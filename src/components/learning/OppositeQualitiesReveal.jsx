@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
@@ -17,12 +17,12 @@ function ensureStyles() {
   const el = document.createElement('style')
   el.textContent = `
     @keyframes oqr-item-settle-left {
-      from { opacity: 0; transform: translateX(18px) scale(0.98); filter: blur(2px); }
-      to { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); }
+      from { opacity: 0; transform: translateX(16px) scale(0.985); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
     }
     @keyframes oqr-item-settle-right {
-      from { opacity: 0; transform: translateX(-18px) scale(0.98); filter: blur(2px); }
-      to { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); }
+      from { opacity: 0; transform: translateX(-16px) scale(0.985); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
     }
     @keyframes oqr-item-land {
       0% { text-shadow: none; }
@@ -30,72 +30,68 @@ function ensureStyles() {
       100% { text-shadow: none; }
     }
     @keyframes oqr-active-left {
-      0% { opacity: 0; transform: translateX(0) scale(0.94); filter: blur(3px); }
-      16% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); }
-      48% { opacity: 1; transform: translateX(0) scale(1); }
-      88% { opacity: 1; transform: translateX(-39%) scale(0.96); }
-      100% { opacity: 0; transform: translateX(-42%) scale(0.94); }
+      0% { opacity: 0; transform: translateX(0) scale(0.96); }
+      16% { opacity: 1; transform: translateX(0) scale(1); }
+      52% { opacity: 1; transform: translateX(0) scale(1); }
+      90% { opacity: 1; transform: translateX(-39%) scale(0.97); }
+      100% { opacity: 0; transform: translateX(-42%) scale(0.95); }
     }
     @keyframes oqr-active-right {
-      0% { opacity: 0; transform: translateX(0) scale(0.94); filter: blur(3px); }
-      16% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); }
-      48% { opacity: 1; transform: translateX(0) scale(1); }
-      88% { opacity: 1; transform: translateX(39%) scale(0.96); }
-      100% { opacity: 0; transform: translateX(42%) scale(0.94); }
+      0% { opacity: 0; transform: translateX(0) scale(0.96); }
+      16% { opacity: 1; transform: translateX(0) scale(1); }
+      52% { opacity: 1; transform: translateX(0) scale(1); }
+      90% { opacity: 1; transform: translateX(39%) scale(0.97); }
+      100% { opacity: 0; transform: translateX(42%) scale(0.95); }
     }
     @keyframes oqr-caption-in {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .oqr-zone {
+    .oqr-atmosphere {
       position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 54%;
-      opacity: 0.72;
+      inset: 0;
+      opacity: 0.68;
       transform: scale(1);
-      transition: opacity 280ms ease, transform 340ms ease, background 280ms ease;
+      transition: opacity 420ms ease, transform 520ms ease, background 420ms ease;
       pointer-events: none;
     }
-    .oqr-zone--left {
-      left: 0;
+    .oqr-atmosphere--left {
       transform-origin: left center;
       background: var(--oqr-zone-idle);
     }
-    .oqr-zone--right {
-      right: 0;
+    .oqr-atmosphere--right {
       transform-origin: right center;
       background: var(--oqr-zone-idle);
     }
-    .oqr-zone--centre {
-      left: 29%;
-      width: 42%;
-      opacity: 1;
+    .oqr-atmosphere--centre {
+      opacity: 0.78;
       background: var(--oqr-centre-zone);
-      border-left: 1px solid var(--oqr-centre-line);
-      border-right: 1px solid var(--oqr-centre-line);
     }
-    .oqr-stage[data-active-side="left"] .oqr-zone--left,
-    .oqr-stage[data-active-side="right"] .oqr-zone--right {
+    .oqr-stage[data-active-side="left"] .oqr-atmosphere--left,
+    .oqr-stage[data-active-side="right"] .oqr-atmosphere--right {
       opacity: 1;
-      transform: scale(1.045);
+      transform: scale(1.025);
       background: var(--oqr-zone-active);
     }
-    .oqr-stage[data-active-side="left"] .oqr-zone--right,
-    .oqr-stage[data-active-side="right"] .oqr-zone--left {
-      opacity: 0.38;
-      transform: scale(0.985);
+    .oqr-stage[data-active-side="left"] .oqr-atmosphere--right,
+    .oqr-stage[data-active-side="right"] .oqr-atmosphere--left {
+      opacity: 0.34;
+      transform: scale(0.99);
+    }
+    .oqr-stage[data-complete="true"] .oqr-atmosphere {
+      opacity: 0.54;
+      transform: scale(1);
     }
     .oqr-concept-column {
       position: relative;
       z-index: 2;
-      transition: opacity 240ms ease, transform 280ms ease, filter 240ms ease;
+      transition: opacity 360ms ease, transform 420ms ease, filter 360ms ease;
     }
     .oqr-concept-label {
       display: inline-flex;
       align-items: center;
       gap: var(--oqr-label-gap);
-      transition: transform 280ms ease, filter 280ms ease;
+      transition: transform 420ms ease, filter 420ms ease;
     }
     .oqr-stage[data-active-side="left"] .oqr-concept-column[data-opposite-side="left"],
     .oqr-stage[data-active-side="right"] .oqr-concept-column[data-opposite-side="right"] {
@@ -104,14 +100,18 @@ function ensureStyles() {
     }
     .oqr-stage[data-active-side="left"] .oqr-concept-column[data-opposite-side="right"],
     .oqr-stage[data-active-side="right"] .oqr-concept-column[data-opposite-side="left"] {
-      opacity: 0.56;
-      transform: scale(0.985);
-      filter: saturate(0.72);
+      opacity: 0.58;
+      transform: scale(0.99);
+      filter: saturate(0.76);
     }
     .oqr-stage[data-active-side="left"] .oqr-concept-column[data-opposite-side="left"] .oqr-concept-label,
     .oqr-stage[data-active-side="right"] .oqr-concept-column[data-opposite-side="right"] .oqr-concept-label {
-      transform: scale(1.055);
+      transform: scale(1.045);
       filter: drop-shadow(0 0 8px var(--oqr-destination-glow));
+    }
+    .oqr-list li::before {
+      display: none !important;
+      content: none !important;
     }
     .oqr-settled-item--left {
       animation: oqr-item-settle-left var(--oqr-settle-duration) var(--oqr-easing) both;
@@ -120,16 +120,20 @@ function ensureStyles() {
       animation: oqr-item-settle-right var(--oqr-settle-duration) var(--oqr-easing) both;
     }
     .oqr-settled-item--latest > span {
-      animation: oqr-item-land 620ms ease-out both;
+      animation: oqr-item-land 760ms ease-out both;
     }
     .oqr-active-word {
       transform-origin: center;
-      will-change: transform, opacity, filter;
+      will-change: transform, opacity;
+    }
+    .oqr-accelerate-control:focus-visible {
+      outline: 2px solid var(--oqr-focus);
+      outline-offset: -4px;
     }
     @media (prefers-reduced-motion: reduce) {
       .oqr-motion { animation: none !important; transition: none !important; }
       .oqr-active { display: none !important; }
-      .oqr-zone,
+      .oqr-atmosphere,
       .oqr-concept-column,
       .oqr-concept-label { transition: none !important; }
     }
@@ -240,7 +244,7 @@ function ConceptColumn({
         </div>
       </div>
 
-      <ul style={{
+      <ul className="oqr-list" style={{
         listStyle: 'none',
         padding: 0,
         margin: 0,
@@ -318,25 +322,22 @@ function BackdropImage({ block, visuals, fullScreen = false }) {
   )
 }
 
-function CinematicZones({ visuals }) {
+function CinematicAtmosphere({ visuals }) {
   return (
     <div aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }}>
       <div
-        className="oqr-zone oqr-zone--left"
+        className="oqr-atmosphere oqr-atmosphere--left"
         style={{
           '--oqr-zone-idle': visuals.leftZoneIdle,
           '--oqr-zone-active': visuals.leftZoneActive,
         }}
       />
       <div
-        className="oqr-zone oqr-zone--centre"
-        style={{
-          '--oqr-centre-zone': visuals.centreZone,
-          '--oqr-centre-line': visuals.centreLine,
-        }}
+        className="oqr-atmosphere oqr-atmosphere--centre"
+        style={{ '--oqr-centre-zone': visuals.centreZone }}
       />
       <div
-        className="oqr-zone oqr-zone--right"
+        className="oqr-atmosphere oqr-atmosphere--right"
         style={{
           '--oqr-zone-idle': visuals.rightZoneIdle,
           '--oqr-zone-active': visuals.rightZoneActive,
@@ -365,6 +366,10 @@ export default function OppositeQualitiesReveal({
   )
   const [settledCount, setSettledCount] = useState(reducedMotion ? sequence.length : 0)
   const [activeIndex, setActiveIndex] = useState(reducedMotion ? -1 : 0)
+  const [hasStarted, setHasStarted] = useState(reducedMotion)
+  const [documentVisible, setDocumentVisible] = useState(
+    typeof document === 'undefined' ? true : document.visibilityState !== 'hidden',
+  )
   const [screenBackdropHost, setScreenBackdropHost] = useState(null)
   const continueModule = useInlineNavigationOwner(true)
 
@@ -383,29 +388,62 @@ export default function OppositeQualitiesReveal({
     if (reducedMotion) {
       setSettledCount(sequence.length)
       setActiveIndex(-1)
+      setHasStarted(true)
       return undefined
     }
 
     setSettledCount(0)
     setActiveIndex(0)
+    setHasStarted(false)
     return undefined
   }, [reducedMotion, sequence.length])
 
   useEffect(() => {
-    if (reducedMotion || activeIndex < 0 || activeIndex >= sequence.length) return undefined
+    if (reducedMotion || hasStarted) return undefined
+    const node = rootRef.current
+    if (!node || typeof IntersectionObserver === 'undefined') {
+      setHasStarted(true)
+      return undefined
+    }
 
-    const timer = setTimeout(() => {
-      setSettledCount(count => Math.max(count, activeIndex + 1))
-      setActiveIndex(index => index + 1)
-    }, timings.nextDelay)
+    const observer = new IntersectionObserver(entries => {
+      const entry = entries[0]
+      if (entry?.isIntersecting && entry.intersectionRatio >= 0.2) {
+        setHasStarted(true)
+        observer.disconnect()
+      }
+    }, { threshold: [0.2] })
 
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [hasStarted, reducedMotion])
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined
+    const handleVisibility = () => setDocumentVisible(document.visibilityState !== 'hidden')
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => document.removeEventListener('visibilitychange', handleVisibility)
+  }, [])
+
+  const advanceCurrent = useCallback(() => {
+    if (reducedMotion || activeIndex < 0 || activeIndex >= sequence.length) return
+    setSettledCount(count => Math.max(count, activeIndex + 1))
+    setActiveIndex(index => Math.min(index + 1, sequence.length))
+  }, [activeIndex, reducedMotion, sequence.length])
+
+  useEffect(() => {
+    if (!hasStarted || !documentVisible || reducedMotion || activeIndex < 0 || activeIndex >= sequence.length) {
+      return undefined
+    }
+
+    const timer = setTimeout(advanceCurrent, timings.nextDelay)
     return () => clearTimeout(timer)
-  }, [activeIndex, reducedMotion, sequence.length, timings.nextDelay])
+  }, [activeIndex, advanceCurrent, documentVisible, hasStarted, reducedMotion, sequence.length, timings.nextDelay])
 
   const view = deriveOppositeRevealState(block, { settledCount, activeIndex, reducedMotion })
   const activeSide = view.active?.side || 'none'
   const latestStep = settledCount > 0 ? sequence[settledCount - 1] : null
-  const activeAnimation = view.active
+  const activeAnimation = view.active && hasStarted
     ? `oqr-active-${view.active.direction} ${timings.nextDelay}ms ${MOTION.easing.standard} both`
     : 'none'
   const activeTextShadow = view.active?.side === 'right'
@@ -420,6 +458,7 @@ export default function OppositeQualitiesReveal({
       data-opposite-reveal-intent="guided-contrast"
       data-opposite-visual-pair={visuals.pairId}
       data-opposite-background-mode={usesScreenBackdrop ? 'screen' : 'stage'}
+      data-opposite-reveal-started={hasStarted || undefined}
       style={{
         '--oqr-left-landing-shadow': visuals.leftLandingShadow,
         '--oqr-right-landing-shadow': visuals.rightLandingShadow,
@@ -434,6 +473,7 @@ export default function OppositeQualitiesReveal({
         className="oqr-stage"
         data-opposite-reveal-stage="true"
         data-active-side={activeSide}
+        data-complete={view.complete || undefined}
         aria-label={block.accessibility?.label || block.title}
         style={{
           position: 'relative',
@@ -457,13 +497,13 @@ export default function OppositeQualitiesReveal({
             }}
           />
         )}
-        <CinematicZones visuals={visuals} />
+        <CinematicAtmosphere visuals={visuals} />
 
         <div
           style={{
             position: 'relative',
             zIndex: 2,
-            minHeight: '52svh',
+            minHeight: view.complete ? 'auto' : '52svh',
             display: 'flex',
             flexDirection: 'column',
             padding: `0 ${SPACING.compact}px ${SPACING.compact}px`,
@@ -471,7 +511,9 @@ export default function OppositeQualitiesReveal({
         >
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'minmax(0,1fr) minmax(52px,0.42fr) minmax(0,1fr)',
+            gridTemplateColumns: view.complete
+              ? 'minmax(0,1fr) minmax(32px,0.24fr) minmax(0,1fr)'
+              : 'minmax(0,1fr) minmax(52px,0.42fr) minmax(0,1fr)',
             gap: SPACING.compact,
             paddingTop: SPACING.standard,
           }}>
@@ -501,33 +543,52 @@ export default function OppositeQualitiesReveal({
             />
           </div>
 
-          <div style={{ flex: 1, minHeight: SPACING.cinematic }} />
+          {!view.complete && <div style={{ flex: 1, minHeight: SPACING.cinematic }} />}
 
-          {view.active && (
-            <div
-              key={view.active.id}
-              className="oqr-active oqr-motion oqr-active-word"
-              data-opposite-active-word={view.active.item}
-              aria-hidden="true"
-              style={{
-                position: 'absolute',
-                left: '9%',
-                right: '9%',
-                top: '43%',
-                animation: activeAnimation,
-                pointerEvents: 'none',
-                zIndex: 4,
-              }}
-            >
-              <div style={{
-                ...TYPE.displayScreen,
-                color: visuals.foreground,
-                textAlign: 'center',
-                textShadow: activeTextShadow,
-              }}>
-                {view.active.item}
+          {view.active && hasStarted && (
+            <>
+              <button
+                type="button"
+                className="oqr-accelerate-control"
+                data-opposite-accelerate-control="true"
+                onClick={advanceCurrent}
+                aria-label={`Place ${view.active.item} with ${view.active.conceptLabel} now`}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  zIndex: 3,
+                  padding: 0,
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                  '--oqr-focus': visuals.sharedAccent,
+                }}
+              />
+              <div
+                key={view.active.id}
+                className="oqr-active oqr-motion oqr-active-word"
+                data-opposite-active-word={view.active.item}
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  left: '9%',
+                  right: '9%',
+                  top: '43%',
+                  animation: activeAnimation,
+                  pointerEvents: 'none',
+                  zIndex: 4,
+                }}
+              >
+                <div style={{
+                  ...TYPE.displayScreen,
+                  color: visuals.foreground,
+                  textAlign: 'center',
+                  textShadow: activeTextShadow,
+                }}>
+                  {view.active.item}
+                </div>
               </div>
-            </div>
+            </>
           )}
 
           {view.complete && block.closingCaption && (
@@ -538,7 +599,7 @@ export default function OppositeQualitiesReveal({
                 color: visuals.foreground,
                 textAlign: 'center',
                 textShadow: visuals.captionShadow,
-                margin: 0,
+                margin: `${SPACING.standard}px 0 0`,
                 padding: `${SPACING.compact}px 0 0`,
                 borderTop: `1px solid ${visuals.captionDivider}`,
                 animation: `oqr-caption-in ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
