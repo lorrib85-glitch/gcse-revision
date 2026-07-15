@@ -184,7 +184,7 @@ function CircuitDiagram({
 
         {/* Conducting path appears only after the switch has physically closed. */}
         <CircuitPath
-          className="circuit-diagram__current"
+          current
           active={isClosed}
           d={currentPath}
           stroke={physics.accent}
