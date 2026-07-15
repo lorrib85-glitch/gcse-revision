@@ -356,13 +356,22 @@ export function CircuitSwitch({
   wireStroke,
   inactiveStroke,
   onToggle,
+  label = 'Circuit switch',
+  describedBy,
   openAngle = -24,
   hitPaddingX = 19,
   hitPaddingY = 26,
+  minHitWidth = 64,
+  minHitHeight = 52,
 }) {
   const width = right - left
-  const hitWidth = width + (hitPaddingX * 2)
-  const hitHeight = hitPaddingY * 2 + 6
+  const rawHitWidth = width + (hitPaddingX * 2)
+  const rawHitHeight = hitPaddingY * 2 + 6
+  const hitWidth = Math.max(rawHitWidth, minHitWidth)
+  const hitHeight = Math.max(rawHitHeight, minHitHeight)
+  const centreX = left + (width / 2)
+  const hitX = centreX - (hitWidth / 2)
+  const hitY = y - (hitHeight / 2)
 
   const handleKeyDown = (event) => {
     if (event.key !== 'Enter' && event.key !== ' ') return
@@ -375,17 +384,20 @@ export function CircuitSwitch({
       className="circuit-diagram__switch-control"
       data-circuit-component="switch"
       data-active={closed || undefined}
+      data-disabled={disabled || undefined}
       role="switch"
       aria-checked={closed}
-      aria-label={closed ? 'Open the circuit switch' : 'Close the circuit switch'}
+      aria-label={label}
+      aria-describedby={describedBy}
       aria-disabled={disabled || undefined}
+      aria-keyshortcuts="Enter Space"
       tabIndex={disabled ? -1 : 0}
       onClick={disabled ? undefined : onToggle}
       onKeyDown={disabled ? undefined : handleKeyDown}
     >
       <rect
-        x={left - hitPaddingX}
-        y={y - hitPaddingY}
+        x={hitX}
+        y={hitY}
         width={hitWidth}
         height={hitHeight}
         rx={14}
@@ -393,14 +405,14 @@ export function CircuitSwitch({
       />
       <rect
         className="circuit-diagram__switch-focus"
-        x={left - hitPaddingX + 4}
-        y={y - hitPaddingY + 4}
+        x={hitX + 4}
+        y={hitY + 4}
         width={hitWidth - 8}
         height={hitHeight - 8}
         rx={12}
         fill="none"
         stroke={accent}
-        strokeWidth={1.5}
+        strokeWidth={2}
         vectorEffect="non-scaling-stroke"
       />
       <circle cx={left} cy={y} r={4} fill={closed ? accent : wireStroke} />
