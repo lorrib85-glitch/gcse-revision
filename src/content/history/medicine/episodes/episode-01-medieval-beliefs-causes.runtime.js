@@ -92,9 +92,16 @@ function composeOppositeQualitiesScreen(screen) {
     ...visualProps
   } = screen
 
-  const backgroundImage = label === 'Hot and cold symptoms'
+  const isHotCold = label === 'Hot and cold symptoms'
+  const isWetDry = label === 'Wet and dry symptoms'
+  const backgroundImage = isHotCold
     ? HOT_COLD_REVEAL_BACKGROUND
     : visualProps.backgroundImage
+  const visualPair = isHotCold
+    ? 'warmCool'
+    : isWetDry
+      ? 'wetDry'
+      : visualProps.visualPair
 
   return {
     stage,
@@ -109,7 +116,8 @@ function composeOppositeQualitiesScreen(screen) {
         copy,
         ...visualProps,
         backgroundImage,
-        backgroundOpacity: label === 'Hot and cold symptoms'
+        visualPair,
+        backgroundOpacity: isHotCold
           ? 1
           : visualProps.backgroundOpacity,
       },
