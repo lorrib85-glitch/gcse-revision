@@ -50,10 +50,7 @@ describe('OppositeQualitiesReveal architecture', () => {
     expect(theme).toContain('stageOverlay')
   })
 
-  it('uses edge-faded atmosphere rather than translucent panel boxes', () => {
-    expect(component).toContain('oqr-atmosphere--left')
-    expect(component).toContain('oqr-atmosphere--centre')
-    expect(component).toContain('oqr-atmosphere--right')
+  it('keeps the reveal stage visually transparent instead of painting clipped boxes', () => {
     expect(component).toContain('data-active-side={activeSide}')
     expect(component).toContain('data-complete={view.complete || undefined}')
     expect(component).toContain('.oqr-stage[data-active-side="left"]')
@@ -63,6 +60,12 @@ describe('OppositeQualitiesReveal architecture', () => {
     expect(component).not.toContain('border-right:')
     expect(component).not.toContain('backdrop-filter')
     expect(theme).toContain("stageSurface: 'transparent'")
+    expect(theme).toContain("stageOverlay: 'transparent'")
+    expect(theme).toContain("leftZoneIdle: 'transparent'")
+    expect(theme).toContain("leftZoneActive: 'transparent'")
+    expect(theme).toContain("rightZoneIdle: 'transparent'")
+    expect(theme).toContain("rightZoneActive: 'transparent'")
+    expect(theme).toContain("centreZone: 'transparent'")
   })
 
   it('starts only when visible, pauses when hidden and lets the learner accelerate', () => {
