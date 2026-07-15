@@ -50,14 +50,28 @@ describe('OppositeQualitiesReveal architecture', () => {
     expect(theme).toContain('stageOverlay')
   })
 
-  it('builds a three-zone stage whose destination reacts to the active side', () => {
-    expect(component).toContain('oqr-zone--left')
-    expect(component).toContain('oqr-zone--centre')
-    expect(component).toContain('oqr-zone--right')
+  it('uses edge-faded atmosphere rather than translucent panel boxes', () => {
+    expect(component).toContain('oqr-atmosphere--left')
+    expect(component).toContain('oqr-atmosphere--centre')
+    expect(component).toContain('oqr-atmosphere--right')
     expect(component).toContain('data-active-side={activeSide}')
+    expect(component).toContain('data-complete={view.complete || undefined}')
     expect(component).toContain('.oqr-stage[data-active-side="left"]')
     expect(component).toContain('.oqr-stage[data-active-side="right"]')
     expect(component).toContain('--oqr-destination-glow')
+    expect(component).not.toContain('border-left:')
+    expect(component).not.toContain('border-right:')
+    expect(component).not.toContain('backdrop-filter')
+    expect(theme).toContain("stageSurface: 'transparent'")
+  })
+
+  it('starts only when visible, pauses when hidden and lets the learner accelerate', () => {
+    expect(component).toContain('IntersectionObserver')
+    expect(component).toContain("document.addEventListener('visibilitychange'")
+    expect(component).toContain('data-opposite-accelerate-control="true"')
+    expect(component).toContain('onClick={advanceCurrent}')
+    expect(component).toContain("minHeight: view.complete ? 'auto' : '52svh'")
+    expect(component).toContain('!view.complete &&')
   })
 
   it('visually hands the travelling word into the newly settled item', () => {
