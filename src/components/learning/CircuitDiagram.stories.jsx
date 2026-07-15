@@ -2,7 +2,11 @@ import CircuitDiagram from './CircuitDiagram.jsx'
 
 const symbolLibraryPreset = {
   id: 'symbolLibraryPreview',
-  viewBox: '0 0 380 205',
+  canvas: {
+    width: 380,
+    height: 205,
+    safeInset: 16,
+  },
   maxWidth: 520,
   accessibilityLabel: 'Reusable GCSE circuit symbol library',
   primarySwitchId: 'switch-preview',
@@ -69,6 +73,17 @@ export const InteractiveOpen = {
 
 export const InteractiveClosed = {
   args: { defaultClosed: true },
+}
+
+export const MobileWidth = {
+  args: { defaultClosed: false },
+  decorators: [
+    Story => (
+      <div style={{ width: 320, maxWidth: '100%' }}>
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export const SymbolLibrary = {
