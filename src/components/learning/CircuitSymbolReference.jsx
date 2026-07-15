@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { GENERAL } from '../../constants/generalTheme.js'
 import {
   CircuitAmmeter,
@@ -113,7 +114,7 @@ function SymbolGraphic({ type }) {
         lightStroke={roles.emittedLight}
         offFill={fill}
         litFill={roles.lampFill}
-        haloFill={roles.lampHalo}
+        haloFill="transparent"
       />
     ))
   }
@@ -234,6 +235,7 @@ function SymbolGraphic({ type }) {
       focusable="false"
       style={{ display: 'block', minWidth: 0 }}
     >
+      <style>{'.circuit-diagram__switch-focus{display:none}'}</style>
       {symbol}
     </svg>
   )
@@ -248,9 +250,11 @@ export default function CircuitSymbolReference({
   title = 'GCSE circuit symbols',
   description = 'The symbol shape is the exam convention. Colour is only used to show state inside interactive diagrams.',
 }) {
+  const titleId = useId()
+
   return (
     <section
-      aria-labelledby="circuit-symbol-reference-title"
+      aria-labelledby={titleId}
       style={{
         width: '100%',
         maxWidth: 560,
@@ -263,7 +267,7 @@ export default function CircuitSymbolReference({
       }}
     >
       <h2
-        id="circuit-symbol-reference-title"
+        id={titleId}
         style={{
           margin: 0,
           color: GENERAL.softWhite,
