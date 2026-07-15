@@ -63,6 +63,8 @@ export function resolveOppositeRevealVisuals(block = {}, subjectTheme = {}) {
     leftRgb,
     rightAccent,
     rightRgb,
+    leftDestinationGlow: `rgba(${leftRgb},0.52)`,
+    rightDestinationGlow: `rgba(${rightRgb},0.52)`,
     leftActiveTextShadow: `0 0 34px rgba(${leftRgb},0.42), 0 3px 12px rgba(0,0,0,0.96)`,
     rightActiveTextShadow: `0 0 34px rgba(${rightRgb},0.42), 0 3px 12px rgba(0,0,0,0.96)`,
     leftLandingShadow: `0 0 18px rgba(${leftRgb},0.38)`,
