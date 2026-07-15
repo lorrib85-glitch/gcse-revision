@@ -6,11 +6,13 @@ export function CircuitPath({
   d,
   stroke,
   strokeWidth = 3,
+  current = false,
   active = false,
   className = '',
 }) {
   const classes = [
-    active ? 'circuit-diagram__current circuit-diagram__current--active' : '',
+    current ? 'circuit-diagram__current' : '',
+    current && active ? 'circuit-diagram__current--active' : '',
     className,
   ].filter(Boolean).join(' ')
 
