@@ -27,8 +27,9 @@ Required props are supplied through `block`: `title`, `copy`, `leftConcept`, `ri
 
 Optional props:
 
-- concept `icon`;
+- concept `icon` (`heat`, `cold`, `wet`, `dry`, or a legacy display fallback);
 - `backgroundImage`, `backgroundPosition` and `backgroundOpacity`;
+- `backgroundMode: 'screen' | 'stage'`;
 - `closingCaption`;
 - `timings`;
 - `visualPair`;
@@ -44,8 +45,9 @@ Example:
   copy: 'Doctors used symptoms to decide which quality was strongest.',
   visualPair: 'warmCool',
   backgroundImage: '/figures/history/medicine/medieval/opposite-qualities-background.svg',
-  leftConcept: { label: 'Hot', icon: '☀', items: ['Fever'] },
-  rightConcept: { label: 'Cold', icon: '❄', items: ['Chills'] },
+  backgroundMode: 'screen',
+  leftConcept: { label: 'Hot', icon: 'heat', items: ['Fever'] },
+  rightConcept: { label: 'Cold', icon: 'cold', items: ['Chills'] },
   sequence: [{ item: 'Fever', side: 'left' }, { item: 'Chills', side: 'right' }],
   closingCaption: 'Doctors looked at symptoms to judge the quality.'
 }
@@ -59,11 +61,11 @@ Use:
 
 - `TYPE` for typography;
 - `SPACING` for layout rhythm;
-- `RADII` for the contained stage;
+- `RADII` for the contained fallback stage;
 - `MOTION` for reveal timing;
 - subject theme tokens for the shared subject identity;
 - `CINEMATIC_LAB` for shared dark teaching values;
-- `oppositeQualitiesRevealTheme.js` for semantic pair and backdrop roles.
+- `oppositeQualitiesRevealTheme.js` for semantic pair, destination and backdrop roles.
 
 Content selects a governed semantic pair such as `warmCool` or `wetDry`. It must not invent local red/blue palettes or pass raw colour values for ordinary authored screens.
 
@@ -71,39 +73,66 @@ The component must not assemble local hex, RGB or `rgba()` values. Visual decisi
 
 ## 6. Cinematic background ownership
 
-A cinematic image is encouraged when it supports the concept. The component renders that image as an **absolute, contained backdrop inside its own reveal stage**.
+A cinematic image is encouraged when it supports the concept.
+
+With `backgroundMode: 'screen'` inside ModulePlayer, the component portals its backdrop into the existing fixed `ContentShell`. This gives the teaching screen a genuine full-viewport image while preserving the shell's ownership of:
+
+- clipping;
+- header layering;
+- scrolling;
+- navigation;
+- safe areas.
+
+When no `ContentShell` host exists—such as Storybook or the Component Review Lab—the same configuration falls back to an absolute backdrop inside the reveal stage.
 
 The component must not:
 
-- mount a fixed viewport background;
+- create its own `position: fixed` viewport shell;
 - use a negative z-index to escape its parent;
-- replace the page shell;
-- cover navigation or neighbouring blocks.
+- replace ModulePlayer navigation;
+- cover the LearningHeader or neighbouring screens.
 
-This preserves the cinematic moment in both `TeachScreenShell` and the Component Review Lab while keeping page-level layout ownership outside the body component.
+## 7. Visual composition
 
-## 7. Motion rules
+The reveal uses three semantic zones:
+
+- left destination;
+- neutral centre reveal space;
+- right destination.
+
+During each movement:
+
+- the target destination strengthens;
+- the opposite destination recedes;
+- the active word uses the strongest screen-level type token;
+- the new settled item enters from the centre-facing direction and receives one brief landing emphasis.
+
+Known semantic icons use governed line SVGs rather than platform-dependent emoji rendering.
+
+## 8. Motion rules
 
 Each item appears in the centre, pauses for readability, travels in the direction derived from `sequence.side`, settles into the side list, then the next item begins. Timing uses `MOTION` tokens by default and `block.timings` for semantic overrides. No bounce, confetti, dotted paths or game feedback.
 
 Reduced motion bypasses travel animation and renders the complete final grouping immediately, preserving reading order and all content.
 
-## 8. Gold example
+## 9. Gold example
 
-`OppositeQualitiesReveal.stories.jsx` → **HotCold** and Episode 1 screens “Hot or cold?” / “Wet or dry?”: contained cinematic background, two semantically distinct concept identities, deterministic alternating reveal, final grouped content under the correct labels.
+`OppositeQualitiesReveal.stories.jsx` → **HotCold** and Episode 1 screens “Hot or cold?” / “Wet or dry?”: full-screen cinematic background in ModulePlayer, safe contained fallback elsewhere, three-zone contrast, semantically distinct concept identities, deterministic reveal and a readable final grouping.
 
-## 9. Below-bar counterexample
+## 10. Below-bar counterexample
 
 A two-column sorting task with answer buttons, feedback states, drag affordances or dashboard cards. That changes the learning intent from guided concept reveal to assessment and fails this contract.
 
-A fixed full-screen background mounted by this body component also fails the contract because it breaks composition ownership.
+A component-owned fixed viewport or negative-z background also fails the contract because it bypasses the governed screen shell.
 
-## 10. Review checks
+## 11. Review checks
 
 - ⚙ Both concept labels and all items come from configuration.
 - ⚙ Movement direction is derived from side data, not concept names.
 - ⚙ `visualPair` selects governed semantic roles; ordinary content does not supply raw colours.
-- ⚙ The cinematic background is contained inside the reveal stage.
+- ⚙ `backgroundMode: 'screen'` uses the existing `ContentShell`; standalone previews fall back safely.
+- ⚙ Left, centre and right zones remain visually distinct without becoming cards.
+- ⚙ Target destination response and landing continuity are present.
 - ⚙ Reduced motion yields a complete final DOM state.
 - ⚙ The old Galen-specific four-quality diagnostic screen is not used for the two passive teaching pages.
 - 👁 At 390px, columns do not collide, the active item is readable, and the closing caption stays above navigation/CTA chrome.
