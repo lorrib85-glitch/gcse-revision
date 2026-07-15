@@ -37,7 +37,7 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
       id: 'current-main-loop',
       d: 'M72,38 H288 V134 H72 Z',
       activeWhen: { allClosed: ['switch-main'] },
-      tone: 'accent',
+      tone: 'conducting',
       activeOpacity: 0.36,
       pulse: true,
     },
@@ -49,6 +49,7 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
       type: 'battery',
       x: 72,
       y: 67,
+      strokeTone: 'textPrimary',
     },
     {
       id: 'lamp-main',
@@ -56,6 +57,9 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
       cx: 288,
       cy: 86,
       radius: 18,
+      strokeTone: 'structure',
+      activeTone: 'emittedLight',
+      fillTone: 'surface',
       activeWhen: { allClosed: ['switch-main'] },
     },
     {
@@ -66,6 +70,8 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
       y: 134,
       defaultClosed: false,
       openAngle: -24,
+      strokeTone: 'structure',
+      activeTone: 'interaction',
     },
   ],
 
@@ -76,7 +82,7 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
       y: 88,
       text: 'Battery',
       textAnchor: 'middle',
-      tone: 'secondary',
+      tone: 'textSecondary',
     },
     {
       id: 'label-lamp',
@@ -84,7 +90,7 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
       y: 90,
       text: 'Bulb',
       textAnchor: 'middle',
-      tone: 'secondary',
+      tone: 'textSecondary',
     },
     {
       id: 'label-switch',
@@ -92,14 +98,14 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
       y: 170,
       text: 'Switch',
       textAnchor: 'middle',
-      tone: 'secondary',
+      tone: 'textSecondary',
     },
     {
       id: 'label-switch-action',
       x: 180,
       y: 190,
       textAnchor: 'middle',
-      tone: 'accent',
+      tone: 'interaction',
       fontWeight: 600,
       textByState: {
         open: 'Tap to close',
@@ -114,14 +120,14 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
       when: { allClosed: ['switch-main'] },
       heading: 'The switch is closed.',
       explanation: 'The circuit is complete, so current flows and the bulb lights.',
-      headingTone: 'light',
+      headingTone: 'emittedLight',
     },
     {
       id: 'open',
       default: true,
       heading: 'The switch is open.',
       explanation: 'There is a gap, so current cannot flow.',
-      headingTone: 'primary',
+      headingTone: 'textPrimary',
     },
   ],
 })
@@ -242,7 +248,7 @@ export function getCircuitPresentationState(preset, switchStates = {}) {
     id: 'default',
     heading: '',
     explanation: '',
-    headingTone: 'primary',
+    headingTone: 'textPrimary',
   }
 }
 
