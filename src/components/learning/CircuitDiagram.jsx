@@ -1,5 +1,4 @@
 import { useId, useState } from 'react'
-import { SUBJECTS } from '../../constants/subjects.js'
 import {
   CircuitAmmeter,
   CircuitBattery,
@@ -19,6 +18,7 @@ import {
   resolveCircuitLabelText,
   resolveCircuitPreset,
 } from './circuit/circuitPresets.js'
+import { PHYSICS_CIRCUIT_VISUAL_ROLES } from './circuit/circuitVisualRoles.js'
 
 // ─── Motion / focus styles (injected once) ───────────────────────────────────
 // The sequence is intentional: the learner moves the switch first, then a calm
@@ -29,7 +29,6 @@ function ensureStyles() {
   if (stylesInjected || typeof document === 'undefined') return
   stylesInjected = true
 
-  const physics = SUBJECTS.Physics
   const el = document.createElement('style')
   el.textContent = `
     @keyframes circuit-diagram-pulse {
@@ -89,7 +88,7 @@ function ensureStyles() {
 
     .circuit-diagram__current-pulse--active {
       animation: circuit-diagram-pulse 820ms cubic-bezier(0.22, 0.68, 0.28, 1) 120ms 1 both;
-      filter: drop-shadow(0 0 1.5px ${physics.glow});
+      filter: drop-shadow(0 0 1.5px ${PHYSICS_CIRCUIT_VISUAL_ROLES.focusGlow});
     }
 
     .circuit-diagram__bulb-face,
@@ -153,7 +152,7 @@ function CircuitDiagram({
 }) {
   ensureStyles()
 
-  const physics = SUBJECTS.Physics
+  const visualRoles = PHYSICS_CIRCUIT_VISUAL_ROLES
   const circuit = resolveCircuitPreset(preset)
   const canvas = resolveCircuitCanvas(circuit)
   const titleId = useId()
@@ -180,19 +179,32 @@ function CircuitDiagram({
     ...(isPrimaryControlled ? { [primarySwitchId]: closed } : {}),
   }
 
-  const wire = physics.accentTertiary
-  const textPrimary = physics.palette.lightAsh
-  const textSecondary = physics.palette.warmGrey
-  const bulbLight = physics.accentSecondary
+  const {
+    structure: wire,
+    textPrimary,
+    textSecondary,
+    emittedLight: bulbLight,
+    interaction,
+    conducting,
+    surface,
+  } = visualRoles
   const presentationState = getCircuitPresentationState(circuit, switchStates)
 
+  // Semantic names are the governed API. The short legacy aliases remain so
+  // work-in-progress custom presets do not break while they migrate.
   const tones = {
+    interaction,
+    conducting,
+    emittedLight: bulbLight,
+    structure: wire,
+    surface,
+    textPrimary,
+    textSecondary,
     primary: textPrimary,
     secondary: textSecondary,
-    accent: physics.accent,
+    accent: interaction,
     light: bulbLight,
     wire,
-    surface: physics.backgroundSecondary,
   }
 
   const resolveTone = tone => tones[tone] ?? tone ?? textSecondary
@@ -216,10 +228,10 @@ function CircuitDiagram({
   const renderComponent = (component) => {
     const active = matchesCircuitCondition(component.activeWhen, switchStates)
     const componentStroke = component.strokeTone ? resolveTone(component.strokeTone) : wire
-    const activeStroke = component.activeTone ? resolveTone(component.activeTone) : physics.accent
+    const activeStroke = component.activeTone ? resolveTone(component.activeTone) : interaction
     const componentFill = component.fillTone
       ? resolveTone(component.fillTone)
-      : physics.backgroundSecondary
+      : surface
 
     if (component.type === 'cell') {
       return (
@@ -263,8 +275,8 @@ function CircuitDiagram({
           wireStroke={componentStroke}
           lightStroke={component.activeTone ? activeStroke : bulbLight}
           offFill={componentFill}
-          litFill="rgba(242,193,78,0.18)"
-          haloFill="rgba(242,193,78,0.32)"
+          litFill={visualRoles.lampFill}
+          haloFill={visualRoles.lampHalo}
         />
       )
     }
@@ -327,7 +339,7 @@ function CircuitDiagram({
           y={component.y}
           closed={switchStates[component.id] === true}
           disabled={disabled || component.disabled}
-          accent={component.activeTone ? activeStroke : physics.accent}
+          accent={component.activeTone ? activeStroke : interaction}
           wireStroke={componentStroke}
           inactiveStroke={textSecondary}
           openAngle={component.openAngle}
@@ -394,7 +406,7 @@ function CircuitDiagram({
             pulse={path.pulse !== false}
             activeOpacity={path.activeOpacity}
             d={path.d}
-            stroke={path.tone ? resolveTone(path.tone) : physics.accent}
+            stroke={path.tone ? resolveTone(path.tone) : conducting}
             strokeWidth={path.strokeWidth}
           />
         ))}
