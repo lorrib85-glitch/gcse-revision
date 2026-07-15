@@ -1,3 +1,5 @@
+import { resolveCircuitSwitchHitBox } from './circuitGeometry.js'
+
 // Internal SVG building blocks for CircuitDiagram.
 // These are not global UI components: they form one governed scientific-diagram
 // system so future circuit presets can reuse the same GCSE symbols and states.
@@ -364,14 +366,15 @@ export function CircuitSwitch({
   minHitWidth = 64,
   minHitHeight = 52,
 }) {
-  const width = right - left
-  const rawHitWidth = width + (hitPaddingX * 2)
-  const rawHitHeight = hitPaddingY * 2 + 6
-  const hitWidth = Math.max(rawHitWidth, minHitWidth)
-  const hitHeight = Math.max(rawHitHeight, minHitHeight)
-  const centreX = left + (width / 2)
-  const hitX = centreX - (hitWidth / 2)
-  const hitY = y - (hitHeight / 2)
+  const hitBox = resolveCircuitSwitchHitBox({
+    left,
+    right,
+    y,
+    hitPaddingX,
+    hitPaddingY,
+    minHitWidth,
+    minHitHeight,
+  })
 
   const handleKeyDown = (event) => {
     if (event.key !== 'Enter' && event.key !== ' ') return
@@ -396,19 +399,20 @@ export function CircuitSwitch({
       onKeyDown={disabled ? undefined : handleKeyDown}
     >
       <rect
-        x={hitX}
-        y={hitY}
-        width={hitWidth}
-        height={hitHeight}
+        data-circuit-hit-target="true"
+        x={hitBox.x}
+        y={hitBox.y}
+        width={hitBox.width}
+        height={hitBox.height}
         rx={14}
         fill="transparent"
       />
       <rect
         className="circuit-diagram__switch-focus"
-        x={hitX + 4}
-        y={hitY + 4}
-        width={hitWidth - 8}
-        height={hitHeight - 8}
+        x={hitBox.x + 4}
+        y={hitBox.y + 4}
+        width={hitBox.width - 8}
+        height={hitBox.height - 8}
         rx={12}
         fill="none"
         stroke={accent}
