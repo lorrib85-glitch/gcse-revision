@@ -47,7 +47,8 @@ describe('OppositeQualitiesReveal architecture', () => {
     expect(theme).toContain('leftAccent')
     expect(theme).toContain('rightAccent')
     expect(theme).toContain('fullScreenOverlay')
-    expect(theme).toContain('stageOverlay')
+    expect(theme).toContain('dividerErase')
+    expect(theme).toContain('dividerLine')
   })
 
   it('keeps the reveal stage visually transparent instead of painting clipped boxes', () => {
@@ -56,16 +57,20 @@ describe('OppositeQualitiesReveal architecture', () => {
     expect(component).toContain('.oqr-stage[data-active-side="left"]')
     expect(component).toContain('.oqr-stage[data-active-side="right"]')
     expect(component).toContain('--oqr-destination-glow')
-    expect(component).not.toContain('border-left:')
-    expect(component).not.toContain('border-right:')
     expect(component).not.toContain('backdrop-filter')
+    expect(component).not.toContain('oqr-atmosphere')
     expect(theme).toContain("stageSurface: 'transparent'")
     expect(theme).toContain("stageOverlay: 'transparent'")
-    expect(theme).toContain("leftZoneIdle: 'transparent'")
-    expect(theme).toContain("leftZoneActive: 'transparent'")
-    expect(theme).toContain("rightZoneIdle: 'transparent'")
-    expect(theme).toContain("rightZoneActive: 'transparent'")
-    expect(theme).toContain("centreZone: 'transparent'")
+  })
+
+  it('removes decorative concept icons and begins the divider below the label row', () => {
+    expect(component).not.toContain('ConceptIcon')
+    expect(component).not.toContain('concept.icon')
+    expect(component).not.toContain('<svg aria-hidden="true"')
+    expect(component).toContain('data-opposite-embedded-divider-mask="true"')
+    expect(component).toContain('data-opposite-divider="true"')
+    expect(component).toContain('top: var(--oqr-divider-start)')
+    expect(component).toContain("'--oqr-divider-start': `${SPACING.standard + 42}px`")
   })
 
   it('starts only when visible, pauses when hidden and lets the learner accelerate', () => {
@@ -84,15 +89,6 @@ describe('OppositeQualitiesReveal architecture', () => {
     expect(component).toContain('oqr-item-settle-right')
     expect(component).toContain('oqr-settled-item--latest')
     expect(component).toContain('oqr-item-land')
-  })
-
-  it('uses governed line symbols for known opposite concepts', () => {
-    expect(component).toContain("'☀': 'heat'")
-    expect(component).toContain("'❄': 'cold'")
-    expect(component).toContain("'💧': 'wet'")
-    expect(component).toContain("'✦': 'dry'")
-    expect(component).toContain('<svg aria-hidden="true"')
-    expect(component).toContain('stroke="currentColor"')
   })
 
   it('keeps both concept directions data-driven', () => {
