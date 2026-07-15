@@ -90,7 +90,16 @@ describe('opposite qualities reveal sequencing', () => {
     expect(view.active).toBe(null)
   })
 
-  it('sequence order is deterministic and next item waits for read, travel and settle', () => {
+  it('uses a calm two-second default beat for each example', () => {
+    expect(getOppositeRevealDurations()).toEqual({
+      read: 900,
+      travel: 850,
+      settle: 320,
+      nextDelay: 2070,
+    })
+  })
+
+  it('sequence order is deterministic and timing overrides still compose correctly', () => {
     expect(buildOppositeRevealSequence(wetDry)).toEqual(buildOppositeRevealSequence(wetDry))
     const timings = getOppositeRevealDurations({ read: '420ms', travel: '720ms', settle: '280ms' })
     expect(timings.nextDelay).toBe(timings.read + timings.travel + timings.settle)
@@ -108,6 +117,7 @@ describe('opposite qualities reveal visual roles', () => {
     expect(visuals.leftDestinationGlow).not.toBe(visuals.rightDestinationGlow)
     expect(visuals.leftZoneActive).not.toBe(visuals.leftZoneIdle)
     expect(visuals.rightZoneActive).not.toBe(visuals.rightZoneIdle)
+    expect(visuals.stageSurface).toBe('transparent')
     expect(visuals.sharedAccent).toBe(historyTheme.accent)
   })
 
