@@ -1,3 +1,4 @@
+import { expect, userEvent, within } from 'storybook/test'
 import CircuitDiagram from './CircuitDiagram.jsx'
 
 const symbolLibraryPreset = {
@@ -57,6 +58,29 @@ const symbolLibraryPreset = {
   ],
 }
 
+function getScientificState(canvasElement) {
+  return {
+    lamp: canvasElement.querySelector('[data-circuit-component="lamp"]'),
+    currentPath: canvasElement.querySelector('[data-circuit-component="current-path"]'),
+  }
+}
+
+function expectScientificState(canvasElement, active) {
+  const { lamp, currentPath } = getScientificState(canvasElement)
+  const expected = active ? 'true' : null
+
+  expect(lamp?.getAttribute('data-active')).toBe(expected)
+  expect(currentPath?.getAttribute('data-active')).toBe(expected)
+}
+
+function expectMobileContainment(canvasElement, maximumWidth = 320) {
+  const circuit = canvasElement.querySelector('.circuit-diagram')
+  const circuitWidth = circuit?.getBoundingClientRect().width ?? Infinity
+
+  expect(circuitWidth).toBeLessThanOrEqual(maximumWidth + 0.5)
+  expect(circuit?.scrollWidth).toBeLessThanOrEqual(circuit?.clientWidth)
+}
+
 export default {
   title: 'Learning/CircuitDiagram',
   component: CircuitDiagram,
@@ -70,6 +94,24 @@ export default {
 
 export const InteractiveOpen = {
   args: { defaultClosed: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const circuitSwitch = canvas.getByRole('switch', { name: 'Main circuit switch' })
+
+    await expect(circuitSwitch).toHaveAttribute('aria-checked', 'false')
+    expectScientificState(canvasElement, false)
+
+    await userEvent.click(circuitSwitch)
+    await expect(circuitSwitch).toHaveAttribute('aria-checked', 'true')
+    await expect(canvas.getByText('The switch is closed.')).toBeVisible()
+    expectScientificState(canvasElement, true)
+
+    circuitSwitch.focus()
+    await userEvent.keyboard(' ')
+    await expect(circuitSwitch).toHaveAttribute('aria-checked', 'false')
+    await expect(canvas.getByText('The switch is open.')).toBeVisible()
+    expectScientificState(canvasElement, false)
+  },
 }
 
 export const InteractiveClosed = {
@@ -80,6 +122,28 @@ export const TwoSwitchSeries = {
   args: {
     preset: 'twoSwitchSeries',
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const switchA = canvas.getByRole('switch', { name: 'Switch A' })
+    const switchB = canvas.getByRole('switch', { name: 'Switch B' })
+
+    await expect(switchA).toHaveAttribute('aria-checked', 'true')
+    await expect(switchB).toHaveAttribute('aria-checked', 'false')
+    await expect(canvas.getByText('Switch B is open.')).toBeVisible()
+    expectScientificState(canvasElement, false)
+
+    switchB.focus()
+    await userEvent.keyboard('{Enter}')
+    await expect(switchB).toHaveAttribute('aria-checked', 'true')
+    await expect(canvas.getByText('Both switches are closed.')).toBeVisible()
+    expectScientificState(canvasElement, true)
+
+    switchA.focus()
+    await userEvent.keyboard(' ')
+    await expect(switchA).toHaveAttribute('aria-checked', 'false')
+    await expect(canvas.getByText('Switch A is open.')).toBeVisible()
+    expectScientificState(canvasElement, false)
+  },
 }
 
 export const PredictThenTest = {
@@ -87,12 +151,48 @@ export const PredictThenTest = {
     preset: 'twoSwitchSeries',
     mode: 'predictThenTest',
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const switchA = canvas.getByRole('switch', { name: 'Switch A' })
+    const switchB = canvas.getByRole('switch', { name: 'Switch B' })
+    const correctPrediction = canvas.getByRole('radio', { name: 'The bulb will light' })
+
+    await expect(switchA).toHaveAttribute('aria-disabled', 'true')
+    await expect(switchB).toHaveAttribute('aria-disabled', 'true')
+    await expect(switchA).toHaveAttribute('tabindex', '-1')
+    await expect(switchB).toHaveAttribute('tabindex', '-1')
+
+    await userEvent.click(correctPrediction)
+    await expect(correctPrediction).toBeChecked()
+    await expect(switchA).not.toHaveAttribute('aria-disabled')
+    await expect(switchB).not.toHaveAttribute('aria-disabled')
+    await expect(switchB).toHaveAttribute('tabindex', '0')
+
+    switchB.focus()
+    await userEvent.keyboard('{Enter}')
+    await expect(canvas.getByText(/Prediction matched\./)).toBeVisible()
+    await expect(canvas.getByText('Both switches are closed.')).toBeVisible()
+    expectScientificState(canvasElement, true)
+  },
 }
 
 export const ReducedMotion = {
   args: {
     defaultClosed: false,
     reducedMotion: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const circuit = canvasElement.querySelector('.circuit-diagram')
+    const circuitSwitch = canvas.getByRole('switch', { name: 'Main circuit switch' })
+
+    await expect(circuit).toHaveClass('circuit-diagram--reduced-motion')
+    await expect(circuit).toHaveAttribute('data-reduced-motion', 'true')
+
+    await userEvent.click(circuitSwitch)
+    const pulse = canvasElement.querySelector('.circuit-diagram__current-pulse')
+    expect(window.getComputedStyle(pulse).display).toBe('none')
+    expectScientificState(canvasElement, true)
   },
 }
 
@@ -105,6 +205,11 @@ export const MobileWidth = {
       </div>
     ),
   ],
+  play: async ({ canvasElement }) => {
+    expectMobileContainment(canvasElement)
+    const svg = canvasElement.querySelector('svg[data-circuit-canvas="360x210"]')
+    await expect(svg).toHaveAttribute('preserveAspectRatio', 'xMidYMid meet')
+  },
 }
 
 export const TwoSwitchSeriesMobile = {
@@ -118,6 +223,16 @@ export const TwoSwitchSeriesMobile = {
       </div>
     ),
   ],
+  play: async ({ canvasElement }) => {
+    expectMobileContainment(canvasElement)
+    const hitTargets = [...canvasElement.querySelectorAll('[data-circuit-hit-target="true"]')]
+
+    expect(hitTargets).toHaveLength(2)
+    for (const target of hitTargets) {
+      expect(Number(target.getAttribute('width'))).toBeGreaterThanOrEqual(64)
+      expect(Number(target.getAttribute('height'))).toBeGreaterThanOrEqual(52)
+    }
+  },
 }
 
 export const PredictThenTestMobile = {
@@ -132,6 +247,9 @@ export const PredictThenTestMobile = {
       </div>
     ),
   ],
+  play: async ({ canvasElement }) => {
+    expectMobileContainment(canvasElement)
+  },
 }
 
 export const SymbolLibrary = {
