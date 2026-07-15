@@ -151,7 +151,7 @@ export default function BeforeAfterImageSlider({
       {/* ── Heading — question is the hero ── */}
       {heading && (
         <div style={{
-          padding: `calc(${SPACING.cinematic}px + ${SPACING.micro}px) ${SPACING.standard}px ${SPACING.compact}px`,
+          padding: `calc(${SPACING.cinematic}px + ${SPACING.micro}px) ${SPACING.standard}px ${SPACING.standard}px`,
           flexShrink: 0,
         }}>
           <p style={{
