@@ -1,172 +1,361 @@
+import { useId, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 
-// ─── Animation / glow styles (CSS classes, injected once) ────────────────────
-// Static colours are set inline from the `closed` prop; only the moving-current
-// animation and the restrained glows live here as classes, and the moving
-// animation is disabled under prefers-reduced-motion.
+// ─── Motion / focus styles (injected once) ───────────────────────────────────
+// The sequence is intentional: the learner moves the switch first, then the
+// conducting path appears, then the bulb responds. Reduced-motion users still
+// get the same clear state change without the animation.
 let stylesInjected = false
 function ensureStyles() {
-  if (stylesInjected) return
+  if (stylesInjected || typeof document === 'undefined') return
   stylesInjected = true
+
+  const physics = SUBJECTS.Physics
   const el = document.createElement('style')
   el.textContent = `
-    @keyframes circuit-flow {
-      to { stroke-dashoffset: -32; }
+    @keyframes circuit-diagram-flow {
+      to { stroke-dashoffset: -34; }
     }
-    .circuit-current {
-      stroke-dasharray: 9 7;
-      animation: circuit-flow 0.9s linear infinite;
-      filter: drop-shadow(0 0 3px ${SUBJECTS.Physics.glow});
+
+    .circuit-diagram__switch-control {
+      cursor: pointer;
+      outline: none;
     }
-    .circuit-bulb-halo {
-      filter: blur(6px);
+
+    .circuit-diagram__switch-arm {
+      transform-box: view-box;
+      transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
     }
+
+    .circuit-diagram__switch-focus {
+      opacity: 0;
+      transition: opacity 140ms ease;
+    }
+
+    .circuit-diagram__switch-control:hover .circuit-diagram__switch-focus,
+    .circuit-diagram__switch-control:focus-visible .circuit-diagram__switch-focus {
+      opacity: 1;
+    }
+
+    .circuit-diagram__current {
+      opacity: 0;
+      stroke-dasharray: 9 8;
+      pointer-events: none;
+      transition: opacity 120ms ease;
+    }
+
+    .circuit-diagram__current--active {
+      opacity: 1;
+      animation: circuit-diagram-flow 1.15s linear infinite;
+      filter: drop-shadow(0 0 2px ${physics.glow});
+      transition-delay: 120ms;
+    }
+
+    .circuit-diagram__bulb-face,
+    .circuit-diagram__bulb-filament {
+      transition: fill 160ms ease, stroke 160ms ease;
+    }
+
+    .circuit-diagram__bulb-face--lit,
+    .circuit-diagram__bulb-filament--lit {
+      transition-delay: 260ms;
+    }
+
+    .circuit-diagram__bulb-halo {
+      opacity: 0;
+      transform: scale(0.72);
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: opacity 160ms ease, transform 180ms ease;
+    }
+
+    .circuit-diagram__bulb-halo--lit {
+      opacity: 1;
+      transform: scale(1);
+      transition-delay: 260ms;
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      .circuit-current { animation: none; }
+      .circuit-diagram__switch-arm,
+      .circuit-diagram__switch-focus,
+      .circuit-diagram__current,
+      .circuit-diagram__bulb-face,
+      .circuit-diagram__bulb-filament,
+      .circuit-diagram__bulb-halo {
+        animation: none;
+        transition: none;
+      }
     }
   `
   document.head.appendChild(el)
 }
 
-// ─── Geometry (viewBox 0 0 360 220) ─────────────────────────────────────────
-const LOOP = { left: 70, right: 290, top: 50, bottom: 150 }
-const BULB = { cx: 290, cy: 100, r: 18 }
-const SWITCH = { left: 150, right: 210, y: 150, openTipX: 206, openTipY: 124 }
+// ─── Geometry (viewBox 0 0 360 194) ─────────────────────────────────────────
+const LOOP = { left: 72, right: 288, top: 38, bottom: 134 }
+const BULB = { cx: 288, cy: 86, r: 18 }
+const SWITCH = { left: 145, right: 215, y: 134 }
 
-const WIRE = '#4A5A6A'
-
-function CircuitDiagram({ closed = false }) {
+/**
+ * A single responsive series circuit whose physical switch is the control.
+ *
+ * Use `defaultClosed` for the normal self-contained interaction. `closed` and
+ * `onToggle` provide a controlled API for future lesson flows that need to own
+ * circuit state.
+ */
+function CircuitDiagram({
+  closed,
+  defaultClosed = false,
+  onToggle,
+  disabled = false,
+  label = 'Interactive series circuit',
+}) {
   ensureStyles()
 
   const physics = SUBJECTS.Physics
-  const amber = '#FFB454'
-  const bulbStroke = closed ? amber : '#3A4756'
-  const bulbFill = closed ? 'rgba(255,180,84,0.16)' : '#10171F'
-  const filament = closed ? amber : '#46535F'
+  const titleId = useId()
+  const descriptionId = useId()
+  const [uncontrolledClosed, setUncontrolledClosed] = useState(defaultClosed)
 
-  // Wire segments — gaps left where the battery, bulb and switch sit.
+  const isControlled = typeof closed === 'boolean'
+  const isClosed = isControlled ? closed : uncontrolledClosed
+
+  const wire = physics.accentTertiary
+  const textPrimary = physics.palette.lightAsh
+  const textSecondary = physics.palette.warmGrey
+  const bulbLight = physics.accentSecondary
+
   const wires = [
-    `M${LOOP.left},${LOOP.top} H${LOOP.right}`,            // top
-    `M${LOOP.right},${LOOP.top} V82`,                       // right, above bulb
-    `M${LOOP.right},118 V${LOOP.bottom}`,                  // right, below bulb
-    `M${LOOP.right},${LOOP.bottom} H${SWITCH.right}`,      // bottom, right of switch
-    `M${SWITCH.left},${LOOP.bottom} H${LOOP.left}`,        // bottom, left of switch
-    `M${LOOP.left},${LOOP.bottom} V112`,                   // left, below battery
-    `M${LOOP.left},82 V${LOOP.top}`,                       // left, above battery
+    `M${LOOP.left},${LOOP.top} H${LOOP.right}`,
+    `M${LOOP.right},${LOOP.top} V68`,
+    `M${LOOP.right},104 V${LOOP.bottom}`,
+    `M${LOOP.right},${LOOP.bottom} H${SWITCH.right}`,
+    `M${SWITCH.left},${LOOP.bottom} H${LOOP.left}`,
+    `M${LOOP.left},${LOOP.bottom} V108`,
+    `M${LOOP.left},66 V${LOOP.top}`,
   ]
 
-  // Closed-loop perimeter used for the animated current overlay.
   const currentPath =
     `M${LOOP.left},${LOOP.top} H${LOOP.right} V${LOOP.bottom} H${LOOP.left} Z`
 
-  const status = closed
-    ? 'Circuit complete — current flows'
-    : 'Circuit broken — no current'
+  const stateHeading = isClosed
+    ? 'The switch is closed.'
+    : 'The switch is open.'
+
+  const stateExplanation = isClosed
+    ? 'The circuit is complete, so current flows and the bulb lights.'
+    : 'There is a gap, so current cannot flow.'
+
+  const toggleSwitch = () => {
+    if (disabled) return
+
+    const nextClosed = !isClosed
+    if (!isControlled) setUncontrolledClosed(nextClosed)
+    onToggle?.(nextClosed)
+  }
+
+  const handleKeyDown = (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    toggleSwitch()
+  }
 
   return (
-    <svg
-      viewBox="0 0 360 220"
-      width="100%"
-      role="img"
-      aria-label={status}
-      style={{ display: 'block', maxWidth: 420, margin: '0 auto' }}
-    >
-      {/* Base wires */}
-      {wires.map((d, i) => (
-        <path
-          key={i}
-          d={d}
-          fill="none"
-          stroke={WIRE}
-          strokeWidth={3}
-          strokeLinecap="round"
-        />
-      ))}
+    <div style={{ width: '100%', maxWidth: 460, margin: '0 auto' }}>
+      <svg
+        viewBox="0 0 360 194"
+        width="100%"
+        role="group"
+        aria-labelledby={`${titleId} ${descriptionId}`}
+        style={{ display: 'block', overflow: 'visible' }}
+      >
+        <title id={titleId}>{label}</title>
+        <desc id={descriptionId}>
+          {stateExplanation} Use the switch control to change the circuit.
+        </desc>
 
-      {/* Animated current — only when the circuit is closed */}
-      {closed && (
+        {/* Base wires */}
+        {wires.map((d, index) => (
+          <path
+            key={index}
+            d={d}
+            fill="none"
+            stroke={wire}
+            strokeWidth={3}
+            strokeLinecap="round"
+          />
+        ))}
+
+        {/* Conducting path appears only after the switch has physically closed. */}
         <path
-          className="circuit-current"
+          className={`circuit-diagram__current${isClosed ? ' circuit-diagram__current--active' : ''}`}
           d={currentPath}
           fill="none"
-          stroke={physics.accentSecondary}
+          stroke={physics.accent}
           strokeWidth={3}
           strokeLinecap="round"
+          aria-hidden="true"
         />
-      )}
 
-      {/* Battery (left) — two cells drawn as plates */}
-      <g>
-        <rect x={54} y={82} width={32} height={3} rx={1.5} fill="#C7D2DD" />
-        <rect x={60} y={90} width={20} height={7} rx={2} fill="#C7D2DD" />
-        <rect x={54} y={104} width={32} height={3} rx={1.5} fill="#C7D2DD" />
-        <rect x={60} y={112} width={20} height={7} rx={2} fill="#C7D2DD" />
-        <text x={50} y={78} textAnchor="end" fill="#8A98A6" fontSize={12}>+</text>
-      </g>
+        {/* Battery */}
+        <g aria-hidden="true">
+          <rect x={56} y={67} width={32} height={3} rx={1.5} fill={textPrimary} />
+          <rect x={62} y={76} width={20} height={7} rx={2} fill={textPrimary} />
+          <rect x={56} y={91} width={32} height={3} rx={1.5} fill={textPrimary} />
+          <rect x={62} y={100} width={20} height={7} rx={2} fill={textPrimary} />
+          <text x={51} y={65} textAnchor="end" fill={textSecondary} fontSize={12}>+</text>
+        </g>
 
-      {/* Bulb (right) */}
-      <g>
-        {closed && (
+        {/* Bulb */}
+        <g aria-hidden="true">
           <circle
-            className="circuit-bulb-halo"
+            className={`circuit-diagram__bulb-halo${isClosed ? ' circuit-diagram__bulb-halo--lit' : ''}`}
             cx={BULB.cx}
             cy={BULB.cy}
-            r={BULB.r + 8}
-            fill="rgba(255,180,84,0.45)"
+            r={BULB.r + 9}
+            fill="rgba(242,193,78,0.34)"
           />
-        )}
-        <circle
-          cx={BULB.cx}
-          cy={BULB.cy}
-          r={BULB.r}
-          fill={bulbFill}
-          stroke={bulbStroke}
-          strokeWidth={3}
-        />
-        <line
-          x1={BULB.cx - 12} y1={BULB.cy - 12}
-          x2={BULB.cx + 12} y2={BULB.cy + 12}
-          stroke={filament} strokeWidth={2.5} strokeLinecap="round"
-        />
-        <line
-          x1={BULB.cx - 12} y1={BULB.cy + 12}
-          x2={BULB.cx + 12} y2={BULB.cy - 12}
-          stroke={filament} strokeWidth={2.5} strokeLinecap="round"
-        />
-      </g>
+          <circle
+            className={`circuit-diagram__bulb-face${isClosed ? ' circuit-diagram__bulb-face--lit' : ''}`}
+            cx={BULB.cx}
+            cy={BULB.cy}
+            r={BULB.r}
+            fill={isClosed ? 'rgba(242,193,78,0.16)' : physics.backgroundSecondary}
+            stroke={isClosed ? bulbLight : wire}
+            strokeWidth={3}
+          />
+          <line
+            className={`circuit-diagram__bulb-filament${isClosed ? ' circuit-diagram__bulb-filament--lit' : ''}`}
+            x1={BULB.cx - 12}
+            y1={BULB.cy - 12}
+            x2={BULB.cx + 12}
+            y2={BULB.cy + 12}
+            stroke={isClosed ? bulbLight : wire}
+            strokeWidth={2.5}
+            strokeLinecap="round"
+          />
+          <line
+            className={`circuit-diagram__bulb-filament${isClosed ? ' circuit-diagram__bulb-filament--lit' : ''}`}
+            x1={BULB.cx - 12}
+            y1={BULB.cy + 12}
+            x2={BULB.cx + 12}
+            y2={BULB.cy - 12}
+            stroke={isClosed ? bulbLight : wire}
+            strokeWidth={2.5}
+            strokeLinecap="round"
+          />
+        </g>
 
-      {/* Switch (bottom) */}
-      <g>
-        <circle cx={SWITCH.left} cy={SWITCH.y} r={3.5} fill={WIRE} />
-        <circle cx={SWITCH.right} cy={SWITCH.y} r={3.5} fill={WIRE} />
-        <line
-          x1={SWITCH.left}
-          y1={SWITCH.y}
-          x2={closed ? SWITCH.right : SWITCH.openTipX}
-          y2={closed ? SWITCH.y : SWITCH.openTipY}
-          stroke={closed ? physics.accent : '#8A98A6'}
-          strokeWidth={3}
-          strokeLinecap="round"
-        />
-      </g>
+        {/* The scientific object is the control: no separate UI button. */}
+        <g
+          className="circuit-diagram__switch-control"
+          role="switch"
+          aria-checked={isClosed}
+          aria-label={isClosed ? 'Open the circuit switch' : 'Close the circuit switch'}
+          aria-disabled={disabled || undefined}
+          tabIndex={disabled ? -1 : 0}
+          onClick={toggleSwitch}
+          onKeyDown={handleKeyDown}
+        >
+          <rect
+            x={126}
+            y={108}
+            width={108}
+            height={58}
+            rx={14}
+            fill="transparent"
+          />
+          <rect
+            className="circuit-diagram__switch-focus"
+            x={130}
+            y={112}
+            width={100}
+            height={48}
+            rx={12}
+            fill="none"
+            stroke={physics.accent}
+            strokeWidth={1.5}
+          />
+          <circle
+            cx={SWITCH.left}
+            cy={SWITCH.y}
+            r={4}
+            fill={isClosed ? physics.accent : wire}
+          />
+          <circle
+            cx={SWITCH.right}
+            cy={SWITCH.y}
+            r={4}
+            fill={isClosed ? physics.accent : wire}
+          />
+          <g
+            className="circuit-diagram__switch-arm"
+            style={{
+              transform: `rotate(${isClosed ? 0 : -24}deg)`,
+              transformOrigin: `${SWITCH.left}px ${SWITCH.y}px`,
+            }}
+          >
+            <line
+              x1={SWITCH.left}
+              y1={SWITCH.y}
+              x2={SWITCH.right}
+              y2={SWITCH.y}
+              stroke={isClosed ? physics.accent : textSecondary}
+              strokeWidth={3.5}
+              strokeLinecap="round"
+            />
+          </g>
+        </g>
 
-      {/* Minimal labels */}
-      <text x={20} y={104} fill="#8A98A6" fontSize={11}>Battery</text>
-      <text x={300} y={104} fill="#8A98A6" fontSize={11}>Bulb</text>
-      <text x={180} y={172} textAnchor="middle" fill="#8A98A6" fontSize={11}>Switch</text>
+        {/* Minimal diagram labels */}
+        <g aria-hidden="true" fontFamily="Sora, sans-serif">
+          <text x={22} y={90} fill={textSecondary} fontSize={11}>Battery</text>
+          <text x={313} y={90} fill={textSecondary} fontSize={11}>Bulb</text>
+          <text x={180} y={164} textAnchor="middle" fill={textSecondary} fontSize={11}>Switch</text>
+          <text
+            x={180}
+            y={184}
+            textAnchor="middle"
+            fill={physics.accent}
+            fontSize={11}
+            fontWeight={600}
+          >
+            {isClosed ? 'Tap to open' : 'Tap to close'}
+          </text>
+        </g>
+      </svg>
 
-      {/* Status caption */}
-      <text
-        x={180}
-        y={202}
-        textAnchor="middle"
-        fontSize={13}
-        fontWeight={600}
-        fill={closed ? physics.accentSecondary : '#8A98A6'}
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        style={{
+          minHeight: 66,
+          padding: '8px 18px 0',
+          textAlign: 'center',
+          fontFamily: 'Sora, sans-serif',
+        }}
       >
-        {status}
-      </text>
-    </svg>
+        <div
+          style={{
+            color: isClosed ? bulbLight : textPrimary,
+            fontSize: 15,
+            fontWeight: 700,
+            lineHeight: 1.35,
+          }}
+        >
+          {stateHeading}
+        </div>
+        <div
+          style={{
+            color: textSecondary,
+            fontSize: 13,
+            lineHeight: 1.55,
+            marginTop: 4,
+          }}
+        >
+          {stateExplanation}
+        </div>
+      </div>
+    </div>
   )
 }
 
