@@ -278,7 +278,6 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
         aria-label={block.title ? `${block.title} sequence` : 'Causal sequence'}
         aria-describedby={instructionsId}
         onScroll={handleScroll}
-        onKeyDown={handleKeyDown}
         style={{
           display: 'flex',
           overflowX: 'auto',
@@ -305,6 +304,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
             current={currentIndex === index}
             complete={allViewed}
             onToggle={() => toggleOpen(index)}
+            onNavigateKey={handleKeyDown}
             accent={accent}
             rgb={rgb}
             prefersReduced={prefersReduced}
@@ -409,6 +409,7 @@ function ChainCard({
   current,
   complete = false,
   onToggle,
+  onNavigateKey,
   accent,
   rgb,
   prefersReduced,
@@ -537,9 +538,8 @@ function ChainCard({
         aria-controls={detailId}
         aria-label={cardActionLabel}
         aria-keyshortcuts="Enter Space"
-        aria-posinset={index + 1}
-        aria-setsize={total}
         onClick={onToggle}
+        onKeyDown={onNavigateKey}
         style={{
           '--tc-accent': accent,
           width: cardW,
@@ -797,7 +797,6 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
         aria-label="Causal sequence"
         aria-describedby={instructionsId}
         onScroll={handleScroll}
-        onKeyDown={handleKeyDown}
         style={{
           display: 'flex',
           overflowX: 'auto',
@@ -821,6 +820,7 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
             current={currentIndex === index}
             complete={allViewed}
             onToggle={() => toggleOpen(index)}
+            onNavigateKey={handleKeyDown}
             accent={accent}
             rgb={rgb}
             prefersReduced={prefersReduced}
