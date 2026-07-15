@@ -3,10 +3,11 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
-import { CINEMATIC_LAB } from '../../constants/cinematicLabTheme.js'
+import { RADII } from '../../constants/radii.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import { useInlineNavigationOwner } from '../core/InlineNavigationContext.jsx'
 import { deriveOppositeRevealState, getOppositeRevealDurations } from './oppositeQualitiesReveal.js'
+import { resolveOppositeRevealVisuals } from './oppositeQualitiesRevealTheme.js'
 
 let styled = false
 function ensureStyles() {
@@ -50,12 +51,22 @@ function prefersReducedMotion() {
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function ConceptColumn({ concept = {}, items, side, accent, ariaLabel }) {
+function ConceptColumn({
+  concept = {},
+  items,
+  side,
+  accent,
+  textColor,
+  labelShadow,
+  itemShadow,
+  ariaLabel,
+}) {
   const isRight = side === 'right'
 
   return (
     <section
       aria-label={ariaLabel || concept.label}
+      data-opposite-side={side}
       style={{ minWidth: 0, textAlign: isRight ? 'right' : 'left' }}
     >
       <div style={{ marginBottom: SPACING.standard }}>
@@ -64,7 +75,7 @@ function ConceptColumn({ concept = {}, items, side, accent, ariaLabel }) {
           style={{
             ...TYPE.displayCard,
             color: accent,
-            textShadow: '0 2px 16px rgba(0,0,0,0.88)',
+            textShadow: labelShadow,
           }}
         >
           {concept.icon ? (
@@ -98,8 +109,8 @@ function ConceptColumn({ concept = {}, items, side, accent, ariaLabel }) {
             <span style={{
               ...TYPE.bodyStrong,
               display: 'block',
-              color: CINEMATIC_LAB.creamText,
-              textShadow: '0 2px 14px rgba(0,0,0,0.95)',
+              color: textColor,
+              textShadow: itemShadow,
             }}>
               {item}
             </span>
@@ -107,6 +118,46 @@ function ConceptColumn({ concept = {}, items, side, accent, ariaLabel }) {
         ))}
       </ul>
     </section>
+  )
+}
+
+function CinematicStageBackground({ block, visuals }) {
+  return (
+    <div
+      aria-hidden="true"
+      data-opposite-reveal-backdrop="true"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        zIndex: 0,
+        overflow: 'hidden',
+        background: visuals.background,
+        pointerEvents: 'none',
+      }}
+    >
+      {block.backgroundImage && (
+        <img
+          src={block.backgroundImage}
+          alt=""
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: block.backgroundPosition || 'center',
+            opacity: block.backgroundOpacity ?? 0.82,
+          }}
+        />
+      )}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: visuals.backdropOverlay,
+        }}
+      />
+    </div>
   )
 }
 
@@ -119,8 +170,7 @@ export default function OppositeQualitiesReveal({
   ensureStyles()
 
   const theme = SUBJECTS[subject] || SUBJECTS.History
-  const accent = block.theme?.accent || theme.accent
-  const rgb = block.theme?.accentRgb || theme.accentRgb || '245,183,0'
+  const visuals = resolveOppositeRevealVisuals(block, theme)
   const reducedMotion = reducedMotionOverride ?? prefersReducedMotion()
   const timings = useMemo(() => getOppositeRevealDurations(block.timings), [block.timings])
   const sequence = useMemo(
@@ -161,123 +211,114 @@ export default function OppositeQualitiesReveal({
   const finishScreen = onComplete || continueModule
 
   return (
-    <div>
-      {block.backgroundImage && (
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: -1,
-            overflow: 'hidden',
-            background: CINEMATIC_LAB.background,
-            pointerEvents: 'none',
-          }}
-        >
-          <img
-            src={block.backgroundImage}
-            alt=""
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: block.backgroundPosition || 'center',
-              opacity: block.backgroundOpacity ?? 1,
-            }}
-          />
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: [
-              'linear-gradient(180deg, rgba(5,4,6,0.50) 0%, rgba(5,4,6,0.16) 34%, rgba(5,4,6,0.10) 66%, rgba(5,4,6,0.58) 100%)',
-              `radial-gradient(circle at 50% 44%, transparent 24%, rgba(${rgb},0.04) 58%, rgba(5,4,6,0.18) 100%)`,
-            ].join(', '),
-          }} />
-        </div>
-      )}
-
+    <div
+      data-opposite-reveal-intent="guided-contrast"
+      data-opposite-visual-pair={visuals.pairId}
+    >
       <div
+        data-opposite-reveal-stage="true"
         aria-label={block.accessibility?.label || block.title}
         style={{
           position: 'relative',
-          minHeight: '48svh',
-          display: 'flex',
-          flexDirection: 'column',
+          isolation: 'isolate',
+          overflow: 'hidden',
+          borderRadius: RADII.large,
+          background: visuals.background,
+          border: `1px solid ${visuals.stageBorder}`,
         }}
       >
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
-          gap: SPACING.separation,
-          paddingTop: SPACING.standard,
-        }}>
-          <ConceptColumn
-            concept={block.leftConcept}
-            items={view.leftItems}
-            side="left"
-            accent={accent}
-            ariaLabel={block.accessibility?.leftLabel}
-          />
-          <ConceptColumn
-            concept={block.rightConcept}
-            items={view.rightItems}
-            side="right"
-            accent={accent}
-            ariaLabel={block.accessibility?.rightLabel}
-          />
-        </div>
+        <CinematicStageBackground block={block} visuals={visuals} />
 
-        <div style={{ flex: 1, minHeight: SPACING.cinematic }} />
-
-        {view.active && (
-          <div
-            key={view.active.id}
-            className="oqr-active oqr-motion"
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              left: '14%',
-              right: '14%',
-              top: '46%',
-              animation: activeAnimation,
-              pointerEvents: 'none',
-              zIndex: 2,
-            }}
-          >
-            <div style={{
-              ...TYPE.displayCard,
-              color: CINEMATIC_LAB.creamText,
-              textAlign: 'center',
-              textShadow: `0 0 ${SPACING.separation}px rgba(${rgb},0.42), 0 3px ${SPACING.compact}px rgba(0,0,0,0.96)`,
-            }}>
-              {view.active.item}
-            </div>
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            minHeight: '48svh',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: `0 ${SPACING.compact}px ${SPACING.compact}px`,
+          }}
+        >
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
+            gap: SPACING.separation,
+            paddingTop: SPACING.standard,
+          }}>
+            <ConceptColumn
+              concept={block.leftConcept}
+              items={view.leftItems}
+              side="left"
+              accent={visuals.leftAccent}
+              textColor={visuals.settledText}
+              labelShadow={visuals.labelShadow}
+              itemShadow={visuals.settledTextShadow}
+              ariaLabel={block.accessibility?.leftLabel}
+            />
+            <ConceptColumn
+              concept={block.rightConcept}
+              items={view.rightItems}
+              side="right"
+              accent={visuals.rightAccent}
+              textColor={visuals.settledText}
+              labelShadow={visuals.labelShadow}
+              itemShadow={visuals.settledTextShadow}
+              ariaLabel={block.accessibility?.rightLabel}
+            />
           </div>
-        )}
 
-        {view.complete && block.closingCaption && (
-          <p
-            className="oqr-motion"
-            style={{
-              ...TYPE.bodyLarge,
-              color: CINEMATIC_LAB.creamText,
-              textAlign: 'center',
-              textShadow: '0 2px 14px rgba(0,0,0,0.96)',
-              margin: 0,
-              padding: `${SPACING.compact}px 0 0`,
-              borderTop: `1px solid rgba(${rgb},0.24)`,
-              animation: `oqr-caption-in ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
-            }}
-          >
-            {block.closingCaption}
-          </p>
-        )}
+          <div style={{ flex: 1, minHeight: SPACING.cinematic }} />
+
+          {view.active && (
+            <div
+              key={view.active.id}
+              className="oqr-active oqr-motion"
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                left: '14%',
+                right: '14%',
+                top: '46%',
+                animation: activeAnimation,
+                pointerEvents: 'none',
+                zIndex: 2,
+              }}
+            >
+              <div style={{
+                ...TYPE.displayCard,
+                color: visuals.foreground,
+                textAlign: 'center',
+                textShadow: visuals.activeTextShadow,
+              }}>
+                {view.active.item}
+              </div>
+            </div>
+          )}
+
+          {view.complete && block.closingCaption && (
+            <p
+              className="oqr-motion"
+              style={{
+                ...TYPE.bodyLarge,
+                color: visuals.foreground,
+                textAlign: 'center',
+                textShadow: visuals.captionShadow,
+                margin: 0,
+                padding: `${SPACING.compact}px 0 0`,
+                borderTop: `1px solid ${visuals.captionDivider}`,
+                animation: `oqr-caption-in ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
+              }}
+            >
+              {block.closingCaption}
+            </p>
+          )}
+        </div>
       </div>
 
       {view.complete && finishScreen && (
         <ContinueCTA
           onClick={finishScreen}
-          accent={accent}
+          accent={visuals.sharedAccent}
           style={{ marginTop: SPACING.standard }}
         />
       )}
