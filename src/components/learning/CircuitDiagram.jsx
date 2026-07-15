@@ -1,11 +1,16 @@
 import { useId, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import {
+  CircuitAmmeter,
   CircuitBattery,
+  CircuitCell,
+  CircuitJunction,
   CircuitLabel,
   CircuitLamp,
   CircuitPath,
+  CircuitResistor,
   CircuitSwitch,
+  CircuitVoltmeter,
 } from './circuit/CircuitPrimitives.jsx'
 import {
   getCircuitPresentationState,
@@ -125,7 +130,8 @@ function CircuitDiagram({
   const circuit = resolveCircuitPreset(preset)
   const titleId = useId()
   const descriptionId = useId()
-  const switchComponents = circuit.components.filter(component => component.type === 'switch')
+  const components = circuit.components ?? []
+  const switchComponents = components.filter(component => component.type === 'switch')
   const primarySwitchId = circuit.primarySwitchId ?? switchComponents[0]?.id
 
   const [uncontrolledSwitchStates, setUncontrolledSwitchStates] = useState(() => {
@@ -157,6 +163,8 @@ function CircuitDiagram({
     secondary: textSecondary,
     accent: physics.accent,
     light: bulbLight,
+    wire,
+    surface: physics.backgroundSecondary,
   }
 
   const resolveTone = tone => tones[tone] ?? tone ?? textSecondary
@@ -178,32 +186,106 @@ function CircuitDiagram({
   }
 
   const renderComponent = (component) => {
+    const active = matchesCircuitCondition(component.activeWhen, switchStates)
+    const componentStroke = component.strokeTone ? resolveTone(component.strokeTone) : wire
+    const activeStroke = component.activeTone ? resolveTone(component.activeTone) : physics.accent
+    const componentFill = component.fillTone
+      ? resolveTone(component.fillTone)
+      : physics.backgroundSecondary
+
+    if (component.type === 'cell') {
+      return (
+        <CircuitCell
+          key={component.id}
+          x={component.x}
+          y={component.y}
+          orientation={component.orientation}
+          plateFill={componentStroke}
+          polarityFill={textSecondary}
+          showPolarity={component.showPolarity}
+          longLength={component.longLength}
+          shortLength={component.shortLength}
+        />
+      )
+    }
+
     if (component.type === 'battery') {
       return (
         <CircuitBattery
           key={component.id}
           x={component.x}
           y={component.y}
-          plateFill={textPrimary}
+          orientation={component.orientation}
+          cells={component.cells}
+          cellSpacing={component.cellSpacing}
+          plateFill={component.strokeTone ? componentStroke : textPrimary}
           polarityFill={textSecondary}
         />
       )
     }
 
     if (component.type === 'lamp') {
-      const lit = matchesCircuitCondition(component.activeWhen, switchStates)
       return (
         <CircuitLamp
           key={component.id}
           cx={component.cx}
           cy={component.cy}
           radius={component.radius}
-          lit={lit}
-          wireStroke={wire}
-          lightStroke={bulbLight}
-          offFill={physics.backgroundSecondary}
+          lit={active}
+          wireStroke={componentStroke}
+          lightStroke={component.activeTone ? activeStroke : bulbLight}
+          offFill={componentFill}
           litFill="rgba(242,193,78,0.16)"
           haloFill="rgba(242,193,78,0.34)"
+        />
+      )
+    }
+
+    if (component.type === 'resistor') {
+      return (
+        <CircuitResistor
+          key={component.id}
+          cx={component.cx}
+          cy={component.cy}
+          orientation={component.orientation}
+          width={component.width}
+          height={component.height}
+          stroke={componentStroke}
+          activeStroke={activeStroke}
+          fill={component.fillTone ? componentFill : 'none'}
+          active={active}
+        />
+      )
+    }
+
+    if (component.type === 'ammeter' || component.type === 'voltmeter') {
+      const Meter = component.type === 'ammeter' ? CircuitAmmeter : CircuitVoltmeter
+      return (
+        <Meter
+          key={component.id}
+          cx={component.cx}
+          cy={component.cy}
+          radius={component.radius}
+          stroke={componentStroke}
+          activeStroke={activeStroke}
+          textFill={textPrimary}
+          activeTextFill={activeStroke}
+          fill={componentFill}
+          active={active}
+        />
+      )
+    }
+
+    if (component.type === 'junction') {
+      return (
+        <CircuitJunction
+          key={component.id}
+          cx={component.cx}
+          cy={component.cy}
+          radius={component.radius}
+          fill={componentStroke}
+          activeFill={activeStroke}
+          active={active}
         />
       )
     }
@@ -217,8 +299,8 @@ function CircuitDiagram({
           y={component.y}
           closed={switchStates[component.id] === true}
           disabled={disabled || component.disabled}
-          accent={physics.accent}
-          wireStroke={wire}
+          accent={component.activeTone ? activeStroke : physics.accent}
+          wireStroke={componentStroke}
           inactiveStroke={textSecondary}
           openAngle={component.openAngle}
           hitPaddingX={component.hitPaddingX}
@@ -231,9 +313,14 @@ function CircuitDiagram({
     return null
   }
 
-  const switchInstruction = switchComponents.length === 1
-    ? 'Use the switch control to change the circuit.'
-    : 'Use the switch controls to explore the circuit.'
+  const switchInstruction = switchComponents.length === 0
+    ? ''
+    : switchComponents.length === 1
+      ? 'Use the switch control to change the circuit.'
+      : 'Use the switch controls to explore the circuit.'
+  const accessibleDescription = [presentationState.explanation, switchInstruction]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <div style={{ width: '100%', maxWidth: circuit.maxWidth ?? 460, margin: '0 auto' }}>
@@ -245,34 +332,32 @@ function CircuitDiagram({
         style={{ display: 'block', overflow: 'visible' }}
       >
         <title id={titleId}>{label ?? circuit.accessibilityLabel}</title>
-        <desc id={descriptionId}>
-          {presentationState.explanation} {switchInstruction}
-        </desc>
+        <desc id={descriptionId}>{accessibleDescription}</desc>
 
-        {circuit.paths.map(path => (
+        {(circuit.paths ?? []).map(path => (
           <CircuitPath
             key={path.id}
             d={path.d}
-            stroke={wire}
+            stroke={path.tone ? resolveTone(path.tone) : wire}
             strokeWidth={path.strokeWidth}
           />
         ))}
 
-        {circuit.currentPaths.map(path => (
+        {(circuit.currentPaths ?? []).map(path => (
           <CircuitPath
             key={path.id}
             current
             active={matchesCircuitCondition(path.activeWhen, switchStates)}
             d={path.d}
-            stroke={physics.accent}
+            stroke={path.tone ? resolveTone(path.tone) : physics.accent}
             strokeWidth={path.strokeWidth}
           />
         ))}
 
-        {circuit.components.map(renderComponent)}
+        {components.map(renderComponent)}
 
         <g aria-hidden="true" fontFamily="Sora, sans-serif">
-          {circuit.labels.map(labelConfig => (
+          {(circuit.labels ?? []).map(labelConfig => (
             <CircuitLabel
               key={labelConfig.id}
               x={labelConfig.x}
