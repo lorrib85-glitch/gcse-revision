@@ -25,6 +25,17 @@ describe('CircuitDiagram label layout', () => {
     expect(actionLabel.y - switchLabel.y).toBeGreaterThanOrEqual(24)
   })
 
+  it('aligns the two-switch battery and bulb labels as a matched edge pair', () => {
+    const battery = byId(TWO_SWITCH_SERIES_CIRCUIT.components, 'battery-main')
+    const lamp = byId(TWO_SWITCH_SERIES_CIRCUIT.components, 'lamp-main')
+    const batteryLabel = byId(TWO_SWITCH_SERIES_CIRCUIT.labels, 'label-battery')
+    const lampLabel = byId(TWO_SWITCH_SERIES_CIRCUIT.labels, 'label-lamp')
+
+    expect(batteryLabel.x).toBe(battery.x)
+    expect(lampLabel.x).toBe(lamp.cx)
+    expect(batteryLabel.y).toBe(lampLabel.y)
+  })
+
   it('keeps two-switch names and actions on separate, evenly spaced lines', () => {
     for (const suffix of ['a', 'b']) {
       const name = byId(TWO_SWITCH_SERIES_CIRCUIT.labels, `label-switch-${suffix}`)
