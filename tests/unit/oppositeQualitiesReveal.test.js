@@ -107,7 +107,7 @@ describe('opposite qualities reveal sequencing', () => {
 })
 
 describe('opposite qualities reveal visual roles', () => {
-  it('gives warm and cool concepts distinct restrained identities', () => {
+  it('gives warm and cool concepts distinct restrained identities without painting local panels', () => {
     const visuals = resolveOppositeRevealVisuals(hotCold, historyTheme)
 
     expect(visuals.pairId).toBe('warmCool')
@@ -115,9 +115,15 @@ describe('opposite qualities reveal visual roles', () => {
     expect(visuals.rightAccent).toBe(OPPOSITE_REVEAL_PAIRS.warmCool.rightAccent)
     expect(visuals.leftAccent).not.toBe(visuals.rightAccent)
     expect(visuals.leftDestinationGlow).not.toBe(visuals.rightDestinationGlow)
-    expect(visuals.leftZoneActive).not.toBe(visuals.leftZoneIdle)
-    expect(visuals.rightZoneActive).not.toBe(visuals.rightZoneIdle)
     expect(visuals.stageSurface).toBe('transparent')
+    expect(visuals.stageOverlay).toBe('transparent')
+    expect(visuals.leftZoneIdle).toBe('transparent')
+    expect(visuals.leftZoneActive).toBe('transparent')
+    expect(visuals.rightZoneIdle).toBe('transparent')
+    expect(visuals.rightZoneActive).toBe('transparent')
+    expect(visuals.centreZone).toBe('transparent')
+    expect(visuals.fullScreenOverlay).toContain(visuals.leftRgb)
+    expect(visuals.fullScreenOverlay).toContain(visuals.rightRgb)
     expect(visuals.sharedAccent).toBe(historyTheme.accent)
   })
 
