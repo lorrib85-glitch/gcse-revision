@@ -1,6 +1,6 @@
 // Internal SVG building blocks for CircuitDiagram.
 // These are not global UI components: they form one governed scientific-diagram
-// system so future circuit presets can reuse the same symbols and states.
+// system so future circuit presets can reuse the same GCSE symbols and states.
 
 export function CircuitPath({
   d,
@@ -19,6 +19,7 @@ export function CircuitPath({
   return (
     <path
       className={classes || undefined}
+      data-circuit-component={current ? 'current-path' : 'wire'}
       d={d}
       fill="none"
       stroke={stroke}
@@ -29,27 +30,113 @@ export function CircuitPath({
   )
 }
 
+/**
+ * Standard GCSE cell symbol. `x` and `y` locate the long plate's centre/top
+ * edge, matching the original CircuitDiagram battery geometry.
+ */
+export function CircuitCell({
+  x,
+  y,
+  orientation = 'vertical',
+  plateFill,
+  polarityFill,
+  showPolarity = false,
+  longLength = 32,
+  shortLength = 20,
+}) {
+  const isVertical = orientation === 'vertical'
+
+  return (
+    <g data-circuit-component="cell" aria-hidden="true">
+      {isVertical ? (
+        <>
+          <rect
+            x={x - (longLength / 2)}
+            y={y}
+            width={longLength}
+            height={3}
+            rx={1.5}
+            fill={plateFill}
+          />
+          <rect
+            x={x - (shortLength / 2)}
+            y={y + 9}
+            width={shortLength}
+            height={7}
+            rx={2}
+            fill={plateFill}
+          />
+          {showPolarity && (
+            <text
+              x={x - (longLength / 2) - 5}
+              y={y - 2}
+              textAnchor="end"
+              fill={polarityFill}
+              fontSize={12}
+            >
+              +
+            </text>
+          )}
+        </>
+      ) : (
+        <>
+          <rect
+            x={x}
+            y={y - (longLength / 2)}
+            width={3}
+            height={longLength}
+            rx={1.5}
+            fill={plateFill}
+          />
+          <rect
+            x={x + 9}
+            y={y - (shortLength / 2)}
+            width={7}
+            height={shortLength}
+            rx={2}
+            fill={plateFill}
+          />
+          {showPolarity && (
+            <text
+              x={x - 3}
+              y={y - (longLength / 2) - 5}
+              textAnchor="middle"
+              fill={polarityFill}
+              fontSize={12}
+            >
+              +
+            </text>
+          )}
+        </>
+      )}
+    </g>
+  )
+}
+
 export function CircuitBattery({
   x,
   y,
+  orientation = 'vertical',
   plateFill,
   polarityFill,
+  cells = 2,
+  cellSpacing = 24,
 }) {
+  const safeCells = Math.max(1, Math.round(cells))
+
   return (
-    <g aria-hidden="true">
-      <rect x={x - 16} y={y} width={32} height={3} rx={1.5} fill={plateFill} />
-      <rect x={x - 10} y={y + 9} width={20} height={7} rx={2} fill={plateFill} />
-      <rect x={x - 16} y={y + 24} width={32} height={3} rx={1.5} fill={plateFill} />
-      <rect x={x - 10} y={y + 33} width={20} height={7} rx={2} fill={plateFill} />
-      <text
-        x={x - 21}
-        y={y - 2}
-        textAnchor="end"
-        fill={polarityFill}
-        fontSize={12}
-      >
-        +
-      </text>
+    <g data-circuit-component="battery" aria-hidden="true">
+      {Array.from({ length: safeCells }, (_, index) => (
+        <CircuitCell
+          key={index}
+          x={orientation === 'vertical' ? x : x + (index * cellSpacing)}
+          y={orientation === 'vertical' ? y + (index * cellSpacing) : y}
+          orientation={orientation}
+          plateFill={plateFill}
+          polarityFill={polarityFill}
+          showPolarity={index === 0}
+        />
+      ))}
     </g>
   )
 }
@@ -71,7 +158,7 @@ export function CircuitLamp({
   const filamentOffset = radius * (2 / 3)
 
   return (
-    <g aria-hidden="true">
+    <g data-circuit-component="lamp" data-active={lit || undefined} aria-hidden="true">
       <circle
         className={haloClass}
         cx={cx}
@@ -112,6 +199,108 @@ export function CircuitLamp({
   )
 }
 
+export function CircuitResistor({
+  cx,
+  cy,
+  orientation = 'horizontal',
+  width = 42,
+  height = 16,
+  stroke,
+  activeStroke,
+  fill = 'none',
+  active = false,
+}) {
+  const isVertical = orientation === 'vertical'
+  const renderedWidth = isVertical ? height : width
+  const renderedHeight = isVertical ? width : height
+
+  return (
+    <rect
+      data-circuit-component="resistor"
+      data-active={active || undefined}
+      x={cx - (renderedWidth / 2)}
+      y={cy - (renderedHeight / 2)}
+      width={renderedWidth}
+      height={renderedHeight}
+      rx={2}
+      fill={fill}
+      stroke={active ? activeStroke : stroke}
+      strokeWidth={3}
+      aria-hidden="true"
+    />
+  )
+}
+
+export function CircuitMeter({
+  cx,
+  cy,
+  symbol,
+  radius = 18,
+  stroke,
+  activeStroke,
+  textFill,
+  activeTextFill,
+  fill = 'none',
+  active = false,
+  type = 'meter',
+}) {
+  const resolvedStroke = active ? activeStroke : stroke
+  const resolvedText = active ? (activeTextFill ?? activeStroke) : textFill
+
+  return (
+    <g data-circuit-component={type} data-active={active || undefined} aria-hidden="true">
+      <circle
+        cx={cx}
+        cy={cy}
+        r={radius}
+        fill={fill}
+        stroke={resolvedStroke}
+        strokeWidth={3}
+      />
+      <text
+        x={cx}
+        y={cy + 5}
+        textAnchor="middle"
+        fill={resolvedText}
+        fontFamily="Sora, sans-serif"
+        fontSize={radius * 0.9}
+        fontWeight={700}
+      >
+        {symbol}
+      </text>
+    </g>
+  )
+}
+
+export function CircuitAmmeter(props) {
+  return <CircuitMeter {...props} symbol="A" type="ammeter" />
+}
+
+export function CircuitVoltmeter(props) {
+  return <CircuitMeter {...props} symbol="V" type="voltmeter" />
+}
+
+export function CircuitJunction({
+  cx,
+  cy,
+  radius = 4,
+  fill,
+  activeFill,
+  active = false,
+}) {
+  return (
+    <circle
+      data-circuit-component="junction"
+      data-active={active || undefined}
+      cx={cx}
+      cy={cy}
+      r={radius}
+      fill={active ? activeFill : fill}
+      aria-hidden="true"
+    />
+  )
+}
+
 export function CircuitSwitch({
   left,
   right,
@@ -139,6 +328,8 @@ export function CircuitSwitch({
   return (
     <g
       className="circuit-diagram__switch-control"
+      data-circuit-component="switch"
+      data-active={closed || undefined}
       role="switch"
       aria-checked={closed}
       aria-label={closed ? 'Open the circuit switch' : 'Close the circuit switch'}
