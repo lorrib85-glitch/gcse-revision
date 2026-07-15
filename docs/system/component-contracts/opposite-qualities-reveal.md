@@ -94,11 +94,13 @@ The component must not:
 
 ## 7. Visual composition
 
-The reveal uses three semantic zones:
+The reveal uses three semantic atmospheric areas:
 
 - left destination;
 - neutral centre reveal space;
 - right destination.
+
+These are edge-faded washes over the cinematic image, not translucent panels, glass cards or visible columns. There must be no hard vertical boundaries around the concept groups or centre space.
 
 During each movement:
 
@@ -109,30 +111,57 @@ During each movement:
 
 Known semantic icons use governed line SVGs rather than platform-dependent emoji rendering.
 
-## 8. Motion rules
+## 8. Motion and learner control
 
-Each item appears in the centre, pauses for readability, travels in the direction derived from `sequence.side`, settles into the side list, then the next item begins. Timing uses `MOTION` tokens by default and `block.timings` for semantic overrides. No bounce, confetti, dotted paths or game feedback.
+The default beat is deliberately calm:
+
+- 900 ms central read;
+- 850 ms travel;
+- 320 ms settle.
+
+Each item appears in the centre, pauses for readability, travels in the direction derived from `sequence.side`, settles into the side list, then the next item begins. `block.timings` can provide semantic overrides. No bounce, confetti, dotted paths or game feedback.
+
+The sequence starts only after at least 20% of the component is visible. It pauses while the browser tab is hidden.
+
+The learner may tap anywhere on the active stage—or use its keyboard control—to place the current item immediately. This accelerates a guided reveal; it is not an answer submission.
 
 Reduced motion bypasses travel animation and renders the complete final grouping immediately, preserving reading order and all content.
 
-## 9. Gold example
+## 9. Completion
 
-`OppositeQualitiesReveal.stories.jsx` → **HotCold** and Episode 1 screens “Hot or cold?” / “Wet or dry?”: full-screen cinematic background in ModulePlayer, safe contained fallback elsewhere, three-zone contrast, semantically distinct concept identities, deterministic reveal and a readable final grouping.
+Once every item is settled:
 
-## 10. Below-bar counterexample
+- the cinematic spacer is removed;
+- the stage contracts to the completed comparison;
+- the two groups remain fully readable;
+- the closing caption appears beneath them;
+- the governed `ContinueCTA` follows without overlapping the comparison.
+
+The completed screen must not preserve a large empty animation area.
+
+## 10. Gold example
+
+`OppositeQualitiesReveal.stories.jsx` → **HotCold** and Episode 1 screens “Hot or cold?” / “Wet or dry?”: full-screen cinematic background in ModulePlayer, safe contained fallback elsewhere, panel-free atmospheric contrast, semantically distinct concept identities, calm deterministic reveal, tap acceleration and a compact readable final grouping.
+
+## 11. Below-bar counterexample
 
 A two-column sorting task with answer buttons, feedback states, drag affordances or dashboard cards. That changes the learning intent from guided concept reveal to assessment and fails this contract.
 
 A component-owned fixed viewport or negative-z background also fails the contract because it bypasses the governed screen shell.
 
-## 11. Review checks
+Large translucent rectangles behind the two groups also fail the contract: the image and semantic atmosphere should carry the contrast without turning the teaching moment into a dashboard.
+
+## 12. Review checks
 
 - ⚙ Both concept labels and all items come from configuration.
 - ⚙ Movement direction is derived from side data, not concept names.
 - ⚙ `visualPair` selects governed semantic roles; ordinary content does not supply raw colours.
 - ⚙ `backgroundMode: 'screen'` uses the existing `ContentShell`; standalone previews fall back safely.
-- ⚙ Left, centre and right zones remain visually distinct without becoming cards.
+- ⚙ Left, centre and right atmosphere remains distinct without panels or hard boundaries.
 - ⚙ Target destination response and landing continuity are present.
+- ⚙ The sequence starts only when visible and pauses when the document is hidden.
+- ⚙ Tap/keyboard acceleration cannot create assessment state.
+- ⚙ Completion removes the empty cinematic spacer.
 - ⚙ Reduced motion yields a complete final DOM state.
 - ⚙ The old Galen-specific four-quality diagnostic screen is not used for the two passive teaching pages.
 - 👁 At 390px, columns do not collide, the active item is readable, and the closing caption stays above navigation/CTA chrome.
