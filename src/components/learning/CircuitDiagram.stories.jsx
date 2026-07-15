@@ -33,6 +33,7 @@ const symbolLibraryPreset = {
       right: 350,
       y: 125,
       defaultClosed: false,
+      accessibilityLabel: 'Preview switch',
     },
   ],
   labels: [
@@ -75,8 +76,36 @@ export const InteractiveClosed = {
   args: { defaultClosed: true },
 }
 
+export const PredictThenTest = {
+  args: {
+    mode: 'predictThenTest',
+    defaultClosed: false,
+  },
+}
+
+export const ReducedMotion = {
+  args: {
+    defaultClosed: false,
+    reducedMotion: true,
+  },
+}
+
 export const MobileWidth = {
   args: { defaultClosed: false },
+  decorators: [
+    Story => (
+      <div style={{ width: 320, maxWidth: '100%' }}>
+        <Story />
+      </div>
+    ),
+  ],
+}
+
+export const PredictThenTestMobile = {
+  args: {
+    mode: 'predictThenTest',
+    defaultClosed: false,
+  },
   decorators: [
     Story => (
       <div style={{ width: 320, maxWidth: '100%' }}>
