@@ -76,10 +76,16 @@ export const InteractiveClosed = {
   args: { defaultClosed: true },
 }
 
+export const TwoSwitchSeries = {
+  args: {
+    preset: 'twoSwitchSeries',
+  },
+}
+
 export const PredictThenTest = {
   args: {
+    preset: 'twoSwitchSeries',
     mode: 'predictThenTest',
-    defaultClosed: false,
   },
 }
 
@@ -101,10 +107,23 @@ export const MobileWidth = {
   ],
 }
 
+export const TwoSwitchSeriesMobile = {
+  args: {
+    preset: 'twoSwitchSeries',
+  },
+  decorators: [
+    Story => (
+      <div style={{ width: 320, maxWidth: '100%' }}>
+        <Story />
+      </div>
+    ),
+  ],
+}
+
 export const PredictThenTestMobile = {
   args: {
+    preset: 'twoSwitchSeries',
     mode: 'predictThenTest',
-    defaultClosed: false,
   },
   decorators: [
     Story => (
