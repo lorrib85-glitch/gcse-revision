@@ -54,6 +54,17 @@ function ensureStyles() {
       }
     }
 
+    @keyframes circuit-diagram-switch-hint {
+      0%, 100% {
+        opacity: 0.88;
+        filter: drop-shadow(0 0 0 transparent);
+      }
+      50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 3px ${PHYSICS_CIRCUIT_VISUAL_ROLES.focusGlow});
+      }
+    }
+
     .circuit-diagram__switch-control {
       cursor: pointer;
       outline: none;
@@ -63,6 +74,15 @@ function ensureStyles() {
       cursor: default;
     }
 
+    .circuit-diagram__switch-hint .circuit-diagram__switch-control {
+      animation: circuit-diagram-switch-hint 2400ms ease-in-out infinite;
+    }
+
+    .circuit-diagram__switch-control:focus-visible {
+      animation: none;
+      filter: drop-shadow(0 0 3px ${PHYSICS_CIRCUIT_VISUAL_ROLES.focusGlow});
+    }
+
     .circuit-diagram__switch-arm {
       transform-box: view-box;
       transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -70,12 +90,6 @@ function ensureStyles() {
 
     .circuit-diagram__switch-focus {
       opacity: 0;
-      transition: opacity 140ms ease;
-    }
-
-    .circuit-diagram__switch-control:hover .circuit-diagram__switch-focus,
-    .circuit-diagram__switch-control:focus-visible .circuit-diagram__switch-focus {
-      opacity: 1;
     }
 
     .circuit-diagram__conduction {
@@ -125,6 +139,12 @@ function ensureStyles() {
       transition-delay: 260ms;
     }
 
+    .circuit-diagram[data-circuit-preset="simpleSeries"]
+      [data-circuit-label-id="label-battery"] {
+      transform: translateY(-30px);
+    }
+
+    .circuit-diagram--reduced-motion .circuit-diagram__switch-hint .circuit-diagram__switch-control,
     .circuit-diagram--reduced-motion .circuit-diagram__switch-arm,
     .circuit-diagram--reduced-motion .circuit-diagram__switch-focus,
     .circuit-diagram--reduced-motion .circuit-diagram__conduction,
@@ -140,6 +160,7 @@ function ensureStyles() {
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .circuit-diagram__switch-hint .circuit-diagram__switch-control,
       .circuit-diagram__switch-arm,
       .circuit-diagram__switch-focus,
       .circuit-diagram__conduction,
@@ -218,11 +239,13 @@ function CircuitDiagram({
   const [uncontrolledSwitchStates, setUncontrolledSwitchStates] = useState(() => (
     createInitialSwitchStates(circuit, primarySwitchId, defaultClosed)
   ))
+  const [hasInteracted, setHasInteracted] = useState(false)
 
   useEffect(() => {
     setUncontrolledSwitchStates(
       createInitialSwitchStates(circuit, primarySwitchId, defaultClosed),
     )
+    setHasInteracted(false)
   }, [circuit, defaultClosed, primarySwitchId])
 
   const isPrimaryControlled = primarySwitchId && typeof closed === 'boolean'
@@ -266,6 +289,8 @@ function CircuitDiagram({
 
     const nextClosed = !switchStates[switchId]
     const controlledPrimary = switchId === primarySwitchId && isPrimaryControlled
+
+    setHasInteracted(true)
 
     if (!controlledPrimary) {
       setUncontrolledSwitchStates(previous => ({
@@ -443,6 +468,10 @@ function CircuitDiagram({
     }
 
     if (component.type === 'switch') {
+      const interactiveSwitchTone = canInteract && !component.disabled
+        ? activeStroke
+        : componentStroke
+
       element = (
         <CircuitSwitch
           left={component.left}
@@ -450,9 +479,9 @@ function CircuitDiagram({
           y={component.y}
           closed={switchStates[component.id] === true}
           disabled={!canInteract || component.disabled}
-          accent={component.activeTone ? activeStroke : interaction}
-          wireStroke={componentStroke}
-          inactiveStroke={textSecondary}
+          accent={interactiveSwitchTone}
+          wireStroke={interactiveSwitchTone}
+          inactiveStroke={interactiveSwitchTone}
           terminalFill={surface}
           label={component.accessibilityLabel ?? 'Circuit switch'}
           describedBy={showStatus ? statusId : descriptionId}
@@ -468,8 +497,18 @@ function CircuitDiagram({
 
     if (!element) return null
 
+    const showInteractionHint = component.type === 'switch'
+      && canInteract
+      && !component.disabled
+      && !hasInteracted
+
     return (
-      <g key={component.id} data-circuit-id={component.id}>
+      <g
+        key={component.id}
+        className={showInteractionHint ? 'circuit-diagram__switch-hint' : undefined}
+        data-circuit-id={component.id}
+        data-circuit-interaction-hint={showInteractionHint || undefined}
+      >
         {element}
       </g>
     )
@@ -555,17 +594,18 @@ function CircuitDiagram({
               : resolveCircuitLabelText(labelConfig, presentationState.id)
 
             return (
-              <CircuitLabel
-                key={labelConfig.id}
-                x={labelConfig.x}
-                y={labelConfig.y}
-                textAnchor={labelConfig.textAnchor}
-                fill={resolveTone(labelConfig.tone)}
-                fontSize={labelConfig.fontSize}
-                fontWeight={labelConfig.fontWeight}
-              >
-                {labelText}
-              </CircuitLabel>
+              <g key={labelConfig.id} data-circuit-label-id={labelConfig.id}>
+                <CircuitLabel
+                  x={labelConfig.x}
+                  y={labelConfig.y}
+                  textAnchor={labelConfig.textAnchor}
+                  fill={resolveTone(labelConfig.tone)}
+                  fontSize={labelConfig.fontSize}
+                  fontWeight={labelConfig.fontWeight}
+                >
+                  {labelText}
+                </CircuitLabel>
+              </g>
             )
           })}
         </g>
