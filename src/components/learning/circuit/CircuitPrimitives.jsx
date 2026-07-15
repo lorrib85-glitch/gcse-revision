@@ -8,23 +8,63 @@ export function CircuitPath({
   strokeWidth = 3,
   current = false,
   active = false,
+  pulse = true,
+  activeOpacity = 0.36,
   className = '',
 }) {
-  const classes = [
-    current ? 'circuit-diagram__current' : '',
-    current && active ? 'circuit-diagram__current--active' : '',
-    className,
-  ].filter(Boolean).join(' ')
+  if (current) {
+    const conductionClass = [
+      'circuit-diagram__conduction',
+      active ? 'circuit-diagram__conduction--active' : '',
+      className,
+    ].filter(Boolean).join(' ')
+    const pulseClass = [
+      'circuit-diagram__current-pulse',
+      active ? 'circuit-diagram__current-pulse--active' : '',
+    ].filter(Boolean).join(' ')
+
+    return (
+      <g
+        data-circuit-component="current-path"
+        data-active={active || undefined}
+        aria-hidden="true"
+      >
+        <path
+          className={conductionClass}
+          d={d}
+          fill="none"
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+          style={{ '--circuit-active-opacity': activeOpacity }}
+        />
+        {pulse && (
+          <path
+            className={pulseClass}
+            d={d}
+            fill="none"
+            stroke={stroke}
+            strokeWidth={Math.max(1.5, strokeWidth - 0.5)}
+            strokeLinecap="round"
+            pathLength={1}
+            vectorEffect="non-scaling-stroke"
+          />
+        )}
+      </g>
+    )
+  }
 
   return (
     <path
-      className={classes || undefined}
-      data-circuit-component={current ? 'current-path' : 'wire'}
+      className={className || undefined}
+      data-circuit-component="wire"
       d={d}
       fill="none"
       stroke={stroke}
       strokeWidth={strokeWidth}
       strokeLinecap="round"
+      vectorEffect="non-scaling-stroke"
       aria-hidden="true"
     />
   )
@@ -174,6 +214,7 @@ export function CircuitLamp({
         fill={lit ? litFill : offFill}
         stroke={lit ? lightStroke : wireStroke}
         strokeWidth={3}
+        vectorEffect="non-scaling-stroke"
       />
       <line
         className={filamentClass}
@@ -184,6 +225,7 @@ export function CircuitLamp({
         stroke={lit ? lightStroke : wireStroke}
         strokeWidth={2.5}
         strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
       />
       <line
         className={filamentClass}
@@ -194,6 +236,7 @@ export function CircuitLamp({
         stroke={lit ? lightStroke : wireStroke}
         strokeWidth={2.5}
         strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
       />
     </g>
   )
@@ -226,6 +269,7 @@ export function CircuitResistor({
       fill={fill}
       stroke={active ? activeStroke : stroke}
       strokeWidth={3}
+      vectorEffect="non-scaling-stroke"
       aria-hidden="true"
     />
   )
@@ -256,6 +300,7 @@ export function CircuitMeter({
         fill={fill}
         stroke={resolvedStroke}
         strokeWidth={3}
+        vectorEffect="non-scaling-stroke"
       />
       <text
         x={cx}
@@ -356,6 +401,7 @@ export function CircuitSwitch({
         fill="none"
         stroke={accent}
         strokeWidth={1.5}
+        vectorEffect="non-scaling-stroke"
       />
       <circle cx={left} cy={y} r={4} fill={closed ? accent : wireStroke} />
       <circle cx={right} cy={y} r={4} fill={closed ? accent : wireStroke} />
@@ -374,6 +420,7 @@ export function CircuitSwitch({
           stroke={closed ? accent : inactiveStroke}
           strokeWidth={3.5}
           strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
         />
       </g>
     </g>
@@ -385,18 +432,20 @@ export function CircuitLabel({
   y,
   children,
   fill,
-  textAnchor,
+  textAnchor = 'start',
   fontSize = 11,
   fontWeight,
 }) {
   return (
     <text
+      data-circuit-component="label"
       x={x}
       y={y}
       fill={fill}
       textAnchor={textAnchor}
       fontSize={fontSize}
       fontWeight={fontWeight}
+      style={{ pointerEvents: 'none' }}
     >
       {children}
     </text>
