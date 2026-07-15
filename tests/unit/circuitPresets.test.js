@@ -79,9 +79,26 @@ describe('CircuitDiagram presets', () => {
   it('uses a restrained steady path plus one transition pulse', () => {
     const currentPath = SIMPLE_SERIES_CIRCUIT.currentPaths[0]
 
-    expect(currentPath.tone).toBe('accent')
+    expect(currentPath.tone).toBe('conducting')
     expect(currentPath.activeOpacity).toBeLessThanOrEqual(0.5)
     expect(currentPath.pulse).toBe(true)
+  })
+
+  it('assigns interaction and scientific outcomes to distinct semantic tones', () => {
+    const lamp = SIMPLE_SERIES_CIRCUIT.components.find(component => component.type === 'lamp')
+    const circuitSwitch = SIMPLE_SERIES_CIRCUIT.components.find(
+      component => component.type === 'switch',
+    )
+    const closedState = SIMPLE_SERIES_CIRCUIT.presentationStates.find(state => state.id === 'closed')
+    const actionLabel = SIMPLE_SERIES_CIRCUIT.labels.find(
+      label => label.id === 'label-switch-action',
+    )
+
+    expect(circuitSwitch.activeTone).toBe('interaction')
+    expect(actionLabel.tone).toBe('interaction')
+    expect(lamp.activeTone).toBe('emittedLight')
+    expect(closedState.headingTone).toBe('emittedLight')
+    expect(lamp.activeTone).not.toBe(circuitSwitch.activeTone)
   })
 
   it('supports multi-switch series and branch-style rules without a simulator', () => {
