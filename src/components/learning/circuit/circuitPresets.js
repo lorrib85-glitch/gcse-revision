@@ -7,9 +7,17 @@
 
 export const SIMPLE_SERIES_CIRCUIT_ID = 'simpleSeries'
 
+export const DEFAULT_CIRCUIT_CANVAS = Object.freeze({
+  minX: 0,
+  minY: 0,
+  width: 360,
+  height: 210,
+  safeInset: 16,
+})
+
 export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
   id: SIMPLE_SERIES_CIRCUIT_ID,
-  viewBox: '0 0 360 194',
+  canvas: DEFAULT_CIRCUIT_CANVAS,
   maxWidth: 460,
   accessibilityLabel: 'Interactive series circuit',
   primarySwitchId: 'switch-main',
@@ -29,6 +37,9 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
       id: 'current-main-loop',
       d: 'M72,38 H288 V134 H72 Z',
       activeWhen: { allClosed: ['switch-main'] },
+      tone: 'accent',
+      activeOpacity: 0.36,
+      pulse: true,
     },
   ],
 
@@ -59,12 +70,26 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
   ],
 
   labels: [
-    { id: 'label-battery', x: 22, y: 90, text: 'Battery', tone: 'secondary' },
-    { id: 'label-lamp', x: 313, y: 90, text: 'Bulb', tone: 'secondary' },
+    {
+      id: 'label-battery',
+      x: 36,
+      y: 88,
+      text: 'Battery',
+      textAnchor: 'middle',
+      tone: 'secondary',
+    },
+    {
+      id: 'label-lamp',
+      x: 326,
+      y: 90,
+      text: 'Bulb',
+      textAnchor: 'middle',
+      tone: 'secondary',
+    },
     {
       id: 'label-switch',
       x: 180,
-      y: 164,
+      y: 170,
       text: 'Switch',
       textAnchor: 'middle',
       tone: 'secondary',
@@ -72,7 +97,7 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
     {
       id: 'label-switch-action',
       x: 180,
-      y: 184,
+      y: 190,
       textAnchor: 'middle',
       tone: 'accent',
       fontWeight: 600,
@@ -107,6 +132,61 @@ export const CIRCUIT_PRESETS = Object.freeze({
 
 function hasIds(ids) {
   return Array.isArray(ids) && ids.length > 0
+}
+
+function isFinitePositive(value) {
+  return Number.isFinite(value) && value > 0
+}
+
+/**
+ * Resolve every preset onto one predictable SVG coordinate system.
+ *
+ * New presets should use `canvas`. A legacy `viewBox` string is still accepted
+ * so existing custom stories and work-in-progress diagrams do not break.
+ */
+export function resolveCircuitCanvas(preset = {}) {
+  const canvas = preset.canvas
+  if (canvas && isFinitePositive(canvas.width) && isFinitePositive(canvas.height)) {
+    const minX = Number.isFinite(canvas.minX) ? canvas.minX : 0
+    const minY = Number.isFinite(canvas.minY) ? canvas.minY : 0
+    const safeInset = Number.isFinite(canvas.safeInset)
+      ? Math.max(0, canvas.safeInset)
+      : DEFAULT_CIRCUIT_CANVAS.safeInset
+
+    return {
+      minX,
+      minY,
+      width: canvas.width,
+      height: canvas.height,
+      safeInset,
+      viewBox: `${minX} ${minY} ${canvas.width} ${canvas.height}`,
+    }
+  }
+
+  const legacyViewBox = String(preset.viewBox ?? '')
+    .trim()
+    .split(/\s+/)
+    .map(Number)
+
+  if (legacyViewBox.length === 4
+    && legacyViewBox.every(Number.isFinite)
+    && isFinitePositive(legacyViewBox[2])
+    && isFinitePositive(legacyViewBox[3])) {
+    const [minX, minY, width, height] = legacyViewBox
+    return {
+      minX,
+      minY,
+      width,
+      height,
+      safeInset: DEFAULT_CIRCUIT_CANVAS.safeInset,
+      viewBox: `${minX} ${minY} ${width} ${height}`,
+    }
+  }
+
+  return {
+    ...DEFAULT_CIRCUIT_CANVAS,
+    viewBox: `${DEFAULT_CIRCUIT_CANVAS.minX} ${DEFAULT_CIRCUIT_CANVAS.minY} ${DEFAULT_CIRCUIT_CANVAS.width} ${DEFAULT_CIRCUIT_CANVAS.height}`,
+  }
 }
 
 /**
