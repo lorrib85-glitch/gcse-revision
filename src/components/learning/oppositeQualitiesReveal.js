@@ -1,7 +1,7 @@
 const DEFAULT_TIMINGS = {
-  read: '720ms',
-  travel: '720ms',
-  settle: '280ms',
+  read: '900ms',
+  travel: '850ms',
+  settle: '320ms',
 }
 
 function ms(value, fallback = 0) {
