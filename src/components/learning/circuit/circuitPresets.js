@@ -22,6 +22,19 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
   accessibilityLabel: 'Interactive series circuit',
   primarySwitchId: 'switch-main',
 
+  prediction: {
+    prompt: 'When you close the switch, what do you predict will happen to the bulb?',
+    options: [
+      { id: 'lamp-lights', label: 'The bulb will light' },
+      { id: 'lamp-stays-off', label: 'The bulb will stay off' },
+    ],
+    correctOptionId: 'lamp-lights',
+    testWhen: { allClosed: ['switch-main'] },
+    testInstruction: 'Prediction locked. Now close the switch to test it.',
+    correctFeedback: 'Closing the switch completed the circuit, so current flowed and the bulb lit.',
+    incorrectFeedback: 'Closing the switch completed the circuit, so current flowed and the bulb lit.',
+  },
+
   paths: [
     { id: 'wire-top', d: 'M72,38 H288' },
     { id: 'wire-right-upper', d: 'M288,38 V68' },
@@ -72,6 +85,7 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
       openAngle: -24,
       strokeTone: 'structure',
       activeTone: 'interaction',
+      accessibilityLabel: 'Main circuit switch',
     },
   ],
 
@@ -107,6 +121,8 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
       textAnchor: 'middle',
       tone: 'interaction',
       fontWeight: 600,
+      forSwitchId: 'switch-main',
+      lockedText: 'Predict first',
       textByState: {
         open: 'Tap to close',
         closed: 'Tap to open',
@@ -254,4 +270,27 @@ export function getCircuitPresentationState(preset, switchStates = {}) {
 
 export function resolveCircuitLabelText(label, presentationStateId) {
   return label.textByState?.[presentationStateId] ?? label.text ?? ''
+}
+
+/**
+ * Resolve the outcome only after the learner has committed to a prediction and
+ * the configured test condition has actually been reached.
+ */
+export function getCircuitPredictionResult(preset, selectedOptionId, switchStates = {}) {
+  const prediction = preset.prediction
+  if (!prediction || !selectedOptionId) return null
+  if (!matchesCircuitCondition(prediction.testWhen, switchStates)) return null
+
+  const selectedOption = prediction.options?.find(option => option.id === selectedOptionId)
+  if (!selectedOption) return null
+
+  const correct = selectedOptionId === prediction.correctOptionId
+  return {
+    optionId: selectedOptionId,
+    optionLabel: selectedOption.label,
+    correct,
+    feedback: correct
+      ? prediction.correctFeedback
+      : prediction.incorrectFeedback,
+  }
 }
