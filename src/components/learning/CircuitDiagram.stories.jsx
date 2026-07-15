@@ -3,12 +3,15 @@ import CircuitDiagram from './CircuitDiagram.jsx'
 export default {
   title: 'Learning/CircuitDiagram',
   component: CircuitDiagram,
+  parameters: {
+    layout: 'centered',
+  },
 }
 
-export const OpenSwitch = {
-  args: { closed: false },
+export const InteractiveOpen = {
+  args: { defaultClosed: false },
 }
 
-export const ClosedSwitch = {
-  args: { closed: true },
+export const InteractiveClosed = {
+  args: { defaultClosed: true },
 }
