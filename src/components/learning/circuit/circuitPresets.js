@@ -351,13 +351,23 @@ export const PARALLEL_BRANCHES_CIRCUIT = Object.freeze({
     { id: 'wire-branch-b-right', d: 'M263,120 H310' },
   ],
 
+  // Current is shown only on wire segments that belong to a complete loop.
+  // An open branch does not carry current even on the short wire before its switch.
   currentPaths: [
     {
       id: 'current-shared-rails',
-      d: 'M50,145 V50 M310,50 V210 H50 V179',
+      d: 'M50,145 V120 M310,120 V210 H50 V179',
       activeWhen: { anyClosed: ['switch-a', 'switch-b'] },
       tone: 'conducting',
-      activeOpacity: 0.32,
+      activeOpacity: 0.38,
+      pulse: false,
+    },
+    {
+      id: 'current-upper-rails',
+      d: 'M50,120 V50 M310,50 V120',
+      activeWhen: { allClosed: ['switch-a'] },
+      tone: 'conducting',
+      activeOpacity: 0.38,
       pulse: false,
     },
     {
@@ -555,28 +565,28 @@ export const PARALLEL_BRANCHES_CIRCUIT = Object.freeze({
       id: 'bothClosed',
       when: { allClosed: ['switch-a', 'switch-b'] },
       heading: 'Both lamps are on.',
-      explanation: 'Both branches are complete, so current flows through Lamp A and Lamp B.',
+      explanation: 'Both branches are complete, so current flows around both complete loops.',
       headingTone: 'emittedLight',
     },
     {
       id: 'onlyAClosed',
       when: { allClosed: ['switch-a'], allOpen: ['switch-b'] },
       heading: 'Lamp A is on. Lamp B is off.',
-      explanation: 'Branch A is complete. Branch B still has a gap, so only Lamp A lights.',
+      explanation: 'Current flows around the complete loop through Branch A. No current flows anywhere in open Branch B.',
       headingTone: 'emittedLight',
     },
     {
       id: 'onlyBClosed',
       when: { allOpen: ['switch-a'], allClosed: ['switch-b'] },
       heading: 'Lamp A is off. Lamp B is on.',
-      explanation: 'Branch B is complete. Branch A still has a gap, so only Lamp B lights.',
+      explanation: 'Current flows around the complete loop through Branch B. No current flows anywhere in open Branch A.',
       headingTone: 'emittedLight',
     },
     {
       id: 'bothOpen',
       default: true,
       heading: 'Both lamps are off.',
-      explanation: 'Each branch contains an open switch, so neither branch is complete.',
+      explanation: 'Neither branch forms a complete loop, so no current flows in either branch.',
       headingTone: 'textPrimary',
     },
   ],
