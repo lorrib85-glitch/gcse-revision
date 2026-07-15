@@ -26,11 +26,13 @@ describe('OppositeQualitiesReveal architecture', () => {
     }
   })
 
-  it('contains its cinematic background inside the reveal stage', () => {
-    expect(component).toContain('data-opposite-reveal-stage="true"')
-    expect(component).toContain('data-opposite-reveal-backdrop="true"')
-    expect(component).toContain("position: 'absolute'")
-    expect(component).toContain("isolation: 'isolate'")
+  it('supports a full-screen module backdrop with a safe local fallback', () => {
+    expect(component).toContain("block.backgroundMode !== 'screen'")
+    expect(component).toContain("closest('.cs-shell')")
+    expect(component).toContain('createPortal(')
+    expect(component).toContain('data-opposite-reveal-screen-backdrop')
+    expect(component).toContain('data-opposite-reveal-backdrop')
+    expect(component).toContain("data-opposite-background-mode={usesScreenBackdrop ? 'screen' : 'stage'}")
     expect(component).not.toContain("position: 'fixed'")
     expect(component).not.toContain('zIndex: -1')
   })
@@ -44,7 +46,36 @@ describe('OppositeQualitiesReveal architecture', () => {
     expect(theme).toContain('wetDry')
     expect(theme).toContain('leftAccent')
     expect(theme).toContain('rightAccent')
-    expect(theme).toContain('backdropOverlay')
+    expect(theme).toContain('fullScreenOverlay')
+    expect(theme).toContain('stageOverlay')
+  })
+
+  it('builds a three-zone stage whose destination reacts to the active side', () => {
+    expect(component).toContain('oqr-zone--left')
+    expect(component).toContain('oqr-zone--centre')
+    expect(component).toContain('oqr-zone--right')
+    expect(component).toContain('data-active-side={activeSide}')
+    expect(component).toContain('.oqr-stage[data-active-side="left"]')
+    expect(component).toContain('.oqr-stage[data-active-side="right"]')
+    expect(component).toContain('--oqr-destination-glow')
+  })
+
+  it('visually hands the travelling word into the newly settled item', () => {
+    expect(component).toContain('data-opposite-active-word')
+    expect(component).toContain('TYPE.displayScreen')
+    expect(component).toContain('oqr-item-settle-left')
+    expect(component).toContain('oqr-item-settle-right')
+    expect(component).toContain('oqr-settled-item--latest')
+    expect(component).toContain('oqr-item-land')
+  })
+
+  it('uses governed line symbols for known opposite concepts', () => {
+    expect(component).toContain("'☀': 'heat'")
+    expect(component).toContain("'❄': 'cold'")
+    expect(component).toContain("'💧': 'wet'")
+    expect(component).toContain("'✦': 'dry'")
+    expect(component).toContain('<svg aria-hidden="true"')
+    expect(component).toContain('stroke="currentColor"')
   })
 
   it('keeps both concept directions data-driven', () => {
