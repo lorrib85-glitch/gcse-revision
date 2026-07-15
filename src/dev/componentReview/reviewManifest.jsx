@@ -31,6 +31,8 @@ import MisconceptionCheck from '../../components/learning/MisconceptionCheck.jsx
 import AcronymMemorise from '../../components/learning/AcronymMemorise.jsx'
 import BuilderBlock from '../../components/learning/BuilderBlock.jsx'
 import ChapterOutcomeScreen from '../../components/layout/ChapterOutcomeScreen.jsx'
+import ContentShell from '../../components/layout/ContentShell.jsx'
+import TeachScreenShell from '../../components/core/TeachScreenShell.jsx'
 
 // Registered library — self-contained kept components, here to refine in one place.
 import FactorWeb from '../../components/learning/FactorWeb.jsx'
@@ -160,11 +162,21 @@ export const REVIEW_ENTRIES = [
   // ── Group 2 — one-off ────────────────────────────────────────────────────
   {
     id: 'opposite-qualities-reveal', name: 'OppositeQualitiesReveal', group: 'group2',
-    status: 'one-off', subject: 'History', renderMode: 'inline',
-    function: 'Animated reveal sorting symptoms to a left/right opposite-quality pair (hot vs cold).',
-    usage: 'Used once — Episode 1 (medieval beliefs), type: oppositeQualitiesReveal.',
-    alternative: 'SwipeSort; ColSortBlock.',
-    render: (fx) => <OppositeQualitiesReveal block={fx} subject="History" />,
+    status: 'one-off', subject: 'History', renderMode: 'fullbleed',
+    function: 'Cinematic guided reveal that moves each example from a neutral centre into one of two opposing concept groups.',
+    usage: 'Used twice in Episode 1 (hot/cold and wet/dry), type: oppositeQualitiesReveal.',
+    alternative: 'SwipeSort and ColSortBlock assess classification; this component teaches the contrast first.',
+    render: (fx, { onDone }) => (
+      <ContentShell subject="History" header="none">
+        <TeachScreenShell heading={fx.title} intro={fx.copy} subject="History">
+          <OppositeQualitiesReveal
+            block={{ ...fx, backgroundMode: 'screen' }}
+            subject="History"
+            onComplete={onDone}
+          />
+        </TeachScreenShell>
+      </ContentShell>
+    ),
     fixture: FIX.oppositeQualitiesReveal,
   },
   {
