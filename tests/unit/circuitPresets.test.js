@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import {
   DEFAULT_CIRCUIT_CANVAS,
+  MEASUREMENT_CIRCUIT,
+  PARALLEL_BRANCHES_CIRCUIT,
   SIMPLE_SERIES_CIRCUIT,
   TWO_SWITCH_SERIES_CIRCUIT,
-  getCircuitPredictionResult,
   getCircuitPresentationState,
   matchesCircuitCondition,
   resolveCircuitCanvas,
@@ -11,10 +12,19 @@ import {
   resolveCircuitPreset,
 } from '../../src/components/learning/circuit/circuitPresets.js'
 
+const REGISTERED_PRESETS = [
+  SIMPLE_SERIES_CIRCUIT,
+  TWO_SWITCH_SERIES_CIRCUIT,
+  PARALLEL_BRANCHES_CIRCUIT,
+  MEASUREMENT_CIRCUIT,
+]
+
 describe('CircuitDiagram presets', () => {
-  it('resolves both registered series-circuit presets', () => {
+  it('resolves every registered circuit preset', () => {
     expect(resolveCircuitPreset('simpleSeries')).toBe(SIMPLE_SERIES_CIRCUIT)
     expect(resolveCircuitPreset('twoSwitchSeries')).toBe(TWO_SWITCH_SERIES_CIRCUIT)
+    expect(resolveCircuitPreset('parallelBranches')).toBe(PARALLEL_BRANCHES_CIRCUIT)
+    expect(resolveCircuitPreset('measurementCircuit')).toBe(MEASUREMENT_CIRCUIT)
   })
 
   it('rejects unknown preset names instead of silently rendering the wrong circuit', () => {
@@ -33,6 +43,20 @@ describe('CircuitDiagram presets', () => {
       safeInset: 16,
       viewBox: '0 0 360 230',
     })
+
+    expect(resolveCircuitCanvas(PARALLEL_BRANCHES_CIRCUIT)).toMatchObject({
+      width: 360,
+      height: 250,
+      safeInset: 16,
+      viewBox: '0 0 360 250',
+    })
+
+    expect(resolveCircuitCanvas(MEASUREMENT_CIRCUIT)).toMatchObject({
+      width: 360,
+      height: 220,
+      safeInset: 16,
+      viewBox: '0 0 360 220',
+    })
   })
 
   it('keeps legacy custom viewBox presets working during migration', () => {
@@ -46,7 +70,7 @@ describe('CircuitDiagram presets', () => {
   })
 
   it('keeps learner-facing labels inside each canvas safe area', () => {
-    for (const preset of [SIMPLE_SERIES_CIRCUIT, TWO_SWITCH_SERIES_CIRCUIT]) {
+    for (const preset of REGISTERED_PRESETS) {
       const canvas = resolveCircuitCanvas(preset)
       const minX = canvas.minX + canvas.safeInset
       const maxX = canvas.minX + canvas.width - canvas.safeInset
@@ -138,7 +162,7 @@ describe('CircuitDiagram presets', () => {
     expect(resolveCircuitLabelText(actionLabel, 'closed')).toBe('Tap to open')
   })
 
-  it('starts the two-switch proof circuit with A closed and B open', () => {
+  it('starts the two-switch series circuit with A closed and B open', () => {
     const switches = TWO_SWITCH_SERIES_CIRCUIT.components.filter(
       component => component.type === 'switch',
     )
@@ -154,7 +178,7 @@ describe('CircuitDiagram presets', () => {
     ])
   })
 
-  it('keeps the two-switch bulb off until every series gap is closed', () => {
+  it('keeps the two-switch series bulb off until every gap is closed', () => {
     const currentPath = TWO_SWITCH_SERIES_CIRCUIT.currentPaths[0]
     const lamp = TWO_SWITCH_SERIES_CIRCUIT.components.find(
       component => component.type === 'lamp',
@@ -200,50 +224,112 @@ describe('CircuitDiagram presets', () => {
     expect(resolveCircuitLabelText(switchBLabel, 'bothClosed')).toBe('Tap to open')
   })
 
-  it('places prediction on the more meaningful two-switch circuit', () => {
-    const prediction = TWO_SWITCH_SERIES_CIRCUIT.prediction
+  it('starts the parallel circuit with one complete branch and one open branch', () => {
+    const switches = PARALLEL_BRANCHES_CIRCUIT.components.filter(
+      component => component.type === 'switch',
+    )
 
-    expect(SIMPLE_SERIES_CIRCUIT.prediction).toBeUndefined()
-    expect(prediction.prompt).toContain('Switch A is already closed')
-    expect(prediction.prompt).toContain('Switch B')
-    expect(prediction.options).toHaveLength(2)
-    expect(prediction.correctOptionId).toBe('lamp-lights')
-    expect(prediction.testWhen).toEqual({ allClosed: ['switch-a', 'switch-b'] })
+    expect(switches.map(({ id, defaultClosed }) => ({ id, defaultClosed }))).toEqual([
+      { id: 'switch-a', defaultClosed: true },
+      { id: 'switch-b', defaultClosed: false },
+    ])
+    expect(getCircuitPresentationState(PARALLEL_BRANCHES_CIRCUIT, {
+      'switch-a': true,
+      'switch-b': false,
+    }).id).toBe('onlyAClosed')
   })
 
-  it('does not reveal the two-switch prediction result while any gap remains', () => {
-    expect(getCircuitPredictionResult(
-      TWO_SWITCH_SERIES_CIRCUIT,
-      'lamp-lights',
-      { 'switch-a': true, 'switch-b': false },
-    )).toBeNull()
+  it('activates parallel lamps and branch paths independently', () => {
+    const lampA = PARALLEL_BRANCHES_CIRCUIT.components.find(component => component.id === 'lamp-a')
+    const lampB = PARALLEL_BRANCHES_CIRCUIT.components.find(component => component.id === 'lamp-b')
+    const sharedPath = PARALLEL_BRANCHES_CIRCUIT.currentPaths.find(
+      path => path.id === 'current-shared-rails',
+    )
+    const branchA = PARALLEL_BRANCHES_CIRCUIT.currentPaths.find(
+      path => path.id === 'current-branch-a',
+    )
+    const branchB = PARALLEL_BRANCHES_CIRCUIT.currentPaths.find(
+      path => path.id === 'current-branch-b',
+    )
+    const combinations = [
+      {
+        states: { 'switch-a': false, 'switch-b': false },
+        stateId: 'bothOpen',
+        a: false,
+        b: false,
+        shared: false,
+      },
+      {
+        states: { 'switch-a': true, 'switch-b': false },
+        stateId: 'onlyAClosed',
+        a: true,
+        b: false,
+        shared: true,
+      },
+      {
+        states: { 'switch-a': false, 'switch-b': true },
+        stateId: 'onlyBClosed',
+        a: false,
+        b: true,
+        shared: true,
+      },
+      {
+        states: { 'switch-a': true, 'switch-b': true },
+        stateId: 'bothClosed',
+        a: true,
+        b: true,
+        shared: true,
+      },
+    ]
 
-    expect(getCircuitPredictionResult(
-      TWO_SWITCH_SERIES_CIRCUIT,
-      'lamp-lights',
-      { 'switch-a': false, 'switch-b': true },
-    )).toBeNull()
+    for (const combination of combinations) {
+      expect(getCircuitPresentationState(
+        PARALLEL_BRANCHES_CIRCUIT,
+        combination.states,
+      ).id).toBe(combination.stateId)
+      expect(matchesCircuitCondition(lampA.activeWhen, combination.states)).toBe(combination.a)
+      expect(matchesCircuitCondition(lampB.activeWhen, combination.states)).toBe(combination.b)
+      expect(matchesCircuitCondition(branchA.activeWhen, combination.states)).toBe(combination.a)
+      expect(matchesCircuitCondition(branchB.activeWhen, combination.states)).toBe(combination.b)
+      expect(matchesCircuitCondition(sharedPath.activeWhen, combination.states)).toBe(combination.shared)
+    }
   })
 
-  it('marks the prediction only after both switches complete the circuit', () => {
-    const completedCircuit = { 'switch-a': true, 'switch-b': true }
+  it('gives each parallel-branch switch the correct instruction', () => {
+    const switchALabel = PARALLEL_BRANCHES_CIRCUIT.labels.find(
+      label => label.id === 'label-switch-a-action',
+    )
+    const switchBLabel = PARALLEL_BRANCHES_CIRCUIT.labels.find(
+      label => label.id === 'label-switch-b-action',
+    )
 
-    expect(getCircuitPredictionResult(
-      TWO_SWITCH_SERIES_CIRCUIT,
-      'lamp-lights',
-      completedCircuit,
-    )).toMatchObject({
-      optionId: 'lamp-lights',
-      correct: true,
-    })
+    expect(resolveCircuitLabelText(switchALabel, 'onlyAClosed')).toBe('Tap to open')
+    expect(resolveCircuitLabelText(switchBLabel, 'onlyAClosed')).toBe('Tap to close')
+    expect(resolveCircuitLabelText(switchALabel, 'onlyBClosed')).toBe('Tap to close')
+    expect(resolveCircuitLabelText(switchBLabel, 'onlyBClosed')).toBe('Tap to open')
+  })
 
-    expect(getCircuitPredictionResult(
-      TWO_SWITCH_SERIES_CIRCUIT,
-      'lamp-stays-off',
-      completedCircuit,
-    )).toMatchObject({
-      optionId: 'lamp-stays-off',
-      correct: false,
-    })
+  it('models the measurement circuit as a read-only placement diagram', () => {
+    const componentTypes = MEASUREMENT_CIRCUIT.components.map(component => component.type)
+    const pathIds = MEASUREMENT_CIRCUIT.paths.map(path => path.id)
+
+    expect(MEASUREMENT_CIRCUIT.interactive).toBe(false)
+    expect(MEASUREMENT_CIRCUIT.currentPaths).toEqual([])
+    expect(componentTypes).toContain('ammeter')
+    expect(componentTypes).toContain('voltmeter')
+    expect(componentTypes).toContain('resistor')
+    expect(componentTypes).not.toContain('switch')
+    expect(pathIds).toContain('wire-voltmeter-left')
+    expect(pathIds).toContain('wire-voltmeter-right')
+    expect(getCircuitPresentationState(MEASUREMENT_CIRCUIT, {}).heading).toContain(
+      'Ammeter in series',
+    )
+  })
+
+  it('keeps prediction and question content outside every circuit preset', () => {
+    for (const preset of REGISTERED_PRESETS) {
+      expect(preset).not.toHaveProperty('prediction')
+      expect(JSON.stringify(preset)).not.toMatch(/correctOptionId|testInstruction|feedback/i)
+    }
   })
 })
