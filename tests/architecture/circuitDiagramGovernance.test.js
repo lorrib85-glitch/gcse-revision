@@ -44,9 +44,9 @@ describe('CircuitDiagram architecture governance', () => {
     expect(presets).toContain("export const TWO_SWITCH_SERIES_CIRCUIT_ID = 'twoSwitchSeries'")
     expect(presets).toContain("export const PARALLEL_BRANCHES_CIRCUIT_ID = 'parallelBranches'")
     expect(presets).toContain("export const MEASUREMENT_CIRCUIT_ID = 'measurementCircuit'")
+    expect(renderer).toContain("preset = 'simpleSeries'")
 
     for (const presetId of [
-      'simpleSeries',
       'twoSwitchSeries',
       'parallelBranches',
       'measurementCircuit',
