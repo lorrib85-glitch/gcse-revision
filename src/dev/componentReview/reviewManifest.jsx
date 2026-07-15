@@ -111,11 +111,37 @@ export const REVIEW_ENTRIES = [
   {
     id: 'circuit-diagram', name: 'CircuitDiagram', group: 'group1',
     status: 'unused', subject: 'Physics', renderMode: 'inline',
-    function: 'Interactive GCSE Physics series circuit. The learner taps the physical switch and the same responsive diagram changes state: switch, conducting path, bulb and explanation.',
-    usage: 'Not routed in ModulePlayer and not referenced by content yet. The review lab now shows one live circuit rather than duplicating open and closed states.',
+    function: 'Interactive GCSE Physics circuit for exploration or prediction-before-testing. The learner operates the physical switch and observes the causal change across the same responsive diagram.',
+    usage: 'Not routed in ModulePlayer and not referenced by content yet. Review variants expose direct exploration, prediction-before-test, a closed starting state and reduced-motion behaviour.',
     alternative: 'None — no other circuit component exists.',
     render: () => <CircuitDiagram />,
     fixture: null,
+    variants: [
+      {
+        id: 'explore',
+        label: 'Explore',
+        description: 'Default learning mode: operate the physical switch and observe the circuit response directly.',
+        render: () => <CircuitDiagram mode="explore" />,
+      },
+      {
+        id: 'predict-then-test',
+        label: 'Predict then test',
+        description: 'Commit to a prediction first, then unlock the physical switch and compare the prediction with the observed result.',
+        render: () => <CircuitDiagram mode="predictThenTest" />,
+      },
+      {
+        id: 'starts-closed',
+        label: 'Starts closed',
+        description: 'Checks the illuminated outcome, conducting-path treatment and open-switch reversal from the opposite initial state.',
+        render: () => <CircuitDiagram mode="explore" defaultClosed />,
+      },
+      {
+        id: 'reduced-motion',
+        label: 'Reduced motion',
+        description: 'Forces the component-level reduced-motion path so state changes remain immediate and scientifically clear without animation.',
+        render: () => <CircuitDiagram mode="explore" reducedMotion />,
+      },
+    ],
   },
 
   // ── Group 2 — one-off ────────────────────────────────────────────────────
