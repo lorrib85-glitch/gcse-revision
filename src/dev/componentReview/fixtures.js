@@ -70,6 +70,9 @@ export const oppositeQualitiesReveal = {
   type: 'oppositeQualitiesReveal',
   title: 'Hot or cold?',
   copy: 'Doctors used symptoms to decide which quality was strongest.',
+  visualPair: 'warmCool',
+  backgroundImage: '/figures/history/medicine/medieval/opposite-qualities-background.svg',
+  backgroundOpacity: 1,
   leftConcept: { label: 'Hot', icon: '☀', items: ['Fever', 'Red face', 'Flushed skin'] },
   rightConcept: { label: 'Cold', icon: '❄', items: ['Pale skin', 'Chills', 'Shivering'] },
   sequence: [
