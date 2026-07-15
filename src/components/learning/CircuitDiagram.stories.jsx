@@ -6,6 +6,9 @@ export default {
   parameters: {
     layout: 'centered',
   },
+  args: {
+    preset: 'simpleSeries',
+  },
 }
 
 export const InteractiveOpen = {
