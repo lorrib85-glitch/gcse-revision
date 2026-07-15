@@ -15,14 +15,15 @@ import {
 import {
   getCircuitPresentationState,
   matchesCircuitCondition,
+  resolveCircuitCanvas,
   resolveCircuitLabelText,
   resolveCircuitPreset,
 } from './circuit/circuitPresets.js'
 
 // ─── Motion / focus styles (injected once) ───────────────────────────────────
-// The sequence is intentional: the learner moves the switch first, then the
-// conducting path appears, then the bulb responds. Reduced-motion users still
-// get the same clear state change without the animation.
+// The sequence is intentional: the learner moves the switch first, then a calm
+// conducting path appears, then the bulb responds. A single travelling highlight
+// marks the change without implying that visible particles race around the wire.
 let stylesInjected = false
 function ensureStyles() {
   if (stylesInjected || typeof document === 'undefined') return
@@ -31,8 +32,21 @@ function ensureStyles() {
   const physics = SUBJECTS.Physics
   const el = document.createElement('style')
   el.textContent = `
-    @keyframes circuit-diagram-flow {
-      to { stroke-dashoffset: -34; }
+    @keyframes circuit-diagram-pulse {
+      0% {
+        opacity: 0;
+        stroke-dashoffset: 0;
+      }
+      16% {
+        opacity: 0.72;
+      }
+      74% {
+        opacity: 0.52;
+      }
+      100% {
+        opacity: 0;
+        stroke-dashoffset: -1;
+      }
     }
 
     .circuit-diagram__switch-control {
@@ -55,18 +69,27 @@ function ensureStyles() {
       opacity: 1;
     }
 
-    .circuit-diagram__current {
+    .circuit-diagram__conduction {
       opacity: 0;
-      stroke-dasharray: 9 8;
       pointer-events: none;
-      transition: opacity 120ms ease;
+      transition: opacity 160ms ease;
     }
 
-    .circuit-diagram__current--active {
-      opacity: 1;
-      animation: circuit-diagram-flow 1.15s linear infinite;
-      filter: drop-shadow(0 0 2px ${physics.glow});
+    .circuit-diagram__conduction--active {
+      opacity: var(--circuit-active-opacity, 0.36);
       transition-delay: 120ms;
+    }
+
+    .circuit-diagram__current-pulse {
+      opacity: 0;
+      pointer-events: none;
+      stroke-dasharray: 0.1 0.9;
+      stroke-dashoffset: 0;
+    }
+
+    .circuit-diagram__current-pulse--active {
+      animation: circuit-diagram-pulse 820ms cubic-bezier(0.22, 0.68, 0.28, 1) 120ms 1 both;
+      filter: drop-shadow(0 0 1.5px ${physics.glow});
     }
 
     .circuit-diagram__bulb-face,
@@ -96,12 +119,16 @@ function ensureStyles() {
     @media (prefers-reduced-motion: reduce) {
       .circuit-diagram__switch-arm,
       .circuit-diagram__switch-focus,
-      .circuit-diagram__current,
+      .circuit-diagram__conduction,
       .circuit-diagram__bulb-face,
       .circuit-diagram__bulb-filament,
       .circuit-diagram__bulb-halo {
         animation: none;
         transition: none;
+      }
+
+      .circuit-diagram__current-pulse {
+        display: none;
       }
     }
   `
@@ -128,6 +155,7 @@ function CircuitDiagram({
 
   const physics = SUBJECTS.Physics
   const circuit = resolveCircuitPreset(preset)
+  const canvas = resolveCircuitCanvas(circuit)
   const titleId = useId()
   const descriptionId = useId()
   const components = circuit.components ?? []
@@ -235,8 +263,8 @@ function CircuitDiagram({
           wireStroke={componentStroke}
           lightStroke={component.activeTone ? activeStroke : bulbLight}
           offFill={componentFill}
-          litFill="rgba(242,193,78,0.16)"
-          haloFill="rgba(242,193,78,0.34)"
+          litFill="rgba(242,193,78,0.18)"
+          haloFill="rgba(242,193,78,0.32)"
         />
       )
     }
@@ -323,13 +351,28 @@ function CircuitDiagram({
     .join(' ')
 
   return (
-    <div style={{ width: '100%', maxWidth: circuit.maxWidth ?? 460, margin: '0 auto' }}>
+    <div
+      style={{
+        width: '100%',
+        maxWidth: circuit.maxWidth ?? 460,
+        minWidth: 0,
+        margin: '0 auto',
+      }}
+    >
       <svg
-        viewBox={circuit.viewBox}
+        viewBox={canvas.viewBox}
+        preserveAspectRatio="xMidYMid meet"
         width="100%"
         role="group"
         aria-labelledby={`${titleId} ${descriptionId}`}
-        style={{ display: 'block', overflow: 'visible' }}
+        data-circuit-canvas={`${canvas.width}x${canvas.height}`}
+        style={{
+          display: 'block',
+          width: '100%',
+          height: 'auto',
+          aspectRatio: `${canvas.width} / ${canvas.height}`,
+          overflow: 'visible',
+        }}
       >
         <title id={titleId}>{label ?? circuit.accessibilityLabel}</title>
         <desc id={descriptionId}>{accessibleDescription}</desc>
@@ -348,6 +391,8 @@ function CircuitDiagram({
             key={path.id}
             current
             active={matchesCircuitCondition(path.activeWhen, switchStates)}
+            pulse={path.pulse !== false}
+            activeOpacity={path.activeOpacity}
             d={path.d}
             stroke={path.tone ? resolveTone(path.tone) : physics.accent}
             strokeWidth={path.strokeWidth}
