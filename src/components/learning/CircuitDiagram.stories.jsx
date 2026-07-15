@@ -1,76 +1,24 @@
 import { expect, userEvent, within } from 'storybook/test'
 import CircuitDiagram from './CircuitDiagram.jsx'
+import CircuitSymbolReference from './CircuitSymbolReference.jsx'
 
-const symbolLibraryPreset = {
-  id: 'symbolLibraryPreview',
-  canvas: {
-    width: 380,
-    height: 205,
-    safeInset: 16,
-  },
-  maxWidth: 520,
-  accessibilityLabel: 'Reusable GCSE circuit symbol library',
-  primarySwitchId: 'switch-preview',
-  paths: [],
-  currentPaths: [],
-  components: [
-    { id: 'cell-preview', type: 'cell', x: 45, y: 34, showPolarity: true },
-    { id: 'battery-preview', type: 'battery', x: 120, y: 22, cells: 2 },
-    { id: 'resistor-preview', type: 'resistor', cx: 220, cy: 45 },
-    { id: 'junction-preview', type: 'junction', cx: 315, cy: 45, radius: 5 },
-    { id: 'ammeter-preview', type: 'ammeter', cx: 65, cy: 125 },
-    { id: 'voltmeter-preview', type: 'voltmeter', cx: 150, cy: 125 },
-    {
-      id: 'lamp-preview',
-      type: 'lamp',
-      cx: 235,
-      cy: 125,
-      activeWhen: { always: true },
-    },
-    {
-      id: 'switch-preview',
-      type: 'switch',
-      left: 290,
-      right: 350,
-      y: 125,
-      defaultClosed: false,
-      accessibilityLabel: 'Preview switch',
-    },
-  ],
-  labels: [
-    { id: 'cell-label', x: 45, y: 82, text: 'Cell', textAnchor: 'middle', tone: 'secondary' },
-    { id: 'battery-label', x: 120, y: 82, text: 'Battery', textAnchor: 'middle', tone: 'secondary' },
-    { id: 'resistor-label', x: 220, y: 82, text: 'Resistor', textAnchor: 'middle', tone: 'secondary' },
-    { id: 'junction-label', x: 315, y: 82, text: 'Junction', textAnchor: 'middle', tone: 'secondary' },
-    { id: 'ammeter-label', x: 65, y: 162, text: 'Ammeter', textAnchor: 'middle', tone: 'secondary' },
-    { id: 'voltmeter-label', x: 150, y: 162, text: 'Voltmeter', textAnchor: 'middle', tone: 'secondary' },
-    { id: 'lamp-label', x: 235, y: 162, text: 'Lamp', textAnchor: 'middle', tone: 'secondary' },
-    { id: 'switch-label', x: 320, y: 162, text: 'Switch', textAnchor: 'middle', tone: 'secondary' },
-  ],
-  presentationStates: [
-    {
-      id: 'default',
-      default: true,
-      heading: 'One governed GCSE symbol family.',
-      explanation: 'Future circuit presets reuse these symbols rather than drawing local alternatives.',
-      headingTone: 'primary',
-    },
-  ],
+function getCircuitItem(canvasElement, id, componentType) {
+  return canvasElement.querySelector(
+    `[data-circuit-id="${id}"] [data-circuit-component="${componentType}"]`,
+  )
 }
 
-function getScientificState(canvasElement) {
-  return {
-    lamp: canvasElement.querySelector('[data-circuit-component="lamp"]'),
-    currentPath: canvasElement.querySelector('[data-circuit-component="current-path"]'),
-  }
-}
-
-function expectScientificState(canvasElement, active) {
-  const { lamp, currentPath } = getScientificState(canvasElement)
+function expectCircuitItemActive(canvasElement, id, componentType, active) {
+  const element = getCircuitItem(canvasElement, id, componentType)
   const expected = active ? 'true' : null
 
-  expect(lamp?.getAttribute('data-active')).toBe(expected)
-  expect(currentPath?.getAttribute('data-active')).toBe(expected)
+  expect(element).not.toBeNull()
+  expect(element?.getAttribute('data-active')).toBe(expected)
+}
+
+function expectSimpleScientificState(canvasElement, active) {
+  expectCircuitItemActive(canvasElement, 'lamp-main', 'lamp', active)
+  expectCircuitItemActive(canvasElement, 'current-main-loop', 'current-path', active)
 }
 
 function expectMobileContainment(canvasElement, maximumWidth = 320) {
@@ -99,18 +47,18 @@ export const InteractiveOpen = {
     const circuitSwitch = canvas.getByRole('switch', { name: 'Main circuit switch' })
 
     await expect(circuitSwitch).toHaveAttribute('aria-checked', 'false')
-    expectScientificState(canvasElement, false)
+    expectSimpleScientificState(canvasElement, false)
 
     await userEvent.click(circuitSwitch)
     await expect(circuitSwitch).toHaveAttribute('aria-checked', 'true')
     await expect(canvas.getByText('The switch is closed.')).toBeVisible()
-    expectScientificState(canvasElement, true)
+    expectSimpleScientificState(canvasElement, true)
 
     circuitSwitch.focus()
     await userEvent.keyboard(' ')
     await expect(circuitSwitch).toHaveAttribute('aria-checked', 'false')
     await expect(canvas.getByText('The switch is open.')).toBeVisible()
-    expectScientificState(canvasElement, false)
+    expectSimpleScientificState(canvasElement, false)
   },
 }
 
@@ -130,49 +78,91 @@ export const TwoSwitchSeries = {
     await expect(switchA).toHaveAttribute('aria-checked', 'true')
     await expect(switchB).toHaveAttribute('aria-checked', 'false')
     await expect(canvas.getByText('Switch B is open.')).toBeVisible()
-    expectScientificState(canvasElement, false)
+    expectSimpleScientificState(canvasElement, false)
 
     switchB.focus()
     await userEvent.keyboard('{Enter}')
     await expect(switchB).toHaveAttribute('aria-checked', 'true')
     await expect(canvas.getByText('Both switches are closed.')).toBeVisible()
-    expectScientificState(canvasElement, true)
+    expectSimpleScientificState(canvasElement, true)
 
     switchA.focus()
     await userEvent.keyboard(' ')
     await expect(switchA).toHaveAttribute('aria-checked', 'false')
     await expect(canvas.getByText('Switch A is open.')).toBeVisible()
-    expectScientificState(canvasElement, false)
+    expectSimpleScientificState(canvasElement, false)
   },
 }
 
-export const PredictThenTest = {
+export const ParallelBranches = {
   args: {
-    preset: 'twoSwitchSeries',
-    mode: 'predictThenTest',
+    preset: 'parallelBranches',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const switchA = canvas.getByRole('switch', { name: 'Switch A' })
-    const switchB = canvas.getByRole('switch', { name: 'Switch B' })
-    const correctPrediction = canvas.getByRole('radio', { name: 'The bulb will light' })
+    const switchA = canvas.getByRole('switch', { name: 'Switch A for Lamp A' })
+    const switchB = canvas.getByRole('switch', { name: 'Switch B for Lamp B' })
 
-    await expect(switchA).toHaveAttribute('aria-disabled', 'true')
-    await expect(switchB).toHaveAttribute('aria-disabled', 'true')
-    await expect(switchA).toHaveAttribute('tabindex', '-1')
-    await expect(switchB).toHaveAttribute('tabindex', '-1')
+    await expect(canvas.getByText('Lamp A is on. Lamp B is off.')).toBeVisible()
+    expectCircuitItemActive(canvasElement, 'lamp-a', 'lamp', true)
+    expectCircuitItemActive(canvasElement, 'lamp-b', 'lamp', false)
+    expectCircuitItemActive(canvasElement, 'current-shared-rails', 'current-path', true)
+    expectCircuitItemActive(canvasElement, 'current-branch-a', 'current-path', true)
+    expectCircuitItemActive(canvasElement, 'current-branch-b', 'current-path', false)
 
-    await userEvent.click(correctPrediction)
-    await expect(correctPrediction).toBeChecked()
-    await expect(switchA).not.toHaveAttribute('aria-disabled')
-    await expect(switchB).not.toHaveAttribute('aria-disabled')
-    await expect(switchB).toHaveAttribute('tabindex', '0')
+    await userEvent.click(switchB)
+    await expect(canvas.getByText('Both lamps are on.')).toBeVisible()
+    expectCircuitItemActive(canvasElement, 'lamp-a', 'lamp', true)
+    expectCircuitItemActive(canvasElement, 'lamp-b', 'lamp', true)
+    expectCircuitItemActive(canvasElement, 'current-branch-a', 'current-path', true)
+    expectCircuitItemActive(canvasElement, 'current-branch-b', 'current-path', true)
 
-    switchB.focus()
-    await userEvent.keyboard('{Enter}')
-    await expect(canvas.getByText(/Prediction matched\./)).toBeVisible()
-    await expect(canvas.getByText('Both switches are closed.')).toBeVisible()
-    expectScientificState(canvasElement, true)
+    await userEvent.click(switchA)
+    await expect(canvas.getByText('Lamp A is off. Lamp B is on.')).toBeVisible()
+    expectCircuitItemActive(canvasElement, 'lamp-a', 'lamp', false)
+    expectCircuitItemActive(canvasElement, 'lamp-b', 'lamp', true)
+    expectCircuitItemActive(canvasElement, 'current-shared-rails', 'current-path', true)
+    expectCircuitItemActive(canvasElement, 'current-branch-a', 'current-path', false)
+    expectCircuitItemActive(canvasElement, 'current-branch-b', 'current-path', true)
+  },
+}
+
+export const MeasurementCircuit = {
+  args: {
+    preset: 'measurementCircuit',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const circuit = canvasElement.querySelector('.circuit-diagram')
+
+    await expect(circuit).toHaveAttribute('data-circuit-interactive', 'false')
+    await expect(canvas.queryAllByRole('switch')).toHaveLength(0)
+    await expect(canvas.getByText('Ammeter in series. Voltmeter in parallel.')).toBeVisible()
+    expect(getCircuitItem(canvasElement, 'ammeter-main', 'ammeter')).not.toBeNull()
+    expect(getCircuitItem(canvasElement, 'voltmeter-main', 'voltmeter')).not.toBeNull()
+    expect(getCircuitItem(canvasElement, 'resistor-main', 'resistor')).not.toBeNull()
+  },
+}
+
+export const ReadOnly = {
+  args: {
+    defaultClosed: true,
+    interactive: false,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const circuit = canvasElement.querySelector('.circuit-diagram')
+    const circuitSwitch = canvas.getByRole('switch', { name: 'Main circuit switch' })
+
+    await expect(circuit).toHaveAttribute('data-circuit-interactive', 'false')
+    await expect(circuitSwitch).toHaveAttribute('aria-disabled', 'true')
+    await expect(circuitSwitch).toHaveAttribute('tabindex', '-1')
+    await expect(circuitSwitch).toHaveAttribute('aria-checked', 'true')
+
+    await userEvent.click(circuitSwitch)
+    await expect(circuitSwitch).toHaveAttribute('aria-checked', 'true')
+    await expect(canvas.getByText('The switch is closed.')).toBeVisible()
+    expectSimpleScientificState(canvasElement, true)
   },
 }
 
@@ -192,7 +182,7 @@ export const ReducedMotion = {
     await userEvent.click(circuitSwitch)
     const pulse = canvasElement.querySelector('.circuit-diagram__current-pulse')
     expect(window.getComputedStyle(pulse).display).toBe('none')
-    expectScientificState(canvasElement, true)
+    expectSimpleScientificState(canvasElement, true)
   },
 }
 
@@ -212,9 +202,9 @@ export const MobileWidth = {
   },
 }
 
-export const TwoSwitchSeriesMobile = {
+export const ParallelBranchesMobile = {
   args: {
-    preset: 'twoSwitchSeries',
+    preset: 'parallelBranches',
   },
   decorators: [
     Story => (
@@ -235,10 +225,9 @@ export const TwoSwitchSeriesMobile = {
   },
 }
 
-export const PredictThenTestMobile = {
+export const MeasurementCircuitMobile = {
   args: {
-    preset: 'twoSwitchSeries',
-    mode: 'predictThenTest',
+    preset: 'measurementCircuit',
   },
   decorators: [
     Story => (
@@ -249,9 +238,38 @@ export const PredictThenTestMobile = {
   ],
   play: async ({ canvasElement }) => {
     expectMobileContainment(canvasElement)
+    const svg = canvasElement.querySelector('svg[data-circuit-canvas="360x220"]')
+    await expect(svg).toHaveAttribute('preserveAspectRatio', 'xMidYMid meet')
   },
 }
 
-export const SymbolLibrary = {
-  args: { preset: symbolLibraryPreset },
+export const SymbolReference = {
+  render: () => <CircuitSymbolReference />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const symbols = canvasElement.querySelectorAll('[data-circuit-reference-symbol]')
+
+    expect(symbols).toHaveLength(14)
+    await expect(canvas.getByText('Switch (open)')).toBeVisible()
+    await expect(canvas.getByText('Battery')).toBeVisible()
+    await expect(canvas.getByText('Thermistor')).toBeVisible()
+    await expect(canvas.getByText('LDR')).toBeVisible()
+    await expect(canvas.getByText('LED')).toBeVisible()
+    await expect(canvas.queryAllByRole('switch')).toHaveLength(0)
+  },
+}
+
+export const SymbolReferenceMobile = {
+  render: () => (
+    <div style={{ width: 320, maxWidth: '100%' }}>
+      <CircuitSymbolReference />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const reference = canvasElement.querySelector('section')
+    const width = reference?.getBoundingClientRect().width ?? Infinity
+
+    expect(width).toBeLessThanOrEqual(320.5)
+    expect(reference?.scrollWidth).toBeLessThanOrEqual(reference?.clientWidth)
+  },
 }
