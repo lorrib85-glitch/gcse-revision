@@ -83,7 +83,7 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
     {
       id: 'label-battery',
       x: 72,
-      y: 122,
+      y: 152,
       text: 'Battery',
       textAnchor: 'middle',
       tone: 'textSecondary',
