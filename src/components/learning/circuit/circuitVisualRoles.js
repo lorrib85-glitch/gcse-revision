@@ -26,6 +26,7 @@ function hexToRgba(hex, alpha) {
 export function createCircuitVisualRoles(subjectTheme = SUBJECTS.Physics) {
   return Object.freeze({
     interaction: subjectTheme.accent,
+    interactionSoft: hexToRgba(subjectTheme.accent, 0.11),
     conducting: subjectTheme.accent,
     emittedLight: subjectTheme.accentSecondary,
     structure: subjectTheme.accentTertiary,
