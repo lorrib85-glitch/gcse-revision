@@ -1,4 +1,5 @@
 import BeforeAfterImageSlider from './BeforeAfterImageSlider.jsx'
+import { SUBJECT_ACCENTS } from '../../constants/subjects.js'
 
 export default {
   title: 'Learning/BeforeAfterImageSlider',
@@ -8,16 +9,15 @@ export default {
 
 export const Default = {
   args: {
-    beforeSrc: '/headers/history-medicine-through-time.webp',
-    afterSrc: '/headers/history-elizabethan.webp',
-    beforeAlt: 'Before',
-    afterAlt: 'After',
-    beforeLabel: 'Before',
-    afterLabel: 'After',
-    heading: 'Drag to compare',
-    subheading: 'A before-and-after visual comparison.',
-    revealText: 'The slider lets learners compare two states of the same image directly.',
-    accent: '#6A343D',
+    beforeSrc: '/figures/history/medicine/modern/lungs-healthy.png',
+    afterSrc: '/figures/history/medicine/modern/lungs-cancer.png',
+    beforeAlt: 'Healthy lungs',
+    afterAlt: 'Lungs damaged by smoking',
+    beforeLabel: 'Healthy lungs',
+    afterLabel: 'Damaged lungs',
+    heading: 'What does smoking do to your lungs?',
+    revealText: 'Smoking is the biggest cause of lung cancer in the UK.',
+    accent: SUBJECT_ACCENTS.History,
     initial: 50,
     onComplete: () => {},
   },

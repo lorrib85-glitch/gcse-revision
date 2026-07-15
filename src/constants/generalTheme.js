@@ -86,6 +86,20 @@ export const GENERAL = {
   },
   surfaceTint: 'rgba(255,255,255,0.04)',
 
+  // Elevation shadows on dark surfaces and imagery — the approved shadow
+  // ladder. Pick the nearest step; do not invent new shadow values.
+  shadow: {
+    raised:  '0 4px 16px rgba(0,0,0,0.55)',
+    overlay: '0 4px 32px rgba(0,0,0,0.60)',
+  },
+
+  // Interaction ring over imagery (drag handles, focusable image surfaces).
+  // rest = resting ring; pulse = attention-pulse origin colour.
+  ring: {
+    rest:  'rgba(255,255,255,0.25)',
+    pulse: 'rgba(255,255,255,0.50)',
+  },
+
   // Full-screen scrim behind centred dialog/overlay cards.
   scrim: 'rgba(3,10,11,0.86)',
 }

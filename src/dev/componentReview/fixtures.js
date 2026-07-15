@@ -94,17 +94,16 @@ export const timelineCanvas = {
   ],
 }
 
-// ── Group 2: BeforeAfterImageSlider (History) — props, uses existing images ───
+// ── Group 2: BeforeAfterImageSlider (History) — Episode 13's live screen ─────
 export const beforeAfterImageSlider = {
-  beforeSrc: '/headers/history-medicine-through-time.webp',
-  afterSrc: '/headers/history-elizabethan.webp',
-  beforeAlt: 'Before treatment',
-  afterAlt: 'After treatment',
-  beforeLabel: 'Before',
-  afterLabel: 'After',
-  heading: 'Drag to compare',
-  subheading: 'A before-and-after visual comparison.',
-  revealText: 'The slider lets learners compare two states of the same image directly.',
+  beforeSrc: '/figures/history/medicine/modern/lungs-healthy.png',
+  afterSrc: '/figures/history/medicine/modern/lungs-cancer.png',
+  beforeAlt: 'Healthy lungs',
+  afterAlt: 'Lungs damaged by smoking',
+  beforeLabel: 'Healthy lungs',
+  afterLabel: 'Damaged lungs',
+  heading: 'What does smoking do to your lungs?',
+  revealText: 'Smoking is the biggest cause of lung cancer in the UK.',
   initial: 50,
 }
 

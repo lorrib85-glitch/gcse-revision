@@ -9,6 +9,7 @@
 // This whole directory is excluded from production builds (src/App.jsx dev gate).
 
 import * as FIX from './fixtures.js'
+import { SUBJECT_ACCENTS } from '../../constants/subjects.js'
 
 import CinematicCarousel from '../../components/learning/CinematicCarousel.jsx'
 import GraphView from '../../components/learning/GraphView.jsx'
@@ -197,8 +198,8 @@ export const REVIEW_ENTRIES = [
     render: (fx, { onDone }) => (
       <BeforeAfterImageSlider
         beforeSrc={fx.beforeSrc} afterSrc={fx.afterSrc} beforeAlt={fx.beforeAlt} afterAlt={fx.afterAlt}
-        beforeLabel={fx.beforeLabel} afterLabel={fx.afterLabel} heading={fx.heading} subheading={fx.subheading}
-        revealText={fx.revealText} accent="#6A343D" initial={fx.initial} onComplete={onDone}
+        beforeLabel={fx.beforeLabel} afterLabel={fx.afterLabel} heading={fx.heading}
+        revealText={fx.revealText} accent={SUBJECT_ACCENTS.History} initial={fx.initial} onComplete={onDone}
       />
     ),
     fixture: FIX.beforeAfterImageSlider,

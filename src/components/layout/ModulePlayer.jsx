@@ -2033,7 +2033,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           beforeLabel={cur.beforeLabel}
           afterLabel={cur.afterLabel}
           heading={cur.heading}
-          subheading={cur.subheading}
           revealText={cur.revealText}
           accent={subjectColor}
           initial={cur.initial ?? 50}
