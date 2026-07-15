@@ -7,6 +7,12 @@ import {
   CircuitPath,
   CircuitSwitch,
 } from './circuit/CircuitPrimitives.jsx'
+import {
+  getCircuitPresentationState,
+  matchesCircuitCondition,
+  resolveCircuitLabelText,
+  resolveCircuitPreset,
+} from './circuit/circuitPresets.js'
 
 // ─── Motion / focus styles (injected once) ───────────────────────────────────
 // The sequence is intentional: the learner moves the switch first, then the
@@ -97,147 +103,188 @@ function ensureStyles() {
   document.head.appendChild(el)
 }
 
-// ─── Simple-series preset geometry (viewBox 0 0 360 194) ────────────────────
-// CircuitDiagram owns this preset for now. The symbols themselves are reusable
-// primitives; a later configuration layer can provide different geometries.
-const LOOP = { left: 72, right: 288, top: 38, bottom: 134 }
-const BULB = { cx: 288, cy: 86, radius: 18 }
-const BATTERY = { x: 72, y: 67 }
-const SWITCH = { left: 145, right: 215, y: 134 }
-
 /**
- * A single responsive series circuit whose physical switch is the control.
+ * Configuration-driven interactive circuit diagram.
  *
- * Use `defaultClosed` for the normal self-contained interaction. `closed` and
- * `onToggle` provide a controlled API for future lesson flows that need to own
- * circuit state.
+ * `preset` may be a registered preset name or a compatible preset object.
+ * `closed` and `defaultClosed` remain as the simple-series convenience API;
+ * internally, state is stored by switch id so future presets can use more than
+ * one independent switch without changing the renderer.
  */
 function CircuitDiagram({
+  preset = 'simpleSeries',
   closed,
-  defaultClosed = false,
+  defaultClosed,
   onToggle,
   disabled = false,
-  label = 'Interactive series circuit',
+  label,
 }) {
   ensureStyles()
 
   const physics = SUBJECTS.Physics
+  const circuit = resolveCircuitPreset(preset)
   const titleId = useId()
   const descriptionId = useId()
-  const [uncontrolledClosed, setUncontrolledClosed] = useState(defaultClosed)
+  const switchComponents = circuit.components.filter(component => component.type === 'switch')
+  const primarySwitchId = circuit.primarySwitchId ?? switchComponents[0]?.id
 
-  const isControlled = typeof closed === 'boolean'
-  const isClosed = isControlled ? closed : uncontrolledClosed
+  const [uncontrolledSwitchStates, setUncontrolledSwitchStates] = useState(() => {
+    const initialStates = Object.fromEntries(
+      switchComponents.map(component => [component.id, component.defaultClosed === true]),
+    )
+
+    if (primarySwitchId && typeof defaultClosed === 'boolean') {
+      initialStates[primarySwitchId] = defaultClosed
+    }
+
+    return initialStates
+  })
+
+  const isPrimaryControlled = primarySwitchId && typeof closed === 'boolean'
+  const switchStates = {
+    ...uncontrolledSwitchStates,
+    ...(isPrimaryControlled ? { [primarySwitchId]: closed } : {}),
+  }
 
   const wire = physics.accentTertiary
   const textPrimary = physics.palette.lightAsh
   const textSecondary = physics.palette.warmGrey
   const bulbLight = physics.accentSecondary
+  const presentationState = getCircuitPresentationState(circuit, switchStates)
 
-  const wires = [
-    `M${LOOP.left},${LOOP.top} H${LOOP.right}`,
-    `M${LOOP.right},${LOOP.top} V68`,
-    `M${LOOP.right},104 V${LOOP.bottom}`,
-    `M${LOOP.right},${LOOP.bottom} H${SWITCH.right}`,
-    `M${SWITCH.left},${LOOP.bottom} H${LOOP.left}`,
-    `M${LOOP.left},${LOOP.bottom} V108`,
-    `M${LOOP.left},66 V${LOOP.top}`,
-  ]
-
-  const currentPath =
-    `M${LOOP.left},${LOOP.top} H${LOOP.right} V${LOOP.bottom} H${LOOP.left} Z`
-
-  const stateHeading = isClosed
-    ? 'The switch is closed.'
-    : 'The switch is open.'
-
-  const stateExplanation = isClosed
-    ? 'The circuit is complete, so current flows and the bulb lights.'
-    : 'There is a gap, so current cannot flow.'
-
-  const toggleSwitch = () => {
-    if (disabled) return
-
-    const nextClosed = !isClosed
-    if (!isControlled) setUncontrolledClosed(nextClosed)
-    onToggle?.(nextClosed)
+  const tones = {
+    primary: textPrimary,
+    secondary: textSecondary,
+    accent: physics.accent,
+    light: bulbLight,
   }
 
-  return (
-    <div style={{ width: '100%', maxWidth: 460, margin: '0 auto' }}>
-      <svg
-        viewBox="0 0 360 194"
-        width="100%"
-        role="group"
-        aria-labelledby={`${titleId} ${descriptionId}`}
-        style={{ display: 'block', overflow: 'visible' }}
-      >
-        <title id={titleId}>{label}</title>
-        <desc id={descriptionId}>
-          {stateExplanation} Use the switch control to change the circuit.
-        </desc>
+  const resolveTone = tone => tones[tone] ?? tone ?? textSecondary
 
-        {/* Base wire segments leave gaps for the scientific symbols. */}
-        {wires.map((d) => (
-          <CircuitPath key={d} d={d} stroke={wire} />
-        ))}
+  const toggleSwitch = (switchId) => {
+    if (disabled) return
 
-        {/* Conducting path appears only after the switch has physically closed. */}
-        <CircuitPath
-          current
-          active={isClosed}
-          d={currentPath}
-          stroke={physics.accent}
-        />
+    const nextClosed = !switchStates[switchId]
+    const controlledPrimary = switchId === primarySwitchId && isPrimaryControlled
 
+    if (!controlledPrimary) {
+      setUncontrolledSwitchStates(previous => ({
+        ...previous,
+        [switchId]: nextClosed,
+      }))
+    }
+
+    onToggle?.(nextClosed, switchId)
+  }
+
+  const renderComponent = (component) => {
+    if (component.type === 'battery') {
+      return (
         <CircuitBattery
-          x={BATTERY.x}
-          y={BATTERY.y}
+          key={component.id}
+          x={component.x}
+          y={component.y}
           plateFill={textPrimary}
           polarityFill={textSecondary}
         />
+      )
+    }
 
+    if (component.type === 'lamp') {
+      const lit = matchesCircuitCondition(component.activeWhen, switchStates)
+      return (
         <CircuitLamp
-          cx={BULB.cx}
-          cy={BULB.cy}
-          radius={BULB.radius}
-          lit={isClosed}
+          key={component.id}
+          cx={component.cx}
+          cy={component.cy}
+          radius={component.radius}
+          lit={lit}
           wireStroke={wire}
           lightStroke={bulbLight}
           offFill={physics.backgroundSecondary}
           litFill="rgba(242,193,78,0.16)"
           haloFill="rgba(242,193,78,0.34)"
         />
+      )
+    }
 
-        {/* The scientific object is the control: no separate UI button. */}
+    if (component.type === 'switch') {
+      return (
         <CircuitSwitch
-          left={SWITCH.left}
-          right={SWITCH.right}
-          y={SWITCH.y}
-          closed={isClosed}
-          disabled={disabled}
+          key={component.id}
+          left={component.left}
+          right={component.right}
+          y={component.y}
+          closed={switchStates[component.id] === true}
+          disabled={disabled || component.disabled}
           accent={physics.accent}
           wireStroke={wire}
           inactiveStroke={textSecondary}
-          onToggle={toggleSwitch}
+          openAngle={component.openAngle}
+          hitPaddingX={component.hitPaddingX}
+          hitPaddingY={component.hitPaddingY}
+          onToggle={() => toggleSwitch(component.id)}
         />
+      )
+    }
 
-        {/* Minimal diagram labels */}
+    return null
+  }
+
+  const switchInstruction = switchComponents.length === 1
+    ? 'Use the switch control to change the circuit.'
+    : 'Use the switch controls to explore the circuit.'
+
+  return (
+    <div style={{ width: '100%', maxWidth: circuit.maxWidth ?? 460, margin: '0 auto' }}>
+      <svg
+        viewBox={circuit.viewBox}
+        width="100%"
+        role="group"
+        aria-labelledby={`${titleId} ${descriptionId}`}
+        style={{ display: 'block', overflow: 'visible' }}
+      >
+        <title id={titleId}>{label ?? circuit.accessibilityLabel}</title>
+        <desc id={descriptionId}>
+          {presentationState.explanation} {switchInstruction}
+        </desc>
+
+        {circuit.paths.map(path => (
+          <CircuitPath
+            key={path.id}
+            d={path.d}
+            stroke={wire}
+            strokeWidth={path.strokeWidth}
+          />
+        ))}
+
+        {circuit.currentPaths.map(path => (
+          <CircuitPath
+            key={path.id}
+            current
+            active={matchesCircuitCondition(path.activeWhen, switchStates)}
+            d={path.d}
+            stroke={physics.accent}
+            strokeWidth={path.strokeWidth}
+          />
+        ))}
+
+        {circuit.components.map(renderComponent)}
+
         <g aria-hidden="true" fontFamily="Sora, sans-serif">
-          <CircuitLabel x={22} y={90} fill={textSecondary}>Battery</CircuitLabel>
-          <CircuitLabel x={313} y={90} fill={textSecondary}>Bulb</CircuitLabel>
-          <CircuitLabel x={180} y={164} textAnchor="middle" fill={textSecondary}>
-            Switch
-          </CircuitLabel>
-          <CircuitLabel
-            x={180}
-            y={184}
-            textAnchor="middle"
-            fill={physics.accent}
-            fontWeight={600}
-          >
-            {isClosed ? 'Tap to open' : 'Tap to close'}
-          </CircuitLabel>
+          {circuit.labels.map(labelConfig => (
+            <CircuitLabel
+              key={labelConfig.id}
+              x={labelConfig.x}
+              y={labelConfig.y}
+              textAnchor={labelConfig.textAnchor}
+              fill={resolveTone(labelConfig.tone)}
+              fontSize={labelConfig.fontSize}
+              fontWeight={labelConfig.fontWeight}
+            >
+              {resolveCircuitLabelText(labelConfig, presentationState.id)}
+            </CircuitLabel>
+          ))}
         </g>
       </svg>
 
@@ -253,13 +300,13 @@ function CircuitDiagram({
       >
         <div
           style={{
-            color: isClosed ? bulbLight : textPrimary,
+            color: resolveTone(presentationState.headingTone),
             fontSize: 15,
             fontWeight: 700,
             lineHeight: 1.35,
           }}
         >
-          {stateHeading}
+          {presentationState.heading}
         </div>
         <div
           style={{
@@ -269,7 +316,7 @@ function CircuitDiagram({
             marginTop: 4,
           }}
         >
-          {stateExplanation}
+          {presentationState.explanation}
         </div>
       </div>
     </div>
