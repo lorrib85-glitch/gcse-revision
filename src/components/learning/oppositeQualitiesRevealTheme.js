@@ -38,6 +38,10 @@ export const OPPOSITE_REVEAL_ROLES = Object.freeze({
   labelShadow: '0 2px 16px rgba(0,0,0,0.88)',
   settledTextShadow: '0 2px 14px rgba(0,0,0,0.95)',
   captionShadow: '0 2px 14px rgba(0,0,0,0.96)',
+  dividerErase: 'linear-gradient(90deg, transparent 0%, rgba(5,4,6,0.92) 38%, rgba(5,4,6,0.92) 62%, transparent 100%)',
+  dividerLine: 'linear-gradient(180deg, rgba(240,230,200,0.26) 0%, rgba(240,230,200,0.10) 78%, transparent 100%)',
+  dividerDiamond: 'rgba(214,155,69,0.30)',
+  dividerDiamondFill: 'rgba(5,4,6,0.62)',
 })
 
 function resolvePair(pairId) {
@@ -75,10 +79,6 @@ export function resolveOppositeRevealVisuals(block = {}, subjectTheme = {}) {
       `radial-gradient(circle at 92% 30%, rgba(${rightRgb},0.22) 0%, transparent 48%)`,
       `radial-gradient(circle at 50% 48%, transparent 16%, ${OPPOSITE_REVEAL_ROLES.centreShade} 74%)`,
     ].join(', '),
-
-    // Screen mode already paints atmosphere across the whole ContentShell backdrop.
-    // The reveal stage itself must add no filled wash: even a soft gradient clipped
-    // to the stage reads as a translucent rectangular panel on mobile.
     stageOverlay: 'transparent',
     leftZoneIdle: 'transparent',
     leftZoneActive: 'transparent',
