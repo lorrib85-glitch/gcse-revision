@@ -75,15 +75,15 @@ export function resolveOppositeRevealVisuals(block = {}, subjectTheme = {}) {
       `radial-gradient(circle at 92% 30%, rgba(${rightRgb},0.22) 0%, transparent 48%)`,
       `radial-gradient(circle at 50% 48%, transparent 16%, ${OPPOSITE_REVEAL_ROLES.centreShade} 74%)`,
     ].join(', '),
-    stageOverlay: [
-      `radial-gradient(ellipse at 0% 38%, rgba(${leftRgb},0.10) 0%, transparent 58%)`,
-      `radial-gradient(ellipse at 100% 38%, rgba(${rightRgb},0.09) 0%, transparent 58%)`,
-      `linear-gradient(180deg, transparent 0%, rgba(5,4,6,0.16) 100%)`,
-    ].join(', '),
-    leftZoneIdle: `radial-gradient(ellipse at 0% 34%, rgba(${leftRgb},0.12) 0%, transparent 62%)`,
-    leftZoneActive: `radial-gradient(ellipse at 0% 34%, rgba(${leftRgb},0.30) 0%, transparent 64%)`,
-    rightZoneIdle: `radial-gradient(ellipse at 100% 34%, rgba(${rightRgb},0.11) 0%, transparent 62%)`,
-    rightZoneActive: `radial-gradient(ellipse at 100% 34%, rgba(${rightRgb},0.28) 0%, transparent 64%)`,
-    centreZone: `radial-gradient(ellipse at 50% 48%, rgba(5,4,6,0.20) 0%, transparent 58%)`,
+
+    // Screen mode already paints atmosphere across the whole ContentShell backdrop.
+    // The reveal stage itself must add no filled wash: even a soft gradient clipped
+    // to the stage reads as a translucent rectangular panel on mobile.
+    stageOverlay: 'transparent',
+    leftZoneIdle: 'transparent',
+    leftZoneActive: 'transparent',
+    rightZoneIdle: 'transparent',
+    rightZoneActive: 'transparent',
+    centreZone: 'transparent',
   }
 }
