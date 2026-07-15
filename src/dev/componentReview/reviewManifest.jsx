@@ -111,21 +111,10 @@ export const REVIEW_ENTRIES = [
   {
     id: 'circuit-diagram', name: 'CircuitDiagram', group: 'group1',
     status: 'unused', subject: 'Physics', renderMode: 'inline',
-    function: 'GCSE Physics series circuit (battery, wire loop, bulb, switch). A single `closed` prop toggles current flow and bulb glow.',
-    usage: 'Not routed in ModulePlayer and not referenced by any content — fully unused. Both states shown here for comparison.',
+    function: 'Interactive GCSE Physics series circuit. The learner taps the physical switch and the same responsive diagram changes state: switch, conducting path, bulb and explanation.',
+    usage: 'Not routed in ModulePlayer and not referenced by content yet. The review lab now shows one live circuit rather than duplicating open and closed states.',
     alternative: 'None — no other circuit component exists.',
-    render: () => (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div>
-          <div style={{ font: '600 12px Sora, sans-serif', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>Open switch</div>
-          <CircuitDiagram closed={false} />
-        </div>
-        <div>
-          <div style={{ font: '600 12px Sora, sans-serif', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>Closed switch</div>
-          <CircuitDiagram closed={true} />
-        </div>
-      </div>
-    ),
+    render: () => <CircuitDiagram />,
     fixture: null,
   },
 
@@ -224,7 +213,7 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Click-to-continue cinematic scene sequence with animated headlines.',
     usage: 'Used across History episodes (1, 2, 3, 14), type: visualLearning.',
-    alternative: 'CinematicRevealMoment; ConceptReveal; VisualNarrativeScreen.',
+    alternative: 'InteractiveCollectionExplorer; CinematicRevealMoment; ConceptReveal; VisualNarrativeScreen.',
     render: (fx, { onDone }) => <VisualLearning block={fx} subject="History" onComplete={onDone} />,
     fixture: FIX.visualLearning,
   },
