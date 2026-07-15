@@ -80,6 +80,8 @@ function splitTheoryOfOppositesScreen(screen) {
 // canonical source keeps the original authoring shape for audit history; runtime
 // composes it through TeachScreenShell so the title clears LearningHeader and the
 // normal governed navigation remains available after the reveal completes.
+// The reveal requests a screen backdrop, which is portalled into ContentShell;
+// Storybook and the Review Lab fall back to the contained stage backdrop.
 function composeOppositeQualitiesScreen(screen) {
   if (screen.type !== 'oppositeQualitiesReveal') return screen
 
@@ -116,6 +118,7 @@ function composeOppositeQualitiesScreen(screen) {
         copy,
         ...visualProps,
         backgroundImage,
+        backgroundMode: 'screen',
         visualPair,
         backgroundOpacity: isHotCold
           ? 1
