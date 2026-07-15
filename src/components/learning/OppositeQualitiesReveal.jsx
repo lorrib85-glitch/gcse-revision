@@ -47,41 +47,6 @@ function ensureStyles() {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .oqr-atmosphere {
-      position: absolute;
-      inset: 0;
-      opacity: 0.68;
-      transform: scale(1);
-      transition: opacity 420ms ease, transform 520ms ease, background 420ms ease;
-      pointer-events: none;
-    }
-    .oqr-atmosphere--left {
-      transform-origin: left center;
-      background: var(--oqr-zone-idle);
-    }
-    .oqr-atmosphere--right {
-      transform-origin: right center;
-      background: var(--oqr-zone-idle);
-    }
-    .oqr-atmosphere--centre {
-      opacity: 0.78;
-      background: var(--oqr-centre-zone);
-    }
-    .oqr-stage[data-active-side="left"] .oqr-atmosphere--left,
-    .oqr-stage[data-active-side="right"] .oqr-atmosphere--right {
-      opacity: 1;
-      transform: scale(1.025);
-      background: var(--oqr-zone-active);
-    }
-    .oqr-stage[data-active-side="left"] .oqr-atmosphere--right,
-    .oqr-stage[data-active-side="right"] .oqr-atmosphere--left {
-      opacity: 0.34;
-      transform: scale(0.99);
-    }
-    .oqr-stage[data-complete="true"] .oqr-atmosphere {
-      opacity: 0.54;
-      transform: scale(1);
-    }
     .oqr-concept-column {
       position: relative;
       z-index: 2;
@@ -90,7 +55,6 @@ function ensureStyles() {
     .oqr-concept-label {
       display: inline-flex;
       align-items: center;
-      gap: var(--oqr-label-gap);
       transition: transform 420ms ease, filter 420ms ease;
     }
     .oqr-stage[data-active-side="left"] .oqr-concept-column[data-opposite-side="left"],
@@ -126,6 +90,28 @@ function ensureStyles() {
       transform-origin: center;
       will-change: transform, opacity;
     }
+    .oqr-divider {
+      position: absolute;
+      z-index: 1;
+      top: var(--oqr-divider-start);
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      transform: translateX(-50%);
+      background: var(--oqr-divider-line);
+      pointer-events: none;
+    }
+    .oqr-divider::after {
+      content: '';
+      position: absolute;
+      top: 42%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      transform: translate(-50%, -50%) rotate(45deg);
+      border: 1px solid var(--oqr-divider-diamond);
+      background: var(--oqr-divider-diamond-fill);
+    }
     .oqr-accelerate-control:focus-visible {
       outline: 2px solid var(--oqr-focus);
       outline-offset: -4px;
@@ -133,7 +119,6 @@ function ensureStyles() {
     @media (prefers-reduced-motion: reduce) {
       .oqr-motion { animation: none !important; transition: none !important; }
       .oqr-active { display: none !important; }
-      .oqr-atmosphere,
       .oqr-concept-column,
       .oqr-concept-label { transition: none !important; }
     }
@@ -145,60 +130,6 @@ function prefersReducedMotion() {
   return typeof window !== 'undefined'
     && typeof window.matchMedia === 'function'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-}
-
-function normaliseIcon(icon) {
-  const aliases = {
-    '☀': 'heat',
-    '☀️': 'heat',
-    '❄': 'cold',
-    '❄️': 'cold',
-    '💧': 'wet',
-    '✦': 'dry',
-  }
-  return aliases[icon] || icon
-}
-
-function ConceptIcon({ icon }) {
-  const key = normaliseIcon(icon)
-  if (!key) return null
-
-  if (key === 'heat') {
-    return (
-      <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-        <circle cx="12" cy="12" r="3.6" />
-        <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1" />
-      </svg>
-    )
-  }
-
-  if (key === 'cold') {
-    return (
-      <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round">
-        <path d="M12 2.5v19M3.8 7.2l16.4 9.6M3.8 16.8l16.4-9.6M8.8 4.4L12 7.2l3.2-2.8M8.8 19.6L12 16.8l3.2 2.8M4.3 11.2l4.1-1.1-1-4.1M19.7 12.8l-4.1 1.1 1 4.1" />
-      </svg>
-    )
-  }
-
-  if (key === 'wet') {
-    return (
-      <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2.8S6.2 9.2 6.2 14.1A5.8 5.8 0 0 0 17.8 14c0-4.8-5.8-11.2-5.8-11.2Z" />
-        <path d="M9.1 15.1c.4 1.4 1.4 2.1 2.9 2.1" />
-      </svg>
-    )
-  }
-
-  if (key === 'dry') {
-    return (
-      <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 17.5h18M5 13.5h14M8.5 17.5l2-4 2 4 2-4 2 4" />
-        <path d="M7 6.5h10M9 3.5h6" />
-      </svg>
-    )
-  }
-
-  return <span aria-hidden="true">{icon}</span>
 }
 
 function ConceptColumn({
@@ -235,11 +166,8 @@ function ConceptColumn({
             ...TYPE.displayCard,
             color: accent,
             textShadow: labelShadow,
-            flexDirection: isRight ? 'row-reverse' : 'row',
-            '--oqr-label-gap': `${SPACING.micro}px`,
           }}
         >
-          <ConceptIcon icon={concept.icon} />
           <span>{concept.label}</span>
         </div>
       </div>
@@ -318,29 +246,16 @@ function BackdropImage({ block, visuals, fullScreen = false }) {
           background: fullScreen ? visuals.fullScreenOverlay : visuals.stageOverlay,
         }}
       />
-    </div>
-  )
-}
-
-function CinematicAtmosphere({ visuals }) {
-  return (
-    <div aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }}>
       <div
-        className="oqr-atmosphere oqr-atmosphere--left"
+        data-opposite-embedded-divider-mask="true"
         style={{
-          '--oqr-zone-idle': visuals.leftZoneIdle,
-          '--oqr-zone-active': visuals.leftZoneActive,
-        }}
-      />
-      <div
-        className="oqr-atmosphere oqr-atmosphere--centre"
-        style={{ '--oqr-centre-zone': visuals.centreZone }}
-      />
-      <div
-        className="oqr-atmosphere oqr-atmosphere--right"
-        style={{
-          '--oqr-zone-idle': visuals.rightZoneIdle,
-          '--oqr-zone-active': visuals.rightZoneActive,
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: '50%',
+          width: 24,
+          transform: 'translateX(-50%)',
+          background: visuals.dividerErase,
         }}
       />
     </div>
@@ -482,22 +397,14 @@ export default function OppositeQualitiesReveal({
           borderRadius: usesScreenBackdrop ? 0 : RADII.large,
           background: usesScreenBackdrop ? visuals.stageSurface : visuals.background,
           border: usesScreenBackdrop ? 'none' : `1px solid ${visuals.stageBorder}`,
+          '--oqr-divider-start': `${SPACING.standard + 42}px`,
+          '--oqr-divider-line': visuals.dividerLine,
+          '--oqr-divider-diamond': visuals.dividerDiamond,
+          '--oqr-divider-diamond-fill': visuals.dividerDiamondFill,
         }}
       >
         {!usesScreenBackdrop && <BackdropImage block={block} visuals={visuals} />}
-        {usesScreenBackdrop && (
-          <div
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              zIndex: 0,
-              background: visuals.stageOverlay,
-              pointerEvents: 'none',
-            }}
-          />
-        )}
-        <CinematicAtmosphere visuals={visuals} />
+        <div className="oqr-divider" aria-hidden="true" data-opposite-divider="true" />
 
         <div
           style={{
