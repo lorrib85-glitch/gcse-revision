@@ -197,6 +197,11 @@ function IndexView({ filtered, filter, onFilter, onOpen }) {
                     <StatusChip status={entry.status} />
                   </div>
                   <div style={{ fontSize: 12.5, lineHeight: 1.45, color: GENERAL.slate }}>{entry.function}</div>
+                  {entry.variants?.length > 1 && (
+                    <div style={{ fontSize: 11, color: (SUBJECTS[entry.subject] || SUBJECTS.History).accent, marginTop: 7 }}>
+                      {entry.variants.length} preview variants
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
@@ -210,12 +215,20 @@ function IndexView({ filtered, filter, onFilter, onOpen }) {
 // ─── Preview view ────────────────────────────────────────────────────────────
 function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQuestions, onBack, onPrev, onNext, onReset }) {
   const accent = (SUBJECTS[entry.subject] || SUBJECTS.History).accent
+  const variants = entry.variants ?? []
+  const [activeVariantId, setActiveVariantId] = useState(variants[0]?.id ?? null)
   const [renderError, setRenderError] = useState(null)
+  const activeVariant = variants.find(variant => variant.id === activeVariantId) ?? null
 
-  // Fresh error state per component / per replay.
-  useEffect(() => { setRenderError(null) }, [entry.id, previewKey])
+  // Fresh error state per component / variant / replay.
+  useEffect(() => { setRenderError(null) }, [entry.id, activeVariantId, previewKey])
 
   const onDone = () => {}  // previews never advance a real flow
+
+  function chooseVariant(id) {
+    setActiveVariantId(id)
+    setRenderError(null)
+  }
 
   return (
     <div style={{ maxWidth: 420, margin: '0 auto', paddingBottom: 0 }}>
@@ -260,6 +273,47 @@ function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQ
           )}
         </div>
 
+        {variants.length > 0 && (
+          <div style={{ marginTop: 12 }}>
+            <div style={{ ...mono, fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: GENERAL.slate, margin: '0 2px 7px' }}>
+              Preview variant
+            </div>
+            <div role="tablist" aria-label={`${entry.name} preview variants`} style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
+              {variants.map(variant => {
+                const selected = variant.id === activeVariantId
+                return (
+                  <button
+                    key={variant.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={selected}
+                    onClick={() => chooseVariant(variant.id)}
+                    style={{
+                      ...mono,
+                      fontSize: 11.5,
+                      fontWeight: 650,
+                      cursor: 'pointer',
+                      minHeight: 34,
+                      padding: '6px 10px',
+                      borderRadius: 8,
+                      border: `1px solid ${selected ? accent : GENERAL.line.strong}`,
+                      background: selected ? `${accent}1F` : GENERAL.backgroundSurface,
+                      color: selected ? accent : GENERAL.slate,
+                    }}
+                  >
+                    {variant.label}
+                  </button>
+                )
+              })}
+            </div>
+            {activeVariant?.description && (
+              <p style={{ ...mono, fontSize: 11.5, lineHeight: 1.45, color: GENERAL.slate, margin: '7px 2px 0' }}>
+                {activeVariant.description}
+              </p>
+            )}
+          </div>
+        )}
+
         <div style={{ ...mono, fontSize: 11, color: GENERAL.slate, margin: '10px 2px 8px', display: 'flex', gap: 12 }}>
           <span>Viewport: <b style={{ color: vw >= 360 && vw <= 430 ? GENERAL.teal : GENERAL.coral }}>{vw}px</b></span>
           <span>Target ~390px</span>
@@ -267,7 +321,15 @@ function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQ
       </div>
 
       {/* Live component preview */}
-      <PreviewFrame key={previewKey} entry={entry} onDone={onDone} onError={setRenderError} error={renderError} accent={accent} />
+      <PreviewFrame
+        key={`${previewKey}:${activeVariantId ?? 'default'}`}
+        entry={entry}
+        variant={activeVariant}
+        onDone={onDone}
+        onError={setRenderError}
+        error={renderError}
+        accent={accent}
+      />
     </div>
   )
 }
@@ -300,8 +362,14 @@ class RenderBoundary extends Component {
   }
 }
 
-function PreviewFrame({ entry, onDone, onError, accent }) {
-  const fullbleed = entry.renderMode === 'fullbleed'
+function PreviewFrame({ entry, variant, onDone, onError, accent }) {
+  const renderMode = variant?.renderMode ?? entry.renderMode
+  const render = variant?.render ?? entry.render
+  const fixture = Object.prototype.hasOwnProperty.call(variant ?? {}, 'fixture')
+    ? variant.fixture
+    : entry.fixture
+  const fullbleed = renderMode === 'fullbleed'
+  const resetKey = `${entry.id}:${variant?.id ?? 'default'}`
 
   // Full-bleed components render position:fixed inset:0 and own the whole
   // screen. We give them a bounded, relatively-positioned stage so they stay
@@ -315,8 +383,8 @@ function PreviewFrame({ entry, onDone, onError, accent }) {
       }}>
         {/* contain: position pins fixed descendants to this box, not the viewport */}
         <div style={{ position: 'absolute', inset: 0, contain: 'layout paint size', overflow: 'auto' }}>
-          <RenderBoundary onError={onError} resetKey={entry.id}>
-            {entry.render(entry.fixture, { onDone })}
+          <RenderBoundary onError={onError} resetKey={resetKey}>
+            {render(fixture, { onDone })}
           </RenderBoundary>
         </div>
       </div>
@@ -330,8 +398,8 @@ function PreviewFrame({ entry, onDone, onError, accent }) {
         background: GENERAL.backgroundSunken, border: `1px solid ${GENERAL.line.soft}`,
         borderTop: `2px solid ${accent}`, borderRadius: 12, padding: 14, overflowX: 'auto',
       }}>
-        <RenderBoundary onError={onError} resetKey={entry.id}>
-          {entry.render(entry.fixture, { onDone })}
+        <RenderBoundary onError={onError} resetKey={resetKey}>
+          {render(fixture, { onDone })}
         </RenderBoundary>
       </div>
     </div>
