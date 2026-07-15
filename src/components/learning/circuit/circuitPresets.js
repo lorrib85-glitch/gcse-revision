@@ -2,11 +2,13 @@
 //
 // This is intentionally a small state model, not an electrical simulator.
 // Presets describe what is drawn and which visual state is active for a known
-// switch arrangement. That is enough for GCSE teaching interactions without
-// introducing resistance, voltage or current-distribution calculations.
+// switch arrangement. Page-level teaching flows can place questions, predictions
+// or exam tasks around the diagram without putting those concerns in the renderer.
 
 export const SIMPLE_SERIES_CIRCUIT_ID = 'simpleSeries'
 export const TWO_SWITCH_SERIES_CIRCUIT_ID = 'twoSwitchSeries'
+export const PARALLEL_BRANCHES_CIRCUIT_ID = 'parallelBranches'
+export const MEASUREMENT_CIRCUIT_ID = 'measurementCircuit'
 
 export const DEFAULT_CIRCUIT_CANVAS = Object.freeze({
   minX: 0,
@@ -136,9 +138,9 @@ export const SIMPLE_SERIES_CIRCUIT = Object.freeze({
 })
 
 /**
- * Proof-of-flexibility preset: one series loop, two independently operated
- * switches and one bulb. The bulb and conducting path use the same all-closed
- * rule, proving that a second circuit can be authored entirely in data.
+ * One series loop with two independently operated switches. The bulb and
+ * conducting path share the same all-closed rule, so one remaining gap keeps the
+ * entire circuit off.
  */
 export const TWO_SWITCH_SERIES_CIRCUIT = Object.freeze({
   id: TWO_SWITCH_SERIES_CIRCUIT_ID,
@@ -152,19 +154,6 @@ export const TWO_SWITCH_SERIES_CIRCUIT = Object.freeze({
   maxWidth: 460,
   accessibilityLabel: 'Interactive series circuit with two switches',
   primarySwitchId: 'switch-a',
-
-  prediction: {
-    prompt: 'Switch A is already closed. What do you predict will happen when you close Switch B?',
-    options: [
-      { id: 'lamp-lights', label: 'The bulb will light' },
-      { id: 'lamp-stays-off', label: 'The bulb will stay off' },
-    ],
-    correctOptionId: 'lamp-lights',
-    testWhen: { allClosed: ['switch-a', 'switch-b'] },
-    testInstruction: 'Keep Switch A closed, then close Switch B to test it.',
-    correctFeedback: 'Closing Switch B removed the final gap, so the circuit became complete and the bulb lit.',
-    incorrectFeedback: 'Closing Switch B removed the final gap, so the circuit became complete and the bulb lit.',
-  },
 
   paths: [
     { id: 'wire-top', d: 'M72,38 H288' },
@@ -267,7 +256,6 @@ export const TWO_SWITCH_SERIES_CIRCUIT = Object.freeze({
       fontSize: 10,
       fontWeight: 600,
       forSwitchId: 'switch-a',
-      lockedText: 'Predict first',
       textByState: {
         bothClosed: 'Tap to open',
         switchAOpen: 'Tap to close',
@@ -292,7 +280,6 @@ export const TWO_SWITCH_SERIES_CIRCUIT = Object.freeze({
       fontSize: 10,
       fontWeight: 600,
       forSwitchId: 'switch-b',
-      lockedText: 'Predict first',
       textByState: {
         bothClosed: 'Tap to open',
         switchAOpen: 'Tap to open',
@@ -334,9 +321,402 @@ export const TWO_SWITCH_SERIES_CIRCUIT = Object.freeze({
   ],
 })
 
+/**
+ * Two independently switched parallel branches. Each branch can remain complete
+ * while the other is open, so lamps and current paths respond independently.
+ */
+export const PARALLEL_BRANCHES_CIRCUIT = Object.freeze({
+  id: PARALLEL_BRANCHES_CIRCUIT_ID,
+  canvas: Object.freeze({
+    minX: 0,
+    minY: 0,
+    width: 360,
+    height: 250,
+    safeInset: 16,
+  }),
+  maxWidth: 460,
+  accessibilityLabel: 'Interactive parallel circuit with two independently switched lamps',
+  primarySwitchId: 'switch-a',
+
+  paths: [
+    { id: 'wire-left-rail-upper', d: 'M50,50 V145' },
+    { id: 'wire-left-rail-lower', d: 'M50,179 V210' },
+    { id: 'wire-right-rail', d: 'M310,50 V210' },
+    { id: 'wire-return', d: 'M310,210 H50' },
+    { id: 'wire-branch-a-left', d: 'M50,50 H100' },
+    { id: 'wire-branch-a-middle', d: 'M150,50 H227' },
+    { id: 'wire-branch-a-right', d: 'M263,50 H310' },
+    { id: 'wire-branch-b-left', d: 'M50,120 H100' },
+    { id: 'wire-branch-b-middle', d: 'M150,120 H227' },
+    { id: 'wire-branch-b-right', d: 'M263,120 H310' },
+  ],
+
+  currentPaths: [
+    {
+      id: 'current-shared-rails',
+      d: 'M50,145 V50 M310,50 V210 H50 V179',
+      activeWhen: { anyClosed: ['switch-a', 'switch-b'] },
+      tone: 'conducting',
+      activeOpacity: 0.32,
+      pulse: false,
+    },
+    {
+      id: 'current-branch-a',
+      d: 'M50,50 H310',
+      activeWhen: { allClosed: ['switch-a'] },
+      tone: 'conducting',
+      activeOpacity: 0.38,
+      pulse: true,
+    },
+    {
+      id: 'current-branch-b',
+      d: 'M50,120 H310',
+      activeWhen: { allClosed: ['switch-b'] },
+      tone: 'conducting',
+      activeOpacity: 0.38,
+      pulse: true,
+    },
+  ],
+
+  components: [
+    {
+      id: 'battery-main',
+      type: 'battery',
+      x: 50,
+      y: 145,
+      strokeTone: 'textPrimary',
+    },
+    {
+      id: 'switch-a',
+      type: 'switch',
+      left: 100,
+      right: 150,
+      y: 50,
+      defaultClosed: true,
+      openAngle: -24,
+      strokeTone: 'structure',
+      activeTone: 'interaction',
+      accessibilityLabel: 'Switch A for Lamp A',
+    },
+    {
+      id: 'lamp-a',
+      type: 'lamp',
+      cx: 245,
+      cy: 50,
+      radius: 18,
+      strokeTone: 'structure',
+      activeTone: 'emittedLight',
+      fillTone: 'surface',
+      activeWhen: { allClosed: ['switch-a'] },
+    },
+    {
+      id: 'switch-b',
+      type: 'switch',
+      left: 100,
+      right: 150,
+      y: 120,
+      defaultClosed: false,
+      openAngle: -24,
+      strokeTone: 'structure',
+      activeTone: 'interaction',
+      accessibilityLabel: 'Switch B for Lamp B',
+    },
+    {
+      id: 'lamp-b',
+      type: 'lamp',
+      cx: 245,
+      cy: 120,
+      radius: 18,
+      strokeTone: 'structure',
+      activeTone: 'emittedLight',
+      fillTone: 'surface',
+      activeWhen: { allClosed: ['switch-b'] },
+    },
+    {
+      id: 'junction-a-left',
+      type: 'junction',
+      cx: 50,
+      cy: 50,
+      radius: 3.5,
+      strokeTone: 'structure',
+      activeTone: 'conducting',
+      activeWhen: { allClosed: ['switch-a'] },
+    },
+    {
+      id: 'junction-a-right',
+      type: 'junction',
+      cx: 310,
+      cy: 50,
+      radius: 3.5,
+      strokeTone: 'structure',
+      activeTone: 'conducting',
+      activeWhen: { allClosed: ['switch-a'] },
+    },
+    {
+      id: 'junction-b-left',
+      type: 'junction',
+      cx: 50,
+      cy: 120,
+      radius: 3.5,
+      strokeTone: 'structure',
+      activeTone: 'conducting',
+      activeWhen: { allClosed: ['switch-b'] },
+    },
+    {
+      id: 'junction-b-right',
+      type: 'junction',
+      cx: 310,
+      cy: 120,
+      radius: 3.5,
+      strokeTone: 'structure',
+      activeTone: 'conducting',
+      activeWhen: { allClosed: ['switch-b'] },
+    },
+  ],
+
+  labels: [
+    {
+      id: 'label-battery',
+      x: 24,
+      y: 168,
+      text: 'Battery',
+      textAnchor: 'middle',
+      tone: 'textSecondary',
+      fontSize: 10,
+    },
+    {
+      id: 'label-switch-a',
+      x: 125,
+      y: 78,
+      text: 'Switch A',
+      textAnchor: 'middle',
+      tone: 'textSecondary',
+    },
+    {
+      id: 'label-switch-a-action',
+      x: 125,
+      y: 94,
+      textAnchor: 'middle',
+      tone: 'interaction',
+      fontSize: 10,
+      fontWeight: 600,
+      forSwitchId: 'switch-a',
+      textByState: {
+        bothClosed: 'Tap to open',
+        onlyAClosed: 'Tap to open',
+        onlyBClosed: 'Tap to close',
+        bothOpen: 'Tap to close',
+      },
+    },
+    {
+      id: 'label-lamp-a',
+      x: 245,
+      y: 82,
+      text: 'Lamp A',
+      textAnchor: 'middle',
+      tone: 'textSecondary',
+    },
+    {
+      id: 'label-switch-b',
+      x: 125,
+      y: 148,
+      text: 'Switch B',
+      textAnchor: 'middle',
+      tone: 'textSecondary',
+    },
+    {
+      id: 'label-switch-b-action',
+      x: 125,
+      y: 164,
+      textAnchor: 'middle',
+      tone: 'interaction',
+      fontSize: 10,
+      fontWeight: 600,
+      forSwitchId: 'switch-b',
+      textByState: {
+        bothClosed: 'Tap to open',
+        onlyAClosed: 'Tap to close',
+        onlyBClosed: 'Tap to open',
+        bothOpen: 'Tap to close',
+      },
+    },
+    {
+      id: 'label-lamp-b',
+      x: 245,
+      y: 152,
+      text: 'Lamp B',
+      textAnchor: 'middle',
+      tone: 'textSecondary',
+    },
+  ],
+
+  presentationStates: [
+    {
+      id: 'bothClosed',
+      when: { allClosed: ['switch-a', 'switch-b'] },
+      heading: 'Both lamps are on.',
+      explanation: 'Both branches are complete, so current flows through Lamp A and Lamp B.',
+      headingTone: 'emittedLight',
+    },
+    {
+      id: 'onlyAClosed',
+      when: { allClosed: ['switch-a'], allOpen: ['switch-b'] },
+      heading: 'Lamp A is on. Lamp B is off.',
+      explanation: 'Branch A is complete. Branch B still has a gap, so only Lamp A lights.',
+      headingTone: 'emittedLight',
+    },
+    {
+      id: 'onlyBClosed',
+      when: { allOpen: ['switch-a'], allClosed: ['switch-b'] },
+      heading: 'Lamp A is off. Lamp B is on.',
+      explanation: 'Branch B is complete. Branch A still has a gap, so only Lamp B lights.',
+      headingTone: 'emittedLight',
+    },
+    {
+      id: 'bothOpen',
+      default: true,
+      heading: 'Both lamps are off.',
+      explanation: 'Each branch contains an open switch, so neither branch is complete.',
+      headingTone: 'textPrimary',
+    },
+  ],
+})
+
+/**
+ * Read-only placement diagram. The ammeter is in the main series loop and the
+ * voltmeter is connected across the resistor, matching GCSE exam conventions.
+ */
+export const MEASUREMENT_CIRCUIT = Object.freeze({
+  id: MEASUREMENT_CIRCUIT_ID,
+  canvas: Object.freeze({
+    minX: 0,
+    minY: 0,
+    width: 360,
+    height: 220,
+    safeInset: 16,
+  }),
+  maxWidth: 460,
+  accessibilityLabel: 'Circuit showing correct ammeter and voltmeter placement',
+  interactive: false,
+
+  paths: [
+    { id: 'wire-left-upper', d: 'M60,40 V75' },
+    { id: 'wire-left-lower', d: 'M60,109 V180' },
+    { id: 'wire-top-left', d: 'M60,40 H127' },
+    { id: 'wire-top-middle', d: 'M163,40 H224' },
+    { id: 'wire-top-right', d: 'M266,40 H300' },
+    { id: 'wire-right-and-return', d: 'M300,40 V180 H60' },
+    { id: 'wire-voltmeter-left', d: 'M216,40 V105 H227' },
+    { id: 'wire-voltmeter-right', d: 'M263,105 H274 V40' },
+  ],
+
+  currentPaths: [],
+
+  components: [
+    {
+      id: 'battery-main',
+      type: 'battery',
+      x: 60,
+      y: 75,
+      strokeTone: 'textPrimary',
+    },
+    {
+      id: 'ammeter-main',
+      type: 'ammeter',
+      cx: 145,
+      cy: 40,
+      radius: 18,
+      strokeTone: 'structure',
+      fillTone: 'surface',
+    },
+    {
+      id: 'resistor-main',
+      type: 'resistor',
+      cx: 245,
+      cy: 40,
+      width: 42,
+      height: 16,
+      strokeTone: 'structure',
+    },
+    {
+      id: 'voltmeter-main',
+      type: 'voltmeter',
+      cx: 245,
+      cy: 105,
+      radius: 18,
+      strokeTone: 'structure',
+      fillTone: 'surface',
+    },
+    {
+      id: 'junction-left',
+      type: 'junction',
+      cx: 216,
+      cy: 40,
+      radius: 3.5,
+      strokeTone: 'structure',
+    },
+    {
+      id: 'junction-right',
+      type: 'junction',
+      cx: 274,
+      cy: 40,
+      radius: 3.5,
+      strokeTone: 'structure',
+    },
+  ],
+
+  labels: [
+    {
+      id: 'label-battery',
+      x: 28,
+      y: 96,
+      text: 'Battery',
+      textAnchor: 'middle',
+      tone: 'textSecondary',
+      fontSize: 10,
+    },
+    {
+      id: 'label-ammeter',
+      x: 145,
+      y: 75,
+      text: 'Ammeter',
+      textAnchor: 'middle',
+      tone: 'textSecondary',
+    },
+    {
+      id: 'label-resistor',
+      x: 245,
+      y: 75,
+      text: 'Resistor',
+      textAnchor: 'middle',
+      tone: 'textSecondary',
+    },
+    {
+      id: 'label-voltmeter',
+      x: 245,
+      y: 140,
+      text: 'Voltmeter',
+      textAnchor: 'middle',
+      tone: 'textSecondary',
+    },
+  ],
+
+  presentationStates: [
+    {
+      id: 'placement',
+      default: true,
+      heading: 'Ammeter in series. Voltmeter in parallel.',
+      explanation: 'The ammeter sits in the main loop. The voltmeter is connected across the resistor.',
+      headingTone: 'textPrimary',
+    },
+  ],
+})
+
 export const CIRCUIT_PRESETS = Object.freeze({
   [SIMPLE_SERIES_CIRCUIT_ID]: SIMPLE_SERIES_CIRCUIT,
   [TWO_SWITCH_SERIES_CIRCUIT_ID]: TWO_SWITCH_SERIES_CIRCUIT,
+  [PARALLEL_BRANCHES_CIRCUIT_ID]: PARALLEL_BRANCHES_CIRCUIT,
+  [MEASUREMENT_CIRCUIT_ID]: MEASUREMENT_CIRCUIT,
 })
 
 function hasIds(ids) {
@@ -399,9 +779,8 @@ export function resolveCircuitCanvas(preset = {}) {
 }
 
 /**
- * Match a declarative condition against switch state.
- * Multiple clauses are ANDed, allowing future presets to describe series and
- * parallel outcomes without adding a full circuit-solving engine.
+ * Match a declarative condition against switch state. Multiple clauses are
+ * ANDed, allowing series and parallel outcomes without a full circuit solver.
  */
 export function matchesCircuitCondition(condition, switchStates = {}) {
   if (!condition) return false
@@ -457,27 +836,4 @@ export function getCircuitPresentationState(preset, switchStates = {}) {
 
 export function resolveCircuitLabelText(label, presentationStateId) {
   return label.textByState?.[presentationStateId] ?? label.text ?? ''
-}
-
-/**
- * Resolve the outcome only after the learner has committed to a prediction and
- * the configured test condition has actually been reached.
- */
-export function getCircuitPredictionResult(preset, selectedOptionId, switchStates = {}) {
-  const prediction = preset.prediction
-  if (!prediction || !selectedOptionId) return null
-  if (!matchesCircuitCondition(prediction.testWhen, switchStates)) return null
-
-  const selectedOption = prediction.options?.find(option => option.id === selectedOptionId)
-  if (!selectedOption) return null
-
-  const correct = selectedOptionId === prediction.correctOptionId
-  return {
-    optionId: selectedOptionId,
-    optionLabel: selectedOption.label,
-    correct,
-    feedback: correct
-      ? prediction.correctFeedback
-      : prediction.incorrectFeedback,
-  }
 }
