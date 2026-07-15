@@ -1,19 +1,23 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import {
   CircuitAmmeter,
   CircuitBattery,
   CircuitCell,
+  CircuitDiode,
+  CircuitFuse,
   CircuitJunction,
   CircuitLabel,
   CircuitLamp,
+  CircuitLdr,
+  CircuitLed,
   CircuitPath,
   CircuitResistor,
   CircuitSwitch,
+  CircuitThermistor,
+  CircuitVariableResistor,
   CircuitVoltmeter,
 } from './circuit/CircuitPrimitives.jsx'
-import CircuitPredictionPanel from './circuit/CircuitPredictionPanel.jsx'
 import {
-  getCircuitPredictionResult,
   getCircuitPresentationState,
   matchesCircuitCondition,
   resolveCircuitCanvas,
@@ -24,7 +28,7 @@ import { PHYSICS_CIRCUIT_VISUAL_ROLES } from './circuit/circuitVisualRoles.js'
 
 // ─── Motion / focus styles (injected once) ───────────────────────────────────
 // The sequence is intentional: the learner moves the switch first, then a calm
-// conducting path appears, then the bulb responds. A single travelling highlight
+// conducting path appears, then the lamp responds. A single travelling highlight
 // marks the change without implying that visible particles race around the wire.
 let stylesInjected = false
 function ensureStyles() {
@@ -121,22 +125,6 @@ function ensureStyles() {
       transition-delay: 260ms;
     }
 
-    .circuit-diagram__prediction-input {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      margin: -1px;
-      padding: 0;
-      opacity: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .circuit-diagram__prediction-option:focus-within {
-      outline: 2px solid var(--circuit-prediction-focus);
-      outline-offset: 3px;
-    }
-
     .circuit-diagram--reduced-motion .circuit-diagram__switch-arm,
     .circuit-diagram--reduced-motion .circuit-diagram__switch-focus,
     .circuit-diagram--reduced-motion .circuit-diagram__conduction,
@@ -172,38 +160,46 @@ function ensureStyles() {
         opacity: 1;
         stroke: Highlight;
       }
-
-      .circuit-diagram__prediction-option:focus-within {
-        outline-color: Highlight;
-      }
     }
   `
   document.head.appendChild(el)
 }
 
+function createInitialSwitchStates(circuit, primarySwitchId, defaultClosed) {
+  const switchComponents = (circuit.components ?? []).filter(
+    component => component.type === 'switch',
+  )
+  const initialStates = Object.fromEntries(
+    switchComponents.map(component => [component.id, component.defaultClosed === true]),
+  )
+
+  if (primarySwitchId && typeof defaultClosed === 'boolean') {
+    initialStates[primarySwitchId] = defaultClosed
+  }
+
+  return initialStates
+}
+
 /**
- * Configuration-driven interactive circuit diagram.
+ * Configuration-driven GCSE circuit diagram.
+ *
+ * The component owns diagram state and physical switch interaction only. Questions,
+ * predictions, exam tasks and feedback belong to the page that composes the diagram.
  *
  * `preset` may be a registered preset name or a compatible preset object.
- * `closed` and `defaultClosed` remain as the simple-series convenience API;
- * internally, state is stored by switch id so future presets can use more than
- * one independent switch without changing the renderer.
- *
- * Modes:
- * - explore: operate the circuit directly and observe the outcome.
- * - predictThenTest: commit to a prediction before the switch unlocks.
+ * `interactive={false}` turns any preset into a read-only teaching or exam diagram.
+ * `closed` and `defaultClosed` remain simple-series convenience props.
  */
 function CircuitDiagram({
   preset = 'simpleSeries',
-  mode = 'explore',
   closed,
   defaultClosed,
   onToggle,
-  onPrediction,
-  onComplete,
   disabled = false,
+  interactive,
   reducedMotion = false,
   label,
+  showStatus = true,
 }) {
   ensureStyles()
 
@@ -216,28 +212,18 @@ function CircuitDiagram({
   const components = circuit.components ?? []
   const switchComponents = components.filter(component => component.type === 'switch')
   const primarySwitchId = circuit.primarySwitchId ?? switchComponents[0]?.id
-  const prediction = mode === 'predictThenTest' ? circuit.prediction : null
-  const predictionCompletionNotified = useRef(false)
+  const circuitAllowsInteraction = interactive ?? circuit.interactive ?? true
+  const canInteract = circuitAllowsInteraction && !disabled
 
-  const [uncontrolledSwitchStates, setUncontrolledSwitchStates] = useState(() => {
-    const initialStates = Object.fromEntries(
-      switchComponents.map(component => [component.id, component.defaultClosed === true]),
-    )
-
-    if (primarySwitchId && typeof defaultClosed === 'boolean') {
-      initialStates[primarySwitchId] = defaultClosed
-    }
-
-    return initialStates
-  })
-  const [selectedPredictionId, setSelectedPredictionId] = useState(null)
-  const [hasTestInteraction, setHasTestInteraction] = useState(false)
+  const [uncontrolledSwitchStates, setUncontrolledSwitchStates] = useState(() => (
+    createInitialSwitchStates(circuit, primarySwitchId, defaultClosed)
+  ))
 
   useEffect(() => {
-    setSelectedPredictionId(null)
-    setHasTestInteraction(false)
-    predictionCompletionNotified.current = false
-  }, [circuit.id, mode])
+    setUncontrolledSwitchStates(
+      createInitialSwitchStates(circuit, primarySwitchId, defaultClosed),
+    )
+  }, [circuit, defaultClosed, primarySwitchId])
 
   const isPrimaryControlled = primarySwitchId && typeof closed === 'boolean'
   const switchStates = {
@@ -255,22 +241,6 @@ function CircuitDiagram({
     surface,
   } = visualRoles
   const presentationState = getCircuitPresentationState(circuit, switchStates)
-  const predictionResult = hasTestInteraction
-    ? getCircuitPredictionResult(circuit, selectedPredictionId, switchStates)
-    : null
-  const predictionRequired = Boolean(prediction && !selectedPredictionId)
-
-  useEffect(() => {
-    if (!predictionResult || predictionCompletionNotified.current) return
-
-    predictionCompletionNotified.current = true
-    onComplete?.({
-      mode: 'predictThenTest',
-      predictionId: predictionResult.optionId,
-      correct: predictionResult.correct,
-      switchStates: { ...switchStates },
-    })
-  }, [onComplete, predictionResult, switchStates])
 
   // Semantic names are the governed API. The short legacy aliases remain so
   // work-in-progress custom presets do not break while they migrate.
@@ -291,18 +261,8 @@ function CircuitDiagram({
 
   const resolveTone = tone => tones[tone] ?? tone ?? textSecondary
 
-  const selectPrediction = (optionId) => {
-    if (!prediction || selectedPredictionId) return
-    if (!prediction.options?.some(option => option.id === optionId)) return
-
-    setSelectedPredictionId(optionId)
-    setHasTestInteraction(false)
-    predictionCompletionNotified.current = false
-    onPrediction?.(optionId)
-  }
-
   const toggleSwitch = (switchId) => {
-    if (disabled || predictionRequired) return
+    if (!canInteract) return
 
     const nextClosed = !switchStates[switchId]
     const controlledPrimary = switchId === primarySwitchId && isPrimaryControlled
@@ -312,10 +272,6 @@ function CircuitDiagram({
         ...previous,
         [switchId]: nextClosed,
       }))
-    }
-
-    if (prediction && selectedPredictionId) {
-      setHasTestInteraction(true)
     }
 
     onToggle?.(nextClosed, switchId)
@@ -328,11 +284,11 @@ function CircuitDiagram({
     const componentFill = component.fillTone
       ? resolveTone(component.fillTone)
       : surface
+    let element = null
 
     if (component.type === 'cell') {
-      return (
+      element = (
         <CircuitCell
-          key={component.id}
           x={component.x}
           y={component.y}
           orientation={component.orientation}
@@ -341,14 +297,14 @@ function CircuitDiagram({
           showPolarity={component.showPolarity}
           longLength={component.longLength}
           shortLength={component.shortLength}
+          plateGap={component.plateGap}
         />
       )
     }
 
     if (component.type === 'battery') {
-      return (
+      element = (
         <CircuitBattery
-          key={component.id}
           x={component.x}
           y={component.y}
           orientation={component.orientation}
@@ -361,9 +317,8 @@ function CircuitDiagram({
     }
 
     if (component.type === 'lamp') {
-      return (
+      element = (
         <CircuitLamp
-          key={component.id}
           cx={component.cx}
           cy={component.cy}
           radius={component.radius}
@@ -378,9 +333,8 @@ function CircuitDiagram({
     }
 
     if (component.type === 'resistor') {
-      return (
+      element = (
         <CircuitResistor
-          key={component.id}
           cx={component.cx}
           cy={component.cy}
           orientation={component.orientation}
@@ -394,11 +348,74 @@ function CircuitDiagram({
       )
     }
 
+    if (component.type === 'fuse') {
+      element = (
+        <CircuitFuse
+          cx={component.cx}
+          cy={component.cy}
+          width={component.width}
+          height={component.height}
+          stroke={componentStroke}
+          activeStroke={activeStroke}
+          fill={component.fillTone ? componentFill : 'none'}
+          active={active}
+        />
+      )
+    }
+
+    if (component.type === 'variableResistor') {
+      element = (
+        <CircuitVariableResistor
+          cx={component.cx}
+          cy={component.cy}
+          width={component.width}
+          height={component.height}
+          stroke={componentStroke}
+          activeStroke={activeStroke}
+          fill={component.fillTone ? componentFill : 'none'}
+          active={active}
+        />
+      )
+    }
+
+    if (component.type === 'thermistor') {
+      element = (
+        <CircuitThermistor
+          cx={component.cx}
+          cy={component.cy}
+          width={component.width}
+          height={component.height}
+          stroke={componentStroke}
+          activeStroke={activeStroke}
+          fill={component.fillTone ? componentFill : 'none'}
+          active={active}
+        />
+      )
+    }
+
+    if (component.type === 'diode' || component.type === 'led' || component.type === 'ldr') {
+      const Symbol = component.type === 'diode'
+        ? CircuitDiode
+        : component.type === 'led'
+          ? CircuitLed
+          : CircuitLdr
+      element = (
+        <Symbol
+          cx={component.cx}
+          cy={component.cy}
+          radius={component.radius}
+          stroke={componentStroke}
+          activeStroke={activeStroke}
+          fill={component.fillTone ? componentFill : 'none'}
+          active={active}
+        />
+      )
+    }
+
     if (component.type === 'ammeter' || component.type === 'voltmeter') {
       const Meter = component.type === 'ammeter' ? CircuitAmmeter : CircuitVoltmeter
-      return (
+      element = (
         <Meter
-          key={component.id}
           cx={component.cx}
           cy={component.cy}
           radius={component.radius}
@@ -413,9 +430,8 @@ function CircuitDiagram({
     }
 
     if (component.type === 'junction') {
-      return (
+      element = (
         <CircuitJunction
-          key={component.id}
           cx={component.cx}
           cy={component.cy}
           radius={component.radius}
@@ -427,19 +443,19 @@ function CircuitDiagram({
     }
 
     if (component.type === 'switch') {
-      return (
+      element = (
         <CircuitSwitch
-          key={component.id}
           left={component.left}
           right={component.right}
           y={component.y}
           closed={switchStates[component.id] === true}
-          disabled={disabled || component.disabled || predictionRequired}
+          disabled={!canInteract || component.disabled}
           accent={component.activeTone ? activeStroke : interaction}
           wireStroke={componentStroke}
           inactiveStroke={textSecondary}
+          terminalFill={surface}
           label={component.accessibilityLabel ?? 'Circuit switch'}
-          describedBy={statusId}
+          describedBy={showStatus ? statusId : descriptionId}
           openAngle={component.openAngle}
           hitPaddingX={component.hitPaddingX}
           hitPaddingY={component.hitPaddingY}
@@ -450,20 +466,22 @@ function CircuitDiagram({
       )
     }
 
-    return null
+    if (!element) return null
+
+    return (
+      <g key={component.id} data-circuit-id={component.id}>
+        {element}
+      </g>
+    )
   }
 
   const switchInstruction = switchComponents.length === 0
     ? ''
-    : predictionRequired
-      ? 'Make a prediction before using the switch.'
-      : prediction && !predictionResult
-        ? prediction.testInstruction
-        : predictionResult
-          ? 'The circuit has been tested. You can keep using the switch to explore.'
-          : switchComponents.length === 1
-            ? 'Use the switch control to change the circuit.'
-            : 'Use the switch controls to explore the circuit.'
+    : canInteract
+      ? switchComponents.length === 1
+        ? 'Use the switch control to change the circuit.'
+        : 'Use the switch controls to explore the circuit.'
+      : 'This circuit is shown as a read-only diagram.'
   const accessibleDescription = [presentationState.explanation, switchInstruction]
     .filter(Boolean)
     .join(' ')
@@ -471,7 +489,8 @@ function CircuitDiagram({
   return (
     <div
       className={`circuit-diagram${reducedMotion ? ' circuit-diagram--reduced-motion' : ''}`}
-      data-circuit-mode={prediction ? 'predictThenTest' : 'explore'}
+      data-circuit-preset={circuit.id}
+      data-circuit-interactive={canInteract ? 'true' : 'false'}
       data-reduced-motion={reducedMotion || undefined}
       style={{
         width: '100%',
@@ -499,34 +518,40 @@ function CircuitDiagram({
         <desc id={descriptionId}>{accessibleDescription}</desc>
 
         {(circuit.paths ?? []).map(path => (
-          <CircuitPath
-            key={path.id}
-            d={path.d}
-            stroke={path.tone ? resolveTone(path.tone) : wire}
-            strokeWidth={path.strokeWidth}
-          />
+          <g key={path.id} data-circuit-id={path.id}>
+            <CircuitPath
+              d={path.d}
+              stroke={path.tone ? resolveTone(path.tone) : wire}
+              strokeWidth={path.strokeWidth}
+            />
+          </g>
         ))}
 
         {(circuit.currentPaths ?? []).map(path => (
-          <CircuitPath
-            key={path.id}
-            current
-            active={matchesCircuitCondition(path.activeWhen, switchStates)}
-            pulse={path.pulse !== false}
-            activeOpacity={path.activeOpacity}
-            d={path.d}
-            stroke={path.tone ? resolveTone(path.tone) : conducting}
-            strokeWidth={path.strokeWidth}
-          />
+          <g key={path.id} data-circuit-id={path.id}>
+            <CircuitPath
+              current
+              active={matchesCircuitCondition(path.activeWhen, switchStates)}
+              pulse={path.pulse !== false}
+              activeOpacity={path.activeOpacity}
+              d={path.d}
+              stroke={path.tone ? resolveTone(path.tone) : conducting}
+              strokeWidth={path.strokeWidth}
+            />
+          </g>
         ))}
 
         {components.map(renderComponent)}
 
         <g aria-hidden="true" fontFamily="Sora, sans-serif">
           {(circuit.labels ?? []).map(labelConfig => {
-            const lockedByPrediction = predictionRequired && labelConfig.forSwitchId
-            const labelText = lockedByPrediction
-              ? labelConfig.lockedText ?? 'Predict first'
+            const switchClosed = labelConfig.forSwitchId
+              ? switchStates[labelConfig.forSwitchId] === true
+              : false
+            const labelText = !canInteract && labelConfig.forSwitchId
+              ? switchClosed
+                ? labelConfig.readOnlyClosedText ?? 'Closed'
+                : labelConfig.readOnlyOpenText ?? 'Open'
               : resolveCircuitLabelText(labelConfig, presentationState.id)
 
             return (
@@ -546,48 +571,40 @@ function CircuitDiagram({
         </g>
       </svg>
 
-      {prediction && (
-        <CircuitPredictionPanel
-          prediction={prediction}
-          selectedOptionId={selectedPredictionId}
-          onSelect={selectPrediction}
-          result={predictionResult}
-          visualRoles={visualRoles}
-        />
+      {showStatus && (
+        <div
+          id={statusId}
+          aria-live={canInteract ? 'polite' : undefined}
+          aria-atomic="true"
+          style={{
+            minHeight: 66,
+            padding: '8px 18px 0',
+            textAlign: 'center',
+            fontFamily: 'Sora, sans-serif',
+          }}
+        >
+          <div
+            style={{
+              color: resolveTone(presentationState.headingTone),
+              fontSize: 15,
+              fontWeight: 700,
+              lineHeight: 1.35,
+            }}
+          >
+            {presentationState.heading}
+          </div>
+          <div
+            style={{
+              color: textSecondary,
+              fontSize: 13,
+              lineHeight: 1.55,
+              marginTop: 4,
+            }}
+          >
+            {presentationState.explanation}
+          </div>
+        </div>
       )}
-
-      <div
-        id={statusId}
-        aria-live="polite"
-        aria-atomic="true"
-        style={{
-          minHeight: 66,
-          padding: '8px 18px 0',
-          textAlign: 'center',
-          fontFamily: 'Sora, sans-serif',
-        }}
-      >
-        <div
-          style={{
-            color: resolveTone(presentationState.headingTone),
-            fontSize: 15,
-            fontWeight: 700,
-            lineHeight: 1.35,
-          }}
-        >
-          {presentationState.heading}
-        </div>
-        <div
-          style={{
-            color: textSecondary,
-            fontSize: 13,
-            lineHeight: 1.55,
-            marginTop: 4,
-          }}
-        >
-          {presentationState.explanation}
-        </div>
-      </div>
     </div>
   )
 }
