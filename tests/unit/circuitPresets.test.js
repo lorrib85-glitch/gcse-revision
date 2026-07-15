@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   DEFAULT_CIRCUIT_CANVAS,
   SIMPLE_SERIES_CIRCUIT,
+  getCircuitPredictionResult,
   getCircuitPresentationState,
   matchesCircuitCondition,
   resolveCircuitCanvas,
@@ -126,5 +127,47 @@ describe('CircuitDiagram presets', () => {
 
     expect(resolveCircuitLabelText(actionLabel, 'open')).toBe('Tap to close')
     expect(resolveCircuitLabelText(actionLabel, 'closed')).toBe('Tap to open')
+    expect(actionLabel.lockedText).toBe('Predict first')
+  })
+
+  it('defines an accessible prediction before the circuit test', () => {
+    const prediction = SIMPLE_SERIES_CIRCUIT.prediction
+    const circuitSwitch = SIMPLE_SERIES_CIRCUIT.components.find(
+      component => component.type === 'switch',
+    )
+
+    expect(prediction.prompt).toContain('predict')
+    expect(prediction.options).toHaveLength(2)
+    expect(prediction.correctOptionId).toBe('lamp-lights')
+    expect(prediction.testWhen).toEqual({ allClosed: ['switch-main'] })
+    expect(circuitSwitch.accessibilityLabel).toBe('Main circuit switch')
+  })
+
+  it('does not reveal a prediction result before the configured test condition', () => {
+    expect(getCircuitPredictionResult(
+      SIMPLE_SERIES_CIRCUIT,
+      'lamp-lights',
+      { 'switch-main': false },
+    )).toBeNull()
+  })
+
+  it('marks the prediction only after the learner closes the switch', () => {
+    expect(getCircuitPredictionResult(
+      SIMPLE_SERIES_CIRCUIT,
+      'lamp-lights',
+      { 'switch-main': true },
+    )).toMatchObject({
+      optionId: 'lamp-lights',
+      correct: true,
+    })
+
+    expect(getCircuitPredictionResult(
+      SIMPLE_SERIES_CIRCUIT,
+      'lamp-stays-off',
+      { 'switch-main': true },
+    )).toMatchObject({
+      optionId: 'lamp-stays-off',
+      correct: false,
+    })
   })
 })
