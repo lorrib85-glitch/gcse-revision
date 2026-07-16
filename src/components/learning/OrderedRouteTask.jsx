@@ -368,13 +368,12 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                       <div
                         style={{
                           marginTop: SPACING.micro,
-                          padding: `${SPACING.micro / 2}px ${SPACING.micro}px`,
-                          borderRadius: RADII.small,
-                          background: `rgba(${rgb},0.12)`,
-                          border: `1px solid rgba(${rgb},0.40)`,
+                          marginLeft: SPACING.standard,
+                          paddingTop: SPACING.micro,
+                          borderTop: `1px solid rgba(${rgb},0.22)`,
                           display: 'flex',
                           gap: SPACING.micro,
-                          alignItems: 'baseline',
+                          alignItems: 'flex-start',
                           ...TYPE.caption,
                           color: TEXT_PRIMARY,
                         }}
