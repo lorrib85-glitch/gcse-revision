@@ -1,3 +1,4 @@
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import OrderedRouteTask from './OrderedRouteTask'
 
 export default {
@@ -35,7 +36,84 @@ const SCREEN = {
   ],
 }
 
+function getCurrentAnswer(canvasElement) {
+  const liveRegion = canvasElement.querySelector('[aria-live="polite"]')
+  return SCREEN.answers.find(answer => liveRegion?.textContent?.includes(answer.text))
+}
+
+function getStageButton(canvasElement, stage) {
+  return [...canvasElement.querySelectorAll('button.ort-stage')].find(button =>
+    button.getAttribute('aria-label')?.includes(stage.title),
+  )
+}
+
+async function placeCurrentAnswer(canvasElement) {
+  const currentAnswer = getCurrentAnswer(canvasElement)
+  expect(currentAnswer).toBeDefined()
+
+  const targetStage = SCREEN.stages.find(stage => stage.answerId === currentAnswer.id)
+  const targetButton = getStageButton(canvasElement, targetStage)
+  expect(targetButton).toBeDefined()
+
+  await userEvent.click(targetButton)
+  await waitFor(() => {
+    expect(getCurrentAnswer(canvasElement)?.id).not.toBe(currentAnswer.id)
+  })
+}
+
 export const Default = {
   name: 'Evacuation chain route',
   args: { screen: SCREEN, subject: 'History', onComplete: () => {} },
+}
+
+export const InteractionAndMobileCompletion = {
+  name: 'Interaction and mobile completion QA',
+  args: { screen: SCREEN, subject: 'History', onComplete: fn() },
+  play: async ({ canvasElement, args }) => {
+    args.onComplete.mockClear?.()
+    const canvas = within(canvasElement)
+    const heading = canvas.getByRole('heading', { name: 'Rebuild the evacuation chain' })
+    const scrollRegion = heading.parentElement
+
+    expect(scrollRegion).not.toBeNull()
+    expect(scrollRegion.scrollWidth).toBeLessThanOrEqual(scrollRegion.clientWidth)
+    await expect(canvas.getByText('0/5 placed')).toBeVisible()
+    expect(canvas.queryByRole('button', { name: 'Continue' })).toBeNull()
+
+    const firstAnswer = getCurrentAnswer(canvasElement)
+    const correctStage = SCREEN.stages.find(stage => stage.answerId === firstAnswer.id)
+    const wrongStage = SCREEN.stages.find(stage => stage.id !== correctStage.id)
+    const wrongButton = getStageButton(canvasElement, wrongStage)
+
+    wrongButton.focus()
+    await userEvent.keyboard('{Enter}')
+    await expect(canvas.getByText(/^Not here —/)).toBeVisible()
+    await expect(canvas.getByText('0/5 placed')).toBeVisible()
+
+    await userEvent.click(getStageButton(canvasElement, correctStage))
+    await waitFor(() => expect(canvas.getByText('1/5 placed')).toBeVisible())
+
+    for (let placed = 1; placed < SCREEN.answers.length; placed += 1) {
+      await placeCurrentAnswer(canvasElement)
+    }
+
+    await expect(canvas.getByText('Chain rebuilt')).toBeVisible()
+    await expect(canvas.getByText('Five stages, each one further from the fighting.')).toBeVisible()
+    await expect(canvas.getByText(/Exam takeaway:/)).toBeVisible()
+
+    const continueButton = canvas.getByRole('button', { name: 'Continue' })
+    const finalStageButton = getStageButton(canvasElement, SCREEN.stages.at(-1))
+
+    await waitFor(() => {
+      const continueRect = continueButton.getBoundingClientRect()
+      expect(continueRect.top).toBeGreaterThanOrEqual(0)
+      expect(continueRect.bottom).toBeLessThanOrEqual(window.innerHeight + 1)
+    }, { timeout: 3000 })
+
+    expect(finalStageButton.getBoundingClientRect().bottom)
+      .toBeLessThanOrEqual(continueButton.getBoundingClientRect().top + 1)
+
+    await userEvent.click(continueButton)
+    await expect(args.onComplete).toHaveBeenCalledTimes(1)
+  },
 }
