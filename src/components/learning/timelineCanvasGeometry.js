@@ -42,3 +42,56 @@ export function getTimelineCanvasGeometry({
     canvasWidth: edgePadding * 2 + Math.max(stepCount - 1, 0) * stepGap,
   }
 }
+
+export function getNearestTimelineIndex({ centers = [], focusX = 0 } = {}) {
+  if (!centers.length) return 0
+
+  return centers.reduce((nearestIndex, center, index) => (
+    Math.abs(center.x - focusX) < Math.abs(centers[nearestIndex].x - focusX)
+      ? index
+      : nearestIndex
+  ), 0)
+}
+
+export function getTimelineScrollLeft({
+  centerX = 0,
+  viewportWidth = 390,
+  canvasWidth = 390,
+} = {}) {
+  const maximumScroll = Math.max(0, canvasWidth - viewportWidth)
+  return clamp(centerX - viewportWidth / 2, 0, maximumScroll)
+}
+
+/**
+ * When a detail sheet is open, preserve the journey geometry but shift the whole
+ * route vertically so the selected card remains fully visible above the sheet.
+ */
+export function getTimelineDetailLayout({ geometry, openIndex = null } = {}) {
+  if (!geometry || openIndex === null || !geometry.centers[openIndex]) {
+    return {
+      sheetHeight: 0,
+      verticalOffset: 0,
+      centers: geometry?.centers ?? [],
+    }
+  }
+
+  const maximumSheetHeight = Math.max(72, geometry.canvasHeight - geometry.cardHeight - 24)
+  const desiredSheetHeight = clamp(geometry.canvasHeight * 0.38, 136, 220)
+  const sheetHeight = Math.round(Math.min(desiredSheetHeight, maximumSheetHeight))
+  const visibleJourneyHeight = geometry.canvasHeight - sheetHeight
+  const minimumCenter = geometry.cardHeight / 2 + 12
+  const maximumCenter = visibleJourneyHeight - geometry.cardHeight / 2 - 12
+  const selectedCenterY = maximumCenter >= minimumCenter
+    ? clamp(visibleJourneyHeight / 2, minimumCenter, maximumCenter)
+    : Math.max(geometry.cardHeight / 2, visibleJourneyHeight / 2)
+  const verticalOffset = Math.round(selectedCenterY - geometry.centers[openIndex].y)
+
+  return {
+    sheetHeight,
+    verticalOffset,
+    centers: geometry.centers.map(center => ({
+      ...center,
+      y: center.y + verticalOffset,
+    })),
+  }
+}
