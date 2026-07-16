@@ -63,17 +63,19 @@ describe('TimelineCanvas responsive geometry', () => {
     expect(getNearestTimelineIndex({ centers: geometry.centers, focusX: betweenSecondAndThird + 1 })).toBe(2)
   })
 
-  it('makes the centred card dominant while keeping adjacent cards readable', () => {
-    const centred = getTimelineCardFocus({ centerX: 300, focusX: 300, stepGap: 300 })
-    const halfWay = getTimelineCardFocus({ centerX: 300, focusX: 450, stepGap: 300 })
-    const adjacent = getTimelineCardFocus({ centerX: 300, focusX: 600, stepGap: 300 })
+  it('grows each opaque waypoint as the active route reaches it', () => {
+    const joined = getTimelineCardFocus({ centerX: 300, focusX: 300, stepGap: 300 })
+    const approaching = getTimelineCardFocus({ centerX: 300, focusX: 450, stepGap: 300 })
+    const waiting = getTimelineCardFocus({ centerX: 300, focusX: 600, stepGap: 300 })
 
-    expect(centred).toEqual({ focus: 1, scale: 1, opacity: 1, brightness: 1 })
-    expect(halfWay.scale).toBeCloseTo(0.92, 2)
-    expect(halfWay.opacity).toBeCloseTo(0.75, 2)
-    expect(adjacent.scale).toBeCloseTo(0.84, 2)
-    expect(adjacent.opacity).toBeCloseTo(0.5, 2)
-    expect(adjacent.brightness).toBeCloseTo(0.74, 2)
+    expect(joined).toEqual({ focus: 1, routeArrival: 1, scale: 1, brightness: 1 })
+    expect(approaching.scale).toBeGreaterThan(waiting.scale)
+    expect(approaching.scale).toBeLessThan(joined.scale)
+    expect(approaching.routeArrival).toBeGreaterThan(0)
+    expect(approaching.routeArrival).toBeLessThan(1)
+    expect(waiting.scale).toBeCloseTo(0.66, 2)
+    expect(waiting.brightness).toBeCloseTo(0.58, 2)
+    expect(waiting).not.toHaveProperty('opacity')
   })
 
   it('removes zoom and dimming for reduced-motion learners', () => {
@@ -82,7 +84,7 @@ describe('TimelineCanvas responsive geometry', () => {
       focusX: 900,
       stepGap: 300,
       reducedMotion: true,
-    })).toEqual({ focus: 1, scale: 1, opacity: 1, brightness: 1 })
+    })).toEqual({ focus: 1, routeArrival: 1, scale: 1, brightness: 1 })
   })
 
   it('shifts the selected card fully above the anchored detail sheet', () => {
