@@ -52,14 +52,20 @@ export const BlackDeathJourney = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const firstGroup = canvasElement.querySelector('[data-timeline-card-group="0"]')
+    const basePaths = canvasElement.querySelectorAll('[data-connector-layer="base"]')
+    const activePaths = canvasElement.querySelectorAll('[data-connector-layer="active"]')
     const reveal = canvas.getByRole('button', {
       name: 'Reveal why It began in central Asia mattered',
     })
 
     await expect(firstGroup).toHaveAttribute('data-focused', 'true')
+    await expect(firstGroup).toHaveAttribute('data-route-arrival', 'joined')
     await expect(reveal).toHaveAttribute('data-control-position', 'card-top-left')
     await expect(reveal).toHaveAttribute('data-control-symbol', 'reveal')
     expect(Number.parseFloat(firstGroup?.style.getPropertyValue('--tcv-focus-scale') || '0')).toBeCloseTo(1, 2)
+    expect(firstGroup?.style.getPropertyValue('--tcv-focus-opacity')).toBe('')
+    expect(basePaths).toHaveLength(3)
+    expect(activePaths).toHaveLength(3)
 
     await userEvent.click(reveal)
 
