@@ -19,6 +19,32 @@ describe('TimelineCanvas architecture', () => {
     expect(component).not.toContain('const STEP_GAP =')
   })
 
+  it('anchors the explanation to the visible viewport instead of shrinking the journey', () => {
+    expect(component).toContain('data-timeline-detail-sheet="anchored"')
+    expect(component).toContain("position: 'absolute'")
+    expect(component).toContain('height: detailLayout.sheetHeight')
+    expect(component).toContain('getTimelineDetailLayout')
+    expect(component).not.toContain('flexShrink: 0,\n          margin: `${SPACING.compact}px ${SPACING.standard}px 0`')
+  })
+
+  it('centres selected cards and tracks the card physically centred in the viewport', () => {
+    expect(component).toContain('getTimelineScrollLeft')
+    expect(component).toContain('getNearestTimelineIndex')
+    expect(component).toContain('current={currentIndex}')
+    expect(component).toContain("scrollSnapType: 'x mandatory'")
+    expect(component).toContain("scrollSnapAlign: 'center'")
+    expect(component).toContain("scrollSnapStop: 'always'")
+    expect(component).not.toContain('currentProgressIndex')
+  })
+
+  it('keeps the selected close control in the card top-right corner', () => {
+    expect(component).toContain("data-control-position={isOpen ? 'card-top-right' : 'card-bottom-right'}")
+    expect(component).toContain('center.x + cardWidth / 2 - 22')
+    expect(component).toContain('center.y - cardHeight / 2 + 22')
+    expect(component).toContain('Close explanation for ${step.label}')
+    expect(component).not.toContain('justifyContent: \'space-between\'')
+  })
+
   it('reviews the production-quality Black Death route with real imagery', () => {
     for (const source of [fixtures, story]) {
       expect(source).toContain("title: 'How the plague travelled'")
