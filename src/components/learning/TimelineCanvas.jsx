@@ -50,19 +50,20 @@ function ensureStyles() {
     .tcv-scroller::-webkit-scrollbar { display: none; }
     .tcv-card-group {
       transform: translate(-50%, -50%) scale(var(--tcv-focus-scale, 1));
-      opacity: var(--tcv-focus-opacity, 1);
       filter: brightness(var(--tcv-focus-brightness, 1));
       transition:
         top ${MOTION.duration.standard} ${MOTION.easing.standard},
         transform ${MOTION.duration.instant} linear,
-        opacity ${MOTION.duration.instant} linear,
         filter ${MOTION.duration.instant} linear;
-      will-change: transform, opacity, filter;
+      will-change: transform, filter;
     }
     .tcv-card {
       transition:
         border-color ${MOTION.duration.fast} ${MOTION.easing.standard},
         box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard};
+    }
+    .tcv-connector-active {
+      filter: var(--tcv-connector-glow);
     }
     .tcv-plus-btn {
       transform: translate(-35%, -35%) scale(var(--tcv-control-scale, 1));
@@ -232,8 +233,9 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
     }
   })
 
-  // Scroll position controls connector drawing, current progress and cinematic card focus.
-  // DOM styles are updated in one animation frame rather than re-rendering on every pixel.
+  // The active route and card growth use the same focus point. As the glowing
+  // connector reaches a waypoint, that opaque card grows to full size and clarity.
+  // DOM styles are updated in one animation frame rather than re-rendering per pixel.
   useLayoutEffect(() => {
     const scroller = scrollerRef.current
     if (!scroller) return undefined
@@ -267,10 +269,14 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
         const card = cardRefs.current[index]
         if (group) {
           group.style.setProperty('--tcv-focus-scale', focusState.scale.toFixed(3))
-          group.style.setProperty('--tcv-focus-opacity', focusState.opacity.toFixed(3))
           group.style.setProperty('--tcv-focus-brightness', focusState.brightness.toFixed(3))
           group.style.zIndex = openIndex === index ? '7' : `${3 + Math.round(focusState.focus * 2)}`
-          group.dataset.focused = focusState.focus > 0.72 ? 'true' : 'false'
+          group.dataset.focused = focusState.focus > 0.92 ? 'true' : 'false'
+          group.dataset.routeArrival = focusState.routeArrival > 0.92
+            ? 'joined'
+            : focusState.routeArrival > 0.18
+              ? 'approaching'
+              : 'waiting'
         }
         if (card) {
           card.style.borderColor = openIndex === index
@@ -303,8 +309,8 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
             reducedMotion: prefersReducedMotion,
           })
           const visible = prefersReducedMotion || progress > 0.5
-          dot.style.opacity = visible ? `${0.62 + dotFocus.focus * 0.38}` : '0'
-          dot.style.transform = `translate(-50%,-50%) scale(${visible ? 0.78 + dotFocus.focus * 0.22 : 0.4})`
+          dot.style.opacity = visible ? `${0.72 + dotFocus.focus * 0.28}` : '0'
+          dot.style.transform = `translate(-50%,-50%) scale(${visible ? 0.82 + dotFocus.focus * 0.28 : 0.4})`
         }
       })
 
@@ -460,18 +466,42 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
               width={canvasW}
               height={canvasH}
               viewBox={`0 0 ${canvasW} ${canvasH}`}
-              style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 0,
+                overflow: 'visible',
+                pointerEvents: 'none',
+              }}
             >
               {segments.map((segment, index) => (
                 <path
-                  key={index}
-                  ref={element => { pathRefs.current[index] = element }}
+                  key={`base-${index}`}
+                  data-connector-layer="base"
                   d={segment.d}
                   stroke={visual.connectorInactive}
-                  strokeWidth={3}
+                  strokeWidth={visual.connectorBaseWidth}
                   fill="none"
                   strokeLinecap="round"
-                  style={{ strokeDasharray: 600, strokeDashoffset: prefersReducedMotion ? 0 : 600 }}
+                />
+              ))}
+              {segments.map((segment, index) => (
+                <path
+                  key={`active-${index}`}
+                  ref={element => { pathRefs.current[index] = element }}
+                  className="tcv-connector-active"
+                  data-connector-layer="active"
+                  d={segment.d}
+                  stroke={visual.connectorActive}
+                  strokeWidth={visual.connectorActiveWidth}
+                  fill="none"
+                  strokeLinecap="round"
+                  style={{
+                    strokeDasharray: 600,
+                    strokeDashoffset: prefersReducedMotion ? 0 : 600,
+                    '--tcv-connector-glow': visual.connectorGlow,
+                  }}
                 />
               ))}
             </svg>
@@ -493,7 +523,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                   background: visual.nodeActive,
                   border: `6px solid ${visual.nodeRing}`,
                   boxShadow: visual.nodeShadow,
-                  zIndex: 2,
+                  zIndex: 1,
                 }}
               />
             ))}
@@ -512,15 +542,15 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                   data-timeline-card-group={index}
                   data-selected={isOpen ? 'true' : 'false'}
                   data-reduced-motion={prefersReducedMotion ? 'true' : 'false'}
+                  data-route-arrival={prefersReducedMotion || index === currentIndex ? 'joined' : 'waiting'}
                   style={{
                     position: 'absolute',
                     left: center.x,
                     top: center.y,
                     width: cardWidth,
                     height: cardHeight,
-                    '--tcv-focus-scale': prefersReducedMotion || index === currentIndex ? 1 : 0.84,
-                    '--tcv-focus-opacity': prefersReducedMotion || index === currentIndex ? 1 : 0.5,
-                    '--tcv-focus-brightness': prefersReducedMotion || index === currentIndex ? 1 : 0.74,
+                    '--tcv-focus-scale': prefersReducedMotion || index === currentIndex ? 1 : 0.66,
+                    '--tcv-focus-brightness': prefersReducedMotion || index === currentIndex ? 1 : 0.58,
                     zIndex: isOpen ? 7 : index === currentIndex ? 5 : 3,
                     scrollSnapAlign: 'center',
                     scrollSnapStop: 'always',
@@ -538,6 +568,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                       background: visual.cardSurface,
                       boxShadow: isOpen ? visual.cardShadowSelected : visual.cardShadow,
                       overflow: 'hidden',
+                      isolation: 'isolate',
                     }}
                   >
                     <div style={{
