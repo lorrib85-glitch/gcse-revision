@@ -54,10 +54,11 @@ export function getNearestTimelineIndex({ centers = [], focusX = 0 } = {}) {
 }
 
 /**
- * Route arrival and card focus share the same distance model. A card begins as a
- * small, opaque waypoint, then grows to full size exactly as the active route
- * reaches its centre. The smoothstep curve keeps the approach calm rather than
- * making the card pop abruptly.
+ * Card scale is controlled only by distance from the viewport centre. Because
+ * TimelineCanvas step spacing is about 78% of the viewport width, 64% of one
+ * step gap is approximately half a viewport: the card is smallest at the screen
+ * edge, grows continuously on approach, peaks at dead centre, then shrinks as it
+ * leaves. The connector is a separate supporting effect and does not drive zoom.
  */
 export function getTimelineCardFocus({
   centerX = 0,
@@ -74,15 +75,16 @@ export function getTimelineCardFocus({
     }
   }
 
-  const distance = Math.abs(centerX - focusX)
-  const rawFocus = 1 - clamp(distance / Math.max(stepGap * 0.82, 1), 0, 1)
+  const distanceFromViewportCentre = Math.abs(centerX - focusX)
+  const visibleFocusRadius = Math.max(stepGap * 0.64, 1)
+  const rawFocus = 1 - clamp(distanceFromViewportCentre / visibleFocusRadius, 0, 1)
   const focus = rawFocus * rawFocus * (3 - 2 * rawFocus)
 
   return {
     focus,
     routeArrival: focus,
-    scale: 0.66 + focus * 0.34,
-    brightness: 0.58 + focus * 0.42,
+    scale: 0.68 + focus * 0.42,
+    brightness: 0.62 + focus * 0.38,
   }
 }
 
