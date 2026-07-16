@@ -330,20 +330,20 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 **File:** `src/components/learning/OrderedRouteTask.jsx`
 **Screen type:** `orderedRouteTask`
-**What it is:** Ordered chain activity — learner taps a job card then taps the stage slot it belongs to. Amber vertical route line connects numbered nodes on the left; dark military field-tag cards sit to the right. Checks all slots at once; correct slots glow amber, wrong slots dim and can be retried.
+**What it is:** Ordered chain activity — one job card is shown at a time beneath the heading; the learner taps the stage on the numbered vertical route it belongs to. Correct taps lock the job beneath that stage immediately; wrong taps show a persistent clue-based hint ("Not here — look for the stage near railways.") and allow another tap. Route line, nodes and surfaces derive from the supplied subject's accent.
 **Best used for:** Recalling the steps or stages of a process in order — evacuation chains, scientific processes, historical sequences.
 **Props:** `screen`, `subject`, `onComplete`
 **Screen data shape:**
 ```js
 {
   type: 'orderedRouteTask',
-  title, subtitle, backgroundImage,
-  stages: [{ id, icon, title, clue, answerId }],  // icon: 'helmet'|'cross'|'hut'|'train'
+  title, titleHighlight?, subtitle?, prompt?, weakGroup?, completionText?, backgroundImage?,
+  stages: [{ id, icon, title, clue, answerId }],  // icon: 'helmet'|'cross'|'hut'|'train'|'ship'
   answers: [{ id, text }],
 }
 ```
-**Interaction:** tap pool card to select → tap stage slot to place; tap filled slot (no selection) to unplace; tapping filled slot while selected swaps them. Pool cards ghost at 38% opacity when placed.
-**Dependencies:** `MOTION`, `CinematicShell`, `ContinueCTA`, `unifiedWeaknessTracker`
+**Interaction:** jobs are shuffled and presented one at a time; tap a stage row (a real button, keyboard-focusable) to place. First wrong attempt per job logs a weakness; a clean first-attempt placement logs a correct answer. After the final placement the rebuilt chain stays on screen with `completionText`, then the governed `ContinueCTA` reveals — completion is learner-controlled, never automatic.
+**Dependencies:** `TYPE`, `SPACING`, `RADII`, `MOTION`, `SUBJECTS`, `CinematicShell`, `ContinueCTA`, `unifiedWeaknessTracker`
 **Do not use when:** The relationship between items is unordered (use `MatchingTask` instead).
 
 ---

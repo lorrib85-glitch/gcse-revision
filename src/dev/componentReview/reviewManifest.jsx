@@ -207,7 +207,7 @@ export const REVIEW_ENTRIES = [
   {
     id: 'ordered-route-task', name: 'OrderedRouteTask', group: 'group2',
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
-    function: 'Ordered chain: tap a job card then tap the stage it belongs to. Amber route line + numbered nodes.',
+    function: 'Ordered chain: one job card at a time — tap the stage it belongs to. Accent route line + numbered nodes.',
     usage: 'Used in Episode 14 (Western Front), type: orderedRouteTask (renamed from evacuationChainRoute).',
     alternative: 'MatchingTask (unordered).',
     render: (fx, { onDone }) => <OrderedRouteTask screen={fx} subject="History" onComplete={onDone} />,
