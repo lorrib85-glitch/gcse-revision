@@ -181,6 +181,10 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
       const nearestIndex = getNearestTimelineIndex({ centers: geometry.centers, focusX })
       setCurrentIndex(previous => (previous === nearestIndex ? previous : nearestIndex))
 
+      if (openIndex !== null && nearestIndex !== openIndex) {
+        setOpenIndex(null)
+      }
+
       segments.forEach((segment, i) => {
         const progress = Math.max(0, Math.min(1, (focusX - segment.from) / (segment.to - segment.from)))
         const path = pathRefs.current[i]
@@ -202,7 +206,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
     update()
     scroller.addEventListener('scroll', update, { passive: true })
     return () => scroller.removeEventListener('scroll', update)
-  }, [steps.length, canvasW, canvasH, stepGap, detailLayout.verticalOffset])
+  }, [steps.length, canvasW, canvasH, stepGap, detailLayout.verticalOffset, openIndex])
 
   function centreCard(index, behavior = 'smooth') {
     const scroller = scrollerRef.current
@@ -253,6 +257,9 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   }
 
   const allOpened = steps.length > 0 && opened.size === steps.length
+  const openStep = openIndex === null ? null : steps[openIndex]
+  const openDetailId = openIndex === null ? null : `${detailIdBase}-detail-${openIndex}`
+  const openDetailHeadingId = openDetailId ? `${openDetailId}-heading` : null
 
   return (
     <CinematicShell style={{
@@ -357,7 +364,6 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
               const isOpen = openIndex === index
               const stats = step.stats || ['Tap for detail']
               const detailId = `${detailIdBase}-detail-${index}`
-              const detailHeadingId = `${detailId}-heading`
               const controlLeft = isOpen
                 ? center.x + cardWidth / 2 - 22
                 : center.x + cardWidth / 2 - 8
@@ -482,58 +488,58 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                   >
                     {isOpen ? '×' : '+'}
                   </button>
-
-                  {isOpen && (
-                    <div
-                      id={detailId}
-                      role="region"
-                      aria-labelledby={detailHeadingId}
-                      data-timeline-detail-sheet="anchored"
-                      style={{
-                        position: 'absolute',
-                        left: SPACING.standard,
-                        right: SPACING.standard,
-                        bottom: 0,
-                        height: detailLayout.sheetHeight,
-                        boxSizing: 'border-box',
-                        padding: SPACING.standard,
-                        borderRadius: `${RADII.large}px ${RADII.large}px 0 0`,
-                        background: `rgba(${rgb},0.09)`,
-                        border: `1px solid rgba(${rgb},0.26)`,
-                        borderBottom: 'none',
-                        boxShadow: '0 -18px 42px rgba(0,0,0,0.46)',
-                        animation: `tcv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-                        zIndex: 8,
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <div
-                        id={detailHeadingId}
-                        style={{
-                          ...TYPE.eyebrow,
-                          textTransform: 'uppercase',
-                          color: accent,
-                          marginBottom: SPACING.micro,
-                        }}
-                      >
-                        Why it mattered
-                      </div>
-                      <div style={{
-                        ...TYPE.bodyStrong,
-                        color: 'rgba(255,255,255,0.82)',
-                        overflowY: 'auto',
-                        maxHeight: `calc(100% - ${SPACING.standard + SPACING.micro}px)`,
-                        paddingRight: 4,
-                      }}>
-                        {step.detail}
-                      </div>
-                    </div>
-                  )}
                 </div>
               )
             })}
           </div>
         </div>
+
+        {openStep && openDetailId && openDetailHeadingId && (
+          <div
+            id={openDetailId}
+            role="region"
+            aria-labelledby={openDetailHeadingId}
+            data-timeline-detail-sheet="anchored"
+            style={{
+              position: 'absolute',
+              left: SPACING.standard,
+              right: SPACING.standard,
+              bottom: 0,
+              height: detailLayout.sheetHeight,
+              boxSizing: 'border-box',
+              padding: SPACING.standard,
+              borderRadius: `${RADII.large}px ${RADII.large}px 0 0`,
+              background: `rgba(${rgb},0.09)`,
+              border: `1px solid rgba(${rgb},0.26)`,
+              borderBottom: 'none',
+              boxShadow: '0 -18px 42px rgba(0,0,0,0.46)',
+              animation: `tcv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+              zIndex: 8,
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              id={openDetailHeadingId}
+              style={{
+                ...TYPE.eyebrow,
+                textTransform: 'uppercase',
+                color: accent,
+                marginBottom: SPACING.micro,
+              }}
+            >
+              Why it mattered
+            </div>
+            <div style={{
+              ...TYPE.bodyStrong,
+              color: 'rgba(255,255,255,0.82)',
+              overflowY: 'auto',
+              maxHeight: `calc(100% - ${SPACING.standard + SPACING.micro}px)`,
+              paddingRight: 4,
+            }}>
+              {openStep.detail}
+            </div>
+          </div>
+        )}
 
         {steps.length > 1 && openIndex === null && !hasPanned && (
           <div style={{
