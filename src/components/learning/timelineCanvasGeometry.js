@@ -54,8 +54,10 @@ export function getNearestTimelineIndex({ centers = [], focusX = 0 } = {}) {
 }
 
 /**
- * Cinematic focus derived from distance to the viewport centre. Adjacent cards
- * remain readable, but the centred card is unmistakably dominant.
+ * Route arrival and card focus share the same distance model. A card begins as a
+ * small, opaque waypoint, then grows to full size exactly as the active route
+ * reaches its centre. The smoothstep curve keeps the approach calm rather than
+ * making the card pop abruptly.
  */
 export function getTimelineCardFocus({
   centerX = 0,
@@ -66,20 +68,21 @@ export function getTimelineCardFocus({
   if (reducedMotion) {
     return {
       focus: 1,
+      routeArrival: 1,
       scale: 1,
-      opacity: 1,
       brightness: 1,
     }
   }
 
   const distance = Math.abs(centerX - focusX)
-  const focus = 1 - clamp(distance / Math.max(stepGap, 1), 0, 1)
+  const rawFocus = 1 - clamp(distance / Math.max(stepGap * 0.82, 1), 0, 1)
+  const focus = rawFocus * rawFocus * (3 - 2 * rawFocus)
 
   return {
     focus,
-    scale: 0.84 + focus * 0.16,
-    opacity: 0.50 + focus * 0.50,
-    brightness: 0.74 + focus * 0.26,
+    routeArrival: focus,
+    scale: 0.66 + focus * 0.34,
+    brightness: 0.58 + focus * 0.42,
   }
 }
 
