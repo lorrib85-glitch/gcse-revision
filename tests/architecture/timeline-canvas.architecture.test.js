@@ -6,6 +6,7 @@ function read(relativePath) {
 }
 
 const component = read('../../src/components/learning/TimelineCanvas.jsx')
+const theme = read('../../src/components/learning/timelineCanvasTheme.js')
 const fixtures = read('../../src/dev/componentReview/fixtures.js')
 const story = read('../../src/components/learning/TimelineCanvas.stories.jsx')
 
@@ -37,12 +38,44 @@ describe('TimelineCanvas architecture', () => {
     expect(component).not.toContain('currentProgressIndex')
   })
 
-  it('keeps the selected close control in the card top-right corner', () => {
-    expect(component).toContain("data-control-position={isOpen ? 'card-top-right' : 'card-bottom-right'}")
-    expect(component).toContain('center.x + cardWidth / 2 - 22')
-    expect(component).toContain('center.y - cardHeight / 2 + 22')
+  it('keeps reveal and close on one stable top-left card anchor', () => {
+    expect(component).toContain('data-control-position="card-top-left"')
+    expect(component).toContain("left: 0")
+    expect(component).toContain("top: 0")
+    expect(component).toContain('data-control-symbol={isOpen ? \'close\' : \'reveal\'}')
     expect(component).toContain('Close explanation for ${step.label}')
-    expect(component).not.toContain('justifyContent: \'space-between\'')
+    expect(component).not.toContain('card-top-right')
+    expect(component).not.toContain('card-bottom-right')
+  })
+
+  it('updates cinematic focus in one animation frame without React pixel rerenders', () => {
+    expect(component).toContain('getTimelineCardFocus')
+    expect(component).toContain('window.requestAnimationFrame(update)')
+    expect(component).toContain("group.style.setProperty('--tcv-focus-scale'")
+    expect(component).toContain("group.style.setProperty('--tcv-focus-opacity'")
+    expect(component).toContain("group.style.setProperty('--tcv-focus-brightness'")
+    expect(component).toContain('data-timeline-card-group={index}')
+  })
+
+  it('uses governed motion, semantic visual roles and shared shell spacing', () => {
+    expect(component).toContain("from 'motion/react'")
+    expect(component).toContain('useReducedMotion()')
+    expect(component).toContain('getTimelineCanvasTheme')
+    expect(component).toContain('const HEADER_CLEARANCE = SPACING.cinematic + SPACING.micro')
+    expect(component).not.toContain("paddingTop: 'calc(80px")
+    expect(component).not.toContain('@keyframes tcv-bounce')
+    expect(component).not.toContain('infinite ease-in-out;\n    }\n    .tcv-swipe-hint')
+    expect(theme).toContain('cardBorderFocused')
+    expect(theme).toContain('detailSurface')
+    expect(theme).toContain('mediaFallback')
+  })
+
+  it('provides a governed image fallback and reduced-motion path', () => {
+    expect(component).toContain('data-timeline-image-fallback="true"')
+    expect(component).toContain('reducedMotion: prefersReducedMotion')
+    expect(component).toContain("scrollBehavior: prefersReducedMotion ? 'auto' : 'smooth'")
+    expect(component).toContain("path.style.strokeDasharray = prefersReducedMotion ? 'none'")
+    expect(story).toContain('export const MissingImageFallback')
   })
 
   it('reviews the production-quality Black Death route with real imagery', () => {
