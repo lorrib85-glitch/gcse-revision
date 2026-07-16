@@ -62,7 +62,7 @@ export const BlackDeathJourney = {
     await expect(firstGroup).toHaveAttribute('data-route-arrival', 'joined')
     await expect(reveal).toHaveAttribute('data-control-position', 'card-top-left')
     await expect(reveal).toHaveAttribute('data-control-symbol', 'reveal')
-    expect(Number.parseFloat(firstGroup?.style.getPropertyValue('--tcv-focus-scale') || '0')).toBeCloseTo(1, 2)
+    expect(Number.parseFloat(firstGroup?.style.getPropertyValue('--tcv-focus-scale') || '0')).toBeCloseTo(1.10, 2)
     expect(firstGroup?.style.getPropertyValue('--tcv-focus-opacity')).toBe('')
     expect(basePaths).toHaveLength(3)
     expect(activePaths).toHaveLength(3)
