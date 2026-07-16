@@ -63,19 +63,24 @@ describe('TimelineCanvas responsive geometry', () => {
     expect(getNearestTimelineIndex({ centers: geometry.centers, focusX: betweenSecondAndThird + 1 })).toBe(2)
   })
 
-  it('grows each opaque waypoint as the active route reaches it', () => {
-    const joined = getTimelineCardFocus({ centerX: 300, focusX: 300, stepGap: 300 })
-    const approaching = getTimelineCardFocus({ centerX: 300, focusX: 450, stepGap: 300 })
-    const waiting = getTimelineCardFocus({ centerX: 300, focusX: 600, stepGap: 300 })
+  it('zooms symmetrically towards a single peak at the viewport centre', () => {
+    const centreX = 300
+    const stepGap = 300
+    const atCentre = getTimelineCardFocus({ centerX: centreX, focusX: centreX, stepGap })
+    const approachingFromLeft = getTimelineCardFocus({ centerX: centreX, focusX: centreX - 96, stepGap })
+    const approachingFromRight = getTimelineCardFocus({ centerX: centreX, focusX: centreX + 96, stepGap })
+    const atLeftEdge = getTimelineCardFocus({ centerX: centreX, focusX: centreX - 192, stepGap })
+    const atRightEdge = getTimelineCardFocus({ centerX: centreX, focusX: centreX + 192, stepGap })
 
-    expect(joined).toEqual({ focus: 1, routeArrival: 1, scale: 1, brightness: 1 })
-    expect(approaching.scale).toBeGreaterThan(waiting.scale)
-    expect(approaching.scale).toBeLessThan(joined.scale)
-    expect(approaching.routeArrival).toBeGreaterThan(0)
-    expect(approaching.routeArrival).toBeLessThan(1)
-    expect(waiting.scale).toBeCloseTo(0.66, 2)
-    expect(waiting.brightness).toBeCloseTo(0.58, 2)
-    expect(waiting).not.toHaveProperty('opacity')
+    expect(atCentre.scale).toBeCloseTo(1.10, 2)
+    expect(atCentre.brightness).toBe(1)
+    expect(approachingFromLeft.scale).toBeCloseTo(0.89, 2)
+    expect(approachingFromRight.scale).toBeCloseTo(approachingFromLeft.scale, 4)
+    expect(atLeftEdge.scale).toBeCloseTo(0.68, 2)
+    expect(atRightEdge.scale).toBeCloseTo(atLeftEdge.scale, 4)
+    expect(atCentre.scale).toBeGreaterThan(approachingFromLeft.scale)
+    expect(approachingFromLeft.scale).toBeGreaterThan(atLeftEdge.scale)
+    expect(atCentre).not.toHaveProperty('opacity')
   })
 
   it('removes zoom and dimming for reduced-motion learners', () => {
