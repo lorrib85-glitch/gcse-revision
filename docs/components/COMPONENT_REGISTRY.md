@@ -70,6 +70,17 @@ Foundation components used by many others. Handle atomic UI concerns.
 
 ---
 
+### CheckAnswerCTA
+
+**File:** `src/components/core/CheckAnswerCTA.jsx`
+**Story:** `src/components/core/CheckAnswerCTA.stories.jsx`
+**Purpose:** The governed shared **non-progression** answer-submit / "check my thinking" action for assessed learning screens. Deliberately distinct from `ContinueCTA` (the progression CTA): uses the `BUTTONS.secondary` token (56px, `RADII.medium`) with a solid subject-accent fill, `GENERAL.textOnAccent` foreground, the governed disabled treatment, and focus-visible + press states — so a "check" step never visually competes with the final "Continue" that advances the flow.
+**Props:** `onClick`, `label` (default `'Check my thinking'`), `accent`, `disabled`, `disabledBackground`, `disabledColor`, `textColor`, `style` (layout overrides only — width/flex/margin; never new height, radius, font or colour logic)
+**Used by:** `SpotTheError`. Prefer this over rebuilding a bespoke check/submit button in any new assessed component.
+**Dependencies:** `BUTTONS`, `MOTION`, `GENERAL`
+
+---
+
 ### ExitButton — **LOCKED**
 
 **File:** `src/components/core/ExitButton.jsx`
@@ -381,11 +392,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### SpotTheError
 
 **File:** `src/components/learning/SpotTheError.jsx`
-**What it is:** Error identification and correction activity — find the mistake, explain it, rewrite correctly.
-**Best used for:** Precision-checking misconceptions or calculation errors. Teaches diagnosis (finding errors) not just recognition (knowing answers). Logs multiple weakness types.
+**Scoring logic:** `src/components/learning/spotTheErrorScoring.js` (pure, unit-tested)
+**Story:** `src/components/learning/SpotTheError.stories.jsx`
+**What it is:** Three-stage diagnostic precision task — locate the wrong word/phrase (contiguous, keyboard-accessible selection), explain why it is wrong, then rewrite it correctly. Full-bleed (owns its own 100dvh scroll + safe-area) so the staged fields and actions stay reachable with the keyboard open.
+**Best used for:** Precision-checking misconceptions or calculation errors. Teaches diagnosis and repair, not just recognition. Evaluates and gives specific feedback on all three stages independently, logging `Error identification`, `Scientific precision` and `Error correction` weaknesses.
 **Props:** `block`, `subject`, `onContinue`
-**Block shape:** `{ type: 'spotTheError', prompt?, statement, errorTarget, whatWasWrong, examinerNote, correctVersion, commonTrap, keyTerms? }`
-**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `BUTTONS`, `unifiedWeaknessTracker`
+**Block shape:** `{ type: 'spotTheError', statement, errorTarget, whatWasWrong, correctVersion, examinerNote?, commonTrap?, missHeading?, explanationCriteria?: { anyOf?, allOf?, supportingAnyOf? }, keyTerms? (legacy — treated as explanationCriteria.anyOf), explanationHint?, explanationPraise?, repairKeyTerms?, acceptableRepairs?, repairMustAvoid?, minimumExplanationLength?, minimumRepairLength? }`
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `GENERAL`, `CinematicShell`, `ContinueCTA`, `CheckAnswerCTA`, `unifiedWeaknessTracker`, `spotTheErrorScoring`
 
 ---
 

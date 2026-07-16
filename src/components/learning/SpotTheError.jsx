@@ -1,125 +1,109 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect, useId } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
-import { BUTTONS } from '../../constants/buttons.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
+// CinematicShell used here (not ContentShell/InteractionShell): this is a
+// full-bleed diagnostic screen that owns its own 100dvh height, internal
+// scroll and safe-area insets so the staged fields and the check/continue
+// action stay reachable when the mobile keyboard is open.
+import CinematicShell from '../layout/CinematicShell.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import CheckAnswerCTA from '../core/CheckAnswerCTA.jsx'
+import {
+  tokenise,
+  resolveTargetRange,
+  nextContiguousSelection,
+  selectionTokenText,
+  targetTokenText,
+  scoreSelection,
+  evaluateExplanation,
+  evaluateRepair,
+  deriveFeedbackHeading,
+} from './spotTheErrorScoring.js'
 
-// Plain, subtle openers — never a game-show "Spot The Error" title.
-const HEADER_PROMPTS = [
-  "Something isn't right.",
-  'Look closely.',
-  'Check the reasoning.',
-]
-
-function tokenise(text) {
-  const tokens = []
-  const re = /\S+/g
-  let m
-  while ((m = re.exec(text))) tokens.push({ text: m[0], start: m.index, end: m.index + m[0].length })
-  return tokens
-}
-
-// Jaccard-style overlap — rewards selections that closely track the real
-// error span and naturally penalises "select the whole sentence" gaming.
-function overlapRatio(aStart, aEnd, bStart, bEnd) {
-  const interStart = Math.max(aStart, bStart)
-  const interEnd   = Math.min(aEnd, bEnd)
-  const inter = Math.max(0, interEnd - interStart)
-  const union = Math.max(aEnd, bEnd) - Math.min(aStart, bStart)
-  return union > 0 ? inter / union : 0
-}
+// Named foreground values — kept out of the render body so no raw colour is
+// improvised inline (mirrors the TEXT_PRIMARY pattern in OrderedRouteTask).
+const TEXT_PRIMARY = GENERAL.feedbackText              // #F5F7FF — body + statement
+const TEXT_MUTED = 'rgba(245,247,255,0.62)'            // supporting copy
+const TEXT_FAINT = 'rgba(245,247,255,0.42)'            // captions / placeholders
 
 function slugify(text) {
   return (text || '').toLowerCase().slice(0, 40).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 }
 
-function FeedbackSection({ label, text, rgb }) {
-  if (!text) return null
+// One labelled feedback block. Sentence-case label (no forced-uppercase
+// metadata), calm rhythm.
+function FeedbackRow({ label, children, muted = false }) {
+  if (children == null || children === '') return null
   return (
     <div style={{ marginBottom: SPACING.standard }}>
-      <p style={{
-        ...TYPE.metadata,
-        textTransform: 'uppercase',
-        color: `rgba(${rgb},0.5)`,
-        marginBottom: SPACING.micro,
-      }}>{label}</p>
-      <p style={{ ...TYPE.body, color: '#EAF7F0', margin: 0 }}>{text}</p>
+      <p style={{ ...TYPE.label, color: TEXT_MUTED, margin: `0 0 ${SPACING.micro / 2}px` }}>{label}</p>
+      <p style={{ ...TYPE.body, color: muted ? TEXT_MUTED : TEXT_PRIMARY, margin: 0, lineHeight: 1.6 }}>
+        {children}
+      </p>
     </div>
   )
 }
 
 export default function SpotTheError({ block, subject = 'Biology', onContinue }) {
-  const subj   = SUBJECTS[subject] || SUBJECTS.Biology
+  const subj = SUBJECTS[subject] || SUBJECTS.Biology
   const accent = subj.accent
-  const rgb    = subj.accentRgb
+  const rgb = subj.accentRgb
 
   const statement = block.statement || ''
   const tokens = useMemo(() => tokenise(statement), [statement])
+  const target = useMemo(
+    () => resolveTargetRange(tokens, statement, block.errorTarget),
+    [tokens, statement, block.errorTarget],
+  )
 
-  // The error span is authored as a substring — resolved to character
-  // offsets so we can score selections by overlap rather than exact match.
-  const target = useMemo(() => {
-    const needle = block.errorTarget || ''
-    const idx = needle ? statement.indexOf(needle) : -1
-    return idx === -1 ? null : { start: idx, end: idx + needle.length }
-  }, [statement, block.errorTarget])
-
-  const headerPrompt = block.prompt || HEADER_PROMPTS[slugify(statement).length % HEADER_PROMPTS.length]
-
-  const [selected, setSelected]       = useState(() => new Set())
-  const [pulsing, setPulsing]         = useState(null)
+  const [selection, setSelection] = useState(null) // { start, end } | null
   const [explanation, setExplanation] = useState('')
-  const [repair, setRepair]           = useState('')
-  const [phase, setPhase]             = useState('diagnose') // diagnose | feedback
-  const [pressed, setPressed]         = useState(false)
+  const [repair, setRepair] = useState('')
+  const [phase, setPhase] = useState('diagnose')    // 'diagnose' | 'feedback'
   const loggedRef = useRef(false)
 
-  const hasSelection      = selected.size > 0
-  const explanationFilled = explanation.trim().length > 0
-  const canCheck          = hasSelection && explanationFilled
+  const groupId = useId()
+  const explainId = useId()
+  const repairId = useId()
+  const explainRef = useRef(null)
+  const repairRef = useRef(null)
 
-  function toggleToken(i) {
+  const explanationEval = useMemo(() => evaluateExplanation(explanation, block), [explanation, block])
+  const repairEval = useMemo(() => evaluateRepair(repair, block), [repair, block])
+
+  const hasSelection = selection != null
+  const showExplain = hasSelection
+  const showRepair = hasSelection && explanationEval.meetsLength
+  const canCheck = hasSelection && explanationEval.meetsLength && repairEval.meetsLength
+
+  // Bring each newly revealed stage (and, with it, the check action just below)
+  // into view so an open keyboard never hides the next step. Respects
+  // reduced-motion by snapping instead of animating.
+  useEffect(() => {
+    if (!showExplain || !explainRef.current) return
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    explainRef.current.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' })
+  }, [showExplain])
+
+  useEffect(() => {
+    if (!showRepair || !repairRef.current) return
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    repairRef.current.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' })
+  }, [showRepair])
+
+  const selectionCorrect = useMemo(() => scoreSelection(selection, target), [selection, target])
+  const explanationPrecise = explanationEval.precise
+  const repairAccurate = repairEval.accurate
+
+  function tapToken(i) {
     if (phase !== 'diagnose') return
-    setSelected(prev => {
-      const next = new Set(prev)
-      if (next.has(i)) {
-        next.delete(i)
-      } else {
-        next.add(i)
-        setPulsing(i)
-        setTimeout(() => setPulsing(p => (p === i ? null : p)), 560)
-      }
-      return next
-    })
+    setSelection(prev => nextContiguousSelection(prev, i))
   }
-
-  const selectionRange = useMemo(() => {
-    if (selected.size === 0) return null
-    let start = Infinity, end = -Infinity
-    selected.forEach(i => {
-      start = Math.min(start, tokens[i].start)
-      end   = Math.max(end, tokens[i].end)
-    })
-    return { start, end }
-  }, [selected, tokens])
-
-  const selectionCorrect = useMemo(() => {
-    if (!selectionRange || !target) return false
-    return overlapRatio(selectionRange.start, selectionRange.end, target.start, target.end) >= 0.4
-  }, [selectionRange, target])
-
-  // Without a marking API to grade free text, precision is checked against
-  // the GCSE terms the explanation is expected to reach for.
-  const explanationPrecise = useMemo(() => {
-    const terms = block.keyTerms || []
-    if (terms.length === 0) return true
-    const lower = explanation.toLowerCase()
-    return terms.some(t => lower.includes(String(t).toLowerCase()))
-  }, [explanation, block.keyTerms])
 
   function handleCheck() {
     if (!canCheck || phase !== 'diagnose') return
@@ -127,24 +111,19 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
     if (!loggedRef.current) {
       loggedRef.current = true
       const qid = `spotTheError-${slugify(block.id || statement)}`
-
-      if (selectionCorrect) {
-        logCorrectAnswer({ subject, topic: 'Error identification', questionId: qid, source: 'module' })
-      } else {
-        logWrongAnswer({
-          subject, topic: 'Error identification', questionId: qid,
-          questionText: statement, source: 'module', questionType: 'spotTheError', marks: 1,
-        })
+      const log = (ok, topic, suffix, questionText) => {
+        if (ok) {
+          logCorrectAnswer({ subject, topic, questionId: `${qid}${suffix}`, source: 'module' })
+        } else {
+          logWrongAnswer({
+            subject, topic, questionId: `${qid}${suffix}`,
+            questionText, source: 'module', questionType: 'spotTheError', marks: 1,
+          })
+        }
       }
-
-      if (explanationPrecise) {
-        logCorrectAnswer({ subject, topic: 'Scientific precision', questionId: `${qid}-precision`, source: 'module' })
-      } else {
-        logWrongAnswer({
-          subject, topic: 'Scientific precision', questionId: `${qid}-precision`,
-          questionText: explanation, source: 'module', questionType: 'spotTheError', marks: 1,
-        })
-      }
+      log(selectionCorrect, 'Error identification', '', statement)
+      log(explanationPrecise, 'Scientific precision', '-precision', explanation)
+      log(repairAccurate, 'Error correction', '-repair', repair)
     }
 
     setPhase('feedback')
@@ -155,179 +134,214 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
     if (fn) fn()
   }
 
+  const heading = deriveFeedbackHeading({
+    selectionCorrect,
+    explanationPrecise,
+    repairAccurate,
+    missHeading: block.missHeading,
+  })
+
+  const selectedText = selectionTokenText(tokens, selection)
+  const actualErrorText = targetTokenText(tokens, target)
+
   const textAreaStyle = {
     display: 'block',
     width: '100%',
     background: 'rgba(0,0,0,0.28)',
-    border: `1.5px solid rgba(${rgb},0.20)`,
+    border: `1.5px solid rgba(${rgb},0.22)`,
     borderRadius: RADII.medium,
     padding: SPACING.compact,
     ...TYPE.bodySmall,
-    color: '#EAF7F0',
+    color: TEXT_PRIMARY,
     resize: 'vertical',
     boxSizing: 'border-box',
-    outline: 'none',
   }
 
   return (
-    <div style={{ marginTop: SPACING.compact, maxWidth: 720, marginInline: 'auto' }}>
+    <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 1000, WebkitTapHighlightColor: 'transparent' }}>
       <style>{`
-        .ste-token { transition: background ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}, color ${MOTION.duration.fast} ${MOTION.easing.gentle}; }
-        .ste-token::placeholder, .ste-input::placeholder { color: rgba(234,247,240,0.28); font-style: italic; }
-        @keyframes ste-pulse {
-          0%, 100% { transform: scale(1); }
-          45%      { transform: scale(${MOTION.scale.subtle}); }
+        .ste-token {
+          transition: background ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}, color ${MOTION.duration.fast} ${MOTION.easing.gentle};
         }
-        @keyframes ste-slide-up {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes ste-fade-in {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
+        .ste-token:focus-visible { outline: 2px solid ${accent}; outline-offset: 2px; }
+        .ste-input { outline: none; }
+        .ste-input:focus-visible { border-color: rgba(${rgb},0.6); box-shadow: 0 0 0 3px rgba(${rgb},0.14); }
+        .ste-input::placeholder { color: ${TEXT_FAINT}; }
+        @keyframes ste-reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (prefers-reduced-motion: reduce) {
+          .ste-anim { animation: none !important; }
+          .ste-token { transition: none !important; }
         }
       `}</style>
 
-      {phase === 'diagnose' ? (
-        <>
-          {/* Plain, subtle opener — not a game-show title */}
-          <p style={{
-            ...TYPE.bodySmall,
-            fontStyle: 'italic',
-            color: 'rgba(234,247,240,0.38)',
-            margin: `0 0 ${SPACING.standard}px`,
-          }}>{headerPrompt}</p>
-
-          {/* Statement — every token is independently selectable so the
-              error never stands out by its own formatting */}
-          <div style={{
-            background: `linear-gradient(160deg, rgba(${rgb},0.07) 0%, rgba(0,0,0,0.26) 100%)`,
-            border: `1px solid rgba(${rgb},0.16)`,
-            boxShadow: `inset 0 1px 0 rgba(${rgb},0.10), 0 4px 24px rgba(0,0,0,0.30)`,
-            borderRadius: RADII.large,
-            padding: SPACING.standard,
-            marginBottom: SPACING.standard,
-          }}>
-            <p style={{ ...TYPE.body, color: '#EAF7F0', margin: 0, lineHeight: 1.7 }}>
-              {tokens.map((tok, i) => {
-                const isSelected = selected.has(i)
-                const isPulsing  = pulsing === i
-                return (
-                  <span key={i}>
-                    <span
-                      className="ste-token"
-                      onClick={() => toggleToken(i)}
-                      style={{
-                        display: 'inline-block',
-                        cursor: 'pointer',
-                        borderRadius: RADII.small,
-                        padding: '1px 4px',
-                        margin: '0 -4px',
-                        color: isSelected ? '#F4FFF8' : '#EAF7F0',
-                        background: isSelected ? `rgba(${rgb},0.20)` : 'transparent',
-                        boxShadow: isSelected
-                          ? `0 0 0 1px rgba(${rgb},0.45), 0 0 16px rgba(${rgb},0.26)`
-                          : 'none',
-                        textShadow: isSelected ? `0 0 12px rgba(${rgb},0.40)` : 'none',
-                        animation: isPulsing ? `ste-pulse 560ms ${MOTION.easing.gentle}` : 'none',
-                      }}
-                    >{tok.text}</span>{' '}
-                  </span>
-                )
-              })}
+      <div style={{
+        height: '100%',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        WebkitOverflowScrolling: 'touch',
+        padding: `calc(${SPACING.separation}px + env(safe-area-inset-top, 0px)) ${SPACING.standard}px calc(${SPACING.cinematic}px + env(safe-area-inset-bottom, 0px))`,
+        scrollPaddingBottom: SPACING.cinematic,
+        maxWidth: 420,
+        width: '100%',
+        margin: '0 auto',
+        boxSizing: 'border-box',
+      }}>
+        {phase === 'diagnose' ? (
+          <>
+            {/* Stage 1 — Locate. Clear sentence-case instruction, not a title. */}
+            <p style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, margin: `0 0 ${SPACING.standard}px` }}>
+              Tap the word or phrase that is wrong.
             </p>
+
+            {/* Statement surface — calm, readable, no pre-reveal of the error. */}
+            <div style={{
+              background: GENERAL.backgroundSurface,
+              border: `1px solid ${GENERAL.line.soft}`,
+              borderRadius: RADII.large,
+              padding: SPACING.standard,
+              marginBottom: SPACING.standard,
+            }}>
+              <p
+                role="group"
+                aria-label="Tap the word or phrase that is wrong"
+                aria-describedby={groupId}
+                style={{ ...TYPE.body, color: TEXT_PRIMARY, margin: 0, lineHeight: 1.9 }}
+              >
+                {tokens.map((tok, i) => {
+                  const isSelected = selection != null && i >= selection.start && i <= selection.end
+                  return (
+                    <span key={i}>
+                      <button
+                        type="button"
+                        className="ste-token"
+                        aria-pressed={isSelected}
+                        aria-label={tok.text}
+                        onClick={() => tapToken(i)}
+                        style={{
+                          display: 'inline',
+                          font: 'inherit',
+                          cursor: 'pointer',
+                          border: 'none',
+                          borderRadius: RADII.small,
+                          padding: '2px 4px',
+                          margin: '0 -2px',
+                          color: TEXT_PRIMARY,
+                          background: isSelected ? `rgba(${rgb},0.22)` : 'transparent',
+                          boxShadow: isSelected ? `inset 0 0 0 1px rgba(${rgb},0.5)` : 'none',
+                        }}
+                      >{tok.text}</button>{' '}
+                    </span>
+                  )
+                })}
+              </p>
+              <span id={groupId} style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
+                Select a single continuous word or phrase, then explain and rewrite it.
+              </span>
+            </div>
+
+            {/* Stage 2 — Explain. Associated label + textarea. */}
+            {showExplain && (
+              <div ref={explainRef} className="ste-anim" style={{ marginBottom: SPACING.standard, animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
+                <label htmlFor={explainId} style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, display: 'block', marginBottom: SPACING.micro }}>
+                  Why is this incorrect?
+                </label>
+                <textarea
+                  id={explainId}
+                  className="ste-input"
+                  value={explanation}
+                  onChange={e => setExplanation(e.target.value)}
+                  placeholder="Explain what is wrong and why…"
+                  style={{ ...textAreaStyle, minHeight: 108 }}
+                />
+              </div>
+            )}
+
+            {/* Stage 3 — Repair (required). */}
+            {showRepair && (
+              <div ref={repairRef} className="ste-anim" style={{ marginBottom: SPACING.standard, animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
+                <label htmlFor={repairId} style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, display: 'block', marginBottom: SPACING.micro }}>
+                  Rewrite the statement correctly.
+                </label>
+                <textarea
+                  id={repairId}
+                  className="ste-input"
+                  value={repair}
+                  onChange={e => setRepair(e.target.value)}
+                  placeholder="Write the corrected version…"
+                  style={{ ...textAreaStyle, minHeight: 96 }}
+                />
+              </div>
+            )}
+
+            <CheckAnswerCTA onClick={handleCheck} disabled={!canCheck} accent={accent} />
+          </>
+        ) : (
+          <div className="ste-anim" style={{ animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
+            {/* 1 — specific outcome heading */}
+            <h2 style={{ ...TYPE.displaySection, color: accent, margin: `0 0 ${SPACING.standard}px` }}>
+              {heading}
+            </h2>
+
+            {/* 2 — selection comparison. Confirm compactly when correct;
+                otherwise contrast the learner's pick with the real error. */}
+            {selectionCorrect ? (
+              <FeedbackRow label="You spotted the error">
+                “{actualErrorText || block.errorTarget}”
+              </FeedbackRow>
+            ) : (
+              <div style={{
+                display: 'flex', gap: SPACING.standard, marginBottom: SPACING.standard, flexWrap: 'wrap',
+              }}>
+                <div style={{ flex: '1 1 45%' }}>
+                  <p style={{ ...TYPE.label, color: TEXT_MUTED, margin: `0 0 ${SPACING.micro / 2}px` }}>You selected</p>
+                  <p style={{ ...TYPE.body, color: TEXT_MUTED, margin: 0 }}>“{selectedText || '—'}”</p>
+                </div>
+                <div style={{ flex: '1 1 45%' }}>
+                  <p style={{ ...TYPE.label, color: TEXT_MUTED, margin: `0 0 ${SPACING.micro / 2}px` }}>The actual error</p>
+                  <p style={{ ...TYPE.body, color: accent, margin: 0 }}>“{actualErrorText || block.errorTarget}”</p>
+                </div>
+              </div>
+            )}
+
+            {/* 3 — explanation feedback: what the reasoning still needs. */}
+            <FeedbackRow label="Your explanation">
+              {explanationPrecise
+                ? (block.explanationPraise || 'Your reasoning names the right idea.')
+                : (block.explanationHint
+                    || (explanationEval.missing.length
+                        ? `Your explanation needs to mention ${explanationEval.missing.join(' and ')}.`
+                        : 'Your explanation needs to be more precise about the science.'))}
+            </FeedbackRow>
+
+            {/* 4 — rewrite comparison */}
+            {repair.trim() && (
+              <FeedbackRow label="Your rewrite" muted={!repairAccurate}>
+                {repair.trim()}
+              </FeedbackRow>
+            )}
+            <FeedbackRow label="Accurate version">
+              {block.correctVersion}
+            </FeedbackRow>
+
+            {/* 5 — what was wrong (the teaching point) */}
+            <FeedbackRow label="What was wrong">
+              {block.whatWasWrong}
+            </FeedbackRow>
+
+            {/* 6 — examiner takeaway */}
+            <FeedbackRow label="Examiner takeaway">
+              {block.examinerNote}
+            </FeedbackRow>
+
+            {/* 7 — common trap, quieter supporting text */}
+            <FeedbackRow label="Common trap" muted>
+              {block.commonTrap}
+            </FeedbackRow>
+
+            <ContinueCTA onClick={handleContinue} accent={accent} style={{ marginTop: SPACING.micro }} />
           </div>
-
-          {/* Explain — appears only once something has been selected */}
-          {hasSelection && (
-            <div style={{
-              marginBottom: SPACING.standard,
-              animation: `ste-slide-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-            }}>
-              <p style={{ ...TYPE.displayCard, fontSize: 17, color: '#EAF7F0', marginBottom: SPACING.micro }}>
-                Why is this incorrect?
-              </p>
-              <textarea
-                className="ste-input"
-                value={explanation}
-                onChange={e => setExplanation(e.target.value)}
-                placeholder="Explain what is wrong..."
-                style={{ ...textAreaStyle, minHeight: 120 }}
-              />
-              {explanation.length > 0 && (
-                <p style={{
-                  ...TYPE.metadata,
-                  color: `rgba(${rgb},0.40)`,
-                  textAlign: 'right',
-                  margin: `${SPACING.micro}px 0 0`,
-                }}>{explanation.trim().length} characters</p>
-              )}
-            </div>
-          )}
-
-          {/* Repair — appears once the explanation has content; this is
-              where the real learning happens */}
-          {explanationFilled && (
-            <div style={{
-              marginBottom: SPACING.standard,
-              animation: `ste-slide-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-            }}>
-              <p style={{ ...TYPE.displayCard, fontSize: 17, color: '#EAF7F0', marginBottom: SPACING.micro }}>
-                Rewrite the statement correctly.
-              </p>
-              <textarea
-                className="ste-input"
-                value={repair}
-                onChange={e => setRepair(e.target.value)}
-                placeholder="Rewrite it so it's accurate..."
-                style={{ ...textAreaStyle, minHeight: 96 }}
-              />
-            </div>
-          )}
-
-          {/* Submit — disabled until an error is selected and explained */}
-          <button
-            onClick={handleCheck}
-            disabled={!canCheck}
-            onMouseDown={() => setPressed(true)}
-            onMouseUp={() => setPressed(false)}
-            onMouseLeave={() => setPressed(false)}
-            onTouchStart={() => setPressed(true)}
-            onTouchEnd={() => setPressed(false)}
-            style={{
-              width: '100%',
-              height: BUTTONS.primary.height,
-              borderRadius: BUTTONS.primary.borderRadius,
-              background: canCheck ? `linear-gradient(135deg, ${accent}, rgba(${rgb},0.72))` : `rgba(${rgb},0.10)`,
-              border: canCheck ? 'none' : `1px solid rgba(${rgb},0.18)`,
-              cursor: canCheck ? 'pointer' : 'default',
-              opacity: canCheck ? 1 : 0.45,
-              fontFamily: BUTTONS.primary.fontFamily,
-              fontSize: BUTTONS.primary.fontSize,
-              fontWeight: BUTTONS.primary.fontWeight,
-              color: canCheck ? '#0A0804' : accent,
-              letterSpacing: '-0.02em',
-              boxShadow: canCheck ? `0 4px 28px rgba(${rgb},0.28)` : 'none',
-              transition: `all ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-              transform: pressed && canCheck ? `scale(${MOTION.scale.press})` : 'scale(1)',
-            }}
-          >Check my thinking</button>
-        </>
-      ) : (
-        // ── Feedback — premium tone, never a bare "wrong" stamp ──────────────
-        <div style={{ animation: `ste-fade-in ${MOTION.duration.slow} ${MOTION.easing.standard} both` }}>
-          <p style={{ ...TYPE.displaySection, color: accent, margin: `0 0 ${SPACING.standard}px` }}>
-            {selectionCorrect ? 'Good catch.' : 'Almost.'}
-          </p>
-
-          <FeedbackSection label="What was wrong?"      text={block.whatWasWrong}   rgb={rgb} />
-          <FeedbackSection label="Why examiners care"   text={block.examinerNote}   rgb={rgb} />
-          <FeedbackSection label="Correct version"      text={block.correctVersion} rgb={rgb} />
-          <FeedbackSection label="Common GCSE trap"     text={block.commonTrap}     rgb={rgb} />
-
-          <ContinueCTA onClick={handleContinue} accent={accent} />
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </CinematicShell>
   )
 }

@@ -161,16 +161,24 @@ export const evacuationChainRoute = {
 }
 
 // ── Group 2: SpotTheError (Biology) ──────────────────────────────────────────
-// Shape: { id, prompt, statement, errorTarget, whatWasWrong, correctVersion,
-//          keyTerms?, commonTrap?, examinerNote? }
+// Shape: { id, statement, errorTarget, whatWasWrong, correctVersion,
+//          examinerNote?, commonTrap?, missHeading?,
+//          explanationCriteria?: { anyOf?, allOf?, supportingAnyOf? },
+//          keyTerms? (legacy — treated as explanationCriteria.anyOf),
+//          explanationHint?, explanationPraise?,
+//          repairKeyTerms?, acceptableRepairs?, repairMustAvoid?,
+//          minimumExplanationLength?, minimumRepairLength? }
 export const spotTheError = {
   id: 'spot-photosynthesis',
-  prompt: 'Find the error in this exam answer.',
   statement: 'Photosynthesis takes place in the mitochondria of plant cells, using carbon dioxide and water to produce glucose and oxygen.',
   errorTarget: 'mitochondria',
   whatWasWrong: 'Photosynthesis happens in the chloroplasts, not the mitochondria. Mitochondria are the site of respiration.',
   correctVersion: 'Photosynthesis takes place in the chloroplasts of plant cells, using carbon dioxide and water to produce glucose and oxygen.',
-  keyTerms: ['chloroplast', 'mitochondria', 'respiration'],
+  explanationCriteria: { anyOf: ['chloroplast', 'chloroplasts'], supportingAnyOf: ['mitochondria', 'respiration'] },
+  explanationHint: 'Your explanation needs to identify the chloroplast as the site of photosynthesis.',
+  repairKeyTerms: ['chloroplast'],
+  repairMustAvoid: ['mitochondria'],
+  missHeading: 'Not quite — compare the two organelles.',
   commonTrap: 'Students often confuse the sites of photosynthesis and respiration.',
   examinerNote: 'Naming the correct organelle is worth an easy mark — do not throw it away.',
 }
