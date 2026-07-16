@@ -1,22 +1,23 @@
-import { useEffect, useId, useState, useRef, useLayoutEffect } from 'react'
+import { useEffect, useId, useMemo, useState, useRef, useLayoutEffect } from 'react'
+import { useReducedMotion } from 'motion/react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
-// CinematicShell used here because the horizontal spatial journey must reach the full
-// viewport width with no horizontal padding; InteractionShell's inset would clip the
-// connector rail and prevent the first and final journey cards centring correctly.
+// CinematicShell is used because the horizontal spatial journey must reach the full
+// viewport width; an inset shell would clip the connector rail and card centring.
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { TYPE } from '../../constants/typography.js'
-import { GENERAL } from '../../constants/generalTheme.js'
 import {
   getNearestTimelineIndex,
   getTimelineCanvasGeometry,
+  getTimelineCardFocus,
   getTimelineDetailLayout,
   getTimelineScrollLeft,
 } from './timelineCanvasGeometry.js'
+import { getTimelineCanvasTheme } from './timelineCanvasTheme.js'
 
 // ─── TimelineCanvas ───────────────────────────────────────────────────────────
 //
@@ -24,61 +25,109 @@ import {
 // TimelineChain. Horizontal movement is part of the meaning: the learner pans
 // through connected places or stages, then reveals why each point mattered.
 // Use TimelineChain instead when the content is simply a compact causal sequence.
-//
-// Block shape:
-// {
-//   type: 'timelineCanvas',
-//   title?: 'How the plague travelled',
-//   intro?: 'Swipe to follow the journey. Tap + to reveal why each stage mattered.',
-//   steps: [
-//     { id, image?: '/path.png', label: 'It began in central Asia',
-//       detail: 'The plague spread west along trade routes...', stats?: ['c.1338', 'Central Asia'] },
-//     ...
-//   ],
-// }
+
+const HEADER_CLEARANCE = SPACING.cinematic + SPACING.micro
+const OPEN_DELAY_MS = Number.parseInt(MOTION.duration.standard, 10)
 
 let _tcvStyled = false
 function ensureStyles() {
   if (_tcvStyled) return
   _tcvStyled = true
-  const el = document.createElement('style')
-  el.textContent = `
-    @keyframes tcv-bounce {
-      0%, 100% { transform: translate(-50%, 0); }
-      50% { transform: translate(-50%, -15px); }
-    }
+  const element = document.createElement('style')
+  element.textContent = `
     @keyframes tcv-fade-up {
       from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to { opacity: 1; transform: translateY(0); }
     }
     @keyframes tcv-plus-glow {
-      0%, 100% { box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 0 0 rgba(var(--glow-rgb), 0.5); }
-      50%      { box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 14px 3px rgba(var(--glow-rgb), 0.5); }
+      0%, 100% { box-shadow: var(--tcv-control-shadow), 0 0 0 0 transparent; }
+      50% { box-shadow: var(--tcv-control-shadow), 0 0 13px 3px var(--tcv-control-glow); }
+    }
+    @keyframes tcv-hint-slide {
+      0%, 100% { opacity: 0.34; transform: translateX(-50%); }
+      50% { opacity: 0.72; transform: translateX(calc(-50% + 8px)); }
     }
     .tcv-scroller::-webkit-scrollbar { display: none; }
-    .tcv-plus-btn {
-      --s: 1;
-      transform: translate(-50%, -50%) scale(var(--s));
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                  left 0.3s ease,
-                  top 0.3s ease,
-                  background 0.3s ease,
-                  color 0.3s ease;
+    .tcv-card-group {
+      transform: translate(-50%, -50%) scale(var(--tcv-focus-scale, 1));
+      opacity: var(--tcv-focus-opacity, 1);
+      filter: brightness(var(--tcv-focus-brightness, 1));
+      transition:
+        top ${MOTION.duration.standard} ${MOTION.easing.standard},
+        transform ${MOTION.duration.instant} linear,
+        opacity ${MOTION.duration.instant} linear,
+        filter ${MOTION.duration.instant} linear;
+      will-change: transform, opacity, filter;
     }
-    .tcv-plus-btn:active { --s: 1.08; }
-    .tcv-plus-btn.tcv-glow { animation: tcv-plus-glow 2.2s infinite ease-in-out; }
     .tcv-card {
-      --ty: -50%;
-      --s: 1;
-      transform: translate(-50%, var(--ty)) scale(var(--s));
-      transition: transform 0.4s ease, top 0.35s ease, box-shadow 0.4s ease, border-color 0.3s ease;
+      transition:
+        border-color ${MOTION.duration.fast} ${MOTION.easing.standard},
+        box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard};
     }
-    .tcv-card:active { --ty: -54%; --s: 1.015; }
+    .tcv-plus-btn {
+      transform: translate(-35%, -35%) scale(var(--tcv-control-scale, 1));
+      transition:
+        transform ${MOTION.duration.fast} ${MOTION.easing.standard},
+        background ${MOTION.duration.fast} ${MOTION.easing.standard},
+        color ${MOTION.duration.fast} ${MOTION.easing.standard};
+    }
+    .tcv-plus-btn:active { --tcv-control-scale: ${MOTION.scale.press}; }
+    .tcv-plus-btn.tcv-glow { animation: tcv-plus-glow 2.2s infinite ease-in-out; }
+    .tcv-plus-btn:focus-visible {
+      outline: 2px solid var(--tcv-accent);
+      outline-offset: 4px;
+    }
     .tcv-connector-dot {
-      transition: opacity 0.3s ease, top 0.35s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition:
+        opacity ${MOTION.duration.fast} ${MOTION.easing.standard},
+        top ${MOTION.duration.standard} ${MOTION.easing.standard},
+        transform ${MOTION.duration.fast} ${MOTION.easing.standard};
+      will-change: transform, opacity;
+    }
+    .tcv-swipe-hint {
+      animation: tcv-hint-slide 1.2s ${MOTION.easing.standard} 2;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tcv-motion,
+      .tcv-card-group,
+      .tcv-card,
+      .tcv-plus-btn,
+      .tcv-connector-dot,
+      .tcv-sequence-progress * {
+        animation: none !important;
+        transition: none !important;
+      }
+      .tcv-scroller { scroll-behavior: auto !important; }
     }
   `
-  document.head.appendChild(el)
+  document.head.appendChild(element)
+}
+
+function TimelineImageFallback({ accent }) {
+  return (
+    <div
+      data-timeline-image-fallback="true"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        display: 'grid',
+        placeItems: 'center',
+      }}
+    >
+      <svg aria-hidden="true" width="86" height="54" viewBox="0 0 86 54" fill="none">
+        <path
+          d="M7 42C20 42 20 12 37 12s15 30 31 30h11"
+          stroke={accent}
+          strokeWidth="2"
+          strokeLinecap="round"
+          opacity="0.58"
+        />
+        <circle cx="7" cy="42" r="4" fill={accent} opacity="0.72" />
+        <circle cx="37" cy="12" r="4" fill={accent} opacity="0.72" />
+        <circle cx="79" cy="42" r="4" fill={accent} opacity="0.72" />
+      </svg>
+    </div>
+  )
 }
 
 export default function TimelineCanvas({ block, subject = 'History', onContinue }) {
@@ -86,6 +135,11 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
 
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
+  const visual = useMemo(
+    () => getTimelineCanvasTheme({ accent, accentRgb: rgb }),
+    [accent, rgb],
+  )
+  const prefersReducedMotion = Boolean(useReducedMotion())
   const steps = block.steps || []
   const detailIdBase = useId()
 
@@ -93,18 +147,35 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   const [opened, setOpened] = useState(() => new Set())
   const [currentIndex, setCurrentIndex] = useState(0)
   const [hasPanned, setHasPanned] = useState(false)
+  const [showSwipeHint, setShowSwipeHint] = useState(true)
   const [canvasSize, setCanvasSize] = useState({ width: 390, height: 480 })
 
   const canvasRegionRef = useRef(null)
   const scrollerRef = useRef(null)
+  const cardGroupRefs = useRef([])
+  const cardRefs = useRef([])
   const pathRefs = useRef([])
   const dotRefs = useRef([])
   const hasPannedRef = useRef(false)
+  const lastNearestRef = useRef(0)
   const openTimerRef = useRef(null)
+  const animationFrameRef = useRef(null)
 
   useEffect(() => () => {
     if (openTimerRef.current) window.clearTimeout(openTimerRef.current)
+    if (animationFrameRef.current) window.cancelAnimationFrame(animationFrameRef.current)
   }, [])
+
+  useEffect(() => {
+    setShowSwipeHint(true)
+    if (steps.length <= 1) return undefined
+
+    const timeout = window.setTimeout(
+      () => setShowSwipeHint(false),
+      prefersReducedMotion ? 1800 : 3800,
+    )
+    return () => window.clearTimeout(timeout)
+  }, [steps.length, prefersReducedMotion])
 
   useLayoutEffect(() => {
     const region = canvasRegionRef.current
@@ -129,12 +200,8 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
       return () => observer.disconnect()
     }
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', measure)
-      return () => window.removeEventListener('resize', measure)
-    }
-
-    return undefined
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
   }, [])
 
   const geometry = getTimelineCanvasGeometry({
@@ -154,8 +221,8 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   } = geometry
   const displayCenters = detailLayout.centers
 
-  const segments = displayCenters.slice(0, -1).map((center, i) => {
-    const nextCenter = displayCenters[i + 1]
+  const segments = displayCenters.slice(0, -1).map((center, index) => {
+    const nextCenter = displayCenters[index + 1]
     const midX = (center.x + nextCenter.x) / 2
     return {
       d: `M ${center.x} ${center.y} C ${midX} ${center.y}, ${midX} ${nextCenter.y}, ${nextCenter.x} ${nextCenter.y}`,
@@ -165,50 +232,117 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
     }
   })
 
-  // Draw each connector line in as the viewport moves across it. The same scroll
-  // position also determines the governed current progress marker.
+  // Scroll position controls connector drawing, current progress and cinematic card focus.
+  // DOM styles are updated in one animation frame rather than re-rendering on every pixel.
   useLayoutEffect(() => {
     const scroller = scrollerRef.current
-    if (!scroller || segments.length === 0) return undefined
+    if (!scroller) return undefined
 
     const lengths = pathRefs.current.map(path => path?.getTotalLength?.() || 0)
-    pathRefs.current.forEach((path, i) => {
-      if (path) path.style.strokeDasharray = `${lengths[i]}`
+    pathRefs.current.forEach((path, index) => {
+      if (!path) return
+      path.style.strokeDasharray = prefersReducedMotion ? 'none' : `${lengths[index]}`
+      if (prefersReducedMotion) path.style.strokeDashoffset = '0'
     })
 
     function update() {
+      animationFrameRef.current = null
       const focusX = scroller.scrollLeft + scroller.clientWidth / 2
       const nearestIndex = getNearestTimelineIndex({ centers: geometry.centers, focusX })
-      setCurrentIndex(previous => (previous === nearestIndex ? previous : nearestIndex))
 
-      if (openIndex !== null && nearestIndex !== openIndex) {
-        setOpenIndex(null)
+      if (lastNearestRef.current !== nearestIndex) {
+        lastNearestRef.current = nearestIndex
+        setCurrentIndex(nearestIndex)
+        if (openIndex !== null && nearestIndex !== openIndex) setOpenIndex(null)
       }
 
-      segments.forEach((segment, i) => {
-        const progress = Math.max(0, Math.min(1, (focusX - segment.from) / (segment.to - segment.from)))
-        const path = pathRefs.current[i]
-        if (path) path.style.strokeDashoffset = `${lengths[i] * (1 - progress)}`
-        const dot = dotRefs.current[i]
+      geometry.centers.forEach((center, index) => {
+        const focusState = getTimelineCardFocus({
+          centerX: center.x,
+          focusX,
+          stepGap,
+          reducedMotion: prefersReducedMotion,
+        })
+        const group = cardGroupRefs.current[index]
+        const card = cardRefs.current[index]
+        if (group) {
+          group.style.setProperty('--tcv-focus-scale', focusState.scale.toFixed(3))
+          group.style.setProperty('--tcv-focus-opacity', focusState.opacity.toFixed(3))
+          group.style.setProperty('--tcv-focus-brightness', focusState.brightness.toFixed(3))
+          group.style.zIndex = openIndex === index ? '7' : `${3 + Math.round(focusState.focus * 2)}`
+          group.dataset.focused = focusState.focus > 0.72 ? 'true' : 'false'
+        }
+        if (card) {
+          card.style.borderColor = openIndex === index
+            ? visual.cardBorderSelected
+            : focusState.focus > 0.72
+              ? visual.cardBorderFocused
+              : visual.cardBorder
+          card.style.boxShadow = openIndex === index
+            ? visual.cardShadowSelected
+            : focusState.focus > 0.72
+              ? visual.cardShadowFocused
+              : visual.cardShadow
+        }
+      })
+
+      segments.forEach((segment, index) => {
+        const progress = prefersReducedMotion
+          ? 1
+          : Math.max(0, Math.min(1, (focusX - segment.from) / (segment.to - segment.from)))
+        const path = pathRefs.current[index]
+        if (path && !prefersReducedMotion) {
+          path.style.strokeDashoffset = `${lengths[index] * (1 - progress)}`
+        }
+        const dot = dotRefs.current[index]
         if (dot) {
-          const lit = progress > 0.5
-          dot.style.opacity = lit ? '1' : '0'
-          dot.style.transform = `translate(-50%,-50%) scale(${lit ? 1 : 0.4})`
+          const dotFocus = getTimelineCardFocus({
+            centerX: segment.dot.x,
+            focusX,
+            stepGap,
+            reducedMotion: prefersReducedMotion,
+          })
+          const visible = prefersReducedMotion || progress > 0.5
+          dot.style.opacity = visible ? `${0.62 + dotFocus.focus * 0.38}` : '0'
+          dot.style.transform = `translate(-50%,-50%) scale(${visible ? 0.78 + dotFocus.focus * 0.22 : 0.4})`
         }
       })
 
       if (!hasPannedRef.current && scroller.scrollLeft > 4) {
         hasPannedRef.current = true
         setHasPanned(true)
+        setShowSwipeHint(false)
       }
     }
 
-    update()
-    scroller.addEventListener('scroll', update, { passive: true })
-    return () => scroller.removeEventListener('scroll', update)
-  }, [steps.length, canvasW, canvasH, stepGap, detailLayout.verticalOffset, openIndex])
+    function scheduleUpdate() {
+      if (animationFrameRef.current) return
+      animationFrameRef.current = window.requestAnimationFrame(update)
+    }
 
-  function centreCard(index, behavior = 'smooth') {
+    scheduleUpdate()
+    scroller.addEventListener('scroll', scheduleUpdate, { passive: true })
+    return () => {
+      scroller.removeEventListener('scroll', scheduleUpdate)
+      if (animationFrameRef.current) window.cancelAnimationFrame(animationFrameRef.current)
+    }
+  }, [
+    steps.length,
+    canvasW,
+    canvasH,
+    stepGap,
+    detailLayout.verticalOffset,
+    openIndex,
+    prefersReducedMotion,
+    visual.cardBorder,
+    visual.cardBorderFocused,
+    visual.cardBorderSelected,
+    visual.cardShadow,
+    visual.cardShadowFocused,
+    visual.cardShadowSelected,
+  ])
+
+  function centreCard(index, behavior = prefersReducedMotion ? 'auto' : 'smooth') {
     const scroller = scrollerRef.current
     const center = geometry.centers[index]
     if (!scroller || !center) return true
@@ -225,6 +359,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
     } else {
       scroller.scrollLeft = targetLeft
     }
+    lastNearestRef.current = index
     setCurrentIndex(index)
     return alreadyCentred
   }
@@ -245,7 +380,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
     })
 
     const alreadyCentred = centreCard(index)
-    if (alreadyCentred) {
+    if (alreadyCentred || prefersReducedMotion) {
       setOpenIndex(index)
       return
     }
@@ -253,7 +388,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
     openTimerRef.current = window.setTimeout(() => {
       setOpenIndex(index)
       openTimerRef.current = null
-    }, 320)
+    }, OPEN_DELAY_MS)
   }
 
   const allOpened = steps.length > 0 && opened.size === steps.length
@@ -262,14 +397,18 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   const openDetailHeadingId = openDetailId ? `${openDetailId}-heading` : null
 
   return (
-    <CinematicShell style={{
-      background: GENERAL.backgroundApp,
-      zIndex: 100,
-      display: 'flex',
-      flexDirection: 'column',
-      paddingTop: 'calc(80px + env(safe-area-inset-top, 0px))',
-      paddingBottom: 'calc(28px + env(safe-area-inset-bottom, 0px))',
-    }}>
+    <CinematicShell
+      className={prefersReducedMotion ? 'tcv-reduced-motion' : undefined}
+      data-reduced-motion={prefersReducedMotion ? 'true' : 'false'}
+      style={{
+        background: visual.canvasBackground,
+        zIndex: 100,
+        display: 'flex',
+        flexDirection: 'column',
+        paddingTop: `calc(${HEADER_CLEARANCE}px + env(safe-area-inset-top, 0px))`,
+        paddingBottom: `calc(${SPACING.standard}px + env(safe-area-inset-bottom, 0px))`,
+      }}
+    >
       <div
         data-timeline-canvas-intent="spatial-journey"
         style={{
@@ -282,14 +421,14 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
           <h2 style={{
             ...TYPE.displaySection,
             fontSize: 'clamp(24px, 7.5vw, 32px)',
-            color: 'rgba(255,255,255,0.97)',
+            color: visual.titleText,
             margin: '0 0 8px',
           }}>
             {block.title}
           </h2>
         )}
         {block.intro && (
-          <p style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.52)', margin: 0 }}>
+          <p style={{ ...TYPE.bodyStrong, color: visual.introText, margin: 0 }}>
             {block.intro}
           </p>
         )}
@@ -313,7 +452,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
             overflowY: 'hidden',
             WebkitOverflowScrolling: 'touch',
             scrollSnapType: 'x mandatory',
-            scrollBehavior: 'smooth',
+            scrollBehavior: prefersReducedMotion ? 'auto' : 'smooth',
           }}
         >
           <div style={{ position: 'relative', flexShrink: 0, width: canvasW, height: canvasH }}>
@@ -323,37 +462,37 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
               viewBox={`0 0 ${canvasW} ${canvasH}`}
               style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
             >
-              {segments.map((segment, i) => (
+              {segments.map((segment, index) => (
                 <path
-                  key={i}
-                  ref={element => { pathRefs.current[i] = element }}
+                  key={index}
+                  ref={element => { pathRefs.current[index] = element }}
                   d={segment.d}
-                  stroke={`rgba(${rgb},0.32)`}
+                  stroke={visual.connectorInactive}
                   strokeWidth={3}
                   fill="none"
                   strokeLinecap="round"
-                  style={{ strokeDasharray: 600, strokeDashoffset: 600 }}
+                  style={{ strokeDasharray: 600, strokeDashoffset: prefersReducedMotion ? 0 : 600 }}
                 />
               ))}
             </svg>
 
-            {segments.map((segment, i) => (
+            {segments.map((segment, index) => (
               <div
-                key={i}
-                ref={element => { dotRefs.current[i] = element }}
-                className="tcv-connector-dot"
+                key={index}
+                ref={element => { dotRefs.current[index] = element }}
+                className="tcv-connector-dot tcv-motion"
                 style={{
                   position: 'absolute',
                   left: segment.dot.x,
                   top: segment.dot.y,
                   transform: 'translate(-50%,-50%) scale(0.4)',
-                  opacity: 0,
+                  opacity: prefersReducedMotion ? 1 : 0,
                   width: 20,
                   height: 20,
                   borderRadius: '50%',
-                  background: accent,
-                  border: '6px solid #08090D',
-                  boxShadow: `0 0 14px rgba(${rgb},0.55)`,
+                  background: visual.nodeActive,
+                  border: `6px solid ${visual.nodeRing}`,
+                  boxShadow: visual.nodeShadow,
                   zIndex: 2,
                 }}
               />
@@ -364,34 +503,41 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
               const isOpen = openIndex === index
               const stats = step.stats || ['Tap for detail']
               const detailId = `${detailIdBase}-detail-${index}`
-              const controlLeft = isOpen
-                ? center.x + cardWidth / 2 - 22
-                : center.x + cardWidth / 2 - 8
-              const controlTop = isOpen
-                ? center.y - cardHeight / 2 + 22
-                : center.y + cardHeight / 2 - 8
 
               return (
-                <div key={step.id || index}>
+                <div
+                  key={step.id || index}
+                  ref={element => { cardGroupRefs.current[index] = element }}
+                  className="tcv-card-group tcv-motion"
+                  data-timeline-card-group={index}
+                  data-selected={isOpen ? 'true' : 'false'}
+                  data-reduced-motion={prefersReducedMotion ? 'true' : 'false'}
+                  style={{
+                    position: 'absolute',
+                    left: center.x,
+                    top: center.y,
+                    width: cardWidth,
+                    height: cardHeight,
+                    '--tcv-focus-scale': prefersReducedMotion || index === currentIndex ? 1 : 0.84,
+                    '--tcv-focus-opacity': prefersReducedMotion || index === currentIndex ? 1 : 0.5,
+                    '--tcv-focus-brightness': prefersReducedMotion || index === currentIndex ? 1 : 0.74,
+                    zIndex: isOpen ? 7 : index === currentIndex ? 5 : 3,
+                    scrollSnapAlign: 'center',
+                    scrollSnapStop: 'always',
+                  }}
+                >
                   <div
+                    ref={element => { cardRefs.current[index] = element }}
                     className="tcv-card"
-                    data-selected={isOpen ? 'true' : 'false'}
                     style={{
-                      position: 'absolute',
-                      left: center.x,
-                      top: center.y,
-                      width: cardWidth,
-                      height: cardHeight,
+                      position: 'relative',
+                      width: '100%',
+                      height: '100%',
                       borderRadius: RADII.large,
-                      border: `1px solid ${isOpen ? `rgba(${rgb},0.58)` : `rgba(${rgb},0.18)`}`,
-                      background: 'rgba(255,255,255,0.03)',
-                      boxShadow: isOpen
-                        ? `0 22px 54px rgba(0,0,0,0.62), 0 0 22px rgba(${rgb},0.12)`
-                        : '0 20px 48px rgba(0,0,0,0.5)',
+                      border: `1px solid ${isOpen ? visual.cardBorderSelected : visual.cardBorder}`,
+                      background: visual.cardSurface,
+                      boxShadow: isOpen ? visual.cardShadowSelected : visual.cardShadow,
                       overflow: 'hidden',
-                      zIndex: isOpen ? 6 : 3,
-                      scrollSnapAlign: 'center',
-                      scrollSnapStop: 'always',
                     }}
                   >
                     <div style={{
@@ -399,9 +545,9 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                       height: mediaHeight,
                       width: '100%',
                       overflow: 'hidden',
-                      background: '#000',
+                      background: step.image ? visual.mediaBackground : visual.mediaFallback,
                     }}>
-                      {step.image && (
+                      {step.image ? (
                         <img
                           src={step.image}
                           alt=""
@@ -413,12 +559,10 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                             objectFit: 'cover',
                           }}
                         />
+                      ) : (
+                        <TimelineImageFallback accent={accent} />
                       )}
-                      <div style={{
-                        position: 'absolute',
-                        inset: 0,
-                        background: `linear-gradient(180deg, rgba(${rgb},0.16) 0%, rgba(8,9,13,0) 45%, rgba(8,9,13,0.85) 100%)`,
-                      }} />
+                      <div style={{ position: 'absolute', inset: 0, background: visual.mediaScrim }} />
                       <div style={{
                         position: 'absolute',
                         bottom: 12,
@@ -427,8 +571,8 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                         textAlign: 'center',
                         ...TYPE.titleLarge,
                         fontSize: 16,
-                        color: 'rgba(255,255,255,0.96)',
-                        textShadow: '0 3px 10px rgba(0,0,0,0.6)',
+                        color: visual.mediaTitle,
+                        textShadow: visual.mediaTitleShadow,
                         padding: '0 12px',
                         boxSizing: 'border-box',
                       }}>
@@ -443,9 +587,9 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                       alignItems: 'center',
                       ...TYPE.metadata,
                       fontSize: 12,
-                      color: 'rgba(255,255,255,0.46)',
-                      background: 'rgba(255,255,255,0.02)',
-                      borderTop: '1px solid rgba(255,255,255,0.06)',
+                      color: visual.metadataText,
+                      background: visual.metadataSurface,
+                      borderTop: `1px solid ${visual.metadataDivider}`,
                     }}>
                       {stats.map((stat, statIndex) => (
                         <span key={statIndex}>{stat}</span>
@@ -455,8 +599,9 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
 
                   <button
                     type="button"
-                    className={`tcv-plus-btn${!opened.has(index) ? ' tcv-glow' : ''}`}
-                    data-control-position={isOpen ? 'card-top-right' : 'card-bottom-right'}
+                    className={`tcv-plus-btn tcv-motion${!opened.has(index) && !prefersReducedMotion ? ' tcv-glow' : ''}`}
+                    data-control-position="card-top-left"
+                    data-control-symbol={isOpen ? 'close' : 'reveal'}
                     aria-label={isOpen
                       ? `Close explanation for ${step.label}`
                       : `Reveal why ${step.label} mattered`}
@@ -465,25 +610,27 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                     onClick={() => toggleDetail(index)}
                     style={{
                       position: 'absolute',
-                      left: controlLeft,
-                      top: controlTop,
+                      left: 0,
+                      top: 0,
                       width: 44,
                       height: 44,
                       borderRadius: '50%',
-                      border: `2px solid rgba(${rgb},0.5)`,
-                      background: isOpen ? accent : `rgba(${rgb},0.14)`,
-                      color: isOpen ? GENERAL.textOnAccent : accent,
+                      border: `2px solid ${visual.controlBorder}`,
+                      background: isOpen ? visual.controlActive : visual.controlRest,
+                      color: isOpen ? visual.controlTextActive : visual.controlText,
                       ...TYPE.button,
                       fontSize: 22,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
+                      boxShadow: visual.controlShadow,
                       cursor: 'pointer',
-                      zIndex: isOpen ? 7 : 4,
+                      zIndex: 8,
                       padding: 0,
                       WebkitTapHighlightColor: 'transparent',
-                      '--glow-rgb': rgb,
+                      '--tcv-accent': accent,
+                      '--tcv-control-shadow': visual.controlShadow,
+                      '--tcv-control-glow': visual.controlGlow,
                     }}
                   >
                     {isOpen ? '×' : '+'}
@@ -509,11 +656,13 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
               boxSizing: 'border-box',
               padding: SPACING.standard,
               borderRadius: `${RADII.large}px ${RADII.large}px 0 0`,
-              background: `rgba(${rgb},0.09)`,
-              border: `1px solid rgba(${rgb},0.26)`,
+              background: visual.detailSurface,
+              border: `1px solid ${visual.detailBorder}`,
               borderBottom: 'none',
-              boxShadow: '0 -18px 42px rgba(0,0,0,0.46)',
-              animation: `tcv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+              boxShadow: visual.detailShadow,
+              animation: prefersReducedMotion
+                ? 'none'
+                : `tcv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
               zIndex: 8,
               overflow: 'hidden',
             }}
@@ -523,7 +672,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
               style={{
                 ...TYPE.eyebrow,
                 textTransform: 'uppercase',
-                color: accent,
+                color: visual.detailEyebrow,
                 marginBottom: SPACING.micro,
               }}
             >
@@ -531,36 +680,38 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
             </div>
             <div style={{
               ...TYPE.bodyStrong,
-              color: 'rgba(255,255,255,0.82)',
+              color: visual.settledText,
               overflowY: 'auto',
               maxHeight: `calc(100% - ${SPACING.standard + SPACING.micro}px)`,
-              paddingRight: 4,
+              paddingRight: SPACING.micro / 2,
             }}>
               {openStep.detail}
             </div>
           </div>
         )}
 
-        {steps.length > 1 && openIndex === null && !hasPanned && (
-          <div style={{
-            position: 'absolute',
-            top: 12,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            ...TYPE.label,
-            color: accent,
-            textShadow: '0 2px 12px rgba(0,0,0,0.8)',
-            pointerEvents: 'none',
-            animation: 'tcv-bounce 2s infinite ease-in-out',
-            zIndex: 9,
-          }}>
-            Swipe to explore →
+        {steps.length > 1 && openIndex === null && !hasPanned && showSwipeHint && (
+          <div
+            className={`tcv-swipe-hint${prefersReducedMotion ? '' : ' tcv-motion'}`}
+            style={{
+              position: 'absolute',
+              top: SPACING.micro,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              ...TYPE.label,
+              color: visual.swipeHint,
+              textShadow: visual.swipeHintShadow,
+              pointerEvents: 'none',
+              zIndex: 9,
+            }}
+          >
+            Swipe →
           </div>
         )}
       </div>
 
       {steps.length > 0 && (
-        <div style={{
+        <div className="tcv-sequence-progress" style={{
           display: 'flex',
           justifyContent: 'center',
           marginTop: SPACING.compact,
@@ -587,11 +738,15 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
           <ContinueCTA
             onClick={onContinue}
             accent={accent}
-            style={{ animation: `tcv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both` }}
+            style={{
+              animation: prefersReducedMotion
+                ? 'none'
+                : `tcv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+            }}
           />
         ) : (
-          <div style={{ ...TYPE.label, color: 'rgba(255,255,255,0.32)' }}>
-            Tap each + to continue
+          <div style={{ ...TYPE.label, color: visual.quietText }}>
+            Explore each point to continue
           </div>
         )}
       </div>
