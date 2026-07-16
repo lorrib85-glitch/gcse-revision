@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { getTimelineCanvasGeometry } from '../../src/components/learning/timelineCanvasGeometry.js'
+import {
+  getNearestTimelineIndex,
+  getTimelineCanvasGeometry,
+  getTimelineDetailLayout,
+  getTimelineScrollLeft,
+} from '../../src/components/learning/timelineCanvasGeometry.js'
 
 function expectCardsInsideCanvas(geometry) {
   const halfCard = geometry.cardHeight / 2
@@ -15,6 +20,16 @@ describe('TimelineCanvas responsive geometry', () => {
 
     expect(geometry.centers[0].x).toBe(195)
     expect(geometry.centers.at(-1).x).toBe(geometry.canvasWidth - 195)
+    expect(getTimelineScrollLeft({
+      centerX: geometry.centers[0].x,
+      viewportWidth: geometry.viewportWidth,
+      canvasWidth: geometry.canvasWidth,
+    })).toBe(0)
+    expect(getTimelineScrollLeft({
+      centerX: geometry.centers.at(-1).x,
+      viewportWidth: geometry.viewportWidth,
+      canvasWidth: geometry.canvasWidth,
+    })).toBe(geometry.canvasWidth - geometry.viewportWidth)
     expect(geometry.cardWidth).toBeGreaterThanOrEqual(196)
     expect(geometry.cardWidth).toBeLessThanOrEqual(244)
     expectCardsInsideCanvas(geometry)
@@ -35,5 +50,30 @@ describe('TimelineCanvas responsive geometry', () => {
     expect(narrow.cardWidth).toBeLessThan(standard.cardWidth)
     expect(narrow.stepGap).toBeLessThan(standard.stepGap)
     expect(narrow.canvasWidth).toBeLessThan(standard.canvasWidth)
+  })
+
+  it('derives current progress from the card nearest the viewport centre', () => {
+    const geometry = getTimelineCanvasGeometry({ width: 390, height: 480, stepCount: 4 })
+    const betweenSecondAndThird = (geometry.centers[1].x + geometry.centers[2].x) / 2
+
+    expect(getNearestTimelineIndex({ centers: geometry.centers, focusX: geometry.centers[0].x })).toBe(0)
+    expect(getNearestTimelineIndex({ centers: geometry.centers, focusX: geometry.centers[2].x - 20 })).toBe(2)
+    expect(getNearestTimelineIndex({ centers: geometry.centers, focusX: betweenSecondAndThird - 1 })).toBe(1)
+    expect(getNearestTimelineIndex({ centers: geometry.centers, focusX: betweenSecondAndThird + 1 })).toBe(2)
+  })
+
+  it('shifts the selected card fully above the anchored detail sheet', () => {
+    const geometry = getTimelineCanvasGeometry({ width: 390, height: 480, stepCount: 4 })
+    const layout = getTimelineDetailLayout({ geometry, openIndex: 1 })
+    const selectedCentre = layout.centers[1]
+    const selectedBottom = selectedCentre.y + geometry.cardHeight / 2
+    const sheetTop = geometry.canvasHeight - layout.sheetHeight
+
+    expect(layout.sheetHeight).toBeGreaterThanOrEqual(136)
+    expect(layout.sheetHeight).toBeLessThanOrEqual(220)
+    expect(layout.verticalOffset).toBeLessThan(0)
+    expect(selectedBottom).toBeLessThanOrEqual(sheetTop - 12)
+    expect(layout.centers[0].y - geometry.centers[0].y).toBe(layout.verticalOffset)
+    expect(layout.centers[3].y - geometry.centers[3].y).toBe(layout.verticalOffset)
   })
 })
