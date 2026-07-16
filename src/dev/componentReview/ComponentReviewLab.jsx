@@ -41,6 +41,8 @@ function matchesFilter(entry, filterId) {
 }
 
 const mono = { fontFamily: "'Sora', sans-serif" }
+const FULLBLEED_PREVIEW_WIDTH = 390
+const FULLBLEED_PREVIEW_SCALE = 0.78
 
 // Leave the lab by dropping the ?componentReview flag and reloading into the
 // normal learner app. Used from the index header so production users (the app
@@ -371,18 +373,41 @@ function PreviewFrame({ entry, variant, onDone, onError, accent }) {
   const fullbleed = renderMode === 'fullbleed'
   const resetKey = `${entry.id}:${variant?.id ?? 'default'}`
 
-  // Full-bleed components render position:fixed inset:0 and own the whole
-  // screen. We give them a bounded, relatively-positioned stage so they stay
-  // inside the 420px review column instead of covering the info panel.
+  // Full-screen components still lay themselves out at a genuine 390px mobile
+  // viewport and 100dvh height. The lab scales that complete virtual screen down
+  // to 78% so bottom sheets, progress and Continue remain visible together rather
+  // than being clipped by a shorter gallery frame.
   if (fullbleed) {
     return (
-      <div style={{
-        position: 'relative', width: '100%', height: '78vh', marginTop: 12,
-        border: `1px solid ${GENERAL.line.soft}`, borderTop: `2px solid ${accent}`,
-        overflow: 'hidden', background: '#000',
-      }}>
-        {/* contain: position pins fixed descendants to this box, not the viewport */}
-        <div style={{ position: 'absolute', inset: 0, contain: 'layout paint size', overflow: 'auto' }}>
+      <div
+        data-review-fullscreen-fit="true"
+        data-review-viewport-width={FULLBLEED_PREVIEW_WIDTH}
+        data-review-viewport-scale={FULLBLEED_PREVIEW_SCALE}
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '78dvh',
+          marginTop: 12,
+          display: 'flex',
+          justifyContent: 'center',
+          border: `1px solid ${GENERAL.line.soft}`,
+          borderTop: `2px solid ${accent}`,
+          overflow: 'hidden',
+          background: '#000',
+        }}
+      >
+        {/* A transformed ancestor contains fixed descendants and preserves their
+            real 100dvh layout before the complete screen is scaled to fit. */}
+        <div style={{
+          position: 'relative',
+          width: FULLBLEED_PREVIEW_WIDTH,
+          height: '100dvh',
+          flex: '0 0 auto',
+          transform: `scale(${FULLBLEED_PREVIEW_SCALE})`,
+          transformOrigin: 'top center',
+          contain: 'layout paint size',
+          overflow: 'hidden',
+        }}>
           <RenderBoundary onError={onError} resetKey={resetKey}>
             {render(fixture, { onDone })}
           </RenderBoundary>
