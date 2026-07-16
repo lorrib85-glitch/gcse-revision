@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { MOTION } from '../../constants/motion.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
@@ -78,6 +78,7 @@ function renderTitle(text, highlight, accent) {
   if (!text || !highlight) return text
   const idx = text.toLowerCase().indexOf(highlight.toLowerCase())
   if (idx === -1) return text
+
   return (
     <>
       {text.slice(0, idx)}
@@ -91,6 +92,22 @@ function renderStageTitle(title) {
   return title?.replace(/\s*\/\s*/g, '/')
 }
 
+function splitCompletionCopy(screen) {
+  if (screen.completionSummary || screen.completionTakeaway) {
+    return {
+      summary: screen.completionSummary || screen.completionText || 'Route complete.',
+      takeaway: screen.completionTakeaway || '',
+    }
+  }
+
+  const text = screen.completionText || ''
+  const sentenceBreak = text.match(/^(.+?[.!?])\s+(.+)$/)
+
+  return sentenceBreak
+    ? { summary: sentenceBreak[1], takeaway: sentenceBreak[2] }
+    : { summary: text || 'Route complete.', takeaway: '' }
+}
+
 export default function OrderedRouteTask({ screen, subject, onComplete }) {
   const stages = screen.stages || []
   const answers = screen.answers || []
@@ -101,6 +118,10 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
   const idPrefix = screen.tag || 'ordered-route'
   const weakGroup = screen.weakGroup || screen.label || screen.title || 'Ordered route'
   const prompt = screen.prompt || 'Which stage does this belong to?'
+  const { summary: completionSummary, takeaway: completionTakeaway } = splitCompletionCopy(screen)
+
+  const scrollRef = useRef(null)
+  const missedRef = useRef(new Set())
 
   const [jobs] = useState(() => {
     const copy = [...answers]
@@ -115,16 +136,30 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
   const [locked, setLocked] = useState({})
   const [wrongStageId, setWrongStageId] = useState(null)
   const [feedback, setFeedback] = useState(null)
-  const missedRef = useRef(new Set())
 
   const currentJob = jobs[jobIndex] || null
   const complete = jobs.length > 0 && !currentJob
+
+  useEffect(() => {
+    if (!complete || !scrollRef.current) return undefined
+
+    const frame = window.requestAnimationFrame(() => {
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      scrollRef.current?.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: reduceMotion ? 'auto' : 'smooth',
+      })
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [complete])
 
   function handleStageTap(stage) {
     if (!currentJob || locked[stage.id]) return
 
     if (stage.answerId === currentJob.id) {
       setLocked(prev => ({ ...prev, [stage.id]: currentJob.id }))
+
       if (!missedRef.current.has(currentJob.id)) {
         logCorrectAnswer({
           subject: subjectKey,
@@ -133,13 +168,15 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           source: 'module',
         })
       }
+
       setJobIndex(i => i + 1)
       setFeedback(null)
       setWrongStageId(null)
       return
     }
 
-    const target = stages.find(s => s.answerId === currentJob.id)
+    const target = stages.find(stageItem => stageItem.answerId === currentJob.id)
+
     if (!missedRef.current.has(currentJob.id)) {
       missedRef.current.add(currentJob.id)
       logWrongAnswer({
@@ -153,7 +190,11 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
         weakGroup,
       })
     }
-    const clue = target?.clue ? target.clue.charAt(0).toLowerCase() + target.clue.slice(1) : ''
+
+    const clue = target?.clue
+      ? target.clue.charAt(0).toLowerCase() + target.clue.slice(1)
+      : ''
+
     setFeedback(clue ? `Not here — look for the stage ${clue}.` : 'Not here — try another stage.')
     setWrongStageId(stage.id)
   }
@@ -169,10 +210,12 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
+
         .ort-stage:focus-visible {
           outline: 2px solid ${accent};
           outline-offset: 2px;
         }
+
         @media (prefers-reduced-motion: reduce) {
           .ort-anim { animation: none !important; }
         }
@@ -204,6 +247,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
       />
 
       <div
+        ref={scrollRef}
         style={{
           position: 'relative',
           zIndex: 1,
@@ -212,11 +256,12 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           overflowX: 'hidden',
           display: 'flex',
           flexDirection: 'column',
-          padding: `calc(${SPACING.cinematic}px + env(safe-area-inset-top, 0px)) ${SPACING.compact}px calc(${SPACING.standard}px + env(safe-area-inset-bottom, 0px))`,
+          padding: `calc(${SPACING.cinematic}px + env(safe-area-inset-top, 0px)) ${SPACING.compact}px ${SPACING.standard}px`,
           maxWidth: 430,
           width: '100%',
           margin: '0 auto',
           boxSizing: 'border-box',
+          scrollPaddingBottom: `calc(${SPACING.section}px + env(safe-area-inset-bottom, 0px))`,
         }}
       >
         <h1
@@ -251,7 +296,9 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
             background: ROW_BG,
             border: `1px solid rgba(${rgb},0.45)`,
             borderRadius: RADII.medium,
-            padding: SPACING.compact,
+            padding: complete
+              ? `${SPACING.micro}px ${SPACING.compact}px`
+              : SPACING.compact,
             marginBottom: SPACING.compact,
             animation: entrance,
             animationDelay: MOTION.duration.fast,
@@ -260,23 +307,36 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           {complete ? (
             <>
               <div style={{ ...TYPE.label, color: accent }}>Chain rebuilt</div>
-              {screen.completionText && (
-                <div style={{ ...TYPE.bodySmall, color: TEXT_PRIMARY, marginTop: SPACING.micro }}>
-                  {screen.completionText}
-                </div>
-              )}
+              <div
+                style={{
+                  ...TYPE.bodySmall,
+                  color: TEXT_PRIMARY,
+                  marginTop: SPACING.micro / 2,
+                }}
+              >
+                {completionSummary}
+              </div>
             </>
           ) : (
             <>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: SPACING.micro }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'baseline',
+                  gap: SPACING.micro,
+                }}
+              >
                 <span style={{ ...TYPE.label, color: accent }}>{prompt}</span>
                 <span style={{ ...TYPE.caption, color: TEXT_DIM, flexShrink: 0 }}>
                   {jobIndex}/{jobs.length} placed
                 </span>
               </div>
+
               <div style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, marginTop: SPACING.micro }}>
                 {currentJob?.text}
               </div>
+
               {feedback && (
                 <div style={{ ...TYPE.caption, color: 'var(--error)', marginTop: SPACING.micro }}>
                   {feedback}
@@ -286,10 +346,15 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           )}
         </div>
 
-        <div className="ort-anim" style={{ animation: entrance, animationDelay: MOTION.duration.standard }}>
+        <div
+          className="ort-anim"
+          style={{ animation: entrance, animationDelay: MOTION.duration.standard }}
+        >
           <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.micro }}>
             {stages.map((stage, idx) => {
-              const lockedJob = locked[stage.id] ? answers.find(a => a.id === locked[stage.id]) : null
+              const lockedJob = locked[stage.id]
+                ? answers.find(answer => answer.id === locked[stage.id])
+                : null
               const isWrongTap = wrongStageId === stage.id
               const IconComp = ICON_MAP[stage.icon] || IconCross
 
@@ -297,7 +362,13 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                 <div key={stage.id} style={{ display: 'flex', gap: 0, alignItems: 'stretch' }}>
                   <div
                     aria-hidden="true"
-                    style={{ width: NODE, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                    style={{
+                      width: NODE,
+                      flexShrink: 0,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                    }}
                   >
                     <div
                       style={{
@@ -313,11 +384,16 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                         ...TYPE.label,
                         color: accent,
                         boxShadow: lockedJob ? `0 0 12px rgba(${rgb},0.35)` : 'none',
-                        transition: `background ${MOTION.duration.fast} ${MOTION.easing.gentle}, border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                        transition: [
+                          `background ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                          `border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                          `box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                        ].join(', '),
                       }}
                     >
                       {idx + 1}
                     </div>
+
                     {idx < stages.length - 1 && (
                       <div
                         style={{
@@ -340,7 +416,10 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                       flexShrink: 0,
                       background: `rgba(${rgb},${lockedJob ? 0.62 : 0.38})`,
                       boxShadow: lockedJob ? `0 0 6px rgba(${rgb},0.25)` : 'none',
-                      transition: `background ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                      transition: [
+                        `background ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                        `box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                      ].join(', '),
                     }}
                   />
 
@@ -365,17 +444,32 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                       background: lockedJob ? `rgba(${rgb},0.10)` : ROW_BG,
                       padding: `${SPACING.micro}px ${SPACING.compact}px`,
                       cursor: lockedJob || complete ? 'default' : 'pointer',
-                      transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}, background ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                      transition: [
+                        `border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                        `background ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                      ].join(', '),
                       WebkitTapHighlightColor: 'transparent',
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
                       <IconComp accent={accent} />
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ ...TYPE.titleMedium, color: TEXT_PRIMARY, overflowWrap: 'break-word' }}>
+                        <div
+                          style={{
+                            ...TYPE.titleMedium,
+                            color: TEXT_PRIMARY,
+                            overflowWrap: 'break-word',
+                          }}
+                        >
                           {renderStageTitle(stage.title)}
                         </div>
-                        <div style={{ ...TYPE.caption, color: TEXT_DIM, overflowWrap: 'break-word' }}>
+                        <div
+                          style={{
+                            ...TYPE.caption,
+                            color: TEXT_DIM,
+                            overflowWrap: 'break-word',
+                          }}
+                        >
                           {stage.clue}
                         </div>
                       </div>
@@ -395,7 +489,9 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                           color: TEXT_PRIMARY,
                         }}
                       >
-                        <span aria-hidden="true" style={{ color: accent, flexShrink: 0 }}>✓</span>
+                        <span aria-hidden="true" style={{ color: accent, flexShrink: 0 }}>
+                          ✓
+                        </span>
                         <span>{lockedJob.text}</span>
                       </div>
                     )}
@@ -406,18 +502,51 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           </div>
         </div>
 
-        {complete && (
-          <ContinueCTA
-            onClick={onComplete}
-            accent={accent}
+        {complete && completionTakeaway && (
+          <div
+            className="ort-anim"
             style={{
-              marginTop: SPACING.standard,
-              animation: `ort-in ${MOTION.duration.standard} ${MOTION.easing.gentle} ${MOTION.duration.cinematic} both`,
+              marginTop: SPACING.compact,
+              paddingTop: SPACING.compact,
+              borderTop: `1px solid rgba(${rgb},0.26)`,
+              ...TYPE.bodySmall,
+              color: TEXT_PRIMARY,
+              animation: `ort-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both`,
             }}
-          />
+          >
+            <span style={{ ...TYPE.label, color: accent }}>Exam takeaway: </span>
+            {completionTakeaway}
+          </div>
         )}
 
-        <div style={{ height: `calc(env(safe-area-inset-bottom, 0px) + ${SPACING.compact}px)` }} />
+        {complete && (
+          <div
+            style={{
+              position: 'sticky',
+              bottom: 0,
+              zIndex: 2,
+              marginTop: SPACING.compact,
+              paddingTop: SPACING.standard,
+              paddingBottom: `calc(${SPACING.micro}px + env(safe-area-inset-bottom, 0px))`,
+              background: 'linear-gradient(to top, rgba(5,4,2,0.98) 0%, rgba(5,4,2,0.92) 72%, transparent 100%)',
+            }}
+          >
+            <ContinueCTA
+              onClick={onComplete}
+              accent={accent}
+              style={{
+                animation: `ort-in ${MOTION.duration.standard} ${MOTION.easing.gentle} ${MOTION.duration.cinematic} both`,
+              }}
+            />
+          </div>
+        )}
+
+        {!complete && (
+          <div
+            aria-hidden="true"
+            style={{ height: `calc(env(safe-area-inset-bottom, 0px) + ${SPACING.compact}px)` }}
+          />
+        )}
       </div>
     </CinematicShell>
   )
