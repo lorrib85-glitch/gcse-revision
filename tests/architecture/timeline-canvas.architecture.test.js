@@ -40,21 +40,39 @@ describe('TimelineCanvas architecture', () => {
 
   it('keeps reveal and close on one stable top-left card anchor', () => {
     expect(component).toContain('data-control-position="card-top-left"')
-    expect(component).toContain("left: 0")
-    expect(component).toContain("top: 0")
+    expect(component).toContain('left: 0')
+    expect(component).toContain('top: 0')
     expect(component).toContain('data-control-symbol={isOpen ? \'close\' : \'reveal\'}')
     expect(component).toContain('Close explanation for ${step.label}')
     expect(component).not.toContain('card-top-right')
     expect(component).not.toContain('card-bottom-right')
   })
 
-  it('updates cinematic focus in one animation frame without React pixel rerenders', () => {
+  it('grows opaque cards as the glowing route reaches them', () => {
     expect(component).toContain('getTimelineCardFocus')
     expect(component).toContain('window.requestAnimationFrame(update)')
     expect(component).toContain("group.style.setProperty('--tcv-focus-scale'")
-    expect(component).toContain("group.style.setProperty('--tcv-focus-opacity'")
     expect(component).toContain("group.style.setProperty('--tcv-focus-brightness'")
-    expect(component).toContain('data-timeline-card-group={index}')
+    expect(component).toContain('group.dataset.routeArrival')
+    expect(component).toContain('data-route-arrival=')
+    expect(component).not.toContain('--tcv-focus-opacity')
+    expect(component).not.toContain('group.style.opacity')
+    expect(component).toContain("isolation: 'isolate'")
+    expect(theme).toContain('cardSurface: GENERAL.backgroundSurface')
+    expect(theme).toContain('metadataSurface: GENERAL.backgroundSurface')
+  })
+
+  it('renders a faint base route and a separate stronger glowing active route', () => {
+    expect(component).toContain('data-connector-layer="base"')
+    expect(component).toContain('data-connector-layer="active"')
+    expect(component).toContain('className="tcv-connector-active"')
+    expect(component).toContain('visual.connectorActive')
+    expect(component).toContain('visual.connectorGlow')
+    expect(component).toContain('zIndex: 0')
+    expect(theme).toContain('connectorInactive')
+    expect(theme).toContain('connectorActive')
+    expect(theme).toContain('connectorActiveWidth')
+    expect(theme).toContain('connectorGlow')
   })
 
   it('uses governed motion, semantic visual roles and shared shell spacing', () => {
