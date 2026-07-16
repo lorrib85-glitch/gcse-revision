@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect } from 'react'
+import { useEffect, useId, useState, useRef, useLayoutEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
@@ -11,7 +11,12 @@ import SequenceProgress from '../core/SequenceProgress.jsx'
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
-import { getTimelineCanvasGeometry } from './timelineCanvasGeometry.js'
+import {
+  getNearestTimelineIndex,
+  getTimelineCanvasGeometry,
+  getTimelineDetailLayout,
+  getTimelineScrollLeft,
+} from './timelineCanvasGeometry.js'
 
 // ─── TimelineCanvas ───────────────────────────────────────────────────────────
 //
@@ -55,20 +60,22 @@ function ensureStyles() {
       --s: 1;
       transform: translate(-50%, -50%) scale(var(--s));
       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                  background 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                  color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                  left 0.3s ease,
+                  top 0.3s ease,
+                  background 0.3s ease,
+                  color 0.3s ease;
     }
-    .tcv-plus-btn:active, .tcv-plus-btn.is-open { --s: 1.15; }
+    .tcv-plus-btn:active { --s: 1.08; }
     .tcv-plus-btn.tcv-glow { animation: tcv-plus-glow 2.2s infinite ease-in-out; }
     .tcv-card {
       --ty: -50%;
       --s: 1;
       transform: translate(-50%, var(--ty)) scale(var(--s));
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      transition: transform 0.4s ease, top 0.35s ease, box-shadow 0.4s ease, border-color 0.3s ease;
     }
     .tcv-card:active { --ty: -54%; --s: 1.015; }
     .tcv-connector-dot {
-      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: opacity 0.3s ease, top 0.35s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
   `
   document.head.appendChild(el)
@@ -80,9 +87,11 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
   const steps = block.steps || []
+  const detailIdBase = useId()
 
   const [openIndex, setOpenIndex] = useState(null)
   const [opened, setOpened] = useState(() => new Set())
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [hasPanned, setHasPanned] = useState(false)
   const [canvasSize, setCanvasSize] = useState({ width: 390, height: 480 })
 
@@ -91,6 +100,11 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   const pathRefs = useRef([])
   const dotRefs = useRef([])
   const hasPannedRef = useRef(false)
+  const openTimerRef = useRef(null)
+
+  useEffect(() => () => {
+    if (openTimerRef.current) window.clearTimeout(openTimerRef.current)
+  }, [])
 
   useLayoutEffect(() => {
     const region = canvasRegionRef.current
@@ -128,8 +142,8 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
     height: canvasSize.height,
     stepCount: steps.length,
   })
+  const detailLayout = getTimelineDetailLayout({ geometry, openIndex })
   const {
-    centers,
     canvasWidth: canvasW,
     canvasHeight: canvasH,
     cardWidth,
@@ -138,22 +152,21 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
     statsHeight,
     stepGap,
   } = geometry
+  const displayCenters = detailLayout.centers
 
-  const segments = centers.slice(0, -1).map((c, i) => {
-    const n = centers[i + 1]
-    const midX = (c.x + n.x) / 2
+  const segments = displayCenters.slice(0, -1).map((center, i) => {
+    const nextCenter = displayCenters[i + 1]
+    const midX = (center.x + nextCenter.x) / 2
     return {
-      d: `M ${c.x} ${c.y} C ${midX} ${c.y}, ${midX} ${n.y}, ${n.x} ${n.y}`,
-      dot: { x: (c.x + n.x) / 2, y: (c.y + n.y) / 2 },
-      from: c.x,
-      to: n.x,
+      d: `M ${center.x} ${center.y} C ${midX} ${center.y}, ${midX} ${nextCenter.y}, ${nextCenter.x} ${nextCenter.y}`,
+      dot: { x: (center.x + nextCenter.x) / 2, y: (center.y + nextCenter.y) / 2 },
+      from: center.x,
+      to: nextCenter.x,
     }
   })
 
-  // Draw each connector line in (and light up its dot) as the pan position
-  // moves across it, and hide the swipe hint for good once panning begins.
-  // `segments` is rebuilt from the measured geometry each render; the primitive
-  // geometry values below are the stable dependencies that require re-measuring.
+  // Draw each connector line in as the viewport moves across it. The same scroll
+  // position also determines the governed current progress marker.
   useLayoutEffect(() => {
     const scroller = scrollerRef.current
     if (!scroller || segments.length === 0) return undefined
@@ -165,6 +178,8 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
 
     function update() {
       const focusX = scroller.scrollLeft + scroller.clientWidth / 2
+      const nearestIndex = getNearestTimelineIndex({ centers: geometry.centers, focusX })
+      setCurrentIndex(previous => (previous === nearestIndex ? previous : nearestIndex))
 
       segments.forEach((segment, i) => {
         const progress = Math.max(0, Math.min(1, (focusX - segment.from) / (segment.to - segment.from)))
@@ -187,19 +202,57 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
     update()
     scroller.addEventListener('scroll', update, { passive: true })
     return () => scroller.removeEventListener('scroll', update)
-  }, [steps.length, canvasW, canvasH, stepGap])
+  }, [steps.length, canvasW, canvasH, stepGap, detailLayout.verticalOffset])
 
-  function togglePlus(i) {
-    setOpenIndex(previous => (previous === i ? null : i))
+  function centreCard(index, behavior = 'smooth') {
+    const scroller = scrollerRef.current
+    const center = geometry.centers[index]
+    if (!scroller || !center) return true
+
+    const targetLeft = getTimelineScrollLeft({
+      centerX: center.x,
+      viewportWidth: scroller.clientWidth,
+      canvasWidth: canvasW,
+    })
+    const alreadyCentred = Math.abs(scroller.scrollLeft - targetLeft) < 4
+
+    if (typeof scroller.scrollTo === 'function') {
+      scroller.scrollTo({ left: targetLeft, behavior })
+    } else {
+      scroller.scrollLeft = targetLeft
+    }
+    setCurrentIndex(index)
+    return alreadyCentred
+  }
+
+  function toggleDetail(index) {
+    if (openTimerRef.current) window.clearTimeout(openTimerRef.current)
+
+    if (openIndex === index) {
+      setOpenIndex(null)
+      return
+    }
+
+    setOpenIndex(null)
     setOpened(previous => {
       const next = new Set(previous)
-      next.add(i)
+      next.add(index)
       return next
     })
+
+    const alreadyCentred = centreCard(index)
+    if (alreadyCentred) {
+      setOpenIndex(index)
+      return
+    }
+
+    openTimerRef.current = window.setTimeout(() => {
+      setOpenIndex(index)
+      openTimerRef.current = null
+    }, 320)
   }
 
   const allOpened = steps.length > 0 && opened.size === steps.length
-  const currentProgressIndex = openIndex ?? Math.min(opened.size, Math.max(steps.length - 1, 0))
 
   return (
     <CinematicShell style={{
@@ -210,7 +263,6 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
       paddingTop: 'calc(80px + env(safe-area-inset-top, 0px))',
       paddingBottom: 'calc(28px + env(safe-area-inset-bottom, 0px))',
     }}>
-      {/* Title + intro */}
       <div
         data-timeline-canvas-intent="spatial-journey"
         style={{
@@ -236,21 +288,27 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
         )}
       </div>
 
-      {/* Swipe-to-pan spatial journey */}
       <div
         ref={canvasRegionRef}
         data-timeline-canvas-region="true"
         style={{ flex: 1, position: 'relative', minHeight: 0 }}
       >
-        <div ref={scrollerRef} className="tcv-scroller" style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          alignItems: 'center',
-          overflowX: 'auto',
-          overflowY: 'hidden',
-          WebkitOverflowScrolling: 'touch',
-        }}>
+        <div
+          ref={scrollerRef}
+          className="tcv-scroller"
+          aria-label="Timeline journey"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+            scrollSnapType: 'x mandatory',
+            scrollBehavior: 'smooth',
+          }}
+        >
           <div style={{ position: 'relative', flexShrink: 0, width: canvasW, height: canvasH }}>
             <svg
               width={canvasW}
@@ -294,25 +352,42 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
               />
             ))}
 
-            {steps.map((step, i) => {
-              const center = centers[i]
-              const isOpen = openIndex === i
+            {steps.map((step, index) => {
+              const center = displayCenters[index]
+              const isOpen = openIndex === index
               const stats = step.stats || ['Tap for detail']
+              const detailId = `${detailIdBase}-detail-${index}`
+              const detailHeadingId = `${detailId}-heading`
+              const controlLeft = isOpen
+                ? center.x + cardWidth / 2 - 22
+                : center.x + cardWidth / 2 - 8
+              const controlTop = isOpen
+                ? center.y - cardHeight / 2 + 22
+                : center.y + cardHeight / 2 - 8
+
               return (
-                <div key={step.id || i}>
-                  <div className="tcv-card" style={{
-                    position: 'absolute',
-                    left: center.x,
-                    top: center.y,
-                    width: cardWidth,
-                    height: cardHeight,
-                    borderRadius: RADII.large,
-                    border: `1px solid rgba(${rgb},0.18)`,
-                    background: 'rgba(255,255,255,0.03)',
-                    boxShadow: '0 20px 48px rgba(0,0,0,0.5)',
-                    overflow: 'hidden',
-                    zIndex: 3,
-                  }}>
+                <div key={step.id || index}>
+                  <div
+                    className="tcv-card"
+                    data-selected={isOpen ? 'true' : 'false'}
+                    style={{
+                      position: 'absolute',
+                      left: center.x,
+                      top: center.y,
+                      width: cardWidth,
+                      height: cardHeight,
+                      borderRadius: RADII.large,
+                      border: `1px solid ${isOpen ? `rgba(${rgb},0.58)` : `rgba(${rgb},0.18)`}`,
+                      background: 'rgba(255,255,255,0.03)',
+                      boxShadow: isOpen
+                        ? `0 22px 54px rgba(0,0,0,0.62), 0 0 22px rgba(${rgb},0.12)`
+                        : '0 20px 48px rgba(0,0,0,0.5)',
+                      overflow: 'hidden',
+                      zIndex: isOpen ? 6 : 3,
+                      scrollSnapAlign: 'center',
+                      scrollSnapStop: 'always',
+                    }}
+                  >
                     <div style={{
                       position: 'relative',
                       height: mediaHeight,
@@ -373,12 +448,19 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                   </div>
 
                   <button
-                    className={`tcv-plus-btn${isOpen ? ' is-open' : ''}${!opened.has(i) ? ' tcv-glow' : ''}`}
-                    onClick={() => togglePlus(i)}
+                    type="button"
+                    className={`tcv-plus-btn${!opened.has(index) ? ' tcv-glow' : ''}`}
+                    data-control-position={isOpen ? 'card-top-right' : 'card-bottom-right'}
+                    aria-label={isOpen
+                      ? `Close explanation for ${step.label}`
+                      : `Reveal why ${step.label} mattered`}
+                    aria-expanded={isOpen}
+                    aria-controls={detailId}
+                    onClick={() => toggleDetail(index)}
                     style={{
                       position: 'absolute',
-                      left: center.x + cardWidth / 2 - 8,
-                      top: center.y + cardHeight / 2 - 8,
+                      left: controlLeft,
+                      top: controlTop,
                       width: 44,
                       height: 44,
                       borderRadius: '50%',
@@ -392,7 +474,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                       justifyContent: 'center',
                       boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
                       cursor: 'pointer',
-                      zIndex: 4,
+                      zIndex: isOpen ? 7 : 4,
                       padding: 0,
                       WebkitTapHighlightColor: 'transparent',
                       '--glow-rgb': rgb,
@@ -400,6 +482,53 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                   >
                     {isOpen ? '×' : '+'}
                   </button>
+
+                  {isOpen && (
+                    <div
+                      id={detailId}
+                      role="region"
+                      aria-labelledby={detailHeadingId}
+                      data-timeline-detail-sheet="anchored"
+                      style={{
+                        position: 'absolute',
+                        left: SPACING.standard,
+                        right: SPACING.standard,
+                        bottom: 0,
+                        height: detailLayout.sheetHeight,
+                        boxSizing: 'border-box',
+                        padding: SPACING.standard,
+                        borderRadius: `${RADII.large}px ${RADII.large}px 0 0`,
+                        background: `rgba(${rgb},0.09)`,
+                        border: `1px solid rgba(${rgb},0.26)`,
+                        borderBottom: 'none',
+                        boxShadow: '0 -18px 42px rgba(0,0,0,0.46)',
+                        animation: `tcv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+                        zIndex: 8,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <div
+                        id={detailHeadingId}
+                        style={{
+                          ...TYPE.eyebrow,
+                          textTransform: 'uppercase',
+                          color: accent,
+                          marginBottom: SPACING.micro,
+                        }}
+                      >
+                        Why it mattered
+                      </div>
+                      <div style={{
+                        ...TYPE.bodyStrong,
+                        color: 'rgba(255,255,255,0.82)',
+                        overflowY: 'auto',
+                        maxHeight: `calc(100% - ${SPACING.standard + SPACING.micro}px)`,
+                        paddingRight: 4,
+                      }}>
+                        {step.detail}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )
             })}
@@ -417,53 +546,12 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
             textShadow: '0 2px 12px rgba(0,0,0,0.8)',
             pointerEvents: 'none',
             animation: 'tcv-bounce 2s infinite ease-in-out',
-            zIndex: 5,
+            zIndex: 9,
           }}>
             Swipe to explore →
           </div>
         )}
       </div>
-
-      {/* Detail reveal panel — converted to an anchored sheet in Pass 2. */}
-      {openIndex !== null && (
-        <div style={{
-          flexShrink: 0,
-          margin: `${SPACING.compact}px ${SPACING.standard}px 0`,
-          padding: SPACING.standard,
-          borderRadius: RADII.large,
-          background: `rgba(${rgb},0.07)`,
-          border: `1px solid rgba(${rgb},0.22)`,
-          animation: `tcv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            marginBottom: SPACING.micro,
-          }}>
-            <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: accent }}>
-              Why it mattered
-            </div>
-            <button
-              onClick={() => setOpenIndex(null)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'rgba(255,255,255,0.4)',
-                fontSize: 18,
-                cursor: 'pointer',
-                padding: 0,
-                lineHeight: 1,
-              }}
-            >
-              ×
-            </button>
-          </div>
-          <div style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.82)' }}>
-            {steps[openIndex]?.detail}
-          </div>
-        </div>
-      )}
 
       {steps.length > 0 && (
         <div style={{
@@ -474,7 +562,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
         }}>
           <SequenceProgress
             total={steps.length}
-            current={currentProgressIndex}
+            current={currentIndex}
             viewed={Array.from(opened)}
             accent={accent}
             accentRgb={rgb}
