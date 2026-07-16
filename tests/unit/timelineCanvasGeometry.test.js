@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   getNearestTimelineIndex,
   getTimelineCanvasGeometry,
+  getTimelineCardFocus,
   getTimelineDetailLayout,
   getTimelineScrollLeft,
 } from '../../src/components/learning/timelineCanvasGeometry.js'
@@ -60,6 +61,28 @@ describe('TimelineCanvas responsive geometry', () => {
     expect(getNearestTimelineIndex({ centers: geometry.centers, focusX: geometry.centers[2].x - 20 })).toBe(2)
     expect(getNearestTimelineIndex({ centers: geometry.centers, focusX: betweenSecondAndThird - 1 })).toBe(1)
     expect(getNearestTimelineIndex({ centers: geometry.centers, focusX: betweenSecondAndThird + 1 })).toBe(2)
+  })
+
+  it('makes the centred card dominant while keeping adjacent cards readable', () => {
+    const centred = getTimelineCardFocus({ centerX: 300, focusX: 300, stepGap: 300 })
+    const halfWay = getTimelineCardFocus({ centerX: 300, focusX: 450, stepGap: 300 })
+    const adjacent = getTimelineCardFocus({ centerX: 300, focusX: 600, stepGap: 300 })
+
+    expect(centred).toEqual({ focus: 1, scale: 1, opacity: 1, brightness: 1 })
+    expect(halfWay.scale).toBeCloseTo(0.92, 2)
+    expect(halfWay.opacity).toBeCloseTo(0.75, 2)
+    expect(adjacent.scale).toBeCloseTo(0.84, 2)
+    expect(adjacent.opacity).toBeCloseTo(0.5, 2)
+    expect(adjacent.brightness).toBeCloseTo(0.74, 2)
+  })
+
+  it('removes zoom and dimming for reduced-motion learners', () => {
+    expect(getTimelineCardFocus({
+      centerX: 300,
+      focusX: 900,
+      stepGap: 300,
+      reducedMotion: true,
+    })).toEqual({ focus: 1, scale: 1, opacity: 1, brightness: 1 })
   })
 
   it('shifts the selected card fully above the anchored detail sheet', () => {
