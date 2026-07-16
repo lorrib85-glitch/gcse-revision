@@ -87,6 +87,10 @@ function renderTitle(text, highlight, accent) {
   )
 }
 
+function renderStageTitle(title) {
+  return title?.replace(/\s*\/\s*/g, '/')
+}
+
 export default function OrderedRouteTask({ screen, subject, onComplete }) {
   const stages = screen.stages || []
   const answers = screen.answers || []
@@ -290,7 +294,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
               const IconComp = ICON_MAP[stage.icon] || IconCross
 
               return (
-                <div key={stage.id} style={{ display: 'flex', gap: SPACING.micro, alignItems: 'stretch' }}>
+                <div key={stage.id} style={{ display: 'flex', gap: 0, alignItems: 'stretch' }}>
                   <div
                     aria-hidden="true"
                     style={{ width: NODE, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
@@ -327,6 +331,19 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                     )}
                   </div>
 
+                  <div
+                    aria-hidden="true"
+                    style={{
+                      width: SPACING.micro,
+                      height: 2,
+                      marginTop: NODE / 2 - 1,
+                      flexShrink: 0,
+                      background: `rgba(${rgb},${lockedJob ? 0.62 : 0.38})`,
+                      boxShadow: lockedJob ? `0 0 6px rgba(${rgb},0.25)` : 'none',
+                      transition: `background ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                    }}
+                  />
+
                   <button
                     type="button"
                     className="ort-stage"
@@ -356,7 +373,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                       <IconComp accent={accent} />
                       <div style={{ minWidth: 0 }}>
                         <div style={{ ...TYPE.titleMedium, color: TEXT_PRIMARY, overflowWrap: 'break-word' }}>
-                          {stage.title}
+                          {renderStageTitle(stage.title)}
                         </div>
                         <div style={{ ...TYPE.caption, color: TEXT_DIM, overflowWrap: 'break-word' }}>
                           {stage.clue}
