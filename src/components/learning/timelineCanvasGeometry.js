@@ -53,6 +53,36 @@ export function getNearestTimelineIndex({ centers = [], focusX = 0 } = {}) {
   ), 0)
 }
 
+/**
+ * Cinematic focus derived from distance to the viewport centre. Adjacent cards
+ * remain readable, but the centred card is unmistakably dominant.
+ */
+export function getTimelineCardFocus({
+  centerX = 0,
+  focusX = 0,
+  stepGap = 300,
+  reducedMotion = false,
+} = {}) {
+  if (reducedMotion) {
+    return {
+      focus: 1,
+      scale: 1,
+      opacity: 1,
+      brightness: 1,
+    }
+  }
+
+  const distance = Math.abs(centerX - focusX)
+  const focus = 1 - clamp(distance / Math.max(stepGap, 1), 0, 1)
+
+  return {
+    focus,
+    scale: 0.84 + focus * 0.16,
+    opacity: 0.50 + focus * 0.50,
+    brightness: 0.74 + focus * 0.26,
+  }
+}
+
 export function getTimelineScrollLeft({
   centerX = 0,
   viewportWidth = 390,
