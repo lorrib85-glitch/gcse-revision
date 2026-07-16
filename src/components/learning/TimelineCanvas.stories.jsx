@@ -1,3 +1,4 @@
+import { expect, userEvent, within } from 'storybook/test'
 import TimelineCanvas from './TimelineCanvas.jsx'
 
 export default {
@@ -45,5 +46,28 @@ export const BlackDeathJourney = {
         },
       ],
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const reveal = canvas.getByRole('button', {
+      name: 'Reveal why It began in central Asia mattered',
+    })
+
+    await expect(reveal).toHaveAttribute('data-control-position', 'card-bottom-right')
+    await userEvent.click(reveal)
+
+    const close = canvas.getByRole('button', {
+      name: 'Close explanation for It began in central Asia',
+    })
+    const detail = canvas.getByRole('region', { name: 'Why it mattered' })
+
+    await expect(close).toHaveAttribute('data-control-position', 'card-top-right')
+    await expect(close).toHaveAttribute('aria-expanded', 'true')
+    await expect(detail).toHaveAttribute('data-timeline-detail-sheet', 'anchored')
+    await expect(detail).toBeVisible()
+    await expect(canvas.getByText(/spread west along trade routes/)).toBeVisible()
+
+    await userEvent.click(close)
+    await expect(canvas.queryByRole('region', { name: 'Why it mattered' })).not.toBeInTheDocument()
   },
 }
