@@ -10,69 +10,8 @@ import CinematicShell from '../layout/CinematicShell.jsx'
 
 const TEXT_PRIMARY = 'rgba(255,251,242,0.96)'
 const TEXT_DIM = 'rgba(255,248,235,0.62)'
-const ROW_BG = 'rgba(12,11,9,0.86)'
+const ROW_BG = 'rgba(10,9,7,0.62)'
 const NODE = 30
-
-function IconHelmet({ accent }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M3 13c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke={accent} strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M2 13h16" stroke={accent} strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M5 13v1.5a1 1 0 001 1h8a1 1 0 001-1V13" stroke={accent} strokeWidth="1.4" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function IconCross({ accent }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <rect x="8" y="3" width="4" height="14" rx="1" fill={accent} opacity="0.85" />
-      <rect x="3" y="8" width="14" height="4" rx="1" fill={accent} opacity="0.85" />
-    </svg>
-  )
-}
-
-function IconHut({ accent }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M2 10l8-7 8 7" stroke={accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      <rect x="4" y="10" width="12" height="8" rx="1" stroke={accent} strokeWidth="1.5" />
-      <rect x="8" y="13" width="4" height="5" rx="0.5" stroke={accent} strokeWidth="1.2" />
-    </svg>
-  )
-}
-
-function IconTrain({ accent }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <rect x="3" y="4" width="14" height="10" rx="2" stroke={accent} strokeWidth="1.5" />
-      <path d="M3 8h14" stroke={accent} strokeWidth="1.3" />
-      <circle cx="6.5" cy="17" r="1.5" stroke={accent} strokeWidth="1.3" />
-      <circle cx="13.5" cy="17" r="1.5" stroke={accent} strokeWidth="1.3" />
-      <path d="M6.5 15.5V14M13.5 15.5V14" stroke={accent} strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M7 4V3M13 4V3" stroke={accent} strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function IconShip({ accent }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M3 12l1.6 4.5h10.8L17 12" stroke={accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M3 12h14" stroke={accent} strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M10 3.5V12" stroke={accent} strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M10 4.5h4.2L12.6 8H10" stroke={accent} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-const ICON_MAP = {
-  helmet: IconHelmet,
-  cross: IconCross,
-  hut: IconHut,
-  train: IconTrain,
-  ship: IconShip,
-}
 
 function renderTitle(text, highlight, accent) {
   if (!text || !highlight) return text
@@ -136,9 +75,17 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
   const [locked, setLocked] = useState({})
   const [wrongStageId, setWrongStageId] = useState(null)
   const [feedback, setFeedback] = useState(null)
+  const [recentCorrectStageId, setRecentCorrectStageId] = useState(null)
 
   const currentJob = jobs[jobIndex] || null
   const complete = jobs.length > 0 && !currentJob
+
+  useEffect(() => {
+    if (!recentCorrectStageId) return undefined
+
+    const timeout = window.setTimeout(() => setRecentCorrectStageId(null), 760)
+    return () => window.clearTimeout(timeout)
+  }, [recentCorrectStageId])
 
   useEffect(() => {
     if (!complete || !scrollRef.current) return undefined
@@ -158,7 +105,8 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
     if (!currentJob || locked[stage.id]) return
 
     if (stage.answerId === currentJob.id) {
-      setLocked(prev => ({ ...prev, [stage.id]: currentJob.id }))
+      setLocked(previous => ({ ...previous, [stage.id]: currentJob.id }))
+      setRecentCorrectStageId(stage.id)
 
       if (!missedRef.current.has(currentJob.id)) {
         logCorrectAnswer({
@@ -169,7 +117,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
         })
       }
 
-      setJobIndex(i => i + 1)
+      setJobIndex(index => index + 1)
       setFeedback(null)
       setWrongStageId(null)
       return
@@ -202,8 +150,6 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
   const entrance = `ort-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both`
 
   return (
-    // CinematicShell (not ContentShell/InteractionShell): this task owns a
-    // full-bleed background scene with the route composition laid over it.
     <CinematicShell style={{ zIndex: 1000, display: 'flex', flexDirection: 'column' }}>
       <style>{`
         @keyframes ort-in {
@@ -211,13 +157,52 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes ort-stage-confirm {
+          0% { transform: translateX(0); }
+          45% { transform: translateX(4px); }
+          100% { transform: translateX(0); }
+        }
+
+        @keyframes ort-node-confirm {
+          0% { transform: scale(0.92); }
+          55% { transform: scale(1.12); }
+          100% { transform: scale(1); }
+        }
+
+        .ort-stage {
+          appearance: none;
+          -webkit-appearance: none;
+        }
+
+        .ort-stage:not(:disabled):active {
+          transform: translateX(3px) scale(0.995);
+          border-color: rgba(${rgb},0.72) !important;
+          background: rgba(${rgb},0.12) !important;
+        }
+
+        .ort-stage--confirmed {
+          animation: ort-stage-confirm ${MOTION.duration.standard} ${MOTION.easing.gentle} both;
+        }
+
+        .ort-node--confirmed {
+          animation: ort-node-confirm ${MOTION.duration.standard} ${MOTION.easing.gentle} both;
+        }
+
         .ort-stage:focus-visible {
           outline: 2px solid ${accent};
-          outline-offset: 2px;
+          outline-offset: 3px;
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .ort-anim { animation: none !important; }
+          .ort-anim,
+          .ort-stage--confirmed,
+          .ort-node--confirmed {
+            animation: none !important;
+          }
+
+          .ort-stage {
+            transition: none !important;
+          }
         }
       `}</style>
 
@@ -240,7 +225,10 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to bottom, rgba(5,4,2,0.78) 0%, rgba(5,4,2,0.62) 40%, rgba(5,4,2,0.82) 100%)',
+          background: [
+            'linear-gradient(to bottom, rgba(5,4,2,0.66) 0%, rgba(5,4,2,0.72) 52%, rgba(5,4,2,0.94) 100%)',
+            'linear-gradient(to right, rgba(5,4,2,0.18) 0%, rgba(5,4,2,0.46) 100%)',
+          ].join(', '),
           zIndex: 0,
           pointerEvents: 'none',
         }}
@@ -293,13 +281,11 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           className="ort-anim"
           aria-live="polite"
           style={{
-            background: ROW_BG,
-            border: `1px solid rgba(${rgb},0.45)`,
-            borderRadius: RADII.medium,
-            padding: complete
-              ? `${SPACING.micro}px ${SPACING.compact}px`
-              : SPACING.compact,
+            position: 'relative',
+            padding: `${SPACING.micro}px 0 ${SPACING.compact}px ${SPACING.compact}px`,
             marginBottom: SPACING.compact,
+            borderLeft: `2px solid rgba(${rgb},${complete ? 0.82 : 0.62})`,
+            background: `linear-gradient(90deg, rgba(${rgb},${complete ? 0.12 : 0.09}) 0%, rgba(5,4,2,0) 86%)`,
             animation: entrance,
             animationDelay: MOTION.duration.fast,
           }}
@@ -325,6 +311,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                   justifyContent: 'space-between',
                   alignItems: 'baseline',
                   gap: SPACING.micro,
+                  paddingRight: SPACING.micro,
                 }}
               >
                 <span style={{ ...TYPE.label, color: accent }}>{prompt}</span>
@@ -333,7 +320,14 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                 </span>
               </div>
 
-              <div style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, marginTop: SPACING.micro }}>
+              <div
+                style={{
+                  ...TYPE.bodyStrong,
+                  color: TEXT_PRIMARY,
+                  marginTop: SPACING.micro,
+                  maxWidth: '34ch',
+                }}
+              >
                 {currentJob?.text}
               </div>
 
@@ -356,7 +350,9 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                 ? answers.find(answer => answer.id === locked[stage.id])
                 : null
               const isWrongTap = wrongStageId === stage.id
-              const IconComp = ICON_MAP[stage.icon] || IconCross
+              const isRecentCorrect = recentCorrectStageId === stage.id
+              const isFinalStage = idx === stages.length - 1
+              const segmentActive = Boolean(lockedJob) || complete
 
               return (
                 <div key={stage.id} style={{ display: 'flex', gap: 0, alignItems: 'stretch' }}>
@@ -371,23 +367,30 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                     }}
                   >
                     <div
+                      className={isRecentCorrect ? 'ort-node--confirmed' : undefined}
                       style={{
                         width: NODE,
                         height: NODE,
                         borderRadius: '50%',
                         flexShrink: 0,
-                        background: lockedJob ? `rgba(${rgb},0.22)` : ROW_BG,
-                        border: `2px solid ${lockedJob ? accent : `rgba(${rgb},0.55)`}`,
+                        background: lockedJob ? `rgba(${rgb},0.24)` : 'rgba(8,7,6,0.74)',
+                        border: `2px solid ${lockedJob ? accent : `rgba(${rgb},0.28)`}`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         ...TYPE.label,
-                        color: accent,
-                        boxShadow: lockedJob ? `0 0 12px rgba(${rgb},0.35)` : 'none',
+                        color: lockedJob ? accent : `rgba(${rgb},0.66)`,
+                        boxShadow: complete && isFinalStage
+                          ? `0 0 0 4px rgba(${rgb},0.16), 0 0 14px rgba(${rgb},0.22)`
+                          : lockedJob
+                            ? `0 0 0 2px rgba(${rgb},0.08)`
+                            : 'none',
+                        transform: complete && isFinalStage ? 'scale(1.06)' : 'scale(1)',
                         transition: [
                           `background ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
                           `border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
                           `box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                          `transform ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
                         ].join(', '),
                       }}
                     >
@@ -397,35 +400,56 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                     {idx < stages.length - 1 && (
                       <div
                         style={{
+                          position: 'relative',
                           width: 2,
                           flex: 1,
+                          minHeight: SPACING.compact,
                           marginBottom: -SPACING.micro,
-                          background: `rgba(${rgb},0.40)`,
-                          boxShadow: `0 0 6px rgba(${rgb},0.22)`,
+                          overflow: 'hidden',
+                          background: `rgba(${rgb},0.14)`,
                         }}
-                      />
+                      >
+                        <div
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            background: `rgba(${rgb},0.66)`,
+                            transform: `scaleY(${segmentActive ? 1 : 0})`,
+                            transformOrigin: 'top',
+                            transition: `transform ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
+                          }}
+                        />
+                      </div>
                     )}
                   </div>
 
                   <div
                     aria-hidden="true"
                     style={{
+                      position: 'relative',
                       width: SPACING.micro,
                       height: 2,
                       marginTop: NODE / 2 - 1,
                       flexShrink: 0,
-                      background: `rgba(${rgb},${lockedJob ? 0.62 : 0.38})`,
-                      boxShadow: lockedJob ? `0 0 6px rgba(${rgb},0.25)` : 'none',
-                      transition: [
-                        `background ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
-                        `box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
-                      ].join(', '),
+                      overflow: 'hidden',
+                      background: `rgba(${rgb},0.14)`,
                     }}
-                  />
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background: `rgba(${rgb},0.68)`,
+                        transform: `scaleX(${segmentActive ? 1 : 0})`,
+                        transformOrigin: 'left',
+                        transition: `transform ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
+                      }}
+                    />
+                  </div>
 
                   <button
                     type="button"
-                    className="ort-stage"
+                    className={`ort-stage${isRecentCorrect ? ' ort-stage--confirmed' : ''}`}
                     onClick={() => handleStageTap(stage)}
                     disabled={Boolean(lockedJob) || complete}
                     aria-label={
@@ -440,38 +464,47 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                       borderRadius: RADII.medium,
                       border: isWrongTap
                         ? '1px solid var(--error)'
-                        : `1px solid rgba(${rgb},${lockedJob ? 0.55 : 0.30})`,
-                      background: lockedJob ? `rgba(${rgb},0.10)` : ROW_BG,
+                        : `1px solid rgba(${rgb},${lockedJob ? 0.46 : 0.16})`,
+                      background: isWrongTap
+                        ? 'rgba(92,20,20,0.22)'
+                        : lockedJob
+                          ? `rgba(${rgb},0.12)`
+                          : ROW_BG,
+                      boxShadow: lockedJob
+                        ? `inset 2px 0 0 rgba(${rgb},0.54)`
+                        : 'inset 0 1px 0 rgba(255,255,255,0.025)',
                       padding: `${SPACING.micro}px ${SPACING.compact}px`,
+                      opacity: lockedJob ? 1 : 0.82,
                       cursor: lockedJob || complete ? 'default' : 'pointer',
+                      transform: 'translateX(0)',
                       transition: [
                         `border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
                         `background ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                        `box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                        `opacity ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                        `transform ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
                       ].join(', '),
                       WebkitTapHighlightColor: 'transparent',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
-                      <IconComp accent={accent} />
-                      <div style={{ minWidth: 0 }}>
-                        <div
-                          style={{
-                            ...TYPE.titleMedium,
-                            color: TEXT_PRIMARY,
-                            overflowWrap: 'break-word',
-                          }}
-                        >
-                          {renderStageTitle(stage.title)}
-                        </div>
-                        <div
-                          style={{
-                            ...TYPE.caption,
-                            color: TEXT_DIM,
-                            overflowWrap: 'break-word',
-                          }}
-                        >
-                          {stage.clue}
-                        </div>
+                    <div style={{ minWidth: 0 }}>
+                      <div
+                        style={{
+                          ...TYPE.titleMedium,
+                          color: TEXT_PRIMARY,
+                          overflowWrap: 'break-word',
+                        }}
+                      >
+                        {renderStageTitle(stage.title)}
+                      </div>
+                      <div
+                        style={{
+                          ...TYPE.caption,
+                          color: TEXT_DIM,
+                          overflowWrap: 'break-word',
+                        }}
+                      >
+                        {stage.clue}
                       </div>
                     </div>
 
@@ -479,9 +512,8 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                       <div
                         style={{
                           marginTop: SPACING.micro,
-                          marginLeft: SPACING.standard,
                           paddingTop: SPACING.micro,
-                          borderTop: `1px solid rgba(${rgb},0.22)`,
+                          borderTop: `1px solid rgba(${rgb},0.20)`,
                           display: 'flex',
                           gap: SPACING.micro,
                           alignItems: 'flex-start',
