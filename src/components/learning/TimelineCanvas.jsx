@@ -48,11 +48,13 @@ function ensureStyles() {
       50% { opacity: 0.72; transform: translateX(calc(-50% + 8px)); }
     }
     .tcv-scroller::-webkit-scrollbar { display: none; }
+    .tcv-card-anchor {
+      transition: top ${MOTION.duration.standard} ${MOTION.easing.standard};
+    }
     .tcv-card-group {
-      transform: translate(-50%, -50%) scale(var(--tcv-focus-scale, 1));
+      transform: scale(var(--tcv-focus-scale, 1));
       filter: brightness(var(--tcv-focus-brightness, 1));
       transition:
-        top ${MOTION.duration.standard} ${MOTION.easing.standard},
         transform ${MOTION.duration.instant} linear,
         filter ${MOTION.duration.instant} linear;
       will-change: transform, filter;
@@ -90,6 +92,7 @@ function ensureStyles() {
     }
     @media (prefers-reduced-motion: reduce) {
       .tcv-motion,
+      .tcv-card-anchor,
       .tcv-card-group,
       .tcv-card,
       .tcv-plus-btn,
@@ -153,6 +156,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
 
   const canvasRegionRef = useRef(null)
   const scrollerRef = useRef(null)
+  const cardAnchorRefs = useRef([])
   const cardGroupRefs = useRef([])
   const cardRefs = useRef([])
   const pathRefs = useRef([])
@@ -160,11 +164,9 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   const hasPannedRef = useRef(false)
   const lastNearestRef = useRef(0)
   const openTimerRef = useRef(null)
-  const animationFrameRef = useRef(null)
 
   useEffect(() => () => {
     if (openTimerRef.current) window.clearTimeout(openTimerRef.current)
-    if (animationFrameRef.current) window.cancelAnimationFrame(animationFrameRef.current)
   }, [])
 
   useEffect(() => {
@@ -236,9 +238,13 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   // The active route and card growth use the same focus point. As the glowing
   // connector reaches a waypoint, that opaque card grows to full size and clarity.
   // DOM styles are updated in one animation frame rather than re-rendering per pixel.
+  // The pending-frame handle is local to each effect run: a shared ref cancelled in
+  // cleanup but never nulled once blocked every scheduleUpdate() forever, freezing
+  // all cards at their pre-scroll size.
   useLayoutEffect(() => {
     const scroller = scrollerRef.current
     if (!scroller) return undefined
+    let frame = null
 
     const lengths = pathRefs.current.map(path => path?.getTotalLength?.() || 0)
     pathRefs.current.forEach((path, index) => {
@@ -248,8 +254,9 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
     })
 
     function update() {
-      animationFrameRef.current = null
-      const focusX = scroller.scrollLeft + scroller.clientWidth / 2
+      frame = null
+      const viewportWidth = scroller.clientWidth
+      const focusX = scroller.scrollLeft + viewportWidth / 2
       const nearestIndex = getNearestTimelineIndex({ centers: geometry.centers, focusX })
 
       if (lastNearestRef.current !== nearestIndex) {
@@ -262,15 +269,18 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
         const focusState = getTimelineCardFocus({
           centerX: center.x,
           focusX,
-          stepGap,
+          viewportWidth,
           reducedMotion: prefersReducedMotion,
         })
+        const anchor = cardAnchorRefs.current[index]
         const group = cardGroupRefs.current[index]
         const card = cardRefs.current[index]
+        if (anchor) {
+          anchor.style.zIndex = openIndex === index ? '7' : `${3 + Math.round(focusState.focus * 2)}`
+        }
         if (group) {
           group.style.setProperty('--tcv-focus-scale', focusState.scale.toFixed(3))
           group.style.setProperty('--tcv-focus-brightness', focusState.brightness.toFixed(3))
-          group.style.zIndex = openIndex === index ? '7' : `${3 + Math.round(focusState.focus * 2)}`
           group.dataset.focused = focusState.focus > 0.92 ? 'true' : 'false'
           group.dataset.routeArrival = focusState.routeArrival > 0.92
             ? 'joined'
@@ -305,7 +315,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
           const dotFocus = getTimelineCardFocus({
             centerX: segment.dot.x,
             focusX,
-            stepGap,
+            viewportWidth,
             reducedMotion: prefersReducedMotion,
           })
           const visible = prefersReducedMotion || progress > 0.5
@@ -322,15 +332,18 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
     }
 
     function scheduleUpdate() {
-      if (animationFrameRef.current) return
-      animationFrameRef.current = window.requestAnimationFrame(update)
+      if (frame !== null) return
+      frame = window.requestAnimationFrame(update)
     }
 
     scheduleUpdate()
     scroller.addEventListener('scroll', scheduleUpdate, { passive: true })
     return () => {
       scroller.removeEventListener('scroll', scheduleUpdate)
-      if (animationFrameRef.current) window.cancelAnimationFrame(animationFrameRef.current)
+      if (frame !== null) {
+        window.cancelAnimationFrame(frame)
+        frame = null
+      }
     }
   }, [
     steps.length,
@@ -533,27 +546,54 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
               const isOpen = openIndex === index
               const stats = step.stats || ['Tap for detail']
               const detailId = `${detailIdBase}-detail-${index}`
+              // First-paint focus, before the first scroll frame runs: the scroller
+              // rests at scrollLeft 0, so the visible centre sits at edgePadding.
+              // Derived from the same centre-distance curve as the scroll updates —
+              // never from currentIndex — so the first card starts full-size and
+              // re-renders never clobber the scroll-linked values.
+              const initialFocus = getTimelineCardFocus({
+                centerX: geometry.centers[index].x,
+                focusX: geometry.edgePadding,
+                viewportWidth: geometry.viewportWidth,
+                reducedMotion: prefersReducedMotion,
+              })
 
               return (
                 <div
                   key={step.id || index}
-                  ref={element => { cardGroupRefs.current[index] = element }}
-                  className="tcv-card-group tcv-motion"
-                  data-timeline-card-group={index}
-                  data-selected={isOpen ? 'true' : 'false'}
-                  data-reduced-motion={prefersReducedMotion ? 'true' : 'false'}
-                  data-route-arrival={prefersReducedMotion || index === currentIndex ? 'joined' : 'waiting'}
+                  ref={element => { cardAnchorRefs.current[index] = element }}
+                  className="tcv-card-anchor"
+                  data-timeline-card-anchor={index}
                   style={{
                     position: 'absolute',
                     left: center.x,
                     top: center.y,
                     width: cardWidth,
                     height: cardHeight,
-                    '--tcv-focus-scale': prefersReducedMotion || index === currentIndex ? 1 : 0.66,
-                    '--tcv-focus-brightness': prefersReducedMotion || index === currentIndex ? 1 : 0.58,
-                    zIndex: isOpen ? 7 : index === currentIndex ? 5 : 3,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: isOpen ? 7 : 3 + Math.round(initialFocus.focus * 2),
                     scrollSnapAlign: 'center',
                     scrollSnapStop: 'always',
+                  }}
+                >
+                <div
+                  ref={element => { cardGroupRefs.current[index] = element }}
+                  className="tcv-card-group tcv-motion"
+                  data-timeline-card-group={index}
+                  data-selected={isOpen ? 'true' : 'false'}
+                  data-reduced-motion={prefersReducedMotion ? 'true' : 'false'}
+                  data-focused={initialFocus.focus > 0.92 ? 'true' : 'false'}
+                  data-route-arrival={initialFocus.routeArrival > 0.92
+                    ? 'joined'
+                    : initialFocus.routeArrival > 0.18
+                      ? 'approaching'
+                      : 'waiting'}
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '100%',
+                    '--tcv-focus-scale': initialFocus.scale.toFixed(3),
+                    '--tcv-focus-brightness': initialFocus.brightness.toFixed(3),
                   }}
                 >
                   <div
@@ -666,6 +706,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                   >
                     {isOpen ? '×' : '+'}
                   </button>
+                </div>
                 </div>
               )
             })}

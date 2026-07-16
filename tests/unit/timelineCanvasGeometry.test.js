@@ -63,33 +63,71 @@ describe('TimelineCanvas responsive geometry', () => {
     expect(getNearestTimelineIndex({ centers: geometry.centers, focusX: betweenSecondAndThird + 1 })).toBe(2)
   })
 
-  it('zooms symmetrically towards a single peak at the viewport centre', () => {
-    const centreX = 300
-    const stepGap = 300
-    const atCentre = getTimelineCardFocus({ centerX: centreX, focusX: centreX, stepGap })
-    const approachingFromLeft = getTimelineCardFocus({ centerX: centreX, focusX: centreX - 96, stepGap })
-    const approachingFromRight = getTimelineCardFocus({ centerX: centreX, focusX: centreX + 96, stepGap })
-    const atLeftEdge = getTimelineCardFocus({ centerX: centreX, focusX: centreX - 192, stepGap })
-    const atRightEdge = getTimelineCardFocus({ centerX: centreX, focusX: centreX + 192, stepGap })
+  it('peaks at maximum scale only when the card centre meets the visible viewport centre', () => {
+    const viewportWidth = 390
+    const cardX = 499
 
-    expect(atCentre.scale).toBeCloseTo(1.10, 2)
+    const atCentre = getTimelineCardFocus({ centerX: cardX, focusX: cardX, viewportWidth })
+    const halfway = getTimelineCardFocus({ centerX: cardX, focusX: cardX - viewportWidth / 4, viewportWidth })
+    const atViewportEdge = getTimelineCardFocus({ centerX: cardX, focusX: cardX - viewportWidth / 2, viewportWidth })
+
+    expect(atCentre.scale).toBeCloseTo(1.08, 2)
     expect(atCentre.brightness).toBe(1)
-    expect(approachingFromLeft.scale).toBeCloseTo(0.89, 2)
-    expect(approachingFromRight.scale).toBeCloseTo(approachingFromLeft.scale, 4)
-    expect(atLeftEdge.scale).toBeCloseTo(0.68, 2)
-    expect(atRightEdge.scale).toBeCloseTo(atLeftEdge.scale, 4)
-    expect(atCentre.scale).toBeGreaterThan(approachingFromLeft.scale)
-    expect(approachingFromLeft.scale).toBeGreaterThan(atLeftEdge.scale)
+    expect(halfway.scale).toBeCloseTo(0.90, 2)
+    expect(atViewportEdge.scale).toBeCloseTo(0.72, 2)
     expect(atCentre).not.toHaveProperty('opacity')
+  })
+
+  it('gives equal scale at equal viewport distances on either side of centre', () => {
+    const viewportWidth = 390
+    for (const distance of [40, 97, 160, 195, 400]) {
+      const fromLeft = getTimelineCardFocus({ centerX: 499, focusX: 499 - distance, viewportWidth })
+      const fromRight = getTimelineCardFocus({ centerX: 499, focusX: 499 + distance, viewportWidth })
+      expect(fromLeft.scale).toBeCloseTo(fromRight.scale, 6)
+      expect(fromLeft.brightness).toBeCloseTo(fromRight.brightness, 6)
+    }
+  })
+
+  it('grows strictly monotonically towards centre and shrinks after passing it', () => {
+    const viewportWidth = 390
+    const cardX = 499
+    const travel = []
+    for (let focusX = cardX - viewportWidth / 2; focusX <= cardX + viewportWidth / 2; focusX += 13) {
+      travel.push(getTimelineCardFocus({ centerX: cardX, focusX, viewportWidth }).scale)
+    }
+    const peakIndex = Math.floor(travel.length / 2)
+    for (let index = 1; index <= peakIndex; index += 1) {
+      expect(travel[index]).toBeGreaterThan(travel[index - 1])
+    }
+    for (let index = peakIndex + 1; index < travel.length; index += 1) {
+      expect(travel[index]).toBeLessThan(travel[index - 1])
+    }
+    expect(Math.max(...travel)).toBe(travel[peakIndex])
+  })
+
+  it('holds the minimum scale for cards at or beyond the viewport edge', () => {
+    const viewportWidth = 390
+    const atEdge = getTimelineCardFocus({ centerX: 499, focusX: 499 - viewportWidth / 2, viewportWidth })
+    const beyondEdge = getTimelineCardFocus({ centerX: 499, focusX: 499 - viewportWidth, viewportWidth })
+
+    expect(atEdge.scale).toBeCloseTo(0.72, 2)
+    expect(beyondEdge.scale).toBeCloseTo(0.72, 2)
+    expect(atEdge.focus).toBe(0)
   })
 
   it('removes zoom and dimming for reduced-motion learners', () => {
     expect(getTimelineCardFocus({
       centerX: 300,
       focusX: 900,
-      stepGap: 300,
+      viewportWidth: 390,
       reducedMotion: true,
     })).toEqual({ focus: 1, routeArrival: 1, scale: 1, brightness: 1 })
+    expect(getTimelineCardFocus({
+      centerX: 300,
+      focusX: 300,
+      viewportWidth: 390,
+      reducedMotion: true,
+    }).scale).toBe(1)
   })
 
   it('shifts the selected card fully above the anchored detail sheet', () => {

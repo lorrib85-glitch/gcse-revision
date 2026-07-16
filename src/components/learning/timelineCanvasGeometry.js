@@ -54,16 +54,20 @@ export function getNearestTimelineIndex({ centers = [], focusX = 0 } = {}) {
 }
 
 /**
- * Card scale is controlled only by distance from the viewport centre. Because
- * TimelineCanvas step spacing is about 78% of the viewport width, 64% of one
- * step gap is approximately half a viewport: the card is smallest at the screen
- * edge, grows continuously on approach, peaks at dead centre, then shrinks as it
- * leaves. The connector is a separate supporting effect and does not drive zoom.
+ * Card scale is controlled only by the distance between the card's untransformed
+ * anchor centre and the centre of the visible scroller viewport, measured in the
+ * scroller's own scroll coordinates (scrollLeft + clientWidth / 2). Both sides of
+ * that comparison are unscaled layout values, so the curve holds inside the
+ * CSS-scaled Component Review Lab as well as the real full-screen shell. A card
+ * entering at either viewport edge (half a viewport from centre) is smallest,
+ * grows continuously and symmetrically on approach, peaks at dead centre, then
+ * shrinks identically after passing. The connector is a separate supporting
+ * effect and does not drive zoom.
  */
 export function getTimelineCardFocus({
   centerX = 0,
   focusX = 0,
-  stepGap = 300,
+  viewportWidth = 390,
   reducedMotion = false,
 } = {}) {
   if (reducedMotion) {
@@ -76,14 +80,14 @@ export function getTimelineCardFocus({
   }
 
   const distanceFromViewportCentre = Math.abs(centerX - focusX)
-  const visibleFocusRadius = Math.max(stepGap * 0.64, 1)
+  const visibleFocusRadius = Math.max(viewportWidth / 2, 1)
   const rawFocus = 1 - clamp(distanceFromViewportCentre / visibleFocusRadius, 0, 1)
   const focus = rawFocus * rawFocus * (3 - 2 * rawFocus)
 
   return {
     focus,
     routeArrival: focus,
-    scale: 0.68 + focus * 0.42,
+    scale: 0.72 + focus * 0.36,
     brightness: 0.62 + focus * 0.38,
   }
 }

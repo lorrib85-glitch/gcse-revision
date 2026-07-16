@@ -6,6 +6,7 @@ function read(relativePath) {
 }
 
 const component = read('../../src/components/learning/TimelineCanvas.jsx')
+const geometry = read('../../src/components/learning/timelineCanvasGeometry.js')
 const theme = read('../../src/components/learning/timelineCanvasTheme.js')
 const fixtures = read('../../src/dev/componentReview/fixtures.js')
 const story = read('../../src/components/learning/TimelineCanvas.stories.jsx')
@@ -36,6 +37,47 @@ describe('TimelineCanvas architecture', () => {
     expect(component).toContain("scrollSnapAlign: 'center'")
     expect(component).toContain("scrollSnapStop: 'always'")
     expect(component).not.toContain('currentProgressIndex')
+  })
+
+  it('separates the untransformed snap anchor from the scaled visual group', () => {
+    expect(component).toContain('data-timeline-card-anchor={index}')
+    expect(component).toContain('className="tcv-card-anchor"')
+
+    // Snap styles live on the anchor, which carries only the centring translate
+    // and never a scale — scaling the snap target would corrupt snap geometry.
+    const anchorJsx = component.slice(
+      component.indexOf('className="tcv-card-anchor"'),
+      component.indexOf('className="tcv-card-group'),
+    )
+    expect(anchorJsx).toContain("transform: 'translate(-50%, -50%)'")
+    expect(anchorJsx).toContain("scrollSnapAlign: 'center'")
+    expect(anchorJsx).toContain("scrollSnapStop: 'always'")
+    expect(anchorJsx).not.toContain('--tcv-focus-scale')
+
+    // The inner group owns the scroll-linked scale, and nothing else positions it.
+    expect(component).toContain('transform: scale(var(--tcv-focus-scale, 1));')
+    expect(component).not.toContain('translate(-50%, -50%) scale(')
+  })
+
+  it('drives focus from the visible scroller centre on animation frames', () => {
+    expect(component).toContain('const viewportWidth = scroller.clientWidth')
+    expect(component).toContain('const focusX = scroller.scrollLeft + viewportWidth / 2')
+    expect(component).toContain('window.requestAnimationFrame(update)')
+
+    // The focus radius is the real half-viewport, not an abstract step gap.
+    expect(geometry).toContain('viewportWidth / 2')
+    expect(geometry).not.toContain('stepGap * 0.64')
+
+    // Scale is a continuous centre-distance output — never a currentIndex step.
+    expect(component).not.toMatch(/--tcv-focus-scale[^\n]*currentIndex/)
+
+    // The pending-frame handle is local to each effect run and cleared in
+    // cleanup: a cancelled-but-never-nulled shared ref once deadlocked every
+    // scheduleUpdate() after the first resize/StrictMode re-run, freezing all
+    // cards at their pre-scroll size.
+    expect(component).toContain('let frame = null')
+    expect(component).toContain('if (frame !== null) return')
+    expect(component.replace(/\s+/g, ' ')).toContain('window.cancelAnimationFrame(frame) frame = null')
   })
 
   it('keeps reveal and close on one stable top-left card anchor', () => {
