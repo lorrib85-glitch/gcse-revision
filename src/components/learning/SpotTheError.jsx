@@ -25,18 +25,22 @@ import {
   deriveFeedbackHeading,
 } from './spotTheErrorScoring.js'
 
-// Named foreground values — kept out of the render body so no raw colour is
-// improvised inline (mirrors the TEXT_PRIMARY pattern in OrderedRouteTask).
-const TEXT_PRIMARY = GENERAL.feedbackText              // #F5F7FF — body + statement
-const TEXT_MUTED = 'rgba(245,247,255,0.62)'            // supporting copy
-const TEXT_FAINT = 'rgba(245,247,255,0.42)'            // captions / placeholders
+const TEXT_PRIMARY = GENERAL.feedbackText
+const TEXT_MUTED = 'rgba(245,247,255,0.62)'
+const TEXT_FAINT = 'rgba(245,247,255,0.42)'
+
+// Specialist control dimensions. These are deliberately local and named rather
+// than scattered through the render body; the global spacing scale remains
+// unchanged.
+const FIELD_MIN_HEIGHT = {
+  explanation: 96,
+  repair: 88,
+}
 
 function slugify(text) {
   return (text || '').toLowerCase().slice(0, 40).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 }
 
-// One labelled feedback block. Sentence-case label (no forced-uppercase
-// metadata), calm rhythm.
 function FeedbackRow({ label, children, muted = false }) {
   if (children == null || children === '') return null
   return (
@@ -61,10 +65,10 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
     [tokens, statement, block.errorTarget],
   )
 
-  const [selection, setSelection] = useState(null) // { start, end } | null
+  const [selection, setSelection] = useState(null)
   const [explanation, setExplanation] = useState('')
   const [repair, setRepair] = useState('')
-  const [phase, setPhase] = useState('diagnose')    // 'diagnose' | 'feedback'
+  const [phase, setPhase] = useState('diagnose')
   const loggedRef = useRef(false)
 
   const groupId = useId()
@@ -81,9 +85,6 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
   const showRepair = hasSelection && explanationEval.meetsLength
   const canCheck = hasSelection && explanationEval.meetsLength && repairEval.meetsLength
 
-  // Bring each newly revealed stage (and, with it, the check action just below)
-  // into view so an open keyboard never hides the next step. Respects
-  // reduced-motion by snapping instead of animating.
   useEffect(() => {
     if (!showExplain || !explainRef.current) return
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
@@ -153,12 +154,12 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
     padding: SPACING.compact,
     ...TYPE.bodySmall,
     color: TEXT_PRIMARY,
-    resize: 'vertical',
+    resize: 'none',
     boxSizing: 'border-box',
   }
 
   return (
-    <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 1000, WebkitTapHighlightColor: 'transparent' }}>
+    <CinematicShell style={{ background: subj.background, zIndex: 1000, WebkitTapHighlightColor: 'transparent' }}>
       <style>{`
         .ste-token {
           transition: background ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}, color ${MOTION.duration.fast} ${MOTION.easing.gentle};
@@ -179,7 +180,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
         overflowY: 'auto',
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
-        padding: `calc(${SPACING.separation}px + env(safe-area-inset-top, 0px)) ${SPACING.standard}px calc(${SPACING.cinematic}px + env(safe-area-inset-bottom, 0px))`,
+        padding: `calc(${SPACING.separation}px + ${SPACING.micro}px + env(safe-area-inset-top, 0px)) ${SPACING.standard}px calc(${SPACING.cinematic}px + env(safe-area-inset-bottom, 0px))`,
         scrollPaddingBottom: SPACING.cinematic,
         maxWidth: 420,
         width: '100%',
@@ -188,49 +189,56 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
       }}>
         {phase === 'diagnose' ? (
           <>
-            {/* Stage 1 — Locate. Clear sentence-case instruction, not a title. */}
-            <p style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, margin: `0 0 ${SPACING.standard}px` }}>
+            <p style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, margin: `0 0 ${SPACING.compact}px` }}>
               Tap the word or phrase that is wrong.
             </p>
 
-            {/* Statement surface — calm, readable, no pre-reveal of the error. */}
             <div style={{
-              background: GENERAL.backgroundSurface,
-              border: `1px solid ${GENERAL.line.soft}`,
-              borderRadius: RADII.large,
-              padding: SPACING.standard,
-              marginBottom: SPACING.standard,
+              background: subj.backgroundSecondary,
+              border: `1px solid rgba(${rgb},0.18)`,
+              borderRadius: RADII.medium,
+              padding: SPACING.compact,
+              marginBottom: showExplain ? SPACING.standard : 0,
             }}>
               <p
                 role="group"
                 aria-label="Tap the word or phrase that is wrong"
                 aria-describedby={groupId}
-                style={{ ...TYPE.body, color: TEXT_PRIMARY, margin: 0, lineHeight: 1.9 }}
+                style={{ ...TYPE.examAnswer, color: TEXT_PRIMARY, margin: 0 }}
               >
                 {tokens.map((tok, i) => {
                   const isSelected = selection != null && i >= selection.start && i <= selection.end
+                  const isSelectionStart = isSelected && i === selection.start
+                  const isSelectionEnd = isSelected && i === selection.end
+                  const selectionRadius = isSelected
+                    ? `${isSelectionStart ? RADII.small : 0}px ${isSelectionEnd ? RADII.small : 0}px ${isSelectionEnd ? RADII.small : 0}px ${isSelectionStart ? RADII.small : 0}px`
+                    : 0
+
                   return (
-                    <span key={i}>
-                      <button
-                        type="button"
-                        className="ste-token"
-                        aria-pressed={isSelected}
-                        aria-label={tok.text}
-                        onClick={() => tapToken(i)}
-                        style={{
-                          display: 'inline',
-                          font: 'inherit',
-                          cursor: 'pointer',
-                          border: 'none',
-                          borderRadius: RADII.small,
-                          padding: '2px 4px',
-                          margin: '0 -2px',
-                          color: TEXT_PRIMARY,
-                          background: isSelected ? `rgba(${rgb},0.22)` : 'transparent',
-                          boxShadow: isSelected ? `inset 0 0 0 1px rgba(${rgb},0.5)` : 'none',
-                        }}
-                      >{tok.text}</button>{' '}
-                    </span>
+                    <button
+                      key={i}
+                      type="button"
+                      className="ste-token"
+                      aria-pressed={isSelected}
+                      aria-label={tok.text}
+                      onClick={() => tapToken(i)}
+                      style={{
+                        display: 'inline',
+                        font: 'inherit',
+                        lineHeight: 'inherit',
+                        verticalAlign: 'baseline',
+                        cursor: 'pointer',
+                        border: 'none',
+                        borderRadius: selectionRadius,
+                        padding: 0,
+                        margin: 0,
+                        color: TEXT_PRIMARY,
+                        background: isSelected ? `rgba(${rgb},0.22)` : 'transparent',
+                        boxShadow: isSelected ? `inset 0 0 0 1px rgba(${rgb},0.5)` : 'none',
+                      }}
+                    >
+                      {tok.text}{i < tokens.length - 1 ? ' ' : ''}
+                    </button>
                   )
                 })}
               </p>
@@ -239,7 +247,6 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               </span>
             </div>
 
-            {/* Stage 2 — Explain. Associated label + textarea. */}
             {showExplain && (
               <div ref={explainRef} className="ste-anim" style={{ marginBottom: SPACING.standard, animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
                 <label htmlFor={explainId} style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, display: 'block', marginBottom: SPACING.micro }}>
@@ -251,12 +258,11 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
                   value={explanation}
                   onChange={e => setExplanation(e.target.value)}
                   placeholder="Explain what is wrong and why…"
-                  style={{ ...textAreaStyle, minHeight: 108 }}
+                  style={{ ...textAreaStyle, minHeight: FIELD_MIN_HEIGHT.explanation }}
                 />
               </div>
             )}
 
-            {/* Stage 3 — Repair (required). */}
             {showRepair && (
               <div ref={repairRef} className="ste-anim" style={{ marginBottom: SPACING.standard, animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
                 <label htmlFor={repairId} style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, display: 'block', marginBottom: SPACING.micro }}>
@@ -268,22 +274,21 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
                   value={repair}
                   onChange={e => setRepair(e.target.value)}
                   placeholder="Write the corrected version…"
-                  style={{ ...textAreaStyle, minHeight: 96 }}
+                  style={{ ...textAreaStyle, minHeight: FIELD_MIN_HEIGHT.repair }}
                 />
               </div>
             )}
 
-            <CheckAnswerCTA onClick={handleCheck} disabled={!canCheck} accent={accent} />
+            {showExplain && (
+              <CheckAnswerCTA onClick={handleCheck} disabled={!canCheck} accent={accent} />
+            )}
           </>
         ) : (
           <div className="ste-anim" style={{ animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
-            {/* 1 — specific outcome heading */}
             <h2 style={{ ...TYPE.displaySection, color: accent, margin: `0 0 ${SPACING.standard}px` }}>
               {heading}
             </h2>
 
-            {/* 2 — selection comparison. Confirm compactly when correct;
-                otherwise contrast the learner's pick with the real error. */}
             {selectionCorrect ? (
               <FeedbackRow label="You spotted the error">
                 “{actualErrorText || block.errorTarget}”
@@ -303,7 +308,6 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               </div>
             )}
 
-            {/* 3 — explanation feedback: what the reasoning still needs. */}
             <FeedbackRow label="Your explanation">
               {explanationPrecise
                 ? (block.explanationPraise || 'Your reasoning names the right idea.')
@@ -313,7 +317,6 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
                         : 'Your explanation needs to be more precise about the science.'))}
             </FeedbackRow>
 
-            {/* 4 — rewrite comparison */}
             {repair.trim() && (
               <FeedbackRow label="Your rewrite" muted={!repairAccurate}>
                 {repair.trim()}
@@ -323,17 +326,14 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               {block.correctVersion}
             </FeedbackRow>
 
-            {/* 5 — what was wrong (the teaching point) */}
             <FeedbackRow label="What was wrong">
               {block.whatWasWrong}
             </FeedbackRow>
 
-            {/* 6 — examiner takeaway */}
             <FeedbackRow label="Examiner takeaway">
               {block.examinerNote}
             </FeedbackRow>
 
-            {/* 7 — common trap, quieter supporting text */}
             <FeedbackRow label="Common trap" muted>
               {block.commonTrap}
             </FeedbackRow>
