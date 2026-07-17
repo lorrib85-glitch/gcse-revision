@@ -1,147 +1,343 @@
-import { useState } from 'react'
-import { SPACING } from '../../constants/spacing.js'
+import { useEffect, useMemo, useState } from 'react'
+import { SUBJECTS } from '../../constants/subjects.js'
+import { GENERAL } from '../../constants/generalTheme.js'
+import { BUTTONS } from '../../constants/buttons.js'
+import { COMPONENT_SIZE, SPACING } from '../../constants/spacing.js'
+import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
+
+function resolveSubject(subject) {
+  const requested = typeof subject === 'string'
+    ? subject.charAt(0).toUpperCase() + subject.slice(1).toLowerCase()
+    : 'Biology'
+  const key = SUBJECTS[requested] ? requested : 'Biology'
+  return { key, theme: SUBJECTS[key] }
+}
+
+function normalisePieces(pieces = []) {
+  return pieces.map((piece, index) => {
+    if (typeof piece === 'string') {
+      return { id: `piece-${index}`, label: piece, order: index }
+    }
+
+    return {
+      id: piece.id ?? `piece-${index}`,
+      label: piece.label ?? piece.text ?? String(piece),
+      order: index,
+    }
+  })
+}
+
+function answerLabel(answer) {
+  if (typeof answer === 'string') return answer
+  return answer?.label ?? answer?.text ?? ''
+}
 
 // ─── BuilderBlock — equation/concept builder ──────────────────────────────────
 // Tap-to-fill builder: learner places word pieces into ordered slots to
 // construct an equation, then checks the answer. Distractor pieces are allowed.
-// Content block (renders inline within a content screen's blocks array).
-// Shape: { label?, slots:[…], operators?:[…], pieces:[…], answer:[…], hint, successText }
-export default function BuilderBlock({ block }) {
-  const [slots, setSlots] = useState(block.slots.map(() => null))
-  const [submitted, setSubmitted] = useState(false)
-  const [available, setAvailable] = useState([...block.pieces])
+// Correct work is preserved after a wrong attempt so the learner only repairs
+// the parts they misunderstood.
+export default function BuilderBlock({ block, subject = 'Biology', onComplete }) {
+  const { key: subjectKey, theme } = resolveSubject(subject)
+  const pieces = useMemo(() => normalisePieces(block.pieces), [block.pieces])
+  const slotCount = block.slots?.length ?? block.answer?.length ?? 0
+  const blockKey = `${block.label ?? ''}:${(block.answer ?? []).map(answerLabel).join('|')}`
 
-  function place(slotIdx, piece) {
-    const current = slots[slotIdx]
-    const newSlots = [...slots]
-    newSlots[slotIdx] = piece
-    setSlots(newSlots)
-    const newAvail = available.filter(p => p !== piece)
-    if (current) newAvail.push(current)
-    setAvailable(newAvail)
+  const [slots, setSlots] = useState(() => Array(slotCount).fill(null))
+  const [available, setAvailable] = useState(() => pieces)
+  const [mode, setMode] = useState('building')
+  const [announcement, setAnnouncement] = useState('')
+
+  useEffect(() => {
+    setSlots(Array(slotCount).fill(null))
+    setAvailable(pieces)
+    setMode('building')
+    setAnnouncement('')
+  }, [blockKey, pieces, slotCount])
+
+  const slotCorrectness = slots.map(
+    (piece, index) => piece?.label === answerLabel(block.answer?.[index]),
+  )
+  const allFilled = slots.every(Boolean)
+  const correctCount = slotCorrectness.filter(Boolean).length
+  const isCompleted = mode === 'completed'
+  const isReviewing = mode === 'checkedIncorrect'
+  const canEdit = mode === 'building' || mode === 'correcting'
+  const focusClass = `builder-block-control-${subjectKey.toLowerCase()}`
+  const transition = BUTTONS.compact.transition
+
+  function place(piece) {
+    if (!canEdit) return
+    const emptyIndex = slots.findIndex(slot => slot === null)
+    if (emptyIndex < 0) return
+
+    const nextSlots = [...slots]
+    nextSlots[emptyIndex] = piece
+    setSlots(nextSlots)
+    setAvailable(current => current.filter(item => item.id !== piece.id))
+    setAnnouncement(`${piece.label} placed in space ${emptyIndex + 1}.`)
   }
-  function remove(slotIdx) {
-    const piece = slots[slotIdx]
+
+  function remove(slotIndex) {
+    if (!canEdit || slotCorrectness[slotIndex]) return
+    const piece = slots[slotIndex]
     if (!piece) return
-    const newSlots = [...slots]
-    newSlots[slotIdx] = null
-    setSlots(newSlots)
-    setAvailable([...available, piece])
+
+    const nextSlots = [...slots]
+    nextSlots[slotIndex] = null
+    setSlots(nextSlots)
+    setAvailable(current => [...current, piece].sort((a, b) => a.order - b.order))
+    setAnnouncement(`${piece.label} returned to the word bank.`)
   }
 
-  const isCorrect = slots.every((s, i) => s === block.answer[i])
-  const allFilled = slots.every(s => s !== null)
+  function checkAnswer() {
+    if (!allFilled || !canEdit) return
+
+    if (slotCorrectness.every(Boolean)) {
+      setMode('completed')
+      setAnnouncement('Correct. The equation is complete.')
+      onComplete?.()
+      return
+    }
+
+    setMode('checkedIncorrect')
+    setAnnouncement(`${correctCount} of ${slotCount} spaces are correct. Correct answers will be kept.`)
+  }
+
+  function correctMistakes() {
+    const returnedPieces = slots.filter((piece, index) => piece && !slotCorrectness[index])
+    setSlots(current => current.map((piece, index) => (slotCorrectness[index] ? piece : null)))
+    setAvailable(current => [...current, ...returnedPieces].sort((a, b) => a.order - b.order))
+    setMode('correcting')
+    setAnnouncement('Correct answers have been kept. Fill the empty spaces again.')
+  }
 
   return (
-    <div style={{ margin: '14px 0' }}>
-      <div style={{
-        background: 'linear-gradient(145deg, #0A1520, #0D1A28)',
-        border: '1px solid rgba(56,210,122,.2)',
-        borderRadius: 18, padding: SPACING.compact,
-      }}>
-        <div style={{
-          ...TYPE.eyebrow,
-          textTransform: 'uppercase', color: '#38D27A', marginBottom: 12,
-        }}>🧪 {block.label || 'Build the equation'}</div>
+    <div style={{ margin: `${SPACING.compact}px 0` }}>
+      <style>{`
+        .${focusClass}:focus-visible {
+          outline: ${COMPONENT_SIZE.focusRing}px solid ${theme.accent};
+          outline-offset: ${COMPONENT_SIZE.focusOffset}px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .${focusClass} {
+            transition-duration: 0.01ms !important;
+          }
+        }
+      `}</style>
 
-        {/* Equation row */}
-        <div style={{
-          display: 'flex', flexWrap: 'wrap', alignItems: 'center',
-          gap: 8, marginBottom: 16, justifyContent: 'center',
-        }}>
-          {slots.map((s, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div
-                onClick={() => s && remove(i)}
-                style={{
-                  minWidth: 80, height: 44,
-                  background: s
-                    ? (submitted && !isCorrect ? 'rgba(255,93,115,.12)' : submitted && isCorrect ? 'rgba(77,255,136,.12)' : 'rgba(56,210,122,.1)')
-                    : 'rgba(255,255,255,.03)',
-                  border: `1.5px dashed ${s
-                    ? (submitted && !isCorrect ? '#FF5D73' : submitted && isCorrect ? '#4DFF88' : '#38D27A')
-                    : '#2A3552'}`,
-                  borderRadius: 10,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: s ? 'pointer' : 'default',
-                  ...TYPE.titleMedium,
-                  fontSize: '.85rem',
-                  color: s ? '#F5F7FB' : '#4A5578',
-                  transition: 'all .2s', padding: '0 8px',
-                }}>
-                {s || '?'}
-              </div>
-              {i < slots.length - 1 && (
-                <span style={{ ...TYPE.eyebrow, color: '#38D27A', fontSize: '1rem' }}>
-                  {block.operators?.[i] || '+'}
-                </span>
-              )}
-            </div>
-          ))}
+      <div
+        style={{
+          background: GENERAL.backgroundPanel,
+          border: `1px solid ${GENERAL.line.soft}`,
+          borderRadius: RADII.large,
+          padding: SPACING.compact,
+        }}
+      >
+        <div
+          style={{
+            ...TYPE.displayCard,
+            color: GENERAL.softWhite,
+            marginBottom: SPACING.compact,
+          }}
+        >
+          {block.label || 'Build the equation'}
         </div>
 
-        {/* Available pieces */}
-        {!submitted && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginBottom: 14 }}>
+        <div
+          aria-label="Equation spaces"
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: SPACING.micro,
+            marginBottom: SPACING.compact,
+          }}
+        >
+          {slots.map((piece, index) => {
+            const isCorrect = slotCorrectness[index]
+            const isIncorrect = isReviewing && piece && !isCorrect
+            const isLocked = isCompleted || isCorrect || isReviewing
+            const borderColor = isCorrect
+              ? GENERAL.feedbackCorrect
+              : isIncorrect
+                ? GENERAL.feedbackIncorrect
+                : piece
+                  ? theme.accent
+                  : GENERAL.line.strong
+            const background = isCorrect
+              ? GENERAL.surfaceTint
+              : isIncorrect
+                ? GENERAL.backgroundSunken
+                : piece
+                  ? theme.glowStrong
+                  : GENERAL.backgroundSunken
+
+            return (
+              <div key={index} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
+                <button
+                  type="button"
+                  className={focusClass}
+                  onClick={() => remove(index)}
+                  disabled={!piece || isLocked}
+                  aria-label={`Space ${index + 1}: ${piece?.label ?? 'empty'}${isLocked ? ', locked' : ', tap to remove'}`}
+                  aria-invalid={isIncorrect || undefined}
+                  style={{
+                    minWidth: 'clamp(80px, 24vw, 132px)',
+                    height: BUTTONS.compact.height,
+                    padding: `0 ${SPACING.micro}px`,
+                    background,
+                    border: `${COMPONENT_SIZE.hairline}px ${piece ? 'solid' : 'dashed'} ${borderColor}`,
+                    borderRadius: RADII.small,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: piece && !isLocked ? 'pointer' : 'default',
+                    ...TYPE.titleMedium,
+                    color: piece ? GENERAL.feedbackText : GENERAL.neutral[300],
+                    transition: `background-color ${transition}, border-color ${transition}, color ${transition}`,
+                  }}
+                >
+                  {piece?.label ?? '?'}
+                </button>
+
+                {index < slots.length - 1 && (
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      ...TYPE.titleMedium,
+                      color: theme.accent,
+                    }}
+                  >
+                    {block.operators?.[index] || '+'}
+                  </span>
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        {canEdit && (
+          <div
+            aria-label="Word bank"
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: SPACING.micro,
+              marginBottom: SPACING.compact,
+            }}
+          >
             {available.map(piece => (
-              <button key={piece}
-                onClick={() => {
-                  const emptyIdx = slots.findIndex(s => s === null)
-                  if (emptyIdx >= 0) place(emptyIdx, piece)
-                }}
+              <button
+                key={piece.id}
+                type="button"
+                className={focusClass}
+                onClick={() => place(piece)}
                 style={{
-                  background: 'rgba(56,210,122,.1)',
-                  border: '1px solid rgba(56,210,122,.3)',
-                  borderRadius: 10, padding: '8px 14px',
-                  ...TYPE.titleMedium,
-                  fontSize: '.85rem', color: '#6BFFB0',
-                  cursor: 'pointer', transition: 'all .15s',
-                }}>
-                {piece}
+                  minHeight: BUTTONS.compact.height,
+                  padding: `0 ${BUTTONS.compact.paddingX}px`,
+                  background: theme.glowStrong,
+                  border: `${COMPONENT_SIZE.hairline}px solid ${theme.accent}`,
+                  borderRadius: RADII.small,
+                  ...TYPE.button,
+                  color: theme.accentSecondary,
+                  cursor: 'pointer',
+                  transition: `background-color ${transition}, border-color ${transition}, transform ${transition}`,
+                }}
+              >
+                {piece.label}
               </button>
             ))}
           </div>
         )}
 
-        {allFilled && !submitted && (
-          <button onClick={() => setSubmitted(true)} style={{
-            width: '100%',
-            background: 'linear-gradient(135deg, #38D27A, #6BFFB0)',
-            border: 'none', borderRadius: 12, padding: SPACING.micro,
-            ...TYPE.button,
-            color: '#000',
-            cursor: 'pointer',
-          }}>Check →</button>
+        <div aria-live="polite" aria-atomic="true" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap' }}>
+          {announcement}
+        </div>
+
+        {canEdit && (
+          <button
+            type="button"
+            className={focusClass}
+            onClick={checkAnswer}
+            disabled={!allFilled}
+            style={{
+              width: '100%',
+              height: BUTTONS.continue.height,
+              padding: `0 ${BUTTONS.continue.paddingX}px`,
+              background: allFilled ? theme.accent : GENERAL.backgroundSurface,
+              border: `${COMPONENT_SIZE.hairline}px solid ${allFilled ? theme.accent : GENERAL.line.medium}`,
+              borderRadius: BUTTONS.continue.borderRadius,
+              fontFamily: BUTTONS.continue.fontFamily,
+              fontSize: BUTTONS.continue.fontSize,
+              fontWeight: BUTTONS.continue.fontWeight,
+              color: allFilled ? GENERAL.textOnAccent : GENERAL.neutral[300],
+              cursor: allFilled ? 'pointer' : 'default',
+              opacity: allFilled ? 1 : 0.72,
+              transition: `background-color ${BUTTONS.continue.transition}, border-color ${BUTTONS.continue.transition}, color ${BUTTONS.continue.transition}`,
+            }}
+          >
+            {allFilled ? 'Check answer' : 'Complete all spaces'}
+          </button>
         )}
 
-        {submitted && (
-          <div className="fade-up">
-            {isCorrect ? (
-              <div style={{
-                background: 'rgba(77,255,136,.08)', border: '1px solid rgba(77,255,136,.3)',
-                borderRadius: 12, padding: '14px', textAlign: 'center',
-              }}>
-                <div style={{ ...TYPE.titleMedium, fontSize: '.82rem', color: '#4DFF88', marginBottom: 4 }}>✓ Correct!</div>
-                <p style={{ ...TYPE.body, fontSize: '.85rem', color: '#C8D0E8', margin: 0 }}>{block.successText}</p>
-              </div>
-            ) : (
-              <div style={{
-                background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.3)',
-                borderRadius: 12, padding: '14px',
-              }}>
-                <div style={{ ...TYPE.titleMedium, fontSize: '.82rem', color: '#FF5D73', marginBottom: 6 }}>Not quite — try again</div>
-                <p style={{ ...TYPE.bodySmall, fontSize: '.83rem', color: '#C8D0E8', margin: '0 0 10px' }}>
-                  Hint: {block.hint}
-                </p>
-                <button onClick={() => { setSubmitted(false); setSlots(block.slots.map(() => null)); setAvailable([...block.pieces]) }} style={{
-                  background: 'rgba(255,93,115,.12)', border: '1px solid rgba(255,93,115,.3)',
-                  borderRadius: 9, padding: '8px 16px',
-                  ...TYPE.label, fontSize: '.82rem',
-                  color: '#FF5D73', cursor: 'pointer',
-                }}>Try again</button>
-              </div>
-            )}
+        {isReviewing && (
+          <div
+            role="status"
+            style={{
+              background: GENERAL.backgroundSunken,
+              border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.feedbackIncorrect}`,
+              borderRadius: RADII.medium,
+              padding: SPACING.compact,
+            }}
+          >
+            <div style={{ ...TYPE.titleMedium, color: GENERAL.feedbackIncorrect, marginBottom: SPACING.micro }}>
+              {correctCount} of {slotCount} are in the right place
+            </div>
+            <p style={{ ...TYPE.bodySmall, color: GENERAL.feedbackText, margin: `0 0 ${SPACING.compact}px` }}>
+              {block.hint}
+            </p>
+            <button
+              type="button"
+              className={focusClass}
+              onClick={correctMistakes}
+              style={{
+                minHeight: BUTTONS.compact.height,
+                padding: `0 ${BUTTONS.compact.paddingX}px`,
+                background: GENERAL.surfaceTint,
+                border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.feedbackIncorrect}`,
+                borderRadius: BUTTONS.compact.borderRadius,
+                ...TYPE.button,
+                color: GENERAL.feedbackIncorrect,
+                cursor: 'pointer',
+                transition: `background-color ${transition}, border-color ${transition}`,
+              }}
+            >
+              Correct mistakes
+            </button>
+          </div>
+        )}
+
+        {isCompleted && (
+          <div
+            role="status"
+            style={{
+              background: GENERAL.backgroundSunken,
+              border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.feedbackCorrect}`,
+              borderRadius: RADII.medium,
+              padding: SPACING.compact,
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ ...TYPE.titleMedium, color: GENERAL.feedbackCorrect, marginBottom: SPACING.micro }}>
+              Correct
+            </div>
+            <p style={{ ...TYPE.body, color: GENERAL.feedbackText, margin: 0 }}>
+              {block.successText}
+            </p>
           </div>
         )}
       </div>
