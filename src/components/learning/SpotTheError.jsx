@@ -182,7 +182,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
         overflowY: 'auto',
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
-        padding: `calc(${SPACING.standard}px + env(safe-area-inset-top, 0px)) ${SPACING.standard}px calc(${SPACING.cinematic}px + env(safe-area-inset-bottom, 0px))`,
+        padding: `calc(${SPACING.separation}px + env(safe-area-inset-top, 0px)) ${SPACING.standard}px calc(${SPACING.cinematic}px + env(safe-area-inset-bottom, 0px))`,
         scrollPaddingBottom: SPACING.cinematic,
         maxWidth: 420,
         width: '100%',
@@ -191,7 +191,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
       }}>
         {phase === 'diagnose' ? (
           <>
-            <header style={{ marginBottom: SPACING.separation }}>
+            <header style={{ marginBottom: SPACING.cinematic }}>
               <h1 style={{
                 ...TYPE.displayScreen,
                 color: TEXT_PRIMARY,
@@ -203,7 +203,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               <p style={{
                 ...TYPE.body,
                 color: TEXT_MUTED,
-                lineHeight: 1.65,
+                lineHeight: 1.8,
                 margin: `${SPACING.standard}px 0 0`,
               }}>
                 {screenIntro}
@@ -211,22 +211,30 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
             </header>
 
             <section aria-label="Spot the error task">
-              <p style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, margin: `0 0 ${SPACING.standard}px` }}>
+              <p style={{
+                ...TYPE.bodyStrong,
+                color: TEXT_PRIMARY,
+                lineHeight: 1.6,
+                margin: `0 0 calc(${SPACING.standard}px + ${SPACING.micro}px)`,
+              }}>
                 Tap the word or phrase that is wrong.
               </p>
 
               <div style={{
-                background: subj.backgroundSecondary,
-                border: `1px solid rgba(${rgb},0.18)`,
-                borderRadius: RADII.medium,
-                padding: SPACING.compact,
+                position: 'relative',
+                overflow: 'hidden',
+                background: `linear-gradient(155deg, rgba(${rgb},0.15) 0%, rgba(${rgb},0.07) 34%, ${subj.backgroundSecondary} 82%)`,
+                border: `1px solid rgba(${rgb},0.28)`,
+                borderRadius: RADII.large,
+                padding: SPACING.standard,
+                boxShadow: `inset 0 1px 0 rgba(255,255,255,0.055), inset 0 -1px 0 rgba(0,0,0,0.28), ${GENERAL.shadow.raised}`,
                 marginBottom: showExplain ? SPACING.separation : 0,
               }}>
                 <p
                   role="group"
                   aria-label="Tap the word or phrase that is wrong"
                   aria-describedby={groupId}
-                  style={{ ...TYPE.examAnswer, color: TEXT_PRIMARY, lineHeight: 1.8, margin: 0 }}
+                  style={{ ...TYPE.examAnswer, color: TEXT_PRIMARY, lineHeight: 1.95, margin: 0 }}
                 >
                   {tokens.map((tok, i) => {
                     const isSelected = selection != null && i >= selection.start && i <= selection.end
