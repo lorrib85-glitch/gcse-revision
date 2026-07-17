@@ -61,6 +61,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
   const statement = block.statement || ''
   const screenTitle = block.title || block.heading || 'Spot the error'
   const screenIntro = block.intro || block.introText || 'One inaccurate word can cost a mark. Find the mistake, explain why it is wrong, then rewrite the answer accurately.'
+  const backgroundImage = block.backgroundImage || (subject === 'Biology' ? '/headers/bio-energyforlife.webp' : null)
   const tokens = useMemo(() => tokenise(statement), [statement])
   const target = useMemo(
     () => resolveTargetRange(tokens, statement, block.errorTarget),
@@ -177,7 +178,37 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
         }
       `}</style>
 
+      {backgroundImage && (
+        <>
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',
+              backgroundImage: `url(${backgroundImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: block.backgroundPosition || 'center top',
+              opacity: block.backgroundOpacity ?? 0.15,
+              filter: 'saturate(0.72) contrast(0.92)',
+              transform: 'scale(1.02)',
+            }}
+          />
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',
+              background: `linear-gradient(180deg, rgba(8,10,9,0.62) 0%, rgba(8,10,9,0.84) 44%, ${subj.background} 100%)`,
+            }}
+          />
+        </>
+      )}
+
       <div style={{
+        position: 'relative',
+        zIndex: 1,
         height: '100%',
         overflowY: 'auto',
         overflowX: 'hidden',
@@ -191,7 +222,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
       }}>
         {phase === 'diagnose' ? (
           <>
-            <header style={{ marginBottom: SPACING.cinematic }}>
+            <header style={{ marginBottom: SPACING.separation }}>
               <h1 style={{
                 ...TYPE.displayScreen,
                 color: TEXT_PRIMARY,
@@ -215,7 +246,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
                 ...TYPE.bodyStrong,
                 color: TEXT_PRIMARY,
                 lineHeight: 1.6,
-                margin: `0 0 calc(${SPACING.standard}px + ${SPACING.micro}px)`,
+                margin: `0 0 ${SPACING.standard}px`,
               }}>
                 Tap the word or phrase that is wrong.
               </p>
@@ -223,11 +254,11 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               <div style={{
                 position: 'relative',
                 overflow: 'hidden',
-                background: `linear-gradient(155deg, rgba(${rgb},0.15) 0%, rgba(${rgb},0.07) 34%, ${subj.backgroundSecondary} 82%)`,
-                border: `1px solid rgba(${rgb},0.28)`,
-                borderRadius: RADII.large,
+                background: `radial-gradient(circle at 14% 0%, rgba(${rgb},0.065), transparent 48%), linear-gradient(180deg, ${GENERAL.backgroundSurface} 0%, ${GENERAL.backgroundSunken} 100%)`,
+                border: `1px solid ${GENERAL.line.soft}`,
+                borderRadius: RADII.medium,
                 padding: SPACING.standard,
-                boxShadow: `inset 0 1px 0 rgba(255,255,255,0.055), inset 0 -1px 0 rgba(0,0,0,0.28), ${GENERAL.shadow.raised}`,
+                boxShadow: `inset 0 1px 0 ${GENERAL.line.soft}, ${GENERAL.shadow.raised}`,
                 marginBottom: showExplain ? SPACING.separation : 0,
               }}>
                 <p
