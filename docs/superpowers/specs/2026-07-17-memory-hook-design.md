@@ -4,66 +4,56 @@
 
 ## User story
 
-As a GCSE student, I want a small in-page "memory hook" reminder — an analogy or
-mnemonic for the idea I'm learning — that I can rewrite in my own words, so the
-idea sticks and I can recall it in the exam.
+As a GCSE student, I want a small in-page memory hook — an analogy or mnemonic
+for the idea I am learning — so the idea is easier to recall in the exam without
+adding another task to complete.
 
 ## Visual reference
 
-Uploaded screenshot: a dark card with a square thumbnail on the left, a
-"Memory hook" label and short analogy text on the right ("Think of a virus as a
-tiny 'hacker' that sneaks in, takes over, and makes copies of itself."), and a
-pencil edit action in the top-right corner, under a "Make it stick" section
-label.
+The reference uses a dark embedded panel with a substantial square image, a
+small subject-colour label and lightweight analogy copy. Its strength comes from
+the contrast between the visual anchor and a quiet near-black surface, not from
+a bright coloured card or large typography.
 
-The final component keeps the compact inline shape but deliberately avoids
-copying the reference's uppercase eyebrow, heavy tinting and oversized image.
+The final component keeps that compact inline role while following the app's
+sentence-case typography and restrained subject identity.
 
 ## Confirmed facts
 
-- This is an inline **content component** (Route A) — it sits *within* pages,
-  never owns a screen. Rendered inside composed screens / ModulePlayer content
-  flow, block type `memoryHook`.
-- Closest existing siblings: `AcronymMemorise` and `KeyPoint`, but neither does
-  the same job. `MemoryHook` anchors one difficult idea using a memorable analogy
-  the learner can personalise.
-- The uppercase eyebrow pattern in the reference visual is **prohibited** in
-  this codebase (`TYPOGRAPHY_SYSTEM.md` — label case). Labels render sentence
-  case via `TYPE.label`.
-- All dimensions, surfaces, typography, motion and subject identity come from
-  governed constants. Persistence only routes through `src/lib/storage.js`.
+- This is an inline **content component** (Route A). It sits within pages and
+  never owns a screen. ModulePlayer block type: `memoryHook`.
+- Its job is distinct from `KeyPoint`, `WorkedExample` and `AcronymMemorise`.
+  It provides one memorable analogy or mnemonic, not a rule, demonstration or
+  interaction.
+- The uppercase eyebrow pattern is prohibited. The label renders sentence case.
+- The component is deliberately passive. No editing, storage, completion state
+  or progress behaviour is attached to it.
+- All dimensions, surfaces and typography come from governed constants.
 
-## Refined decisions
+## Final decisions
 
-1. **The hook sentence owns the hierarchy.** It uses `TYPE.bodyStrong` and
-   primary text. The label and frame remain quieter so the learner remembers the
-   analogy, not the card decoration.
-2. **Neutral surface, restrained subject identity.** The component uses a dark
-   neutral surface and neutral hairline with one narrow subject-colour rail.
-   No full accent outline, glow or locally invented accent-alpha tint.
-3. **Personalisation must be discoverable.** The initial action is visibly
-   labelled **Make it mine**, rather than relying on an ambiguous pencil icon.
-   After saving, the label becomes **Your memory hook** and the action becomes
-   **Edit**.
-4. **Stable ids are required for editable hooks.** `block.id` is the persistence
-   key. Without it, the component warns in development and renders as a static
-   hook; authored copy is never used as an unstable storage key.
-5. **Editing stays compact and bounded.** The inline field uses a governed
-   character cap, grows only to the maximum content height, and offers Save,
-   Cancel and (for personalised hooks) **Use original**.
-6. **Mobile interaction is governed.** Every action uses the shared minimum
-   touch size, focus-visible subject ring, restrained press scale and
-   reduced-motion handling.
-7. **Image remains optional.** A small square thumbnail is used only where it
-   strengthens retrieval. The media size has a semantic component token rather
-   than borrowing a spacing token directly at the call site.
+1. **The image is the retrieval anchor.** When supplied, it uses
+   `COMPONENT_SIZE.memoryHookImage` so it has enough presence to support recall
+   rather than reading as a decorative thumbnail.
+2. **The surface is quiet and near-black.** The card uses
+   `GENERAL.backgroundSunken`, a faint neutral border and one narrow subject
+   accent rail. There is no obvious subject-colour wash, glow or full accent
+   outline.
+3. **Typography remains lightweight.** The label uses `TYPE.label`; the analogy
+   uses `TYPE.bodySmall`. The hook should read as a quick, clever aside rather
+   than another teaching card.
+4. **Subject colour is restrained.** Accent is reserved for the rail and label.
+   The body copy stays neutral.
+5. **The component remains compact.** It uses the governed compact inset and gap
+   so the larger image does not turn it into a hero panel.
+6. **Image remains optional.** Text-only hooks still render cleanly, but authors
+   should only add an image when it genuinely strengthens retrieval.
 
 ## API
 
 ```jsx
 <MemoryHook
   block={{
-    id: 'bio-virus-hacker',
     hook: 'Think of a virus as …',
     image: '/figures/…',
     imageAlt: '…',
@@ -73,22 +63,19 @@ copying the reference's uppercase eyebrow, heavy tinting and oversized image.
 />
 ```
 
-`id` is required to expose learner personalisation. Without an id, the authored
-hook still renders but the edit action does not.
-
 ## Out of scope
 
-- Surfacing personalised hooks elsewhere (retrieval feeds, progress) — future.
-- Auto-generating hooks; syncing hooks to Firestore beyond the normal scoped
-  storage layer.
+- Learner editing or personalisation.
+- Persistence, Firestore sync or weakness tracking.
+- Auto-generating hooks or imagery.
 - Any change to `AcronymMemorise`'s existing footer.
 
 ## Scope
 
 - `src/components/learning/MemoryHook.jsx`
-- `src/constants/spacing.js` semantic component-size/content-limit aliases
+- `src/constants/spacing.js`
 - `src/components/learning/MemoryHook.stories.jsx`
-- `src/components/layout/ModulePlayer.jsx` route
+- `src/components/layout/ModulePlayer.jsx`
 - `src/dev/componentReview/fixtures.js`
 - `src/dev/componentReview/reviewManifest.jsx`
 - `docs/components/COMPONENT_REGISTRY.md`
@@ -100,5 +87,5 @@ hook still renders but the edit action does not.
 
 - `vite build`
 - `vitest run tests/architecture`
-- Story render at 390px, including edit/save/use-original states
+- Story render at 390px for image and text-only variants
 - Component Review Lab inline preview
