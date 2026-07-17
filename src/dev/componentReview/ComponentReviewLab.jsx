@@ -416,17 +416,13 @@ function PreviewFrame({ entry, variant, onDone, onError, accent }) {
     )
   }
 
-  // Inline blocks flow inside the normal content column.
+  // Inline blocks flow directly in the normal content column. The lab must not
+  // add a second card treatment around components that already own their frame.
   return (
-    <div style={{ padding: '14px 14px 48px' }}>
-      <div style={{
-        background: GENERAL.backgroundSunken, border: `1px solid ${GENERAL.line.soft}`,
-        borderTop: `2px solid ${accent}`, borderRadius: 12, padding: 14, overflowX: 'auto',
-      }}>
-        <RenderBoundary onError={onError} resetKey={resetKey}>
-          {render(fixture, { onDone })}
-        </RenderBoundary>
-      </div>
+    <div style={{ padding: '14px 14px 48px', overflowX: 'auto' }}>
+      <RenderBoundary onError={onError} resetKey={resetKey}>
+        {render(fixture, { onDone })}
+      </RenderBoundary>
     </div>
   )
 }
