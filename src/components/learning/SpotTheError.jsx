@@ -8,8 +8,8 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 // CinematicShell used here (not ContentShell/InteractionShell): this is a
 // full-bleed diagnostic screen that owns its own 100dvh height, internal
-// scroll and safe-area insets so the staged fields and the check/continue
-// action stay reachable when the mobile keyboard is open.
+// scroll and safe-area insets so the staged field and action stay reachable
+// when the mobile keyboard is open.
 import CinematicShell from '../layout/CinematicShell.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import CheckAnswerCTA from '../core/CheckAnswerCTA.jsx'
@@ -21,21 +21,13 @@ import {
   targetTokenText,
   scoreSelection,
   evaluateExplanation,
-  evaluateRepair,
-  deriveFeedbackHeading,
+  deriveDiagnosisHeading,
 } from './spotTheErrorScoring.js'
 
 const TEXT_PRIMARY = GENERAL.feedbackText
 const TEXT_MUTED = 'rgba(245,247,255,0.62)'
 const TEXT_FAINT = 'rgba(245,247,255,0.42)'
-
-// Specialist control dimensions. These are deliberately local and named rather
-// than scattered through the render body; the global spacing scale remains
-// unchanged.
-const FIELD_MIN_HEIGHT = {
-  explanation: 96,
-  repair: 88,
-}
+const EXPLANATION_MIN_HEIGHT = 96
 
 function slugify(text) {
   return (text || '').toLowerCase().slice(0, 40).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
@@ -60,7 +52,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
 
   const statement = block.statement || ''
   const screenTitle = block.title || block.heading || 'Spot the error'
-  const screenIntro = block.intro || block.introText || 'One inaccurate word can cost a mark. Find the mistake, explain why it is wrong, then rewrite the answer accurately.'
+  const screenIntro = block.intro || block.introText || 'One inaccurate word can cost a mark. Find the mistake, then explain why it is wrong.'
   const backgroundImage = block.backgroundImage || (subject === 'Biology' ? '/headers/bio-energyforlife.webp' : null)
   const tokens = useMemo(() => tokenise(statement), [statement])
   const target = useMemo(
@@ -70,23 +62,18 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
 
   const [selection, setSelection] = useState(null)
   const [explanation, setExplanation] = useState('')
-  const [repair, setRepair] = useState('')
   const [phase, setPhase] = useState('diagnose')
   const loggedRef = useRef(false)
 
   const groupId = useId()
   const explainId = useId()
-  const repairId = useId()
   const explainRef = useRef(null)
-  const repairRef = useRef(null)
+  const feedbackHeadingRef = useRef(null)
 
   const explanationEval = useMemo(() => evaluateExplanation(explanation, block), [explanation, block])
-  const repairEval = useMemo(() => evaluateRepair(repair, block), [repair, block])
-
   const hasSelection = selection != null
   const showExplain = hasSelection
-  const showRepair = hasSelection && explanationEval.meetsLength
-  const canCheck = hasSelection && explanationEval.meetsLength && repairEval.meetsLength
+  const canCheck = hasSelection && explanationEval.meetsLength
 
   useEffect(() => {
     if (!showExplain || !explainRef.current) return
@@ -95,14 +82,11 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
   }, [showExplain])
 
   useEffect(() => {
-    if (!showRepair || !repairRef.current) return
-    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-    repairRef.current.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' })
-  }, [showRepair])
+    if (phase === 'feedback') feedbackHeadingRef.current?.focus()
+  }, [phase])
 
   const selectionCorrect = useMemo(() => scoreSelection(selection, target), [selection, target])
   const explanationPrecise = explanationEval.precise
-  const repairAccurate = repairEval.accurate
 
   function tapToken(i) {
     if (phase !== 'diagnose') return
@@ -120,14 +104,18 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
           logCorrectAnswer({ subject, topic, questionId: `${qid}${suffix}`, source: 'module' })
         } else {
           logWrongAnswer({
-            subject, topic, questionId: `${qid}${suffix}`,
-            questionText, source: 'module', questionType: 'spotTheError', marks: 1,
+            subject,
+            topic,
+            questionId: `${qid}${suffix}`,
+            questionText,
+            source: 'module',
+            questionType: 'spotTheError',
+            marks: 1,
           })
         }
       }
       log(selectionCorrect, 'Error identification', '', statement)
       log(explanationPrecise, 'Scientific precision', '-precision', explanation)
-      log(repairAccurate, 'Error correction', '-repair', repair)
     }
 
     setPhase('feedback')
@@ -138,10 +126,9 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
     if (fn) fn()
   }
 
-  const heading = deriveFeedbackHeading({
+  const heading = deriveDiagnosisHeading({
     selectionCorrect,
     explanationPrecise,
-    repairAccurate,
     missHeading: block.missHeading,
   })
 
@@ -306,12 +293,19 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
                   })}
                 </p>
                 <span id={groupId} style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
-                  Select a single continuous word or phrase, then explain and rewrite it.
+                  Select one continuous word or phrase, then explain why it is wrong.
                 </span>
               </div>
 
               {showExplain && (
-                <div ref={explainRef} className="ste-anim" style={{ marginBottom: SPACING.separation, animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
+                <div
+                  ref={explainRef}
+                  className="ste-anim"
+                  style={{
+                    marginBottom: SPACING.separation,
+                    animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
+                  }}
+                >
                   <label htmlFor={explainId} style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, display: 'block', marginBottom: SPACING.micro }}>
                     Why is this incorrect?
                   </label>
@@ -321,23 +315,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
                     value={explanation}
                     onChange={e => setExplanation(e.target.value)}
                     placeholder="Explain what is wrong and why…"
-                    style={{ ...textAreaStyle, minHeight: FIELD_MIN_HEIGHT.explanation }}
-                  />
-                </div>
-              )}
-
-              {showRepair && (
-                <div ref={repairRef} className="ste-anim" style={{ marginBottom: SPACING.separation, animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
-                  <label htmlFor={repairId} style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, display: 'block', marginBottom: SPACING.micro }}>
-                    Rewrite the statement correctly.
-                  </label>
-                  <textarea
-                    id={repairId}
-                    className="ste-input"
-                    value={repair}
-                    onChange={e => setRepair(e.target.value)}
-                    placeholder="Write the corrected version…"
-                    style={{ ...textAreaStyle, minHeight: FIELD_MIN_HEIGHT.repair }}
+                    style={{ ...textAreaStyle, minHeight: EXPLANATION_MIN_HEIGHT }}
                   />
                 </div>
               )}
@@ -349,7 +327,11 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
           </>
         ) : (
           <div className="ste-anim" style={{ animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
-            <h2 style={{ ...TYPE.displaySection, color: accent, margin: `0 0 ${SPACING.standard}px` }}>
+            <h2
+              ref={feedbackHeadingRef}
+              tabIndex={-1}
+              style={{ ...TYPE.displaySection, color: accent, margin: `0 0 ${SPACING.standard}px`, outline: 'none' }}
+            >
               {heading}
             </h2>
 
@@ -359,7 +341,10 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               </FeedbackRow>
             ) : (
               <div style={{
-                display: 'flex', gap: SPACING.standard, marginBottom: SPACING.standard, flexWrap: 'wrap',
+                display: 'flex',
+                gap: SPACING.standard,
+                marginBottom: SPACING.standard,
+                flexWrap: 'wrap',
               }}>
                 <div style={{ flex: '1 1 45%' }}>
                   <p style={{ ...TYPE.label, color: TEXT_MUTED, margin: `0 0 ${SPACING.micro / 2}px` }}>You selected</p>
@@ -378,16 +363,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
                 : (block.explanationHint
                     || (explanationEval.missing.length
                         ? `Your explanation needs to mention ${explanationEval.missing.join(' and ')}.`
-                        : 'Your explanation needs to be more precise about the science.'))}
-            </FeedbackRow>
-
-            {repair.trim() && (
-              <FeedbackRow label="Your rewrite" muted={!repairAccurate}>
-                {repair.trim()}
-              </FeedbackRow>
-            )}
-            <FeedbackRow label="Accurate version">
-              {block.correctVersion}
+                        : 'Your explanation needs to be more precise.'))}
             </FeedbackRow>
 
             <FeedbackRow label="What was wrong">
