@@ -10,7 +10,7 @@ import CinematicShell from '../layout/CinematicShell.jsx'
 
 const TEXT_PRIMARY = 'rgba(255,251,242,0.96)'
 const TEXT_DIM = 'rgba(255,248,235,0.66)'
-const ROW_BG = 'rgba(10,9,7,0.68)'
+const ROW_BG = 'rgba(10,9,7,0.88)'
 const NODE = 30
 const SWEEP_STAGGER_MS = 120
 
@@ -229,8 +229,8 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           position: 'absolute',
           inset: 0,
           background: [
-            'linear-gradient(to bottom, rgba(5,4,2,0.66) 0%, rgba(5,4,2,0.72) 52%, rgba(5,4,2,0.94) 100%)',
-            'linear-gradient(to right, rgba(5,4,2,0.18) 0%, rgba(5,4,2,0.46) 100%)',
+            'linear-gradient(to bottom, rgba(5,4,2,0.72) 0%, rgba(5,4,2,0.78) 52%, rgba(5,4,2,0.95) 100%)',
+            'linear-gradient(to right, rgba(5,4,2,0.24) 0%, rgba(5,4,2,0.52) 100%)',
           ].join(', '),
           zIndex: 0,
           pointerEvents: 'none',
@@ -288,7 +288,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
             padding: `${SPACING.micro}px 0 ${SPACING.compact}px ${SPACING.compact}px`,
             marginBottom: SPACING.compact,
             borderLeft: `2px solid rgba(${rgb},${complete ? 0.82 : 0.62})`,
-            background: `linear-gradient(90deg, rgba(${rgb},${complete ? 0.12 : 0.09}) 0%, rgba(5,4,2,0) 86%)`,
+            background: 'linear-gradient(90deg, rgba(8,7,5,0.82) 0%, rgba(8,7,5,0.58) 72%, rgba(8,7,5,0.18) 100%)',
             animation: entrance,
             animationDelay: MOTION.duration.fast,
           }}
@@ -376,7 +376,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                         height: NODE,
                         borderRadius: '50%',
                         flexShrink: 0,
-                        background: lockedJob ? `rgba(${rgb},0.22)` : 'rgba(8,7,6,0.78)',
+                        background: lockedJob ? `rgba(${rgb},0.22)` : 'rgba(8,7,6,0.84)',
                         border: `2px solid ${lockedJob ? accent : `rgba(${rgb},0.36)`}`,
                         display: 'flex',
                         alignItems: 'center',
@@ -470,17 +470,17 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                       borderRadius: RADII.medium,
                       border: isWrongTap
                         ? '1px solid var(--error)'
-                        : `1px solid rgba(${rgb},${lockedJob ? 0.34 : 0.24})`,
+                        : `1px solid rgba(${rgb},${lockedJob ? 0.30 : 0.28})`,
                       background: isWrongTap
-                        ? 'rgba(92,20,20,0.22)'
+                        ? 'rgba(92,20,20,0.72)'
                         : lockedJob
-                          ? `rgba(${rgb},0.075)`
+                          ? 'linear-gradient(180deg, rgba(10,9,7,0.92) 0%, rgba(10,9,7,0.90) 100%)'
                           : ROW_BG,
                       boxShadow: lockedJob
-                        ? `inset 2px 0 0 rgba(${rgb},0.42)`
+                        ? `inset 2px 0 0 rgba(${rgb},0.26)`
                         : 'inset 0 1px 0 rgba(255,255,255,0.035)',
                       padding: `${SPACING.micro}px ${SPACING.compact}px`,
-                      opacity: lockedJob ? 0.97 : 0.90,
+                      opacity: lockedJob ? 0.98 : 1,
                       cursor: lockedJob || complete ? 'default' : 'pointer',
                       transform: 'translateX(0)',
                       transition: [
