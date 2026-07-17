@@ -17,7 +17,7 @@ component's pedagogical reason to exist beyond a static callout.
 
 Once, beside or after the content it reinforces, when a single idea benefits
 from a memorable analogy/mnemonic the learner should carry into the exam.
-Optional author image when a visual anchor genuinely helps recall.
+Optional author image only when it genuinely strengthens recall.
 
 ## 3. When NOT to use
 
@@ -32,52 +32,65 @@ Optional author image when a visual anchor genuinely helps recall.
 
 ## 4. Required structure
 
-- Accent-tinted card (`SUBJECTS[subject]` accent), sentence-case `label`
-  (default "Memory hook") — **no uppercase eyebrow**.
+- Compact neutral dark surface with a neutral hairline and one restrained
+  subject-colour rail. Sentence-case label (default "Memory hook") — **no
+  uppercase eyebrow, glow or full accent outline**.
 - Optional square thumbnail on the leading edge; text-only without one.
-- Hook body in calm body copy; a pencil edit button reveals an inline
-  textarea with Save / Cancel. A personalised hook shows a "Your version"
-  caption. Saving empty (or the default restored) clears the override.
+- The hook is the strongest text in the component (`TYPE.bodyStrong`, primary
+  text colour), not muted supporting copy.
+- A visible **Make it mine** action reveals an inline textarea with Save /
+  Cancel. After personalisation, the label becomes **Your memory hook**, the
+  action becomes **Edit**, and **Use original** clears the override.
+- Personalisation is enabled only when `block.id` is a stable non-empty string.
+  Missing ids produce a development warning and render a static hook rather
+  than pretending the edit will persist.
 - Personalisation persists only through `src/lib/storage.js`
-  (`gcse_memory_hook_notes_v1`, keyed by `block.id || block.hook`) — never
-  `localStorage` directly.
+  (`gcse_memory_hook_notes_v1`, keyed by `block.id`) — never `localStorage`
+  directly.
+- Learner copy is capped at `CONTENT_LIMITS.memoryHook` and the textarea grows
+  only up to the governed maximum height.
 
 ## 5. Token rules
 
-`RADII.medium` card, `RADII.small` thumbnail/controls; `SPACING.standard`
-padding, `SPACING.compact` gaps, `SPACING.cinematic` thumbnail side;
-`TYPE.label` accent label, `TYPE.body` hook, `TYPE.caption` "Your version",
-`TYPE.button` controls; accent + fill/border via
-`SUBJECTS[subject].accent` / `.accentRgb`; surfaces/lines/`textOnAccent` via
-`GENERAL`. No raw px/hex.
+`RADII.medium` card and `RADII.small` thumbnail/controls;
+`SPACING.compact` padding/gaps; `COMPONENT_SIZE.thumbnail` image side;
+`COMPONENT_SIZE.touchTarget` minimum interactive height;
+`COMPONENT_SIZE.hairline` / `.accentRail` / focus metrics for strokes;
+`TYPE.label`, `TYPE.bodyStrong`, `TYPE.button`, `TYPE.caption`;
+`SUBJECTS[subject].accent`; neutral surfaces/lines/primary text via `GENERAL`.
+No local colour values, invented control sizes or subject-alpha recipes.
 
 ## 6. Motion rules
 
-Restrained. The edit button uses a `MOTION.scale.press` press-scale over
-`MOTION.duration.fast`; no entrance animation, bounce, or reward motion.
-Respects `prefers-reduced-motion` by having no persistent animation to
-suppress.
+Restrained. Interactive controls use `MOTION.scale.press` over
+`MOTION.duration.fast`; focus-visible uses the governed subject-colour ring.
+The control transition is removed for `prefers-reduced-motion`. No entrance
+animation, bounce, pulse or reward motion.
 
 ## 7. Gold example
 
-`MemoryHook.stories.jsx` → **Gold**: the virus "hacker" analogy with
-thumbnail and the learner-edit affordance, at 390px — matches the design
-reference.
+`MemoryHook.stories.jsx` → **Gold**: the virus "hacker" analogy with thumbnail
+and visible learner-personalisation action at 390px.
 
 ## 8. Below-bar counterexample
 
 - An ALL-CAPS "MEMORY HOOK" eyebrow (violates the label-case rule).
 - The screen's actual takeaway rule dropped into a MemoryHook instead of
   `KeyPoint` (intent inversion).
+- A fully tinted or glowing subject-colour card competing with the page.
+- An icon-only pencil with no visible explanation of the learner action.
 - Two hooks stacked on one screen, or a hook used as a generic bordered
   callout with no mnemonic value.
 
 ## 9. Review checks
 
 - ⚙ Personalisation routes through `storage.js` (no direct `localStorage`).
+- ⚙ Editable hooks have stable authored ids; missing ids remain static.
 - ⚙ Label renders sentence case (no uppercase eyebrow).
-- ⚙ Uses tokens, not raw px/hex.
+- ⚙ Uses governed dimensions and tokens, not local px/hex/alpha recipes.
+- ⚙ Every action has a comfortable mobile touch target and focus-visible state.
 - ⚙ At most one MemoryHook per screen.
+- 👁 The hook sentence has stronger hierarchy than the label and framing.
 - 👁 It is genuinely a memorable *hook*, not the screen's rule, a worked
   example, or decoration (render pass).
 - 👁 Text wraps cleanly beside a thumbnail at 390px.
