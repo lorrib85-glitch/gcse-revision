@@ -15,7 +15,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 // block shape: {
 //   label?: string,     // defaults to 'Memory hook'
 //   hook: string,       // the analogy / mnemonic the author supplies
-//   image?: string,     // optional square thumbnail (author-supplied)
+//   image?: string,     // optional square visual anchor (author-supplied)
 //   imageAlt?: string,
 // }
 export default function MemoryHook({ block = {}, subject = 'Biology' }) {
@@ -32,8 +32,8 @@ export default function MemoryHook({ block = {}, subject = 'Biology' }) {
         alignItems: 'flex-start',
         margin: `${SPACING.compact}px 0`,
         padding: SPACING.compact,
-        background: GENERAL.backgroundSurface,
-        border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.soft}`,
+        background: GENERAL.backgroundSunken,
+        border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.faint}`,
         borderLeft: `${COMPONENT_SIZE.accentRail}px solid ${theme.accent}`,
         borderRadius: RADII.medium,
       }}
@@ -43,8 +43,8 @@ export default function MemoryHook({ block = {}, subject = 'Biology' }) {
           src={block.image}
           alt={block.imageAlt || ''}
           style={{
-            width: COMPONENT_SIZE.thumbnail,
-            height: COMPONENT_SIZE.thumbnail,
+            width: COMPONENT_SIZE.memoryHookImage,
+            height: COMPONENT_SIZE.memoryHookImage,
             flexShrink: 0,
             objectFit: 'cover',
             borderRadius: RADII.small,
@@ -57,7 +57,7 @@ export default function MemoryHook({ block = {}, subject = 'Biology' }) {
         <div style={{ ...TYPE.label, color: theme.accent, marginBottom: SPACING.micro }}>
           {label}
         </div>
-        <p style={{ ...TYPE.body, color: GENERAL.softWhite, margin: 0 }}>
+        <p style={{ ...TYPE.bodySmall, color: GENERAL.softWhite, margin: 0 }}>
           {hook}
         </p>
       </div>
