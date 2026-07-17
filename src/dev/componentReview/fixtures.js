@@ -457,3 +457,14 @@ export const keyFigureReveal = {
       lines: ['His idea of natural causes shaped Western medicine for the next 2,000 years.'] },
   ],
 }
+
+// MemoryHook (Biology) — in-page "make it stick" analogy/mnemonic reminder with
+// a learner-edit affordance. Shape: { id?, label?, hook, image?, imageAlt? }.
+// Block type: memoryHook.
+export const memoryHook = {
+  id: 'bio-virus-hacker',
+  label: 'Memory hook',
+  hook: "Think of a virus as a tiny 'hacker' that sneaks in, takes over, and makes copies of itself.",
+  image: '/headers/bio-diseasewars.webp',
+  imageAlt: 'Stylised virus particle in a dark, cinematic scene',
+}

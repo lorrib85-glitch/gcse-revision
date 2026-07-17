@@ -98,6 +98,7 @@ fails.
 | Reserve an image/diagram the author will supply | `MediaPlaceholder` |
 | Teach a concept, test-after-teach | `factorWeb` / `centreImageReveal` (per their contracts) |
 | Introduce a key person | `keyFigureReveal` |
+| Anchor one idea with a memorable analogy/mnemonic | `MemoryHook` |
 | …(existing learning components) | per `component-contracts/` |
 
 **`KeyPoint` and `WorkedExample` are deliberately separate and must never be

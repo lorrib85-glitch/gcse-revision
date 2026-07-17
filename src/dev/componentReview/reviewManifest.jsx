@@ -30,6 +30,7 @@ import GuidedChoiceCarousel from '../../components/learning/GuidedChoiceCarousel
 import TheoryCompareBlock from '../../components/learning/TheoryCompareBlock.jsx'
 import MisconceptionCheck from '../../components/learning/MisconceptionCheck.jsx'
 import AcronymMemorise from '../../components/learning/AcronymMemorise.jsx'
+import MemoryHook from '../../components/learning/MemoryHook.jsx'
 import BuilderBlock from '../../components/learning/BuilderBlock.jsx'
 import ChapterOutcomeScreen from '../../components/layout/ChapterOutcomeScreen.jsx'
 import ContentShell from '../../components/layout/ContentShell.jsx'
@@ -311,6 +312,15 @@ export const REVIEW_ENTRIES = [
     alternative: 'MatchingTask (unordered pairing).',
     render: (fx, { onDone }) => <FactorWeb block={fx} subject="History" onContinue={onDone} />,
     fixture: FIX.factorWeb,
+  },
+  {
+    id: 'memory-hook', name: 'MemoryHook', group: 'library',
+    status: 'routed-unused', subject: 'Biology', renderMode: 'inline',
+    function: 'In-page "make it stick" reminder: anchors one hard idea with a memorable analogy/mnemonic. Optional thumbnail; learner can rewrite the hook in their own words (persisted via storage.js).',
+    usage: 'Routed in ModulePlayer (type: memoryHook); available for placement within any subject page. No content file uses it yet.',
+    alternative: 'KeyPoint (states the screen’s rule); AcronymMemorise (interactive acronym drill).',
+    render: (fx) => <MemoryHook block={fx} subject="Biology" />,
+    fixture: FIX.memoryHook,
   },
   {
     id: 'concept-reveal', name: 'ConceptReveal', group: 'library',

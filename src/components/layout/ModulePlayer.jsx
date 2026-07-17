@@ -24,6 +24,7 @@ import GuidedExamResponse from '../learning/GuidedExamResponse.jsx'
 import InteractiveHotspotImage from '../learning/InteractiveHotspotImage.jsx'
 import FillInTheBlanksBlock from '../learning/FillInTheBlanksBlock.jsx'
 import AcronymMemorise from '../learning/AcronymMemorise.jsx'
+import MemoryHook from '../learning/MemoryHook.jsx'
 import BuilderBlock from '../learning/BuilderBlock.jsx'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import RetrievalFrame from '../feedback/RetrievalFrame.jsx'
@@ -640,6 +641,7 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'hotspot'       && <HotspotBlock block={block} />}
           {block.type === 'misconception' && <MisconceptionBlock block={block} />}
           {block.type === 'acronymMemorise' && <AcronymMemorise block={block} />}
+          {block.type === 'memoryHook'    && <MemoryHook block={block} subject={subject} />}
           {block.type === 'builder'       && <BuilderBlock block={block} />}
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
           {block.type === 'boss'          && <ExamQuestionFrame block={block} subject={subject} mode="practice" onSkip={onScreenComplete} />}
