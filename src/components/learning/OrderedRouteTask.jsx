@@ -229,8 +229,8 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           position: 'absolute',
           inset: 0,
           background: [
-            'linear-gradient(to bottom, rgba(5,4,2,0.72) 0%, rgba(5,4,2,0.78) 52%, rgba(5,4,2,0.95) 100%)',
-            'linear-gradient(to right, rgba(5,4,2,0.24) 0%, rgba(5,4,2,0.52) 100%)',
+            'linear-gradient(to bottom, rgba(5,4,2,0.48) 0%, rgba(5,4,2,0.68) 48%, rgba(5,4,2,0.95) 100%)',
+            'linear-gradient(to right, rgba(5,4,2,0.34) 0%, rgba(5,4,2,0.12) 68%, rgba(5,4,2,0.08) 100%)',
           ].join(', '),
           zIndex: 0,
           pointerEvents: 'none',
