@@ -32,22 +32,40 @@ function ChevronDownIcon({ open, color }) {
 }
 
 // ─── AcronymMemorise — mnemonic acronym reveal ────────────────────────────────
-// Tap-to-reveal mnemonic block: each acronym letter expands to show its meaning
-// (e.g. SCARF for the five uses of glucose).
-// Content block (renders inline within a content screen's blocks array).
-// Shape: { title?, label?, instruction?, items: [{ letter, word, detail }] }
+// Content-driven mnemonic block. The component owns the interaction and layout;
+// the acronym, words, explanations and optional memory hook all come from data.
+// Shape: {
+//   title?, label?, instruction?, memoryHookLabel?, memoryHook?,
+//   items: [{ id?, letter, word, detail }]
+// }
 export default function AcronymMemorise({ block, subject = 'Biology' }) {
   const [open, setOpen] = useState(null)
+  const [viewed, setViewed] = useState(() => new Set())
   const items = block.items || []
   const theme = SUBJECTS[subject] || SUBJECTS.Biology
   const acronym = items.map(item => item.letter).join('')
   const legacyLabelIsInstruction = /tap each letter/i.test(block.label || '')
   const heading = block.title
     || (!legacyLabelIsInstruction && block.label)
-    || `${acronym || 'Mnemonic'}: five uses of glucose`
-  const instruction = block.instruction || 'Tap each letter to reveal its meaning.'
+    || acronym
+    || 'Acronym'
+  const instruction = block.instruction || 'Tap a letter to reveal its meaning.'
+  const allViewed = items.length > 0 && viewed.size === items.length
+  const memoryHook = block.memoryHook
+    || block.summary
+    || `${acronym}: ${items.map(item => item.word).join(' · ')}`
+  const memoryHookLabel = block.memoryHookLabel || 'Make it stick'
   const letterSize = SPACING.standard + SPACING.compact
   const spineOffset = SPACING.micro + (letterSize / 2)
+
+  function toggleItem(index) {
+    setViewed(previous => {
+      const next = new Set(previous)
+      next.add(index)
+      return next
+    })
+    setOpen(current => current === index ? null : index)
+  }
 
   return (
     <div style={{ margin: `${SPACING.compact}px 0` }}>
@@ -74,6 +92,84 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
           </p>
         </div>
 
+        <div style={{
+          background: GENERAL.backgroundSunken,
+          border: `1px solid ${GENERAL.line.soft}`,
+          borderRadius: 14,
+          padding: SPACING.compact,
+          marginBottom: SPACING.compact,
+        }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${Math.max(items.length, 1)}, minmax(0, 1fr))`,
+            gap: SPACING.micro,
+          }}>
+            {items.map((item, index) => {
+              const isOpen = open === index
+              const hasViewed = viewed.has(index)
+
+              return (
+                <button
+                  key={`hero-${item.id || `${item.letter}-${item.word}`}`}
+                  type="button"
+                  onClick={() => toggleItem(index)}
+                  aria-label={`${item.letter}: ${hasViewed ? item.word : 'reveal meaning'}`}
+                  aria-pressed={isOpen}
+                  style={{
+                    minWidth: 0,
+                    height: letterSize,
+                    borderRadius: 10,
+                    border: `1px solid ${isOpen
+                      ? `rgba(${theme.accentRgb},0.52)`
+                      : hasViewed
+                        ? `rgba(${theme.accentRgb},0.26)`
+                        : GENERAL.line.medium}`,
+                    background: isOpen
+                      ? `rgba(${theme.accentRgb},0.18)`
+                      : hasViewed
+                        ? `rgba(${theme.accentRgb},0.08)`
+                        : GENERAL.surfaceTint,
+                    color: isOpen || hasViewed ? theme.accent : GENERAL.slate,
+                    cursor: 'pointer',
+                    display: 'grid',
+                    placeItems: 'center',
+                    ...TYPE.titleLarge,
+                    boxShadow: isOpen ? `0 0 14px rgba(${theme.accentRgb},0.14)` : 'none',
+                    transition: 'background 200ms ease, border-color 200ms ease, box-shadow 200ms ease, color 200ms ease',
+                  }}
+                >
+                  {item.letter}
+                </button>
+              )
+            })}
+          </div>
+
+          <div
+            aria-live="polite"
+            style={{
+              ...TYPE.bodySmall,
+              color: GENERAL.slate,
+              textAlign: 'center',
+              marginTop: SPACING.compact,
+              lineHeight: 1.65,
+            }}
+          >
+            {items.map((item, index) => (
+              <span key={`word-${item.id || `${item.letter}-${item.word}`}`}>
+                <span style={{
+                  color: viewed.has(index) ? GENERAL.softWhite : GENERAL.neutral[300],
+                  transition: 'color 200ms ease',
+                }}>
+                  {viewed.has(index) ? item.word : item.letter}
+                </span>
+                {index < items.length - 1 && (
+                  <span aria-hidden="true" style={{ color: GENERAL.neutral[300] }}> · </span>
+                )}
+              </span>
+            ))}
+          </div>
+        </div>
+
         <div style={{ position: 'relative' }}>
           {items.length > 1 && (
             <div
@@ -91,15 +187,17 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
             />
           )}
 
-          {items.map((item, i) => {
-            const isOpen = open === i
-            const isLast = i === items.length - 1
+          {items.map((item, index) => {
+            const isOpen = open === index
+            const hasViewed = viewed.has(index)
+            const isLast = index === items.length - 1
 
             return (
               <button
-                key={`${item.letter}-${item.word}`}
+                key={item.id || `${item.letter}-${item.word}`}
                 type="button"
-                onClick={() => setOpen(isOpen ? null : i)}
+                onClick={() => toggleItem(index)}
+                aria-expanded={isOpen}
                 style={{
                   position: 'relative',
                   width: '100%',
@@ -127,16 +225,20 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
                   flexShrink: 0,
                   background: isOpen
                     ? `rgba(${theme.accentRgb},0.16)`
-                    : GENERAL.backgroundSunken,
+                    : hasViewed
+                      ? `rgba(${theme.accentRgb},0.07)`
+                      : GENERAL.backgroundSunken,
                   border: `1px solid ${isOpen
                     ? `rgba(${theme.accentRgb},0.42)`
-                    : GENERAL.line.medium}`,
+                    : hasViewed
+                      ? `rgba(${theme.accentRgb},0.22)`
+                      : GENERAL.line.medium}`,
                   boxShadow: isOpen ? `0 0 16px rgba(${theme.accentRgb},0.16)` : 'none',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   ...TYPE.titleLarge,
-                  color: isOpen ? theme.accent : GENERAL.slate,
+                  color: isOpen || hasViewed ? theme.accent : GENERAL.slate,
                   transition: 'background 200ms ease, border-color 200ms ease, box-shadow 200ms ease, color 200ms ease',
                 }}>
                   {item.letter}
@@ -168,9 +270,9 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
                   ) : (
                     <div style={{
                       ...TYPE.bodySmall,
-                      color: GENERAL.slate,
+                      color: hasViewed ? GENERAL.neutral[200] : GENERAL.slate,
                     }}>
-                      Tap to reveal
+                      {hasViewed ? item.word : 'Tap to reveal'}
                     </div>
                   )}
                 </div>
@@ -185,6 +287,30 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
             )
           })}
         </div>
+
+        {allViewed && (
+          <div className="fade-up" style={{
+            marginTop: SPACING.compact,
+            padding: SPACING.compact,
+            borderRadius: 14,
+            background: `rgba(${theme.accentRgb},0.07)`,
+            border: `1px solid rgba(${theme.accentRgb},0.20)`,
+          }}>
+            <div style={{
+              ...TYPE.label,
+              color: theme.accent,
+              marginBottom: SPACING.micro,
+            }}>
+              {memoryHookLabel}
+            </div>
+            <div style={{
+              ...TYPE.bodySmall,
+              color: GENERAL.neutral[200],
+            }}>
+              {memoryHook}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
