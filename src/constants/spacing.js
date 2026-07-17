@@ -14,3 +14,20 @@ export const SPACING = {
   cinematic: 72,
   section: 96,
 }
+
+// Semantic aliases for fixed component dimensions. These keep call sites from
+// borrowing a rhythm token for an unrelated job (for example, using
+// SPACING.cinematic directly as a thumbnail size) while preserving the locked
+// foundation scale.
+export const COMPONENT_SIZE = {
+  hairline: 1,
+  focusRing: 2,
+  focusOffset: 2,
+  accentRail: 3,
+  touchTarget: SPACING.separation,
+  thumbnail: SPACING.cinematic,
+}
+
+export const CONTENT_LIMITS = {
+  memoryHook: 200,
+}
