@@ -10,7 +10,7 @@ import CinematicShell from '../layout/CinematicShell.jsx'
 
 const TEXT_PRIMARY = 'rgba(255,251,242,0.96)'
 const TEXT_DIM = 'rgba(255,248,235,0.66)'
-const ROW_BG = 'rgba(10,9,7,0.88)'
+const ROW_BG = 'linear-gradient(180deg, rgba(13,12,10,0.92) 0%, rgba(8,7,6,0.90) 100%)'
 const NODE = 30
 const SWEEP_STAGGER_MS = 120
 
@@ -178,8 +178,8 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
 
         .ort-stage:not(:disabled):active {
           transform: translateX(3px) scale(0.995);
-          border-color: rgba(${rgb},0.72) !important;
-          background: rgba(${rgb},0.12) !important;
+          border-color: rgba(${rgb},0.56) !important;
+          box-shadow: inset 2px 0 0 rgba(${rgb},0.38), 0 8px 20px rgba(0,0,0,0.20) !important;
         }
 
         .ort-stage--confirmed {
@@ -285,10 +285,11 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           aria-live="polite"
           style={{
             position: 'relative',
-            padding: `${SPACING.micro}px 0 ${SPACING.compact}px ${SPACING.compact}px`,
+            padding: `${SPACING.micro}px ${SPACING.compact}px ${SPACING.compact}px`,
             marginBottom: SPACING.compact,
             borderLeft: `2px solid rgba(${rgb},${complete ? 0.82 : 0.62})`,
-            background: 'linear-gradient(90deg, rgba(8,7,5,0.82) 0%, rgba(8,7,5,0.58) 72%, rgba(8,7,5,0.18) 100%)',
+            background: 'linear-gradient(90deg, rgba(7,6,5,0.96) 0%, rgba(7,6,5,0.92) 72%, rgba(7,6,5,0.84) 100%)',
+            boxShadow: '0 12px 26px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.035)',
             animation: entrance,
             animationDelay: MOTION.duration.fast,
           }}
@@ -314,7 +315,6 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                   justifyContent: 'space-between',
                   alignItems: 'baseline',
                   gap: SPACING.micro,
-                  paddingRight: SPACING.micro,
                 }}
               >
                 <span style={{ ...TYPE.label, color: accent }}>{prompt}</span>
@@ -470,17 +470,17 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                       borderRadius: RADII.medium,
                       border: isWrongTap
                         ? '1px solid var(--error)'
-                        : `1px solid rgba(${rgb},${lockedJob ? 0.30 : 0.28})`,
+                        : '1px solid rgba(255,248,235,0.10)',
                       background: isWrongTap
                         ? 'rgba(92,20,20,0.72)'
                         : lockedJob
-                          ? 'linear-gradient(180deg, rgba(10,9,7,0.92) 0%, rgba(10,9,7,0.90) 100%)'
+                          ? 'linear-gradient(180deg, rgba(16,13,9,0.96) 0%, rgba(9,8,7,0.94) 100%)'
                           : ROW_BG,
                       boxShadow: lockedJob
-                        ? `inset 2px 0 0 rgba(${rgb},0.26)`
-                        : 'inset 0 1px 0 rgba(255,255,255,0.035)',
+                        ? `inset 2px 0 0 rgba(${rgb},0.34), 0 10px 24px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.05)`
+                        : '0 8px 18px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.04)',
                       padding: `${SPACING.micro}px ${SPACING.compact}px`,
-                      opacity: lockedJob ? 0.98 : 1,
+                      opacity: lockedJob ? 0.99 : 1,
                       cursor: lockedJob || complete ? 'default' : 'pointer',
                       transform: 'translateX(0)',
                       transition: [
@@ -519,7 +519,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                         style={{
                           marginTop: SPACING.micro,
                           paddingTop: SPACING.micro,
-                          borderTop: `1px solid rgba(${rgb},0.17)`,
+                          borderTop: '1px solid rgba(255,248,235,0.09)',
                           display: 'flex',
                           gap: SPACING.micro,
                           alignItems: 'flex-start',
