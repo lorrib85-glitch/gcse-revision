@@ -38,8 +38,8 @@ function answerLabel(answer) {
 // construct an equation, then checks the answer. Distractor pieces are allowed.
 // Correct work is preserved after a wrong attempt so the learner only repairs
 // the parts they misunderstood.
-export default function BuilderBlock({ block, subject = 'Biology', onComplete }) {
-  const { key: subjectKey, theme } = resolveSubject(subject)
+export default function BuilderBlock({ block, subject, onComplete }) {
+  const { key: subjectKey, theme } = resolveSubject(subject ?? block.subject)
   const pieces = useMemo(() => normalisePieces(block.pieces), [block.pieces])
   const slotCount = block.slots?.length ?? block.answer?.length ?? 0
   const blockKey = `${block.label ?? ''}:${(block.answer ?? []).map(answerLabel).join('|')}`
@@ -63,7 +63,9 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
   const correctCount = slotCorrectness.filter(Boolean).length
   const isCompleted = mode === 'completed'
   const isReviewing = mode === 'checkedIncorrect'
-  const canEdit = mode === 'building' || mode === 'correcting'
+  const isCorrecting = mode === 'correcting'
+  const hasChecked = isReviewing || isCorrecting || isCompleted
+  const canEdit = mode === 'building' || isCorrecting
   const focusClass = `builder-block-control-${subjectKey.toLowerCase()}`
   const transition = BUTTONS.compact.transition
 
@@ -80,7 +82,8 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
   }
 
   function remove(slotIndex) {
-    if (!canEdit || slotCorrectness[slotIndex]) return
+    const isPreservedCorrectAnswer = isCorrecting && slotCorrectness[slotIndex]
+    if (!canEdit || isPreservedCorrectAnswer) return
     const piece = slots[slotIndex]
     if (!piece) return
 
@@ -157,9 +160,9 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
           }}
         >
           {slots.map((piece, index) => {
-            const isCorrect = slotCorrectness[index]
-            const isIncorrect = isReviewing && piece && !isCorrect
-            const isLocked = isCompleted || isCorrect || isReviewing
+            const isCorrect = hasChecked && slotCorrectness[index]
+            const isIncorrect = isReviewing && piece && !slotCorrectness[index]
+            const isLocked = isCompleted || isReviewing || (isCorrecting && slotCorrectness[index])
             const borderColor = isCorrect
               ? GENERAL.feedbackCorrect
               : isIncorrect
