@@ -8,6 +8,7 @@ import {
   scoreSelection,
   evaluateExplanation,
   evaluateRepair,
+  deriveDiagnosisHeading,
   deriveFeedbackHeading,
   DEFAULT_MIN_EXPLANATION,
   DEFAULT_MIN_REPAIR,
@@ -82,7 +83,6 @@ describe('nextContiguousSelection', () => {
   it('never produces a non-contiguous selection across a sequence of taps', () => {
     let sel = null
     for (const i of [5, 6, 8, 8, 9]) sel = nextContiguousSelection(sel, i)
-    // 5→{5,5} 6→{5,6} 8(non-adj)→{8,8} 8→null 9→{9,9}
     expect(sel).toEqual({ start: 9, end: 9 })
   })
 })
@@ -93,11 +93,11 @@ describe('scoreSelection', () => {
   })
 
   it('rejects an adjacent-word miss on a single-word target', () => {
-    expect(scoreSelection({ start: 4, end: 4 }, target)).toBe(false) // "the"
-    expect(scoreSelection({ start: 6, end: 6 }, target)).toBe(false) // "of"
+    expect(scoreSelection({ start: 4, end: 4 }, target)).toBe(false)
+    expect(scoreSelection({ start: 6, end: 6 }, target)).toBe(false)
   })
 
-  it('rejects one extra word on a single-word target (no over-selection)', () => {
+  it('rejects one extra word on a single-word target', () => {
     expect(scoreSelection({ start: 5, end: 6 }, target)).toBe(false)
   })
 
@@ -106,18 +106,18 @@ describe('scoreSelection', () => {
   })
 
   it('tolerates one extra word on a multi-word target', () => {
-    const multi = { start: 2, end: 4 } // 3-word phrase
-    expect(scoreSelection({ start: 2, end: 4 }, multi)).toBe(true)      // exact
-    expect(scoreSelection({ start: 2, end: 5 }, multi)).toBe(true)      // one extra, full coverage
+    const multi = { start: 2, end: 4 }
+    expect(scoreSelection({ start: 2, end: 4 }, multi)).toBe(true)
+    expect(scoreSelection({ start: 2, end: 5 }, multi)).toBe(true)
   })
 
   it('requires strong coverage of a multi-word target', () => {
-    const three = { start: 2, end: 4 } // 3-word phrase
-    expect(scoreSelection({ start: 2, end: 3 }, three)).toBe(false)     // 2/3 < 0.8
+    const three = { start: 2, end: 4 }
+    expect(scoreSelection({ start: 2, end: 3 }, three)).toBe(false)
 
-    const multi = { start: 2, end: 6 } // 5-word phrase
-    expect(scoreSelection({ start: 2, end: 3 }, multi)).toBe(false)     // only 2/5 covered
-    expect(scoreSelection({ start: 2, end: 5 }, multi)).toBe(true)      // 4/5 covered, no extra
+    const multi = { start: 2, end: 6 }
+    expect(scoreSelection({ start: 2, end: 3 }, multi)).toBe(false)
+    expect(scoreSelection({ start: 2, end: 5 }, multi)).toBe(true)
   })
 
   it('returns false for null selection or target', () => {
@@ -174,9 +174,9 @@ describe('evaluateRepair', () => {
   it('requires length, required terms, and avoids the forbidden term', () => {
     const block = { repairKeyTerms: ['chloroplast'], repairMustAvoid: ['mitochondria'] }
     expect(evaluateRepair('it happens in the chloroplast', block).accurate).toBe(true)
-    expect(evaluateRepair('it happens in the mitochondria', block).accurate).toBe(false) // forbidden
-    expect(evaluateRepair('it happens somewhere in the cell', block).accurate).toBe(false) // missing term
-    expect(evaluateRepair('chloro', block).meetsLength).toBe(false) // below the length bar
+    expect(evaluateRepair('it happens in the mitochondria', block).accurate).toBe(false)
+    expect(evaluateRepair('it happens somewhere in the cell', block).accurate).toBe(false)
+    expect(evaluateRepair('chloro', block).meetsLength).toBe(false)
   })
 
   it('accepts any listed acceptable rewrite', () => {
@@ -189,6 +189,25 @@ describe('evaluateRepair', () => {
     expect(evaluateRepair('a corrected sentence', {}).accurate).toBe(true)
     expect(evaluateRepair('nope', {}).accurate).toBe(false)
     expect('nope'.length < DEFAULT_MIN_REPAIR).toBe(true)
+  })
+})
+
+describe('deriveDiagnosisHeading', () => {
+  it('describes the two phase-one dimensions without treating repair as failed', () => {
+    expect(deriveDiagnosisHeading({ selectionCorrect: true, explanationPrecise: true }))
+      .toBe('You spotted the mistake and explained it well.')
+    expect(deriveDiagnosisHeading({ selectionCorrect: true, explanationPrecise: false }))
+      .toBe('You found the right phrase.')
+    expect(deriveDiagnosisHeading({ selectionCorrect: false, explanationPrecise: true }))
+      .toBe('Your explanation is heading in the right direction.')
+  })
+
+  it('uses the authored miss heading when both diagnosis dimensions are weak', () => {
+    expect(deriveDiagnosisHeading({
+      selectionCorrect: false,
+      explanationPrecise: false,
+      missHeading: 'Not quite — compare the two organelles.',
+    })).toBe('Not quite — compare the two organelles.')
   })
 })
 
