@@ -33,14 +33,18 @@ function ChevronDownIcon({ open, color }) {
 
 // ─── AcronymMemorise — mnemonic acronym reveal ────────────────────────────────
 // Content-driven mnemonic block. The component owns the interaction and layout;
-// the acronym, words, explanations and optional memory hook all come from data.
+// the acronym, words, explanations and optional instructional copy come from data.
 // Shape: {
-//   title?, label?, instruction?, memoryHookLabel?, memoryHook?,
+//   title?, label?, instruction?, readyText?, testInstruction?, testPrompt?,
+//   testCompleteText?, testCtaLabel?, learnCtaLabel?, testRowPrompt?,
 //   items: [{ id?, letter, word, detail }]
 // }
 export default function AcronymMemorise({ block, subject = 'Biology' }) {
+  const [mode, setMode] = useState('learn')
   const [open, setOpen] = useState(null)
   const [viewed, setViewed] = useState(() => new Set())
+  const [checked, setChecked] = useState(() => new Set())
+
   const items = block.items || []
   const theme = SUBJECTS[subject] || SUBJECTS.Biology
   const acronym = items.map(item => item.letter).join('')
@@ -49,26 +53,55 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
     || (!legacyLabelIsInstruction && block.label)
     || acronym
     || 'Acronym'
-  const instruction = block.instruction || 'Tap a letter to reveal its meaning.'
+  const isTestMode = mode === 'test'
   const allViewed = items.length > 0 && viewed.size === items.length
-  const memoryHook = block.memoryHook
-    || block.summary
-    || `${acronym}: ${items.map(item => item.word).join(' · ')}`
-  const memoryHookLabel = block.memoryHookLabel || 'Make it stick'
+  const allChecked = items.length > 0 && checked.size === items.length
+  const instruction = isTestMode
+    ? (block.testInstruction || 'Say each meaning before you tap to check.')
+    : (block.instruction || 'Tap a letter to reveal its meaning.')
+  const heroStatus = isTestMode
+    ? (allChecked
+        ? (block.testCompleteText || 'Every letter checked. Say the full acronym once more.')
+        : (block.testPrompt || 'Answers are hidden. Recall first, then tap.'))
+    : (block.readyText || 'You have revealed every meaning. Ready to test yourself?')
+  const testRowPrompt = block.testRowPrompt || 'Say it, then tap to check'
   const letterSize = SPACING.standard + SPACING.compact
   const spineOffset = SPACING.micro + (letterSize / 2)
 
   function toggleItem(index) {
-    setViewed(previous => {
-      const next = new Set(previous)
-      next.add(index)
-      return next
-    })
+    if (isTestMode) {
+      setChecked(previous => {
+        const next = new Set(previous)
+        next.add(index)
+        return next
+      })
+    } else {
+      setViewed(previous => {
+        const next = new Set(previous)
+        next.add(index)
+        return next
+      })
+    }
+
     setOpen(current => current === index ? null : index)
   }
 
+  function startTest() {
+    setMode('test')
+    setOpen(null)
+    setChecked(new Set())
+  }
+
+  function returnToLearning() {
+    setMode('learn')
+    setOpen(null)
+  }
+
   return (
-    <div style={{ margin: `${SPACING.compact}px 0` }}>
+    <div style={{
+      margin: `${SPACING.compact}px 0 ${SPACING.standard}px`,
+      paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+    }}>
       <div style={{
         background: GENERAL.backgroundSurface,
         border: `1px solid ${GENERAL.line.soft}`,
@@ -106,35 +139,39 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
           }}>
             {items.map((item, index) => {
               const isOpen = open === index
-              const hasViewed = viewed.has(index)
+              const hasProgress = isTestMode ? checked.has(index) : viewed.has(index)
 
               return (
                 <button
                   key={`hero-${item.id || `${item.letter}-${item.word}`}`}
                   type="button"
                   onClick={() => toggleItem(index)}
-                  aria-label={`${item.letter}: ${hasViewed ? item.word : 'reveal meaning'}`}
+                  aria-label={`${item.letter}: ${hasProgress ? item.word : 'reveal meaning'}`}
                   aria-pressed={isOpen}
                   style={{
                     minWidth: 0,
                     height: letterSize,
                     borderRadius: 10,
                     border: `1px solid ${isOpen
-                      ? `rgba(${theme.accentRgb},0.52)`
-                      : hasViewed
+                      ? theme.accent
+                      : hasProgress
                         ? `rgba(${theme.accentRgb},0.26)`
                         : GENERAL.line.medium}`,
                     background: isOpen
-                      ? `rgba(${theme.accentRgb},0.18)`
-                      : hasViewed
-                        ? `rgba(${theme.accentRgb},0.08)`
+                      ? theme.accent
+                      : hasProgress
+                        ? GENERAL.backgroundSunken
                         : GENERAL.surfaceTint,
-                    color: isOpen || hasViewed ? theme.accent : GENERAL.slate,
+                    color: isOpen
+                      ? GENERAL.textOnAccent
+                      : hasProgress
+                        ? theme.accent
+                        : GENERAL.slate,
                     cursor: 'pointer',
                     display: 'grid',
                     placeItems: 'center',
                     ...TYPE.titleLarge,
-                    boxShadow: isOpen ? `0 0 14px rgba(${theme.accentRgb},0.14)` : 'none',
+                    boxShadow: isOpen ? `0 0 16px rgba(${theme.accentRgb},0.18)` : 'none',
                     transition: 'background 200ms ease, border-color 200ms ease, box-shadow 200ms ease, color 200ms ease',
                   }}
                 >
@@ -154,19 +191,21 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
               lineHeight: 1.65,
             }}
           >
-            {items.map((item, index) => (
-              <span key={`word-${item.id || `${item.letter}-${item.word}`}`}>
-                <span style={{
-                  color: viewed.has(index) ? GENERAL.softWhite : GENERAL.neutral[300],
-                  transition: 'color 200ms ease',
-                }}>
-                  {viewed.has(index) ? item.word : item.letter}
+            {!isTestMode && !allViewed ? (
+              items.map((item, index) => (
+                <span key={`word-${item.id || `${item.letter}-${item.word}`}`}>
+                  <span style={{
+                    color: viewed.has(index) ? GENERAL.softWhite : GENERAL.neutral[300],
+                    transition: 'color 200ms ease',
+                  }}>
+                    {viewed.has(index) ? item.word : item.letter}
+                  </span>
+                  {index < items.length - 1 && (
+                    <span aria-hidden="true" style={{ color: GENERAL.neutral[300] }}> · </span>
+                  )}
                 </span>
-                {index < items.length - 1 && (
-                  <span aria-hidden="true" style={{ color: GENERAL.neutral[300] }}> · </span>
-                )}
-              </span>
-            ))}
+              ))
+            ) : heroStatus}
           </div>
         </div>
 
@@ -189,7 +228,7 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
 
           {items.map((item, index) => {
             const isOpen = open === index
-            const hasViewed = viewed.has(index)
+            const hasProgress = isTestMode ? checked.has(index) : viewed.has(index)
             const isLast = index === items.length - 1
 
             return (
@@ -203,17 +242,17 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
                   width: '100%',
                   minHeight: letterSize + (SPACING.micro * 2),
                   background: isOpen
-                    ? `linear-gradient(90deg, rgba(${theme.accentRgb},0.11), rgba(${theme.accentRgb},0.035) 68%, transparent)`
+                    ? `rgba(${theme.accentRgb},0.09)`
                     : 'transparent',
                   border: 'none',
                   borderBottom: isLast ? 'none' : `1px solid ${GENERAL.line.faint}`,
-                  padding: `${isOpen ? SPACING.compact : SPACING.micro}px ${SPACING.micro}px`,
+                  padding: `${SPACING.micro}px`,
                   cursor: 'pointer',
                   textAlign: 'left',
                   display: 'flex',
                   alignItems: 'center',
                   gap: SPACING.compact,
-                  transition: 'background 200ms ease, padding 200ms ease',
+                  transition: 'background 200ms ease',
                 }}
               >
                 <div style={{
@@ -224,21 +263,23 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
                   borderRadius: 10,
                   flexShrink: 0,
                   background: isOpen
-                    ? `rgba(${theme.accentRgb},0.16)`
-                    : hasViewed
-                      ? `rgba(${theme.accentRgb},0.07)`
-                      : GENERAL.backgroundSunken,
+                    ? theme.accent
+                    : GENERAL.backgroundSunken,
                   border: `1px solid ${isOpen
-                    ? `rgba(${theme.accentRgb},0.42)`
-                    : hasViewed
-                      ? `rgba(${theme.accentRgb},0.22)`
+                    ? theme.accent
+                    : hasProgress
+                      ? `rgba(${theme.accentRgb},0.24)`
                       : GENERAL.line.medium}`,
                   boxShadow: isOpen ? `0 0 16px rgba(${theme.accentRgb},0.16)` : 'none',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   ...TYPE.titleLarge,
-                  color: isOpen || hasViewed ? theme.accent : GENERAL.slate,
+                  color: isOpen
+                    ? GENERAL.textOnAccent
+                    : hasProgress
+                      ? theme.accent
+                      : GENERAL.slate,
                   transition: 'background 200ms ease, border-color 200ms ease, box-shadow 200ms ease, color 200ms ease',
                 }}>
                   {item.letter}
@@ -258,21 +299,25 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
                       }}>
                         {item.word}
                       </div>
-                      <div className="fade-up" style={{
-                        ...TYPE.bodySmall,
-                        color: GENERAL.neutral[200],
-                        marginTop: SPACING.micro,
-                        maxWidth: '34ch',
-                      }}>
-                        {item.detail}
-                      </div>
+                      {!isTestMode && (
+                        <div className="fade-up" style={{
+                          ...TYPE.bodySmall,
+                          color: GENERAL.neutral[200],
+                          marginTop: SPACING.micro,
+                          maxWidth: '34ch',
+                        }}>
+                          {item.detail}
+                        </div>
+                      )}
                     </>
                   ) : (
                     <div style={{
                       ...TYPE.bodySmall,
-                      color: hasViewed ? GENERAL.neutral[200] : GENERAL.slate,
+                      color: hasProgress ? GENERAL.neutral[200] : GENERAL.slate,
                     }}>
-                      {hasViewed ? item.word : 'Tap to reveal'}
+                      {isTestMode
+                        ? (hasProgress ? item.word : testRowPrompt)
+                        : (hasProgress ? item.word : 'Tap to reveal')}
                     </div>
                   )}
                 </div>
@@ -289,27 +334,28 @@ export default function AcronymMemorise({ block, subject = 'Biology' }) {
         </div>
 
         {allViewed && (
-          <div className="fade-up" style={{
-            marginTop: SPACING.compact,
-            padding: SPACING.compact,
-            borderRadius: 14,
-            background: `rgba(${theme.accentRgb},0.07)`,
-            border: `1px solid rgba(${theme.accentRgb},0.20)`,
-          }}>
-            <div style={{
-              ...TYPE.label,
-              color: theme.accent,
-              marginBottom: SPACING.micro,
-            }}>
-              {memoryHookLabel}
-            </div>
-            <div style={{
-              ...TYPE.bodySmall,
-              color: GENERAL.neutral[200],
-            }}>
-              {memoryHook}
-            </div>
-          </div>
+          <button
+            type="button"
+            onClick={isTestMode ? returnToLearning : startTest}
+            style={{
+              width: '100%',
+              marginTop: SPACING.compact,
+              padding: SPACING.compact,
+              borderRadius: 12,
+              border: `1px solid rgba(${theme.accentRgb},${isTestMode ? '0.20' : '0.34'})`,
+              background: isTestMode
+                ? 'transparent'
+                : `rgba(${theme.accentRgb},0.10)`,
+              color: isTestMode ? GENERAL.slate : theme.accent,
+              cursor: 'pointer',
+              ...TYPE.button,
+              transition: 'background 200ms ease, border-color 200ms ease, color 200ms ease',
+            }}
+          >
+            {isTestMode
+              ? (block.learnCtaLabel || 'Back to learning')
+              : (block.testCtaLabel || 'Hide and test myself')}
+          </button>
         )}
       </div>
     </div>
