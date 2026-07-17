@@ -3,7 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
-import { TYPE } from '../../constants/typography.js'
+import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 // CinematicShell used here (not ContentShell/InteractionShell): this is a
@@ -46,7 +46,7 @@ function FeedbackRow({ label, children, muted = false }) {
   return (
     <div style={{ marginBottom: SPACING.standard }}>
       <p style={{ ...TYPE.label, color: TEXT_MUTED, margin: `0 0 ${SPACING.micro / 2}px` }}>{label}</p>
-      <p style={{ ...TYPE.body, color: muted ? TEXT_MUTED : TEXT_PRIMARY, margin: 0, lineHeight: 1.6 }}>
+      <p style={{ ...TYPE.body, color: muted ? TEXT_MUTED : TEXT_PRIMARY, margin: 0, lineHeight: 1.65 }}>
         {children}
       </p>
     </div>
@@ -59,6 +59,8 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
   const rgb = subj.accentRgb
 
   const statement = block.statement || ''
+  const screenTitle = block.title || block.heading || 'Spot the error'
+  const screenIntro = block.intro || block.introText || 'One inaccurate word can cost a mark. Find the mistake, explain why it is wrong, then rewrite the answer accurately.'
   const tokens = useMemo(() => tokenise(statement), [statement])
   const target = useMemo(
     () => resolveTargetRange(tokens, statement, block.errorTarget),
@@ -180,7 +182,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
         overflowY: 'auto',
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
-        padding: `calc(${SPACING.separation}px + ${SPACING.micro}px + env(safe-area-inset-top, 0px)) ${SPACING.standard}px calc(${SPACING.cinematic}px + env(safe-area-inset-bottom, 0px))`,
+        padding: `calc(${SPACING.standard}px + env(safe-area-inset-top, 0px)) ${SPACING.standard}px calc(${SPACING.cinematic}px + env(safe-area-inset-bottom, 0px))`,
         scrollPaddingBottom: SPACING.cinematic,
         maxWidth: 420,
         width: '100%',
@@ -189,99 +191,122 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
       }}>
         {phase === 'diagnose' ? (
           <>
-            <p style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, margin: `0 0 ${SPACING.compact}px` }}>
-              Tap the word or phrase that is wrong.
-            </p>
-
-            <div style={{
-              background: subj.backgroundSecondary,
-              border: `1px solid rgba(${rgb},0.18)`,
-              borderRadius: RADII.medium,
-              padding: SPACING.compact,
-              marginBottom: showExplain ? SPACING.standard : 0,
-            }}>
-              <p
-                role="group"
-                aria-label="Tap the word or phrase that is wrong"
-                aria-describedby={groupId}
-                style={{ ...TYPE.examAnswer, color: TEXT_PRIMARY, margin: 0 }}
-              >
-                {tokens.map((tok, i) => {
-                  const isSelected = selection != null && i >= selection.start && i <= selection.end
-                  const isSelectionStart = isSelected && i === selection.start
-                  const isSelectionEnd = isSelected && i === selection.end
-                  const selectionRadius = isSelected
-                    ? `${isSelectionStart ? RADII.small : 0}px ${isSelectionEnd ? RADII.small : 0}px ${isSelectionEnd ? RADII.small : 0}px ${isSelectionStart ? RADII.small : 0}px`
-                    : 0
-
-                  return (
-                    <button
-                      key={i}
-                      type="button"
-                      className="ste-token"
-                      aria-pressed={isSelected}
-                      aria-label={tok.text}
-                      onClick={() => tapToken(i)}
-                      style={{
-                        display: 'inline',
-                        font: 'inherit',
-                        lineHeight: 'inherit',
-                        verticalAlign: 'baseline',
-                        cursor: 'pointer',
-                        border: 'none',
-                        borderRadius: selectionRadius,
-                        padding: 0,
-                        margin: 0,
-                        color: TEXT_PRIMARY,
-                        background: isSelected ? `rgba(${rgb},0.22)` : 'transparent',
-                        boxShadow: isSelected ? `inset 0 0 0 1px rgba(${rgb},0.5)` : 'none',
-                      }}
-                    >
-                      {tok.text}{i < tokens.length - 1 ? ' ' : ''}
-                    </button>
-                  )
-                })}
+            <header style={{ marginBottom: SPACING.separation }}>
+              <h1 style={{
+                ...TYPE.displayScreen,
+                color: TEXT_PRIMARY,
+                maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
+                margin: 0,
+              }}>
+                {screenTitle}
+              </h1>
+              <p style={{
+                ...TYPE.body,
+                color: TEXT_MUTED,
+                lineHeight: 1.65,
+                margin: `${SPACING.standard}px 0 0`,
+              }}>
+                {screenIntro}
               </p>
-              <span id={groupId} style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
-                Select a single continuous word or phrase, then explain and rewrite it.
-              </span>
-            </div>
+            </header>
 
-            {showExplain && (
-              <div ref={explainRef} className="ste-anim" style={{ marginBottom: SPACING.standard, animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
-                <label htmlFor={explainId} style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, display: 'block', marginBottom: SPACING.micro }}>
-                  Why is this incorrect?
-                </label>
-                <textarea
-                  id={explainId}
-                  className="ste-input"
-                  value={explanation}
-                  onChange={e => setExplanation(e.target.value)}
-                  placeholder="Explain what is wrong and why…"
-                  style={{ ...textAreaStyle, minHeight: FIELD_MIN_HEIGHT.explanation }}
-                />
+            <section aria-label="Spot the error task">
+              <p style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, margin: `0 0 ${SPACING.standard}px` }}>
+                Tap the word or phrase that is wrong.
+              </p>
+
+              <div style={{
+                background: subj.backgroundSecondary,
+                border: `1px solid rgba(${rgb},0.18)`,
+                borderRadius: RADII.medium,
+                padding: SPACING.compact,
+                marginBottom: showExplain ? SPACING.separation : 0,
+              }}>
+                <p
+                  role="group"
+                  aria-label="Tap the word or phrase that is wrong"
+                  aria-describedby={groupId}
+                  style={{ ...TYPE.examAnswer, color: TEXT_PRIMARY, lineHeight: 1.8, margin: 0 }}
+                >
+                  {tokens.map((tok, i) => {
+                    const isSelected = selection != null && i >= selection.start && i <= selection.end
+                    const isSelectionStart = isSelected && i === selection.start
+                    const isSelectionEnd = isSelected && i === selection.end
+                    const selectionRadius = isSelected
+                      ? `${isSelectionStart ? RADII.small : 0}px ${isSelectionEnd ? RADII.small : 0}px ${isSelectionEnd ? RADII.small : 0}px ${isSelectionStart ? RADII.small : 0}px`
+                      : 0
+
+                    return (
+                      <span key={i}>
+                        <button
+                          type="button"
+                          className="ste-token"
+                          aria-pressed={isSelected}
+                          aria-label={tok.text}
+                          onClick={() => tapToken(i)}
+                          style={{
+                            display: 'inline',
+                            font: 'inherit',
+                            lineHeight: 'inherit',
+                            verticalAlign: 'baseline',
+                            cursor: 'pointer',
+                            border: 'none',
+                            borderRadius: selectionRadius,
+                            padding: 0,
+                            margin: 0,
+                            color: TEXT_PRIMARY,
+                            background: isSelected ? `rgba(${rgb},0.22)` : 'transparent',
+                            boxShadow: isSelected ? `inset 0 0 0 1px rgba(${rgb},0.5)` : 'none',
+                          }}
+                        >
+                          {tok.text}
+                        </button>
+                        {i < tokens.length - 1 ? ' ' : ''}
+                      </span>
+                    )
+                  })}
+                </p>
+                <span id={groupId} style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
+                  Select a single continuous word or phrase, then explain and rewrite it.
+                </span>
               </div>
-            )}
 
-            {showRepair && (
-              <div ref={repairRef} className="ste-anim" style={{ marginBottom: SPACING.standard, animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
-                <label htmlFor={repairId} style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, display: 'block', marginBottom: SPACING.micro }}>
-                  Rewrite the statement correctly.
-                </label>
-                <textarea
-                  id={repairId}
-                  className="ste-input"
-                  value={repair}
-                  onChange={e => setRepair(e.target.value)}
-                  placeholder="Write the corrected version…"
-                  style={{ ...textAreaStyle, minHeight: FIELD_MIN_HEIGHT.repair }}
-                />
-              </div>
-            )}
+              {showExplain && (
+                <div ref={explainRef} className="ste-anim" style={{ marginBottom: SPACING.separation, animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
+                  <label htmlFor={explainId} style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, display: 'block', marginBottom: SPACING.micro }}>
+                    Why is this incorrect?
+                  </label>
+                  <textarea
+                    id={explainId}
+                    className="ste-input"
+                    value={explanation}
+                    onChange={e => setExplanation(e.target.value)}
+                    placeholder="Explain what is wrong and why…"
+                    style={{ ...textAreaStyle, minHeight: FIELD_MIN_HEIGHT.explanation }}
+                  />
+                </div>
+              )}
 
-            {showExplain && (
-              <CheckAnswerCTA onClick={handleCheck} disabled={!canCheck} accent={accent} />
-            )}
+              {showRepair && (
+                <div ref={repairRef} className="ste-anim" style={{ marginBottom: SPACING.separation, animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
+                  <label htmlFor={repairId} style={{ ...TYPE.bodyStrong, color: TEXT_PRIMARY, display: 'block', marginBottom: SPACING.micro }}>
+                    Rewrite the statement correctly.
+                  </label>
+                  <textarea
+                    id={repairId}
+                    className="ste-input"
+                    value={repair}
+                    onChange={e => setRepair(e.target.value)}
+                    placeholder="Write the corrected version…"
+                    style={{ ...textAreaStyle, minHeight: FIELD_MIN_HEIGHT.repair }}
+                  />
+                </div>
+              )}
+
+              {showExplain && (
+                <CheckAnswerCTA onClick={handleCheck} disabled={!canCheck} accent={accent} />
+              )}
+            </section>
           </>
         ) : (
           <div className="ste-anim" style={{ animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
