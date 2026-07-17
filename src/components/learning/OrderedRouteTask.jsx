@@ -9,9 +9,10 @@ import ContinueCTA from '../core/ContinueCTA.jsx'
 import CinematicShell from '../layout/CinematicShell.jsx'
 
 const TEXT_PRIMARY = 'rgba(255,251,242,0.96)'
-const TEXT_DIM = 'rgba(255,248,235,0.62)'
-const ROW_BG = 'rgba(10,9,7,0.62)'
+const TEXT_DIM = 'rgba(255,248,235,0.66)'
+const ROW_BG = 'rgba(10,9,7,0.68)'
 const NODE = 30
+const SWEEP_STAGGER_MS = 120
 
 function renderTitle(text, highlight, accent) {
   if (!text || !highlight) return text
@@ -79,6 +80,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
 
   const currentJob = jobs[jobIndex] || null
   const complete = jobs.length > 0 && !currentJob
+  const finalNodeDelay = Math.max(0, stages.length - 1) * SWEEP_STAGGER_MS + 180
 
   useEffect(() => {
     if (!recentCorrectStageId) return undefined
@@ -200,7 +202,8 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
             animation: none !important;
           }
 
-          .ort-stage {
+          .ort-stage,
+          .ort-route-fill {
             transition: none !important;
           }
         }
@@ -352,7 +355,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
               const isWrongTap = wrongStageId === stage.id
               const isRecentCorrect = recentCorrectStageId === stage.id
               const isFinalStage = idx === stages.length - 1
-              const segmentActive = Boolean(lockedJob) || complete
+              const shortConnectorActive = Boolean(lockedJob) || complete
 
               return (
                 <div key={stage.id} style={{ display: 'flex', gap: 0, alignItems: 'stretch' }}>
@@ -373,17 +376,17 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                         height: NODE,
                         borderRadius: '50%',
                         flexShrink: 0,
-                        background: lockedJob ? `rgba(${rgb},0.24)` : 'rgba(8,7,6,0.74)',
-                        border: `2px solid ${lockedJob ? accent : `rgba(${rgb},0.28)`}`,
+                        background: lockedJob ? `rgba(${rgb},0.22)` : 'rgba(8,7,6,0.78)',
+                        border: `2px solid ${lockedJob ? accent : `rgba(${rgb},0.36)`}`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         ...TYPE.label,
-                        color: lockedJob ? accent : `rgba(${rgb},0.66)`,
+                        color: lockedJob ? accent : `rgba(${rgb},0.76)`,
                         boxShadow: complete && isFinalStage
-                          ? `0 0 0 4px rgba(${rgb},0.16), 0 0 14px rgba(${rgb},0.22)`
+                          ? `0 0 0 4px rgba(${rgb},0.14), 0 0 13px rgba(${rgb},0.20)`
                           : lockedJob
-                            ? `0 0 0 2px rgba(${rgb},0.08)`
+                            ? `0 0 0 2px rgba(${rgb},0.07)`
                             : 'none',
                         transform: complete && isFinalStage ? 'scale(1.06)' : 'scale(1)',
                         transition: [
@@ -392,6 +395,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                           `box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
                           `transform ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
                         ].join(', '),
+                        transitionDelay: complete && isFinalStage ? `${finalNodeDelay}ms` : '0ms',
                       }}
                     >
                       {idx + 1}
@@ -406,17 +410,19 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                           minHeight: SPACING.compact,
                           marginBottom: -SPACING.micro,
                           overflow: 'hidden',
-                          background: `rgba(${rgb},0.14)`,
+                          background: `rgba(${rgb},0.18)`,
                         }}
                       >
                         <div
+                          className="ort-route-fill"
                           style={{
                             position: 'absolute',
                             inset: 0,
-                            background: `rgba(${rgb},0.66)`,
-                            transform: `scaleY(${segmentActive ? 1 : 0})`,
+                            background: `rgba(${rgb},0.70)`,
+                            transform: `scaleY(${complete ? 1 : 0})`,
                             transformOrigin: 'top',
                             transition: `transform ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
+                            transitionDelay: complete ? `${idx * SWEEP_STAGGER_MS}ms` : '0ms',
                           }}
                         />
                       </div>
@@ -432,7 +438,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                       marginTop: NODE / 2 - 1,
                       flexShrink: 0,
                       overflow: 'hidden',
-                      background: `rgba(${rgb},0.14)`,
+                      background: `rgba(${rgb},0.18)`,
                     }}
                   >
                     <div
@@ -440,7 +446,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                         position: 'absolute',
                         inset: 0,
                         background: `rgba(${rgb},0.68)`,
-                        transform: `scaleX(${segmentActive ? 1 : 0})`,
+                        transform: `scaleX(${shortConnectorActive ? 1 : 0})`,
                         transformOrigin: 'left',
                         transition: `transform ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
                       }}
@@ -464,17 +470,17 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                       borderRadius: RADII.medium,
                       border: isWrongTap
                         ? '1px solid var(--error)'
-                        : `1px solid rgba(${rgb},${lockedJob ? 0.46 : 0.16})`,
+                        : `1px solid rgba(${rgb},${lockedJob ? 0.34 : 0.24})`,
                       background: isWrongTap
                         ? 'rgba(92,20,20,0.22)'
                         : lockedJob
-                          ? `rgba(${rgb},0.12)`
+                          ? `rgba(${rgb},0.075)`
                           : ROW_BG,
                       boxShadow: lockedJob
-                        ? `inset 2px 0 0 rgba(${rgb},0.54)`
-                        : 'inset 0 1px 0 rgba(255,255,255,0.025)',
+                        ? `inset 2px 0 0 rgba(${rgb},0.42)`
+                        : 'inset 0 1px 0 rgba(255,255,255,0.035)',
                       padding: `${SPACING.micro}px ${SPACING.compact}px`,
-                      opacity: lockedJob ? 1 : 0.82,
+                      opacity: lockedJob ? 0.97 : 0.90,
                       cursor: lockedJob || complete ? 'default' : 'pointer',
                       transform: 'translateX(0)',
                       transition: [
@@ -513,7 +519,7 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
                         style={{
                           marginTop: SPACING.micro,
                           paddingTop: SPACING.micro,
-                          borderTop: `1px solid rgba(${rgb},0.20)`,
+                          borderTop: `1px solid rgba(${rgb},0.17)`,
                           display: 'flex',
                           gap: SPACING.micro,
                           alignItems: 'flex-start',
