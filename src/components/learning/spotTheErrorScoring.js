@@ -189,6 +189,22 @@ export function evaluateRepair(text, block = {}) {
   return { meetsLength, accurate: meetsLength && matches && !containsForbidden }
 }
 
+// Phase one only judges whether the learner located and explained the error.
+// Keep this separate from the final three-dimension heading so phase two can be
+// added without making a missing repair look like a failed rewrite.
+export function deriveDiagnosisHeading({ selectionCorrect, explanationPrecise, missHeading } = {}) {
+  if (selectionCorrect && explanationPrecise) {
+    return 'You spotted the mistake and explained it well.'
+  }
+  if (selectionCorrect) {
+    return 'You found the right phrase.'
+  }
+  if (explanationPrecise) {
+    return 'Your explanation is heading in the right direction.'
+  }
+  return missHeading || 'Not quite — look again at what the statement claims.'
+}
+
 // Map the three independent outcomes to a specific, calm heading. Every
 // combination resolves to exactly one line; the "completely incorrect" case
 // can be overridden per-block via `missHeading`.
