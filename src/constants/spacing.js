@@ -26,6 +26,7 @@ export const COMPONENT_SIZE = {
   accentRail: 3,
   touchTarget: SPACING.separation,
   thumbnail: SPACING.cinematic,
+  memoryHookImage: SPACING.section,
 }
 
 export const CONTENT_LIMITS = {
