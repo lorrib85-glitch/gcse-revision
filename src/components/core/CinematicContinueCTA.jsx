@@ -2,12 +2,13 @@ import { TYPE } from '../../constants/typography.js'
 // ── CinematicContinueCTA v1 — LOCKED COMPONENT ────────────────────────────
 // The only Cinematic Reveal CTA implementation allowed anywhere in the app —
 // see docs/system/BUTTON_RADII_SYSTEM.md "Progression CTA System".
-// Plain centred "Continue →" text, fixed to the bottom of a full-screen
-// cinematic moment. `style` carries layout overrides only (position,
-// animation, zIndex) — never new typography, spacing or colour logic.
+// Plain centred progression text, fixed to the bottom of a full-screen cinematic
+// moment. `style` carries layout overrides only (position, animation, zIndex) —
+// never new typography, spacing or colour logic.
 export default function CinematicContinueCTA({
   onClick,
   accent,
+  label = 'Continue',
   animation = 'crm-fade 700ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite',
   style,
 }) {
@@ -48,7 +49,7 @@ export default function CinematicContinueCTA({
           letterSpacing: '0.34em', textTransform: 'uppercase',
           color: accent,
           textShadow: '0 1px 16px rgba(0,0,0,0.6)',
-        }}>Continue&nbsp;&nbsp;→</span>
+        }}>{label}&nbsp;&nbsp;→</span>
       </button>
     </>
   )
