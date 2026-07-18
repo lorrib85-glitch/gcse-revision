@@ -8,7 +8,13 @@ import {
   scoreSelection,
   evaluateExplanation,
   evaluateRepair,
+  splitStatementAtTarget,
+  deriveCorrectionFromVersion,
+  resolveCorrectionAnswers,
+  evaluateCorrection,
+  buildCorrectedVersion,
   deriveDiagnosisHeading,
+  deriveCorrectionHeading,
   deriveFeedbackHeading,
   DEFAULT_MIN_EXPLANATION,
   DEFAULT_MIN_REPAIR,
@@ -16,6 +22,9 @@ import {
 
 const STATEMENT =
   'Photosynthesis takes place in the mitochondria of plant cells, using carbon dioxide and water to produce glucose and oxygen.'
+
+const CORRECT_VERSION =
+  'Photosynthesis takes place in the chloroplasts of plant cells, using carbon dioxide and water to produce glucose and oxygen.'
 
 const tokens = tokenise(STATEMENT)
 const target = resolveTargetRange(tokens, STATEMENT, 'mitochondria')
@@ -170,7 +179,7 @@ describe('evaluateExplanation', () => {
   })
 })
 
-describe('evaluateRepair', () => {
+describe('evaluateRepair legacy support', () => {
   it('requires length, required terms, and avoids the forbidden term', () => {
     const block = { repairKeyTerms: ['chloroplast'], repairMustAvoid: ['mitochondria'] }
     expect(evaluateRepair('it happens in the chloroplast', block).accurate).toBe(true)
@@ -189,6 +198,64 @@ describe('evaluateRepair', () => {
     expect(evaluateRepair('a corrected sentence', {}).accurate).toBe(true)
     expect(evaluateRepair('nope', {}).accurate).toBe(false)
     expect('nope'.length < DEFAULT_MIN_REPAIR).toBe(true)
+  })
+})
+
+describe('missing-phrase repair', () => {
+  const block = {
+    statement: STATEMENT,
+    errorTarget: 'mitochondria',
+    correctVersion: CORRECT_VERSION,
+    correctionAnswer: 'chloroplasts',
+    correctionAlternatives: ['chloroplast'],
+  }
+
+  it('splits the statement exactly around the authored error', () => {
+    expect(splitStatementAtTarget(STATEMENT, 'mitochondria')).toEqual({
+      before: 'Photosynthesis takes place in the ',
+      target: 'mitochondria',
+      after: ' of plant cells, using carbon dioxide and water to produce glucose and oxygen.',
+    })
+    expect(splitStatementAtTarget(STATEMENT, 'ribosome')).toBeNull()
+  })
+
+  it('derives a replacement phrase from a legacy correctVersion', () => {
+    expect(deriveCorrectionFromVersion({
+      statement: STATEMENT,
+      errorTarget: 'mitochondria',
+      correctVersion: CORRECT_VERSION,
+    })).toBe('chloroplasts')
+  })
+
+  it('prefers the explicit correction answer and accepts authored alternatives', () => {
+    expect(resolveCorrectionAnswers(block)).toEqual(['chloroplasts', 'chloroplast'])
+    expect(evaluateCorrection(' Chloroplasts! ', block).accurate).toBe(true)
+    expect(evaluateCorrection('chloroplast', block).accurate).toBe(true)
+  })
+
+  it('scores the compact phrase exactly rather than accepting a longer sentence', () => {
+    expect(evaluateCorrection('vacuole', block).accurate).toBe(false)
+    expect(evaluateCorrection('the answer is chloroplasts', block).accurate).toBe(false)
+  })
+
+  it('allows short correct terms without the old full-rewrite length threshold', () => {
+    const dna = { correctionAnswer: 'DNA' }
+    expect(evaluateCorrection('DNA', dna)).toMatchObject({ meetsLength: true, accurate: true })
+  })
+
+  it('falls back to the derived legacy answer when correctionAnswer is absent', () => {
+    const legacy = {
+      statement: STATEMENT,
+      errorTarget: 'mitochondria',
+      correctVersion: CORRECT_VERSION,
+    }
+    expect(evaluateCorrection('chloroplasts', legacy).accurate).toBe(true)
+  })
+
+  it('builds the corrected sentence for authored and derived contracts', () => {
+    expect(buildCorrectedVersion(block, 'chloroplasts')).toBe(CORRECT_VERSION)
+    expect(buildCorrectedVersion({ statement: STATEMENT, errorTarget: 'mitochondria' }, 'chloroplasts'))
+      .toBe(CORRECT_VERSION)
   })
 })
 
@@ -211,8 +278,21 @@ describe('deriveDiagnosisHeading', () => {
   })
 })
 
-describe('deriveFeedbackHeading', () => {
-  it('names every outcome combination specifically', () => {
+describe('deriveCorrectionHeading', () => {
+  it('uses calm, precise final repair feedback', () => {
+    expect(deriveCorrectionHeading({ repairAccurate: true })).toBe('You fixed the answer.')
+    expect(deriveCorrectionHeading({ repairAccurate: false }))
+      .toBe('Not quite — here is the precise correction.')
+  })
+
+  it('supports an authored miss heading', () => {
+    expect(deriveCorrectionHeading({ repairAccurate: false, repairMissHeading: 'Use the organelle, not the pigment.' }))
+      .toBe('Use the organelle, not the pigment.')
+  })
+})
+
+describe('deriveFeedbackHeading compatibility', () => {
+  it('names every original outcome combination specifically', () => {
     expect(deriveFeedbackHeading({ selectionCorrect: true, explanationPrecise: true, repairAccurate: true }))
       .toBe('You found it and fixed it.')
     expect(deriveFeedbackHeading({ selectionCorrect: true, explanationPrecise: true, repairAccurate: false }))
@@ -226,11 +306,6 @@ describe('deriveFeedbackHeading', () => {
   it('uses the authored miss heading for a completely wrong answer', () => {
     expect(deriveFeedbackHeading({ selectionCorrect: false, explanationPrecise: false, repairAccurate: false, missHeading: 'Not quite — compare the two organelles.' }))
       .toBe('Not quite — compare the two organelles.')
-  })
-
-  it('falls back to a calm generic miss heading', () => {
-    expect(deriveFeedbackHeading({ selectionCorrect: false, explanationPrecise: false, repairAccurate: false }))
-      .toBe('Not quite — look again at what the statement claims.')
   })
 })
 
