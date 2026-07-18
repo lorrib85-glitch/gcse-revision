@@ -18,8 +18,8 @@ export const Photosynthesis = {
       correctVersion: 'Photosynthesis takes place in the chloroplasts of plant cells, using carbon dioxide and water to produce glucose and oxygen.',
       explanationCriteria: { anyOf: ['chloroplast', 'chloroplasts'], supportingAnyOf: ['mitochondria', 'respiration'] },
       explanationHint: 'Your explanation needs to identify the chloroplast as the site of photosynthesis.',
-      repairKeyTerms: ['chloroplast'],
-      repairMustAvoid: ['mitochondria'],
+      correctionAnswer: 'chloroplasts',
+      correctionAlternatives: ['chloroplast'],
       missHeading: 'Not quite — compare the two organelles.',
       commonTrap: 'Students often confuse the sites of photosynthesis and respiration.',
       examinerNote: 'Naming the correct organelle is worth an easy mark — do not throw it away.',
@@ -27,8 +27,8 @@ export const Photosynthesis = {
   },
 }
 
-// Legacy `keyTerms` block (no explanationCriteria / repair fields) — proves the
-// component stays backwards compatible with already-authored content.
+// Legacy `keyTerms` + `correctVersion` block — proves phase one remains backwards
+// compatible and phase two can derive the missing replacement phrase.
 export const LegacyContract = {
   args: {
     subject: 'Biology',
