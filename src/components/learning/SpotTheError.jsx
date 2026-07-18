@@ -61,6 +61,76 @@ function FeedbackRow({ label, children, muted = false }) {
   )
 }
 
+function PhraseSwap({ from, to, accent, incorrect = false }) {
+  return (
+    <div
+      aria-label={`${from || 'blank'} replaced with ${to || 'blank'}`}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: SPACING.micro,
+        marginBottom: SPACING.standard,
+      }}
+    >
+      <span style={{
+        ...TYPE.bodyStrong,
+        color: incorrect ? GENERAL.feedbackIncorrect : TEXT_MUTED,
+        textDecoration: 'line-through',
+        textDecorationThickness: 1,
+      }}>
+        {from || '—'}
+      </span>
+      <span aria-hidden="true" style={{ ...TYPE.body, color: TEXT_FAINT }}>→</span>
+      <span style={{
+        ...TYPE.bodyStrong,
+        color: accent,
+        padding: `${SPACING.micro / 2}px ${SPACING.micro}px`,
+        borderRadius: RADII.small,
+        background: GENERAL.surfaceTint,
+        border: `1px solid ${GENERAL.line.soft}`,
+      }}>
+        {to || '—'}
+      </span>
+    </div>
+  )
+}
+
+function CorrectedAnswerPanel({ parts, correction, correctedVersion, accent, rgb }) {
+  return (
+    <div style={{
+      padding: SPACING.standard,
+      marginBottom: SPACING.separation,
+      borderRadius: RADII.medium,
+      border: `1px solid ${GENERAL.line.soft}`,
+      background: `radial-gradient(circle at 18% 0%, rgba(${rgb},0.055), transparent 46%), linear-gradient(180deg, ${GENERAL.backgroundSurface} 0%, ${GENERAL.backgroundSunken} 100%)`,
+      boxShadow: `inset 0 1px 0 ${GENERAL.line.soft}, ${GENERAL.shadow.raised}`,
+    }}>
+      <p style={{ ...TYPE.label, color: TEXT_MUTED, margin: `0 0 ${SPACING.micro}px` }}>
+        Corrected answer
+      </p>
+      {parts ? (
+        <p style={{ ...TYPE.examAnswer, color: TEXT_PRIMARY, lineHeight: 1.9, margin: 0 }}>
+          {parts.before}
+          <mark style={{
+            color: accent,
+            background: `rgba(${rgb},0.12)`,
+            borderRadius: RADII.small,
+            padding: `0 ${SPACING.micro / 2}px`,
+          }}>
+            {correction}
+          </mark>
+          {parts.after}
+        </p>
+      ) : (
+        <p style={{ ...TYPE.examAnswer, color: TEXT_PRIMARY, lineHeight: 1.9, margin: 0 }}>
+          {correctedVersion}
+        </p>
+      )}
+    </div>
+  )
+}
+
 export default function SpotTheError({ block, subject = 'Biology', onContinue }) {
   const subj = SUBJECTS[subject] || SUBJECTS.Biology
   const accent = subj.accent
@@ -101,6 +171,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
   const showExplain = hasSelection
   const canCheckDiagnosis = hasSelection && explanationEval.meetsLength
   const canCheckRepair = correctionEval.meetsLength
+  const repairAvailable = Boolean(repairParts && correctionEval.expected)
 
   useEffect(() => {
     if (!showExplain || !explainRef.current) return
@@ -113,7 +184,9 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
       stageHeadingRef.current?.focus()
     }
     if (phase === 'repair') {
-      window.requestAnimationFrame(() => repairInputRef.current?.focus())
+      const focusInput = () => repairInputRef.current?.focus()
+      if (window.requestAnimationFrame) window.requestAnimationFrame(focusInput)
+      else focusInput()
     }
   }, [phase])
 
@@ -158,6 +231,10 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
   }
 
   function handleBeginRepair() {
+    if (!repairAvailable) {
+      handleContinue()
+      return
+    }
     setPhase('repair')
   }
 
@@ -166,13 +243,17 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
 
     if (!repairLoggedRef.current) {
       repairLoggedRef.current = true
-      const repairPrompt = repairParts
-        ? `${repairParts.before}___${repairParts.after}`
-        : statement
+      const repairPrompt = `${repairParts.before}___${repairParts.after}`
       logDimension(repairAccurate, weaknessAreas.repair || 'Error correction', '-repair', repairPrompt)
     }
 
     setPhase('finalFeedback')
+  }
+
+  function handleRepairKeyDown(event) {
+    if (event.key !== 'Enter' || !canCheckRepair) return
+    event.preventDefault()
+    handleRepairCheck()
   }
 
   function handleContinue() {
@@ -197,6 +278,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
   const correctionWidth = expectedCorrection.length > 24
     ? '100%'
     : `${Math.min(Math.max(expectedCorrection.length + 2, 10), 24)}ch`
+  const allThreeCorrect = selectionCorrect && explanationPrecise && repairAccurate
 
   const textAreaStyle = {
     display: 'block',
@@ -396,6 +478,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
             <h2
               ref={stageHeadingRef}
               tabIndex={-1}
+              aria-live="polite"
               style={{ ...TYPE.displaySection, color: accent, margin: `0 0 ${SPACING.standard}px`, outline: 'none' }}
             >
               {diagnosisHeading}
@@ -436,16 +519,27 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               {block.whatWasWrong}
             </FeedbackRow>
 
+            {!repairAvailable && (
+              <>
+                <FeedbackRow label="Examiner takeaway">
+                  {block.examinerNote}
+                </FeedbackRow>
+                <FeedbackRow label="Common trap" muted>
+                  {block.commonTrap}
+                </FeedbackRow>
+              </>
+            )}
+
             <ContinueCTA
               onClick={handleBeginRepair}
-              label={block.repairCtaLabel || 'Fix the answer'}
+              label={repairAvailable ? (block.repairCtaLabel || 'Fix the answer') : 'Continue'}
               accent={accent}
               style={{ marginTop: SPACING.micro }}
             />
           </div>
         )}
 
-        {phase === 'repair' && (
+        {phase === 'repair' && repairAvailable && (
           <div className="ste-anim" style={{ animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
             <header style={{ marginBottom: SPACING.separation }}>
               <h1 style={{
@@ -479,7 +573,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               <div style={{ ...answerPanelStyle, marginBottom: SPACING.separation }}>
                 <label htmlFor={repairId} style={VISUALLY_HIDDEN}>Correct missing word or phrase</label>
                 <p style={{ ...TYPE.examAnswer, color: TEXT_PRIMARY, lineHeight: 2.05, margin: 0 }}>
-                  {repairParts ? repairParts.before : statement}
+                  {repairParts.before}
                   <input
                     ref={repairInputRef}
                     id={repairId}
@@ -487,17 +581,19 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
                     type="text"
                     value={correction}
                     onChange={event => setCorrection(event.target.value)}
+                    onKeyDown={handleRepairKeyDown}
                     aria-describedby={repairHelpId}
                     autoComplete="off"
                     autoCapitalize="none"
                     spellCheck={false}
                     style={{
-                      display: 'inline-block',
+                      display: expectedCorrection.length > 24 ? 'block' : 'inline-block',
                       width: correctionWidth,
                       maxWidth: '100%',
                       minHeight: SPACING.separation,
                       boxSizing: 'border-box',
                       verticalAlign: 'baseline',
+                      margin: expectedCorrection.length > 24 ? `${SPACING.micro}px 0` : 0,
                       padding: `${SPACING.micro / 2}px ${SPACING.micro}px`,
                       border: `1px solid rgba(${rgb},0.34)`,
                       borderBottomColor: `rgba(${rgb},0.7)`,
@@ -508,7 +604,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
                       textAlign: 'center',
                     }}
                   />
-                  {repairParts?.after || ''}
+                  {repairParts.after}
                 </p>
               </div>
 
@@ -527,30 +623,63 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
             <h2
               ref={stageHeadingRef}
               tabIndex={-1}
-              style={{ ...TYPE.displaySection, color: accent, margin: `0 0 ${SPACING.standard}px`, outline: 'none' }}
+              aria-live="polite"
+              style={{
+                ...TYPE.displaySection,
+                color: repairAccurate ? accent : GENERAL.feedbackIncorrect,
+                margin: `0 0 ${SPACING.standard}px`,
+                outline: 'none',
+              }}
             >
               {finalHeading}
             </h2>
 
-            <FeedbackRow label="You entered" muted={!repairAccurate}>
-              “{correction.trim()}”
-            </FeedbackRow>
+            <p style={{
+              ...TYPE.body,
+              color: TEXT_MUTED,
+              lineHeight: 1.7,
+              margin: `0 0 ${SPACING.standard}px`,
+            }}>
+              {allThreeCorrect
+                ? 'You located the error, explained the science and repaired the wording.'
+                : repairAccurate
+                  ? 'The repair is correct. The precise sentence is shown below.'
+                  : 'The exact replacement is shown below so you can lock in the wording.'}
+            </p>
 
-            <FeedbackRow label="Correct phrase">
-              “{expectedCorrection || 'No correction has been authored.'}”
-            </FeedbackRow>
+            {!repairAccurate && (
+              <FeedbackRow label="You entered" muted>
+                “{correction.trim()}”
+              </FeedbackRow>
+            )}
 
-            <FeedbackRow label="Corrected answer">
-              {correctedVersion}
-            </FeedbackRow>
+            <PhraseSwap
+              from={repairAccurate ? actualErrorText : correction.trim()}
+              to={expectedCorrection}
+              accent={accent}
+              incorrect={!repairAccurate}
+            />
 
-            <FeedbackRow label="Examiner takeaway">
-              {block.examinerNote}
-            </FeedbackRow>
+            <CorrectedAnswerPanel
+              parts={repairParts}
+              correction={expectedCorrection}
+              correctedVersion={correctedVersion}
+              accent={accent}
+              rgb={rgb}
+            />
 
-            <FeedbackRow label="Common trap" muted>
-              {block.commonTrap}
-            </FeedbackRow>
+            <div style={{
+              paddingTop: SPACING.standard,
+              borderTop: `1px solid ${GENERAL.line.soft}`,
+            }}>
+              <FeedbackRow label="Why examiners care">
+                {block.examinerNote}
+              </FeedbackRow>
+
+              <FeedbackRow label="Common trap" muted>
+                {block.commonTrap}
+              </FeedbackRow>
+            </div>
 
             <ContinueCTA onClick={handleContinue} accent={accent} style={{ marginTop: SPACING.micro }} />
           </div>
