@@ -23,11 +23,18 @@ jobs:
 
           module_player = Path('src/components/layout/ModulePlayer.jsx')
           module_text = module_player.read_text()
-          old_module = "{block.type === 'builder'       && <BuilderBlock block={block} />}"
-          new_module = "{block.type === 'builder'       && <BuilderBlock block={block} subject={subject} onComplete={onScreenComplete} />}"
-          if old_module not in module_text:
+
+          old_route = "{block.type === 'builder'       && <BuilderBlock block={block} />}"
+          new_route = "{block.type === 'builder'       && <BuilderBlock block={block} subject={subject} onComplete={onScreenComplete} />}"
+          if old_route not in module_text:
               raise SystemExit('BuilderBlock route pattern not found in ModulePlayer.jsx')
-          module_player.write_text(module_text.replace(old_module, new_module, 1))
+          module_text = module_text.replace(old_route, new_route, 1)
+
+          old_gate = "b.type === 'spotTheError' || b.type === 'misconceptionCheck'"
+          new_gate = "b.type === 'spotTheError' || b.type === 'misconceptionCheck' || b.type === 'builder'"
+          if old_gate not in module_text:
+              raise SystemExit('Local progression gate pattern not found in ModulePlayer.jsx')
+          module_player.write_text(module_text.replace(old_gate, new_gate, 1))
 
           manifest = Path('src/dev/componentReview/reviewManifest.jsx')
           manifest_text = manifest.read_text()
@@ -50,4 +57,4 @@ jobs:
           git commit -m "Wire BuilderBlock phase 3 progression"
           git push
 
-# Triggered after the workflow existed on the default branch.
+# Valid one-shot trigger.
