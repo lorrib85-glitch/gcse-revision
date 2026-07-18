@@ -6,19 +6,25 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 import BackButton from '../core/BackButton.jsx'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
-// CinematicShell used here because all inner layers are position: fixed (they escape any
-// containing block) and the screen must cover the full viewport; ContentShell's padding
-// would not reach these fixed children and would create an unwanted gap.
+// CinematicShell is required because this is a full-viewport cinematic opener with
+// fixed atmosphere layers and a fixed governed CTA. The inner content owns its own
+// safe-area-aware vertical scroll so long titles and larger text remain reachable.
 import CinematicShell from './CinematicShell.jsx'
 import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
+
+const motionMs = value => Number.parseInt(value, 10)
+const REVEAL_START_MS = motionMs(MOTION.duration.fast)
+const REVEAL_STAGGER_MS = motionMs(MOTION.duration.standard)
+const CTA_SETTLE_MS = motionMs(MOTION.duration.fast)
+const ICON_SETTLE_MS = motionMs(MOTION.duration.slow)
 
 function BackBtn({ onClick }) {
   return (
     <BackButton
       onClick={onClick}
       style={{
-        position: 'absolute',
-        top: SPACING.standard,
+        position: 'fixed',
+        top: `calc(${SPACING.standard}px + env(safe-area-inset-top, 0px))`,
         left: SPACING.compact,
         zIndex: 10,
       }}
@@ -104,28 +110,54 @@ export default function ChapterOutcomeScreen({
   const img = SUBJECT_BACKDROPS[subject] || SUBJECT_BACKDROPS.History
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
+  const [reduceMotion] = useState(() =>
+    typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  )
 
-  const [visibleCount, setVisibleCount] = useState(0)
-  const [showCTA, setShowCTA] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(() => reduceMotion ? outcomes.length : 0)
+  const [showCTA, setShowCTA] = useState(reduceMotion)
   const [glowIdx, setGlowIdx] = useState(-1)
 
-  // Stagger items ~400ms apart so each one lands as a distinct discovery
+  // Keep the opener brisk: all three recommended outcomes and the CTA arrive in
+  // about 1.2 seconds. Reduced-motion users receive the complete screen at once.
   useEffect(() => {
-    const timers = outcomes.map((_, i) =>
-      setTimeout(() => setVisibleCount(v => Math.max(v, i + 1)), 480 + i * 400)
-    )
-    const ctaTimer = setTimeout(() => setShowCTA(true), 480 + outcomes.length * 400 + 420)
-    return () => { timers.forEach(clearTimeout); clearTimeout(ctaTimer) }
-  }, [outcomes])
+    setGlowIdx(-1)
 
-  // Pulse the icon of each item as it arrives, then settle
+    if (reduceMotion) {
+      setVisibleCount(outcomes.length)
+      setShowCTA(true)
+      return undefined
+    }
+
+    setVisibleCount(0)
+    setShowCTA(false)
+
+    const timers = outcomes.map((_, i) =>
+      setTimeout(
+        () => setVisibleCount(v => Math.max(v, i + 1)),
+        REVEAL_START_MS + i * REVEAL_STAGGER_MS,
+      )
+    )
+    const ctaTimer = setTimeout(
+      () => setShowCTA(true),
+      REVEAL_START_MS + outcomes.length * REVEAL_STAGGER_MS + CTA_SETTLE_MS,
+    )
+
+    return () => {
+      timers.forEach(clearTimeout)
+      clearTimeout(ctaTimer)
+    }
+  }, [outcomes.length, reduceMotion])
+
+  // Pulse only the newly arrived marker, then settle. This attention cue is
+  // suppressed entirely when reduced motion is requested.
   useEffect(() => {
-    if (visibleCount === 0) return
+    if (reduceMotion || visibleCount === 0) return undefined
     const idx = visibleCount - 1
     setGlowIdx(idx)
-    const t = setTimeout(() => setGlowIdx(-1), 680)
-    return () => clearTimeout(t)
-  }, [visibleCount])
+    const timer = setTimeout(() => setGlowIdx(-1), ICON_SETTLE_MS)
+    return () => clearTimeout(timer)
+  }, [visibleCount, reduceMotion])
 
   return (
     <>
@@ -137,6 +169,18 @@ export default function ChapterOutcomeScreen({
         @keyframes cos-row {
           from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+        .cos-scroll {
+          scrollbar-width: none;
+        }
+        .cos-scroll::-webkit-scrollbar {
+          display: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .cos-enter,
+          .cos-row {
+            animation: none !important;
+          }
         }
       `}</style>
 
@@ -176,36 +220,57 @@ export default function ChapterOutcomeScreen({
           zIndex: 3,
         }} />
 
-        {/* Content layer */}
-        <div style={{ position: 'relative', zIndex: 5, minHeight: '100dvh' }}>
-          <BackBtn onClick={onBack} />
+        <BackBtn onClick={onBack} />
 
-          <div style={{
-            position: 'absolute',
-            top: SPACING.section,
-            left: SPACING.standard,
-            right: SPACING.standard,
-            maxWidth: 320,
-          }}>
+        {/* Flexible content column. The permanent bottom padding reserves the
+            fixed CTA area before it appears, so the layout never jumps or overlaps. */}
+        <div
+          className="cos-scroll"
+          style={{
+            position: 'relative',
+            zIndex: 5,
+            height: '100dvh',
+            boxSizing: 'border-box',
+            overflowY: 'auto',
+            overscrollBehaviorY: 'contain',
+            WebkitOverflowScrolling: 'touch',
+            touchAction: 'pan-y',
+            paddingTop: `calc(${SPACING.section}px + env(safe-area-inset-top, 0px))`,
+            paddingRight: SPACING.standard,
+            paddingBottom: `calc(${SPACING.cinematic + SPACING.separation}px + env(safe-area-inset-bottom, 0px))`,
+            paddingLeft: SPACING.standard,
+          }}
+        >
+          <div style={{ width: '100%', maxWidth: 320 }}>
 
             {/* Chapter title */}
-            <div style={{
-              ...TYPE.displayHero,
-              ...HEADING_LAYOUT.screenTitle,
-              color: '#FFFFFF',
-              marginBottom: SPACING.standard,
-              animation: 'cos-up 520ms ease 40ms both',
-            }}>
+            <div
+              className="cos-enter"
+              style={{
+                ...TYPE.displayHero,
+                ...HEADING_LAYOUT.screenTitle,
+                color: '#FFFFFF',
+                marginBottom: SPACING.standard,
+                animation: reduceMotion
+                  ? 'none'
+                  : `cos-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+              }}
+            >
               {chapterTitle}
             </div>
 
             {/* Discovery label */}
-            <div style={{
-              ...TYPE.label,
-              color: GENERAL.slate,
-              marginBottom: SPACING.standard,
-              animation: 'cos-up 520ms ease 160ms both',
-            }}>
+            <div
+              className="cos-enter"
+              style={{
+                ...TYPE.label,
+                color: GENERAL.slate,
+                marginBottom: SPACING.standard,
+                animation: reduceMotion
+                  ? 'none'
+                  : `cos-up ${MOTION.duration.slow} ${MOTION.easing.standard} ${MOTION.duration.instant} both`,
+              }}
+            >
               In this chapter, you’ll learn to
             </div>
 
@@ -219,19 +284,27 @@ export default function ChapterOutcomeScreen({
                 const text = typeof item === 'string' ? item : item.text
                 const icon = typeof item === 'string' ? null : item.icon
                 return i < visibleCount ? (
-                  <div key={i} style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: SPACING.compact,
-                    animation: 'cos-row 380ms ease both',
-                  }}>
+                  <div
+                    className="cos-row"
+                    key={i}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: SPACING.compact,
+                      animation: reduceMotion
+                        ? 'none'
+                        : `cos-row ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
+                    }}
+                  >
                     <div style={{
                       flexShrink: 0,
                       filter: glowIdx === i
                         ? `drop-shadow(0 0 5px rgba(${rgb},0.95)) drop-shadow(0 0 14px rgba(${rgb},0.50))`
                         : 'none',
                       transform: glowIdx === i ? 'scale(1.20)' : 'scale(1)',
-                      transition: `filter 500ms ${MOTION.easing.gentle}, transform 380ms ${MOTION.easing.gentle}`,
+                      transition: reduceMotion
+                        ? 'none'
+                        : `filter ${MOTION.duration.slow} ${MOTION.easing.gentle}, transform ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
                     }}>
                       <ItemIcon icon={icon} accent={accent} />
                     </div>
@@ -254,6 +327,7 @@ export default function ChapterOutcomeScreen({
             onClick={onContinue}
             accent={accent}
             label="Start chapter"
+            animation={reduceMotion ? 'none' : undefined}
           />
         )}
 
