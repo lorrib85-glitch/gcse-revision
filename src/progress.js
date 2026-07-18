@@ -16,13 +16,21 @@ const write   = saveCritical
 
 // ─── Date helpers ─────────────────────────────────────────────────
 
+// Local calendar date, never toISOString() — that's UTC, which during BST
+// stamps 00:00–00:59 activity onto the previous day and breaks the streak.
+function localDateStr(d) {
+  const m   = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${d.getFullYear()}-${m}-${day}`
+}
+
 export function todayStr() {
-  return new Date().toISOString().slice(0, 10)
+  return localDateStr(new Date())
 }
 export function offsetDate(days) {
   const d = new Date()
   d.setDate(d.getDate() + days)
-  return d.toISOString().slice(0, 10)
+  return localDateStr(d)
 }
 
 // ─── Core progress store ───────────────────────────────────────────
