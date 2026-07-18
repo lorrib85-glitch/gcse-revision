@@ -1,0 +1,51 @@
+name: One-shot BuilderBlock phase 3 wiring
+
+on:
+  push:
+    paths:
+      - '.github/workflows/phase3-builder-wire.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  wire-builder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Wire governed progression
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          module_player = Path('src/components/layout/ModulePlayer.jsx')
+          module_text = module_player.read_text()
+          old_module = "{block.type === 'builder'       && <BuilderBlock block={block} />}"
+          new_module = "{block.type === 'builder'       && <BuilderBlock block={block} subject={subject} onComplete={onScreenComplete} />}"
+          if old_module not in module_text:
+              raise SystemExit('BuilderBlock route pattern not found in ModulePlayer.jsx')
+          module_player.write_text(module_text.replace(old_module, new_module, 1))
+
+          manifest = Path('src/dev/componentReview/reviewManifest.jsx')
+          manifest_text = manifest.read_text()
+          old_manifest = "render: (fx) => <BuilderBlock block={fx} />,”
+          if old_manifest not in manifest_text:
+              old_manifest = "render: (fx) => <BuilderBlock block={fx} />,“
+          if old_manifest not in manifest_text:
+              old_manifest = "render: (fx) => <BuilderBlock block={fx} />," 
+          new_manifest = 'render: (fx, { onDone }) => <BuilderBlock block={fx} subject="Biology" onComplete={onDone} />,'
+          if old_manifest not in manifest_text:
+              raise SystemExit('BuilderBlock review pattern not found in reviewManifest.jsx')
+          manifest.write_text(manifest_text.replace(old_manifest, new_manifest, 1))
+          PY
+
+      - name: Commit wiring
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/layout/ModulePlayer.jsx src/dev/componentReview/reviewManifest.jsx
+          git commit -m "Wire BuilderBlock phase 3 progression"
+          git push
