@@ -147,7 +147,7 @@ export default function ChapterOutcomeScreen({
       timers.forEach(clearTimeout)
       clearTimeout(ctaTimer)
     }
-  }, [outcomes.length, reduceMotion])
+  }, [outcomes, reduceMotion])
 
   // Pulse only the newly arrived marker, then settle. This attention cue is
   // suppressed entirely when reduced motion is requested.
