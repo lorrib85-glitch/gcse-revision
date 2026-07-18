@@ -33,65 +33,117 @@ function answerLabel(answer) {
   return answer?.label ?? answer?.text ?? ''
 }
 
+function isReactionArrow(operator) {
+  const value = String(operator ?? '').trim()
+  return ['→', '⟶', '⇒', '->', '=>'].includes(value)
+}
+
+function range(start, end) {
+  return Array.from({ length: Math.max(0, end - start) }, (_, index) => start + index)
+}
+
 // ─── BuilderBlock — equation/concept builder ──────────────────────────────────
-// Tap-to-fill builder: learner places word pieces into ordered slots to
-// construct an equation, then checks the answer. Distractor pieces are allowed.
-// Correct work is preserved after a wrong attempt so the learner only repairs
-// the parts they misunderstood.
-export default function BuilderBlock({ block, subject, onComplete }) {
-  const { key: subjectKey, theme } = resolveSubject(subject ?? block.subject)
+// Learners select a destination slot, place a word piece and then check the
+// complete structure. Reaction equations are grouped into reactants/products so
+// the visual model teaches the chemistry as well as testing recall.
+export default function BuilderBlock({ block, subject = 'Biology', onComplete }) {
+  const { key: subjectKey, theme } = resolveSubject(subject)
   const pieces = useMemo(() => normalisePieces(block.pieces), [block.pieces])
   const slotCount = block.slots?.length ?? block.answer?.length ?? 0
+  const operators = block.operators ?? []
+  const arrowIndex = operators.findIndex(isReactionArrow)
+  const hasReactionGroups = arrowIndex >= 0 && arrowIndex < slotCount - 1
+  const reactantIndexes = hasReactionGroups ? range(0, arrowIndex + 1) : []
+  const productIndexes = hasReactionGroups ? range(arrowIndex + 1, slotCount) : []
+  const groupLabels = block.groupLabels ?? ['Reactants', 'Products']
+  const instruction = block.instruction ?? (
+    hasReactionGroups
+      ? `Place each substance under ${groupLabels[0]} or ${groupLabels[1]}.`
+      : 'Tap a space, then choose the word or phrase that belongs there.'
+  )
   const blockKey = `${block.label ?? ''}:${(block.answer ?? []).map(answerLabel).join('|')}`
 
   const [slots, setSlots] = useState(() => Array(slotCount).fill(null))
   const [available, setAvailable] = useState(() => pieces)
   const [mode, setMode] = useState('building')
+  const [selectedSlot, setSelectedSlot] = useState(slotCount > 0 ? 0 : null)
   const [announcement, setAnnouncement] = useState('')
 
   useEffect(() => {
     setSlots(Array(slotCount).fill(null))
     setAvailable(pieces)
     setMode('building')
+    setSelectedSlot(slotCount > 0 ? 0 : null)
     setAnnouncement('')
   }, [blockKey, pieces, slotCount])
 
   const slotCorrectness = slots.map(
     (piece, index) => piece?.label === answerLabel(block.answer?.[index]),
   )
-  const allFilled = slots.every(Boolean)
+  const allFilled = slotCount > 0 && slots.every(Boolean)
   const correctCount = slotCorrectness.filter(Boolean).length
   const isCompleted = mode === 'completed'
   const isReviewing = mode === 'checkedIncorrect'
   const isCorrecting = mode === 'correcting'
-  const hasChecked = isReviewing || isCorrecting || isCompleted
   const canEdit = mode === 'building' || isCorrecting
   const focusClass = `builder-block-control-${subjectKey.toLowerCase()}`
   const transition = BUTTONS.compact.transition
 
-  function place(piece) {
-    if (!canEdit) return
-    const emptyIndex = slots.findIndex(slot => slot === null)
-    if (emptyIndex < 0) return
-
-    const nextSlots = [...slots]
-    nextSlots[emptyIndex] = piece
-    setSlots(nextSlots)
-    setAvailable(current => current.filter(item => item.id !== piece.id))
-    setAnnouncement(`${piece.label} placed in space ${emptyIndex + 1}.`)
+  function isSlotLocked(index) {
+    return isCompleted || isReviewing || (isCorrecting && slotCorrectness[index])
   }
 
-  function remove(slotIndex) {
-    const isPreservedCorrectAnswer = isCorrecting && slotCorrectness[slotIndex]
-    if (!canEdit || isPreservedCorrectAnswer) return
+  function findNextEditableSlot(fromIndex, nextSlots = slots) {
+    for (let offset = 1; offset <= slotCount; offset += 1) {
+      const index = (fromIndex + offset) % slotCount
+      if (!isSlotLocked(index) && !nextSlots[index]) return index
+    }
+    return null
+  }
+
+  function place(piece) {
+    if (!canEdit) return
+
+    const selectedIsUsable = selectedSlot !== null
+      && !isSlotLocked(selectedSlot)
+    const targetIndex = selectedIsUsable
+      ? selectedSlot
+      : slots.findIndex((slot, index) => !slot && !isSlotLocked(index))
+
+    if (targetIndex < 0 || targetIndex === null) return
+
+    const displacedPiece = slots[targetIndex]
+    const nextSlots = [...slots]
+    nextSlots[targetIndex] = piece
+    setSlots(nextSlots)
+    setAvailable(current => {
+      const withoutPlaced = current.filter(item => item.id !== piece.id)
+      return displacedPiece
+        ? [...withoutPlaced, displacedPiece].sort((a, b) => a.order - b.order)
+        : withoutPlaced
+    })
+
+    const nextIndex = findNextEditableSlot(targetIndex, nextSlots)
+    setSelectedSlot(nextIndex ?? targetIndex)
+    setAnnouncement(`${piece.label} placed in space ${targetIndex + 1}.`)
+  }
+
+  function handleSlotPress(slotIndex) {
+    if (!canEdit || isSlotLocked(slotIndex)) return
+
     const piece = slots[slotIndex]
-    if (!piece) return
+    setSelectedSlot(slotIndex)
+
+    if (!piece) {
+      setAnnouncement(`Space ${slotIndex + 1} selected.`)
+      return
+    }
 
     const nextSlots = [...slots]
     nextSlots[slotIndex] = null
     setSlots(nextSlots)
     setAvailable(current => [...current, piece].sort((a, b) => a.order - b.order))
-    setAnnouncement(`${piece.label} returned to the word bank.`)
+    setAnnouncement(`${piece.label} returned to the word bank. Space ${slotIndex + 1} is selected.`)
   }
 
   function checkAnswer() {
@@ -99,22 +151,163 @@ export default function BuilderBlock({ block, subject, onComplete }) {
 
     if (slotCorrectness.every(Boolean)) {
       setMode('completed')
+      setSelectedSlot(null)
       setAnnouncement('Correct. The equation is complete.')
       onComplete?.()
       return
     }
 
     setMode('checkedIncorrect')
+    setSelectedSlot(null)
     setAnnouncement(`${correctCount} of ${slotCount} spaces are correct. Correct answers will be kept.`)
   }
 
   function correctMistakes() {
     const returnedPieces = slots.filter((piece, index) => piece && !slotCorrectness[index])
-    setSlots(current => current.map((piece, index) => (slotCorrectness[index] ? piece : null)))
+    const nextSlots = slots.map((piece, index) => (slotCorrectness[index] ? piece : null))
+    const firstEmpty = nextSlots.findIndex(slot => !slot)
+
+    setSlots(nextSlots)
     setAvailable(current => [...current, ...returnedPieces].sort((a, b) => a.order - b.order))
     setMode('correcting')
+    setSelectedSlot(firstEmpty >= 0 ? firstEmpty : null)
     setAnnouncement('Correct answers have been kept. Fill the empty spaces again.')
   }
+
+  function slotGroupName(index) {
+    if (!hasReactionGroups) return 'Equation'
+    return index <= arrowIndex ? groupLabels[0] : groupLabels[1]
+  }
+
+  function renderSlot(slotIndex) {
+    const piece = slots[slotIndex]
+    const showCorrect = (isReviewing || isCorrecting || isCompleted) && slotCorrectness[slotIndex]
+    const showIncorrect = isReviewing && piece && !slotCorrectness[slotIndex]
+    const selected = canEdit && selectedSlot === slotIndex && !isSlotLocked(slotIndex)
+    const locked = isSlotLocked(slotIndex)
+
+    const borderColor = showCorrect
+      ? GENERAL.feedbackCorrect
+      : showIncorrect
+        ? GENERAL.feedbackIncorrect
+        : selected
+          ? theme.accent
+          : piece
+            ? GENERAL.line.strong
+            : GENERAL.line.medium
+    const background = showCorrect
+      ? GENERAL.surfaceTint
+      : showIncorrect
+        ? GENERAL.backgroundSunken
+        : selected
+          ? theme.glowStrong
+          : GENERAL.backgroundSunken
+
+    return (
+      <button
+        key={slotIndex}
+        type="button"
+        className={focusClass}
+        onClick={() => handleSlotPress(slotIndex)}
+        disabled={locked}
+        aria-pressed={selected}
+        aria-invalid={showIncorrect || undefined}
+        aria-label={`${slotGroupName(slotIndex)} space ${slotIndex + 1}: ${piece?.label ?? 'empty'}${selected ? ', selected' : ''}${locked ? ', locked' : ''}`}
+        style={{
+          width: '100%',
+          minWidth: 0,
+          minHeight: BUTTONS.compact.height,
+          padding: `${SPACING.micro}px`,
+          background,
+          border: `${selected ? COMPONENT_SIZE.focusRing : COMPONENT_SIZE.hairline}px ${piece ? 'solid' : 'dashed'} ${borderColor}`,
+          borderRadius: RADII.small,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: locked ? 'default' : 'pointer',
+          ...TYPE.titleMedium,
+          color: piece ? GENERAL.feedbackText : GENERAL.neutral[300],
+          transition: `background-color ${transition}, border-color ${transition}, color ${transition}`,
+        }}
+      >
+        {piece?.label ?? '?'}
+      </button>
+    )
+  }
+
+  function renderGroup(indexes, label) {
+    return (
+      <section aria-label={label}>
+        <div
+          style={{
+            ...TYPE.label,
+            color: GENERAL.slate,
+            marginBottom: SPACING.micro,
+          }}
+        >
+          {label}
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: indexes.map(() => 'minmax(0, 1fr)').join(' auto '),
+            alignItems: 'center',
+            gap: SPACING.micro,
+          }}
+        >
+          {indexes.map((slotIndex, position) => (
+            <div key={slotIndex} style={{ display: 'contents' }}>
+              {renderSlot(slotIndex)}
+              {position < indexes.length - 1 && (
+                <span
+                  aria-hidden="true"
+                  style={{
+                    ...TYPE.titleMedium,
+                    color: GENERAL.slate,
+                    textAlign: 'center',
+                  }}
+                >
+                  {operators[slotIndex] || '+'}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  function renderLinearEquation() {
+    return (
+      <div
+        aria-label="Equation spaces"
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: SPACING.micro,
+        }}
+      >
+        {slots.map((_, index) => (
+          <div key={index} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro, flex: '1 1 92px' }}>
+            {renderSlot(index)}
+            {index < slots.length - 1 && (
+              <span aria-hidden="true" style={{ ...TYPE.titleMedium, color: GENERAL.slate }}>
+                {operators[index] || '+'}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  const placementHelp = allFilled
+    ? 'Everything is placed. Check your answer when ready.'
+    : selectedSlot === null
+      ? 'Choose a space, then choose a word.'
+      : `Space ${selectedSlot + 1} is selected. Choose a word from the bank.`
 
   return (
     <div style={{ margin: `${SPACING.compact}px 0` }}>
@@ -122,6 +315,9 @@ export default function BuilderBlock({ block, subject, onComplete }) {
         .${focusClass}:focus-visible {
           outline: ${COMPONENT_SIZE.focusRing}px solid ${theme.accent};
           outline-offset: ${COMPONENT_SIZE.focusOffset}px;
+        }
+        .${focusClass}:not(:disabled):active {
+          transform: scale(${BUTTONS.compact.pressScale});
         }
         @media (prefers-reduced-motion: reduce) {
           .${focusClass} {
@@ -132,94 +328,47 @@ export default function BuilderBlock({ block, subject, onComplete }) {
 
       <div
         style={{
-          background: GENERAL.backgroundPanel,
-          border: `1px solid ${GENERAL.line.soft}`,
+          background: GENERAL.backgroundSurface,
+          border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.soft}`,
           borderRadius: RADII.large,
           padding: SPACING.compact,
         }}
       >
-        <div
-          style={{
-            ...TYPE.displayCard,
-            color: GENERAL.softWhite,
-            marginBottom: SPACING.compact,
-          }}
-        >
-          {block.label || 'Build the equation'}
-        </div>
+        <header style={{ marginBottom: SPACING.standard }}>
+          <div
+            style={{
+              ...TYPE.displayCard,
+              color: GENERAL.softWhite,
+              marginBottom: SPACING.micro,
+            }}
+          >
+            {block.label || 'Build the equation'}
+          </div>
+          <p style={{ ...TYPE.bodySmall, color: GENERAL.slate, margin: 0 }}>
+            {instruction}
+          </p>
+        </header>
 
-        <div
-          aria-label="Equation spaces"
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: SPACING.micro,
-            marginBottom: SPACING.compact,
-          }}
-        >
-          {slots.map((piece, index) => {
-            const isCorrect = hasChecked && slotCorrectness[index]
-            const isIncorrect = isReviewing && piece && !slotCorrectness[index]
-            const isLocked = isCompleted || isReviewing || (isCorrecting && slotCorrectness[index])
-            const borderColor = isCorrect
-              ? GENERAL.feedbackCorrect
-              : isIncorrect
-                ? GENERAL.feedbackIncorrect
-                : piece
-                  ? theme.accent
-                  : GENERAL.line.strong
-            const background = isCorrect
-              ? GENERAL.surfaceTint
-              : isIncorrect
-                ? GENERAL.backgroundSunken
-                : piece
-                  ? theme.glowStrong
-                  : GENERAL.backgroundSunken
-
-            return (
-              <div key={index} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
-                <button
-                  type="button"
-                  className={focusClass}
-                  onClick={() => remove(index)}
-                  disabled={!piece || isLocked}
-                  aria-label={`Space ${index + 1}: ${piece?.label ?? 'empty'}${isLocked ? ', locked' : ', tap to remove'}`}
-                  aria-invalid={isIncorrect || undefined}
-                  style={{
-                    minWidth: 'clamp(80px, 24vw, 132px)',
-                    height: BUTTONS.compact.height,
-                    padding: `0 ${SPACING.micro}px`,
-                    background,
-                    border: `${COMPONENT_SIZE.hairline}px ${piece ? 'solid' : 'dashed'} ${borderColor}`,
-                    borderRadius: RADII.small,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: piece && !isLocked ? 'pointer' : 'default',
-                    ...TYPE.titleMedium,
-                    color: piece ? GENERAL.feedbackText : GENERAL.neutral[300],
-                    transition: `background-color ${transition}, border-color ${transition}, color ${transition}`,
-                  }}
-                >
-                  {piece?.label ?? '?'}
-                </button>
-
-                {index < slots.length - 1 && (
-                  <span
-                    aria-hidden="true"
-                    style={{
-                      ...TYPE.titleMedium,
-                      color: theme.accent,
-                    }}
-                  >
-                    {block.operators?.[index] || '+'}
-                  </span>
-                )}
+        <div style={{ marginBottom: SPACING.standard }}>
+          {hasReactionGroups ? (
+            <div style={{ display: 'grid', gap: SPACING.compact }}>
+              {renderGroup(reactantIndexes, groupLabels[0])}
+              <div
+                aria-label="becomes"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: SPACING.micro,
+                  color: theme.accent,
+                }}
+              >
+                <span aria-hidden="true" style={{ ...TYPE.titleLarge }}>→</span>
+                <span style={{ ...TYPE.caption, color: GENERAL.slate }}>becomes</span>
               </div>
-            )
-          })}
+              {renderGroup(productIndexes, groupLabels[1])}
+            </div>
+          ) : renderLinearEquation()}
         </div>
 
         {canEdit && (
@@ -230,7 +379,6 @@ export default function BuilderBlock({ block, subject, onComplete }) {
               flexWrap: 'wrap',
               justifyContent: 'center',
               gap: SPACING.micro,
-              marginBottom: SPACING.compact,
             }}
           >
             {available.map(piece => (
@@ -242,11 +390,11 @@ export default function BuilderBlock({ block, subject, onComplete }) {
                 style={{
                   minHeight: BUTTONS.compact.height,
                   padding: `0 ${BUTTONS.compact.paddingX}px`,
-                  background: theme.glowStrong,
-                  border: `${COMPONENT_SIZE.hairline}px solid ${theme.accent}`,
+                  background: GENERAL.backgroundSunken,
+                  border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.medium}`,
                   borderRadius: RADII.small,
                   ...TYPE.button,
-                  color: theme.accentSecondary,
+                  color: GENERAL.feedbackText,
                   cursor: 'pointer',
                   transition: `background-color ${transition}, border-color ${transition}, transform ${transition}`,
                 }}
@@ -261,88 +409,85 @@ export default function BuilderBlock({ block, subject, onComplete }) {
           {announcement}
         </div>
 
-        {canEdit && (
-          <button
-            type="button"
-            className={focusClass}
-            onClick={checkAnswer}
-            disabled={!allFilled}
-            style={{
-              width: '100%',
-              height: BUTTONS.continue.height,
-              padding: `0 ${BUTTONS.continue.paddingX}px`,
-              background: allFilled ? theme.accent : GENERAL.backgroundSurface,
-              border: `${COMPONENT_SIZE.hairline}px solid ${allFilled ? theme.accent : GENERAL.line.medium}`,
-              borderRadius: BUTTONS.continue.borderRadius,
-              fontFamily: BUTTONS.continue.fontFamily,
-              fontSize: BUTTONS.continue.fontSize,
-              fontWeight: BUTTONS.continue.fontWeight,
-              color: allFilled ? GENERAL.textOnAccent : GENERAL.neutral[300],
-              cursor: allFilled ? 'pointer' : 'default',
-              opacity: allFilled ? 1 : 0.72,
-              transition: `background-color ${BUTTONS.continue.transition}, border-color ${BUTTONS.continue.transition}, color ${BUTTONS.continue.transition}`,
-            }}
-          >
-            {allFilled ? 'Check answer' : 'Complete all spaces'}
-          </button>
-        )}
+        <div
+          style={{
+            minHeight: 144,
+            marginTop: SPACING.standard,
+            paddingTop: SPACING.compact,
+            borderTop: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.faint}`,
+          }}
+        >
+          {canEdit && (
+            <>
+              <button
+                type="button"
+                className={focusClass}
+                onClick={checkAnswer}
+                disabled={!allFilled}
+                style={{
+                  width: '100%',
+                  height: BUTTONS.continue.height,
+                  padding: `0 ${BUTTONS.continue.paddingX}px`,
+                  background: allFilled ? theme.accent : GENERAL.backgroundSunken,
+                  border: `${COMPONENT_SIZE.hairline}px solid ${allFilled ? theme.accent : GENERAL.line.medium}`,
+                  borderRadius: BUTTONS.continue.borderRadius,
+                  fontFamily: BUTTONS.continue.fontFamily,
+                  fontSize: BUTTONS.continue.fontSize,
+                  fontWeight: BUTTONS.continue.fontWeight,
+                  color: allFilled ? GENERAL.textOnAccent : GENERAL.neutral[300],
+                  cursor: allFilled ? 'pointer' : 'default',
+                  opacity: allFilled ? 1 : 0.72,
+                  transition: `background-color ${BUTTONS.continue.transition}, border-color ${BUTTONS.continue.transition}, color ${BUTTONS.continue.transition}`,
+                }}
+              >
+                {allFilled ? 'Check answer' : 'Complete all spaces'}
+              </button>
+              <p style={{ ...TYPE.caption, color: GENERAL.slate, margin: `${SPACING.micro}px 0 0`, textAlign: 'center' }}>
+                {placementHelp}
+              </p>
+            </>
+          )}
 
-        {isReviewing && (
-          <div
-            role="status"
-            style={{
-              background: GENERAL.backgroundSunken,
-              border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.feedbackIncorrect}`,
-              borderRadius: RADII.medium,
-              padding: SPACING.compact,
-            }}
-          >
-            <div style={{ ...TYPE.titleMedium, color: GENERAL.feedbackIncorrect, marginBottom: SPACING.micro }}>
-              {correctCount} of {slotCount} are in the right place
+          {isReviewing && (
+            <div role="status" style={{ borderLeft: `${COMPONENT_SIZE.accentRail}px solid ${GENERAL.feedbackIncorrect}`, paddingLeft: SPACING.compact }}>
+              <div style={{ ...TYPE.titleMedium, color: GENERAL.feedbackIncorrect, marginBottom: SPACING.micro }}>
+                {correctCount} of {slotCount} are in the right place
+              </div>
+              <p style={{ ...TYPE.bodySmall, color: GENERAL.feedbackText, margin: `0 0 ${SPACING.compact}px` }}>
+                {block.hint}
+              </p>
+              <button
+                type="button"
+                className={focusClass}
+                onClick={correctMistakes}
+                style={{
+                  minHeight: BUTTONS.compact.height,
+                  padding: `0 ${BUTTONS.compact.paddingX}px`,
+                  background: GENERAL.backgroundSunken,
+                  border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.feedbackIncorrect}`,
+                  borderRadius: BUTTONS.compact.borderRadius,
+                  ...TYPE.button,
+                  color: GENERAL.feedbackIncorrect,
+                  cursor: 'pointer',
+                  transition: `background-color ${transition}, border-color ${transition}, transform ${transition}`,
+                }}
+              >
+                Correct mistakes
+              </button>
             </div>
-            <p style={{ ...TYPE.bodySmall, color: GENERAL.feedbackText, margin: `0 0 ${SPACING.compact}px` }}>
-              {block.hint}
-            </p>
-            <button
-              type="button"
-              className={focusClass}
-              onClick={correctMistakes}
-              style={{
-                minHeight: BUTTONS.compact.height,
-                padding: `0 ${BUTTONS.compact.paddingX}px`,
-                background: GENERAL.surfaceTint,
-                border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.feedbackIncorrect}`,
-                borderRadius: BUTTONS.compact.borderRadius,
-                ...TYPE.button,
-                color: GENERAL.feedbackIncorrect,
-                cursor: 'pointer',
-                transition: `background-color ${transition}, border-color ${transition}`,
-              }}
-            >
-              Correct mistakes
-            </button>
-          </div>
-        )}
+          )}
 
-        {isCompleted && (
-          <div
-            role="status"
-            style={{
-              background: GENERAL.backgroundSunken,
-              border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.feedbackCorrect}`,
-              borderRadius: RADII.medium,
-              padding: SPACING.compact,
-              textAlign: 'center',
-            }}
-          >
-            <div style={{ ...TYPE.titleMedium, color: GENERAL.feedbackCorrect, marginBottom: SPACING.micro }}>
-              Correct
+          {isCompleted && (
+            <div role="status" style={{ borderLeft: `${COMPONENT_SIZE.accentRail}px solid ${GENERAL.feedbackCorrect}`, paddingLeft: SPACING.compact }}>
+              <div style={{ ...TYPE.titleMedium, color: GENERAL.feedbackCorrect, marginBottom: SPACING.micro }}>
+                Correct
+              </div>
+              <p style={{ ...TYPE.body, color: GENERAL.feedbackText, margin: 0 }}>
+                {block.successText}
+              </p>
             </div>
-            <p style={{ ...TYPE.body, color: GENERAL.feedbackText, margin: 0 }}>
-              {block.successText}
-            </p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
