@@ -247,7 +247,7 @@ export const REVIEW_ENTRIES = [
     function: 'Tap-to-fill equation builder: place word pieces into ordered slots to construct an equation, then check — with distractor pieces and a hint on a wrong answer.',
     usage: 'Used in Plant Cells & Photosynthesis (sci_bio_w1), block type: builder. Extracted from an inline definition in ModulePlayer into a standalone component.',
     alternative: 'FillInTheBlanksBlock (inline gaps); ColSortBlock.',
-    render: (fx) => <BuilderBlock block={fx} />,
+    render: (fx, { onDone }) => <BuilderBlock block={fx} subject="Biology" onComplete={onDone} />,
     fixture: FIX.builderBlock,
   },
 

@@ -642,7 +642,7 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'misconception' && <MisconceptionBlock block={block} />}
           {block.type === 'acronymMemorise' && <AcronymMemorise block={block} />}
           {block.type === 'memoryHook'    && <MemoryHook block={block} subject={subject} />}
-          {block.type === 'builder'       && <BuilderBlock block={block} />}
+          {block.type === 'builder'       && <BuilderBlock block={block} subject={subject} onComplete={onScreenComplete} />}
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
           {block.type === 'boss'          && <ExamQuestionFrame block={block} subject={subject} mode="practice" onSkip={onScreenComplete} />}
           {block.type === 'explainReveal' && <ExplainReveal block={block} subject={subject} onComplete={onScreenComplete} />}
@@ -1399,7 +1399,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       if (hookPhase === 'reveal') return hookRevealDone ? 'Continue' : null // hidden until all revealed
     }
     if (!introDone && module.intro) return null // IntroScreen has its own button
-    if ((module.screens[screen]?.blocks || []).some(b => b.type === 'spotTheError' || b.type === 'misconceptionCheck')) return null // these gate their own continue button
+    if ((module.screens[screen]?.blocks || []).some(b => b.type === 'spotTheError' || b.type === 'misconceptionCheck' || b.type === 'builder')) return null // these gate their own continue button
     return isLast ? 'Finish ✓' : 'Continue'
   }
 
