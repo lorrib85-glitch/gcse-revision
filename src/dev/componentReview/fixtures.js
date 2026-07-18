@@ -436,10 +436,9 @@ export const builderBlock = {
 export const chapterOutcome = {
   chapterTitle: 'Plant Cells & Photosynthesis',
   outcomes: [
-    'Describe the key parts of a plant cell and what each one does',
-    'Explain the photosynthesis equation and what it actually means',
-    'See why chlorophyll is the molecule that makes life possible',
-    'Connect photosynthesis to respiration and energy flow in ecosystems',
+    'Identify plant cell structures and explain their jobs',
+    'Explain what the photosynthesis equation means',
+    'Connect photosynthesis, respiration and food chains',
   ],
 }
 
