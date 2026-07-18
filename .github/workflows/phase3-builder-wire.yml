@@ -38,11 +38,7 @@ jobs:
 
           manifest = Path('src/dev/componentReview/reviewManifest.jsx')
           manifest_text = manifest.read_text()
-          old_manifest = "render: (fx) => <BuilderBlock block={fx} />,”
-          if old_manifest not in manifest_text:
-              old_manifest = "render: (fx) => <BuilderBlock block={fx} />,“
-          if old_manifest not in manifest_text:
-              old_manifest = "render: (fx) => <BuilderBlock block={fx} />," 
+          old_manifest = 'render: (fx) => <BuilderBlock block={fx} />,'
           new_manifest = 'render: (fx, { onDone }) => <BuilderBlock block={fx} subject="Biology" onComplete={onDone} />,'
           if old_manifest not in manifest_text:
               raise SystemExit('BuilderBlock review pattern not found in reviewManifest.jsx')
@@ -57,4 +53,4 @@ jobs:
           git commit -m "Wire BuilderBlock phase 3 progression"
           git push
 
-# Valid manifest trigger.
+# Simplified valid trigger.
