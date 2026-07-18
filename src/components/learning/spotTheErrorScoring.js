@@ -2,10 +2,10 @@
 //
 // All of SpotTheError's diagnosis is data-driven and side-effect free so it can
 // be unit-tested without a browser. The component owns rendering and weakness
-// logging; this file owns "was the selection/explanation/repair good enough?".
+// logging; this file owns selection, explanation and missing-phrase scoring.
 //
-// No subject-specific knowledge lives here — every threshold and term list is
-// authored on the block, never hardcoded to Biology.
+// No subject-specific knowledge lives here — every threshold and accepted answer
+// is authored on the block, never hardcoded to Biology.
 
 export const DEFAULT_MIN_EXPLANATION = 12
 export const DEFAULT_MIN_REPAIR = 10
@@ -35,7 +35,6 @@ export function resolveTargetRange(tokens, statement, errorTarget) {
   let start = -1
   let end = -1
   tokens.forEach((tok, i) => {
-    // Token overlaps the target character span.
     if (tok.end > charStart && tok.start < charEnd) {
       if (start === -1) start = i
       end = i
@@ -45,14 +44,6 @@ export function resolveTargetRange(tokens, statement, errorTarget) {
 }
 
 // Enforce a single contiguous selection as the learner taps words.
-//   • no selection → tapped word becomes the selection
-//   • tap directly beside the range → extend by one word
-//   • tap an endpoint of a multi-word range → shrink from that end
-//   • tap the only selected word → clear
-//   • tap an interior selected word → collapse to just that word
-//   • tap a non-adjacent word → start a fresh single-word selection
-// The returned range is always contiguous (or null), so the visible highlight
-// and the scored phrase can never disagree.
 export function nextContiguousSelection(current, index) {
   if (!current) return { start: index, end: index }
   const { start, end } = current
@@ -80,10 +71,7 @@ export function targetTokenText(tokens, target) {
 }
 
 // A selection is correct when it covers (almost) the whole authored phrase
-// without dragging in unrelated words. Single-word targets demand an exact
-// hit; multi-word targets tolerate one missing/extra word so a natural phrase
-// selection still counts. Selecting the whole sentence can never pass because
-// `extra` blows past the allowance.
+// without dragging in unrelated words. Single-word targets demand an exact hit.
 export function scoreSelection(selection, target) {
   if (!selection || !target) return false
   const interStart = Math.max(selection.start, target.start)
@@ -101,7 +89,7 @@ export function scoreSelection(selection, target) {
   return coverage >= minCoverage && extra <= maxExtra
 }
 
-function normalise(text) {
+export function normaliseAnswer(text) {
   return String(text || '')
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, ' ')
@@ -110,12 +98,10 @@ function normalise(text) {
 }
 
 function includesTerm(haystack, term) {
-  const t = normalise(term)
-  return t.length > 0 && normalise(haystack).includes(t)
+  const t = normaliseAnswer(term)
+  return t.length > 0 && normaliseAnswer(haystack).includes(t)
 }
 
-// Resolve the authored explanation criteria, tolerating the legacy `keyTerms`
-// array (treated as "any one of these terms").
 function resolveExplanationCriteria(block) {
   if (block.explanationCriteria) return block.explanationCriteria
   if (Array.isArray(block.keyTerms) && block.keyTerms.length) {
@@ -124,10 +110,6 @@ function resolveExplanationCriteria(block) {
   return null
 }
 
-// Evaluate the written explanation. `precise` gates on a length threshold AND
-// authored terminology; `missing` reports which required idea was absent so the
-// feedback can name it. With no authored criteria, terminology can't be judged
-// and length alone decides completion (never correctness).
 export function evaluateExplanation(text, block = {}) {
   const trimmed = String(text || '').trim()
   const minLength = block.minimumExplanationLength || DEFAULT_MIN_EXPLANATION
@@ -149,7 +131,6 @@ export function evaluateExplanation(text, block = {}) {
     }
   }
 
-  // allOf is an array of groups; each group needs at least one match.
   if (Array.isArray(criteria.allOf)) {
     for (const group of criteria.allOf) {
       const terms = Array.isArray(group) ? group : [group]
@@ -164,10 +145,8 @@ export function evaluateExplanation(text, block = {}) {
   return { meetsLength, precise: meetsLength && matchesTerms, missing }
 }
 
-// Evaluate the rewritten statement. Accuracy is driven by authored data:
-// an accepted-rewrite list, a required-terms list, and/or a must-avoid list
-// (typically the original wrong word). With no authored repair criteria,
-// length is the completion bar and any sufficiently long rewrite is accepted.
+// Legacy full-rewrite evaluator retained for already-authored consumers and
+// tests. SpotTheError now uses `evaluateCorrection` for its compact phrase slot.
 export function evaluateRepair(text, block = {}) {
   const trimmed = String(text || '').trim()
   const minLength = block.minimumRepairLength || DEFAULT_MIN_REPAIR
@@ -185,13 +164,92 @@ export function evaluateRepair(text, block = {}) {
   }
 
   const containsForbidden = Array.isArray(avoid) && avoid.some(t => includesTerm(trimmed, t))
-
   return { meetsLength, accurate: meetsLength && matches && !containsForbidden }
 }
 
+// Return the original sentence split around the one authored incorrect phrase.
+// The UI places the compact repair input between `before` and `after`.
+export function splitStatementAtTarget(statement, errorTarget) {
+  const source = String(statement || '')
+  const target = String(errorTarget || '')
+  if (!source || !target) return null
+  const index = source.indexOf(target)
+  if (index === -1) return null
+  return {
+    before: source.slice(0, index),
+    target,
+    after: source.slice(index + target.length),
+  }
+}
+
+// If a legacy block only provides a full correct sentence, derive the exact
+// replacement phrase when the rest of the sentence is unchanged.
+export function deriveCorrectionFromVersion(block = {}) {
+  const parts = splitStatementAtTarget(block.statement, block.errorTarget)
+  const correctVersion = String(block.correctVersion || '')
+  if (!parts || !correctVersion) return ''
+  if (!correctVersion.startsWith(parts.before) || !correctVersion.endsWith(parts.after)) return ''
+  const end = parts.after ? correctVersion.length - parts.after.length : correctVersion.length
+  return correctVersion.slice(parts.before.length, end).trim()
+}
+
+export function resolveCorrectionAnswers(block = {}) {
+  const primary = String(
+    block.correctionAnswer
+      || deriveCorrectionFromVersion(block)
+      || block.repairKeyTerms?.[0]
+      || block.acceptableRepairs?.[0]
+      || '',
+  ).trim()
+
+  const candidates = [
+    primary,
+    ...(Array.isArray(block.correctionAlternatives) ? block.correctionAlternatives : []),
+  ]
+
+  // Legacy phrase-oriented fields remain acceptable fallbacks, but a modern
+  // `correctionAnswer` keeps the contract explicit and avoids full-sentence input.
+  if (!block.correctionAnswer) {
+    if (Array.isArray(block.repairKeyTerms)) candidates.push(...block.repairKeyTerms)
+    if (Array.isArray(block.acceptableRepairs)) candidates.push(...block.acceptableRepairs)
+  }
+
+  const seen = new Set()
+  return candidates
+    .map(answer => String(answer || '').trim())
+    .filter(Boolean)
+    .filter(answer => {
+      const key = normaliseAnswer(answer)
+      if (!key || seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+}
+
+// Score the compact missing-word/phrase input. Matching is deliberately exact
+// after case, punctuation and whitespace normalisation; this is a precise phrase
+// repair, not a second free-writing task.
+export function evaluateCorrection(text, block = {}) {
+  const trimmed = String(text || '').trim()
+  const accepted = resolveCorrectionAnswers(block)
+  const normalised = normaliseAnswer(trimmed)
+  const accurate = Boolean(normalised) && accepted.some(answer => normaliseAnswer(answer) === normalised)
+  return {
+    meetsLength: normalised.length > 0,
+    accurate,
+    accepted,
+    expected: accepted[0] || '',
+  }
+}
+
+export function buildCorrectedVersion(block = {}, correction) {
+  if (block.correctVersion) return block.correctVersion
+  const parts = splitStatementAtTarget(block.statement, block.errorTarget)
+  if (!parts) return block.statement || ''
+  return `${parts.before}${correction || ''}${parts.after}`
+}
+
 // Phase one only judges whether the learner located and explained the error.
-// Keep this separate from the final three-dimension heading so phase two can be
-// added without making a missing repair look like a failed rewrite.
 export function deriveDiagnosisHeading({ selectionCorrect, explanationPrecise, missHeading } = {}) {
   if (selectionCorrect && explanationPrecise) {
     return 'You spotted the mistake and explained it well.'
@@ -205,9 +263,13 @@ export function deriveDiagnosisHeading({ selectionCorrect, explanationPrecise, m
   return missHeading || 'Not quite — look again at what the statement claims.'
 }
 
-// Map the three independent outcomes to a specific, calm heading. Every
-// combination resolves to exactly one line; the "completely incorrect" case
-// can be overridden per-block via `missHeading`.
+export function deriveCorrectionHeading({ repairAccurate, repairMissHeading } = {}) {
+  if (repairAccurate) return 'You fixed the answer.'
+  return repairMissHeading || 'Not quite — here is the precise correction.'
+}
+
+// Retained for compatibility with any external callers using the original
+// combined outcome helper.
 export function deriveFeedbackHeading({ selectionCorrect, explanationPrecise, repairAccurate, missHeading } = {}) {
   if (selectionCorrect && explanationPrecise && repairAccurate) {
     return 'You found it and fixed it.'
