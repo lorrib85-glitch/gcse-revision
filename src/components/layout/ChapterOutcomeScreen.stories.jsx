@@ -50,11 +50,11 @@ export const BiologyOutcome = {
 
     await waitFor(
       () => expect(canvas.getAllByRole('listitem')).toHaveLength(3),
-      { timeout: 2500 },
+      { timeout: 3000 },
     )
     await waitFor(
       () => expect(canvas.getByRole('button', { name: /start chapter/i })).toBeVisible(),
-      { timeout: 2500 },
+      { timeout: 3000 },
     )
 
     await expect(canvas.getByRole('heading', {
@@ -65,16 +65,24 @@ export const BiologyOutcome = {
     const backdrop = canvasElement.querySelector('[data-chapter-outcome-backdrop]')
     const scrim = canvasElement.querySelector('[data-chapter-outcome-scrim]')
     const markers = canvasElement.querySelectorAll('[data-chapter-outcome-marker]')
+    const rows = canvasElement.querySelectorAll('[data-chapter-outcome-row]')
 
     await expect(backdrop).toHaveAttribute(
       'data-background-position',
       SUBJECT_BACKDROP_POSITIONS.Biology,
     )
+    expect(backdrop.style.opacity).toBe('0.5')
     expect(scrim.getBoundingClientRect().width).toBeLessThan(window.innerWidth)
     expect(markers).toHaveLength(3)
+    expect(rows).toHaveLength(3)
     markers.forEach(marker => {
       expect(marker.style.filter).toBe('')
       expect(marker.style.transform).toBe('')
+      expect(marker.style.animation).toBe('')
+    })
+    rows.forEach(row => {
+      expect(row.style.animation).toContain('cos-row')
+      expect(row.style.animation).toContain('420ms')
     })
   },
 }
@@ -107,11 +115,11 @@ export const ShortViewportWithLongContent = {
 
     await waitFor(
       () => expect(canvas.getAllByRole('listitem')).toHaveLength(5),
-      { timeout: 3500 },
+      { timeout: 4000 },
     )
     await waitFor(
       () => expect(canvas.getByRole('button', { name: /start chapter/i })).toBeVisible(),
-      { timeout: 3500 },
+      { timeout: 4000 },
     )
 
     const scroller = canvasElement.querySelector('[data-chapter-outcome-scroll]')
@@ -137,7 +145,7 @@ export const ReducedMotion = {
     expect(rows).toHaveLength(3)
     expect(markers).toHaveLength(3)
     rows.forEach(row => expect(row.style.animation).toBe('none'))
-    markers.forEach(marker => expect(marker.style.animation).toBe('none'))
+    markers.forEach(marker => expect(marker.style.animation).toBe(''))
     expect(cta.style.animation).toBe('none')
   },
 }
