@@ -78,6 +78,14 @@ describe('VisualNarrativeScreen contract', () => {
     expect(src).toMatch(/if \(isFacts\)[\s\S]*completeBeat\(\)\n\s*}/)
   })
 
+  it('keeps fact-only beats visible instead of rendering a blank conclusion', () => {
+    const src = read(componentPath)
+    expect(src).toContain('const hasConclusion = Boolean(beat.conclusion)')
+    expect(src).toContain('if (hasConclusion) setShowConclusion(true)')
+    expect(src).toContain('Fact-only beats keep')
+    expect(src).toContain('const factInteractionActive = isFacts && !showConclusion && !showCTA')
+  })
+
   it('guards against empty beat arrays', () => {
     const src = read(componentPath)
     expect(src).toContain('if (beats.length === 0) return null')
