@@ -40,6 +40,7 @@ export default function VisualNarrativeScreen({
   const isFacts = Array.isArray(beat.facts)
   const totalFacts = isFacts ? beat.facts.length : 0
   const isLastBeat = beatIdx === beats.length - 1
+  const hasConclusion = Boolean(beat.conclusion)
   const { beat: imageBeat, index: imageBeatIndex } = findActiveImage(beats, beatIdx)
   const imageMode = imageBeat.imageMode || (imageBeatIndex <= 0 ? 'full' : 'upper')
   const imageBottom = imageMode === 'full' ? 0 : (imageBeat.imageBottom ?? '42%')
@@ -99,12 +100,12 @@ export default function VisualNarrativeScreen({
     advanceBeat()
   }
 
-  function revealConclusion() {
+  function revealCompletion() {
     schedule(() => {
-      setShowConclusion(true)
+      if (hasConclusion) setShowConclusion(true)
       schedule(
         () => setShowCTA(true),
-        GENERAL.cinematic.motion.ctaDelayMs,
+        hasConclusion ? GENERAL.cinematic.motion.ctaDelayMs : 0,
       )
     }, GENERAL.cinematic.motion.conclusionDelayMs)
   }
@@ -118,12 +119,12 @@ export default function VisualNarrativeScreen({
         lockAndUnlock()
         const next = factCount + 1
         setFactCount(next)
-        if (next === totalFacts) revealConclusion()
+        if (next === totalFacts) revealCompletion()
         return
       }
 
-      if (totalFacts === 0 && !showConclusion) {
-        setShowConclusion(true)
+      if (totalFacts === 0 && !showConclusion && !showCTA) {
+        if (hasConclusion) setShowConclusion(true)
         setShowCTA(true)
         return
       }
@@ -137,15 +138,34 @@ export default function VisualNarrativeScreen({
 
   if (beats.length === 0) return null
 
-  const showHint = hintVisible && !showConclusion
+  const showHint = hintVisible && !showConclusion && !showCTA
   const showCinematicContinue = showHint && !isFacts
-  const factInteractionActive = isFacts && !showConclusion
+  const factInteractionActive = isFacts && !showConclusion && !showCTA
   const factInteractionLabel = totalFacts > 0
     ? `Reveal fact ${Math.min(factCount + 1, totalFacts)} of ${totalFacts}`
     : 'Reveal conclusion'
   const liveMessage = showConclusion
     ? (beat.conclusion || '')
     : (factCount > 0 ? beat.facts[factCount - 1] : '')
+
+  const sourceNote = beat.source && (
+    <div style={{
+      ...TYPE.caption,
+      marginTop: SPACING.compact,
+      color: GENERAL.cinematic.sourceText,
+      animation: `vnFadeIn ${GENERAL.cinematic.motion.standard} ease ${GENERAL.cinematic.motion.fast} both`,
+      maxWidth: 280,
+    }}>
+      <span style={{
+        ...TYPE.metadata,
+        display: 'inline-block',
+        marginRight: SPACING.micro,
+      }}>
+        Source
+      </span>
+      {beat.source}
+    </div>
+  )
 
   return (
     <>
@@ -310,7 +330,8 @@ export default function VisualNarrativeScreen({
             </div>
           )}
 
-          {/* Sequential facts, then a conclusion that replaces them. */}
+          {/* Sequential facts, then an optional conclusion. Fact-only beats keep
+              their evidence visible while Continue appears. */}
           {isFacts && (
             <div style={{
               position: 'absolute',
@@ -326,7 +347,7 @@ export default function VisualNarrativeScreen({
                   flexDirection: 'column',
                   gap: SPACING.micro,
                 }}>
-                  {factCount === 0 && (
+                  {factCount === 0 && !showCTA && (
                     <div style={{
                       ...TYPE.label,
                       color: GENERAL.cinematic.textSubtle,
@@ -348,6 +369,19 @@ export default function VisualNarrativeScreen({
                       {fact}
                     </p>
                   ))}
+                  {showCTA && (
+                    <div style={{ marginTop: SPACING.standard, pointerEvents: 'auto' }}>
+                      <ContinueCTA
+                        onClick={event => {
+                          event.stopPropagation()
+                          completeBeat()
+                        }}
+                        accent={accent}
+                        style={{ animation: `vnFadeIn ${GENERAL.cinematic.motion.fast} ease both` }}
+                      />
+                      {sourceNote}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <>
@@ -371,24 +405,7 @@ export default function VisualNarrativeScreen({
                         accent={accent}
                         style={{ animation: `vnFadeIn ${GENERAL.cinematic.motion.fast} ease both` }}
                       />
-                      {beat.source && (
-                        <div style={{
-                          ...TYPE.caption,
-                          marginTop: SPACING.compact,
-                          color: GENERAL.cinematic.sourceText,
-                          animation: `vnFadeIn ${GENERAL.cinematic.motion.standard} ease ${GENERAL.cinematic.motion.fast} both`,
-                          maxWidth: 280,
-                        }}>
-                          <span style={{
-                            ...TYPE.metadata,
-                            display: 'inline-block',
-                            marginRight: SPACING.micro,
-                          }}>
-                            Source
-                          </span>
-                          {beat.source}
-                        </div>
-                      )}
+                      {sourceNote}
                     </div>
                   )}
                 </>
