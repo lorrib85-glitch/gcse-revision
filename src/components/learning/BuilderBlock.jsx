@@ -204,15 +204,13 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         : selected
           ? theme.accent
           : piece
-            ? GENERAL.line.strong
-            : GENERAL.line.medium
+            ? GENERAL.line.medium
+            : GENERAL.line.strong
     const background = showCorrect
       ? GENERAL.surfaceTint
-      : showIncorrect
-        ? GENERAL.backgroundSunken
-        : selected
-          ? theme.glowStrong
-          : GENERAL.backgroundSunken
+      : GENERAL.backgroundSunken
+    const borderStyle = selected || piece ? 'solid' : 'dashed'
+    const slotTextColor = piece ? GENERAL.feedbackText : GENERAL.slate
 
     return (
       <button
@@ -230,15 +228,16 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
           minHeight: BUTTONS.compact.height,
           padding: `${SPACING.micro}px`,
           background,
-          border: `${selected ? COMPONENT_SIZE.focusRing : COMPONENT_SIZE.hairline}px ${piece ? 'solid' : 'dashed'} ${borderColor}`,
+          border: `${selected ? COMPONENT_SIZE.focusRing : COMPONENT_SIZE.hairline}px ${borderStyle} ${borderColor}`,
           borderRadius: RADII.small,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           cursor: locked ? 'default' : 'pointer',
+          boxShadow: selected ? `0 0 0 ${COMPONENT_SIZE.focusOffset}px ${theme.glowStrong}` : 'none',
           ...TYPE.titleMedium,
-          color: piece ? GENERAL.feedbackText : GENERAL.neutral[300],
-          transition: `background-color ${transition}, border-color ${transition}, color ${transition}, transform ${transition}`,
+          color: slotTextColor,
+          transition: `background-color ${transition}, border-color ${transition}, box-shadow ${transition}, color ${transition}, transform ${transition}`,
         }}
       >
         <span key={piece?.id ?? 'empty'} className={piece ? pieceClass : undefined}>
@@ -379,8 +378,8 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
       : `Space ${selectedSlot + 1} is selected. Choose a word from the bank.`
 
   const atmosphereBackground = contextImage
-    ? `linear-gradient(180deg, rgba(${theme.accentRgb},0.06) 0%, ${GENERAL.backgroundSurface} 100%), url(${contextImage}) center / cover`
-    : `radial-gradient(circle at 12% 0%, rgba(${theme.accentRgb},0.14), transparent 48%), radial-gradient(circle at 88% 8%, rgba(${theme.accentRgb},0.07), transparent 42%)`
+    ? `linear-gradient(180deg, ${theme.overlay} 0%, ${GENERAL.backgroundSurface} 100%), url(${contextImage}) center / cover`
+    : `radial-gradient(circle at 18% -8%, ${theme.glow} 0%, transparent 58%), linear-gradient(180deg, ${theme.backgroundSecondary} 0%, transparent 100%)`
 
   return (
     <div style={{ margin: `${SPACING.compact}px 0` }}>
@@ -428,7 +427,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
           overflow: 'hidden',
           isolation: 'isolate',
           background: GENERAL.backgroundSurface,
-          border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.soft}`,
+          border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.faint}`,
           borderRadius: RADII.large,
         }}
       >
@@ -437,19 +436,19 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
           style={{
             position: 'absolute',
             inset: 0,
-            height: 168,
+            height: SPACING.cinematic * 2,
             zIndex: 0,
             pointerEvents: 'none',
             background: atmosphereBackground,
             opacity: contextImage ? 0.34 : 1,
-            filter: contextImage ? 'saturate(.7) contrast(.9)' : 'none',
+            filter: contextImage ? 'saturate(.8) contrast(.95)' : 'none',
             maskImage: 'linear-gradient(180deg, black 0%, transparent 100%)',
             WebkitMaskImage: 'linear-gradient(180deg, black 0%, transparent 100%)',
           }}
         />
 
         <div style={{ position: 'relative', zIndex: 1, padding: SPACING.compact }}>
-          <header style={{ marginBottom: SPACING.standard }}>
+          <header style={{ marginBottom: SPACING.compact }}>
             <div style={{ ...TYPE.displayCard, color: GENERAL.softWhite, marginBottom: SPACING.micro }}>
               {block.label || 'Build the equation'}
             </div>
@@ -481,7 +480,15 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
             </>
           ) : (
             <>
-              <div style={{ marginBottom: SPACING.standard }}>
+              <div
+                style={{
+                  marginBottom: SPACING.standard,
+                  padding: SPACING.compact,
+                  background: GENERAL.backgroundSunken,
+                  border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.faint}`,
+                  borderRadius: RADII.medium,
+                }}
+              >
                 {hasReactionGroups ? (
                   <div style={{ display: 'grid', gap: SPACING.compact }}>
                     {renderGroup(reactantIndexes, groupLabels[0])}
@@ -489,8 +496,8 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                       aria-label="becomes"
                       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: SPACING.micro }}
                     >
-                      <span aria-hidden="true" style={{ ...TYPE.titleLarge, color: theme.accent }}>→</span>
-                      <span style={{ ...TYPE.caption, color: GENERAL.slate }}>becomes</span>
+                      <span aria-hidden="true" style={{ ...TYPE.titleLarge, color: theme.accentSecondary }}>→</span>
+                      <span style={{ ...TYPE.label, color: GENERAL.neutral[200] }}>becomes</span>
                     </div>
                     {renderGroup(productIndexes, groupLabels[1])}
                   </div>
@@ -509,10 +516,10 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                       className={focusClass}
                       onClick={() => place(piece)}
                       style={{
-                        minHeight: BUTTONS.compact.height,
-                        padding: `0 ${BUTTONS.compact.paddingX}px`,
-                        background: GENERAL.backgroundSunken,
-                        border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.medium}`,
+                        minHeight: COMPONENT_SIZE.touchTarget,
+                        padding: `0 ${SPACING.compact}px`,
+                        background: GENERAL.surfaceTint,
+                        border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.soft}`,
                         borderRadius: RADII.small,
                         ...TYPE.button,
                         color: GENERAL.feedbackText,
@@ -532,7 +539,6 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
 
               <div
                 style={{
-                  minHeight: 144,
                   marginTop: SPACING.standard,
                   paddingTop: SPACING.compact,
                   borderTop: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.faint}`,
@@ -540,6 +546,9 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
               >
                 {canEdit && (
                   <>
+                    <p style={{ ...TYPE.caption, color: GENERAL.slate, margin: `0 0 ${SPACING.micro}px`, textAlign: 'center' }}>
+                      {placementHelp}
+                    </p>
                     <button
                       type="button"
                       className={focusClass}
@@ -547,25 +556,21 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                       disabled={!allFilled}
                       style={{
                         width: '100%',
-                        height: BUTTONS.continue.height,
-                        padding: `0 ${BUTTONS.continue.paddingX}px`,
-                        background: allFilled ? theme.accent : GENERAL.backgroundSunken,
-                        border: `${COMPONENT_SIZE.hairline}px solid ${allFilled ? theme.accent : GENERAL.line.medium}`,
-                        borderRadius: BUTTONS.continue.borderRadius,
-                        fontFamily: BUTTONS.continue.fontFamily,
-                        fontSize: BUTTONS.continue.fontSize,
-                        fontWeight: BUTTONS.continue.fontWeight,
-                        color: allFilled ? GENERAL.textOnAccent : GENERAL.neutral[300],
+                        height: BUTTONS.secondary.height,
+                        padding: `0 ${BUTTONS.secondary.paddingX}px`,
+                        background: allFilled ? theme.accent : GENERAL.surfaceTint,
+                        border: `${COMPONENT_SIZE.hairline}px solid ${allFilled ? theme.accent : GENERAL.line.soft}`,
+                        borderRadius: BUTTONS.secondary.borderRadius,
+                        fontFamily: BUTTONS.secondary.fontFamily,
+                        fontSize: BUTTONS.secondary.fontSize,
+                        fontWeight: BUTTONS.secondary.fontWeight,
+                        color: allFilled ? GENERAL.textOnAccent : GENERAL.neutral[200],
                         cursor: allFilled ? 'pointer' : 'default',
-                        opacity: allFilled ? 1 : 0.72,
-                        transition: `background-color ${BUTTONS.continue.transition}, border-color ${BUTTONS.continue.transition}, color ${BUTTONS.continue.transition}`,
+                        transition: `background-color ${BUTTONS.secondary.transition}, border-color ${BUTTONS.secondary.transition}, color ${BUTTONS.secondary.transition}`,
                       }}
                     >
                       {allFilled ? 'Check answer' : 'Complete all spaces'}
                     </button>
-                    <p style={{ ...TYPE.caption, color: GENERAL.slate, margin: `${SPACING.micro}px 0 0`, textAlign: 'center' }}>
-                      {placementHelp}
-                    </p>
                   </>
                 )}
 
