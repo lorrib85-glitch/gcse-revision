@@ -21,6 +21,7 @@ const FIGURE_PRESETS = {
     portraitHeight: `calc(52vh - ${SPACING.compact}px)`,
     portraitPosition: 'center 18%',
     portraitScrim: 'strongBottom',
+    portraitFilter: 'brightness(1.07) saturate(1.02)',
   },
   hippocrates: {
     cardVariant: 'parchment',
@@ -28,6 +29,7 @@ const FIGURE_PRESETS = {
     portraitHeight: `calc(52vh - ${SPACING.compact}px)`,
     portraitPosition: 'center 18%',
     portraitScrim: 'strongBottom',
+    portraitFilter: 'brightness(1.07) saturate(1.02)',
   },
   galen: {
     cardVariant: 'parchment',
@@ -39,7 +41,7 @@ const FIGURE_PRESETS = {
 
 const PORTRAIT_SCRIMS = {
   standard: 'linear-gradient(to bottom, rgba(8,9,13,0.04) 0%, rgba(8,9,13,0.08) 45%, rgba(8,9,13,0.42) 76%, rgba(8,9,13,0.88) 100%)',
-  strongBottom: 'linear-gradient(to bottom, rgba(8,9,13,0.03) 0%, rgba(8,9,13,0.06) 45%, rgba(8,9,13,0.34) 76%, rgba(8,9,13,0.78) 100%)',
+  strongBottom: 'linear-gradient(to bottom, rgba(8,9,13,0.02) 0%, rgba(8,9,13,0.04) 45%, rgba(8,9,13,0.24) 76%, rgba(8,9,13,0.56) 100%)',
   evidenceRight: `linear-gradient(to bottom, rgba(8,9,13,0.03) 0%, rgba(8,9,13,0.06) 35%, rgba(8,9,13,0.38) 68%, rgba(8,9,13,0.86) 100%),
     linear-gradient(to right, rgba(8,9,13,0.08) 0%, rgba(8,9,13,0.00) 42%, rgba(8,9,13,0.00) 100%)`,
 }
@@ -120,6 +122,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
 
   const portraitHeight = block.portraitHeight || preset.portraitHeight || '44vh'
   const portraitPosition = block.portraitPosition || preset.portraitPosition || 'center top'
+  const portraitFilter = block.portraitFilter || preset.portraitFilter || 'none'
   const requestedScrim = block.portraitScrim || preset.portraitScrim || 'standard'
   const portraitScrim = PORTRAIT_SCRIMS[requestedScrim] || requestedScrim
 
@@ -227,6 +230,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             objectFit: 'cover',
             objectPosition: portraitPosition,
             display: 'block',
+            filter: portraitFilter,
           }}
         />
 
