@@ -1,17 +1,22 @@
 import { TYPE } from '../../constants/typography.js'
+
 // ── CinematicContinueCTA v1 — LOCKED COMPONENT ────────────────────────────
 // The only Cinematic Reveal CTA implementation allowed anywhere in the app —
 // see docs/system/BUTTON_RADII_SYSTEM.md "Progression CTA System".
-// Plain centred progression text, fixed to the bottom of a full-screen cinematic
-// moment. `style` carries layout overrides only (position, animation, zIndex) —
-// never new typography, spacing or colour logic.
+// `layout="fixed"` anchors progression to a full-screen cinematic moment.
+// `layout="inline"` keeps the same governed treatment in normal content flow.
+// `style` remains for layout-only overrides — never new typography or colour logic.
 export default function CinematicContinueCTA({
   onClick,
   accent,
   label = 'Continue',
   animation = 'crm-fade 700ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite',
+  layout = 'fixed',
+  align = 'center',
   style,
 }) {
+  const isInline = layout === 'inline'
+
   return (
     <>
       <style>{`
@@ -29,24 +34,39 @@ export default function CinematicContinueCTA({
         }
       `}</style>
       <button
+        data-cinematic-cta-layout={layout}
         onClick={e => { e.stopPropagation(); onClick?.() }}
         style={{
-          position: 'fixed',
-          left: 32, right: 32,
-          bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))',
+          ...(isInline
+            ? {
+                position: 'static',
+                width: '100%',
+              }
+            : {
+                position: 'fixed',
+                left: 32,
+                right: 32,
+                bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))',
+              }),
           zIndex: 1300,
           pointerEvents: 'auto',
           minHeight: 44,
-          background: 'none', border: 'none', padding: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: align === 'start' ? 'flex-start' : 'center',
           cursor: 'pointer',
           animation,
           ...style,
-        }}>
+        }}
+      >
         <span style={{
           ...TYPE.eyebrow,
           fontSize: 13,
-          letterSpacing: '0.30em', textTransform: 'uppercase',
+          letterSpacing: '0.30em',
+          textTransform: 'uppercase',
           color: accent,
           textShadow: '0 1px 16px rgba(0,0,0,0.6)',
         }}>{label}&nbsp;&nbsp;→</span>
