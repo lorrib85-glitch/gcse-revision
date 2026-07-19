@@ -22,6 +22,13 @@ const FIGURE_PRESETS = {
     portraitPosition: 'center 18%',
     portraitScrim: 'strongBottom',
   },
+  hippocrates: {
+    cardVariant: 'parchment',
+    cardBackground: DEFAULT_PARCHMENT,
+    portraitHeight: `calc(60vh - ${SPACING.compact}px)`,
+    portraitPosition: 'center 18%',
+    portraitScrim: 'strongBottom',
+  },
   galen: {
     cardVariant: 'parchment',
     cardBackground: DEFAULT_PARCHMENT,
@@ -55,7 +62,7 @@ function FigureIcon({ icon, size = MEDALLION_ICON_SIZE }) {
   )
 }
 
-function getCardTreatment({ isParchment, parchmentSrc, accent, rgb }) {
+function getCardTreatment({ isParchment, parchmentSrc, accent, rgb, theme }) {
   if (isParchment) {
     return {
       title: '#4A2508',
@@ -73,16 +80,16 @@ function getCardTreatment({ isParchment, parchmentSrc, accent, rgb }) {
 
   return {
     title: accent,
-    body: 'rgba(245,238,225,0.82)',
-    quote: 'rgba(245,220,175,0.75)',
-    divider: `rgba(${rgb},0.22)`,
-    medalBg: `rgba(${rgb},0.14)`,
-    medalBorder: `rgba(${rgb},0.38)`,
-    border: `1px solid rgba(${rgb},0.32)`,
-    shadow: GENERAL.shadow.overlay,
-    background: `radial-gradient(ellipse at 50% 0%, rgba(${rgb},0.07) 0%, transparent 65%),
-      linear-gradient(160deg, rgba(${rgb},0.05) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.18) 100%),
-      rgba(12,9,5,0.88)`,
+    body: GENERAL.feedbackText,
+    quote: 'rgba(245,247,255,0.74)',
+    divider: `rgba(${rgb},0.30)`,
+    medalBg: `rgba(${rgb},0.18)`,
+    medalBorder: `rgba(${rgb},0.48)`,
+    border: `1px solid rgba(${rgb},0.46)`,
+    shadow: `inset 0 1px 0 rgba(${rgb},0.14), ${GENERAL.shadow.overlay}`,
+    background: `radial-gradient(ellipse at 50% 0%, rgba(${rgb},0.12) 0%, transparent 66%),
+      linear-gradient(160deg, rgba(${rgb},0.08) 0%, transparent 58%, rgba(0,0,0,0.16) 100%),
+      ${theme.backgroundSecondary || GENERAL.backgroundSurface}`,
     vignette: null,
   }
 }
@@ -102,13 +109,14 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
   const hasSections = sections.length > 0
   const isLast = hasSections && sectionIdx === sections.length - 1
 
-  const preset = FIGURE_PRESETS[block.profilePreset || block.tag] || {}
+  const presetKey = block.profilePreset || block.tag || block.name?.trim().toLowerCase()
+  const preset = FIGURE_PRESETS[presetKey] || {}
   const cardVariant = block.cardVariant
     || preset.cardVariant
     || (block.cardBackground ? 'parchment' : 'dark')
   const parchmentSrc = block.cardBackground || preset.cardBackground
   const isParchment = cardVariant === 'parchment' && Boolean(parchmentSrc)
-  const card = getCardTreatment({ isParchment, parchmentSrc, accent, rgb })
+  const card = getCardTreatment({ isParchment, parchmentSrc, accent, rgb, theme })
 
   const portraitHeight = block.portraitHeight || preset.portraitHeight || '44vh'
   const portraitPosition = block.portraitPosition || preset.portraitPosition || 'center top'
@@ -234,7 +242,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           bottom: 0,
           left: 0,
           right: 0,
-          padding: `0 ${SPACING.standard}px ${SPACING.standard}px`,
+          padding: `0 ${SPACING.standard}px ${SPACING.micro}px`,
         }}>
           <div style={{
             ...TYPE.displayHero,
@@ -379,15 +387,14 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                 </div>
 
                 {lines.map((line, index) => {
-                  const isAutoTakeaway = index === lines.length - 1 && !section.takeaway
                   const isLead = index === 0
 
                   return (
                     <p key={index} style={{
                       ...TYPE.bodySmall,
-                      fontWeight: isAutoTakeaway ? 600 : isLead ? 500 : TYPE.bodySmall.fontWeight,
+                      fontWeight: isLead ? 500 : TYPE.bodySmall.fontWeight,
                       lineHeight: isLead ? 1.55 : TYPE.bodySmall.lineHeight,
-                      color: isAutoTakeaway ? card.title : card.body,
+                      color: card.body,
                       margin: index < lines.length - 1 ? `0 0 ${SPACING.micro / 2}px` : 0,
                     }}>
                       {line}
@@ -400,14 +407,12 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             ) : (
               <>
                 {lines.map((line, index) => {
-                  const isAutoTakeaway = index === lines.length - 1 && !section.takeaway
                   const textToken = index === 0 ? TYPE.bodyStrong : TYPE.bodySmall
 
                   return (
                     <p key={index} style={{
                       ...textToken,
-                      fontWeight: isAutoTakeaway ? 600 : textToken.fontWeight,
-                      color: isAutoTakeaway ? card.title : card.body,
+                      color: card.body,
                       margin: index < lines.length - 1 ? `0 0 ${SPACING.micro / 2}px` : 0,
                     }}>
                       {line}
