@@ -31,7 +31,7 @@ function normalisePieces(pieces = []) {
 }
 
 function answerLabel(answer) {
-  if (typeof answer === 'string') return answer
+  if (typeof answer === 'string' || typeof answer === 'number') return String(answer)
   return answer?.label ?? answer?.text ?? ''
 }
 
@@ -44,6 +44,11 @@ function range(start, end) {
   return Array.from({ length: Math.max(0, end - start) }, (_, index) => start + index)
 }
 
+function templateSlotIndex(token) {
+  const match = String(token).match(/^\{\{(\d+)\}\}$/)
+  return match ? Number(match[1]) : null
+}
+
 // ─── BuilderBlock — equation/concept builder ──────────────────────────────────
 // Select a destination, place a piece, repair only the incorrect parts, then
 // resolve the interaction into a clean final equation and governed progression.
@@ -54,13 +59,23 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
   const operators = block.operators ?? []
   const arrowIndex = operators.findIndex(isReactionArrow)
   const hasReactionGroups = arrowIndex >= 0 && arrowIndex < slotCount - 1
+  const requestedLayout = block.layout ?? block.variant
+  const layout = requestedLayout ?? (hasReactionGroups ? 'reaction' : 'equation')
+  const usesReactionLayout = layout === 'reaction'
+  const isQuoteLayout = layout === 'quote' || layout === 'sentence'
+  const isMathLayout = layout === 'equation' || layout === 'calculation'
+  const usesTemplate = Boolean(block.template) && (isQuoteLayout || isMathLayout)
   const reactantIndexes = hasReactionGroups ? range(0, arrowIndex + 1) : []
   const productIndexes = hasReactionGroups ? range(arrowIndex + 1, slotCount) : []
   const groupLabels = block.groupLabels ?? ['Reactants', 'Products']
   const instruction = block.instruction ?? (
-    hasReactionGroups
-      ? `Place each substance under ${groupLabels[0]} or ${groupLabels[1]}.`
-      : 'Tap a space, then choose the word or phrase that belongs there.'
+    isQuoteLayout
+      ? 'Choose the missing words or phrases to restore the quotation.'
+      : isMathLayout && usesTemplate
+        ? 'Choose the missing value for each gap in the calculation.'
+        : usesReactionLayout
+          ? `Place each substance under ${groupLabels[0]} or ${groupLabels[1]}.`
+          : 'Tap a space, then choose the word or phrase that belongs there.'
   )
   const contextImage = block.contextImage ?? block.backgroundImage ?? null
   const blockKey = `${block.label ?? ''}:${(block.answer ?? []).map(answerLabel).join('|')}`
@@ -187,17 +202,18 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
   }
 
   function slotGroupName(index) {
+    if (isQuoteLayout) return 'Quotation'
+    if (isMathLayout) return 'Calculation'
     if (!hasReactionGroups) return 'Equation'
     return index <= arrowIndex ? groupLabels[0] : groupLabels[1]
   }
 
-  function renderSlot(slotIndex) {
+  function getSlotAppearance(slotIndex) {
     const piece = slots[slotIndex]
     const showCorrect = (isReviewing || isCorrecting) && slotCorrectness[slotIndex]
     const showIncorrect = isReviewing && piece && !slotCorrectness[slotIndex]
     const selected = canEdit && selectedSlot === slotIndex && !isSlotLocked(slotIndex)
     const locked = isSlotLocked(slotIndex)
-
     const borderColor = showCorrect
       ? GENERAL.feedbackCorrect
       : showIncorrect
@@ -207,11 +223,23 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
           : piece
             ? GENERAL.line.medium
             : GENERAL.line.strong
-    const background = showCorrect
-      ? GENERAL.surfaceTint
-      : GENERAL.backgroundSunken
-    const borderStyle = selected || piece ? 'solid' : 'dashed'
-    const slotTextColor = piece ? GENERAL.feedbackText : GENERAL.slate
+
+    return {
+      piece,
+      showCorrect,
+      showIncorrect,
+      selected,
+      locked,
+      borderColor,
+      background: showCorrect ? GENERAL.surfaceTint : GENERAL.backgroundSunken,
+      borderStyle: selected || piece ? 'solid' : 'dashed',
+      color: piece ? GENERAL.feedbackText : GENERAL.slate,
+    }
+  }
+
+  function renderSlot(slotIndex, { inline = false, quote = false, maths = false } = {}) {
+    const appearance = getSlotAppearance(slotIndex)
+    const { piece, showIncorrect, selected, locked, borderColor, background, borderStyle, color } = appearance
 
     return (
       <button
@@ -224,20 +252,25 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         aria-invalid={showIncorrect || undefined}
         aria-label={`${slotGroupName(slotIndex)} space ${slotIndex + 1}: ${piece?.label ?? 'empty'}${selected ? ', selected' : ''}${locked ? ', locked' : ''}`}
         style={{
-          width: '100%',
-          minWidth: 0,
-          minHeight: BUTTONS.compact.height,
-          padding: `${SPACING.micro}px`,
+          width: inline ? 'auto' : '100%',
+          minWidth: inline ? (maths ? 64 : 92) : 0,
+          minHeight: inline ? COMPONENT_SIZE.touchTarget : BUTTONS.compact.height,
+          padding: inline ? `${SPACING.micro}px ${SPACING.compact}px` : `${SPACING.micro}px`,
           background,
           border: `${selected ? COMPONENT_SIZE.focusRing : COMPONENT_SIZE.hairline}px ${borderStyle} ${borderColor}`,
           borderRadius: RADII.small,
-          display: 'flex',
+          display: inline ? 'inline-flex' : 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          verticalAlign: inline ? 'middle' : undefined,
+          margin: inline ? '3px 4px' : undefined,
           cursor: locked ? 'default' : 'pointer',
           boxShadow: selected ? `0 0 0 ${COMPONENT_SIZE.focusOffset}px ${theme.glowStrong}` : 'none',
           ...TYPE.titleMedium,
-          color: slotTextColor,
+          fontFamily: quote ? "'IBM Plex Serif', serif" : TYPE.titleMedium.fontFamily,
+          fontSize: quote ? '1.02em' : maths ? '1em' : TYPE.titleMedium.fontSize,
+          fontVariantNumeric: maths ? 'tabular-nums' : undefined,
+          color,
           transition: `background-color ${transition}, border-color ${transition}, box-shadow ${transition}, color ${transition}, transform ${transition}`,
         }}
       >
@@ -303,6 +336,55 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
     )
   }
 
+  function renderTemplateContent(resolved = false) {
+    return String(block.template ?? '')
+      .split(/(\{\{\d+\}\})/g)
+      .filter(Boolean)
+      .map((token, index) => {
+        const slotIndex = templateSlotIndex(token)
+        if (slotIndex === null) return <span key={`text-${index}`}>{token}</span>
+        if (resolved) {
+          return (
+            <span key={`answer-${slotIndex}`} style={{ color: GENERAL.feedbackText, fontWeight: isQuoteLayout ? 600 : 650 }}>
+              {answerLabel(block.answer?.[slotIndex])}
+            </span>
+          )
+        }
+        return (
+          <span key={`slot-${slotIndex}`} style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+            {renderSlot(slotIndex, { inline: true, quote: isQuoteLayout, maths: isMathLayout })}
+          </span>
+        )
+      })
+  }
+
+  function renderTemplateWorkspace(resolved = false) {
+    const TemplateElement = isQuoteLayout ? 'blockquote' : 'div'
+    const quotePaper = theme.palette?.parchment ?? theme.accentSecondary ?? GENERAL.feedbackText
+
+    return (
+      <TemplateElement
+        style={{
+          margin: 0,
+          padding: isQuoteLayout ? `${SPACING.standard}px ${SPACING.compact}px` : SPACING.standard,
+          background: isQuoteLayout ? theme.backgroundSecondary : 'transparent',
+          borderLeft: isQuoteLayout ? `${COMPONENT_SIZE.accentRail}px solid ${theme.accent}` : undefined,
+          borderRadius: isQuoteLayout ? RADII.small : 0,
+          fontFamily: isQuoteLayout ? "'IBM Plex Serif', serif" : "'Sora', sans-serif",
+          fontSize: isQuoteLayout ? 'clamp(19px, 5.3vw, 24px)' : 'clamp(22px, 7vw, 30px)',
+          lineHeight: isQuoteLayout ? 1.65 : 1.35,
+          fontWeight: isQuoteLayout ? 400 : 600,
+          fontVariantNumeric: isMathLayout ? 'tabular-nums' : undefined,
+          textAlign: isMathLayout ? 'center' : 'left',
+          whiteSpace: 'pre-wrap',
+          color: isQuoteLayout ? quotePaper : GENERAL.feedbackText,
+        }}
+      >
+        {renderTemplateContent(resolved)}
+      </TemplateElement>
+    )
+  }
+
   function renderResolvedGroup(indexes, label) {
     return (
       <section aria-label={label} style={{ minWidth: 0 }}>
@@ -328,9 +410,29 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
   }
 
   function renderResolvedEquation() {
-    const spokenEquation = (block.answer ?? [])
-      .map((answer, index) => `${answerLabel(answer)}${index < slotCount - 1 ? ` ${operators[index] || '+'} ` : ''}`)
-      .join('')
+    const spokenEquation = usesTemplate
+      ? String(block.template).replace(/\{\{(\d+)\}\}/g, (_, index) => answerLabel(block.answer?.[Number(index)]))
+      : (block.answer ?? [])
+        .map((answer, index) => `${answerLabel(answer)}${index < slotCount - 1 ? ` ${operators[index] || '+'} ` : ''}`)
+        .join('')
+
+    if (usesTemplate) {
+      return (
+        <div
+          className={resolveClass}
+          role="status"
+          aria-label={`Completed ${isQuoteLayout ? 'quotation' : 'calculation'}: ${spokenEquation}`}
+          style={{
+            background: GENERAL.backgroundSunken,
+            border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.soft}`,
+            borderRadius: RADII.medium,
+            padding: SPACING.compact,
+          }}
+        >
+          {renderTemplateWorkspace(true)}
+        </div>
+      )
+    }
 
     return (
       <div
@@ -344,7 +446,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
           padding: SPACING.standard,
         }}
       >
-        {hasReactionGroups ? (
+        {usesReactionLayout ? (
           <div style={{ display: 'grid', gap: SPACING.compact }}>
             {renderResolvedGroup(reactantIndexes, groupLabels[0])}
             <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
@@ -375,8 +477,20 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
   const placementHelp = allFilled
     ? 'Everything is placed. Check your answer when ready.'
     : selectedSlot === null
-      ? 'Choose a space, then choose a word.'
-      : `Space ${selectedSlot + 1} is selected. Choose a word from the bank.`
+      ? 'Choose a space, then choose an option.'
+      : `Space ${selectedSlot + 1} is selected. Choose an option from the bank.`
+  const completedInstruction = block.completedInstruction ?? (
+    isQuoteLayout
+      ? 'You restored the quotation.'
+      : isMathLayout
+        ? 'You completed the calculation.'
+        : 'You built the full relationship.'
+  )
+  const successHeading = block.successHeading ?? (
+    isQuoteLayout ? 'Quotation restored' : isMathLayout ? 'Calculation complete' : 'Equation complete'
+  )
+  const bankLabel = block.bankLabel ?? (isQuoteLayout ? 'Word choices' : isMathLayout ? 'Number choices' : 'Word bank')
+  const incompleteLabel = block.incompleteLabel ?? (isQuoteLayout ? 'Complete all gaps' : 'Complete all spaces')
 
   const atmosphereBackground = contextImage
     ? `linear-gradient(180deg, ${theme.overlay} 0%, ${GENERAL.backgroundSurface} 100%), url(${contextImage}) center / cover`
@@ -425,7 +539,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
       <div style={{ marginBottom: SPACING.standard }}>
         <ScreenTitle>{block.label || 'Build the equation'}</ScreenTitle>
         <ScreenBody style={{ color: GENERAL.slate, margin: 0 }}>
-          {isCompleted ? 'You built the full relationship.' : instruction}
+          {isCompleted ? completedInstruction : instruction}
         </ScreenBody>
       </div>
 
@@ -461,7 +575,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
               {renderResolvedEquation()}
               <div style={{ marginTop: SPACING.standard, borderLeft: `${COMPONENT_SIZE.accentRail}px solid ${GENERAL.feedbackCorrect}`, paddingLeft: SPACING.compact }}>
                 <div style={{ ...TYPE.titleMedium, color: GENERAL.feedbackCorrect, marginBottom: SPACING.micro }}>
-                  Equation complete
+                  {successHeading}
                 </div>
                 <p style={{ ...TYPE.body, color: GENERAL.feedbackText, margin: 0 }}>
                   {block.successText}
@@ -488,7 +602,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                   borderRadius: RADII.medium,
                 }}
               >
-                {hasReactionGroups ? (
+                {usesTemplate ? renderTemplateWorkspace() : usesReactionLayout ? (
                   <div style={{ display: 'grid', gap: SPACING.compact }}>
                     {renderGroup(reactantIndexes, groupLabels[0])}
                     <div
@@ -505,7 +619,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
 
               {canEdit && (
                 <div
-                  aria-label="Word bank"
+                  aria-label={bankLabel}
                   style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: SPACING.micro }}
                 >
                   {available.map(piece => (
@@ -517,11 +631,14 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                       style={{
                         minHeight: COMPONENT_SIZE.touchTarget,
                         padding: `0 ${SPACING.compact}px`,
-                        background: GENERAL.surfaceTint,
-                        border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.soft}`,
+                        background: isQuoteLayout ? theme.backgroundSecondary : GENERAL.surfaceTint,
+                        border: `${COMPONENT_SIZE.hairline}px solid ${isQuoteLayout ? theme.glowStrong : GENERAL.line.soft}`,
                         borderRadius: RADII.small,
                         ...TYPE.button,
-                        color: GENERAL.feedbackText,
+                        fontFamily: isQuoteLayout ? "'IBM Plex Serif', serif" : TYPE.button.fontFamily,
+                        fontSize: isQuoteLayout ? '1rem' : TYPE.button.fontSize,
+                        fontVariantNumeric: isMathLayout ? 'tabular-nums' : undefined,
+                        color: isQuoteLayout ? (theme.palette?.parchment ?? GENERAL.feedbackText) : GENERAL.feedbackText,
                         cursor: 'pointer',
                         transition: `background-color ${transition}, border-color ${transition}, transform ${transition}`,
                       }}
@@ -568,7 +685,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                         transition: `background-color ${BUTTONS.secondary.transition}, border-color ${BUTTONS.secondary.transition}, color ${BUTTONS.secondary.transition}`,
                       }}
                     >
-                      {allFilled ? 'Check answer' : 'Complete all spaces'}
+                      {allFilled ? 'Check answer' : incompleteLabel}
                     </button>
                   </>
                 )}

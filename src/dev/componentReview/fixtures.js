@@ -421,6 +421,7 @@ export const acronymMemorise = {
 // Shape: { label?, slots, operators?, pieces, answer, hint, successText }. From
 // Plant Cells & Photosynthesis (sci_bio_w1), block type: builder.
 export const builderBlock = {
+  layout: 'reaction',
   label: 'Build the photosynthesis equation',
   slots: [null, null, null, null],
   operators: ['+', '→', '+'],
@@ -428,6 +429,30 @@ export const builderBlock = {
   answer: ['carbon dioxide', 'water', 'glucose', 'oxygen'],
   hint: 'Two things go IN (reactants), two things come OUT (products). Light energy drives the reaction.',
   successText: 'Carbon dioxide + water → glucose + oxygen. Light energy drives the reaction. This is the foundation of almost all life on Earth.',
+}
+
+export const builderMaths = {
+  layout: 'equation',
+  label: 'Complete the calculation',
+  instruction: 'Choose the missing value.',
+  template: '36 ÷ {{0}} = 6',
+  slots: [null],
+  pieces: [4, 6, 8, 12],
+  answer: [6],
+  hint: 'Use the inverse: which number multiplied by 6 gives 36?',
+  successText: '36 ÷ 6 = 6, because 6 × 6 = 36.',
+}
+
+export const builderQuote = {
+  layout: 'quote',
+  label: 'Rebuild the quotation',
+  instruction: 'Choose the missing words to restore Macbeth’s line.',
+  template: '“Is this a {{0}} which I see before me,\nThe {{1}} toward my hand?”',
+  slots: [null, null],
+  pieces: ['dagger', 'handle', 'crown', 'blood'],
+  answer: ['dagger', 'handle'],
+  hint: 'Picture the object Macbeth thinks he can see and the part pointing towards him.',
+  successText: 'The completed quotation is ready to use as evidence about Macbeth’s disturbed state of mind.',
 }
 
 // ChapterOutcomeScreen (Biology) — full-screen chapter-opening outcomes reveal.
