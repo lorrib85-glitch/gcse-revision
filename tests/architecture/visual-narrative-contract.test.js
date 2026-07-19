@@ -22,7 +22,7 @@ describe('VisualNarrativeScreen contract', () => {
 
   it('uses the locked cinematic continue CTA for opening narrative beats', () => {
     const src = read(componentPath)
-    expect(src).toMatch(/import\s+CinematicContinueCTA\s+from\s+['"]\.\.\/core\/CinematicContinueCTA\.jsx['"]/)
+    expect(src).toMatch(/import\s+CinematicContinueCTA\s+from\s+['"]\.\.\/core\/CinematicContinueCTA\.jsx['"]/) 
     expect(src).toContain('<CinematicContinueCTA')
   })
 
@@ -54,12 +54,12 @@ describe('VisualNarrativeScreen contract', () => {
     expect(src).not.toMatch(/\d+\s*\/\s*\d+/)
   })
 
-  it('supports keyboard fact reveals and announces dynamic content', () => {
+  it('uses a native button for keyboard fact reveals and announces dynamic content', () => {
     const src = read(componentPath)
-    expect(src).toContain("event.key !== 'Enter'")
-    expect(src).toContain("event.key !== ' '")
+    expect(src).toContain('className="vn-fact-hit-area"')
+    expect(src).toContain('type="button"')
+    expect(src).toContain('aria-label={factInteractionLabel}')
     expect(src).toContain('aria-live="polite"')
-    expect(src).toContain('aria-label={factInteractionActive ? factInteractionLabel : undefined}')
   })
 
   it('respects reduced motion and keeps highlights data-driven', () => {
