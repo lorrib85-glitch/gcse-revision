@@ -135,12 +135,6 @@ export default function VisualNarrativeScreen({
     completeBeat()
   }
 
-  function handleKeyDown(event) {
-    if (event.key !== 'Enter' && event.key !== ' ') return
-    event.preventDefault()
-    handleTap()
-  }
-
   if (beats.length === 0) return null
 
   const showHint = hintVisible && !showConclusion
@@ -168,7 +162,7 @@ export default function VisualNarrativeScreen({
           0%, 100% { opacity: 0.62; transform: translate(-50%, -50%) scale(1); }
           50%      { opacity: 0.92; transform: translate(-50%, -50%) scale(1.28); }
         }
-        .vn-fact-surface:focus-visible {
+        .vn-fact-hit-area:focus-visible {
           outline: 2px solid ${accent};
           outline-offset: -4px;
         }
@@ -199,11 +193,7 @@ export default function VisualNarrativeScreen({
 
       <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 100 }}>
         <div
-          className={`vn-motion${factInteractionActive ? ' vn-fact-surface' : ''}`}
-          role={factInteractionActive ? 'button' : undefined}
-          tabIndex={factInteractionActive ? 0 : undefined}
-          aria-label={factInteractionActive ? factInteractionLabel : undefined}
-          onKeyDown={factInteractionActive ? handleKeyDown : undefined}
+          className="vn-motion"
           onClick={handleTap}
           style={{
             position: 'absolute',
@@ -404,6 +394,27 @@ export default function VisualNarrativeScreen({
                 </>
               )}
             </div>
+          )}
+
+          {factInteractionActive && (
+            <button
+              type="button"
+              className="vn-fact-hit-area"
+              aria-label={factInteractionLabel}
+              onClick={event => {
+                event.stopPropagation()
+                handleTap()
+              }}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 10,
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+              }}
+            />
           )}
 
           <div
