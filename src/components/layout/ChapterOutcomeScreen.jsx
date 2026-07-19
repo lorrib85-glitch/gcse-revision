@@ -16,9 +16,9 @@ import CinematicShell from './CinematicShell.jsx'
 import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
 
 const motionMs = value => Number.parseInt(value, 10)
-const REVEAL_START_MS = motionMs(MOTION.duration.fast)
-const REVEAL_STAGGER_MS = motionMs(MOTION.duration.standard)
-const CTA_SETTLE_MS = motionMs(MOTION.duration.fast)
+const REVEAL_START_MS = motionMs(MOTION.duration.slow) + motionMs(MOTION.duration.instant)
+const REVEAL_STAGGER_MS = motionMs(MOTION.duration.standard) * 2
+const CTA_SETTLE_MS = motionMs(MOTION.duration.standard)
 
 function BackBtn({ onClick }) {
   return (
@@ -121,8 +121,8 @@ export default function ChapterOutcomeScreen({
   const [visibleCount, setVisibleCount] = useState(() => reduceMotion ? outcomes.length : 0)
   const [showCTA, setShowCTA] = useState(reduceMotion)
 
-  // Keep the opener brisk: all three recommended outcomes and the CTA arrive in
-  // about 1.2 seconds. Reduced-motion users receive the complete screen at once.
+  // Let each outcome land as a readable sentence rather than a rapid checklist.
+  // Three standard outcomes and the CTA complete in roughly two seconds.
   useEffect(() => {
     if (reduceMotion) {
       setVisibleCount(outcomes.length)
@@ -139,9 +139,11 @@ export default function ChapterOutcomeScreen({
         REVEAL_START_MS + i * REVEAL_STAGGER_MS,
       )
     )
+    const finalRevealAt = REVEAL_START_MS
+      + Math.max(0, outcomes.length - 1) * REVEAL_STAGGER_MS
     const ctaTimer = setTimeout(
       () => setShowCTA(true),
-      REVEAL_START_MS + outcomes.length * REVEAL_STAGGER_MS + CTA_SETTLE_MS,
+      finalRevealAt + CTA_SETTLE_MS,
     )
 
     return () => {
@@ -158,11 +160,7 @@ export default function ChapterOutcomeScreen({
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes cos-row {
-          from { opacity: 0; transform: translateY(12px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes cos-marker {
-          from { opacity: 0; transform: translateY(4px); }
+          from { opacity: 0; transform: translateY(${SPACING.micro}px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         .cos-scroll {
@@ -173,8 +171,7 @@ export default function ChapterOutcomeScreen({
         }
         @media (prefers-reduced-motion: reduce) {
           .cos-enter,
-          .cos-row,
-          .cos-marker {
+          .cos-row {
             animation: none !important;
           }
         }
@@ -190,14 +187,15 @@ export default function ChapterOutcomeScreen({
             backgroundImage: `url(${img})`,
             backgroundSize: 'cover',
             backgroundPosition,
-            opacity: 0.44,
-            filter: 'saturate(0.92) brightness(0.78)',
+            opacity: 0.5,
+            filter: 'saturate(0.96) brightness(0.84)',
             pointerEvents: 'none',
             zIndex: 1,
           }}
         />
 
-        {/* A local scrim protects the text without flattening the whole image. */}
+        {/* A local scrim protects the text while allowing the subject image to
+            become visible quickly beyond the reading column. */}
         <div
           data-chapter-outcome-scrim
           style={{
@@ -205,8 +203,8 @@ export default function ChapterOutcomeScreen({
             top: 0,
             bottom: 0,
             left: 0,
-            width: 'min(92vw, 460px)',
-            background: 'linear-gradient(90deg, rgba(8,9,13,0.97) 0%, rgba(8,9,13,0.90) 46%, rgba(8,9,13,0.54) 72%, rgba(8,9,13,0) 100%)',
+            width: 'min(90vw, 420px)',
+            background: 'linear-gradient(90deg, rgba(8,9,13,0.97) 0%, rgba(8,9,13,0.90) 52%, rgba(8,9,13,0.46) 76%, rgba(8,9,13,0) 100%)',
             pointerEvents: 'none',
             zIndex: 2,
           }}
@@ -239,7 +237,7 @@ export default function ChapterOutcomeScreen({
             overscrollBehaviorY: 'contain',
             WebkitOverflowScrolling: 'touch',
             touchAction: 'pan-y',
-            paddingTop: `calc(${SPACING.section}px + env(safe-area-inset-top, 0px))`,
+            paddingTop: `calc(${SPACING.section + SPACING.standard}px + env(safe-area-inset-top, 0px))`,
             paddingRight: SPACING.standard,
             paddingBottom: `calc(${SPACING.cinematic + SPACING.separation}px + env(safe-area-inset-bottom, 0px))`,
             paddingLeft: SPACING.standard,
@@ -298,18 +296,14 @@ export default function ChapterOutcomeScreen({
                       gap: SPACING.compact,
                       animation: reduceMotion
                         ? 'none'
-                        : `cos-row ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
+                        : `cos-row ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
                     }}
                   >
                     <span
-                      className="cos-marker"
                       data-chapter-outcome-marker
                       style={{
                         display: 'inline-flex',
                         flexShrink: 0,
-                        animation: reduceMotion
-                          ? 'none'
-                          : `cos-marker ${MOTION.duration.slow} ${MOTION.easing.gentle} both`,
                       }}
                     >
                       <ItemIcon icon={icon} accent={accent} />
