@@ -244,7 +244,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
 
       <div style={{
         flexShrink: 0,
-        padding: `${SPACING.compact}px ${SPACING.standard}px 0`,
+        padding: `${SPACING.micro}px ${SPACING.standard}px 0`,
         background: theme.background,
       }}>
         <div style={{
