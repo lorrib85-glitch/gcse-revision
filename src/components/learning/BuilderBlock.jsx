@@ -6,6 +6,7 @@ import { COMPONENT_SIZE, SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import { ScreenTitle, ScreenBody } from '../core/ScreenText.jsx'
 
 function resolveSubject(subject) {
   const requested = typeof subject === 'string'
@@ -421,6 +422,13 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         }
       `}</style>
 
+      <div style={{ marginBottom: SPACING.standard }}>
+        <ScreenTitle>{block.label || 'Build the equation'}</ScreenTitle>
+        <ScreenBody style={{ color: GENERAL.slate, margin: 0 }}>
+          {isCompleted ? 'You built the full relationship.' : instruction}
+        </ScreenBody>
+      </div>
+
       <div
         style={{
           position: 'relative',
@@ -448,15 +456,6 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         />
 
         <div style={{ position: 'relative', zIndex: 1, padding: SPACING.compact }}>
-          <header style={{ marginBottom: SPACING.compact }}>
-            <div style={{ ...TYPE.displayCard, color: GENERAL.softWhite, marginBottom: SPACING.micro }}>
-              {block.label || 'Build the equation'}
-            </div>
-            <p style={{ ...TYPE.bodySmall, color: GENERAL.slate, margin: 0 }}>
-              {isCompleted ? 'You built the full relationship.' : instruction}
-            </p>
-          </header>
-
           {isCompleted ? (
             <>
               {renderResolvedEquation()}
