@@ -64,23 +64,28 @@ export const BiologyOutcome = {
 
     const backdrop = canvasElement.querySelector('[data-chapter-outcome-backdrop]')
     const scrim = canvasElement.querySelector('[data-chapter-outcome-scrim]')
+    const content = canvasElement.querySelector('[data-chapter-outcome-content]')
     const markers = canvasElement.querySelectorAll('[data-chapter-outcome-marker]')
     const rows = canvasElement.querySelectorAll('[data-chapter-outcome-row]')
     const cta = canvas.getByRole('button', { name: /start chapter/i })
     const finalRowRect = rows[rows.length - 1].getBoundingClientRect()
+    const contentRect = content.getBoundingClientRect()
     const ctaRect = cta.getBoundingClientRect()
+    const outcomeGap = ctaRect.top - finalRowRect.bottom
 
     await expect(backdrop).toHaveAttribute(
       'data-background-position',
       SUBJECT_BACKDROP_POSITIONS.Biology,
     )
+    await expect(cta).toHaveAttribute('data-cinematic-cta-layout', 'inline')
     expect(backdrop.style.opacity).toBe('0.5')
     expect(scrim.getBoundingClientRect().width).toBeLessThan(window.innerWidth)
     expect(markers).toHaveLength(3)
     expect(rows).toHaveLength(3)
-    expect(cta.style.position).toBe('relative')
-    expect(ctaRect.top).toBeGreaterThan(finalRowRect.bottom + 24)
-    expect(ctaRect.top).toBeLessThan(finalRowRect.bottom + 80)
+    expect(cta.style.position).toBe('static')
+    expect(outcomeGap).toBeGreaterThanOrEqual(20)
+    expect(outcomeGap).toBeLessThanOrEqual(32)
+    expect(ctaRect.left).toBeCloseTo(contentRect.left, 0)
 
     markers.forEach(marker => {
       expect(marker.style.filter).toBe('')
@@ -130,12 +135,17 @@ export const ShortViewportWithLongContent = {
     )
 
     const scroller = canvasElement.querySelector('[data-chapter-outcome-scroll]')
+    const rows = canvasElement.querySelectorAll('[data-chapter-outcome-row]')
     const cta = canvas.getByRole('button', { name: /start chapter/i })
     const scrollerRect = scroller.getBoundingClientRect()
+    const finalRowRect = rows[rows.length - 1].getBoundingClientRect()
+    const ctaRect = cta.getBoundingClientRect()
 
     expect(scroller.clientHeight).toBeLessThanOrEqual(window.innerHeight)
     expect(scroller.scrollHeight).toBeGreaterThan(scroller.clientHeight)
-    expect(cta.getBoundingClientRect().top).toBeGreaterThan(scrollerRect.bottom)
+    expect(ctaRect.top - finalRowRect.bottom).toBeGreaterThanOrEqual(20)
+    expect(ctaRect.top - finalRowRect.bottom).toBeLessThanOrEqual(32)
+    expect(ctaRect.top).toBeGreaterThan(scrollerRect.bottom)
 
     scroller.scrollTop = scroller.scrollHeight
     await waitFor(() => expect(scroller.scrollTop).toBeGreaterThan(0))
@@ -157,11 +167,12 @@ export const ReducedMotion = {
     const cta = canvas.getByRole('button', { name: /start chapter/i })
 
     await expect(scroller).toHaveAttribute('data-reduced-motion', 'true')
+    await expect(cta).toHaveAttribute('data-cinematic-cta-layout', 'inline')
     expect(rows).toHaveLength(3)
     expect(markers).toHaveLength(3)
     rows.forEach(row => expect(row.style.animation).toBe('none'))
     markers.forEach(marker => expect(marker.style.animation).toBe('')
     expect(cta.style.animation).toBe('none')
-    expect(cta.style.position).toBe('relative')
+    expect(cta.style.position).toBe('static')
   },
 }
