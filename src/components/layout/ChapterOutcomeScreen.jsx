@@ -318,19 +318,18 @@ export default function ChapterOutcomeScreen({
               })}
             </ul>
 
-            <div data-chapter-outcome-cta-slot>
+            <div
+              data-chapter-outcome-cta-slot
+              style={{ marginTop: SPACING.standard }}
+            >
               <CinematicContinueCTA
+                layout="inline"
+                align="start"
                 onClick={onContinue}
                 accent={accent}
                 label="Start chapter"
                 animation={showCTA && !reduceMotion ? undefined : 'none'}
                 style={{
-                  position: 'relative',
-                  left: 'auto',
-                  right: 'auto',
-                  bottom: 'auto',
-                  width: '100%',
-                  marginTop: SPACING.separation,
                   visibility: showCTA ? 'visible' : 'hidden',
                   pointerEvents: showCTA ? 'auto' : 'none',
                 }}
