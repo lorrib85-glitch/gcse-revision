@@ -1,90 +1,157 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { SPACING } from '../../constants/spacing.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
-// CinematicShell used here because this screen renders full-bleed absolute-positioned portrait
-// and timeline image layers that must reach all four edges; ContentShell's 16px horizontal
-// padding and opaque background would clip the atmospheric imagery and break the layout.
+// CinematicShell used here because this screen renders full-bleed absolute-positioned
+// image layers that must reach all four edges; ContentShell's horizontal padding and
+// opaque background would clip the atmospheric imagery and break the layout.
 import CinematicShell from '../layout/CinematicShell.jsx'
+
+function findActiveImage(beats, beatIdx) {
+  for (let index = beatIdx; index >= 0; index -= 1) {
+    if (beats[index]?.image) return { beat: beats[index], index }
+  }
+  return { beat: {}, index: -1 }
+}
 
 export default function VisualNarrativeScreen({
   subject = 'History',
-  beats   = [],
+  beats = [],
   onRevealStart,
   onContinue,
 }) {
-  const theme  = SUBJECTS[subject] || SUBJECTS.History
+  const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
+  const timersRef = useRef(new Set())
+  const revealStartedRef = useRef(false)
 
-  const [beatIdx,        setBeatIdx]        = useState(0)
-  const [factCount,      setFactCount]      = useState(0)
+  const [beatIdx, setBeatIdx] = useState(0)
+  const [factCount, setFactCount] = useState(0)
   const [showConclusion, setShowConclusion] = useState(false)
-  const [showCTA,        setShowCTA]        = useState(false)
-  const [locked,         setLocked]         = useState(false)
-  const [hintVisible,    setHintVisible]    = useState(false)
+  const [showCTA, setShowCTA] = useState(false)
+  const [locked, setLocked] = useState(false)
+  const [hintVisible, setHintVisible] = useState(false)
 
-  const beat      = beats[beatIdx] || {}
-  const isFacts   = Array.isArray(beat.facts)
+  const beat = beats[beatIdx] || {}
+  const isFacts = Array.isArray(beat.facts)
   const totalFacts = isFacts ? beat.facts.length : 0
-
   const isLastBeat = beatIdx === beats.length - 1
+  const { beat: imageBeat, index: imageBeatIndex } = findActiveImage(beats, beatIdx)
+  const imageMode = imageBeat.imageMode || (imageBeatIndex <= 0 ? 'full' : 'upper')
+  const imageBottom = imageMode === 'full' ? 0 : (imageBeat.imageBottom ?? '42%')
+  const imageAlt = imageBeat.imageAlt || imageBeat.alt
+  const highlight = showConclusion ? beat.highlight : null
 
-  // Portrait: visible only on beat 0
-  const portraitOpacity = beatIdx === 0 ? 1 : 0
-  // Timeline: full opacity once it appears (beat 1 onward)
-  const timelineOpacity =
-    beatIdx === 0 ? 0 :
-    isLastBeat ? (beat.imageOpacity ?? 1) :
-    1
+  function schedule(callback, delay) {
+    const timer = setTimeout(() => {
+      timersRef.current.delete(timer)
+      callback()
+    }, delay)
+    timersRef.current.add(timer)
+  }
 
-  // Reset hint after each action
+  useEffect(() => () => {
+    timersRef.current.forEach(clearTimeout)
+    timersRef.current.clear()
+  }, [])
+
+  // Reset hint after each action.
   useEffect(() => {
     setHintVisible(false)
-    const t = setTimeout(() => setHintVisible(true), 300)
-    return () => clearTimeout(t)
+    const timer = setTimeout(
+      () => setHintVisible(true),
+      GENERAL.cinematic.motion.hintDelayMs,
+    )
+    return () => clearTimeout(timer)
   }, [beatIdx, factCount])
 
-  // Lock tap for 250ms after each interaction
+  function beginReveal() {
+    if (revealStartedRef.current) return
+    revealStartedRef.current = true
+    onRevealStart?.()
+  }
+
   function lockAndUnlock() {
     setLocked(true)
-    setTimeout(() => setLocked(false), 250)
+    schedule(
+      () => setLocked(false),
+      GENERAL.cinematic.motion.lockDelayMs,
+    )
+  }
+
+  function advanceBeat() {
+    setFactCount(0)
+    setShowConclusion(false)
+    setShowCTA(false)
+    setBeatIdx(index => Math.min(index + 1, beats.length - 1))
+  }
+
+  function completeBeat() {
+    if (isLastBeat) {
+      onContinue?.()
+      return
+    }
+    lockAndUnlock()
+    advanceBeat()
+  }
+
+  function revealConclusion() {
+    schedule(() => {
+      setShowConclusion(true)
+      schedule(
+        () => setShowCTA(true),
+        GENERAL.cinematic.motion.ctaDelayMs,
+      )
+    }, GENERAL.cinematic.motion.conclusionDelayMs)
   }
 
   function handleTap() {
-    if (locked) return
-
-    if (!isLastBeat) {
-      lockAndUnlock()
-      if (beatIdx === 0) onRevealStart?.()
-      setBeatIdx(i => i + 1)
-      return
-    }
+    if (locked || beats.length === 0) return
+    beginReveal()
 
     if (isFacts) {
       if (factCount < totalFacts) {
         lockAndUnlock()
         const next = factCount + 1
         setFactCount(next)
-        if (next === totalFacts) {
-          // Conclusion appears automatically after final fact
-          setTimeout(() => {
-            setShowConclusion(true)
-            setTimeout(() => setShowCTA(true), 700)
-          }, 350)
-        }
+        if (next === totalFacts) revealConclusion()
         return
       }
-      if (showCTA) {
-        onContinue?.()
+
+      if (totalFacts === 0 && !showConclusion) {
+        setShowConclusion(true)
+        setShowCTA(true)
+        return
       }
+
+      if (showCTA) completeBeat()
+      return
     }
+
+    completeBeat()
   }
+
+  function handleKeyDown(event) {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    handleTap()
+  }
+
+  if (beats.length === 0) return null
 
   const showHint = hintVisible && !showConclusion
   const showCinematicContinue = showHint && !isFacts
+  const factInteractionActive = isFacts && !showConclusion
+  const factInteractionLabel = totalFacts > 0
+    ? `Reveal fact ${Math.min(factCount + 1, totalFacts)} of ${totalFacts}`
+    : 'Reveal conclusion'
+  const liveMessage = showConclusion
+    ? (beat.conclusion || '')
+    : (factCount > 0 ? beat.facts[factCount - 1] : '')
 
   return (
     <>
@@ -97,197 +164,264 @@ export default function VisualNarrativeScreen({
           from { opacity: 0; }
           to   { opacity: 1; }
         }
-        @keyframes vnEnglandPulse {
-          0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
-          50%      { opacity: 0.90; transform: translate(-50%, -50%) scale(1.35); }
+        @keyframes vnHighlightPulse {
+          0%, 100% { opacity: 0.62; transform: translate(-50%, -50%) scale(1); }
+          50%      { opacity: 0.92; transform: translate(-50%, -50%) scale(1.28); }
         }
-        .vn-cta:active { opacity: 0.55 !important; }
+        .vn-fact-surface:focus-visible {
+          outline: 2px solid ${accent};
+          outline-offset: -4px;
+        }
+        .vn-visually-hidden {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .vn-motion,
+          .vn-motion * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+          .vn-highlight {
+            animation: none !important;
+            opacity: 0.82 !important;
+          }
+        }
       `}</style>
 
       <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 100 }}>
-      <div
-        style={{
-          position: 'absolute', inset: 0,
-          cursor: 'pointer',
-          WebkitTapHighlightColor: 'transparent',
-          userSelect: 'none', WebkitUserSelect: 'none',
-        }}
-        onClick={handleTap}
-      >
-        {/* Portrait image — Beat 1 only */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: `url(${(beats[0] || {}).image})`,
-          backgroundSize: 'cover',
-          backgroundPosition: (beats[0] || {}).imagePosition || 'center top',
-          opacity: portraitOpacity,
-          transition: 'opacity 700ms ease',
-          filter: (beats[0] || {}).imageFilter || 'brightness(2.5)',
-          pointerEvents: 'none',
-        }} />
+        <div
+          className={`vn-motion${factInteractionActive ? ' vn-fact-surface' : ''}`}
+          role={factInteractionActive ? 'button' : undefined}
+          tabIndex={factInteractionActive ? 0 : undefined}
+          aria-label={factInteractionActive ? factInteractionLabel : undefined}
+          onKeyDown={factInteractionActive ? handleKeyDown : undefined}
+          onClick={handleTap}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+          }}
+        >
+          {/* The active image is the most recent beat image, so later text-only
+              beats can reuse it without assuming a portrait/timeline story. */}
+          {imageBeat.image && (
+            <div
+              key={`${imageBeat.image}:${imageBeatIndex}`}
+              role={imageAlt ? 'img' : undefined}
+              aria-label={imageAlt || undefined}
+              aria-hidden={imageAlt ? undefined : true}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: imageBottom,
+                backgroundImage: `url(${imageBeat.image})`,
+                backgroundSize: imageBeat.imageSize || 'cover',
+                backgroundPosition: imageBeat.imagePosition
+                  || (imageMode === 'full' ? 'center top' : 'center 25%'),
+                opacity: beat.imageOpacity ?? imageBeat.imageOpacity ?? 1,
+                transition: `opacity ${GENERAL.cinematic.motion.slow} ease`,
+                animation: `vnFadeIn ${GENERAL.cinematic.motion.slow} ease both`,
+                filter: imageBeat.imageFilter
+                  || (imageMode === 'full'
+                    ? GENERAL.cinematic.imageFilterFull
+                    : GENERAL.cinematic.imageFilterUpper),
+                pointerEvents: 'none',
+              }}
+            />
+          )}
 
-        {/* Timeline image — Beats 2 & 3 (same image, different opacity) */}
-        <div style={{
-          position: 'absolute', top: 0, left: 0, right: 0, bottom: '42%',
-          backgroundImage: `url(${(beats[1] || {}).image})`,
-          backgroundSize: 'cover',
-          backgroundPosition: (beats[1] || {}).imagePosition || 'center 25%',
-          opacity: timelineOpacity,
-          transition: 'opacity 700ms ease',
-          filter: (beats[1] || {}).imageFilter || 'brightness(1.12) saturate(1.04)',
-          pointerEvents: 'none',
-        }} />
+          {/* Optional subject-accent highlight supplied by content data. */}
+          {highlight && (
+            <div
+              className="vn-highlight"
+              style={{
+                position: 'absolute',
+                top: highlight.top,
+                left: highlight.left,
+                width: highlight.size || SPACING.separation + SPACING.micro,
+                height: highlight.size || SPACING.separation + SPACING.micro,
+                borderRadius: RADII.pill,
+                background: `radial-gradient(circle, rgba(${highlight.rgb || rgb},${highlight.opacity ?? 0.55}) 0%, transparent 70%)`,
+                transform: 'translate(-50%, -50%)',
+                pointerEvents: 'none',
+                zIndex: 2,
+                animation: `vnHighlightPulse ${GENERAL.cinematic.motion.pulse} ease-in-out infinite`,
+              }}
+            />
+          )}
 
-        {/* Medieval England glow — appears when the full chain is revealed */}
-        {showConclusion && (
+          {/* Dark gradient protects text without turning the image into a panel. */}
           <div style={{
             position: 'absolute',
-            top: '21%', left: '73%',
-            width: 52, height: 52,
-            borderRadius: RADII.pill,
-            background: `radial-gradient(circle, rgba(${rgb},0.55) 0%, transparent 70%)`,
-            transform: 'translate(-50%, -50%)',
+            inset: 0,
+            background: GENERAL.cinematic.overlay,
             pointerEvents: 'none',
-            zIndex: 2,
-            animation: 'vnEnglandPulse 2.8s ease-in-out infinite',
           }} />
-        )}
 
-        {/* Dark gradient — keeps text readable without crushing the image into black */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.04) 30%, rgba(0,0,0,0.46) 57%, rgba(0,0,0,0.82) 78%, rgba(0,0,0,0.94) 100%)',
-          pointerEvents: 'none',
-        }} />
-
-        {/* ── Beat 1 & 2: cinematic headline + body at bottom ─────────── */}
-        {!isFacts && (
-          <div
-            key={beatIdx}
-            style={{
-              position: 'absolute', bottom: 0, left: 0, right: 0,
-              padding: '0 28px calc(126px + env(safe-area-inset-bottom, 0px))',
-              animation: 'vnFadeUp 500ms cubic-bezier(0.16,1,0.3,1) both',
-              pointerEvents: 'none',
-            }}
-          >
-            {beat.showLabel === true && beat.label && (
-              <div style={{
-                ...TYPE.eyebrow,
-                color: 'rgba(255,255,255,0.50)',
-                marginBottom: 10,
-              }}>
-                {beat.label}
-              </div>
-            )}
-
-            <div style={{
-              ...TYPE.displaySection,
-              fontSize: 'clamp(36px, 10.8vw, 52px)',
-              color: 'rgba(255,255,255,0.98)',
-              marginBottom: 16,
-              maxWidth: 352,
-            }}>
-              {beat.headline}
-            </div>
-
-            {beat.body && (
-              <div style={{
-                ...TYPE.bodyStrong,
-                color: 'rgba(255,255,255,0.74)',
-                maxWidth: '31ch',
-                whiteSpace: 'pre-line',
-              }}>
-                {beat.body}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── Beat 3: sequential facts, then conclusion replaces them ── */}
-        {isFacts && (
-          <div style={{
-            position: 'absolute',
-            top: '52%', left: 28, right: 28,
-            paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
-            pointerEvents: 'none',
-          }}>
-            {!showConclusion ? (
-              // Facts phase
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {factCount === 0 && (
-                  <div style={{
-                    ...TYPE.eyebrow,
-                    color: 'rgba(255,255,255,0.30)',
-                    marginBottom: 12,
-                  }}>
-                    Tap to reveal
-                  </div>
-                )}
-                {beat.facts.slice(0, factCount).map((fact, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      ...TYPE.bodyStrong,
-                      color: 'rgba(255,255,255,0.84)',
-                      animation: 'vnFadeUp 420ms cubic-bezier(0.16,1,0.3,1) both',
-                    }}
-                  >
-                    {fact}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              // Conclusion phase — replaces the facts
-              <>
+          {/* Narrative beats: cinematic headline + short body at the bottom. */}
+          {!isFacts && (
+            <div
+              key={beatIdx}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                padding: `0 ${SPACING.standard}px calc(${SPACING.cinematic + SPACING.separation + SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
+                animation: `vnFadeUp ${GENERAL.cinematic.motion.standard} cubic-bezier(0.16,1,0.3,1) both`,
+                pointerEvents: 'none',
+              }}
+            >
+              {beat.showLabel === true && beat.label && (
                 <div style={{
-                  ...TYPE.displaySection,
-                  color: accent,
-                  whiteSpace: 'pre-line',
-                  animation: 'vnFadeIn 700ms ease both',
+                  ...TYPE.label,
+                  color: GENERAL.cinematic.textMuted,
+                  marginBottom: SPACING.micro,
                 }}>
-                  {beat.conclusion}
+                  {beat.label}
                 </div>
+              )}
 
-                {showCTA && (
-                  <div style={{ marginTop: 32, pointerEvents: 'auto' }}>
-                    <ContinueCTA
-                      onClick={(e) => { e.stopPropagation(); onContinue?.() }}
-                      accent={accent}
-                      style={{ animation: 'vnFadeIn 420ms ease both' }}
-                    />
-                    {beat.source && (
-                      <div style={{
-                        marginTop: 20,
-                        fontFamily: "'Sora', sans-serif",
-                        fontSize: 10, lineHeight: 1.5,
-                        color: 'rgba(255,255,255,0.22)',
-                        animation: 'vnFadeIn 600ms ease 200ms both',
-                        maxWidth: 280,
-                      }}>
-                        <span style={{ fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: 9 }}>
-                          Source{' '}
-                        </span>
-                        {beat.source}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
+              <h1 style={{
+                ...TYPE.displayCinematic,
+                color: GENERAL.cinematic.textPrimary,
+                margin: 0,
+                marginBottom: SPACING.compact,
+                maxWidth: 352,
+              }}>
+                {beat.headline}
+              </h1>
+
+              {beat.body && (
+                <p style={{
+                  ...TYPE.bodyStrong,
+                  color: GENERAL.cinematic.textSecondary,
+                  maxWidth: '31ch',
+                  whiteSpace: 'pre-line',
+                  margin: 0,
+                }}>
+                  {beat.body}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Sequential facts, then a conclusion that replaces them. */}
+          {isFacts && (
+            <div style={{
+              position: 'absolute',
+              top: '52%',
+              left: SPACING.standard,
+              right: SPACING.standard,
+              paddingBottom: `calc(${SPACING.cinematic + SPACING.micro}px + env(safe-area-inset-bottom, 0px))`,
+              pointerEvents: 'none',
+            }}>
+              {!showConclusion ? (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: SPACING.micro,
+                }}>
+                  {factCount === 0 && (
+                    <div style={{
+                      ...TYPE.label,
+                      color: GENERAL.cinematic.textSubtle,
+                      marginBottom: SPACING.compact,
+                    }}>
+                      Tap to reveal
+                    </div>
+                  )}
+                  {beat.facts.slice(0, factCount).map((fact, index) => (
+                    <p
+                      key={`${index}:${fact}`}
+                      style={{
+                        ...TYPE.bodyStrong,
+                        color: GENERAL.cinematic.textFact,
+                        animation: `vnFadeUp ${GENERAL.cinematic.motion.fast} cubic-bezier(0.16,1,0.3,1) both`,
+                        margin: 0,
+                      }}
+                    >
+                      {fact}
+                    </p>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <h2 style={{
+                    ...TYPE.displaySection,
+                    color: accent,
+                    whiteSpace: 'pre-line',
+                    animation: `vnFadeIn ${GENERAL.cinematic.motion.slow} ease both`,
+                    margin: 0,
+                  }}>
+                    {beat.conclusion}
+                  </h2>
+
+                  {showCTA && (
+                    <div style={{ marginTop: SPACING.standard, pointerEvents: 'auto' }}>
+                      <ContinueCTA
+                        onClick={event => {
+                          event.stopPropagation()
+                          completeBeat()
+                        }}
+                        accent={accent}
+                        style={{ animation: `vnFadeIn ${GENERAL.cinematic.motion.fast} ease both` }}
+                      />
+                      {beat.source && (
+                        <div style={{
+                          ...TYPE.caption,
+                          marginTop: SPACING.compact,
+                          color: GENERAL.cinematic.sourceText,
+                          animation: `vnFadeIn ${GENERAL.cinematic.motion.standard} ease ${GENERAL.cinematic.motion.fast} both`,
+                          maxWidth: 280,
+                        }}>
+                          <span style={{
+                            ...TYPE.metadata,
+                            display: 'inline-block',
+                            marginRight: SPACING.micro,
+                          }}>
+                            Source
+                          </span>
+                          {beat.source}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
+          <div
+            className="vn-visually-hidden"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {liveMessage}
           </div>
-        )}
 
-        {/* ── Next action ───────────────────────────────────────────── */}
-        {showCinematicContinue && (
-          <CinematicContinueCTA
-            onClick={handleTap}
-            accent={accent}
-            animation="crm-fade 700ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite"
-          />
-        )}
-
-      </div>
+          {showCinematicContinue && (
+            <CinematicContinueCTA
+              onClick={handleTap}
+              accent={accent}
+              animation={`crm-fade ${GENERAL.cinematic.motion.slow} ease both, crm-pulse ${GENERAL.cinematic.motion.pulse} ease-in-out ${GENERAL.cinematic.motion.attentionDelay} infinite`}
+            />
+          )}
+        </div>
       </CinematicShell>
     </>
   )
