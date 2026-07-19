@@ -18,14 +18,14 @@ const FIGURE_PRESETS = {
   'four-humours': {
     cardVariant: 'parchment',
     cardBackground: DEFAULT_PARCHMENT,
-    portraitHeight: `calc(60vh - ${SPACING.compact}px)`,
+    portraitHeight: `calc(52vh - ${SPACING.compact}px)`,
     portraitPosition: 'center 18%',
     portraitScrim: 'strongBottom',
   },
   hippocrates: {
     cardVariant: 'parchment',
     cardBackground: DEFAULT_PARCHMENT,
-    portraitHeight: `calc(60vh - ${SPACING.compact}px)`,
+    portraitHeight: `calc(52vh - ${SPACING.compact}px)`,
     portraitPosition: 'center 18%',
     portraitScrim: 'strongBottom',
   },
@@ -38,9 +38,9 @@ const FIGURE_PRESETS = {
 }
 
 const PORTRAIT_SCRIMS = {
-  standard: 'linear-gradient(to bottom, rgba(8,9,13,0.06) 0%, rgba(8,9,13,0.10) 35%, rgba(8,9,13,0.70) 65%, rgba(8,9,13,0.98) 100%)',
-  strongBottom: 'linear-gradient(to bottom, rgba(8,9,13,0.06) 0%, rgba(8,9,13,0.10) 35%, rgba(8,9,13,0.70) 65%, rgba(8,9,13,0.98) 100%)',
-  evidenceRight: `linear-gradient(to bottom, rgba(8,9,13,0.03) 0%, rgba(8,9,13,0.06) 35%, rgba(8,9,13,0.46) 65%, rgba(8,9,13,0.94) 100%),
+  standard: 'linear-gradient(to bottom, rgba(8,9,13,0.04) 0%, rgba(8,9,13,0.08) 45%, rgba(8,9,13,0.42) 76%, rgba(8,9,13,0.88) 100%)',
+  strongBottom: 'linear-gradient(to bottom, rgba(8,9,13,0.03) 0%, rgba(8,9,13,0.06) 45%, rgba(8,9,13,0.34) 76%, rgba(8,9,13,0.78) 100%)',
+  evidenceRight: `linear-gradient(to bottom, rgba(8,9,13,0.03) 0%, rgba(8,9,13,0.06) 35%, rgba(8,9,13,0.38) 68%, rgba(8,9,13,0.86) 100%),
     linear-gradient(to right, rgba(8,9,13,0.08) 0%, rgba(8,9,13,0.00) 42%, rgba(8,9,13,0.00) 100%)`,
 }
 
@@ -236,28 +236,26 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           background: portraitScrim,
           pointerEvents: 'none',
         }} />
+      </div>
+
+      <div style={{
+        flexShrink: 0,
+        padding: `${SPACING.compact}px ${SPACING.standard}px 0`,
+        background: theme.background,
+      }}>
+        <div style={{
+          ...TYPE.displayScreen,
+          color: GENERAL.feedbackText,
+          marginBottom: SPACING.micro / 2,
+        }}>
+          {block.name}
+        </div>
 
         <div style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          padding: `0 ${SPACING.standard}px ${SPACING.micro}px`,
+          ...TYPE.metadata,
+          color: accent,
         }}>
-          <div style={{
-            ...TYPE.displayHero,
-            color: GENERAL.feedbackText,
-            marginBottom: SPACING.micro / 2,
-          }}>
-            {block.name}
-          </div>
-
-          <div style={{
-            ...TYPE.metadata,
-            color: accent,
-          }}>
-            {block.role}
-          </div>
+          {block.role}
         </div>
       </div>
 
@@ -275,7 +273,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           position: 'relative',
           paddingLeft: SPACING.standard,
           paddingRight: SPACING.standard,
-          paddingTop: SPACING.compact,
+          paddingTop: SPACING.micro,
           paddingBottom: `calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
           userSelect: 'none',
           WebkitUserSelect: 'none',
