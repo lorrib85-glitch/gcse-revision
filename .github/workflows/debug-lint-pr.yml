@@ -1,0 +1,42 @@
+name: Debug lint PR
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  debug-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Capture lint output
+        id: lint
+        continue-on-error: true
+        run: pnpm lint --format compact > lint-output.txt 2>&1
+      - name: Post lint failure
+        if: steps.lint.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs')
+            const output = fs.readFileSync('lint-output.txt', 'utf8')
+            const tail = output.slice(-12000)
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `Temporary lint diagnostics:\n\n\`\`\`text\n${tail}\n\`\`\``,
+            })
+      - name: Preserve lint result
+        if: steps.lint.outcome == 'failure'
+        run: exit 1
