@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
@@ -9,10 +9,12 @@ function ensureStyles() {
   const s = document.createElement('style')
   s.id = 'qa-styles'
   s.textContent = `
-    @keyframes qa-slide-up { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes qa-slide-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes qa-fade-in { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes qa-reveal-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes qa-tick-pop { 0% { transform: scale(0); } 70% { transform: scale(1.18); } 100% { transform: scale(1); } }
+    @keyframes qa-reveal-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) {
+      .qa-animated { animation: none !important; transition: none !important; }
+    }
   `
   document.head.appendChild(s)
 }
@@ -97,16 +99,73 @@ const SCAFFOLD = [
   'This shows _____ because _____.',
 ]
 
+const TORN_PATH = 'M0 0.044 L0.028 0.026 L0.062 0.05 L0.094 0.018 L0.13 0.04 L0.166 0.024 L0.202 0.052 L0.238 0.022 L0.276 0.042 L0.312 0.02 L0.35 0.05 L0.388 0.026 L0.426 0.046 L0.464 0.018 L0.5 0.042 L0.538 0.024 L0.576 0.052 L0.614 0.022 L0.652 0.044 L0.69 0.018 L0.728 0.048 L0.766 0.024 L0.804 0.046 L0.842 0.02 L0.88 0.05 L0.918 0.026 L0.956 0.044 L1 0.024 L1 0.958 L0.968 0.98 L0.932 0.952 L0.896 0.982 L0.858 0.956 L0.82 0.984 L0.782 0.954 L0.744 0.978 L0.706 0.95 L0.668 0.982 L0.63 0.956 L0.592 0.984 L0.554 0.952 L0.516 0.98 L0.478 0.954 L0.44 0.982 L0.402 0.95 L0.364 0.98 L0.326 0.954 L0.288 0.984 L0.25 0.952 L0.212 0.978 L0.174 0.95 L0.136 0.982 L0.098 0.956 L0.06 0.98 L0.026 0.954 L0 0.974 Z'
+
 function cleanWord(w) {
-  return w.replace(/[""";,.?!]/g, '').toLowerCase()
+  return w.replace(/[“”";,.?!]/g, '').toLowerCase()
 }
 
-function RippedSeam({ accentColor }) {
+function TornPaper({ children, accentRgb, paper, ink, style }) {
+  const rawId = useId()
+  const clipId = `qa-torn-${rawId.replace(/[^a-zA-Z0-9_-]/g, '')}`
+
   return (
-    <div style={{ position: 'relative', height: 22, margin: '0 0 2px', flexShrink: 0 }}>
-      <svg viewBox="0 0 420 24" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} aria-hidden="true">
-        <path d="M0,12 C16,15 30,9 46,12 C62,15 76,9 92,12 C108,15 122,9 138,12 C154,15 168,9 184,12 C200,15 214,9 230,12 C246,15 260,9 276,12 C292,15 306,9 322,12 C338,15 352,9 368,12 C386,18 402,9 420,12" fill="none" stroke={accentColor} strokeWidth="2" strokeOpacity="0.45" />
-        <path d="M0 23H420" stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
+    <div style={{ position: 'relative', width: '100%', ...style }}>
+      <svg width="0" height="0" aria-hidden="true" style={{ position: 'absolute' }}>
+        <defs>
+          <clipPath id={clipId} clipPathUnits="objectBoundingBox">
+            <path d={TORN_PATH} />
+          </clipPath>
+        </defs>
+      </svg>
+
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '5px -3px -7px 5px',
+          clipPath: `url(#${clipId})`,
+          background: `rgba(${accentRgb}, 0.22)`,
+          transform: 'rotate(0.45deg)',
+          opacity: 0.72,
+          filter: 'blur(0.2px)',
+        }}
+      />
+
+      <section
+        style={{
+          position: 'relative',
+          clipPath: `url(#${clipId})`,
+          padding: '34px 24px 31px',
+          color: paper,
+          background: `linear-gradient(145deg, rgba(255,255,255,0.045), transparent 40%), ${ink}`,
+          boxShadow: '0 22px 58px rgba(0,0,0,0.48)',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            pointerEvents: 'none',
+            opacity: 0.28,
+            backgroundImage: 'repeating-linear-gradient(0deg, rgba(255,255,255,0.018) 0, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 5px)',
+          }}
+        />
+        <div aria-hidden="true" style={{ position: 'absolute', left: 14, top: 18, bottom: 18, width: 1, background: `rgba(${accentRgb}, 0.22)` }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>{children}</div>
+      </section>
+    </div>
+  )
+}
+
+function InkDivider({ accentRgb }) {
+  return (
+    <div aria-hidden="true" style={{ position: 'relative', height: 18, margin: '18px 0 16px' }}>
+      <svg viewBox="0 0 360 18" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }}>
+        <path d="M0 10 C24 8 38 12 62 9 C88 6 105 13 132 9 C159 6 178 12 204 9 C230 6 250 12 278 9 C306 6 328 11 360 8" fill="none" stroke={`rgba(${accentRgb}, 0.48)`} strokeWidth="1.4" />
+        <path d="M0 13 C40 12 72 14 112 12 C154 10 194 14 236 12 C280 10 318 13 360 11" fill="none" stroke="rgba(233,225,211,0.08)" strokeWidth="1" />
       </svg>
     </div>
   )
@@ -115,7 +174,7 @@ function RippedSeam({ accentColor }) {
 function FocusBlock({ label, children, accent, parchment }) {
   return (
     <div>
-      <div style={{ ...TYPE.metadata, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>{label}</div>
+      <div style={{ ...TYPE.label, color: accent, marginBottom: 5 }}>{label}</div>
       <p style={{ ...TYPE.body, color: parchment, margin: 0 }}>{children}</p>
     </div>
   )
@@ -142,13 +201,13 @@ function WordFocusSheet({ word, accent, accentRgb, parchment, onClose }) {
         type="button"
         onClick={onClose}
         aria-label="Close word focus"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0, background: 'linear-gradient(to top, rgba(13,15,16,0.92), rgba(13,15,16,0.12) 58%, transparent)', pointerEvents: 'auto', cursor: 'default' }}
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0, background: 'linear-gradient(to top, rgba(13,15,16,0.94), rgba(13,15,16,0.22) 58%, transparent)', pointerEvents: 'auto', cursor: 'default' }}
       />
-      <div style={{ position: 'absolute', left: 12, right: 12, bottom: 12, maxWidth: 420, margin: '0 auto', padding: '18px 18px 16px', borderRadius: 26, background: 'linear-gradient(180deg, rgba(59,38,38,0.96), rgba(31,28,27,0.98))', border: `1px solid rgba(${accentRgb}, 0.28)`, boxShadow: '0 -22px 70px rgba(0,0,0,0.46)', pointerEvents: 'auto', animation: 'qa-slide-up 0.24s cubic-bezier(0.16,1,0.3,1) both' }}>
+      <div className="qa-animated" style={{ position: 'absolute', left: 12, right: 12, bottom: 'calc(12px + env(safe-area-inset-bottom))', maxWidth: 420, margin: '0 auto', padding: '18px 18px 16px', borderRadius: 26, background: 'linear-gradient(180deg, rgba(59,38,38,0.98), rgba(31,28,27,0.99))', border: `1px solid rgba(${accentRgb}, 0.28)`, boxShadow: '0 -22px 70px rgba(0,0,0,0.46)', pointerEvents: 'auto', animation: 'qa-slide-up 0.24s cubic-bezier(0.16,1,0.3,1) both' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginBottom: 13 }}>
           <div>
-            <div style={{ ...TYPE.metadata, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>{focus.technique}</div>
-            <div style={{ ...TYPE.displaySection, color: parchment }}>"{focus.label}"</div>
+            <div style={{ ...TYPE.label, color: accent, marginBottom: 5 }}>{focus.technique}</div>
+            <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 'clamp(24px, 7vw, 31px)', lineHeight: 1.1, fontWeight: 600, color: parchment }}>“{focus.label}”</div>
           </div>
           <button type="button" onClick={onClose} aria-label="Close" style={{ width: 36, height: 36, flexShrink: 0, borderRadius: RADII.pill, border: '1px solid rgba(233,225,211,0.16)', background: 'rgba(233,225,211,0.06)', color: 'rgba(233,225,211,0.76)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', ...TYPE.button }}>×</button>
         </div>
@@ -157,7 +216,7 @@ function WordFocusSheet({ word, accent, accentRgb, parchment, onClose }) {
           <FocusBlock label="AQA move" accent={accent} parchment={parchment}>{focus.examMove}</FocusBlock>
           <FocusBlock label="Context / link" accent={accent} parchment={parchment}>{focus.context}</FocusBlock>
           <div style={{ padding: '11px 12px', borderRadius: 16, background: `rgba(${accentRgb}, 0.10)`, border: `1px solid rgba(${accentRgb}, 0.18)` }}>
-            <div style={{ ...TYPE.metadata, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>Use it</div>
+            <div style={{ ...TYPE.label, color: accent, marginBottom: 5 }}>Use it</div>
             <p style={{ ...TYPE.body, color: parchment, margin: 0 }}>{focus.sentence}</p>
           </div>
         </div>
@@ -178,27 +237,24 @@ function QuoteWord({ word, index, visibleWords, accent, accentRgb, interactive, 
         type="button"
         onClick={() => onSelect(stripped)}
         aria-label={`Analyse the word ${stripped}`}
+        className="qa-animated"
         style={{
-          display: 'inline-block',
+          display: 'inline',
           opacity: isVisible ? 1 : 0,
           color: accent,
           background: isActive ? `rgba(${accentRgb}, 0.24)` : `rgba(${accentRgb}, 0.12)`,
-          border: `1px solid rgba(${accentRgb}, ${isActive ? 0.54 : 0.30})`,
-          borderBottom: `3px solid rgba(${accentRgb}, ${isActive ? 0.94 : 0.70})`,
-          borderRadius: 10,
-          boxShadow: isActive
-            ? `0 0 10px rgba(${accentRgb}, 0.38), 0 0 28px rgba(${accentRgb}, 0.30), inset 0 0 10px rgba(${accentRgb}, 0.10)`
-            : `0 0 10px rgba(${accentRgb}, 0.22), 0 0 24px rgba(${accentRgb}, 0.18), inset 0 0 8px rgba(${accentRgb}, 0.07)`,
-          padding: '2px 0.18em 0.06em',
-          margin: '0 0.06em 0.14em 0',
+          border: 0,
+          borderBottom: `2px solid rgba(${accentRgb}, ${isActive ? 0.94 : 0.72})`,
+          borderRadius: 3,
+          boxShadow: isActive ? `0 5px 0 rgba(${accentRgb}, 0.10)` : 'none',
+          padding: '0 0.08em 0.03em',
+          margin: '0 0.04em 0 0',
           minHeight: 44,
           font: 'inherit',
           lineHeight: 'inherit',
           letterSpacing: 'inherit',
-          textShadow: `0 0 10px rgba(${accentRgb}, 0.55), 0 0 24px rgba(${accentRgb}, 0.34)`,
           cursor: 'pointer',
-          transition: 'opacity 0.28s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease',
-          transform: isActive ? 'translateY(-1px)' : 'none',
+          transition: 'opacity 0.28s ease, background 0.18s ease, border-color 0.18s ease',
           WebkitTapHighlightColor: 'transparent',
         }}
       >
@@ -209,25 +265,22 @@ function QuoteWord({ word, index, visibleWords, accent, accentRgb, interactive, 
 
   if (shouldHighlight) {
     return (
-      <span style={{
-        display: 'inline',
-        opacity: isVisible ? 1 : 0,
-        color: accent,
-        borderBottom: `1px solid rgba(${accentRgb}, 0.44)`,
-        paddingBottom: '0.04em',
-        transition: 'opacity 0.28s ease',
-      }}>{word}{' '}</span>
+      <span className="qa-animated" style={{ display: 'inline', opacity: isVisible ? 1 : 0, color: accent, boxShadow: `inset 0 -0.22em rgba(${accentRgb}, 0.18)`, paddingBottom: '0.02em', transition: 'opacity 0.28s ease' }}>{word}{' '}</span>
     )
   }
 
   return (
-    <span style={{
-      display: 'inline',
-      opacity: isVisible ? 1 : 0,
-      color: 'inherit',
-      textShadow: '0 1px 18px rgba(0,0,0,0.65)',
-      transition: 'opacity 0.28s ease',
-    }}>{word}{' '}</span>
+    <span className="qa-animated" style={{ display: 'inline', opacity: isVisible ? 1 : 0, color: 'inherit', transition: 'opacity 0.28s ease' }}>{word}{' '}</span>
+  )
+}
+
+function Annotation({ label, children, accent, accentRgb, delay = 0 }) {
+  return (
+    <div className="qa-animated" style={{ position: 'relative', padding: '0 0 0 16px', animation: `qa-reveal-up 0.34s ease ${delay}s both` }}>
+      <div aria-hidden="true" style={{ position: 'absolute', left: 0, top: 4, bottom: 4, width: 2, borderRadius: 2, background: `rgba(${accentRgb}, 0.62)` }} />
+      <div style={{ ...TYPE.label, color: accent, marginBottom: 6 }}>{label}</div>
+      <p style={{ ...TYPE.body, color: 'rgba(233,225,211,0.84)', margin: 0 }}>{children}</p>
+    </div>
   )
 }
 
@@ -238,6 +291,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   const accent = palette.accent
   const accentRgb = palette.accentRgb
   const parchment = palette.palette?.parchment || '#E9E1D3'
+  const paperInk = palette.backgroundSecondary || '#1F1C1B'
 
   const [step, setStep] = useState('read')
   const [openedWords, setOpenedWords] = useState(new Set())
@@ -277,195 +331,186 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   }
 
   const outerStyle = {
+    position: 'relative',
     minHeight: '100dvh',
-    background: `radial-gradient(circle at 50% 0%, rgba(${accentRgb}, 0.16), transparent 34%), ${palette.background}`,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    padding: 0,
-  }
-
-  const innerStyle = {
-    width: '100%',
-    flex: 1,
-    minHeight: '100dvh',
-    display: 'flex',
-    flexDirection: 'column',
-    background: `linear-gradient(180deg, rgba(${accentRgb}, 0.10), rgba(7,7,9,0.92) 34%, rgba(8,8,10,0.98))`,
+    background: palette.background,
+    color: parchment,
     overflow: 'hidden',
   }
 
-  function renderNav() {
+  const contentStyle = {
+    position: 'relative',
+    zIndex: 1,
+    width: '100%',
+    maxWidth: 430,
+    minHeight: '100dvh',
+    margin: '0 auto',
+    padding: 'max(18px, env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom))',
+    display: 'flex',
+    flexDirection: 'column',
+  }
+
+  function renderAtmosphere() {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', padding: '14px 20px 0', flexShrink: 0 }}>
-        {step !== 'read' ? (
-          <button
-            type="button"
-            onClick={goBack}
-            style={{ background: 'none', border: 'none', padding: '4px 0', cursor: 'pointer', color: `rgba(${accentRgb}, 0.76)`, ...TYPE.caption, fontWeight: 600 }}
-          >
-            ← Back
-          </button>
-        ) : (
-          <div />
+      <>
+        {block.backgroundImage && (
+          <img src={block.backgroundImage} alt="" aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.30) saturate(0.72)', opacity: 0.34 }} />
         )}
-        <div style={{ flex: 1, textAlign: 'right', ...TYPE.metadata, color: `rgba(${accentRgb}, 0.52)`, textTransform: 'uppercase', letterSpacing: '0.18em' }}>
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, rgba(${accentRgb}, 0.10), transparent 26%), linear-gradient(90deg, rgba(0,0,0,0.48), transparent 22%, transparent 78%, rgba(0,0,0,0.48)), linear-gradient(to bottom, rgba(8,8,10,0.18), ${palette.background} 88%)` }} />
+      </>
+    )
+  }
+
+  function renderNav() {
+    if (step === 'read') return null
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, minHeight: 42, margin: '0 6px 12px', flexShrink: 0 }}>
+        <button type="button" onClick={goBack} style={{ minHeight: 40, background: 'none', border: 0, padding: '6px 0', cursor: 'pointer', color: 'rgba(233,225,211,0.72)', ...TYPE.label }}>
+          ← Back
+        </button>
+        <div style={{ flex: 1, textAlign: 'right', ...TYPE.caption, color: `rgba(${accentRgb}, 0.78)` }}>
           {STEP_LABELS[step]}
         </div>
       </div>
     )
   }
 
-  function renderHero(fullHeight) {
-    const minH = fullHeight ? 318 : 220
-    const quoteSize = fullHeight ? 'clamp(2.18rem, 8.6vw, 3.25rem)' : 'clamp(1.5rem, 5.8vw, 2.2rem)'
+  function renderQuote({ interactive = false, compact = false }) {
     return (
-      <div style={{ position: 'relative', minHeight: minH, overflow: 'hidden', flexShrink: 0 }}>
-        {block.backgroundImage && (
-          <img src={block.backgroundImage} alt="" aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.40) saturate(0.82) contrast(1.04)' }} />
+      <>
+        <blockquote style={{ margin: 0 }}>
+          <p style={{
+            margin: 0,
+            fontFamily: "'IBM Plex Serif', Georgia, serif",
+            fontSize: compact ? 'clamp(25px, 7.2vw, 34px)' : 'clamp(34px, 9.5vw, 48px)',
+            lineHeight: compact ? 1.15 : 1.08,
+            fontWeight: 600,
+            letterSpacing: '-0.035em',
+            color: parchment,
+            textWrap: 'balance',
+          }}>
+            {quoteWords.map((word, i) => (
+              <QuoteWord
+                key={`${word}-${i}`}
+                word={word}
+                index={i}
+                visibleWords={visibleWords}
+                accent={accent}
+                accentRgb={accentRgb}
+                interactive={interactive}
+                activeWord={activeWord}
+                onSelect={setActiveWord}
+              />
+            ))}
+          </p>
+        </blockquote>
+        {block.location && (
+          <p className="qa-animated" style={{ margin: '14px 0 0', ...TYPE.caption, color: 'rgba(233,225,211,0.60)', opacity: visibleWords >= quoteWords.length ? 1 : 0, transition: 'opacity 0.5s ease 0.25s' }}>
+            {block.location}
+          </p>
         )}
-        <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to bottom, rgba(6,4,8,0.12) 0%, rgba(8,6,10,0.25) 36%, rgba(8,8,10,0.94) 100%), radial-gradient(circle at 78% 44%, rgba(${accentRgb}, 0.15), transparent 32%)`, pointerEvents: 'none' }} />
-        <div style={{ position: 'relative', zIndex: 1, minHeight: minH, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '30px 26px 22px' }}>
-          <blockquote style={{ margin: 0 }}>
-            <p style={{ margin: 0, ...TYPE.displayHero, color: parchment, fontSize: quoteSize, lineHeight: 1.08, letterSpacing: '-0.055em' }}>
-              {quoteWords.map((word, i) => (
-                <QuoteWord
-                  key={i}
-                  word={word}
-                  index={i}
-                  visibleWords={visibleWords}
-                  accent={accent}
-                  accentRgb={accentRgb}
-                  interactive={step === 'words'}
-                  activeWord={activeWord}
-                  onSelect={setActiveWord}
-                />
-              ))}
-            </p>
-          </blockquote>
-          {block.location && (
-            <p style={{ margin: '16px 0 0', ...TYPE.caption, color: 'rgba(233,225,211,0.72)', opacity: visibleWords >= quoteWords.length ? 1 : 0, transition: 'opacity 0.5s ease 0.3s', letterSpacing: '0.01em' }}>
-              {block.location}
-            </p>
-          )}
-        </div>
-      </div>
+      </>
     )
   }
 
-  function renderBottomCTA(label, action) {
-    return (
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, padding: '16px 16px calc(16px + env(safe-area-inset-bottom))', background: `linear-gradient(to top, ${palette.background} 55%, transparent)`, zIndex: 10, animation: 'qa-slide-up 0.4s ease both' }}>
-        <div style={{ maxWidth: 420, margin: '0 auto' }}>
-          <ContinueCTA onClick={action} label={label} accent={accent} textColor={parchment} />
-        </div>
-      </div>
-    )
+  function renderCTA(label, action, style) {
+    return <ContinueCTA onClick={action} label={label} accent={accent} textColor={parchment} style={{ marginTop: 26, ...style }} />
   }
 
-  // ── Page 1: Read ────────────────────────────────────────────
   if (step === 'read') {
     return (
       <div style={outerStyle}>
-        <div style={innerStyle}>
-          {renderHero(true)}
-          <RippedSeam accentColor={accent} />
-          {renderNav()}
-          <div style={{ flex: 1, padding: '18px 26px 120px', animation: 'qa-fade-in 0.4s ease 0.2s both' }}>
+        {renderAtmosphere()}
+        <main style={{ ...contentStyle, justifyContent: 'flex-start' }}>
+          <TornPaper accentRgb={accentRgb} paper={parchment} ink={paperInk} style={{ marginTop: 8 }}>
+            {renderQuote({ compact: false })}
+            <InkDivider accentRgb={accentRgb} />
             <p style={{ ...TYPE.bodyLarge, color: 'rgba(233,225,211,0.78)', margin: 0 }}>
               Read it once. What feeling does it create?
             </p>
-          </div>
-        </div>
-        {renderBottomCTA('Start breaking it down', goNext)}
+            {renderCTA('Start breaking it down', goNext)}
+          </TornPaper>
+        </main>
         {activeWord && <WordFocusSheet word={activeWord} accent={accent} accentRgb={accentRgb} parchment={parchment} onClose={handleWordClose} />}
       </div>
     )
   }
 
-  // ── Page 2: Words ───────────────────────────────────────────
   if (step === 'words') {
     return (
       <div style={outerStyle}>
-        <div style={innerStyle}>
-          {renderHero(false)}
-          <RippedSeam accentColor={accent} />
+        {renderAtmosphere()}
+        <main style={contentStyle}>
           {renderNav()}
-          <div style={{ flex: 1, padding: '14px 26px 120px', display: 'flex', flexDirection: 'column', gap: 10, animation: 'qa-fade-in 0.3s ease 0.1s both' }}>
+          <TornPaper accentRgb={accentRgb} paper={parchment} ink={paperInk}>
+            {renderQuote({ interactive: true, compact: false })}
+            <InkDivider accentRgb={accentRgb} />
             <p style={{ ...TYPE.bodyLarge, color: 'rgba(233,225,211,0.78)', margin: 0 }}>
-              Tap the highlighted words.
+              Tap a marked word to uncover what it is doing.
             </p>
             {hasOpenedWord && (
-              <p style={{ ...TYPE.caption, color: accent, margin: 0, animation: 'qa-reveal-up 0.3s ease both' }}>
-                Good — you've unlocked a word-level idea.
-              </p>
+              <div className="qa-animated" style={{ marginTop: 15, paddingLeft: 14, borderLeft: `2px solid rgba(${accentRgb}, 0.68)`, animation: 'qa-reveal-up 0.3s ease both' }}>
+                <p style={{ ...TYPE.caption, color: accent, margin: 0 }}>
+                  You have unlocked a word-level idea.
+                </p>
+              </div>
             )}
-          </div>
-        </div>
-        {hasOpenedWord && renderBottomCTA('Next: build the meaning', goNext)}
+            {hasOpenedWord && renderCTA('Next: build the meaning', goNext)}
+          </TornPaper>
+        </main>
         {activeWord && <WordFocusSheet word={activeWord} accent={accent} accentRgb={accentRgb} parchment={parchment} onClose={handleWordClose} />}
       </div>
     )
   }
 
-  // ── Page 3: Meaning ─────────────────────────────────────────
   if (step === 'meaning') {
     return (
       <div style={outerStyle}>
-        <div style={innerStyle}>
+        {renderAtmosphere()}
+        <main style={{ ...contentStyle, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
           {renderNav()}
-          <div style={{ padding: '12px 20px 0', flexShrink: 0 }}>
-            <div style={{ padding: '14px 16px', borderRadius: 16, background: `rgba(${accentRgb}, 0.07)`, border: `1px solid rgba(${accentRgb}, 0.20)` }}>
-              <blockquote style={{ margin: 0 }}>
-                <p style={{ margin: 0, ...TYPE.bodyLarge, color: accent, fontStyle: 'italic', lineHeight: 1.4 }}>
-                  "{block.quote}"
-                </p>
-              </blockquote>
-              {block.location && (
-                <p style={{ margin: '6px 0 0', ...TYPE.caption, color: 'rgba(233,225,211,0.54)' }}>{block.location}</p>
-              )}
+          <TornPaper accentRgb={accentRgb} paper={parchment} ink={paperInk}>
+            {renderQuote({ compact: true })}
+            <InkDivider accentRgb={accentRgb} />
+            <div style={{ display: 'grid', gap: 20 }}>
+              {MEANING_BLOCKS.map((item, index) => (
+                <Annotation key={item.id} label={item.label} accent={accent} accentRgb={accentRgb} delay={index * 0.12 + 0.06}>
+                  {item.text}
+                </Annotation>
+              ))}
             </div>
-          </div>
-          <div style={{ flex: 1, padding: '14px 20px 120px', display: 'flex', flexDirection: 'column', gap: 10, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-            {MEANING_BLOCKS.map((mb, i) => (
-              <div key={mb.id} style={{ padding: '14px 16px', borderRadius: 16, background: 'rgba(233,225,211,0.04)', border: '1px solid rgba(233,225,211,0.10)', animation: `qa-reveal-up 0.36s ease ${i * 0.14 + 0.08}s both` }}>
-                <div style={{ ...TYPE.metadata, color: accent, textTransform: 'uppercase', marginBottom: 7 }}>{mb.label}</div>
-                <p style={{ ...TYPE.body, color: 'rgba(233,225,211,0.82)', margin: 0 }}>{mb.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-        {renderBottomCTA('Next: use it in an essay', goNext)}
+            {renderCTA('Next: use it in an essay', goNext)}
+          </TornPaper>
+        </main>
       </div>
     )
   }
 
-  // ── Page 4: Essay ───────────────────────────────────────────
   if (step === 'essay') {
     return (
       <div style={outerStyle}>
-        <div style={innerStyle}>
+        {renderAtmosphere()}
+        <main style={{ ...contentStyle, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
           {renderNav()}
-          <div style={{ flex: 1, padding: '16px 20px 120px', display: 'flex', flexDirection: 'column', gap: 16, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-            <div style={{ animation: 'qa-reveal-up 0.36s ease 0.08s both' }}>
-              <div style={{ ...TYPE.metadata, color: `rgba(${accentRgb}, 0.72)`, textTransform: 'uppercase', marginBottom: 10 }}>In an exam</div>
-              <div style={{ padding: '16px', borderRadius: 16, background: `rgba(${accentRgb}, 0.09)`, border: `1px solid rgba(${accentRgb}, 0.26)` }}>
-                <p style={{ ...TYPE.bodyLarge, color: parchment, margin: 0, lineHeight: 1.5 }}>
-                  {EXAM_SENTENCE}
-                </p>
-              </div>
+          <TornPaper accentRgb={accentRgb} paper={parchment} ink={paperInk}>
+            <div className="qa-animated" style={{ animation: 'qa-reveal-up 0.34s ease 0.06s both' }}>
+              <div style={{ ...TYPE.label, color: accent, marginBottom: 9 }}>In an exam</div>
+              <p style={{ margin: 0, fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 'clamp(21px, 5.8vw, 27px)', lineHeight: 1.42, fontWeight: 500, color: parchment }}>
+                {EXAM_SENTENCE}
+              </p>
             </div>
-            <div style={{ animation: 'qa-reveal-up 0.36s ease 0.22s both' }}>
-              <div style={{ ...TYPE.metadata, color: 'rgba(233,225,211,0.54)', textTransform: 'uppercase', marginBottom: 10 }}>Your scaffold</div>
-              <div style={{ padding: '14px 16px', borderRadius: 16, background: 'rgba(233,225,211,0.04)', border: '1px solid rgba(233,225,211,0.10)', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {SCAFFOLD.map((line, i) => (
-                  <p key={i} style={{ ...TYPE.body, color: 'rgba(233,225,211,0.72)', margin: 0 }}>{line}</p>
+            <InkDivider accentRgb={accentRgb} />
+            <div className="qa-animated" style={{ animation: 'qa-reveal-up 0.34s ease 0.18s both' }}>
+              <div style={{ ...TYPE.label, color: 'rgba(233,225,211,0.58)', marginBottom: 10 }}>Build your own</div>
+              <div style={{ display: 'grid', gap: 12 }}>
+                {SCAFFOLD.map((line, index) => (
+                  <p key={index} style={{ ...TYPE.body, color: 'rgba(233,225,211,0.78)', margin: 0, paddingBottom: 10, borderBottom: '1px solid rgba(233,225,211,0.11)' }}>{line}</p>
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-        {renderBottomCTA('Continue', onContinue)}
+            {renderCTA('Continue', onContinue)}
+          </TornPaper>
+        </main>
       </div>
     )
   }
