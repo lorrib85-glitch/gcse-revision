@@ -66,6 +66,9 @@ export const BiologyOutcome = {
     const scrim = canvasElement.querySelector('[data-chapter-outcome-scrim]')
     const markers = canvasElement.querySelectorAll('[data-chapter-outcome-marker]')
     const rows = canvasElement.querySelectorAll('[data-chapter-outcome-row]')
+    const cta = canvas.getByRole('button', { name: /start chapter/i })
+    const finalRowRect = rows[rows.length - 1].getBoundingClientRect()
+    const ctaRect = cta.getBoundingClientRect()
 
     await expect(backdrop).toHaveAttribute(
       'data-background-position',
@@ -75,6 +78,10 @@ export const BiologyOutcome = {
     expect(scrim.getBoundingClientRect().width).toBeLessThan(window.innerWidth)
     expect(markers).toHaveLength(3)
     expect(rows).toHaveLength(3)
+    expect(cta.style.position).toBe('relative')
+    expect(ctaRect.top).toBeGreaterThan(finalRowRect.bottom + 24)
+    expect(ctaRect.top).toBeLessThan(finalRowRect.bottom + 80)
+
     markers.forEach(marker => {
       expect(marker.style.filter).toBe('')
       expect(marker.style.transform).toBe('')
@@ -123,12 +130,20 @@ export const ShortViewportWithLongContent = {
     )
 
     const scroller = canvasElement.querySelector('[data-chapter-outcome-scroll]')
+    const cta = canvas.getByRole('button', { name: /start chapter/i })
+    const scrollerRect = scroller.getBoundingClientRect()
+
     expect(scroller.clientHeight).toBeLessThanOrEqual(window.innerHeight)
     expect(scroller.scrollHeight).toBeGreaterThan(scroller.clientHeight)
+    expect(cta.getBoundingClientRect().top).toBeGreaterThan(scrollerRect.bottom)
 
     scroller.scrollTop = scroller.scrollHeight
     await waitFor(() => expect(scroller.scrollTop).toBeGreaterThan(0))
-    await expect(canvas.getByRole('button', { name: /start chapter/i })).toBeVisible()
+    await waitFor(() => {
+      const rect = cta.getBoundingClientRect()
+      expect(rect.top).toBeGreaterThanOrEqual(scrollerRect.top)
+      expect(rect.bottom).toBeLessThanOrEqual(scrollerRect.bottom)
+    })
   },
 }
 
@@ -145,7 +160,8 @@ export const ReducedMotion = {
     expect(rows).toHaveLength(3)
     expect(markers).toHaveLength(3)
     rows.forEach(row => expect(row.style.animation).toBe('none'))
-    markers.forEach(marker => expect(marker.style.animation).toBe(''))
+    markers.forEach(marker => expect(marker.style.animation).toBe('')
     expect(cta.style.animation).toBe('none')
+    expect(cta.style.position).toBe('relative')
   },
 }
