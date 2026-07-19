@@ -19,10 +19,10 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Capture lint output
+      - name: Capture lint errors only
         id: lint
         continue-on-error: true
-        run: pnpm lint > lint-output.txt 2>&1
+        run: pnpm exec eslint . --quiet > lint-output.txt 2>&1
       - name: Post lint failure
         if: steps.lint.outcome == 'failure'
         uses: actions/github-script@v7
@@ -30,12 +30,11 @@ jobs:
           script: |
             const fs = require('fs')
             const output = fs.readFileSync('lint-output.txt', 'utf8')
-            const tail = output.slice(-12000)
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `Temporary lint diagnostics:\n\n\`\`\`text\n${tail}\n\`\`\``,
+              body: `Temporary lint errors only:\n\n\`\`\`text\n${output}\n\`\`\``,
             })
       - name: Preserve lint result
         if: steps.lint.outcome == 'failure'
