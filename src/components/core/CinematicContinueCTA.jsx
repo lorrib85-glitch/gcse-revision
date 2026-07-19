@@ -46,7 +46,7 @@ export default function CinematicContinueCTA({
         <span style={{
           ...TYPE.eyebrow,
           fontSize: 13,
-          letterSpacing: '0.34em', textTransform: 'uppercase',
+          letterSpacing: '0.30em', textTransform: 'uppercase',
           color: accent,
           textShadow: '0 1px 16px rgba(0,0,0,0.6)',
         }}>{label}&nbsp;&nbsp;→</span>
