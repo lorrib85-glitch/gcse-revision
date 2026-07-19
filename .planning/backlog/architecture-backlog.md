@@ -425,3 +425,46 @@ Phase 4 — rendering split:
 - Architecture tests and build stay green after each phase.
 - ModulePlayer remains lazy-loaded as its own chunk.
 - Todo lifecycle specs are converted into real tests as the corresponding logic becomes testable.
+
+---
+
+## A8 — Component Review Lab spec drift + verification findings (2026-07-19)
+
+**Status:** Backlog
+**Priority:** Low
+**Area:** `docs/superpowers/specs/2026-07-13-component-review-lab-design.md`, `src/App.jsx`, `src/dev/componentReview/`
+
+### Context
+Findings from the verified build of the lab's "Buttons and progress" reference
+page (commit e9f844f): `vite build`, full architecture suite, and a Playwright
+walkthrough at 390px all passed; these observations came out of that session.
+
+### Findings
+
+1. **Spec drift — lab access model.** The 2026-07-13 lab design spec still
+   says the lab is DEV-only (`import.meta.env.DEV` gate, "the lab chunk is
+   not emitted" in production). `src/App.jsx` has since deliberately changed:
+   the lab ships in every build, reachable via `?componentReview=true` or the
+   "Component review lab" card in the History browser, as its own lazy chunk
+   (`ComponentReviewLab-*.js`, ~88 kB / 26 kB gzip in `dist/`). The behaviour
+   is intentional (owner-facing, lazy-loaded, `devreview` storage scope), but
+   the spec should be updated or an addendum added so the doc and code agree.
+   Every new lab page (including "Buttons and progress") grows this
+   production-reachable chunk — fine while it stays lazy, worth remembering.
+
+2. **Google Fonts fail closed in proxied/offline environments.** Manrope and
+   Sora load from Google Fonts via `index.html`; in a network-restricted dev
+   environment every page load logs two `ERR_CONNECTION_RESET` console errors
+   and falls back to system fonts. Harmless in production, but self-hosting
+   the two font families would remove the external dependency and the noise.
+
+3. **Note — CinematicContinueCTA in-flow rendering.** The reference page
+   renders CinematicContinueCTA with `style={{ position: 'static' }}` (a
+   permitted layout-only override) so the normally screen-fixed CTA sits in
+   the gallery flow. Recorded here as a known sanctioned use of the override,
+   not a task.
+
+### Acceptance criteria
+- Lab spec updated (or addendum added) to match the actual production-access
+  model in `src/App.jsx`.
+- Decision recorded on self-hosting Manrope/Sora vs keeping Google Fonts.
