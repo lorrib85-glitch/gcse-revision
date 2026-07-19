@@ -10,8 +10,8 @@ import { SPACING } from '../../constants/spacing.js'
 import BackButton from '../core/BackButton.jsx'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 // CinematicShell is required because this is a full-viewport cinematic opener with
-// fixed atmosphere layers and a fixed governed CTA. The inner content owns its own
-// safe-area-aware vertical scroll so long titles and larger text remain reachable.
+// fixed atmosphere layers. The inner content owns its own safe-area-aware vertical
+// scroll so long titles, outcomes and the in-flow CTA remain reachable.
 import CinematicShell from './CinematicShell.jsx'
 import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
 
@@ -223,7 +223,6 @@ export default function ChapterOutcomeScreen({
 
         <BackBtn onClick={onBack} />
 
-        {/* Permanent bottom padding reserves the fixed CTA area before it appears. */}
         <div
           className="cos-scroll"
           data-chapter-outcome-scroll
@@ -239,7 +238,7 @@ export default function ChapterOutcomeScreen({
             touchAction: 'pan-y',
             paddingTop: `calc(${SPACING.section + SPACING.standard}px + env(safe-area-inset-top, 0px))`,
             paddingRight: SPACING.standard,
-            paddingBottom: `calc(${SPACING.cinematic + SPACING.separation}px + env(safe-area-inset-bottom, 0px))`,
+            paddingBottom: `calc(${SPACING.separation}px + env(safe-area-inset-bottom, 0px))`,
             paddingLeft: SPACING.standard,
           }}
         >
@@ -318,17 +317,27 @@ export default function ChapterOutcomeScreen({
                 ) : null
               })}
             </ul>
+
+            <div data-chapter-outcome-cta-slot>
+              <CinematicContinueCTA
+                onClick={onContinue}
+                accent={accent}
+                label="Start chapter"
+                animation={showCTA && !reduceMotion ? undefined : 'none'}
+                style={{
+                  position: 'relative',
+                  left: 'auto',
+                  right: 'auto',
+                  bottom: 'auto',
+                  width: '100%',
+                  marginTop: SPACING.separation,
+                  visibility: showCTA ? 'visible' : 'hidden',
+                  pointerEvents: showCTA ? 'auto' : 'none',
+                }}
+              />
+            </div>
           </div>
         </div>
-
-        {showCTA && (
-          <CinematicContinueCTA
-            onClick={onContinue}
-            accent={accent}
-            label="Start chapter"
-            animation={reduceMotion ? 'none' : undefined}
-          />
-        )}
       </CinematicShell>
     </>
   )
