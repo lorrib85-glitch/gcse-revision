@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
-import { SUBJECT_BACKDROPS } from '../../constants/subjectBackdrops.js'
+import {
+  SUBJECT_BACKDROPS,
+  SUBJECT_BACKDROP_POSITIONS,
+} from '../../constants/subjectBackdrops.js'
 import { MOTION } from '../../constants/motion.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
@@ -16,7 +19,6 @@ const motionMs = value => Number.parseInt(value, 10)
 const REVEAL_START_MS = motionMs(MOTION.duration.fast)
 const REVEAL_STAGGER_MS = motionMs(MOTION.duration.standard)
 const CTA_SETTLE_MS = motionMs(MOTION.duration.fast)
-const ICON_SETTLE_MS = motionMs(MOTION.duration.slow)
 
 function BackBtn({ onClick }) {
   return (
@@ -33,30 +35,26 @@ function BackBtn({ onClick }) {
 }
 
 function ItemIcon({ icon, accent }) {
+  const shared = {
+    flexShrink: 0,
+    marginTop: SPACING.micro / 2,
+  }
+
   if (icon === 'drop') return (
-    <svg
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill={accent}
-      style={{ flexShrink: 0, marginTop: SPACING.micro / 2 }}
-    >
+    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill={accent} style={shared}>
       <path d="M12 2C9 7 4 12 4 16a8 8 0 0016 0C20 12 15 7 12 2z"/>
     </svg>
   )
+
   if (icon === 'star') return (
-    <svg
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill={accent}
-      style={{ flexShrink: 0, marginTop: SPACING.micro / 2 }}
-    >
+    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill={accent} style={shared}>
       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.86L12 17.77l-6.18 3.23L7 14.14 2 9.27l6.91-1.01L12 2z"/>
     </svg>
   )
+
   if (icon === 'prayer') return (
     <svg
+      aria-hidden="true"
       width="15"
       height="15"
       viewBox="0 0 24 24"
@@ -64,14 +62,16 @@ function ItemIcon({ icon, accent }) {
       stroke={accent}
       strokeWidth="2.2"
       strokeLinecap="round"
-      style={{ flexShrink: 0, marginTop: SPACING.micro / 2 }}
+      style={shared}
     >
       <line x1="12" y1="2" x2="12" y2="22"/>
       <line x1="6" y1="8" x2="18" y2="8"/>
     </svg>
   )
+
   if (icon === 'question') return (
     <svg
+      aria-hidden="true"
       width="15"
       height="15"
       viewBox="0 0 24 24"
@@ -80,49 +80,50 @@ function ItemIcon({ icon, accent }) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      style={{ flexShrink: 0, marginTop: SPACING.micro / 2 }}
+      style={shared}
     >
       <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
       <circle cx="12" cy="17" r="0.8" fill={accent} stroke="none"/>
     </svg>
   )
+
   return (
-    <div style={{
-      width: 5,
-      height: 5,
-      borderRadius: '50%',
-      background: accent,
-      flexShrink: 0,
-      marginTop: SPACING.micro,
-    }} />
+    <span
+      aria-hidden="true"
+      style={{
+        width: 5,
+        height: 5,
+        borderRadius: '50%',
+        background: accent,
+        flexShrink: 0,
+        marginTop: SPACING.micro,
+      }}
+    />
   )
 }
 
 export default function ChapterOutcomeScreen({
-  subject      = 'History',
-  chapterNum   = 1,
+  subject = 'History',
   chapterTitle = '',
-  introText,         // kept for compat — not rendered
-  outcomes     = [],
+  outcomes = [],
   onBack,
   onContinue,
 }) {
   const img = SUBJECT_BACKDROPS[subject] || SUBJECT_BACKDROPS.History
+  const backgroundPosition = SUBJECT_BACKDROP_POSITIONS[subject]
+    || SUBJECT_BACKDROP_POSITIONS.History
   const theme = SUBJECTS[subject] || SUBJECTS.History
-  const { accent, accentRgb: rgb } = theme
+  const { accent } = theme
   const [reduceMotion] = useState(() =>
     typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
   )
 
   const [visibleCount, setVisibleCount] = useState(() => reduceMotion ? outcomes.length : 0)
   const [showCTA, setShowCTA] = useState(reduceMotion)
-  const [glowIdx, setGlowIdx] = useState(-1)
 
   // Keep the opener brisk: all three recommended outcomes and the CTA arrive in
   // about 1.2 seconds. Reduced-motion users receive the complete screen at once.
   useEffect(() => {
-    setGlowIdx(-1)
-
     if (reduceMotion) {
       setVisibleCount(outcomes.length)
       setShowCTA(true)
@@ -149,16 +150,6 @@ export default function ChapterOutcomeScreen({
     }
   }, [outcomes, reduceMotion])
 
-  // Pulse only the newly arrived marker, then settle. This attention cue is
-  // suppressed entirely when reduced motion is requested.
-  useEffect(() => {
-    if (reduceMotion || visibleCount === 0) return undefined
-    const idx = visibleCount - 1
-    setGlowIdx(idx)
-    const timer = setTimeout(() => setGlowIdx(-1), ICON_SETTLE_MS)
-    return () => clearTimeout(timer)
-  }, [visibleCount, reduceMotion])
-
   return (
     <>
       <style>{`
@@ -170,6 +161,10 @@ export default function ChapterOutcomeScreen({
           from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes cos-marker {
+          from { opacity: 0; transform: translateY(4px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
         .cos-scroll {
           scrollbar-width: none;
         }
@@ -178,37 +173,45 @@ export default function ChapterOutcomeScreen({
         }
         @media (prefers-reduced-motion: reduce) {
           .cos-enter,
-          .cos-row {
+          .cos-row,
+          .cos-marker {
             animation: none !important;
           }
         }
       `}</style>
 
       <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 1000 }}>
+        <div
+          data-chapter-outcome-backdrop
+          data-background-position={backgroundPosition}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundImage: `url(${img})`,
+            backgroundSize: 'cover',
+            backgroundPosition,
+            opacity: 0.44,
+            filter: 'saturate(0.92) brightness(0.78)',
+            pointerEvents: 'none',
+            zIndex: 1,
+          }}
+        />
 
-        {/* Background image */}
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundImage: `url(${img})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center right',
-          opacity: 0.27,
-          filter: 'grayscale(10%) brightness(0.65)',
-          pointerEvents: 'none',
-          zIndex: 1,
-        }} />
+        {/* A local scrim protects the text without flattening the whole image. */}
+        <div
+          data-chapter-outcome-scrim
+          style={{
+            position: 'fixed',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: 'min(92vw, 460px)',
+            background: 'linear-gradient(90deg, rgba(8,9,13,0.97) 0%, rgba(8,9,13,0.90) 46%, rgba(8,9,13,0.54) 72%, rgba(8,9,13,0) 100%)',
+            pointerEvents: 'none',
+            zIndex: 2,
+          }}
+        />
 
-        {/* Left-side dark gradient */}
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'linear-gradient(90deg, rgba(8,9,13,0.94) 0%, rgba(8,9,13,0.78) 38%, rgba(8,9,13,0.42) 68%, rgba(8,9,13,0.16) 100%)',
-          pointerEvents: 'none',
-          zIndex: 2,
-        }} />
-
-        {/* Bottom fade */}
         <div style={{
           position: 'fixed',
           bottom: 0,
@@ -222,10 +225,11 @@ export default function ChapterOutcomeScreen({
 
         <BackBtn onClick={onBack} />
 
-        {/* Flexible content column. The permanent bottom padding reserves the
-            fixed CTA area before it appears, so the layout never jumps or overlaps. */}
+        {/* Permanent bottom padding reserves the fixed CTA area before it appears. */}
         <div
           className="cos-scroll"
+          data-chapter-outcome-scroll
+          data-reduced-motion={reduceMotion ? 'true' : 'false'}
           style={{
             position: 'relative',
             zIndex: 5,
@@ -241,15 +245,14 @@ export default function ChapterOutcomeScreen({
             paddingLeft: SPACING.standard,
           }}
         >
-          <div style={{ width: '100%', maxWidth: 320 }}>
-
-            {/* Chapter title */}
-            <div
+          <div data-chapter-outcome-content style={{ width: '100%', maxWidth: 320 }}>
+            <h1
               className="cos-enter"
               style={{
                 ...TYPE.displayHero,
                 ...HEADING_LAYOUT.screenTitle,
                 color: '#FFFFFF',
+                marginTop: 0,
                 marginBottom: SPACING.standard,
                 animation: reduceMotion
                   ? 'none'
@@ -257,9 +260,8 @@ export default function ChapterOutcomeScreen({
               }}
             >
               {chapterTitle}
-            </div>
+            </h1>
 
-            {/* Discovery label */}
             <div
               className="cos-enter"
               style={{
@@ -274,19 +276,22 @@ export default function ChapterOutcomeScreen({
               In this chapter, you’ll learn to
             </div>
 
-            {/* Discovery items */}
-            <div style={{
+            <ul style={{
               display: 'flex',
               flexDirection: 'column',
               gap: SPACING.compact,
+              listStyle: 'none',
+              margin: 0,
+              padding: 0,
             }}>
               {outcomes.map((item, i) => {
                 const text = typeof item === 'string' ? item : item.text
                 const icon = typeof item === 'string' ? null : item.icon
                 return i < visibleCount ? (
-                  <div
+                  <li
                     className="cos-row"
-                    key={i}
+                    data-chapter-outcome-row
+                    key={`${text}-${i}`}
                     style={{
                       display: 'flex',
                       alignItems: 'flex-start',
@@ -296,29 +301,29 @@ export default function ChapterOutcomeScreen({
                         : `cos-row ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
                     }}
                   >
-                    <div style={{
-                      flexShrink: 0,
-                      filter: glowIdx === i
-                        ? `drop-shadow(0 0 5px rgba(${rgb},0.95)) drop-shadow(0 0 14px rgba(${rgb},0.50))`
-                        : 'none',
-                      transform: glowIdx === i ? 'scale(1.20)' : 'scale(1)',
-                      transition: reduceMotion
-                        ? 'none'
-                        : `filter ${MOTION.duration.slow} ${MOTION.easing.gentle}, transform ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
-                    }}>
+                    <span
+                      className="cos-marker"
+                      data-chapter-outcome-marker
+                      style={{
+                        display: 'inline-flex',
+                        flexShrink: 0,
+                        animation: reduceMotion
+                          ? 'none'
+                          : `cos-marker ${MOTION.duration.slow} ${MOTION.easing.gentle} both`,
+                      }}
+                    >
                       <ItemIcon icon={icon} accent={accent} />
-                    </div>
-                    <div style={{
+                    </span>
+                    <span style={{
                       ...TYPE.bodyStrong,
                       color: 'rgba(255,255,255,0.86)',
                     }}>
                       {text}
-                    </div>
-                  </div>
+                    </span>
+                  </li>
                 ) : null
               })}
-            </div>
-
+            </ul>
           </div>
         </div>
 
@@ -330,7 +335,6 @@ export default function ChapterOutcomeScreen({
             animation={reduceMotion ? 'none' : undefined}
           />
         )}
-
       </CinematicShell>
     </>
   )
