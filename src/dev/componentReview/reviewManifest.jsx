@@ -35,6 +35,7 @@ import BuilderBlock from '../../components/learning/BuilderBlock.jsx'
 import ChapterOutcomeScreen from '../../components/layout/ChapterOutcomeScreen.jsx'
 import ContentShell from '../../components/layout/ContentShell.jsx'
 import TeachScreenShell from '../../components/core/TeachScreenShell.jsx'
+import ButtonsAndProgressPage from './ButtonsAndProgressPage.jsx'
 
 // Registered library — self-contained kept components, here to refine in one place.
 import FactorWeb from '../../components/learning/FactorWeb.jsx'
@@ -62,6 +63,7 @@ export const STATUS_LABELS = {
   'routed-unused': 'Routed but unused',
   'one-off':       'One-off',
   'comparison':    'Active comparison',
+  'reference':     'Reference',
 }
 
 export const GROUP_LABELS = {
@@ -375,6 +377,15 @@ export const REVIEW_ENTRIES = [
     alternative: 'MedievalDiagnosisScene (scene intro); ConceptReveal.',
     render: (fx, { onDone }) => <KeyFigureReveal block={fx} subject="History" onComplete={onDone} />,
     fixture: FIX.keyFigureReveal,
+  },
+  {
+    id: 'buttons-and-progress', name: 'Buttons and progress', group: 'library',
+    status: 'reference', subject: 'History', renderMode: 'inline',
+    function: 'Reference page: every governed button style and progression/progress indicator rendered live, each labelled with its name.',
+    usage: 'Development reference only. Shows ContinueCTA, CinematicContinueCTA, CheckAnswerCTA, BackButton, ExitButton, ModuleToolbar, the BUTTONS token tiers, cinematic-primary-action, NavArrow, LearningProgressHeader, SequenceProgress, ScoreNumberLine, CircularTimer and the pill progress bar pattern.',
+    alternative: 'docs/system/BUTTON_RADII_SYSTEM.md (the written spec these components implement).',
+    render: () => <ButtonsAndProgressPage />,
+    fixture: null,
   },
   {
     id: 'chapter-outcome-screen', name: 'ChapterOutcomeScreen', group: 'library',
