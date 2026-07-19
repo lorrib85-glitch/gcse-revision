@@ -75,6 +75,33 @@ export const GENERAL = {
   // `text-primary` token in PRODUCT_UI_CONSTITUTION.md.
   feedbackText:         '#F5F7FF',
 
+  // Shared full-screen cinematic values. Subject identity still comes from
+  // SUBJECTS; these only govern readable white text, image treatment and the
+  // protective lower scrim used over photography.
+  cinematic: {
+    textPrimary:   'rgba(255,255,255,0.98)',
+    textSecondary: 'rgba(255,255,255,0.78)',
+    textFact:      'rgba(255,255,255,0.86)',
+    textMuted:     'rgba(255,255,255,0.54)',
+    textSubtle:    'rgba(255,255,255,0.32)',
+    sourceText:    'rgba(255,255,255,0.30)',
+    overlay:       'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.04) 30%, rgba(0,0,0,0.46) 57%, rgba(0,0,0,0.82) 78%, rgba(0,0,0,0.94) 100%)',
+    imageFilterFull:  'brightness(2.5)',
+    imageFilterUpper: 'brightness(1.12) saturate(1.04)',
+    actionShadow:  '0 1px 16px rgba(0,0,0,0.60)',
+    motion: {
+      fast: '420ms',
+      standard: '500ms',
+      slow: '700ms',
+      pulse: '2.8s',
+      attentionDelay: '900ms',
+      hintDelayMs: 300,
+      lockDelayMs: 250,
+      conclusionDelayMs: 350,
+      ctaDelayMs: 700,
+    },
+  },
+
   // Hairline separators, faint borders and tint fills on dark surfaces —
   // the approved white-alpha ladder for general pages. Pick the nearest
   // step; do not invent new alpha values.

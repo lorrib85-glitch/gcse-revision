@@ -7,6 +7,18 @@ const _displayHero = {
   textWrap: 'balance',
 }
 
+// Full-screen cinematic headline. This role is deliberately larger and tighter
+// than a normal module heading, and must be consumed without local typography
+// overrides by full-bleed narrative/reveal components.
+const _displayCinematic = {
+  fontFamily: "'Manrope', sans-serif",
+  fontSize: 'clamp(36px, 10.8vw, 52px)',
+  lineHeight: 1.04,
+  fontWeight: 560,
+  letterSpacing: '-0.024em',
+  textWrap: 'balance',
+}
+
 // Canonical non-cinematic module heading. Calibrated from the 390px
 // TimelineCanvas reference: calm, prominent and readable without competing
 // with cinematic/hero moments. Primary module headings must consume this
@@ -134,6 +146,18 @@ const _buttonLarge = {
   letterSpacing: '-0.005em',
 }
 
+// Atmospheric progression action used only by CinematicContinueCTA.
+// Kept separate from TYPE.label so the uppercase/tracked treatment cannot
+// leak into normal screen labels.
+const _cinematicAction = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: '0.82rem',
+  lineHeight: 1.2,
+  fontWeight: 600,
+  letterSpacing: '0.22em',
+  textTransform: 'uppercase',
+}
+
 const _quizQuestion = {
   ..._displayScreen,
   fontSize: 'clamp(34px, 8.7vw, 46px)',
@@ -179,6 +203,7 @@ const _examAnswer = {
 
 export const TYPE = {
   displayHero: _displayHero,
+  displayCinematic: _displayCinematic,
   displayScreen: _displayScreen,
   displaySection: _displaySection,
   displayCard: _displayCard,
@@ -194,6 +219,7 @@ export const TYPE = {
   caption: _caption,
   button: _button,
   buttonLarge: _buttonLarge,
+  cinematicAction: _cinematicAction,
   quizQuestion: _quizQuestion,
   quizOption: _quizOption,
   quizHint: _quizHint,

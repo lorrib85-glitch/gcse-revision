@@ -1,4 +1,6 @@
 import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
+import { SPACING } from '../../constants/spacing.js'
 
 // ── CinematicContinueCTA v1 — LOCKED COMPONENT ────────────────────────────
 // The only Cinematic Reveal CTA implementation allowed anywhere in the app —
@@ -10,7 +12,7 @@ export default function CinematicContinueCTA({
   onClick,
   accent,
   label = 'Continue',
-  animation = 'crm-fade 700ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite',
+  animation = `crm-fade ${GENERAL.cinematic.motion.slow} ease both, crm-pulse ${GENERAL.cinematic.motion.pulse} ease-in-out ${GENERAL.cinematic.motion.attentionDelay} infinite`,
   layout = 'fixed',
   align = 'center',
   style,
@@ -25,16 +27,25 @@ export default function CinematicContinueCTA({
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes crm-pulse {
-          0%, 100% { opacity: 0.55; }
+          0%, 100% { opacity: 0.72; }
           50%      { opacity: 1; }
         }
         @keyframes expl-cont {
           from { opacity: 0; transform: translateY(14px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        @media (prefers-reduced-motion: reduce) {
+          .cinematic-continue-cta {
+            animation: none !important;
+            opacity: 1 !important;
+            transition: none !important;
+          }
+        }
       `}</style>
       <button
+        className="cinematic-continue-cta"
         data-cinematic-cta-layout={layout}
+        aria-label={label}
         onClick={e => { e.stopPropagation(); onClick?.() }}
         style={{
           ...(isInline
@@ -44,9 +55,9 @@ export default function CinematicContinueCTA({
               }
             : {
                 position: 'fixed',
-                left: 32,
-                right: 32,
-                bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))',
+                left: SPACING.standard + SPACING.micro,
+                right: SPACING.standard + SPACING.micro,
+                bottom: `calc(${SPACING.separation}px + env(safe-area-inset-bottom, 0px))`,
               }),
           zIndex: 1300,
           pointerEvents: 'auto',
@@ -63,13 +74,10 @@ export default function CinematicContinueCTA({
         }}
       >
         <span style={{
-          ...TYPE.eyebrow,
-          fontSize: 13,
-          letterSpacing: '0.30em',
-          textTransform: 'uppercase',
+          ...TYPE.cinematicAction,
           color: accent,
-          textShadow: '0 1px 16px rgba(0,0,0,0.6)',
-        }}>{label}&nbsp;&nbsp;→</span>
+          textShadow: GENERAL.cinematic.actionShadow,
+        }}>{label}</span>
       </button>
     </>
   )
