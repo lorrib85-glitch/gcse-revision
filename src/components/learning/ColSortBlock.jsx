@@ -1,179 +1,392 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
-export default function ColSortBlock({ block, subject = 'Biology' }) {
-  const subj   = SUBJECTS[subject] || SUBJECTS.Biology
+const CSS = `
+  @keyframes csb-card-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes csb-tile-in {
+    from { opacity: 0; transform: translateY(7px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes csb-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(3px); }
+  }
+
+  .csb-tray {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .csb-tray:not(:disabled):active {
+    transform: scale(0.985);
+  }
+
+  .csb-tray:focus-visible {
+    outline: 2px solid var(--csb-focus);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .csb-tray,
+    .csb-current-card,
+    .csb-sorted-tile {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+`
+
+function splitColumnLabel(column) {
+  const [title = '', ...detailLines] = String(column?.label ?? '').split('\n')
+  return {
+    title,
+    detail: column?.description ?? detailLines.join(' '),
+  }
+}
+
+function withAlpha(color, alpha) {
+  return /^#[0-9a-f]{6}$/i.test(color ?? '') ? `${color}${alpha}` : color
+}
+
+export default function ColSortBlock({ block, subject = 'Biology', onComplete }) {
+  const subj = SUBJECTS[subject] || SUBJECTS.Biology
   const accent = subj.accent
-  const rgb    = subj.accentRgb
+  const rgb = subj.accentRgb
 
-  const items   = block.items   || []
+  const items = block.items || []
   const columns = block.columns || []
 
-  const [cursor,    setCursor]    = useState(0)
-  const [feedback,  setFeedback]  = useState(null) // null | 'correct' | 'wrong'
-  const [shakeCol,  setShakeCol]  = useState(null)
-  const [sorted,    setSorted]    = useState(0)
-  const [done,      setDone]      = useState(false)
-  const [lastExpl,  setLastExpl]  = useState(null)
+  const [cursor, setCursor] = useState(0)
+  const [feedback, setFeedback] = useState(null)
+  const [placed, setPlaced] = useState(() => columns.map(() => []))
+  const [done, setDone] = useState(items.length === 0)
 
-  const cur = items[cursor]
+  const timerRef = useRef(null)
+  const lockedRef = useRef(false)
+  const completedRef = useRef(false)
+
+  const cur = items[cursor] ?? null
+  const sortedCount = placed.reduce((total, columnItems) => total + columnItems.length, 0)
+
+  useEffect(() => () => {
+    if (timerRef.current) clearTimeout(timerRef.current)
+  }, [])
+
+  function finish(nextPlaced) {
+    setPlaced(nextPlaced)
+    setDone(true)
+    setFeedback(null)
+    lockedRef.current = false
+
+    if (!completedRef.current) {
+      completedRef.current = true
+      onComplete?.({ placed: nextPlaced, total: items.length })
+    }
+  }
 
   function pick(colIdx) {
-    if (feedback || done) return
+    if (!cur || lockedRef.current || done) return
 
     const correct = colIdx === cur.col
 
     if (!correct) {
-      setShakeCol(colIdx)
-      setFeedback('wrong')
-      setTimeout(() => { setShakeCol(null); setFeedback(null) }, 500)
+      lockedRef.current = true
+      setFeedback({
+        type: 'wrong',
+        colIdx,
+        message: cur.wrongFeedback || 'Not quite — compare the column definitions and try again.',
+      })
+
+      timerRef.current = setTimeout(() => {
+        setFeedback(null)
+        lockedRef.current = false
+      }, 650)
       return
     }
 
-    setFeedback('correct')
-    setLastExpl(cur.explanation || null)
-    const nextSorted = sorted + 1
+    lockedRef.current = true
+    setFeedback({
+      type: 'correct',
+      colIdx,
+      message: cur.explanation || 'That evidence belongs in this group.',
+    })
 
-    setTimeout(() => {
-      setFeedback(null)
-      const next = cursor + 1
-      if (next >= items.length) {
-        setDone(true)
-      } else {
-        setCursor(next)
-        setSorted(nextSorted)
+    timerRef.current = setTimeout(() => {
+      const nextPlaced = placed.map((columnItems, index) => (
+        index === colIdx ? [...columnItems, cur] : columnItems
+      ))
+      const nextCursor = cursor + 1
+
+      if (nextCursor >= items.length) {
+        finish(nextPlaced)
+        return
       }
-    }, 900)
+
+      setPlaced(nextPlaced)
+      setCursor(nextCursor)
+      setFeedback(null)
+      lockedRef.current = false
+    }, 760)
   }
 
-  return (
-    <div style={{ margin: '14px 0' }}>
-      <style>{`
-        @keyframes csb-correct { 0%,100%{transform:scale(1)} 40%{transform:scale(1.03)} }
-        @keyframes csb-shake {
-          0%,100%{transform:translateX(0)}
-          20%{transform:translateX(-5px)}
-          40%{transform:translateX(5px)}
-          60%{transform:translateX(-4px)}
-          80%{transform:translateX(3px)}
-        }
-        @keyframes csb-fade-up { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-      `}</style>
+  if (!columns.length) return null
 
-      {/* Question label */}
-      {block.question && (
+  return (
+    <section style={{ margin: '16px 0 18px' }} aria-label={block.question || 'Sort the evidence'}>
+      <style>{CSS}</style>
+
+      <div style={{ marginBottom: 18 }}>
         <div style={{
-          ...TYPE.eyebrow,
-          textTransform: 'uppercase',
-          color: `rgba(${rgb},0.72)`,
-          marginBottom: 20,
+          ...TYPE.label,
+          color: done ? accent : GENERAL.cinematic.textMuted,
+          marginBottom: 10,
         }}>
-          {block.question}
+          {done ? `${items.length} of ${items.length}` : `${cursor + 1} of ${items.length}`}
+        </div>
+
+        {block.question && (
+          <h3 style={{
+            ...TYPE.displayCard,
+            color: GENERAL.cinematic.textPrimary,
+            margin: 0,
+          }}>
+            {block.question}
+          </h3>
+        )}
+
+        <p style={{
+          ...TYPE.bodySmall,
+          color: GENERAL.cinematic.textMuted,
+          margin: block.question ? '8px 0 0' : 0,
+        }}>
+          {block.instruction || 'Build the groups one statement at a time.'}
+        </p>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${Math.min(Math.max(columns.length, 1), 2)}, minmax(0, 1fr))`,
+        gap: 10,
+        alignItems: 'stretch',
+        marginBottom: done ? 16 : 20,
+      }}>
+        {columns.map((col, colIdx) => {
+          const { title, detail } = splitColumnLabel(col)
+          const color = col.color || accent
+          const columnItems = placed[colIdx] || []
+          const isCorrectTarget = feedback?.type === 'correct' && feedback.colIdx === colIdx
+          const isWrongTarget = feedback?.type === 'wrong' && feedback.colIdx === colIdx
+          const borderColor = isCorrectTarget
+            ? withAlpha(color, 'CC')
+            : withAlpha(color, columnItems.length ? '70' : '42')
+
+          return (
+            <button
+              className="csb-tray"
+              key={`${title}-${colIdx}`}
+              type="button"
+              onClick={() => pick(colIdx)}
+              disabled={done || lockedRef.current}
+              aria-label={done ? title : `Sort ${cur?.label || 'this evidence'} into ${title}`}
+              style={{
+                '--csb-focus': color,
+                minWidth: 0,
+                minHeight: 214,
+                padding: '14px 12px 12px',
+                borderRadius: 16,
+                border: `1px solid ${borderColor}`,
+                background: isCorrectTarget
+                  ? (col.bg || `rgba(${rgb},0.10)`)
+                  : (col.bg || GENERAL.backgroundSunken),
+                boxShadow: isCorrectTarget
+                  ? `inset 0 0 0 1px ${withAlpha(color, '38')}, ${GENERAL.shadow.raised}`
+                  : `inset 0 1px 0 ${GENERAL.line.faint}`,
+                color: GENERAL.cinematic.textPrimary,
+                textAlign: 'left',
+                cursor: done || lockedRef.current ? 'default' : 'pointer',
+                opacity: feedback && feedback.colIdx !== colIdx ? 0.62 : 1,
+                transition: 'border-color 180ms ease, background 180ms ease, opacity 180ms ease, transform 120ms ease',
+                animation: isWrongTarget ? 'csb-shake 340ms ease' : 'none',
+              }}
+            >
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                marginBottom: detail ? 7 : 13,
+              }}>
+                <span aria-hidden="true" style={{
+                  width: 9,
+                  height: 9,
+                  borderRadius: '50%',
+                  flexShrink: 0,
+                  background: color,
+                  boxShadow: isCorrectTarget ? `0 0 14px ${withAlpha(color, '80')}` : 'none',
+                }} />
+                <span style={{
+                  ...TYPE.titleMedium,
+                  color,
+                  overflowWrap: 'anywhere',
+                }}>
+                  {title}
+                </span>
+              </div>
+
+              {detail && (
+                <div style={{
+                  ...TYPE.caption,
+                  color: GENERAL.cinematic.textMuted,
+                  minHeight: 34,
+                  marginBottom: 12,
+                }}>
+                  {detail}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+                {columnItems.map((item, itemIdx) => (
+                  <div
+                    className="csb-sorted-tile"
+                    key={`${item.label}-${itemIdx}`}
+                    style={{
+                      padding: '9px 9px 10px',
+                      borderRadius: 10,
+                      border: `1px solid ${withAlpha(color, '30')}`,
+                      background: 'rgba(0,0,0,0.20)',
+                      animation: 'csb-tile-in 240ms ease both',
+                    }}
+                  >
+                    <div style={{
+                      ...TYPE.caption,
+                      color: GENERAL.cinematic.textFact,
+                      overflowWrap: 'anywhere',
+                    }}>
+                      {item.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {!columnItems.length && (
+                <div style={{
+                  minHeight: 70,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 10,
+                  borderRadius: 11,
+                  border: `1px dashed ${withAlpha(color, '34')}`,
+                  ...TYPE.caption,
+                  color: GENERAL.cinematic.textSubtle,
+                  textAlign: 'center',
+                }}>
+                  {col.emptyLabel || 'Place evidence here'}
+                </div>
+              )}
+
+              <div style={{
+                ...TYPE.metadata,
+                color: withAlpha(color, 'A8'),
+                marginTop: 13,
+                textAlign: 'center',
+                letterSpacing: '0.04em',
+              }}>
+                {columnItems.length} {columnItems.length === 1 ? 'item' : 'items'}
+              </div>
+            </button>
+          )
+        })}
+      </div>
+
+      {!done && cur && (
+        <div>
+          <div style={{
+            ...TYPE.label,
+            color: accent,
+            textAlign: 'center',
+            marginBottom: 10,
+          }}>
+            Tap a column to sort
+          </div>
+
+          <div
+            key={`${cursor}-${cur.label}`}
+            className="csb-current-card"
+            style={{
+              padding: '17px 18px',
+              borderRadius: 14,
+              border: `1px solid ${feedback?.type === 'correct' ? accent : GENERAL.line.strong}`,
+              background: feedback?.type === 'correct'
+                ? `rgba(${rgb},0.09)`
+                : GENERAL.backgroundSurface,
+              boxShadow: GENERAL.shadow.raised,
+              animation: 'csb-card-in 260ms ease both',
+              transition: 'border-color 180ms ease, background 180ms ease',
+            }}
+          >
+            <div style={{
+              ...TYPE.displayCard,
+              color: feedback?.type === 'correct' ? accent : GENERAL.cinematic.textPrimary,
+              textAlign: 'center',
+            }}>
+              {cur.label}
+            </div>
+          </div>
+
+          <div
+            aria-live="polite"
+            style={{
+              minHeight: 48,
+              paddingTop: 10,
+              ...TYPE.bodySmall,
+              color: feedback?.type === 'wrong'
+                ? GENERAL.feedbackIncorrect
+                : feedback?.type === 'correct'
+                  ? GENERAL.feedbackCorrect
+                  : GENERAL.cinematic.textSubtle,
+              textAlign: 'center',
+            }}
+          >
+            {feedback?.message || `${sortedCount} sorted so far`}
+          </div>
         </div>
       )}
 
-      {!done ? (
-        <>
-          {/* Progress */}
+      {done && (
+        <div aria-live="polite" style={{
+          padding: '15px 16px',
+          borderRadius: 14,
+          border: `1px solid ${withAlpha(accent, '42')}`,
+          background: `rgba(${rgb},0.06)`,
+          animation: 'csb-card-in 320ms ease both',
+        }}>
           <div style={{
-            ...TYPE.label,
-            color: 'rgba(255,255,255,0.30)',
-            marginBottom: 14,
-          }}>
-            {cursor + 1} / {items.length}
-          </div>
-
-          {/* Card */}
-          <div style={{
-            padding: '18px 20px',
-            borderRadius: 12,
-            border: feedback === 'correct'
-              ? `1px solid ${accent}`
-              : '1px solid rgba(255,255,255,0.10)',
-            background: feedback === 'correct'
-              ? `rgba(${rgb},0.08)`
-              : 'rgba(255,255,255,0.03)',
-            ...TYPE.displayCard,
-            fontSize: 17,
-            color: feedback === 'correct' ? accent : 'rgba(245,245,245,0.90)',
-            transition: 'border-color 200ms ease, color 200ms ease, background 200ms ease',
-            animation: feedback === 'correct' ? 'csb-correct 320ms ease' : 'none',
-            marginBottom: 20,
-          }}>
-            {cur?.label}
-          </div>
-
-          {/* Correct feedback explanation */}
-          {feedback === 'correct' && lastExpl && (
-            <div style={{
-              ...TYPE.bodySmall,
-              color: `rgba(${rgb},0.82)`,
-              marginBottom: 20,
-              animation: 'csb-fade-up 260ms ease both',
-            }}>
-              {lastExpl}
-            </div>
-          )}
-
-          {/* Column buttons */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {columns.map((col, i) => (
-              <button
-                key={i}
-                onClick={() => pick(i)}
-                disabled={!!feedback}
-                style={{
-                  padding: '14px 18px',
-                  borderRadius: 10,
-                  border: `1px solid ${col.color}44`,
-                  background: col.bg || `rgba(${rgb},0.05)`,
-                  cursor: feedback ? 'default' : 'pointer',
-                  textAlign: 'left',
-                  animation: shakeCol === i ? 'csb-shake 320ms ease' : 'none',
-                  transition: 'opacity 150ms ease',
-                  opacity: feedback === 'wrong' && shakeCol !== i ? 0.5 : 1,
-                }}
-              >
-                {col.label.split('\n').map((line, li) => (
-                  <div
-                    key={li}
-                    style={{
-                      ...(li === 0 ? TYPE.eyebrow : TYPE.label),
-                      color: li === 0 ? col.color : `${col.color}99`,
-                      textTransform: li === 0 ? 'uppercase' : 'none',
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {line}
-                  </div>
-                ))}
-              </button>
-            ))}
-          </div>
-        </>
-      ) : (
-        /* Completion state */
-        <div style={{ animation: 'csb-fade-up 400ms ease both' }}>
-          <div style={{
-            ...TYPE.displayCard,
-            fontSize: 17,
+            ...TYPE.titleMedium,
             color: accent,
-            lineHeight: 1.5,
-            marginBottom: 20,
+            marginBottom: block.explanation ? 7 : 0,
           }}>
-            ✓ All sorted.
+            All evidence sorted.
           </div>
+
           {block.explanation && (
             <div style={{
-              ...TYPE.bodyStrong,
-              color: 'rgba(245,245,245,0.72)',
+              ...TYPE.bodySmall,
+              color: GENERAL.cinematic.textSecondary,
             }}>
               {block.explanation}
             </div>
           )}
         </div>
       )}
-    </div>
+    </section>
   )
 }
