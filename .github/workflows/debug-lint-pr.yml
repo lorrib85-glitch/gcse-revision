@@ -22,7 +22,7 @@ jobs:
       - name: Capture lint output
         id: lint
         continue-on-error: true
-        run: pnpm lint --format compact > lint-output.txt 2>&1
+        run: pnpm lint > lint-output.txt 2>&1
       - name: Post lint failure
         if: steps.lint.outcome == 'failure'
         uses: actions/github-script@v7
