@@ -10,6 +10,7 @@ import SequenceProgress from '../core/SequenceProgress.jsx'
 // viewport width; an inset shell would clip the connector rail and card centring.
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { TYPE } from '../../constants/typography.js'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 import {
   getNearestTimelineIndex,
   getTimelineCanvasGeometry,
@@ -437,14 +438,9 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
         }}
       >
         {block.title && (
-          <h2 style={{
-            ...TYPE.displaySection,
-            fontSize: 'clamp(24px, 7.5vw, 32px)',
-            color: visual.titleText,
-            margin: '0 0 8px',
-          }}>
+          <ScreenTitle style={{ color: visual.titleText, margin: `0 0 ${SPACING.micro}px` }}>
             {block.title}
-          </h2>
+          </ScreenTitle>
         )}
         {block.intro && (
           <p style={{ ...TYPE.bodyStrong, color: visual.introText, margin: 0 }}>

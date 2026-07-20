@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
+import { ScreenTitle, ScreenBody } from '../core/ScreenText.jsx'
 
 let _erStyled = false
 function ensureStyles() {
@@ -79,25 +80,19 @@ export default function ExplainReveal({ block, subject, onComplete }) {
 
         {/* Main title — optional */}
         {block.title && (
-          <h2 style={{
-            ...F, fontSize: 42, fontWeight: 600,
-            lineHeight: 1.08, letterSpacing: '-0.03em',
-            color: 'rgba(245,245,245,0.96)',
-            maxWidth: '92%', margin: '0 0 24px',
-          }}>
+          <ScreenTitle style={{ margin: `0 0 ${SPACING.standard}px` }}>
             {block.title}
-          </h2>
+          </ScreenTitle>
         )}
 
         {/* Intro paragraph */}
         {block.intro && (
-          <p style={{
-            ...F, fontSize: 19, lineHeight: 1.55, fontWeight: 400,
+          <ScreenBody style={{
             color: 'rgba(245,245,245,0.68)',
-            maxWidth: '95%', margin: '0 0 40px',
+            margin: `0 0 ${SPACING.separation}px`,
           }}>
             {block.intro}
-          </p>
+          </ScreenBody>
         )}
 
         {/* Reasoning chain */}

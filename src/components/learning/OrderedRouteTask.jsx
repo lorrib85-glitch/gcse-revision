@@ -7,6 +7,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import CinematicShell from '../layout/CinematicShell.jsx'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 
 const TEXT_PRIMARY = 'rgba(255,251,242,0.96)'
 const TEXT_DIM = 'rgba(255,248,235,0.66)'
@@ -255,17 +256,16 @@ export default function OrderedRouteTask({ screen, subject, onComplete }) {
           scrollPaddingBottom: `calc(${SPACING.section}px + env(safe-area-inset-bottom, 0px))`,
         }}
       >
-        <h1
+        <ScreenTitle
           className="ort-anim"
           style={{
-            ...TYPE.displayScreen,
             margin: `0 0 ${SPACING.micro}px`,
             color: TEXT_PRIMARY,
             animation: entrance,
           }}
         >
           {renderTitle(screen.title, screen.titleHighlight, accent)}
-        </h1>
+        </ScreenTitle>
 
         <p
           className="ort-anim"

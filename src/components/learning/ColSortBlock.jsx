@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
-import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
+import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 
 const CSS = `
   @keyframes csb-card-in {
@@ -402,14 +403,12 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
             </div>
           </div>
 
-          <h2 style={{
-            ...TYPE.displayScreen,
-            ...HEADING_LAYOUT.screenTitle,
+          <ScreenTitle style={{
             color: GENERAL.cinematic.textPrimary,
             margin: 0,
           }}>
             {title}
-          </h2>
+          </ScreenTitle>
 
           <p style={{
             ...TYPE.bodyLarge,

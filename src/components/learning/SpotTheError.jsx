@@ -3,8 +3,9 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
-import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
+import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 // CinematicShell used here (not ContentShell/InteractionShell): this is a
 // full-bleed diagnostic screen that owns its own 100dvh height, internal
@@ -365,14 +366,9 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
         {phase === 'diagnose' && (
           <>
             <header style={{ marginBottom: SPACING.separation }}>
-              <h1 style={{
-                ...TYPE.displayScreen,
-                color: TEXT_PRIMARY,
-                maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
-                margin: 0,
-              }}>
+              <ScreenTitle style={{ color: TEXT_PRIMARY, margin: 0 }}>
                 {screenTitle}
-              </h1>
+              </ScreenTitle>
               <p style={{
                 ...TYPE.body,
                 color: TEXT_MUTED,
@@ -542,14 +538,9 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
         {phase === 'repair' && repairAvailable && (
           <div className="ste-anim" style={{ animation: `ste-reveal ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
             <header style={{ marginBottom: SPACING.separation }}>
-              <h1 style={{
-                ...TYPE.displayScreen,
-                color: TEXT_PRIMARY,
-                maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
-                margin: 0,
-              }}>
+              <ScreenTitle style={{ color: TEXT_PRIMARY, margin: 0 }}>
                 {block.repairTitle || 'Fix the answer'}
-              </h1>
+              </ScreenTitle>
               <p style={{
                 ...TYPE.body,
                 color: TEXT_MUTED,

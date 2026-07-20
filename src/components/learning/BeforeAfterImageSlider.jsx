@@ -6,6 +6,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 
 // The learner must push the divider past both of these before the takeaway
 // and Continue are earned — seeing both sides is the learning, not optional.
@@ -154,13 +155,9 @@ export default function BeforeAfterImageSlider({
           padding: `calc(${SPACING.cinematic}px + ${SPACING.micro}px) ${SPACING.standard}px ${SPACING.standard}px`,
           flexShrink: 0,
         }}>
-          <p style={{
-            ...TYPE.displayScreen,
-            color: GENERAL.feedbackText,
-            margin: 0,
-          }}>
+          <ScreenTitle style={{ color: GENERAL.feedbackText, margin: 0 }}>
             {heading}
-          </p>
+          </ScreenTitle>
         </div>
       )}
 

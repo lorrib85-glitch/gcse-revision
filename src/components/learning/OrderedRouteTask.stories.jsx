@@ -77,7 +77,7 @@ export const InteractionAndMobileCompletion = {
 
     expect(scrollRegion).not.toBeNull()
     expect(scrollRegion.scrollWidth).toBeLessThanOrEqual(scrollRegion.clientWidth)
-    await expect(canvas.getByText('0/5 placed')).toBeVisible()
+    await waitFor(() => expect(canvas.getByText('0/5 placed')).toBeVisible())
     expect(canvas.queryByRole('button', { name: 'Continue' })).toBeNull()
 
     const firstAnswer = getCurrentAnswer(canvasElement)
@@ -88,7 +88,7 @@ export const InteractionAndMobileCompletion = {
     wrongButton.focus()
     await userEvent.keyboard('{Enter}')
     await expect(canvas.getByText(/^Not here —/)).toBeVisible()
-    await expect(canvas.getByText('0/5 placed')).toBeVisible()
+    await waitFor(() => expect(canvas.getByText('0/5 placed')).toBeVisible())
 
     await userEvent.click(getStageButton(canvasElement, correctStage))
     await waitFor(() => expect(canvas.getByText('1/5 placed')).toBeVisible())
@@ -97,9 +97,9 @@ export const InteractionAndMobileCompletion = {
       await placeCurrentAnswer(canvasElement)
     }
 
-    await expect(canvas.getByText('Chain rebuilt')).toBeVisible()
-    await expect(canvas.getByText('Five stages, each one further from the fighting.')).toBeVisible()
-    await expect(canvas.getByText(/Exam takeaway:/)).toBeVisible()
+    await waitFor(() => expect(canvas.getByText('Chain rebuilt')).toBeVisible())
+    await waitFor(() => expect(canvas.getByText('Five stages, each one further from the fighting.')).toBeVisible())
+    await waitFor(() => expect(canvas.getByText(/Exam takeaway:/)).toBeVisible())
 
     const continueButton = canvas.getByRole('button', { name: 'Continue' })
     const finalStageButton = getStageButton(canvasElement, SCREEN.stages.at(-1))
@@ -110,8 +110,13 @@ export const InteractionAndMobileCompletion = {
       expect(continueRect.bottom).toBeLessThanOrEqual(window.innerHeight + 1)
     }, { timeout: 3000 })
 
-    expect(finalStageButton.getBoundingClientRect().bottom)
-      .toBeLessThanOrEqual(continueButton.getBoundingClientRect().top + 1)
+    // The component smooth-scrolls the route to the bottom on completion —
+    // wait for that scroll to settle before asserting the final stage sits
+    // clear of the sticky Continue bar.
+    await waitFor(() => {
+      expect(finalStageButton.getBoundingClientRect().bottom)
+        .toBeLessThanOrEqual(continueButton.getBoundingClientRect().top + 1)
+    }, { timeout: 3000 })
 
     await userEvent.click(continueButton)
     await expect(args.onComplete).toHaveBeenCalledTimes(1)

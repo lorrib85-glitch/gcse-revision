@@ -26,9 +26,9 @@ function withoutScreenTitleTypeOverrides(style = {}) {
 // the TimelineCanvas 390px reference. The style prop may adjust layout or
 // colour, but typography properties are ignored so callers cannot create a
 // second screen-title system locally.
-export function ScreenTitle({ children, style }) {
+export function ScreenTitle({ children, style, className }) {
   return (
-    <h2 style={{
+    <h2 className={className} style={{
       ...TYPE.displayScreen,
       color: 'rgba(255,255,255,0.96)',
       maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,

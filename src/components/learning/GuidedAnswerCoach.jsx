@@ -9,6 +9,7 @@ import { BUTTONS } from '../../constants/buttons.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import GuidedExamResponse from './GuidedExamResponse.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 import { logCoachTypeResult } from '../../unifiedWeaknessTracker.js'
 
 const BRONZE = '#C89B6D'
@@ -153,9 +154,9 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         <ContinueCTA onClick={() => setStage('focus')} accent={GENERAL.teal} />
       }>
         <div style={kickerStyle}>1 · The question</div>
-        <div style={{ ...TYPE.displaySection, fontSize: 30, color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
+        <ScreenTitle style={{ color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
           Read it. Don't rush<span style={{ color: GENERAL.teal }}>.</span>
-        </div>
+        </ScreenTitle>
         <p style={{ ...TYPE.body, fontSize: 14, color: GENERAL.slate, marginBottom: SPACING.standard }}>
           This is the exact question you'll be working with today. Read it carefully — every word changes what the examiner is looking for.
         </p>
@@ -192,9 +193,9 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         <ContinueCTA onClick={() => setStage('thinking')} accent={GENERAL.teal} />
       }>
         <div style={kickerStyle}>2 · What earns marks</div>
-        <div style={{ ...TYPE.displaySection, fontSize: 28, color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
+        <ScreenTitle style={{ color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
           What's the examiner looking for<span style={{ color: GENERAL.teal }}>?</span>
-        </div>
+        </ScreenTitle>
         <p style={{ ...TYPE.body, fontSize: 14.5, color: 'rgba(255,255,255,0.75)', marginBottom: SPACING.standard }}>
           {examFocus.whatItsAsking}
         </p>
@@ -256,9 +257,9 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         ) : null
       }>
         <div style={kickerStyle}>3 · Examiner thinking</div>
-        <div style={{ ...TYPE.displaySection, fontSize: 28, color: GENERAL.softWhite, marginBottom: 6, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
+        <ScreenTitle style={{ color: GENERAL.softWhite, marginBottom: 6, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
           Watch an examiner think<span style={{ color: GENERAL.teal }}>.</span>
-        </div>
+        </ScreenTitle>
         <div style={{
           ...TYPE.eyebrow, textTransform: 'uppercase', color: GENERAL.slate,
           marginBottom: SPACING.standard,
@@ -333,9 +334,9 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         <ContinueCTA onClick={() => setStage('supported')} accent={BRONZE} />
       }>
         <div style={kickerStyle}>4 · Model answer</div>
-        <div style={{ ...TYPE.displaySection, fontSize: 28, color: GENERAL.softWhite, marginBottom: 6, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
+        <ScreenTitle style={{ color: GENERAL.softWhite, marginBottom: 6, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
           A model answer<span style={{ color: GENERAL.teal }}>.</span>
-        </div>
+        </ScreenTitle>
         <p style={{ ...TYPE.body, fontSize: 13.5, color: GENERAL.slate, marginBottom: SPACING.standard }}>
           Tap any sentence to see exactly why it earns marks.
         </p>
@@ -463,9 +464,9 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         </div>
       }>
         <div style={kickerStyle}>8 · Your progress</div>
-        <div style={{ ...TYPE.displaySection, fontSize: 28, color: GENERAL.softWhite, marginBottom: SPACING.standard, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
+        <ScreenTitle style={{ color: GENERAL.softWhite, marginBottom: SPACING.standard, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
           Your progress<span style={{ color: GENERAL.teal }}>.</span>
-        </div>
+        </ScreenTitle>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.standard, marginBottom: SPACING.standard }}>
           {rows.map(row => {

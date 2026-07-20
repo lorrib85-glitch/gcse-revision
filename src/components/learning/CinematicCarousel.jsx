@@ -6,8 +6,9 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
-import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
+import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 
 // ─── CinematicCarousel / ImageReveal ─────────────────────────────────────────
 //
@@ -166,14 +167,9 @@ function ImageReveal({ block, subject, onContinue }) {
           flexShrink: 0,
         }}>
           {block.title && (
-            <h2 style={{
-              ...TYPE.displayScreen,
-              color: 'rgba(245,245,245,0.96)',
-              maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
-              margin: '0 auto',
-            }}>
+            <ScreenTitle style={{ margin: '0 auto' }}>
               {block.title}
-            </h2>
+            </ScreenTitle>
           )}
           {block.intro && (
             <p style={{
@@ -314,14 +310,9 @@ function DefaultCarousel({ block, subject, onContinue }) {
       }}>
         <div style={{ padding: `0 ${SPACING.micro}px`, marginBottom: SPACING.compact, flexShrink: 0 }}>
           {block.title && (
-            <h2 style={{
-              ...TYPE.displayScreen,
-              color: 'rgba(245,245,245,0.96)',
-              maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
-              margin: 0,
-            }}>
+            <ScreenTitle style={{ margin: 0 }}>
               {block.title}
-            </h2>
+            </ScreenTitle>
           )}
           {block.intro && (
             <p style={{

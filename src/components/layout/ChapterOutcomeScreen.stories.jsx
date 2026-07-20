@@ -170,9 +170,9 @@ export const ReducedMotion = {
     await expect(cta).toHaveAttribute('data-cinematic-cta-layout', 'inline')
     expect(rows).toHaveLength(3)
     expect(markers).toHaveLength(3)
-    rows.forEach(row => expect(row.style.animation).toBe('none'))
-    markers.forEach(marker => expect(marker.style.animation).toBe('')
-    expect(cta.style.animation).toBe('none')
+    rows.forEach(row => expect(row.style.animationName).toBe('none'))
+    markers.forEach(marker => expect(marker.style.animation).toBe(''))
+    expect(cta.style.animationName).toBe('none')
     expect(cta.style.position).toBe('static')
   },
 }

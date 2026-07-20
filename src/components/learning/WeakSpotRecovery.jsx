@@ -4,6 +4,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import BackButton from '../core/BackButton.jsx'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 
 let _wsrStyled = false
 function ensureStyles() {
@@ -149,15 +150,9 @@ export default function WeakSpotRecovery({
         }}>
 
           {/* Title: "Quick recovery?" */}
-          <h1 style={{
-            ...F,
-            fontSize: 34, fontWeight: 700, lineHeight: 1.05,
-            letterSpacing: '-0.03em',
-            color: 'rgba(245,245,245,0.96)',
-            margin: 0, marginBottom: 88,
-          }}>
+          <ScreenTitle style={{ margin: '0 0 88px' }}>
             Quick recovery?
-          </h1>
+          </ScreenTitle>
 
           {/* Weak spot content area — no visible card, just readability gradient */}
           <div style={{

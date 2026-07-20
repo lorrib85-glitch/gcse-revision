@@ -11,7 +11,8 @@ import SequenceProgress from '../core/SequenceProgress.jsx'
 // reach the full viewport width; InteractionShell's 16px inset would clip the rail and break
 // the scroll-snap alignment.
 import CinematicShell from '../layout/CinematicShell.jsx'
-import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
+import { TYPE } from '../../constants/typography.js'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 import TimelineChainIcon from './TimelineChainIcons.jsx'
 
 // ─── TimelineChain v1 ───────────────────────────────────────────────────────
@@ -245,14 +246,9 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
         }}
       >
         {block.title && (
-          <h2 style={{
-            ...TYPE.displayScreen,
-            color: 'rgba(245,245,245,0.96)',
-            maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
-            margin: 0,
-          }}>
+          <ScreenTitle style={{ margin: 0 }}>
             {block.title}
-          </h2>
+          </ScreenTitle>
         )}
         {block.intro && (
           <p style={{

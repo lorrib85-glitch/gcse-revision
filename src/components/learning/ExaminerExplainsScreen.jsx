@@ -6,8 +6,9 @@ import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 // gradients, overlays) that must reach all four viewport edges; ContentShell's 16px padding
 // and safe-area inner div would confine them to the content column.
 import CinematicShell from '../layout/CinematicShell.jsx'
-import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
+import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { SUBJECT_BACKDROPS } from '../../constants/subjectBackdrops.js'
@@ -173,11 +174,7 @@ export default function ExaminerExplainsScreen({
               display: 'flex', alignItems: 'center',
               padding: `0 ${SPACING.standard}px`,
             }}>
-              <div style={{
-                ...TYPE.displayScreen,
-                color: GENERAL.feedbackText,
-                ...HEADING_LAYOUT.screenTitle,
-              }}>
+              <ScreenTitle style={{ color: GENERAL.feedbackText, margin: 0 }}>
                 {tokens.map(tok =>
                   tok.space ? tok.text : (
                     <span
@@ -191,7 +188,7 @@ export default function ExaminerExplainsScreen({
                     </span>
                   )
                 )}
-              </div>
+              </ScreenTitle>
             </div>
           )}
 

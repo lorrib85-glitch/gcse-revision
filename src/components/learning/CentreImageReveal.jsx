@@ -6,6 +6,7 @@ import { TYPE } from '../../constants/typography.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import ContentShell from '../layout/ContentShell.jsx'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 import MedievalDiagnosisScene from './MedievalDiagnosisScene.jsx'
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
@@ -255,9 +256,9 @@ function SelectPhase({ theories, completedIds, onSelect, prefersReducedMotion })
           ? 'none'
           : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
       }}>
-        <h1 style={{ ...TYPE.displayScreen, color: THEME.text, margin: 0 }}>
+        <ScreenTitle style={{ color: THEME.text, margin: 0 }}>
           How did people explain illness?
-        </h1>
+        </ScreenTitle>
         <p style={{
           ...TYPE.bodyLarge,
           color: THEME.textMuted,

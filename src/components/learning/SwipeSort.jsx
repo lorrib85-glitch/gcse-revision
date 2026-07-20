@@ -7,6 +7,7 @@ import CinematicShell from '../layout/CinematicShell.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 
 const SWIPE_THRESHOLD = 72
 const BACKGROUND_BRIGHTNESS = {
@@ -295,14 +296,12 @@ export default function SwipeSort({ block, subject, onComplete }) {
           display: 'flex', flexDirection: 'column', alignItems: 'center',
           padding: '30px 24px', maxWidth: 420, width: '100%',
         }}>
-          <div style={{
-            ...TYPE.displayScreen,
+          <ScreenTitle style={{
             color: 'rgba(245,238,225,0.94)',
             textShadow: '0 2px 28px rgba(0,0,0,0.66)',
             textAlign: 'center',
-            marginBottom: 10,
             animation: 'ss-intro-in 560ms cubic-bezier(.22,1,.36,1) both',
-          }}>{introTitle}</div>
+          }}>{introTitle}</ScreenTitle>
 
           <div style={{
             ...TYPE.body,
@@ -369,13 +368,12 @@ export default function SwipeSort({ block, subject, onComplete }) {
         {backgroundLayer(leftCol, rightCol, { intro: true })}
 
         <div style={{ position: 'relative', zIndex: 3, textAlign: 'center', maxWidth: 400, width: '100%' }}>
-          <div style={{
-            ...TYPE.displayScreen,
+          <ScreenTitle style={{
             color: 'rgba(245,238,225,0.95)',
             textShadow: '0 2px 28px rgba(0,0,0,0.58)',
-            marginBottom: 20,
+            margin: '0 auto 20px',
             animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) 0ms both',
-          }}>All sorted.</div>
+          }}>All sorted.</ScreenTitle>
 
           {lastExpl && (
             <div style={{
