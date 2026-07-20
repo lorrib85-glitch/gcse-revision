@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
-import { TYPE } from '../../constants/typography.js'
+import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 
 const CSS = `
@@ -145,6 +145,7 @@ function ColumnIcon({ name = 'group' }) {
 export default function ColSortBlock({ block, subject = 'Biology', onComplete }) {
   const subj = SUBJECTS[subject] || SUBJECTS.Biology
   const accent = subj.accent
+  const frameColor = subj.accentSecondary || accent
   const rgb = subj.accentRgb
 
   const items = block.items || []
@@ -170,7 +171,7 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
   const cur = items[cursor] ?? null
   const sortedCount = placed.reduce((total, columnItems) => total + columnItems.length, 0)
   const title = block.title || block.question || 'Sort the evidence'
-  const instruction = block.instruction || 'Build the groups one statement at a time.'
+  const subtitle = block.subtitle || block.instruction || 'Sort each piece of evidence.'
 
   useEffect(() => () => {
     if (timerRef.current) clearTimeout(timerRef.current)
@@ -363,12 +364,12 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
       }} />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <header style={{ marginBottom: 22 }}>
+        <header style={{ marginBottom: 24 }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: 10,
-            marginBottom: 12,
+            marginBottom: 14,
           }}>
             <div style={{
               ...TYPE.label,
@@ -392,23 +393,24 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
             </div>
           </div>
 
-          <h3 style={{
+          <h2 style={{
             ...TYPE.displayScreen,
+            ...HEADING_LAYOUT.screenTitle,
             color: GENERAL.cinematic.textPrimary,
             margin: 0,
-            maxWidth: 350,
           }}>
             {title}
-          </h3>
+          </h2>
 
-          <p style={{
-            ...TYPE.body,
-            color: GENERAL.cinematic.textSecondary,
-            margin: '9px 0 0',
-            maxWidth: 330,
-          }}>
-            {instruction}
-          </p>
+          <div style={{ marginTop: 10, maxWidth: 'min(360px, 100%)' }}>
+            <p style={{
+              ...TYPE.bodyLarge,
+              color: GENERAL.cinematic.textSecondary,
+              margin: 0,
+            }}>
+              {subtitle}
+            </p>
+          </div>
         </header>
 
         <div style={{
@@ -426,6 +428,7 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
             const isWrongTarget = feedback?.type === 'wrong' && feedback.colIdx === colIdx
             const isDragTarget = drag.active && hoverCol === colIdx
             const isActive = isCorrectTarget || isDragTarget
+            const trayFrame = isActive ? accent : frameColor
 
             return (
               <button
@@ -437,18 +440,18 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
                 disabled={done || lockedRef.current}
                 aria-label={done ? columnTitle : `Sort ${cur?.label || 'this evidence'} into ${columnTitle}`}
                 style={{
-                  '--csb-focus': color,
+                  '--csb-focus': accent,
                   minWidth: 0,
                   minHeight: 248,
                   padding: '14px 11px 12px',
                   borderRadius: 18,
-                  border: `1px solid ${withAlpha(color, isActive ? 'B8' : '42')}`,
+                  border: `1px solid ${withAlpha(trayFrame, isActive ? 'C2' : '72')}`,
                   background: isActive
                     ? `linear-gradient(180deg, ${withAlpha(color, '18')}, rgba(8,9,13,0.80))`
                     : 'linear-gradient(180deg, rgba(255,255,255,0.035), rgba(8,9,13,0.78))',
                   boxShadow: isActive
-                    ? `0 0 0 1px ${withAlpha(color, '22')}, 0 10px 30px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.07)`
-                    : 'inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.22)',
+                    ? `0 0 0 1px ${withAlpha(accent, '22')}, 0 0 24px ${withAlpha(accent, '18')}, 0 10px 30px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.07)`
+                    : `0 0 0 1px ${withAlpha(frameColor, '10')}, inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.22)`,
                   color: GENERAL.cinematic.textPrimary,
                   textAlign: 'left',
                   cursor: done || lockedRef.current ? 'default' : 'pointer',
