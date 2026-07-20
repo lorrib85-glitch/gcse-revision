@@ -5,17 +5,22 @@ import { GENERAL } from '../../constants/generalTheme.js'
 
 const CSS = `
   @keyframes csb-card-in {
-    from { opacity: 0; transform: translateY(14px) scale(0.985); }
+    from { opacity: 0; transform: translateY(12px) scale(0.985); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   @keyframes csb-tile-in {
-    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    from { opacity: 0; transform: translateY(7px) scale(0.985); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
+  @keyframes csb-explanation-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   @keyframes csb-complete-in {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(9px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
@@ -51,6 +56,7 @@ const CSS = `
     .csb-tray,
     .csb-current-card,
     .csb-sorted-tile,
+    .csb-recent-explanation,
     .csb-completion {
       animation: none !important;
       transition: none !important;
@@ -72,8 +78,8 @@ function withAlpha(color, alpha) {
 
 function ColumnIcon({ name = 'group' }) {
   const shared = {
-    width: 22,
-    height: 22,
+    width: 21,
+    height: 21,
     viewBox: '0 0 24 24',
     fill: 'none',
     stroke: 'currentColor',
@@ -112,7 +118,9 @@ function ColumnIcon({ name = 'group' }) {
   if (name === 'functionalist' || name === 'network') {
     return (
       <svg {...shared}>
-        <circle cx="12" cy="6" r="2" /><circle cx="6" cy="17" r="2" /><circle cx="18" cy="17" r="2" />
+        <circle cx="12" cy="6" r="2" />
+        <circle cx="6" cy="17" r="2" />
+        <circle cx="18" cy="17" r="2" />
         <path d="m11 8-4 7M13 8l4 7M8 17h8" />
       </svg>
     )
@@ -158,6 +166,7 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
   const [drag, setDrag] = useState({ active: false, x: 0, y: 0 })
   const [hoverCol, setHoverCol] = useState(null)
   const [snapTarget, setSnapTarget] = useState(null)
+  const [recentItem, setRecentItem] = useState(null)
 
   const timerRef = useRef(null)
   const settleTimerRef = useRef(null)
@@ -169,17 +178,17 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
   const trayRefs = useRef([])
 
   const cur = items[cursor] ?? null
-  const sortedCount = placed.reduce((total, columnItems) => total + columnItems.length, 0)
   const title = block.title || block.question || 'Sort the evidence'
-  const subtitle = block.subtitle || block.instruction || 'Sort each piece of evidence.'
+  const subtitle = block.subtitle || block.instruction || 'Sort each statement into the right group.'
 
   useEffect(() => () => {
     if (timerRef.current) clearTimeout(timerRef.current)
     if (settleTimerRef.current) clearTimeout(settleTimerRef.current)
   }, [])
 
-  function finish(nextPlaced) {
+  function finish(nextPlaced, finalItem, colIdx) {
     setPlaced(nextPlaced)
+    setRecentItem({ item: finalItem, colIdx })
     setDone(true)
     setFeedback(null)
     setSnapTarget(null)
@@ -204,6 +213,7 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
   function pick(colIdx, { dragged = false } = {}) {
     if (!cur || lockedRef.current || done) return
 
+    setRecentItem(null)
     const correct = colIdx === cur.col
 
     if (!correct) {
@@ -226,15 +236,12 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
     }
 
     lockedRef.current = true
-    setFeedback({
-      type: 'correct',
-      colIdx,
-      message: cur.explanation || 'That evidence belongs in this group.',
-    })
+    setFeedback({ type: 'correct', colIdx })
 
     timerRef.current = setTimeout(() => {
+      const placedItem = cur
       const nextPlaced = placed.map((columnItems, index) => (
-        index === colIdx ? [...columnItems, cur] : columnItems
+        index === colIdx ? [...columnItems, placedItem] : columnItems
       ))
       const nextCursor = cursor + 1
 
@@ -243,15 +250,16 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
       setDrag({ active: false, x: 0, y: 0 })
 
       if (nextCursor >= items.length) {
-        finish(nextPlaced)
+        finish(nextPlaced, placedItem, colIdx)
         return
       }
 
       setPlaced(nextPlaced)
+      setRecentItem({ item: placedItem, colIdx })
       setCursor(nextCursor)
       setFeedback(null)
       lockedRef.current = false
-    }, dragged ? 620 : 760)
+    }, dragged ? 600 : 720)
   }
 
   function columnAtPoint(clientX, clientY) {
@@ -309,7 +317,7 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
     if (trayRect && cardRect) {
       setSnapTarget({
         x: trayRect.left + trayRect.width / 2 - (cardRect.left + cardRect.width / 2),
-        y: trayRect.top + Math.min(trayRect.height * 0.62, 150) - (cardRect.top + cardRect.height / 2),
+        y: trayRect.top + Math.min(trayRect.height * 0.58, 118) - (cardRect.top + cardRect.height / 2),
         correct: targetCol === cur.col,
       })
     }
@@ -330,41 +338,41 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
     ? `translate3d(${snapTarget.x}px, ${snapTarget.y}px, 0) scale(${snapTarget.correct ? 0.82 : 0.94})`
     : `translate3d(${drag.x}px, ${drag.y}px, 0) rotate(${drag.active ? drag.x * 0.018 : 0}deg)`
 
-  const backgroundStyle = block.backgroundImage
-    ? {
-        backgroundImage: `linear-gradient(180deg, rgba(5,6,10,0.36) 0%, rgba(5,6,10,0.82) 30%, rgba(5,6,10,0.96) 100%), url(${block.backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: block.backgroundPosition || 'center top',
-      }
-    : {
-        background: `radial-gradient(circle at 14% 0%, rgba(${rgb},0.12), transparent 34%), linear-gradient(180deg, ${subj.backgroundSecondary}, ${subj.background})`,
-      }
-
   return (
     <section
       aria-label={title}
       style={{
-        ...backgroundStyle,
         position: 'relative',
         overflow: 'hidden',
-        margin: '16px 0 18px',
-        padding: '22px 16px 18px',
-        borderRadius: 22,
-        border: `1px solid ${withAlpha(accent, '24')}`,
-        boxShadow: `${GENERAL.shadow.overlay}, inset 0 1px 0 ${GENERAL.line.faint}`,
+        margin: '10px 0 18px',
+        padding: '20px 0 12px',
       }}
     >
       <style>{CSS}</style>
 
+      {block.backgroundImage && (
+        <div aria-hidden="true" style={{
+          position: 'absolute',
+          inset: '-30px -18px 0',
+          pointerEvents: 'none',
+          opacity: 0.18,
+          backgroundImage: `linear-gradient(180deg, rgba(5,6,10,0.35), rgba(5,6,10,0.94) 72%, rgba(5,6,10,1)), url(${block.backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: block.backgroundPosition || 'center top',
+          maskImage: 'linear-gradient(to bottom, black 0%, black 54%, transparent 100%)',
+        }} />
+      )}
+
       <div aria-hidden="true" style={{
         position: 'absolute',
-        inset: 0,
+        inset: '-20px -24px auto',
+        height: 250,
         pointerEvents: 'none',
-        background: `radial-gradient(circle at 20% 12%, rgba(${rgb},0.10), transparent 30%), linear-gradient(90deg, rgba(255,255,255,0.025), transparent 35%, rgba(255,255,255,0.018))`,
+        background: `radial-gradient(circle at 18% 12%, rgba(${rgb},0.10), transparent 52%)`,
       }} />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <header style={{ marginBottom: 24 }}>
+        <header style={{ marginBottom: 22 }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -378,6 +386,7 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
             }}>
               {done ? `${items.length} of ${items.length}` : `${cursor + 1} of ${items.length}`}
             </div>
+
             <div style={{
               height: 1,
               flex: 1,
@@ -402,23 +411,22 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
             {title}
           </h2>
 
-          <div style={{ marginTop: 10, maxWidth: 'min(360px, 100%)' }}>
-            <p style={{
-              ...TYPE.bodyLarge,
-              color: GENERAL.cinematic.textSecondary,
-              margin: 0,
-            }}>
-              {subtitle}
-            </p>
-          </div>
+          <p style={{
+            ...TYPE.bodyLarge,
+            color: GENERAL.cinematic.textSecondary,
+            margin: '10px 0 0',
+            maxWidth: 'min(360px, 100%)',
+          }}>
+            {subtitle}
+          </p>
         </header>
 
         <div style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${Math.min(Math.max(columns.length, 1), 2)}, minmax(0, 1fr))`,
-          gap: 10,
-          alignItems: 'stretch',
-          marginBottom: done ? 18 : 22,
+          gap: 12,
+          alignItems: 'start',
+          marginBottom: done ? 20 : 18,
         }}>
           {columns.map((col, colIdx) => {
             const { title: columnTitle, detail } = splitColumnLabel(col)
@@ -428,7 +436,6 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
             const isWrongTarget = feedback?.type === 'wrong' && feedback.colIdx === colIdx
             const isDragTarget = drag.active && hoverCol === colIdx
             const isActive = isCorrectTarget || isDragTarget
-            const trayFrame = isActive ? accent : frameColor
 
             return (
               <button
@@ -442,21 +449,21 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
                 style={{
                   '--csb-focus': accent,
                   minWidth: 0,
-                  minHeight: 248,
-                  padding: '14px 11px 12px',
-                  borderRadius: 18,
-                  border: `1px solid ${withAlpha(trayFrame, isActive ? 'C2' : '72')}`,
+                  minHeight: columnItems.length ? 164 : 150,
+                  padding: '13px 11px 12px',
+                  borderRadius: 17,
+                  border: `1px solid ${withAlpha(frameColor, isActive ? 'C8' : '78')}`,
                   background: isActive
-                    ? `linear-gradient(180deg, ${withAlpha(color, '18')}, rgba(8,9,13,0.80))`
-                    : 'linear-gradient(180deg, rgba(255,255,255,0.035), rgba(8,9,13,0.78))',
+                    ? `linear-gradient(180deg, rgba(${rgb},0.11), rgba(8,9,13,0.78))`
+                    : 'linear-gradient(180deg, rgba(255,255,255,0.025), rgba(8,9,13,0.74))',
                   boxShadow: isActive
-                    ? `0 0 0 1px ${withAlpha(accent, '22')}, 0 0 24px ${withAlpha(accent, '18')}, 0 10px 30px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.07)`
-                    : `0 0 0 1px ${withAlpha(frameColor, '10')}, inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.22)`,
+                    ? `0 0 0 1px ${withAlpha(accent, '24')}, 0 0 22px ${withAlpha(accent, '18')}, inset 0 1px 0 rgba(255,255,255,0.06)`
+                    : 'inset 0 1px 0 rgba(255,255,255,0.045), 0 8px 20px rgba(0,0,0,0.20)',
                   color: GENERAL.cinematic.textPrimary,
                   textAlign: 'left',
                   cursor: done || lockedRef.current ? 'default' : 'pointer',
                   opacity: feedback && feedback.colIdx !== colIdx ? 0.68 : 1,
-                  transition: 'border-color 180ms ease, background 180ms ease, opacity 180ms ease, transform 160ms ease, box-shadow 180ms ease',
+                  transition: 'min-height 220ms ease, border-color 180ms ease, background 180ms ease, opacity 180ms ease, transform 160ms ease, box-shadow 180ms ease',
                   animation: isWrongTarget ? 'csb-shake 340ms ease' : 'none',
                   transform: isDragTarget ? 'translateY(-3px)' : undefined,
                 }}
@@ -465,19 +472,19 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
                   display: 'flex',
                   alignItems: 'center',
                   gap: 9,
-                  marginBottom: detail ? 9 : 14,
+                  marginBottom: detail ? 8 : 12,
                 }}>
                   <span aria-hidden="true" style={{
-                    width: 36,
-                    height: 36,
+                    width: 34,
+                    height: 34,
                     borderRadius: '50%',
                     display: 'grid',
                     placeItems: 'center',
                     flexShrink: 0,
                     color,
                     border: `1px solid ${withAlpha(color, isActive ? '88' : '48')}`,
-                    background: `radial-gradient(circle at 35% 30%, ${withAlpha(color, '24')}, rgba(0,0,0,0.26))`,
-                    boxShadow: isActive ? `0 0 18px ${withAlpha(color, '38')}` : 'none',
+                    background: `radial-gradient(circle at 35% 30%, ${withAlpha(color, '20')}, rgba(0,0,0,0.24))`,
+                    boxShadow: isActive ? `0 0 16px ${withAlpha(color, '34')}` : 'none',
                   }}>
                     <ColumnIcon name={col.icon || (colIdx === 0 ? 'change' : 'continuity')} />
                   </span>
@@ -495,79 +502,83 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
                   <div style={{
                     ...TYPE.caption,
                     color: GENERAL.cinematic.textMuted,
-                    minHeight: 46,
-                    marginBottom: 12,
-                    paddingLeft: 2,
+                    marginBottom: 10,
+                    paddingLeft: 1,
                   }}>
                     {detail}
                   </div>
                 )}
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {columnItems.map((item, itemIdx) => (
-                    <div
-                      className="csb-sorted-tile"
-                      key={`${item.label}-${itemIdx}`}
-                      style={{
-                        padding: '10px 10px 11px',
-                        borderRadius: 12,
-                        border: `1px solid ${withAlpha(color, '32')}`,
-                        background: 'linear-gradient(180deg, rgba(255,255,255,0.045), rgba(0,0,0,0.26))',
-                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.035)',
-                        animation: 'csb-tile-in 240ms ease both',
-                      }}
-                    >
-                      <div style={{
-                        ...TYPE.caption,
-                        color: GENERAL.cinematic.textFact,
-                        overflowWrap: 'anywhere',
-                      }}>
-                        {item.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {!columnItems.length && (
+                {!columnItems.length ? (
                   <div style={{
-                    minHeight: 82,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 7,
-                    padding: 10,
-                    borderRadius: 13,
-                    border: `1px dashed ${withAlpha(color, isDragTarget ? '88' : '30')}`,
+                    minHeight: 62,
+                    display: 'grid',
+                    placeItems: 'center',
+                    padding: 8,
+                    borderRadius: 12,
+                    border: `1px dashed ${withAlpha(frameColor, isDragTarget ? 'A0' : '38')}`,
                     ...TYPE.caption,
-                    color: isDragTarget ? withAlpha(color, 'E0') : GENERAL.cinematic.textSubtle,
+                    color: isDragTarget ? withAlpha(frameColor, 'E0') : GENERAL.cinematic.textSubtle,
                     textAlign: 'center',
                     transition: 'border-color 180ms ease, color 180ms ease',
                   }}>
-                    <span aria-hidden="true" style={{
-                      width: 22,
-                      height: 12,
-                      border: `1px solid ${withAlpha(color, isDragTarget ? 'A0' : '38')}`,
-                      borderTop: 0,
-                      borderRadius: '0 0 5px 5px',
-                    }} />
-                    {isDragTarget ? 'Release to place' : (col.emptyLabel || 'Drop evidence here')}
+                    {isDragTarget ? 'Release to place' : (col.emptyLabel || 'Drop here')}
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {columnItems.map((item, itemIdx) => {
+                      const isRecent = recentItem?.item === item && recentItem.colIdx === colIdx
+                      return (
+                        <div key={`${item.label}-${itemIdx}`}>
+                          <div
+                            className="csb-sorted-tile"
+                            style={{
+                              padding: '10px 10px 11px',
+                              borderRadius: 11,
+                              border: `1px solid ${withAlpha(color, isRecent ? '52' : '2E')}`,
+                              background: 'linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.24))',
+                              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.03)',
+                              animation: 'csb-tile-in 240ms ease both',
+                            }}
+                          >
+                            <div style={{
+                              ...TYPE.caption,
+                              color: GENERAL.cinematic.textFact,
+                              overflowWrap: 'anywhere',
+                            }}>
+                              {item.label}
+                            </div>
+                          </div>
+
+                          {isRecent && item.explanation && (
+                            <div
+                              className="csb-recent-explanation"
+                              style={{
+                                ...TYPE.caption,
+                                color: withAlpha(color, 'D8'),
+                                padding: '7px 3px 1px',
+                                animation: 'csb-explanation-in 220ms ease both',
+                              }}
+                            >
+                              {item.explanation}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
                   </div>
                 )}
 
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  marginTop: 13,
-                  color: withAlpha(color, 'A0'),
-                }}>
-                  <span style={{ height: 1, flex: 1, background: withAlpha(color, '25') }} />
-                  <span style={{ ...TYPE.caption, whiteSpace: 'nowrap' }}>
+                {!!columnItems.length && (
+                  <div style={{
+                    ...TYPE.caption,
+                    color: withAlpha(frameColor, '96'),
+                    marginTop: 11,
+                    textAlign: 'center',
+                  }}>
                     {columnItems.length} {columnItems.length === 1 ? 'item' : 'items'}
-                  </span>
-                  <span style={{ height: 1, flex: 1, background: withAlpha(color, '25') }} />
-                </div>
+                  </div>
+                )}
               </button>
             )
           })}
@@ -575,20 +586,6 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
 
         {!done && cur && (
           <div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              marginBottom: 11,
-              ...TYPE.label,
-              color: drag.active ? GENERAL.cinematic.textSecondary : accent,
-              textAlign: 'center',
-            }}>
-              <span aria-hidden="true" style={{ fontSize: 17 }}>↕</span>
-              {drag.active ? 'Move over a column, then release' : 'Drag the evidence into a column'}
-            </div>
-
             <div
               ref={cardRef}
               key={`${cursor}-${cur.label}`}
@@ -606,15 +603,15 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
                 zIndex: drag.active || snapTarget ? 5 : 1,
                 width: 'min(100%, 510px)',
                 margin: '0 auto',
-                padding: '18px 48px 18px 18px',
-                borderRadius: 16,
-                border: `1px solid ${feedback?.type === 'correct' ? accent : drag.active ? withAlpha(accent, '98') : withAlpha(accent, '48')}`,
+                padding: '17px 48px 17px 18px',
+                borderRadius: 15,
+                border: `1px solid ${feedback?.type === 'correct' ? accent : drag.active ? withAlpha(accent, '98') : GENERAL.line.strong}`,
                 background: feedback?.type === 'correct'
-                  ? `linear-gradient(180deg, rgba(${rgb},0.16), rgba(10,10,13,0.92))`
-                  : 'linear-gradient(180deg, rgba(30,27,23,0.97), rgba(10,10,13,0.98))',
+                  ? `linear-gradient(180deg, rgba(${rgb},0.14), rgba(10,10,13,0.94))`
+                  : 'linear-gradient(180deg, rgba(25,25,28,0.98), rgba(10,10,13,0.99))',
                 boxShadow: drag.active
-                  ? `${GENERAL.shadow.overlay}, 0 0 30px rgba(${rgb},0.20), inset 0 1px 0 rgba(255,255,255,0.08)`
-                  : `0 12px 34px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.06)`,
+                  ? `${GENERAL.shadow.overlay}, 0 0 28px rgba(${rgb},0.18), inset 0 1px 0 rgba(255,255,255,0.07)`
+                  : '0 11px 28px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.05)',
                 animation: drag.active || snapTarget ? 'none' : 'csb-card-in 260ms ease both',
                 transform: cardTransform,
                 opacity: snapTarget?.correct ? 0.12 : 1,
@@ -655,21 +652,28 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
               </span>
             </div>
 
+            <div style={{
+              ...TYPE.label,
+              color: drag.active ? GENERAL.cinematic.textSecondary : accent,
+              textAlign: 'center',
+              marginTop: 10,
+            }}>
+              {drag.active ? 'Move over a column, then release' : 'Drag or tap to place'}
+            </div>
+
             <div
               aria-live="polite"
               style={{
-                minHeight: 52,
-                padding: '11px 10px 0',
+                minHeight: 26,
+                paddingTop: 7,
                 ...TYPE.bodySmall,
                 color: feedback?.type === 'wrong'
                   ? GENERAL.feedbackIncorrect
-                  : feedback?.type === 'correct'
-                    ? GENERAL.feedbackCorrect
-                    : GENERAL.cinematic.textSubtle,
+                  : GENERAL.cinematic.textSubtle,
                 textAlign: 'center',
               }}
             >
-              {feedback?.message || `${sortedCount} sorted so far · Tap a column also works`}
+              {feedback?.type === 'wrong' ? feedback.message : ''}
             </div>
           </div>
         )}
@@ -680,35 +684,35 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
             aria-live="polite"
             style={{
               position: 'relative',
+              marginTop: 4,
               padding: '17px 18px 17px 20px',
-              borderRadius: 16,
-              border: `1px solid ${withAlpha(accent, '38')}`,
-              background: 'linear-gradient(90deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015))',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+              borderTop: `1px solid ${withAlpha(accent, '36')}`,
+              borderBottom: `1px solid ${withAlpha(accent, '1F')}`,
+              background: `linear-gradient(90deg, rgba(${rgb},0.07), transparent 72%)`,
               animation: 'csb-complete-in 320ms ease both',
-              overflow: 'hidden',
             }}
           >
             <span aria-hidden="true" style={{
               position: 'absolute',
               inset: '0 auto 0 0',
-              width: 3,
+              width: 2,
               background: accent,
-              boxShadow: `0 0 18px rgba(${rgb},0.45)`,
+              boxShadow: `0 0 16px rgba(${rgb},0.38)`,
             }} />
 
             <div style={{
-              ...TYPE.titleMedium,
+              ...TYPE.displayCard,
               color: GENERAL.cinematic.textPrimary,
-              marginBottom: block.explanation ? 7 : 0,
+              marginBottom: block.explanation ? 8 : 0,
             }}>
-              Pattern complete
+              {block.conclusionTitle || 'Pattern complete'}
             </div>
 
             {block.explanation && (
               <div style={{
                 ...TYPE.bodySmall,
                 color: GENERAL.cinematic.textSecondary,
+                maxWidth: 520,
               }}>
                 {block.explanation}
               </div>
