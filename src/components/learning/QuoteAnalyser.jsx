@@ -17,6 +17,8 @@ function ensureStyles() {
 }
 
 const STEPS = ['read', 'words', 'meaning', 'essay']
+const TEMP_MACBETH_BACKGROUND = '/English/Macbeth/heroes/macbeth-generic-banner.svg'
+
 const WORDS = {
   fires: {
     technique: 'Light imagery',
@@ -105,6 +107,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   const accentRgb = palette.accentRgb
   const parchment = palette.palette?.parchment || '#E9E1D3'
   const paper = palette.backgroundSecondary || '#1F1C1B'
+  const backgroundImage = block.backgroundImage || TEMP_MACBETH_BACKGROUND
   const words = (block.quote || '').split(' ').filter(Boolean)
 
   const [step, setStep] = useState('read')
@@ -174,8 +177,8 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
 
   function Atmosphere({ cinematic = false }) {
     return <>
-      {block.backgroundImage && <img className="qa-motion" src={block.backgroundImage} alt="" aria-hidden="true" style={{ position: 'absolute', inset: cinematic ? '-3%' : 0, width: cinematic ? '106%' : '100%', height: cinematic ? '106%' : '100%', objectFit: 'cover', filter: cinematic ? 'brightness(0.34) saturate(0.74) contrast(1.06)' : 'brightness(0.30) saturate(0.72)', opacity: cinematic ? 0.46 : 0.34, animation: cinematic ? 'qa-drift 18s ease-in-out infinite' : 'none' }} />}
-      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: cinematic ? `radial-gradient(circle at 50% 46%, rgba(${accentRgb}, 0.18), transparent 39%), linear-gradient(90deg, rgba(0,0,0,0.68), transparent 25%, transparent 75%, rgba(0,0,0,0.68)), linear-gradient(to bottom, rgba(5,5,7,0.30), rgba(5,5,7,0.12) 42%, ${palette.background})` : `linear-gradient(180deg, rgba(${accentRgb}, 0.10), transparent 26%), linear-gradient(to bottom, rgba(8,8,10,0.18), ${palette.background} 88%)` }} />
+      {backgroundImage && <img className="qa-motion" src={backgroundImage} alt="" aria-hidden="true" style={{ position: 'absolute', inset: cinematic ? '-3%' : 0, width: cinematic ? '106%' : '100%', height: cinematic ? '106%' : '100%', objectFit: 'cover', objectPosition: block.backgroundPosition || 'center', filter: cinematic ? 'brightness(0.44) saturate(0.78) contrast(1.08)' : 'brightness(0.30) saturate(0.72)', opacity: cinematic ? 0.58 : 0.34, animation: cinematic ? 'qa-drift 18s ease-in-out infinite' : 'none' }} />}
+      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: cinematic ? `radial-gradient(circle at 50% 46%, rgba(${accentRgb}, 0.14), transparent 41%), linear-gradient(90deg, rgba(0,0,0,0.62), transparent 25%, transparent 75%, rgba(0,0,0,0.62)), linear-gradient(to bottom, rgba(5,5,7,0.22), rgba(5,5,7,0.08) 42%, ${palette.background})` : `linear-gradient(180deg, rgba(${accentRgb}, 0.10), transparent 26%), linear-gradient(to bottom, rgba(8,8,10,0.18), ${palette.background} 88%)` }} />
     </>
   }
 
