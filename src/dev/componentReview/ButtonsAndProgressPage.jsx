@@ -1,9 +1,9 @@
-// ─── Component Review Lab — Buttons and progress reference page ──────────────
+// ─── Component Review Lab — Buttons, components and progress reference page ───
 //
-// DEVELOPMENT-ONLY. One page rendering every governed button style and every
-// progression/progress indicator live, each labelled with its name. Companion
-// to docs/system/BUTTON_RADII_SYSTEM.md — this shows the real components, the
-// doc states the law. Nothing here is learner-facing or part of production.
+// DEVELOPMENT-ONLY. One page rendering governed button styles, small reusable
+// UI components and progression/progress indicators live, each labelled with
+// its name. Companion to docs/system/BUTTON_RADII_SYSTEM.md — this shows the
+// real components, the doc states the law. Nothing here is learner-facing.
 
 import { useState } from 'react'
 import ContinueCTA from '../../components/core/ContinueCTA.jsx'
@@ -16,6 +16,7 @@ import LearningProgressHeader from '../../components/core/LearningProgressHeader
 import SequenceProgress from '../../components/core/SequenceProgress.jsx'
 import ScoreNumberLine from '../../components/core/ScoreNumberLine.jsx'
 import CircularTimer from '../../components/core/CircularTimer.jsx'
+import CinematicDivider from '../../components/core/CinematicDivider.jsx'
 import { BUTTONS } from '../../constants/buttons.js'
 import { RADII } from '../../constants/radii.js'
 import { GENERAL } from '../../constants/generalTheme.js'
@@ -137,6 +138,16 @@ export default function ButtonsAndProgressPage() {
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={GENERAL.teal} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
+        </Item>
+      </Section>
+
+      <Section title="Reusable decorative components">
+        <Item name="CinematicDivider" note="Line–diamond–line separator for a calm editorial beat between cinematic content sections. Lines use governed neutral tokens; the centre motif inherits the subject accent.">
+          <div style={{ display: 'grid', gap: 22, justifyItems: 'center', padding: '22px 16px', background: GENERAL.backgroundSunken, borderRadius: RADII.small }}>
+            <CinematicDivider size="compact" accent={ACCENT} accentRgb={ACCENT_RGB} />
+            <CinematicDivider accent={ACCENT} accentRgb={ACCENT_RGB} />
+            <CinematicDivider size="wide" accent={ACCENT} accentRgb={ACCENT_RGB} />
+          </div>
         </Item>
       </Section>
 
