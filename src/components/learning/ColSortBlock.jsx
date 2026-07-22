@@ -1,10 +1,23 @@
+import { useState } from 'react'
 import ColSortBlockCore from './ColSortBlockCore.jsx'
+import ContinueCTA from '../core/ContinueCTA.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 const FOCUS_CSS = `
+  .colsort-focus {
+    position: relative;
+  }
+
   .colsort-focus section {
     padding-top: 28px !important;
     padding-bottom: 82px !important;
+  }
+
+  .colsort-focus.is-sorted section {
+    padding-bottom: 154px !important;
   }
 
   .colsort-focus section > div:last-child {
@@ -102,8 +115,18 @@ const FOCUS_CSS = `
     order: 6;
   }
 
+  /* Completion is a learner-controlled transition, not another status panel. */
   .colsort-focus .csb-completion {
-    order: 4;
+    display: none !important;
+  }
+
+  .colsort-sort-continue {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 48px;
+    z-index: 4;
+    animation: colsort-continue-in 280ms ease both;
   }
 
   /* Local sequence progress sits alone at the bottom of the task. */
@@ -133,9 +156,102 @@ const FOCUS_CSS = `
     border-radius: 999px !important;
   }
 
+  .colsort-summary {
+    position: relative;
+    min-height: min(720px, calc(100dvh - 88px));
+    overflow: hidden;
+    margin: 10px 0 18px;
+    padding: 42px 22px 86px;
+    border-radius: 20px;
+    background: var(--colsort-summary-bg);
+    animation: colsort-summary-in 420ms cubic-bezier(.16,1,.3,1) both;
+  }
+
+  .colsort-summary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(180deg, rgba(4,5,8,0.26) 0%, rgba(4,5,8,0.60) 44%, rgba(4,5,8,0.96) 100%),
+      var(--colsort-summary-image);
+    background-size: cover;
+    background-position: center top;
+    opacity: var(--colsort-summary-image-opacity);
+  }
+
+  .colsort-summary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--colsort-accent) 12%, transparent), transparent 38%),
+      radial-gradient(ellipse at 50% 45%, transparent 32%, rgba(0,0,0,0.56) 100%);
+  }
+
+  .colsort-summary-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .colsort-summary-rule {
+    width: 42px;
+    height: 2px;
+    margin: 0 0 22px;
+    border-radius: 999px;
+    background: var(--colsort-accent);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--colsort-accent) 34%, transparent);
+  }
+
+  .colsort-summary-contrast {
+    display: grid;
+    gap: 18px;
+    margin-top: 34px;
+  }
+
+  .colsort-summary-point {
+    position: relative;
+    padding: 2px 0 2px 18px;
+  }
+
+  .colsort-summary-point::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    bottom: 2px;
+    width: 2px;
+    background: color-mix(in srgb, var(--colsort-accent) 56%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--colsort-accent) 20%, transparent);
+  }
+
+  .colsort-summary-progress {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    z-index: 2;
+    transform: translateX(-50%);
+  }
+
+  @keyframes colsort-continue-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes colsort-summary-in {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .colsort-focus .csb-tray > div:first-child {
       transition: none !important;
+    }
+
+    .colsort-sort-continue,
+    .colsort-summary {
+      animation: none !important;
     }
   }
 `
@@ -154,7 +270,103 @@ function inferEvidenceIcon(label) {
   return undefined
 }
 
-export default function ColSortBlock({ block, ...props }) {
+function ColSortSummary({ block, theme, total }) {
+  const points = block.summaryPoints || []
+
+  return (
+    <section
+      className="colsort-summary"
+      aria-label={block.summaryTitle || 'What the sort revealed'}
+      style={{
+        '--colsort-accent': theme.accent,
+        '--colsort-summary-bg': theme.background,
+        '--colsort-summary-image': block.backgroundImage ? `url(${block.backgroundImage})` : 'none',
+        '--colsort-summary-image-opacity': block.backgroundImage ? (block.summaryBackgroundOpacity ?? 0.34) : 0,
+      }}
+    >
+      <div className="colsort-summary-content">
+        <div className="colsort-summary-rule" aria-hidden="true" />
+
+        <div style={{
+          ...TYPE.label,
+          color: `rgba(${theme.accentRgb},0.78)`,
+          marginBottom: 12,
+        }}>
+          What the sort revealed
+        </div>
+
+        <h2 style={{
+          ...TYPE.displayHero,
+          color: GENERAL.cinematic.textPrimary,
+          margin: 0,
+          maxWidth: 470,
+        }}>
+          {block.summaryTitle}
+        </h2>
+
+        {block.summaryIntro && (
+          <p style={{
+            ...TYPE.bodyLarge,
+            color: GENERAL.cinematic.textSecondary,
+            margin: '18px 0 0',
+            maxWidth: 500,
+          }}>
+            {block.summaryIntro}
+          </p>
+        )}
+
+        {!!points.length && (
+          <div className="colsort-summary-contrast">
+            {points.map((point, index) => (
+              <div className="colsort-summary-point" key={`${point.label}-${index}`}>
+                <div style={{
+                  ...TYPE.titleMedium,
+                  color: theme.accent,
+                  marginBottom: 5,
+                }}>
+                  {point.label}
+                </div>
+                <div style={{
+                  ...TYPE.body,
+                  color: GENERAL.cinematic.textFact,
+                }}>
+                  {point.text}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {block.summaryClose && (
+          <p style={{
+            ...TYPE.bodyStrong,
+            color: GENERAL.cinematic.textPrimary,
+            margin: '34px 0 0',
+            maxWidth: 500,
+          }}>
+            {block.summaryClose}
+          </p>
+        )}
+      </div>
+
+      <div className="colsort-summary-progress">
+        <SequenceProgress
+          total={total}
+          current={Math.max(total - 1, 0)}
+          completed={Math.max(total - 1, 0)}
+          accent={theme.accent}
+          accentRgb={theme.accentRgb}
+          compact
+          ariaLabel="Sorting complete"
+        />
+      </div>
+    </section>
+  )
+}
+
+export default function ColSortBlock({ block, onComplete, ...props }) {
+  const [sorted, setSorted] = useState(false)
+  const [showSummary, setShowSummary] = useState(false)
   const subject = props.subject || 'Biology'
   const theme = SUBJECTS[subject] || SUBJECTS.Biology
   const columnNames = (block.columns || []).map(column => firstLine(column.label))
@@ -225,18 +437,85 @@ export default function ColSortBlock({ block, ...props }) {
     thinkingPromptMode: block.thinkingPromptMode || (vesaliusContext ? 'always' : 'afterIncorrect'),
     conclusionTitle: block.conclusionTitle
       || (treatmentInsight ? 'Knowledge changed faster than treatment.' : 'Pattern complete'),
+    summaryTitle: block.summaryTitle
+      || (vesaliusContext
+        ? 'Knowledge changed before treatment did.'
+        : treatmentInsight
+          ? 'Knowledge changed faster than treatment.'
+          : 'The pattern is clear.'),
+    summaryIntro: block.summaryIntro
+      || (vesaliusContext
+        ? 'Vesalius changed how doctors built knowledge: ancient books could now be checked against real human bodies.'
+        : block.explanation
+          || 'The finished groups show the difference between change and continuity.'),
+    summaryPoints: block.summaryPoints
+      || (vesaliusContext
+        ? [
+            {
+              label: 'What changed',
+              text: 'Observation, human dissection and printed diagrams made anatomy more accurate — and weakened Galen’s authority.',
+            },
+            {
+              label: 'What continued',
+              text: 'Doctors still used the four humours, bloodletting and purging. Better knowledge had not yet created better cures.',
+            },
+          ]
+        : columns.map((column, index) => ({
+            label: String(column.label || '').split('\n')[0],
+            text: items
+              .filter(item => item.col === index)
+              .slice(0, 3)
+              .map(item => item.label)
+              .join(' · '),
+          })).filter(point => point.label && point.text)),
+    summaryClose: block.summaryClose
+      || (vesaliusContext
+        ? 'The Renaissance transformed medical knowledge first. Everyday treatment took much longer to catch up.'
+        : block.explanation),
+  }
+
+  function handleSortComplete(result) {
+    setSorted(true)
+    block.onSortComplete?.(result)
+  }
+
+  if (showSummary) {
+    return (
+      <div
+        className="colsort-focus is-summary"
+        style={{
+          '--colsort-accent': theme.accent,
+          '--colsort-frame': theme.accentSecondary || theme.accent,
+        }}
+      >
+        <style>{FOCUS_CSS}</style>
+        <ColSortSummary block={resolvedBlock} theme={theme} total={items.length} />
+      </div>
+    )
   }
 
   return (
     <div
-      className="colsort-focus"
+      className={`colsort-focus${sorted ? ' is-sorted' : ''}`}
       style={{
         '--colsort-accent': theme.accent,
         '--colsort-frame': theme.accentSecondary || theme.accent,
       }}
     >
       <style>{FOCUS_CSS}</style>
-      <ColSortBlockCore block={resolvedBlock} {...props} />
+      <ColSortBlockCore block={resolvedBlock} {...props} onComplete={handleSortComplete} />
+
+      {sorted && (
+        <div className="colsort-sort-continue">
+          <ContinueCTA
+            onClick={() => {
+              setShowSummary(true)
+              onComplete?.({ phase: 'summary', total: items.length })
+            }}
+            accent={theme.accent}
+          />
+        </div>
+      )}
     </div>
   )
 }
