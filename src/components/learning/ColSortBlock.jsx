@@ -13,11 +13,11 @@ const FOCUS_CSS = `
 
   .colsort-focus section {
     padding-top: 28px !important;
-    padding-bottom: 82px !important;
+    padding-bottom: 90px !important;
   }
 
   .colsort-focus.is-sorted section {
-    padding-bottom: 154px !important;
+    padding-bottom: 162px !important;
   }
 
   .colsort-focus section > div:last-child {
@@ -32,24 +32,27 @@ const FOCUS_CSS = `
     transform: none !important;
   }
 
-  /* The thinking cue belongs before the choices, where it can guide the sort. */
   .colsort-focus .csb-card-stage {
     display: contents;
   }
 
+  /* Keep the thinking cue useful but visually subordinate to the task. */
   .colsort-focus .csb-card-stage > div:last-child:has(svg) {
     order: 2;
-    margin: 0 0 20px !important;
-    padding: 10px 4px 10px 14px !important;
+    margin: 0 0 15px !important;
+    padding: 7px 2px 7px 10px !important;
     border: 0 !important;
-    border-left: 2px solid color-mix(in srgb, var(--colsort-accent) 48%, transparent) !important;
+    border-left: 2px solid color-mix(in srgb, var(--colsort-accent) 38%, transparent) !important;
     border-radius: 0 !important;
-    background: linear-gradient(90deg, color-mix(in srgb, var(--colsort-accent) 6%, transparent), transparent 72%) !important;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--colsort-accent) 4%, transparent), transparent 72%) !important;
     box-shadow: none !important;
+    opacity: 0.78;
   }
 
   .colsort-focus .csb-card-stage > div:last-child:has(svg) svg {
-    opacity: 0.72;
+    width: 16px !important;
+    height: 16px !important;
+    opacity: 0.68;
   }
 
   .colsort-focus .csb-trays {
@@ -58,17 +61,26 @@ const FOCUS_CSS = `
     margin-bottom: 20px !important;
   }
 
-  /* Trays are destinations, not the primary content. Keep them calm until targeted. */
+  /* Both destinations are equally available until one becomes an active target. */
   .colsort-focus .csb-tray {
     border-color: color-mix(in srgb, var(--colsort-frame) 36%, transparent) !important;
     background: linear-gradient(180deg, rgba(255,255,255,0.014), rgba(8,9,13,0.66)) !important;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.025) !important;
-    opacity: 0.86;
+    opacity: 0.88;
   }
 
   .colsort-focus .csb-tray > div:first-child {
-    opacity: 0.82;
+    opacity: 0.88;
     transition: opacity 180ms ease;
+  }
+
+  .colsort-focus .csb-tray > div:first-child > span {
+    color: var(--colsort-accent) !important;
+  }
+
+  .colsort-focus .csb-tray > div:first-child > span:first-child {
+    border-color: color-mix(in srgb, var(--colsort-accent) 38%, transparent) !important;
+    background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--colsort-accent) 12%, transparent), rgba(0,0,0,0.24)) !important;
   }
 
   .colsort-focus .csb-tray[style*='translateY(-3px)'] {
@@ -82,7 +94,7 @@ const FOCUS_CSS = `
     opacity: 1;
   }
 
-  /* The statement being handled is the visual focus of the interaction. */
+  /* The statement being handled remains the strongest visual focus. */
   .colsort-focus .csb-current-card {
     order: 4;
     margin-top: 2px !important;
@@ -115,7 +127,6 @@ const FOCUS_CSS = `
     order: 6;
   }
 
-  /* Completion is a learner-controlled transition, not another status panel. */
   .colsort-focus .csb-completion {
     display: none !important;
   }
@@ -124,12 +135,12 @@ const FOCUS_CSS = `
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 48px;
+    bottom: 52px;
     z-index: 4;
     animation: colsort-continue-in 280ms ease both;
   }
 
-  /* Local sequence progress sits alone at the bottom of the task. */
+  /* The dots sit at the true bottom with clear space above them. */
   .colsort-focus .csb-progress {
     position: absolute !important;
     left: 50% !important;
@@ -389,8 +400,6 @@ export default function ColSortBlock({ block, onComplete, ...props }) {
     && /anatom|ancient books|four humours|galen/.test(itemText)
   const treatmentInsight = /treatment.*(?:slow|much more slowly)/i.test(block.explanation || '')
 
-  // Older ColSort content predates the richer data shape. These defaults keep it
-  // cinematic while explicit content props always remain the source of truth.
   const columns = (block.columns || []).map(column => {
     const name = firstLine(column.label)
     if (column.description || !changeContinuity) return column
@@ -398,20 +407,22 @@ export default function ColSortBlock({ block, onComplete, ...props }) {
     if (name === 'changed') {
       return {
         ...column,
+        color: column.color || theme.accent,
         icon: column.icon || 'change',
         description: vesaliusContext
-          ? 'Ideas and practices that became different after Vesalius.'
-          : 'Ideas and practices that became different.',
+          ? 'New ideas or practices after Vesalius.'
+          : 'New ideas or practices.',
       }
     }
 
     if (name === 'continued') {
       return {
         ...column,
+        color: column.color || theme.accent,
         icon: column.icon || 'continuity',
         description: vesaliusContext
-          ? 'Ideas and practices that stayed largely the same after Vesalius.'
-          : 'Ideas and practices that stayed largely the same.',
+          ? 'Ideas or practices that stayed the same.'
+          : 'Ideas or practices that stayed the same.',
       }
     }
 
