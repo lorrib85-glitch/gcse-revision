@@ -738,8 +738,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
             <div
               id={openDetailHeadingId}
               style={{
-                ...TYPE.eyebrow,
-                textTransform: 'uppercase',
+                ...TYPE.label,
                 color: visual.detailEyebrow,
                 marginBottom: SPACING.micro,
               }}
