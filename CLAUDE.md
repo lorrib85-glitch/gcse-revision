@@ -139,9 +139,8 @@ Screen-level learning interaction components.
 - `SwipeSort.jsx` — Swipe-gesture sorting activity; powers `naturalSupernaturalSwipe` screen type.
 - `TheoryCompareBlock.jsx` — Side-by-side theory comparison block with staggered fade-in animation.
 - `TimelineCanvas.jsx` — Full-screen "swipe to pan" canvas: swipe horizontally to pan across a wide chain of cards with curved connectors that draw in as you pan; tap + to reveal why each step mattered. A deliberate one-off variation in rhythm from `TimelineChain`.
-- `TimelineChain.jsx` — Full-screen horizontal scroll-snap chain of flip cards connected by a connector rail, revealing a chapter's causal sequence step by step.
+- `TimelineChain.jsx` — Full-screen causal-sequence component with two variants. `interactive` (default): horizontal scroll-snap chain of flip cards connected by a connector rail, revealed step by step at the learner's pace. `reveal` (`variant: 'reveal'`): passive vertical sequence that reveals one statement at a time behind a "Reveal next" CTA, with optional secondary detail, structured `{ text, highlight? }` phrases, numbered or icon markers, and an accent takeaway — this absorbs the former `VisualNarrativeScreen`. Pure reveal logic lives in `timelineChainReveal.js`; legacy `type: 'visualNarrative'` blocks are mapped to it via `src/data/visualNarrativeCompat.js`.
 - `VisualLearning.jsx` — Click-to-continue cinematic scene sequence with background images, animated headlines, and optional final reveal.
-- `VisualNarrativeScreen.jsx` — Beat-based narrative screen supporting portraits, timelines, facts, and conclusion beats.
 - `WeakSpotRecovery.jsx` — Full-screen behavioural intervention screen shown when a learner struggles.
 
 ### `src/components/layout/`

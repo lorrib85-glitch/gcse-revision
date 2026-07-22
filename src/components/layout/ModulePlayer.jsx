@@ -33,8 +33,8 @@ import WeakSpotRecovery from '../learning/WeakSpotRecovery.jsx'
 import RecoveryQuizPlayer from '../learning/RecoveryQuizPlayer.jsx'
 import CardContainer from '../core/CardContainer.jsx'
 import GuidedChoiceCarousel from '../learning/GuidedChoiceCarousel.jsx'
-import VisualNarrativeScreen from '../learning/VisualNarrativeScreen.jsx'
 import TimelineChain, { TimelineChainBlock } from '../learning/TimelineChain.jsx'
+import { visualNarrativeToRevealChain } from '../../data/visualNarrativeCompat.js'
 import TimelineCanvas from '../learning/TimelineCanvas.jsx'
 import CinematicCarousel from '../learning/CinematicCarousel.jsx'
 import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
@@ -1916,15 +1916,19 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     )
   }
 
-  // ── Visual narrative — tap-through image + fact sequence ────────────────────
+  // ── Visual narrative (legacy) — mapped to the TimelineChain reveal variant ──
+  // Authored content now uses `type: 'timelineChain', variant: 'reveal'` directly.
+  // This branch stays only as a compatibility path for any persisted/legacy lesson
+  // data that still carries `type: 'visualNarrative'`; the mapping lives outside the
+  // visual component in src/data/visualNarrativeCompat.js.
   if (cur?.type === 'visualNarrative') {
     return (
       <>
         <LearningHeader {...H} visible={true} />
-        <VisualNarrativeScreen
+        <TimelineChain
+          block={visualNarrativeToRevealChain(cur)}
           subject={module.subject}
-          beats={cur.beats || []}
-          onRevealStart={() => setCinematicHeaderVisible(true)}
+          variant="reveal"
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
         {jumpSheetPortal}

@@ -367,7 +367,7 @@ named findings; the rest are explicit debt, ranked below.
 | `priorKnowledgeRecall` | 6 | ✓ Ep2 s0 | |
 | `interactiveImage` | 7 | ✓ Ep1 s4 | intro + explore + hotspot sheet verified |
 | `factorWeb` | 2 | ✓ `history-medicine-vesalius-beginning-doubt` s7 | initial + explored-detail verified |
-| `visualNarrative` | 6 | ✓ Ep1 s0 | beats 1–2 verified; later beats unseen |
+| `timelineChain` reveal variant | 6 (migrated from `visualNarrative`) | ✓ story `Learning/TimelineChain — Reveal` | 390px reveal render verified 2026-07-22 (all steps + takeaway + Continue) |
 | `guidedExamResponse` | 4 | ✓ Ep1 s32 | refused 2026-07-12 AM, fixed + seated same day — see entry |
 
 ### Composed teach screen — `TeachScreenShell` route
@@ -453,25 +453,29 @@ named findings; the rest are explicit debt, ranked below.
   emoji identity, uppercase labels, x/y counter).
 - **390px review questions:** run the contract's field 9 render checks.
 
-### `visualNarrative`
+### `timelineChain` reveal variant (formerly `visualNarrative`)
 
-- **Learning intent:** open or pivot a chapter through beat-based narrative
-  (portraits, timelines, facts, conclusion beats), one idea per beat.
-- **Strongest composed runtime use:** `history-medicine-medieval-beliefs-causes`
-  screen **0**. Verified at 390px for beats 1–2: beat 1 — full-bleed dual
-  portrait with one dominant headline ("Two dead Greeks ran medieval
-  medicine.") and one supporting line; beat 2 — a timeline visualisation
-  (Hippocrates → Galen → medieval England, 400 BC → 1300 AD) whose
-  uppercase node labels are genuine diagram labelling (approved exception).
-  Later beats not yet captured — remaining-state debt, noted, not
-  bar-blocking for the seen beats.
-- **Why it is the current gold example:** each beat lands exactly one idea
-  with a strong visual carrier; the 1,000-year continuity claim is *shown*
-  (timeline) rather than asserted.
-- **Below-bar counterexample:** none render-reviewed yet.
-- **390px review questions:** One idea per beat? Is text legible over
-  imagery? Are uppercase labels genuinely diagram notation? Does the beat
-  sequence build to the chapter's dramatic question?
+- **Learning intent:** open or pivot a chapter through a short cause→effect
+  narrative, revealed one calm statement at a time.
+- **History note:** `VisualNarrativeScreen` (screen type `visualNarrative`)
+  was removed; its beat-based behaviour is now the `reveal` variant of
+  `TimelineChain`. The six former uses (Ep1 ×2, Ep3 renaissance, Ep3
+  Vesalius, Ep5, Ep14) are authored as `type: 'timelineChain', variant:
+  'reveal'`; legacy persisted `visualNarrative` blocks are mapped at render
+  time via `src/data/visualNarrativeCompat.js`.
+- **Strongest render use:** the `Learning/TimelineChain — Reveal` story,
+  verified at 390px (2026-07-22): each step lands one statement with the
+  strongest hierarchy, optional secondary detail sits quieter beneath, the
+  newest step carries a subtle subject-accent marker glow while earlier
+  steps stay readable but quieter, a subtle vertical connector links the
+  markers, and the accent takeaway plus the standard `ContinueCTA` sit
+  directly beneath the latest content (no dead area, no per-item cards, no
+  local progress dots).
+- **390px review questions:** One statement per step? Is the active step
+  clearly dominant over the quieter earlier ones? Do highlighted phrases
+  read as emphasis, not decoration? Does the CTA sit beneath the content
+  rather than pinned to the viewport floor? Is every colour a subject-accent
+  token (no hardcoded bronze/gold)?
 
 ### `guidedExamResponse`
 
@@ -657,9 +661,8 @@ below.
    `beforeAfterSlider`, `orderedRouteTask`, `quoteAnalyser`. Seat
    opportunistically when their episodes are next reviewed; do not block
    production on them.
-2. **Remaining-state captures** — `visualNarrative` beats 3+,
-   `naturalSupernaturalSwipe` sort state, `guidedExamResponse`
-   marking/result states (noted in their entries).
+2. **Remaining-state captures** — `naturalSupernaturalSwipe` sort state,
+   `guidedExamResponse` marking/result states (noted in their entries).
 3. **Below-bar counterexamples not yet render-reviewed** — `cinematic`
    (both composed uses clear the bar; a non-specific-imagery / no-payoff
    below-bar example is still open).

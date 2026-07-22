@@ -1,5 +1,3 @@
-import { SPACING } from './spacing.js'
-
 // ─── General App Theme — Non-Subject Pages ──────────────────────────────────
 //
 // Used by Home, Subjects browser, Progress/Pulse, Exam landing, bottom nav,
@@ -91,25 +89,6 @@ export const GENERAL = {
     imageFilterFull:  'brightness(2.5)',
     imageFilterUpper: 'brightness(1.12) saturate(1.04)',
     actionShadow:  '0 1px 16px rgba(0,0,0,0.60)',
-    visualNarrative: {
-      // The image remains present behind the title rather than ending in a
-      // separate black section. The lower scrim supplies the readability.
-      imageBottomUpper: SPACING.section,
-      imagePositionFull: 'center top',
-      imagePositionUpper: 'center 25%',
-      overlay: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.02) 34%, rgba(0,0,0,0.24) 56%, rgba(0,0,0,0.62) 74%, rgba(0,0,0,0.88) 88%, rgba(0,0,0,0.98) 100%)',
-      vignette: 'radial-gradient(ellipse at center 40%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.10) 58%, rgba(0,0,0,0.50) 100%)',
-      contentBottom: SPACING.section,
-      actionGap: SPACING.separation,
-      actionMinHeight: 44,
-      headlineMaxWidth: 352,
-      bodyMeasure: '31ch',
-      sourceMaxWidth: 280,
-      factsTop: '52%',
-      motionOffset: 18,
-      focusRingWidth: 2,
-      focusRingOffset: 4,
-    },
     motion: {
       fast: '420ms',
       standard: '500ms',

@@ -274,74 +274,41 @@ War creates urgent demand for faster, better treatment. The First World War prod
     // ── Section 3: Chain of evacuation ──────────────────────────────────────
 
     {
-      type: 'visualNarrative',
+      type: 'timelineChain',
+      variant: 'reveal',
       tag: 'chain-of-evacuation',
       stage: 'Chain of evacuation',
       label: 'From trench to hospital',
-      beats: [
+      title: 'From trench to hospital',
+      intro: 'A wounded soldier did not go straight to a hospital — he moved through a chain of evacuation, five stages, each one further from the fighting.',
+      steps: [
         {
-          image: '/figures/history/medicine/western-front/stretcher-bearers.png',
-          label: 'THE EVACUATION CHAIN',
-          headline: 'A wounded soldier did not go straight from the trench to a hospital.',
-          body: 'He moved through a chain of evacuation — five stages, each further from the fighting.',
+          id: 'stretcher-bearers',
+          statement: 'Stretcher bearers',
+          detail: 'Stretcher bearers carried wounded men from the front line. This was dangerous, slow and physically exhausting, especially under shellfire and through mud.',
         },
         {
-          image: '/figures/history/medicine/western-front/stretcher-bearers.png',
-          label: 'STAGE 1',
-          headline: '1. Stretcher bearers',
-          body: 'Stretcher bearers carried wounded men from the front line. This was dangerous, slow and physically exhausting, especially under shellfire and through mud.',
-          facts: [
-            'First hands on the wounded.',
-            'Had to reach the injured under fire.',
-            'Mud made every step a struggle.',
-          ],
+          id: 'rap',
+          statement: 'Regimental Aid Post (RAP)',
+          detail: 'The RAP was close to the front line, staffed by a medical officer. It gave basic first aid. Minor wounds could be treated so the soldier returned to fight. Serious cases were sent further back.',
         },
         {
-          image: '/figures/history/medicine/western-front/ramc-aid-post.png',
-          label: 'STAGE 2',
-          headline: '2. Regimental Aid Post (RAP)',
-          body: 'The RAP was close to the front line. It gave basic first aid. Minor wounds could be treated so the soldier returned to fight. Serious cases were sent further back.',
-          facts: [
-            'Rapid first aid near the front.',
-            'Staffed by a medical officer.',
-            'Minor wounds treated here — serious cases sent back.',
-          ],
+          id: 'dressing-station',
+          statement: 'Advanced / Main Dressing Station',
+          detail: 'About 400 metres behind the line. Treated more serious injuries in tents or abandoned buildings. Staffed by medical officers, orderlies and stretcher bearers.',
         },
         {
-          image: '/figures/history/medicine/western-front/ramc-aid-post.png',
-          label: 'STAGE 3',
-          headline: '3. Advanced/Main Dressing Station',
-          body: 'About 400 metres behind the line. Treated more serious injuries in tents or abandoned buildings. Staffed by medical officers, orderlies and stretcher bearers.',
-          facts: [
-            'Dress the wound, decide what comes next.',
-            'Around 400 metres from the front.',
-            'Often in tents or abandoned buildings.',
-          ],
+          id: 'ccs',
+          statement: 'Casualty Clearing Station (CCS)',
+          detail: 'Larger field hospitals, often near railways. Performed most surgery on the Western Front. Sorted patients by urgency — this is called triage.',
         },
         {
-          image: '/figures/history/medicine/western-front/stretcher-bearers.png',
-          label: 'STAGE 4',
-          headline: '4. Casualty Clearing Station (CCS)',
-          body: 'Larger field hospitals, often near railways. Performed most surgery on the Western Front. Sorted patients by urgency — this is called triage.',
-          facts: [
-            'Most surgery happened here.',
-            'Often near railways for fast transport.',
-            'Triage sorted patients by urgency.',
-          ],
-        },
-        {
-          image: '/figures/history/medicine/western-front/ramc-aid-post.png',
-          label: 'STAGE 5',
-          headline: '5. Base Hospital',
-          body: 'Base hospitals were on the French coast. They provided longer-term treatment and could send soldiers back to Britain.',
-          facts: [
-            'Last stop before long recovery.',
-            'On the French coast.',
-            'Seriously injured soldiers sent back to Britain.',
-          ],
-          conclusion: 'Exam warning: Q1 often asks for two features of a stage in this chain. You need precise details — not vague comments.',
+          id: 'base-hospital',
+          statement: 'Base Hospital',
+          detail: 'Base hospitals were on the French coast. They provided longer-term treatment and could send soldiers back to Britain.',
         },
       ],
+      takeaway: 'Exam warning: Q1 often asks for two features of a stage in this chain. You need precise details — not vague comments.',
     },
 
     {

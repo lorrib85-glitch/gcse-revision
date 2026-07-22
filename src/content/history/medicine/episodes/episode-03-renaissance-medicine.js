@@ -515,31 +515,22 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
     },
 
     {
-      type: 'visualNarrative',
+      type: 'timelineChain',
+      variant: 'reveal',
       stage: 'Change and continuity',
       label: 'The Great Plague, 1665',
-      beats: [
+      steps: [
         {
-          image: '/headers/history-medicine-london-terror.png',
-          imagePosition: 'center center',
-          imageFilter: 'brightness(0.85) saturate(0.7)',
-          label: 'LONDON, 1665',
-          headline: 'Despite everything,\nthe plague returned.',
-          body: 'A hundred thousand dead. Anatomical breakthroughs meant nothing.\nPeople still blamed bad air, sin, and the stars.',
+          id: 'plague-returned',
+          statement: 'Despite everything, the plague returned.',
+          detail: 'A hundred thousand dead. Anatomical breakthroughs meant nothing.\nPeople still blamed bad air, sin, and the stars.',
         },
-        {
-          image: '/headers/history-medicine-london-terror.png',
-          imagePosition: 'center 30%',
-          imageOpacity: 0.55,
-          facts: [
-            'The Great Plague killed around 100,000 people in London in 1665.',
-            'Despite Renaissance advances, people still blamed miasma, the Four Humours, and God\'s punishment.',
-            'The government\'s response was more organised than in 1348 — quarantine, pest houses, bills of mortality.',
-            'The mayor ordered cats and dogs killed, believing they spread plague. Fewer cats meant more rats, more fleas, more plague.',
-          ],
-          conclusion: 'Renaissance medicine changed knowledge more than treatment.\nThe gap between understanding and curing would take two more centuries to close.',
-        },
+        { id: 'toll', statement: 'The Great Plague killed around 100,000 people in London in 1665.' },
+        { id: 'blame', statement: "Despite Renaissance advances, people still blamed miasma, the Four Humours, and God's punishment." },
+        { id: 'response', statement: "The government's response was more organised than in 1348 — quarantine, pest houses, bills of mortality." },
+        { id: 'cats', statement: 'The mayor ordered cats and dogs killed, believing they spread plague. Fewer cats meant more rats, more fleas, more plague.' },
       ],
+      takeaway: 'Renaissance medicine changed knowledge more than treatment.\nThe gap between understanding and curing would take two more centuries to close.',
     },
 
     {

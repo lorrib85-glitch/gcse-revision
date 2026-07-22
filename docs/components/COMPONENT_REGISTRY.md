@@ -519,12 +519,15 @@ Person-to-person comparison. Two named people with portraits kept as compact hea
 ### TimelineChain
 
 **File:** `src/components/learning/TimelineChain.jsx`
-**What it is:** Full-screen horizontal scroll-snap chain of flip cards connected by a connector rail (line segments + dot per card).
-**Best used for:** A chapter's "big idea" causal sequence, step by step (e.g. how the Black Death spread). Card fronts show a short step label; tapping flips a card to reveal why that step mattered / how it links to the next. Continue only appears once every card has been flipped.
-**Props:** `block`, `subject` (defaults to `History`), `onContinue`
-**Block shape:** `{ type: 'timelineChain', title, intro?, steps: [{ id?, icon?, image?, label, detail }] }`
-**Screen type:** `timelineChain` (full-screen, routed directly in `ModulePlayer.jsx` like `VisualNarrativeScreen`)
-**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
+**What it is:** Full-screen sequence component with two variants. **`interactive`** (default) — a horizontal scroll-snap chain of flip cards connected by a connector rail (line segments + dot per card). **`reveal`** — a passive vertical sequence that reveals one step at a time behind a "Reveal next" CTA, absorbing the behaviour of the former `VisualNarrativeScreen`.
+**Best used for:**
+- *Interactive:* A chapter's "big idea" causal sequence the learner explores at will (e.g. how the Black Death spread). Card fronts show a short step label; tapping flips a card to reveal why that step mattered. Continue only appears once every card has been flipped.
+- *Reveal:* A short cause→effect narrative delivered one calm statement at a time (e.g. "bad air → sweeten the air → the real cause was microbes"). Each press reveals one more step; the standard `ContinueCTA` replaces "Reveal next" once all steps show; an optional accent takeaway closes it.
+**Props:** `block`, `subject` (defaults to `History`), `onContinue`, `variant` (`'interactive'` | `'reveal'`; falls back to `block.variant`, then `'interactive'`)
+**Block shape (interactive):** `{ type: 'timelineChain', title, intro?, steps: [{ id?, icon?, image?, label, detail }] }`
+**Block shape (reveal):** `{ type: 'timelineChain', variant: 'reveal', title?, intro?, source?, steps: [{ id?, icon?, statement, detail? }], takeaway? }` — `statement`/`detail`/`takeaway` accept a plain string or an array of `{ text, highlight? }` segments for inline subject-accent highlighting. `statement` (not `label`) is the primary field so full-sentence copy is not scanned by the sentence-case heading guard.
+**Screen type:** `timelineChain` (full-screen, routed directly in `ModulePlayer.jsx`). Legacy `type: 'visualNarrative'` screens are mapped to the reveal variant at render time via `src/data/visualNarrativeCompat.js`.
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `ContinueCTA`, `timelineChainReveal.js` (pure reveal logic)
 
 ---
 
@@ -540,12 +543,7 @@ Person-to-person comparison. Two named people with portraits kept as compact hea
 
 ---
 
-### VisualNarrativeScreen
-
-**File:** `src/components/learning/VisualNarrativeScreen.jsx`
-**Purpose:** Beat-based narrative screen that sequences portrait, timeline, fact, and conclusion beats with tap-through progression. Used for multi-step historical storytelling.
-**Props:** `subject`, `beats`, `onRevealStart`, `onContinue`
-**Dependencies:** `SUBJECTS`, `MOTION`
+> **VisualNarrativeScreen — removed.** Its beat-based narrative behaviour was absorbed into `TimelineChain`'s `reveal` variant (see above). Legacy `type: 'visualNarrative'` content is mapped to the reveal variant via `src/data/visualNarrativeCompat.js`.
 
 ---
 

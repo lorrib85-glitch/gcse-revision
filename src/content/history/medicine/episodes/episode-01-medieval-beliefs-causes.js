@@ -55,28 +55,22 @@ export default {
   screens: [
 
     {
-      type: 'visualNarrative',
+      type: 'timelineChain',
+      variant: 'reveal',
       stage: 'Intro',
       label: 'Ancient Authorities',
-      beats: [
+      steps: [
         {
-          image: '/figures/history/medicine/medieval/ancient-authorities-back-to-back.webp',
-          label: 'ANCIENT AUTHORITIES',
-          headline: 'Two dead Greeks ran medieval medicine.',
-          body: 'When medieval doctors wanted answers, they looked to two men who had been dead for centuries.',
+          id: 'authorities',
+          statement: 'Two dead Greeks ran medieval medicine.',
+          detail: 'When medieval doctors wanted answers, they looked to two men who had been dead for centuries.',
         },
-        {
-          image: '/figures/history/medicine/medieval/ancient-authorities-timeline.webp',
-          imageOpacity: 1,
-          facts: [
-            'Medieval doctors learned medicine from ancient Greek and Roman writers.',
-            'Especially Hippocrates and Galen.',
-            'The Church copied and taught their books across Europe.',
-            'Their ideas shaped medicine for over 1,000 years.',
-          ],
-          conclusion: "Doctors couldn't see germs.\n\nSo who else were they supposed to trust?",
-        },
+        { id: 'greek-roman', statement: 'Medieval doctors learned medicine from ancient Greek and Roman writers.' },
+        { id: 'hippocrates-galen', statement: 'Especially Hippocrates and Galen.' },
+        { id: 'church', statement: 'The Church copied and taught their books across Europe.' },
+        { id: 'thousand-years', statement: 'Their ideas shaped medicine for over 1,000 years.' },
       ],
+      takeaway: "Doctors couldn't see germs.\n\nSo who else were they supposed to trust?",
     },
 
     {
@@ -629,32 +623,23 @@ export default {
     },
 
     {
-      type: 'visualNarrative',
+      type: 'timelineChain',
+      variant: 'reveal',
       stage: 'Medieval treatments',
       label: 'The colour of your illness',
-      beats: [
+      steps: [
         {
-          image: '/figures/history/medicine/medieval/uroscopy-chart.jpg',
-          imagePosition: 'center center',
-          imageFilter: 'brightness(1.1) saturate(0.85)',
-          label: 'Diagnostic methods',
-          headline: 'The colour\nof your illness.',
-          body: 'Before a physician could treat you, they had to diagnose you.\nTheir most trusted tool? A flask of urine.',
+          id: 'diagnosis',
+          statement: 'The colour of your illness.',
+          detail: 'Before a physician could treat you, they had to diagnose you.\nTheir most trusted tool? A flask of urine.',
         },
-        {
-          image: '/figures/history/medicine/medieval/uroscopy-chart.jpg',
-          imagePosition: 'center 20%',
-          imageOpacity: 0.55,
-          facts: [
-            'Physicians examined urine for colour, smell — and sometimes taste. This practice was called uroscopy.',
-            'Urine was placed in a flask called a jordan and held to the light.',
-            'A chart of up to 20 shades matched each colour to a specific humour and illness.',
-            'Dark urine? Too much black bile. Cloudy? Excess phlegm. Nothing was random.',
-          ],
-          conclusion: 'Uroscopy shows the internal logic of humoural medicine:\nthe body was always a system in balance or imbalance.',
-          source: 'Troubled Waters: Reading Urine in Medieval Medicine. The Public Domain Review (2023-04-19). Retrieved on 2025-03-27.',
-        },
+        { id: 'uroscopy', statement: 'Physicians examined urine for colour, smell — and sometimes taste. This practice was called uroscopy.' },
+        { id: 'jordan', statement: 'Urine was placed in a flask called a jordan and held to the light.' },
+        { id: 'chart', statement: 'A chart of up to 20 shades matched each colour to a specific humour and illness.' },
+        { id: 'nothing-random', statement: 'Dark urine? Too much black bile. Cloudy? Excess phlegm. Nothing was random.' },
       ],
+      takeaway: 'Uroscopy shows the internal logic of humoural medicine:\nthe body was always a system in balance or imbalance.',
+      source: 'Troubled Waters: Reading Urine in Medieval Medicine. The Public Domain Review (2023-04-19). Retrieved on 2025-03-27.',
     },
 
     {

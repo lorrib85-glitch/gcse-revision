@@ -352,37 +352,22 @@ export const episode = {
 
     // ── Screen 6 — How the evidence travelled (teach) ───────────────────
     {
-      type: 'visualNarrative',
+      type: 'timelineChain',
+      variant: 'reveal',
       stage: 'Printing',
       tag: 'printing-press',
       label: 'The evidence travels',
-      beats: [
-        {
-          image: '/headers/history-medicine-renaissance.png',
-          headline: 'The body',
-          body: 'Human dissection gave Vesalius direct evidence about the human body.',
-        },
-        {
-          image: '/headers/history-medicine-medieval-scripture.png',
-          headline: 'The drawing',
-          body: 'Detailed drawings recorded exactly what he had seen.',
-        },
-        {
-          headline: 'The book',
-          body: 'In 1543, one book brought the drawings and explanations together.',
-        },
-        {
-          headline: 'The printing press',
-          body: 'Printing made many exact copies of the book and its images.',
-        },
-        {
-          facts: [
-            'Doctors across Europe could now compare Galen with human evidence.',
-            'His challenge became far harder to ignore.',
-          ],
-          conclusion: 'Dissection made the evidence.\nPrinting gave it reach.',
-        },
+      title: 'The evidence travels',
+      intro: "How Vesalius's challenge to Galen reached doctors across Europe, step by step.",
+      steps: [
+        { id: 'body', statement: 'The body', detail: 'Human dissection gave Vesalius direct evidence about the human body.' },
+        { id: 'drawing', statement: 'The drawing', detail: 'Detailed drawings recorded exactly what he had seen.' },
+        { id: 'book', statement: 'The book', detail: 'In 1543, one book brought the drawings and explanations together.' },
+        { id: 'press', statement: 'The printing press', detail: 'Printing made many exact copies of the book and its images.' },
+        { id: 'compare', statement: 'Doctors across Europe could now compare Galen with human evidence.' },
+        { id: 'harder', statement: 'His challenge became far harder to ignore.' },
       ],
+      takeaway: 'Dissection made the evidence.\nPrinting gave it reach.',
     },
 
     // ── Screen 7 — Why could Vesalius challenge Galen? (apply/judgement) ─

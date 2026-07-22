@@ -63,32 +63,23 @@ export const episode = {
       ],
     },
     {
-      type: 'visualNarrative',
+      type: 'timelineChain',
+      variant: 'reveal',
       stage: 'Return of plague',
       tag: 'great-plague',
       label: 'The Great Plague, 1665',
-      beats: [
+      steps: [
         {
-          image: '/headers/history-medicine-london-terror.png',
-          imagePosition: 'center center',
-          imageFilter: 'brightness(0.85) saturate(0.7)',
-          label: 'London, 1665',
-          headline: 'Despite everything,\nthe plague returned.',
-          body: 'More than 300 years after the Black Death, London faced plague again.',
+          id: 'plague-returned',
+          statement: 'Despite everything, the plague returned.',
+          detail: 'More than 300 years after the Black Death, London faced plague again.',
         },
-        {
-          image: '/headers/history-medicine-london-terror.png',
-          imagePosition: 'center 30%',
-          imageOpacity: 0.55,
-          facts: [
-            'The Great Plague killed around 100,000 people in London.',
-            'People still blamed bad air, sin and the stars.',
-            'The response was more organised than in 1348.',
-            'Medicine still could not explain the real cause.',
-          ],
-          conclusion: 'The key comparison is simple: better organisation, weak medical understanding.',
-        },
+        { id: 'toll', statement: 'The Great Plague killed around 100,000 people in London.' },
+        { id: 'blame', statement: 'People still blamed bad air, sin and the stars.' },
+        { id: 'response', statement: 'The response was more organised than in 1348.' },
+        { id: 'no-cause', statement: 'Medicine still could not explain the real cause.' },
       ],
+      takeaway: 'The key comparison is simple: better organisation, weak medical understanding.',
     },
     {
       type: 'quickRecall',

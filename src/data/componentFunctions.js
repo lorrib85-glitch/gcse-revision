@@ -31,7 +31,6 @@ export const SCREEN_TYPE_FUNCTIONS = {
   examtip: { functions: ['exam-technique'], interaction: 'passive' },
   cinematic: { functions: ['hook-tension'], interaction: 'passive' },
   examinerExplains: { functions: ['exam-technique'], interaction: 'passive' },
-  visualNarrative: { functions: ['hook-tension', 'teach-mechanism'], interaction: 'passive' },
 
   // Pattern components (docs/system/PATTERN_GOVERNANCE.md)
   keyPoint: { functions: ['teach-mechanism'], interaction: 'passive' },

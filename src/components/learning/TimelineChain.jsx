@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useReducedMotion } from 'motion/react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
@@ -9,11 +9,19 @@ import ContinueCTA from '../core/ContinueCTA.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 // CinematicShell used here because the horizontal scroll-snap chain and connector rail must
 // reach the full viewport width; InteractionShell's 16px inset would clip the rail and break
-// the scroll-snap alignment.
+// the scroll-snap alignment. The reveal variant also owns the full viewport so its own scroll
+// column sits beneath the floating LearningHeader like the other full-screen learning screens.
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { TYPE } from '../../constants/typography.js'
 import { ScreenTitle } from '../core/ScreenText.jsx'
 import TimelineChainIcon from './TimelineChainIcons.jsx'
+import {
+  buildRevealModel,
+  initialRevealCount,
+  nextRevealCount,
+  revealState,
+  segmentsToString,
+} from './timelineChainReveal.js'
 
 // ─── TimelineChain v1 ───────────────────────────────────────────────────────
 //
@@ -60,6 +68,11 @@ function ensureStyles() {
       0%, 100% { opacity: 0.30; transform: translateX(0); }
       50% { opacity: 0.58; transform: translateX(4px); }
     }
+    @keyframes tc-reveal-enter {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tc-reveal-scroll::-webkit-scrollbar { display: none; }
     .tc-row::-webkit-scrollbar { display: none; }
     .tc-card-trigger:focus-visible {
       outline: 2px solid var(--tc-accent) !important;
@@ -179,9 +192,18 @@ function DisclosureChevron({ open, prefersReduced }) {
   )
 }
 
-export default function TimelineChain({ block, subject = 'History', onContinue }) {
+// Thin dispatcher — no hooks here, so each variant component owns its own hook
+// order (rules-of-hooks). Existing interactive screens don't set `variant`
+// (or `block.variant`), so they are untouched by the reveal branch.
+export default function TimelineChain({ block, subject = 'History', onContinue, variant }) {
   ensureStyles()
+  const resolvedVariant = variant ?? block?.variant ?? 'interactive'
+  return resolvedVariant === 'reveal'
+    ? <RevealChain block={block} subject={subject} onContinue={onContinue} />
+    : <InteractiveChain block={block} subject={subject} onContinue={onContinue} />
+}
 
+function InteractiveChain({ block, subject = 'History', onContinue }) {
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
   const steps = block.steps || []
@@ -390,6 +412,270 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
             }}
           />
         )}
+      </div>
+    </CinematicShell>
+  )
+}
+
+// ─── TimelineChain reveal variant ──────────────────────────────────────────
+//
+// A passive, one-step-at-a-time vertical reveal that absorbs the useful behaviour
+// of the former VisualNarrativeScreen. Opt in with `variant: 'reveal'` (prop or on
+// the block). Subject-accent themed, mobile-first, no history-specific styling.
+//
+// Block shape:
+// {
+//   type: 'timelineChain',
+//   variant: 'reveal',
+//   title?: 'How the idea travelled',
+//   intro?: 'Reveal each step in turn.',
+//   steps: [
+//     { id?, icon?, label: string | [{ text, highlight? }], detail?: string | segments },
+//     ...
+//   ],
+//   takeaway?: string | segments,   // final accent statement once all steps show
+//   source?: 'Attribution note',    // optional caption shown with the takeaway
+// }
+
+// Renders structured rich text: highlighted phrases come from data segments, never
+// hardcoded HTML. Highlight uses the subject accent so it stays theme-driven.
+function RichText({ segments, accent }) {
+  return segments.map((segment, index) => (
+    segment.highlight
+      ? (
+        <mark
+          key={index}
+          style={{ background: 'transparent', color: accent, fontWeight: 700 }}
+        >
+          {segment.text}
+        </mark>
+      )
+      : <span key={index}>{segment.text}</span>
+  ))
+}
+
+function RevealMarker({ step, active, rgb, prefersReduced }) {
+  const glow = active
+    ? `0 0 0 4px rgba(${rgb},0.10), 0 0 16px rgba(${rgb},0.30)`
+    : 'none'
+  return (
+    <div
+      className="tc-motion"
+      style={{
+        width: 34,
+        height: 34,
+        borderRadius: '50%',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        border: `1px solid rgba(${rgb},${active ? 0.55 : 0.28})`,
+        background: active ? `rgba(${rgb},0.14)` : `rgba(${rgb},0.06)`,
+        color: `rgba(${rgb},${active ? 0.95 : 0.78})`,
+        boxShadow: glow,
+        ...TYPE.metadata,
+        transition: prefersReduced
+          ? 'none'
+          : `background ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+      }}
+    >
+      {step.icon ? <TimelineChainIcon icon={step.icon} size={18} /> : step.marker}
+    </div>
+  )
+}
+
+function RevealStep({ step, isActive, isFirst, showConnector, accent, rgb, prefersReduced, stepRef }) {
+  return (
+    <li
+      ref={stepRef}
+      className="tc-motion"
+      style={{
+        display: 'flex',
+        gap: SPACING.compact,
+        listStyle: 'none',
+        // Only the newest step animates in; earlier steps are already settled.
+        animation: (isActive && !isFirst && !prefersReduced)
+          ? `tc-reveal-enter ${MOTION.duration.slow} ${MOTION.easing.standard} both`
+          : 'none',
+      }}
+    >
+      {/* Marker column + subtle vertical connector to the next revealed step. */}
+      <div style={{
+        position: 'relative',
+        width: 34,
+        flexShrink: 0,
+        display: 'flex',
+        justifyContent: 'center',
+      }}>
+        {showConnector && (
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              top: 34,
+              bottom: -SPACING.standard,
+              left: '50%',
+              width: 1,
+              transform: 'translateX(-50%)',
+              background: `rgba(${rgb},0.18)`,
+            }}
+          />
+        )}
+        <RevealMarker step={step} active={isActive} rgb={rgb} prefersReduced={prefersReduced} />
+      </div>
+
+      {/* Text column: the statement carries the strongest hierarchy; detail is quieter. */}
+      <div style={{ flex: 1, minWidth: 0, paddingTop: 3 }}>
+        <div style={{
+          ...TYPE.displayCard,
+          color: isActive ? 'rgba(245,245,245,0.96)' : 'rgba(245,245,245,0.66)',
+          whiteSpace: 'pre-line',
+          transition: prefersReduced ? 'none' : `color ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+        }}>
+          <RichText segments={step.statement} accent={accent} />
+        </div>
+        {step.detail.length > 0 && (
+          <div style={{
+            ...TYPE.body,
+            color: isActive ? 'rgba(245,245,245,0.80)' : 'rgba(245,245,245,0.52)',
+            marginTop: SPACING.micro,
+            whiteSpace: 'pre-line',
+            transition: prefersReduced ? 'none' : `color ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+          }}>
+            <RichText segments={step.detail} accent={accent} />
+          </div>
+        )}
+      </div>
+    </li>
+  )
+}
+
+function RevealChain({ block, subject = 'History', onContinue }) {
+  const theme = SUBJECTS[subject] || SUBJECTS.History
+  const { accent, accentRgb: rgb } = theme
+  const prefersReduced = useReducedMotion()
+
+  const model = useMemo(() => buildRevealModel(block), [block])
+  const total = model.steps.length
+  const hasTakeaway = model.takeaway.length > 0
+
+  const [visibleCount, setVisibleCount] = useState(() => initialRevealCount(total))
+  const state = revealState({ total, visibleCount, hasTakeaway })
+  const latestStepRef = useRef(null)
+
+  function handleReveal() {
+    setVisibleCount(current => nextRevealCount(current, total))
+  }
+
+  // Scroll a newly revealed step into view only when it isn't already fully visible,
+  // so short content never jumps. The first step (mount) is never scrolled.
+  useEffect(() => {
+    if (visibleCount <= 1) return
+    const node = latestStepRef.current
+    if (!node || typeof node.getBoundingClientRect !== 'function') return
+    const rect = node.getBoundingClientRect()
+    const belowFold = rect.bottom > (window.innerHeight || 0) - 96
+    const aboveFold = rect.top < 72
+    if (belowFold || aboveFold) {
+      node.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' })
+    }
+  }, [visibleCount, prefersReduced])
+
+  const visibleSteps = model.steps.slice(0, state.visibleCount)
+  const liveMessage = visibleSteps.length > 0
+    ? segmentsToString(visibleSteps[visibleSteps.length - 1].statement)
+    : ''
+
+  return (
+    <CinematicShell style={{ background: theme.background, zIndex: 100 }}>
+      <div
+        className="tc-reveal-scroll"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: `calc(84px + env(safe-area-inset-top, 0px)) ${SPACING.standard}px calc(${SPACING.cinematic}px + env(safe-area-inset-bottom, 0px))`,
+        }}
+      >
+        <div style={{ maxWidth: 420, margin: '0 auto' }}>
+          {model.title && (
+            <ScreenTitle style={{ margin: 0 }}>{model.title}</ScreenTitle>
+          )}
+          {model.intro && (
+            <p style={{
+              ...TYPE.body,
+              color: 'rgba(245,245,245,0.60)',
+              margin: `${model.title ? SPACING.compact : 0}px 0 0`,
+              maxWidth: '34ch',
+            }}>
+              {model.intro}
+            </p>
+          )}
+
+          <ol style={{
+            listStyle: 'none',
+            padding: 0,
+            margin: `${SPACING.separation}px 0 0`,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: SPACING.standard,
+          }}>
+            {visibleSteps.map((step, index) => (
+              <RevealStep
+                key={step.id}
+                step={step}
+                isFirst={index === 0}
+                isActive={index === visibleSteps.length - 1}
+                showConnector={index < visibleSteps.length - 1 || (!state.atEnd)}
+                accent={accent}
+                rgb={rgb}
+                prefersReduced={prefersReduced}
+                stepRef={index === visibleSteps.length - 1 ? latestStepRef : undefined}
+              />
+            ))}
+          </ol>
+
+          {state.showTakeaway && (
+            <div style={{
+              marginTop: SPACING.separation,
+              paddingLeft: `calc(34px + ${SPACING.compact}px)`,
+              animation: prefersReduced ? 'none' : `tc-reveal-enter ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+            }}>
+              <div style={{
+                ...TYPE.displaySection,
+                color: accent,
+                whiteSpace: 'pre-line',
+              }}>
+                <RichText segments={model.takeaway} accent={accent} />
+              </div>
+              {model.source && (
+                <p style={{
+                  ...TYPE.caption,
+                  color: 'rgba(245,245,245,0.42)',
+                  margin: `${SPACING.compact}px 0 0`,
+                  maxWidth: '40ch',
+                }}>
+                  <span style={{ ...TYPE.metadata, marginRight: SPACING.micro }}>Source</span>
+                  {model.source}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* The CTA sits directly beneath the latest content rather than pinned to the
+              bottom of the viewport, so short reveals never leave a dead area below.
+              An empty step list resolves to Continue in revealState (never a soft-lock). */}
+          <div style={{ marginTop: SPACING.separation, paddingLeft: `calc(34px + ${SPACING.compact}px)` }}>
+            <ContinueCTA
+              onClick={state.cta === 'continue' ? onContinue : handleReveal}
+              label={state.cta === 'continue' ? 'Continue' : 'Reveal next'}
+              accent={accent}
+            />
+          </div>
+        </div>
+
+        <div style={SR_ONLY} aria-live="polite" aria-atomic="true">{liveMessage}</div>
       </div>
     </CinematicShell>
   )

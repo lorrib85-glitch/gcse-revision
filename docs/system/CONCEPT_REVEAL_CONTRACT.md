@@ -4,7 +4,7 @@
 **Component:** `src/components/learning/ConceptReveal.jsx`  
 **Screen type:** `conceptReveal`
 
-ConceptReveal owns the single-concept teaching reveal: one idea at a time, explained clearly, with cinematic atmosphere but less drama than VisualNarrative.
+ConceptReveal owns the single-concept teaching reveal: one idea at a time, explained clearly, with cinematic atmosphere but less drama than VisualLearning.
 
 ## Use ConceptReveal when
 
@@ -13,11 +13,17 @@ ConceptReveal owns the single-concept teaching reveal: one idea at a time, expla
 - The concept benefits from a full-screen atmosphere or background image.
 - The content can be expressed as a short sequence of simple steps.
 
-## Use VisualNarrative instead when
+## Use VisualLearning instead when
 
 - The screen is a dramatic story beat.
 - The goal is emotional hook/storytelling rather than concept teaching.
-- The screen needs portrait/timeline/fact/conclusion sequencing.
+- The beat needs a full-bleed image sequence with one headline per scene.
+
+## Use the TimelineChain reveal variant instead when
+
+- The content is a short cause→effect chain delivered one calm statement at a
+  time (each with optional supporting detail), rather than a single concept.
+  (This absorbed the former VisualNarrative sequencing.)
 
 ## Locked structure
 

@@ -45,7 +45,6 @@ import CinematicRevealMoment from '../../components/learning/CinematicRevealMome
 import ConceptReveal from '../../components/learning/ConceptReveal.jsx'
 import ExplainReveal from '../../components/learning/ExplainReveal.jsx'
 import ColSortBlock from '../../components/learning/ColSortBlock.jsx'
-import VisualNarrativeScreen from '../../components/learning/VisualNarrativeScreen.jsx'
 import QuoteAnalyser from '../../components/learning/QuoteAnalyser.jsx'
 import KeyFigureReveal from '../../components/learning/KeyFigureReveal.jsx'
 
@@ -289,7 +288,7 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Click-to-continue cinematic scene sequence with animated headlines.',
     usage: 'Used across History episodes (1, 2, 3, 14), type: visualLearning.',
-    alternative: 'InteractiveCollectionExplorer; CinematicRevealMoment; ConceptReveal; VisualNarrativeScreen.',
+    alternative: 'InteractiveCollectionExplorer; CinematicRevealMoment; ConceptReveal; TimelineChain (reveal variant).',
     render: (fx, { onDone }) => <VisualLearning block={fx} subject="History" onComplete={onDone} />,
     fixture: FIX.visualLearning,
   },
@@ -406,7 +405,7 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Progressive cause-and-effect reasoning chain, revealed one step at a time.',
     usage: 'Used for building an explanation step by step.',
-    alternative: 'TimelineChain (causal chain); VisualNarrativeScreen.',
+    alternative: 'TimelineChain (causal chain, or reveal variant).',
     render: (fx, { onDone }) => <ExplainReveal block={fx} subject="History" onComplete={onDone} />,
     fixture: FIX.explainReveal,
   },
@@ -418,15 +417,6 @@ export const REVIEW_ENTRIES = [
     alternative: 'SwipeSort; MatchingTask.',
     render: (fx) => <ColSortBlock block={fx} subject="History" />,
     fixture: FIX.colSort,
-  },
-  {
-    id: 'visual-narrative', name: 'VisualNarrativeScreen', group: 'library',
-    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
-    function: 'Beat-based narrative screen (portrait/timeline/fact/conclusion beats).',
-    usage: 'Used in Episode 3 (Vesalius) and elsewhere, type: visualNarrative.',
-    alternative: 'VisualLearning; ConceptReveal.',
-    render: (fx, { onDone }) => <VisualNarrativeScreen subject="History" beats={fx.beats} onContinue={onDone} />,
-    fixture: FIX.visualNarrative,
   },
   {
     id: 'quote-analyser', name: 'QuoteAnalyser', group: 'library',

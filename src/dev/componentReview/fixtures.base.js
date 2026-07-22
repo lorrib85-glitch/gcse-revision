@@ -374,15 +374,6 @@ export const colSort = {
   ],
 }
 
-// VisualNarrativeScreen (History) — beat-based narrative.
-export const visualNarrative = {
-  beats: [
-    { image: '/headers/history-medicine-through-time.webp', headline: 'The body', body: 'Human dissection gave Vesalius direct evidence about the human body.' },
-    { image: '/headers/history-medicine-through-time.webp', headline: 'The book', body: 'His printed drawings let doctors across Europe check the evidence for themselves.' },
-    { image: '/headers/history-medicine-through-time.webp', headline: 'The challenge', body: 'For the first time, careful observation could openly correct Galen.' },
-  ],
-}
-
 // QuoteAnalyser (English) — tap-through analysis of a literary quote.
 export const quoteAnalyser = {
   type: 'quoteAnalyser',
