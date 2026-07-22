@@ -84,7 +84,6 @@ export default {
       interpretationInstruction: 'Use your own words. A rough idea is enough.',
       interpretationPlaceholder: 'Write your interpretation...',
       interpretationStarterHeading: 'Need a way in?',
-      interpretationMoreLabel: 'More prompts',
       interpretationStarters: [
         'I think Macbeth is feeling…',
         'I think this because the word “…” suggests…',
