@@ -7,15 +7,15 @@ const _displayHero = {
   textWrap: 'balance',
 }
 
-// Full-screen cinematic headline. This role is deliberately larger and tighter
-// than a normal module heading, and must be consumed without local typography
-// overrides by full-bleed narrative/reveal components.
+// Full-screen cinematic headline. This role stays dominant but is deliberately
+// calmer than a landing-page hero so the image and narrative remain one moment.
+// Full-bleed narrative/reveal components must consume it without local type overrides.
 const _displayCinematic = {
   fontFamily: "'Manrope', sans-serif",
-  fontSize: 'clamp(36px, 10.8vw, 52px)',
-  lineHeight: 1.04,
-  fontWeight: 560,
-  letterSpacing: '-0.024em',
+  fontSize: 'clamp(32px, 9.2vw, 44px)',
+  lineHeight: 1.06,
+  fontWeight: 540,
+  letterSpacing: '-0.020em',
   textWrap: 'balance',
 }
 
