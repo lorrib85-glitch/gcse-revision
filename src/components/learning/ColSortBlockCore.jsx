@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { ScreenTitle } from '../core/ScreenText.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 
 const CSS = `
   @keyframes csb-card-in {
@@ -181,6 +182,8 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
   const cur = items[cursor] ?? null
   const title = block.title || block.question || 'Sort the evidence'
   const subtitle = block.subtitle || block.instruction || 'Sort each statement into the right group.'
+  const progressIndex = done ? Math.max(items.length - 1, 0) : cursor
+  const progressCompleted = done ? Math.max(items.length - 1, 0) : cursor
 
   useEffect(() => () => {
     if (timerRef.current) clearTimeout(timerRef.current)
@@ -374,35 +377,6 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         <header style={{ marginBottom: 22 }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            marginBottom: 14,
-          }}>
-            <div style={{
-              ...TYPE.label,
-              color: accent,
-              whiteSpace: 'nowrap',
-            }}>
-              {done ? `${items.length} of ${items.length}` : `${cursor + 1} of ${items.length}`}
-            </div>
-
-            <div style={{
-              height: 1,
-              flex: 1,
-              background: GENERAL.line.soft,
-              overflow: 'hidden',
-            }}>
-              <div style={{
-                width: `${items.length ? ((done ? items.length : cursor + 1) / items.length) * 100 : 100}%`,
-                height: '100%',
-                background: `linear-gradient(90deg, ${accent}, ${withAlpha(accent, '66')})`,
-                transition: 'width 300ms ease',
-              }} />
-            </div>
-          </div>
-
           <ScreenTitle style={{
             color: GENERAL.cinematic.textPrimary,
             margin: 0,
@@ -418,6 +392,21 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
           }}>
             {subtitle}
           </p>
+
+          {!!items.length && (
+            <SequenceProgress
+              total={items.length}
+              current={progressIndex}
+              completed={progressCompleted}
+              accent={accent}
+              accentRgb={rgb}
+              variant="sash"
+              compact
+              stretch
+              ariaLabel="Sorting progress"
+              style={{ width: '100%', marginTop: 20 }}
+            />
+          )}
         </header>
 
         <div style={{
