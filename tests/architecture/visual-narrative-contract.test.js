@@ -18,20 +18,24 @@ describe('VisualNarrativeScreen contract', () => {
     expect(contract).toContain('Full-bleed cinematic image')
     expect(contract).toContain('Accessible interaction')
     expect(contract).toContain('Data-driven highlights only')
+    expect(contract).toContain('Token-governed composition')
   })
 
   it('uses the locked cinematic continue CTA for opening narrative beats', () => {
     const src = read(componentPath)
     expect(src).toMatch(/import\s+CinematicContinueCTA\s+from\s+['"]\.\.\/core\/CinematicContinueCTA\.jsx['"]/) 
     expect(src).toContain('<CinematicContinueCTA')
+    expect(src).toContain('layout="inline"')
   })
 
   it('uses governed cinematic typography and spacing tokens', () => {
     const src = read(componentPath)
     expect(src).toContain('...TYPE.displayCinematic')
     expect(src).toContain("import { SPACING } from '../../constants/spacing.js'")
+    expect(src).toContain('const narrativeTokens = GENERAL.cinematic.visualNarrative')
     expect(src).not.toContain('TYPE.eyebrow')
     expect(src).not.toContain("fontFamily: \"'Sora', sans-serif\"")
+    expect(src).not.toContain("imageBottom ?? '42%'")
   })
 
   it('does not contain a custom circular next button implementation', () => {
