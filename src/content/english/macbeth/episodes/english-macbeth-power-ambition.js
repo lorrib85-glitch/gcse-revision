@@ -24,7 +24,7 @@ export default {
     {
       id: 'part-1',
       title: 'Quote analysis',
-      description: 'Read the quote, break down words, build meaning and turn it into an exam sentence.',
+      description: 'Read the quote, test your interpretation, break down words and turn it into an exam sentence.',
       screenIndex: 0,
     },
     {
@@ -69,6 +69,27 @@ export default {
       quote: '"Stars, hide your fires; let not light see my black and deep desires."',
       location: 'Act 1, Scene 4 — Macbeth',
       backgroundImage: '/English/Macbeth/heroes/macbeth-generic-banner.svg',
+      interpretationPrompt: 'What do you think Macbeth is revealing here?',
+      interpretationPlaceholder: 'I think Macbeth is showing...',
+      interpretationHints: ['What is he feeling?', 'What does he want?', 'Why might he hide it?'],
+      analysisIdeas: [
+        {
+          idea: 'Macbeth feels guilt, shame or moral unease because he knows his ambition is wrong.',
+          evidence: ['hide', 'black'],
+        },
+        {
+          idea: 'He wants to conceal his ambition from other people, moral judgement or divine judgement.',
+          evidence: ['hide your fires', 'let not light see'],
+        },
+        {
+          idea: 'His ambition is already internal and self-driven before Lady Macbeth begins influencing him.',
+          evidence: ['deep', 'desires'],
+        },
+        {
+          idea: 'The contrast between light and darkness presents a conflict between goodness or judgement and corrupt ambition.',
+          evidence: ['fires', 'light', 'black'],
+        },
+      ],
     },
   ],
 }
