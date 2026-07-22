@@ -52,20 +52,22 @@ export const FACTOR_WEB_VISUAL = Object.freeze({
   activeBorderWidth: 1.5,
   linkedBorderWidth: 2,
 
-  haloScale: 1.63,
+  // The centre remains the focal point, but the atmosphere should sit behind
+  // the content rather than reading as a second illuminated object.
+  haloScale: 1.56,
   haloBlur: 24,
-  haloOpacity: 0.22,
-  haloLayerOpacity: 0.74,
-  haloCoreOpacity: 0.11,
+  haloOpacity: 0.15,
+  haloLayerOpacity: 0.56,
+  haloCoreOpacity: 0.07,
   haloCoreStop: 68,
 
-  focalGlowBlur: 30,
-  focalGlowOpacity: 0.30,
-  focalOuterRingWidth: 5,
-  focalOuterRingOpacity: 0.045,
-  focalBorderOpacity: 0.76,
-  focalRingOpacity: 0.20,
-  focalPlaceholderFillOpacity: 0.055,
+  focalGlowBlur: 26,
+  focalGlowOpacity: 0.18,
+  focalOuterRingWidth: 4,
+  focalOuterRingOpacity: 0.03,
+  focalBorderOpacity: 0.60,
+  focalRingOpacity: 0.14,
+  focalPlaceholderFillOpacity: 0.045,
   focalImagePosition: 'center 22%',
   focalImageFilter: 'saturate(0.82) contrast(1.05) brightness(0.84)',
 
@@ -73,30 +75,31 @@ export const FACTOR_WEB_VISUAL = Object.freeze({
   linkedBorderOpacity: 0.55,
   linkedLabelOpacity: 0.82,
 
-  nodeActiveBorderOpacity: 0.82,
-  nodeExploredBorderOpacity: 0.36,
-  nodeActiveFillOpacity: 0.11,
-  nodeExploredTextOpacity: 0.88,
-  nodeActiveRingWidth: 3,
-  nodeActiveRingOpacity: 0.08,
-  judgementSelectedFillOpacity: 0.12,
+  // Selected factors remain clear through contrast and line weight, not glow.
+  nodeActiveBorderOpacity: 0.58,
+  nodeExploredBorderOpacity: 0.26,
+  nodeActiveFillOpacity: 0.07,
+  nodeExploredTextOpacity: 0.76,
+  nodeActiveRingWidth: 2,
+  nodeActiveRingOpacity: 0.035,
+  judgementSelectedFillOpacity: 0.09,
 
   // Connectors should support the composition, not compete with the focal image.
-  connectorIdleOpacity: 0.13,
-  connectorExploredOpacity: 0.28,
-  connectorActiveOpacity: 0.52,
-  connectorInitialOpacity: 0.08,
+  connectorIdleOpacity: 0.10,
+  connectorExploredOpacity: 0.21,
+  connectorActiveOpacity: 0.40,
+  connectorInitialOpacity: 0.06,
   connectorIdleWidth: 0.30,
-  connectorActiveWidth: 0.46,
+  connectorActiveWidth: 0.43,
 
   // Only node-side anchor dots are shown. Lines continue beneath the centre
   // ring by connectorUnderlap so every connection reads as physically joined.
-  anchorIdleRadius: 0.85,
-  anchorActiveRadius: 1.15,
-  anchorGlowRadius: 5,
-  anchorGlowOpacity: 0.48,
-  exploredIndicatorGlowRadius: 8,
-  exploredIndicatorGlowOpacity: 0.42,
+  anchorIdleRadius: 0.78,
+  anchorActiveRadius: 1.00,
+  anchorGlowRadius: 4,
+  anchorGlowOpacity: 0.25,
+  exploredIndicatorGlowRadius: 6,
+  exploredIndicatorGlowOpacity: 0.20,
 })
 
 export const FACTOR_WEB_MOTION = Object.freeze({
