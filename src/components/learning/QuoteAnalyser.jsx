@@ -74,10 +74,10 @@ function resolveContext(block, literaryMeta) {
 
   if (suppliedBeats.length) {
     return {
-      label: supplied.label || 'Before this line',
+      label: String(supplied.label || '').trim(),
       beats: suppliedBeats,
       transition: supplied.transition || '',
-      continueLabel: supplied.continueLabel || 'Reveal the quote',
+      continueLabel: supplied.continueLabel || undefined,
       showWorkTitle: supplied.showWorkTitle === true,
       showScene: supplied.showScene !== false,
     }
@@ -86,10 +86,10 @@ function resolveContext(block, literaryMeta) {
   const speaker = block.speaker || block.character || literaryMeta.title || 'The speaker'
   const scene = literaryMeta.scene
   return {
-    label: supplied.label || 'Before this line',
+    label: String(supplied.label || '').trim(),
     beats: [scene ? `${speaker} speaks in ${scene}.` : 'This quote comes from a key moment in the text.'],
     transition: supplied.transition || 'Now listen for what the speaker reveals.',
-    continueLabel: supplied.continueLabel || 'Reveal the quote',
+    continueLabel: supplied.continueLabel || undefined,
     showWorkTitle: supplied.showWorkTitle === true,
     showScene: supplied.showScene !== false,
   }
@@ -444,16 +444,16 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
           </div>
         )}
         <div style={{ padding: 'clamp(44px, 6.5vh, 70px) 4px 32px' }}>
-          <div className="qa-motion" style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 16, animation: 'qa-rise 0.45s ease both' }}>{context.label}</div>
+          {context.label && <div className="qa-motion" style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 16, animation: 'qa-rise 0.45s ease both' }}>{context.label}</div>}
           <div style={{ display: 'grid', gap: 14 }}>
             {context.beats.map((beat, index) => (
               <p key={`${beat}-${index}`} className="qa-motion" style={{ ...TYPE.displaySection, fontWeight: 480, color: text.textPrimary, margin: 0, animation: `qa-rise 0.55s ease ${index * 0.32}s both` }}>{beat}</p>
             ))}
           </div>
           {context.transition && <p className="qa-motion" style={{ ...TYPE.bodyLarge, color: text.textSecondary, fontStyle: 'italic', margin: '24px 0 0', animation: `qa-rise 0.55s ease ${context.beats.length * 0.32 + 0.18}s both` }}>{context.transition}</p>}
-        </div>
-        <div className="qa-motion" style={{ marginTop: 'auto', animation: `qa-rise 0.55s ease ${context.beats.length * 0.32 + 0.5}s both` }}>
-          <ContinueCTA onClick={next} label={context.continueLabel} accent={accent} textColor={parchment} />
+          <div className="qa-motion" style={{ marginTop: 24, animation: `qa-rise 0.55s ease ${context.beats.length * 0.32 + 0.5}s both` }}>
+            <ContinueCTA onClick={next} label={context.continueLabel} accent={accent} textColor={parchment} />
+          </div>
         </div>
       </main>
     </div>
