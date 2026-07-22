@@ -532,3 +532,32 @@ export const cinematicRevealMoment = {
   headline: 'Something is coming.',
   body: 'In June 1348, ships docked at Melcombe in Dorset.\n\nWithin weeks, people began to die.\n\nThe disease moved fast — through towns, villages, and monasteries.\n\nNo one knew what it was. No one knew how to stop it.',
 }
+
+// Infographic (History) — heading + intro (TeachScreenShell) then one governed
+// infographic media slot (MediaPlaceholder). Shape: { heading, intro, media }.
+// Fixture: Episode 1 "Galen treated with opposites" as a progressive quadrant
+// reveal (media.kind: imageReveal), matching the built screen.
+export const infographic = {
+  heading: 'Galen treated with opposites',
+  intro: "Galen took Hippocrates' theory of the Four Humours one step further. He believed illness happened when one humour became too dominant — so treatment should use the opposite qualities to restore balance.",
+  media: {
+    kind: 'imageReveal',
+    aspect: '1:1',
+    caption: {
+      interval: 1500,
+      images: {
+        topLeft: '/figures/history/medicine/medieval/four-humours-blood.webp',
+        topRight: '/figures/history/medicine/medieval/four-humours-yellow-bile.webp',
+        bottomLeft: '/figures/history/medicine/medieval/four-humours-phlegm.webp',
+        bottomRight: '/figures/history/medicine/medieval/four-humours-black-bile.webp',
+      },
+      alt: 'The four humours revealed one quadrant at a time: blood (hot and wet), yellow bile (hot and dry), phlegm (cold and wet) and black bile (cold and dry), with arrows crossing the centre to link each humour to its opposite',
+      parts: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'],
+      opposites: [
+        ['topLeft', 'bottomRight'],
+        ['topRight', 'bottomLeft'],
+      ],
+      finished: 'Hot was treated with cold. Wet was treated with dry. The aim was to restore balance.',
+    },
+  },
+}

@@ -8,7 +8,12 @@ function read(relativePath) {
 const component = read('../../src/components/learning/TimelineCanvas.jsx')
 const geometry = read('../../src/components/learning/timelineCanvasGeometry.js')
 const theme = read('../../src/components/learning/timelineCanvasTheme.js')
-const fixtures = read('../../src/dev/componentReview/fixtures.js')
+// Review Lab fixtures were split into a shared base file plus a thin overrides
+// file; read both so these checks pass wherever a given fixture family lives.
+const fixtures = [
+  read('../../src/dev/componentReview/fixtures.js'),
+  read('../../src/dev/componentReview/fixtures.base.js'),
+].join('\n')
 const story = read('../../src/components/learning/TimelineCanvas.stories.jsx')
 
 describe('TimelineCanvas architecture', () => {

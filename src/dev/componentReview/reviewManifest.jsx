@@ -39,6 +39,7 @@ import ButtonsAndProgressPage from './ButtonsAndProgressPage.jsx'
 
 // Registered library — self-contained kept components, here to refine in one place.
 import FactorWeb from '../../components/learning/FactorWeb.jsx'
+import Infographic from '../../components/learning/Infographic.jsx'
 import InteractiveHotspotImage from '../../components/learning/InteractiveHotspotImage.jsx'
 import CinematicRevealMoment from '../../components/learning/CinematicRevealMoment.jsx'
 import ConceptReveal from '../../components/learning/ConceptReveal.jsx'
@@ -334,6 +335,15 @@ export const REVIEW_ENTRIES = [
     alternative: 'MatchingTask (unordered pairing).',
     render: (fx, { onDone }) => <FactorWeb block={fx} subject="History" onContinue={onDone} />,
     fixture: FIX.factorWeb,
+  },
+  {
+    id: 'infographic', name: 'Infographic', group: 'library',
+    status: 'reference', subject: 'History', renderMode: 'inline',
+    function: 'Canonical screen for block type infographic: one teaching heading and framing line (owned by the approved TeachScreenShell) then a single governed infographic media slot (MediaPlaceholder) — either a reserved diagram or a progressive quadrant reveal.',
+    usage: 'New canonical component for the infographic screen type. Not yet routed in ModulePlayer or used by content — it exists as the build target so future type: infographic screens have one clear composition. Fixture: Episode 1 "Galen treated with opposites".',
+    alternative: 'Compose TeachScreenShell + MediaPlaceholder directly; MediaPlaceholder alone for a bare media slot.',
+    render: (fx) => <Infographic subject="History" heading={fx.heading} intro={fx.intro} media={fx.media} />,
+    fixture: FIX.infographic,
   },
   {
     id: 'interactive-hotspot-image', name: 'InteractiveHotspotImage', group: 'library',

@@ -230,6 +230,15 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
+### Infographic
+
+**File:** `src/components/learning/Infographic.jsx`
+**Purpose:** Canonical screen for block type `infographic`: a single teaching heading and framing line (owned by the approved `TeachScreenShell`, Route A) then one governed infographic media slot (`MediaPlaceholder`). Owns no heading typography or screen rhythm of its own — it fixes the standard "title + intro + infographic" composition into one named screen so authoring `type: 'infographic'` has a clear build target. The media slot passes through to `MediaPlaceholder`, so the infographic can be a reserved diagram slot (`kind: 'diagram'`) or a progressive quadrant reveal (`kind: 'imageReveal'`).
+**Props:** `subject`, `eyebrow`, `heading`, `intro`, `media` (`{ kind, aspect, caption }`)
+**Dependencies:** `TeachScreenShell`, `MediaPlaceholder`
+
+---
+
 ### InteractiveHotspotImage
 
 **File:** `src/components/learning/InteractiveHotspotImage.jsx`
