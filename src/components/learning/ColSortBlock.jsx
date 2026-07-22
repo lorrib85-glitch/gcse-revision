@@ -226,6 +226,12 @@ const FOCUS_CSS = `
     box-shadow: 0 0 12px color-mix(in srgb, var(--colsort-accent) 20%, transparent);
   }
 
+  .colsort-summary-continue {
+    position: relative;
+    z-index: 2;
+    margin-top: 36px;
+  }
+
   .colsort-summary-progress {
     position: absolute;
     left: 50%;
@@ -270,7 +276,7 @@ function inferEvidenceIcon(label) {
   return undefined
 }
 
-function ColSortSummary({ block, theme, total }) {
+function ColSortSummary({ block, theme, total, onContinue }) {
   const points = block.summaryPoints || []
 
   return (
@@ -346,6 +352,12 @@ function ColSortSummary({ block, theme, total }) {
           }}>
             {block.summaryClose}
           </p>
+        )}
+
+        {onContinue && (
+          <div className="colsort-summary-continue">
+            <ContinueCTA onClick={onContinue} accent={theme.accent} />
+          </div>
         )}
       </div>
 
@@ -489,7 +501,12 @@ export default function ColSortBlock({ block, onComplete, ...props }) {
         }}
       >
         <style>{FOCUS_CSS}</style>
-        <ColSortSummary block={resolvedBlock} theme={theme} total={items.length} />
+        <ColSortSummary
+          block={resolvedBlock}
+          theme={theme}
+          total={items.length}
+          onContinue={onComplete}
+        />
       </div>
     )
   }
@@ -507,13 +524,7 @@ export default function ColSortBlock({ block, onComplete, ...props }) {
 
       {sorted && (
         <div className="colsort-sort-continue">
-          <ContinueCTA
-            onClick={() => {
-              setShowSummary(true)
-              onComplete?.({ phase: 'summary', total: items.length })
-            }}
-            accent={theme.accent}
-          />
+          <ContinueCTA onClick={() => setShowSummary(true)} accent={theme.accent} />
         </div>
       )}
     </div>
