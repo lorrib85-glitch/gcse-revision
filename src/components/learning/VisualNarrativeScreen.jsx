@@ -26,6 +26,7 @@ export default function VisualNarrativeScreen({
 }) {
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
+  const narrativeTokens = GENERAL.cinematic.visualNarrative
   const timersRef = useRef(new Set())
   const revealStartedRef = useRef(false)
 
@@ -43,7 +44,9 @@ export default function VisualNarrativeScreen({
   const hasConclusion = Boolean(beat.conclusion)
   const { beat: imageBeat, index: imageBeatIndex } = findActiveImage(beats, beatIdx)
   const imageMode = imageBeat.imageMode || (imageBeatIndex <= 0 ? 'full' : 'upper')
-  const imageBottom = imageMode === 'full' ? 0 : (imageBeat.imageBottom ?? '42%')
+  const imageBottom = imageMode === 'full'
+    ? 0
+    : (imageBeat.imageBottom ?? narrativeTokens.imageBottomUpper)
   const imageAlt = imageBeat.imageAlt || imageBeat.alt
   const highlight = showConclusion ? beat.highlight : null
 
@@ -154,7 +157,7 @@ export default function VisualNarrativeScreen({
       marginTop: SPACING.compact,
       color: GENERAL.cinematic.sourceText,
       animation: `vnFadeIn ${GENERAL.cinematic.motion.standard} ease ${GENERAL.cinematic.motion.fast} both`,
-      maxWidth: 280,
+      maxWidth: narrativeTokens.sourceMaxWidth,
     }}>
       <span style={{
         ...TYPE.metadata,
@@ -171,7 +174,7 @@ export default function VisualNarrativeScreen({
     <>
       <style>{`
         @keyframes vnFadeUp {
-          from { opacity: 0; transform: translateY(18px); }
+          from { opacity: 0; transform: translateY(${narrativeTokens.motionOffset}px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes vnFadeIn {
@@ -183,8 +186,8 @@ export default function VisualNarrativeScreen({
           50%      { opacity: 0.92; transform: translate(-50%, -50%) scale(1.28); }
         }
         .vn-fact-hit-area:focus-visible {
-          outline: 2px solid ${accent};
-          outline-offset: -4px;
+          outline: ${narrativeTokens.focusRingWidth}px solid ${accent};
+          outline-offset: -${narrativeTokens.focusRingOffset}px;
         }
         .vn-visually-hidden {
           position: absolute;
@@ -241,7 +244,9 @@ export default function VisualNarrativeScreen({
                 backgroundImage: `url(${imageBeat.image})`,
                 backgroundSize: imageBeat.imageSize || 'cover',
                 backgroundPosition: imageBeat.imagePosition
-                  || (imageMode === 'full' ? 'center top' : 'center 25%'),
+                  || (imageMode === 'full'
+                    ? narrativeTokens.imagePositionFull
+                    : narrativeTokens.imagePositionUpper),
                 opacity: beat.imageOpacity ?? imageBeat.imageOpacity ?? 1,
                 transition: `opacity ${GENERAL.cinematic.motion.slow} ease`,
                 animation: `vnFadeIn ${GENERAL.cinematic.motion.slow} ease both`,
@@ -252,6 +257,18 @@ export default function VisualNarrativeScreen({
                 pointerEvents: 'none',
               }}
             />
+          )}
+
+          {/* Subtle edge vignette keeps the active evidence as the focal point.
+              Content may disable it without changing the component. */}
+          {imageBeat.image && imageBeat.imageVignette !== false && (
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: narrativeTokens.vignette,
+              pointerEvents: 'none',
+              zIndex: 1,
+            }} />
           )}
 
           {/* Optional subject-accent highlight supplied by content data. */}
@@ -278,8 +295,9 @@ export default function VisualNarrativeScreen({
           <div style={{
             position: 'absolute',
             inset: 0,
-            background: GENERAL.cinematic.overlay,
+            background: narrativeTokens.overlay,
             pointerEvents: 'none',
+            zIndex: 3,
           }} />
 
           {/* Narrative beats: cinematic headline + short body at the bottom. */}
@@ -291,9 +309,10 @@ export default function VisualNarrativeScreen({
                 bottom: 0,
                 left: 0,
                 right: 0,
-                padding: `0 ${SPACING.standard}px calc(${SPACING.cinematic + SPACING.separation + SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
+                padding: `0 ${SPACING.standard}px calc(${narrativeTokens.contentBottom}px + env(safe-area-inset-bottom, 0px))`,
                 animation: `vnFadeUp ${GENERAL.cinematic.motion.standard} cubic-bezier(0.16,1,0.3,1) both`,
                 pointerEvents: 'none',
+                zIndex: 4,
               }}
             >
               {beat.showLabel === true && beat.label && (
@@ -311,7 +330,7 @@ export default function VisualNarrativeScreen({
                 color: GENERAL.cinematic.textPrimary,
                 margin: 0,
                 marginBottom: SPACING.compact,
-                maxWidth: 352,
+                maxWidth: narrativeTokens.headlineMaxWidth,
               }}>
                 {beat.headline}
               </h1>
@@ -320,13 +339,28 @@ export default function VisualNarrativeScreen({
                 <p style={{
                   ...TYPE.bodyStrong,
                   color: GENERAL.cinematic.textSecondary,
-                  maxWidth: '31ch',
+                  maxWidth: narrativeTokens.bodyMeasure,
                   whiteSpace: 'pre-line',
                   margin: 0,
                 }}>
                   {beat.body}
                 </p>
               )}
+
+              <div style={{
+                marginTop: narrativeTokens.actionGap,
+                minHeight: narrativeTokens.actionMinHeight,
+                pointerEvents: 'auto',
+              }}>
+                {showCinematicContinue && (
+                  <CinematicContinueCTA
+                    onClick={handleTap}
+                    accent={accent}
+                    layout="inline"
+                    animation={`crm-fade ${GENERAL.cinematic.motion.slow} ease both, crm-pulse ${GENERAL.cinematic.motion.pulse} ease-in-out ${GENERAL.cinematic.motion.attentionDelay} infinite`}
+                  />
+                )}
+              </div>
             </div>
           )}
 
@@ -335,11 +369,12 @@ export default function VisualNarrativeScreen({
           {isFacts && (
             <div style={{
               position: 'absolute',
-              top: '52%',
+              top: narrativeTokens.factsTop,
               left: SPACING.standard,
               right: SPACING.standard,
               paddingBottom: `calc(${SPACING.cinematic + SPACING.micro}px + env(safe-area-inset-bottom, 0px))`,
               pointerEvents: 'none',
+              zIndex: 4,
             }}>
               {!showConclusion ? (
                 <div style={{
@@ -441,14 +476,6 @@ export default function VisualNarrativeScreen({
           >
             {liveMessage}
           </div>
-
-          {showCinematicContinue && (
-            <CinematicContinueCTA
-              onClick={handleTap}
-              accent={accent}
-              animation={`crm-fade ${GENERAL.cinematic.motion.slow} ease both, crm-pulse ${GENERAL.cinematic.motion.pulse} ease-in-out ${GENERAL.cinematic.motion.attentionDelay} infinite`}
-            />
-          )}
         </div>
       </CinematicShell>
     </>
