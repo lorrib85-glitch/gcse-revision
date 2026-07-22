@@ -19,7 +19,8 @@ import { MOTION } from '../../constants/motion.js'
 //   alt?: string,
 //   parts?: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'],  // reveal order
 //   opposites?: [['topLeft', 'bottomRight'], ['topRight', 'bottomLeft']],
-//   finished?: string,  // caption shown once every quadrant is revealed
+//   progressText?: string, // status shown while the visual is building
+//   finished?: string,     // caption shown once every quadrant is revealed
 // }
 
 function Glyph({ kind, accent }) {
@@ -60,8 +61,8 @@ const QUADRANT_CENTRES = {
   bottomRight: [75, 75],
 }
 
-// Trim an opposite-pair line evenly at both ends so it bridges the centre —
-// each arrowhead reaches into its quadrant without covering that humour's title.
+// Trim an opposite-pair line evenly at both ends so it bridges the centre without
+// covering the artwork anchored inside either quadrant.
 function oppositeArrowLine(from, to, trimStart = 0.24, trimEnd = 0.24) {
   const [ax, ay] = QUADRANT_CENTRES[from]
   const [bx, by] = QUADRANT_CENTRES[to]
@@ -129,7 +130,7 @@ function ImageReveal({ config, aspect, accent, rgb }) {
 
       <div
         role="img"
-        aria-label={config?.alt || 'Image revealed in four parts'}
+        aria-label={config?.alt || 'Infographic revealed in stages'}
         style={{
           width: '100%',
           aspectRatio: `${w || 1} / ${h || 1}`,
@@ -269,7 +270,9 @@ function ImageReveal({ config, aspect, accent, rgb }) {
         color: finished ? `rgba(${rgb},0.88)` : 'rgba(245,245,245,0.4)',
         marginTop: SPACING.micro,
       }}>
-        {finished ? (config?.finished || 'The complete four-humours system.') : 'Building the theory…'}
+        {finished
+          ? (config?.finished || 'Infographic complete.')
+          : (config?.progressText || 'Building the infographic…')}
       </div>
 
       <style>{`
