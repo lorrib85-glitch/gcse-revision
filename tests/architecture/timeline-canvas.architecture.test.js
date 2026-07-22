@@ -29,6 +29,17 @@ describe('TimelineCanvas architecture', () => {
     expect(component).not.toContain('flexShrink: 0,\n          margin: `${SPACING.compact}px ${SPACING.standard}px 0`')
   })
 
+  it('keeps the explanation label governed and sentence case', () => {
+    const detailHeading = component.slice(
+      component.indexOf('id={openDetailHeadingId}'),
+      component.indexOf('Why it mattered'),
+    )
+
+    expect(detailHeading).toContain('...TYPE.label')
+    expect(detailHeading).not.toContain('TYPE.eyebrow')
+    expect(detailHeading).not.toContain("textTransform: 'uppercase'")
+  })
+
   it('centres selected cards and tracks the card physically centred in the viewport', () => {
     expect(component).toContain('getTimelineScrollLeft')
     expect(component).toContain('getNearestTimelineIndex')
