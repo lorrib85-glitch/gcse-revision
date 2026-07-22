@@ -11,62 +11,60 @@ export default {
 
 const MACBETH_BLOCK = {
   type: 'quoteAnalyser',
+  workTitle: 'Macbeth',
+  speaker: 'Macbeth',
+  sceneLabel: 'Act 1, Scene 4',
   quote: '"Stars, hide your fires; let not light see my black and deep desires."',
-  location: 'Act I, Scene IV — Macbeth',
-  backgroundImage: null,
-  items: [
-    {
-      id: 'word-focus',
-      icon: 'search',
-      heading: 'Word focus',
-      explainer: 'Dissect key words in the quote',
-      content: {
-        title: 'Key words unpacked',
-        body: 'Shakespeare uses imperative verbs — "hide" and "let not" — to show Macbeth commanding even celestial bodies. "Stars" are usually symbols of fate and divine order; ordering them to hide reveals Macbeth\'s awareness that his ambitions violate the natural law. "Fires" connotes light, truth, and God\'s watchful eye. "Black and deep desires" is one of the most direct moments of self-knowledge in the play — dark imagery admitting guilt before the act.',
-        keyWords: ['hide', 'fires', 'black', 'deep', 'desires'],
-      },
-    },
-    {
-      id: 'connotations',
-      icon: 'feather',
-      heading: 'Connotations',
-      explainer: 'Explore implied meanings and tones',
-      content: {
-        title: 'Connotations',
-        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.',
-      },
-    },
-    {
-      id: 'methods',
-      icon: 'mask',
-      heading: 'Methods',
-      explainer: 'Analyse literary devices',
-      content: {
-        title: 'Literary methods',
-        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-      },
-    },
-    {
-      id: 'interpretations',
-      icon: 'bulb',
-      heading: 'Interpretations',
-      explainer: 'Consider different viewpoints',
-      content: {
-        title: 'Critical interpretations',
-        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.',
-      },
-    },
-    {
-      id: 'essay-builder',
-      icon: 'flame',
-      heading: 'Essay builder',
-      explainer: 'Build a paragraph step by step',
-      content: {
-        title: 'Build your paragraph',
-        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.',
-      },
-    },
+  location: 'Act 1, Scene 4 — Macbeth',
+  backgroundImage: '/English/Macbeth/heroes/macbeth-generic-banner.svg',
+  context: {
+    label: 'The moment before',
+    beats: [
+      'King Duncan names Malcolm as the next heir to the throne.',
+      'Macbeth realises Malcolm now stands between him and the crown.',
+    ],
+    transition: 'Macbeth turns his thoughts towards the stars…',
+    continueLabel: 'Hear what Macbeth reveals',
+  },
+  interpretationPrompt: 'What do you think this quote reveals?',
+  interpretationInstruction: 'Use your own words. A rough idea is enough.',
+  interpretationPlaceholder: 'Write your interpretation...',
+  interpretationStarterHeading: 'Need a way in?',
+  interpretationMoreLabel: 'More prompts',
+  interpretationStarters: [
+    'I think Macbeth is feeling…',
+    'I think this because the word “…” suggests…',
+    'Macbeth wants to hide…',
+    'This reveals that Macbeth is…',
   ],
+  wordAnalysis: {
+    fires: {
+      technique: 'Light imagery',
+      meaning: 'Light suggests truth, judgement and divine order. Macbeth wants that light hidden because he knows his ambition should not be seen.',
+      sentence: 'Shakespeare uses “fires” to show Macbeth trying to conceal ambition from moral and divine judgement.',
+    },
+    black: {
+      technique: 'Colour imagery',
+      meaning: '“Black” suggests moral darkness. Macbeth already recognises that what he wants is corrupt.',
+      sentence: 'The colour imagery of “black” presents Macbeth’s ambition as morally corrupt and deliberately hidden.',
+    },
+    deep: {
+      technique: 'Depth imagery',
+      meaning: '“Deep” makes the ambition feel buried and rooted inside Macbeth rather than like a passing thought.',
+      sentence: 'Shakespeare’s use of “deep” implies Macbeth’s ambition is hidden but already established in his mind.',
+    },
+    desires: {
+      technique: 'Noun choice',
+      meaning: '“Desires” shows that Macbeth actively wants power. His ambition exists before Lady Macbeth begins influencing him.',
+      sentence: 'The noun “desires” reveals that Macbeth’s ambition is internal and self-driven.',
+    },
+  },
+  meaningSections: [
+    { label: 'What it means', body: 'Macbeth asks the stars to hide their light so his ambition cannot be seen. He already knows that what he wants is morally wrong.' },
+    { label: 'Why it matters', body: 'Macbeth is not innocent or simply pushed into evil. He actively chooses to conceal a desire that already belongs to him.' },
+    { label: 'Method and effect', body: 'Shakespeare contrasts light and darkness to show the conflict between judgement and hidden ambition.' },
+  ],
+  essayExample: 'Shakespeare uses light and dark imagery in “Stars, hide your fires” to show that Macbeth recognises his ambition is morally corrupt and wants to conceal it from judgement.',
 }
 
 export const MacbethQuote = {
@@ -76,4 +74,3 @@ export const MacbethQuote = {
     onContinue: () => console.log('continue'),
   },
 }
-

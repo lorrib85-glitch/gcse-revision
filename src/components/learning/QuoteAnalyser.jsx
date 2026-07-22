@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { RADII } from '../../constants/radii.js'
@@ -20,10 +20,11 @@ function ensureStyles() {
   document.head.appendChild(style)
 }
 
-const STEPS = ['read', 'interpret', 'words', 'meaning', 'essay']
-const TEMP_MACBETH_BACKGROUND = '/English/Macbeth/heroes/macbeth-generic-banner.svg'
+const BASE_STEPS = ['read', 'interpret', 'words', 'meaning', 'essay']
 
-const WORDS = {
+// Legacy fallbacks keep older content working. New QuoteAnalyser content should
+// provide wordAnalysis, meaningSections and essayExample in its data block.
+const LEGACY_WORDS = {
   fires: {
     technique: 'Light imagery',
     meaning: 'Light suggests truth, judgement and divine order. Macbeth wants that light hidden because he knows his ambition should not be seen.',
@@ -46,7 +47,7 @@ const WORDS = {
   },
 }
 
-const MEANING = [
+const LEGACY_MEANING = [
   ['What it means', 'Macbeth asks the stars to hide their light so his ambition cannot be seen. He already knows that what he wants is morally wrong.'],
   ['Why it matters', 'Macbeth is not innocent or simply pushed into evil. He actively chooses to conceal a desire that already belongs to him.'],
   ['Method and effect', 'Shakespeare contrasts light and darkness to show the conflict between judgement and hidden ambition.'],
@@ -65,6 +66,45 @@ function resolveLiteraryMeta(block) {
   }
 }
 
+function resolveContext(block, literaryMeta) {
+  const supplied = block.context && typeof block.context === 'object' ? block.context : {}
+  const suppliedBeats = Array.isArray(supplied.beats)
+    ? supplied.beats.map(beat => String(beat || '').trim()).filter(Boolean).slice(0, 3)
+    : []
+
+  if (suppliedBeats.length) {
+    return {
+      label: supplied.label || 'Before this line',
+      beats: suppliedBeats,
+      transition: supplied.transition || '',
+      continueLabel: supplied.continueLabel || 'Reveal the quote',
+    }
+  }
+
+  const speaker = block.speaker || block.character || literaryMeta.title || 'The speaker'
+  const scene = literaryMeta.scene
+  return {
+    label: supplied.label || 'Before this line',
+    beats: [scene ? `${speaker} speaks in ${scene}.` : 'This quote comes from a key moment in the text.'],
+    transition: supplied.transition || 'Now listen for what the speaker reveals.',
+    continueLabel: supplied.continueLabel || 'Reveal the quote',
+  }
+}
+
+function resolveDefaultStarters(block, literaryMeta) {
+  if (Array.isArray(block.interpretationStarters) && block.interpretationStarters.length) {
+    return block.interpretationStarters.map(item => String(item || '').trim()).filter(Boolean).slice(0, 4)
+  }
+
+  const speaker = block.speaker || block.character || literaryMeta.title || 'The speaker'
+  return [
+    `I think ${speaker} is feeling…`,
+    'I think this because the word “…” suggests…',
+    `${speaker} wants to hide…`,
+    `This reveals that ${speaker} is…`,
+  ]
+}
+
 function Paper({ children, accentRgb, background }) {
   return (
     <section style={{ position: 'relative', padding: '30px 24px', overflow: 'hidden', clipPath: 'polygon(0 2%, 5% 0, 11% 2%, 18% 0, 25% 2%, 34% 0, 43% 2%, 52% 0, 61% 2%, 70% 0, 79% 2%, 88% 0, 95% 2%, 100% 0, 100% 98%, 94% 100%, 87% 98%, 78% 100%, 69% 98%, 60% 100%, 51% 98%, 42% 100%, 33% 98%, 24% 100%, 15% 98%, 7% 100%, 0 98%)', background: `linear-gradient(145deg, ${GENERAL.surfaceTint}, transparent 42%), ${background}`, boxShadow: GENERAL.shadow.overlay }}>
@@ -75,7 +115,7 @@ function Paper({ children, accentRgb, background }) {
   )
 }
 
-function QuoteText({ words, visibleWords, parchment, accentRgb, interactive = false, onWord, variant = 'analysis' }) {
+function QuoteText({ words, visibleWords, parchment, accentRgb, analysisWords, interactive = false, onWord, variant = 'analysis' }) {
   const centred = variant === 'hero' || variant === 'reference'
   const fontSize = variant === 'hero'
     ? 'clamp(34px, 9.1vw, 46px)'
@@ -99,7 +139,7 @@ function QuoteText({ words, visibleWords, parchment, accentRgb, interactive = fa
       }}>
         {words.map((word, index) => {
           const key = clean(word)
-          const marked = Boolean(WORDS[key])
+          const marked = Boolean(analysisWords[key])
           if (interactive && marked) {
             return <button key={`${word}-${index}`} type="button" onClick={() => onWord(key)} style={{ opacity: index < visibleWords ? 1 : 0, minHeight: 44, padding: '0 0.08em', border: 0, borderBottom: `2px solid rgba(${accentRgb}, 0.75)`, background: `rgba(${accentRgb}, 0.12)`, color: GENERAL.cinematic.textPrimary, font: 'inherit', lineHeight: 'inherit', cursor: 'pointer' }}>{word}{' '}</button>
           }
@@ -123,11 +163,11 @@ function LiteraryHeader({ title, scene, onBack, accentRgb, text }) {
   )
 }
 
-function QuoteScene({ words, parchment, accentRgb }) {
+function QuoteScene({ words, parchment, accentRgb, analysisWords }) {
   return (
     <section className="qa-motion" style={{ position: 'relative', padding: '28px 16px 24px', animation: 'qa-rise 0.35s ease both' }}>
       <div aria-hidden="true" style={{ position: 'absolute', left: 10, top: 13, fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 50, lineHeight: 1, color: `rgba(${accentRgb}, 0.62)` }}>“</div>
-      <QuoteText words={words} visibleWords={words.length} parchment={parchment} accentRgb={accentRgb} variant="reference" />
+      <QuoteText words={words} visibleWords={words.length} parchment={parchment} accentRgb={accentRgb} analysisWords={analysisWords} variant="reference" />
       <div aria-hidden="true" style={{ display: 'flex', alignItems: 'center', gap: 8, width: 96, margin: '22px auto 0' }}>
         <span style={{ height: 1, flex: 1, background: GENERAL.line.medium }} />
         <span style={{ width: 5, height: 5, transform: 'rotate(45deg)', border: `1px solid rgba(${accentRgb}, 0.62)` }} />
@@ -138,12 +178,31 @@ function QuoteScene({ words, parchment, accentRgb }) {
   )
 }
 
-function HintRow({ hints, accentRgb, text, lead = 'Think about' }) {
-  if (!hints.length) return null
+function StarterPrompts({ starters, heading, moreLabel, showMore, onToggleMore, onChoose, text }) {
+  if (!starters.length) return null
+  const visible = showMore ? starters : starters.slice(0, 2)
+  const hasMore = starters.length > 2
+
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, paddingTop: 13, marginTop: 14, borderTop: `1px solid ${GENERAL.line.soft}` }}>
-      <div aria-hidden="true" style={{ flex: '0 0 auto', width: 28, height: 28, display: 'grid', placeItems: 'center', borderRadius: RADII.pill, border: `1px solid rgba(${accentRgb}, 0.34)`, color: GENERAL.cinematic.textSecondary, ...TYPE.caption }}>?</div>
-      <p style={{ ...TYPE.caption, fontSize: 13, lineHeight: 1.55, color: text.textMuted, margin: 2 }}><span style={{ color: text.textSecondary }}>{lead}:</span> {hints.join(' · ')}</p>
+    <div style={{ paddingTop: 14, marginTop: 14, borderTop: `1px solid ${GENERAL.line.soft}` }}>
+      <div style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 4 }}>{heading}</div>
+      <div>
+        {visible.map(starter => (
+          <button
+            key={starter}
+            type="button"
+            onClick={() => onChoose(starter)}
+            style={{ width: '100%', minHeight: 44, padding: '10px 0', border: 0, borderBottom: `1px solid ${GENERAL.line.soft}`, background: 'none', color: text.textFact, textAlign: 'left', cursor: 'pointer', ...TYPE.bodySmall }}
+          >
+            {starter}
+          </button>
+        ))}
+      </div>
+      {hasMore && (
+        <button type="button" onClick={onToggleMore} style={{ minHeight: 40, padding: '9px 0 0', border: 0, background: 'none', color: text.textSecondary, cursor: 'pointer', ...TYPE.button }}>
+          {showMore ? 'Fewer prompts' : moreLabel}
+        </button>
+      )}
     </div>
   )
 }
@@ -172,12 +231,14 @@ function FeedbackInsight({ insight, accentRgb }) {
   )
 }
 
-function WordSheet({ word, accentRgb, parchment, onClose }) {
-  const content = WORDS[word]
+function WordSheet({ word, analysisWords, accentRgb, parchment, onClose }) {
+  const content = analysisWords[word]
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
   }, [])
+
+  if (!content) return null
 
   return (
     <div role="dialog" aria-modal="true" aria-label={`Word focus: ${word}`} style={{ position: 'fixed', inset: 0, zIndex: 180 }}>
@@ -188,7 +249,7 @@ function WordSheet({ word, accentRgb, parchment, onClose }) {
           <button type="button" onClick={onClose} aria-label="Close" style={{ width: 36, height: 36, borderRadius: RADII.pill, border: `1px solid ${GENERAL.line.strong}`, background: GENERAL.surfaceTint, color: parchment, ...TYPE.button }}>×</button>
         </div>
         <p style={{ ...TYPE.body, color: parchment, margin: '0 0 14px' }}>{content.meaning}</p>
-        <div style={{ padding: 12, borderRadius: 16, background: `rgba(${accentRgb}, 0.10)`, border: `1px solid rgba(${accentRgb}, 0.18)` }}><div style={{ ...TYPE.label, color: GENERAL.cinematic.textSecondary, marginBottom: 5 }}>Use it</div><p style={{ ...TYPE.body, color: parchment, margin: 0 }}>{content.sentence}</p></div>
+        {content.sentence && <div style={{ padding: 12, borderRadius: 16, background: `rgba(${accentRgb}, 0.10)`, border: `1px solid rgba(${accentRgb}, 0.18)` }}><div style={{ ...TYPE.label, color: GENERAL.cinematic.textSecondary, marginBottom: 5 }}>Use it</div><p style={{ ...TYPE.body, color: parchment, margin: 0 }}>{content.sentence}</p></div>}
       </div>
     </div>
   )
@@ -201,24 +262,30 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   const accentRgb = palette.accentRgb
   const parchment = palette.palette?.parchment || GENERAL.feedbackText
   const paper = palette.backgroundSecondary || GENERAL.backgroundSurface
-  const backgroundImage = block.backgroundImage || TEMP_MACBETH_BACKGROUND
+  const backgroundImage = block.backgroundImage || null
   const words = (block.quote || '').split(' ').filter(Boolean)
   const text = GENERAL.cinematic
   const literaryMeta = resolveLiteraryMeta(block)
+  const context = resolveContext(block, literaryMeta)
+  const steps = ['context', ...BASE_STEPS]
+  const analysisWords = block.wordAnalysis && typeof block.wordAnalysis === 'object' ? block.wordAnalysis : LEGACY_WORDS
+  const meaningSections = Array.isArray(block.meaningSections) && block.meaningSections.length ? block.meaningSections : LEGACY_MEANING
   const interpretationLabel = block.interpretationLabel || 'Your interpretation'
   const interpretationInstruction = block.interpretationInstruction || 'Use your own words. A rough idea is enough.'
-  const interpretationHintLead = block.interpretationHintLead || 'Think about'
+  const interpretationStarters = resolveDefaultStarters(block, literaryMeta)
+  const interpretationStarterHeading = block.interpretationStarterHeading || 'Need a way in?'
+  const interpretationMoreLabel = block.interpretationMoreLabel || 'More prompts'
   const support = {
     noAnswerTitle: block.interpretationSupport?.noAnswerTitle || 'Give me an idea to work with',
     noAnswerBody: block.interpretationSupport?.noAnswerBody || 'That answer does not explain the quote yet. Try one sentence about what the speaker feels, wants or hides.',
     starterHeading: block.interpretationSupport?.starterHeading || 'Start with one of these:',
-    sentenceStarters: (block.interpretationSupport?.sentenceStarters || ['The speaker is feeling...', 'They want to hide...', 'The word suggests...']).slice(0, 3),
+    sentenceStarters: (block.interpretationSupport?.sentenceStarters || interpretationStarters.slice(0, 3)).slice(0, 3),
     hint: block.interpretationSupport?.hint || 'Choose one important word from the quote and explain what it suggests.',
     retryLabel: block.interpretationSupport?.retryLabel || 'Try my answer again',
     hintLabel: block.interpretationSupport?.hintLabel || 'Give me one hint',
   }
 
-  const [step, setStep] = useState('read')
+  const [step, setStep] = useState('context')
   const [visibleWords, setVisibleWords] = useState(0)
   const [showAttribution, setShowAttribution] = useState(false)
   const [showCTA, setShowCTA] = useState(false)
@@ -230,6 +297,8 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   const [checking, setChecking] = useState(false)
   const [checkError, setCheckError] = useState('')
   const [showInterpretationHint, setShowInterpretationHint] = useState(false)
+  const [showMoreStarters, setShowMoreStarters] = useState(false)
+  const textareaRef = useRef(null)
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return undefined
@@ -271,13 +340,13 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   }, [step, reducedMotion, visibleWords, words.length])
 
   function next() {
-    const index = STEPS.indexOf(step)
-    if (index < STEPS.length - 1) setStep(STEPS[index + 1])
+    const index = steps.indexOf(step)
+    if (index < steps.length - 1) setStep(steps[index + 1])
   }
 
   function back() {
-    const index = STEPS.indexOf(step)
-    if (index > 0) setStep(STEPS[index - 1])
+    const index = steps.indexOf(step)
+    if (index > 0) setStep(steps[index - 1])
   }
 
   function closeWord() {
@@ -290,6 +359,15 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
     setFeedback(null)
     setCheckError('')
     setShowInterpretationHint(false)
+    setShowMoreStarters(false)
+  }
+
+  function insertStarter(starter) {
+    setInterpretation(current => {
+      const existing = current.trimEnd()
+      return `${existing}${existing ? '\n' : ''}${starter} `
+    })
+    window.requestAnimationFrame(() => textareaRef.current?.focus())
   }
 
   async function checkInterpretation() {
@@ -349,13 +427,37 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
     return <div style={{ display: 'flex', alignItems: 'center', minHeight: 36, margin: '0 6px 4px' }}><button type="button" onClick={back} style={{ minHeight: 36, border: 0, background: 'none', color: text.textMuted, cursor: 'pointer', padding: 0, ...TYPE.caption, fontSize: 13 }}>← Back</button><div style={{ flex: 1, textAlign: 'right', ...TYPE.caption, fontSize: 13, color: text.textMuted }}>{label}</div></div>
   }
 
+  if (step === 'context') {
+    return <div style={outer}>
+      <Atmosphere cinematic />
+      <main style={{ ...page, paddingLeft: 22, paddingRight: 22 }}>
+        <div style={{ textAlign: 'center', paddingTop: 4 }}>
+          {literaryMeta.title && <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 19, fontStyle: 'italic', color: text.textPrimary }}>{literaryMeta.title}</div>}
+          {literaryMeta.scene && <div style={{ ...TYPE.caption, color: text.textMuted, marginTop: 4 }}>{literaryMeta.scene}</div>}
+        </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '7vh 4px 5vh' }}>
+          <div className="qa-motion" style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 18, animation: 'qa-rise 0.45s ease both' }}>{context.label}</div>
+          <div style={{ display: 'grid', gap: 16 }}>
+            {context.beats.map((beat, index) => (
+              <p key={`${beat}-${index}`} className="qa-motion" style={{ ...TYPE.displaySection, fontWeight: 480, color: text.textPrimary, margin: 0, animation: `qa-rise 0.55s ease ${index * 0.32}s both` }}>{beat}</p>
+            ))}
+          </div>
+          {context.transition && <p className="qa-motion" style={{ ...TYPE.bodyLarge, color: text.textSecondary, fontStyle: 'italic', margin: '28px 0 0', animation: `qa-rise 0.55s ease ${context.beats.length * 0.32 + 0.18}s both` }}>{context.transition}</p>}
+        </div>
+        <div className="qa-motion" style={{ animation: `qa-rise 0.55s ease ${context.beats.length * 0.32 + 0.5}s both` }}>
+          <ContinueCTA onClick={next} label={context.continueLabel} accent={accent} textColor={parchment} />
+        </div>
+      </main>
+    </div>
+  }
+
   if (step === 'read') {
     return <div style={outer}>
       <Atmosphere cinematic />
       <main style={{ ...page, paddingLeft: 22, paddingRight: 22 }}>
         <div style={{ flex: 1, display: 'grid', placeItems: 'center', padding: '8vh 0 5vh' }}>
           <div style={{ width: '100%', maxWidth: 390, transform: 'translateY(-2vh)' }}>
-            <QuoteText words={words} visibleWords={visibleWords} parchment={parchment} accentRgb={accentRgb} variant="hero" />
+            <QuoteText words={words} visibleWords={visibleWords} parchment={parchment} accentRgb={accentRgb} analysisWords={analysisWords} variant="hero" />
             <div className="qa-motion" aria-hidden={!showAttribution} style={{ minHeight: 52, marginTop: 24, opacity: showAttribution ? 1 : 0, transform: showAttribution ? 'translateY(0)' : 'translateY(10px)', transition: 'opacity 0.65s ease, transform 0.65s ease', textAlign: 'center' }}>
               <div aria-hidden="true" style={{ width: 34, height: 1, margin: '0 auto 13px', background: `rgba(${accentRgb}, 0.64)` }} />
               <p style={{ ...TYPE.label, color: text.textSecondary, margin: 0 }}>{block.location}</p>
@@ -363,14 +465,13 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
           </div>
         </div>
         <div className="qa-motion" aria-hidden={!showCTA} style={{ opacity: showCTA ? 1 : 0, transform: showCTA ? 'translateY(0)' : 'translateY(18px)', transition: 'opacity 0.55s ease, transform 0.55s ease', pointerEvents: showCTA ? 'auto' : 'none' }}>
-          <ContinueCTA onClick={next} label="What do you think it means?" accent={accent} textColor={parchment} />
+          <ContinueCTA onClick={next} label={block.quoteContinueLabel || 'What do you think it means?'} accent={accent} textColor={parchment} />
         </div>
       </main>
     </div>
   }
 
   if (step === 'interpret') {
-    const hints = (block.interpretationHints || ['What is the speaker feeling?', 'What do they want to hide?']).slice(0, 3)
     const needsRetry = Boolean(feedback) && (
       feedback.responseQuality === 'non_answer'
       || (!feedback.responseQuality && feedback.understanding === 'starting' && !feedback.strengths?.length)
@@ -380,14 +481,15 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
       <Atmosphere cinematic />
       <main style={{ ...page, overflowY: 'auto', paddingLeft: 18, paddingRight: 18 }}>
         <LiteraryHeader title={literaryMeta.title} scene={literaryMeta.scene} onBack={back} accentRgb={accentRgb} text={text} />
-        <QuoteScene words={words} parchment={parchment} accentRgb={accentRgb} />
+        <QuoteScene words={words} parchment={parchment} accentRgb={accentRgb} analysisWords={analysisWords} />
 
         <section className="qa-motion" style={{ ...interpretationSurface, animation: 'qa-rise 0.42s ease 0.08s both' }}>
           {!feedback ? <>
             <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 20, color: text.textPrimary, marginBottom: 10 }}>{interpretationLabel}</div>
-            <h2 style={{ ...TYPE.bodyLarge, color: text.textPrimary, margin: 0, maxWidth: 350 }}>{block.interpretationPrompt || 'What do you think this quote reveals?'}</h2>
+            <p style={{ ...TYPE.bodyLarge, color: text.textPrimary, margin: 0, maxWidth: 350 }}>{block.interpretationPrompt || 'What do you think this quote reveals?'}</p>
             <p style={{ ...TYPE.bodySmall, color: text.textSecondary, margin: '7px 0 15px' }}>{interpretationInstruction}</p>
             <textarea
+              ref={textareaRef}
               className="qa-interpretation-input"
               value={interpretation}
               onChange={event => { setInterpretation(event.target.value); setCheckError('') }}
@@ -417,7 +519,15 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
                 lineHeight: 1.55,
               }}
             />
-            <HintRow hints={hints} accentRgb={accentRgb} text={text} lead={interpretationHintLead} />
+            <StarterPrompts
+              starters={interpretationStarters}
+              heading={interpretationStarterHeading}
+              moreLabel={interpretationMoreLabel}
+              showMore={showMoreStarters}
+              onToggleMore={() => setShowMoreStarters(current => !current)}
+              onChoose={insertStarter}
+              text={text}
+            />
             <div aria-live="polite" style={{ minHeight: checkError || checking ? 30 : 8, marginTop: 8 }}>
               {checking && <p className="qa-motion" style={{ ...TYPE.caption, color: text.textSecondary, margin: 0, animation: 'qa-pulse 1.2s ease-in-out infinite' }}>Reading your interpretation…</p>}
               {checkError && <p style={{ ...TYPE.caption, color: GENERAL.errorSoft, margin: 0 }}>{checkError}</p>}
@@ -478,26 +588,30 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   }
 
   if (step === 'words') {
-    return <div style={outer}><Atmosphere /><main style={page}><Nav label="Break down words" /><Paper accentRgb={accentRgb} background={paper}>
-      <QuoteText words={words} visibleWords={words.length} parchment={parchment} accentRgb={accentRgb} interactive onWord={setActiveWord} />
-      <p style={{ ...TYPE.bodyLarge, color: text.textSecondary, margin: '22px 0 0' }}>Tap a marked word to uncover what it is doing.</p>
-      {openedWords.size > 0 && <ContinueCTA onClick={next} label="Next: build the meaning" accent={accent} textColor={parchment} style={{ marginTop: 26 }} />}
-    </Paper></main>{activeWord && <WordSheet word={activeWord} accentRgb={accentRgb} parchment={parchment} onClose={closeWord} />}</div>
+    return <div style={outer}><Atmosphere /><main style={page}><Nav label={block.wordAnalysisLabel || 'Break down words'} /><Paper accentRgb={accentRgb} background={paper}>
+      <QuoteText words={words} visibleWords={words.length} parchment={parchment} accentRgb={accentRgb} analysisWords={analysisWords} interactive onWord={setActiveWord} />
+      <p style={{ ...TYPE.bodyLarge, color: text.textSecondary, margin: '22px 0 0' }}>{block.wordAnalysisInstruction || 'Tap a marked word to uncover what it is doing.'}</p>
+      {openedWords.size > 0 && <ContinueCTA onClick={next} label={block.meaningContinueLabel || 'Next: build the meaning'} accent={accent} textColor={parchment} style={{ marginTop: 26 }} />}
+    </Paper></main>{activeWord && <WordSheet word={activeWord} analysisWords={analysisWords} accentRgb={accentRgb} parchment={parchment} onClose={closeWord} />}</div>
   }
 
   if (step === 'meaning') {
-    return <div style={outer}><Atmosphere /><main style={{ ...page, overflowY: 'auto' }}><Nav label="Build the meaning" /><Paper accentRgb={accentRgb} background={paper}>
-      <QuoteText words={words} visibleWords={words.length} parchment={parchment} accentRgb={accentRgb} />
-      <div style={{ display: 'grid', gap: 20, marginTop: 24 }}>{MEANING.map(([label, body]) => <div key={label} style={{ paddingLeft: 16, borderLeft: `2px solid rgba(${accentRgb}, 0.62)` }}><div style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 6 }}>{label}</div><p style={{ ...TYPE.body, color: text.textFact, margin: 0 }}>{body}</p></div>)}</div>
-      <ContinueCTA onClick={next} label="Next: use it in an essay" accent={accent} textColor={parchment} style={{ marginTop: 26 }} />
+    return <div style={outer}><Atmosphere /><main style={{ ...page, overflowY: 'auto' }}><Nav label={block.meaningLabel || 'Build the meaning'} /><Paper accentRgb={accentRgb} background={paper}>
+      <QuoteText words={words} visibleWords={words.length} parchment={parchment} accentRgb={accentRgb} analysisWords={analysisWords} />
+      <div style={{ display: 'grid', gap: 20, marginTop: 24 }}>{meaningSections.map((section, index) => {
+        const label = Array.isArray(section) ? section[0] : section.label
+        const body = Array.isArray(section) ? section[1] : section.body
+        return <div key={`${label}-${index}`} style={{ paddingLeft: 16, borderLeft: `2px solid rgba(${accentRgb}, 0.62)` }}><div style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 6 }}>{label}</div><p style={{ ...TYPE.body, color: text.textFact, margin: 0 }}>{body}</p></div>
+      })}</div>
+      <ContinueCTA onClick={next} label={block.essayContinueLabel || 'Next: use it in an essay'} accent={accent} textColor={parchment} style={{ marginTop: 26 }} />
     </Paper></main></div>
   }
 
   if (step === 'essay') {
-    return <div style={outer}><Atmosphere /><main style={{ ...page, overflowY: 'auto' }}><Nav label="Use it in an essay" /><Paper accentRgb={accentRgb} background={paper}>
-      <div style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 9 }}>In an exam</div>
-      <p style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 'clamp(21px, 5.8vw, 27px)', lineHeight: 1.42, color: parchment, margin: 0 }}>Shakespeare uses light and dark imagery in “Stars, hide your fires” to show that Macbeth recognises his ambition is morally corrupt and wants to conceal it from judgement.</p>
-      <ContinueCTA onClick={onContinue} label="Continue" accent={accent} textColor={parchment} style={{ marginTop: 26 }} />
+    return <div style={outer}><Atmosphere /><main style={{ ...page, overflowY: 'auto' }}><Nav label={block.essayNavLabel || 'Use it in an essay'} /><Paper accentRgb={accentRgb} background={paper}>
+      <div style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 9 }}>{block.essayLabel || 'In an exam'}</div>
+      <p style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 'clamp(21px, 5.8vw, 27px)', lineHeight: 1.42, color: parchment, margin: 0 }}>{block.essayExample || 'Use the quote as precise evidence, then analyse one word or method and explain what it reveals.'}</p>
+      <ContinueCTA onClick={onContinue} label={block.finalContinueLabel || 'Continue'} accent={accent} textColor={parchment} style={{ marginTop: 26 }} />
     </Paper></main></div>
   }
 
