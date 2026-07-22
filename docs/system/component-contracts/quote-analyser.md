@@ -28,7 +28,10 @@ It should:
 - use `interpretationPrompt` as the main `TYPE.displaySection` heading;
 - place the support sentence directly beneath the heading;
 - keep the textarea as the main bordered interaction surface;
-- show sentence starters as quiet rows separated by governed line tokens;
+- place sentence starters inside a collapsed disclosure headed by `interpretationStarterHeading`;
+- reveal all supplied starters as quiet rows separated by governed line tokens;
+- insert the selected starter into the textarea, close the disclosure and return focus to the answer;
+- expose the disclosure state with `aria-expanded` and connect it to its region with `aria-controls`;
 - avoid a redundant label such as “Your interpretation” above the main question;
 - preserve the same open layout for retry and AI-feedback states.
 
@@ -57,7 +60,6 @@ Do not add a background, border, shadow, blur or rounded container around the en
   interpretationInstruction?,
   interpretationPlaceholder?,
   interpretationStarterHeading?,
-  interpretationMoreLabel?,
   interpretationStarters?: string[],
   interpretationSupport?: object,
   analysisIdeas?: object[],
@@ -73,5 +75,6 @@ Do not add a background, border, shadow, blur or rounded container around the en
 - Supply all text through the block; do not add play-, poem- or character-specific copy inside the component.
 - The context page establishes events, not meaning. Interpretation begins only after the quotation reveal.
 - `interpretationPrompt` is the only task heading on the initial interpretation screen.
+- Keep `interpretationStarterHeading` short enough to work as a single accordion row.
 - Sentence starters should use the supplied speaker where appropriate and remain editable by the learner.
 - Word analysis, meaning sections and essay examples belong in content data rather than component constants.
