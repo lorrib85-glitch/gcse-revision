@@ -492,3 +492,43 @@ export const memoryHook = {
   image: '/headers/bio-diseasewars.webp',
   imageAlt: 'Stylised virus particle in a dark, cinematic scene',
 }
+
+// InteractiveHotspotImage (History) — full-screen image with an intro → explore
+// two-phase flow; tap glowing points to read each hotspot. Shape:
+// { title, introText, image, imageAlt, ctaLabel, hotspots:[{id,x,y,shortLabel,title,icon,description,extraFact}] }.
+// Fixture: Episode 1 "Tap the Four Humours" (type: interactiveImage).
+export const interactiveHotspotImage = {
+  title: 'Tap the Four Humours',
+  introText: 'Medieval doctors believed the body contained four vital fluids. Each humour had its own qualities — and its own associated illness when it went out of balance.',
+  image: '/figures/history/medicine/medieval/four-humours-body.webp',
+  imageAlt: 'Medieval symbolic body diagram showing the positions of the Four Humours',
+  ctaLabel: 'Explore the body',
+  hotspots: [
+    { id: 'blood', x: 18, y: 18, shortLabel: 'Blood', title: 'Blood', icon: '🩸',
+      description: 'Linked with warmth, energy and a cheerful personality. Too much blood could be blamed for fever or a red face.',
+      extraFact: 'If a physician diagnosed excess blood, they would use bloodletting — cutting a vein or applying leeches — to "restore balance."' },
+    { id: 'phlegm', x: 82, y: 18, shortLabel: 'Phlegm', title: 'Phlegm', icon: '💧',
+      description: 'Linked with coldness and calmness. Too much phlegm could be linked to coughs, colds and sluggishness.',
+      extraFact: 'The word "phlegmatic" — meaning calm and unemotional — comes directly from this humour.' },
+    { id: 'yellow_bile', x: 18, y: 82, shortLabel: 'Yellow Bile', title: 'Yellow Bile', icon: '🔥',
+      description: 'Linked with heat and anger. Too much yellow bile could be blamed for fever or vomiting sickness.',
+      extraFact: 'Someone described as "bilious" — irritable or short-tempered — is still using this ancient medical vocabulary today.' },
+    { id: 'black_bile', x: 82, y: 82, shortLabel: 'Black Bile', title: 'Black Bile', icon: '🌙',
+      description: 'Linked with sadness and melancholy. Too much black bile could be blamed for low mood or a wasting illness.',
+      extraFact: 'The word "melancholy" comes from the Greek for "black bile." Medieval doctors thought depression was literally a bodily fluid problem.' },
+  ],
+}
+
+// CinematicRevealMoment (History) — full-screen video that plays, then reveals
+// staggered text over a darkening still. Shape:
+// { label, videoSrc, fallbackImage, year, headline, body }.
+// Fixture: Episode 2 Black Death opening (type: cinematic). This exact label +
+// headline + body triggers the component's refined "June 1348." reveal copy.
+export const cinematicRevealMoment = {
+  label: 'ENGLAND, 1348',
+  videoSrc: '/videos/black-death-intro.mp4',
+  fallbackImage: '/figures/history/medicine/black-death/plague-background.png',
+  year: '1348',
+  headline: 'Something is coming.',
+  body: 'In June 1348, ships docked at Melcombe in Dorset.\n\nWithin weeks, people began to die.\n\nThe disease moved fast — through towns, villages, and monasteries.\n\nNo one knew what it was. No one knew how to stop it.',
+}

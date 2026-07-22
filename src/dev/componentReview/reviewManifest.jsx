@@ -39,6 +39,8 @@ import ButtonsAndProgressPage from './ButtonsAndProgressPage.jsx'
 
 // Registered library — self-contained kept components, here to refine in one place.
 import FactorWeb from '../../components/learning/FactorWeb.jsx'
+import InteractiveHotspotImage from '../../components/learning/InteractiveHotspotImage.jsx'
+import CinematicRevealMoment from '../../components/learning/CinematicRevealMoment.jsx'
 import ConceptReveal from '../../components/learning/ConceptReveal.jsx'
 import ExplainReveal from '../../components/learning/ExplainReveal.jsx'
 import ColSortBlock from '../../components/learning/ColSortBlock.jsx'
@@ -332,6 +334,36 @@ export const REVIEW_ENTRIES = [
     alternative: 'MatchingTask (unordered pairing).',
     render: (fx, { onDone }) => <FactorWeb block={fx} subject="History" onContinue={onDone} />,
     fixture: FIX.factorWeb,
+  },
+  {
+    id: 'interactive-hotspot-image', name: 'InteractiveHotspotImage', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Full-screen image with a two-phase intro → explore flow: tap glowing hotspots to read a label, description and extra fact for each point on the image.',
+    usage: 'Used in Episode 1 (Tap the Four Humours) and Episode 2 (the dock at Melcombe), type: interactiveImage.',
+    alternative: 'InteractiveCollectionExplorer (themed sheets, no image anchoring); CinematicCarousel.',
+    render: (fx, { onDone }) => (
+      <InteractiveHotspotImage
+        subject="History" title={fx.title} introText={fx.introText}
+        image={fx.image} imageAlt={fx.imageAlt} hotspots={fx.hotspots} ctaLabel={fx.ctaLabel}
+        onContinue={onDone}
+      />
+    ),
+    fixture: FIX.interactiveHotspotImage,
+  },
+  {
+    id: 'cinematic-reveal-moment', name: 'CinematicRevealMoment', group: 'library',
+    status: 'one-off', subject: 'History', renderMode: 'fullbleed',
+    function: 'Full-screen cinematic opener: a video plays (with a still-image fallback), then label, headline and body reveal line by line over a darkening frame before the Continue prompt.',
+    usage: 'Used in Episode 2 (Black Death opening), type: cinematic.',
+    alternative: 'VisualLearning (click-through scenes); ConceptReveal; CinematicCarousel.',
+    render: (fx, { onDone }) => (
+      <CinematicRevealMoment
+        subject="History" label={fx.label} videoSrc={fx.videoSrc} fallbackImage={fx.fallbackImage}
+        year={fx.year} headline={fx.headline} body={fx.body}
+        onContinue={onDone}
+      />
+    ),
+    fixture: FIX.cinematicRevealMoment,
   },
   {
     id: 'memory-hook', name: 'MemoryHook', group: 'library',
