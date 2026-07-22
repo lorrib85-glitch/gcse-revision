@@ -18,13 +18,11 @@ const MACBETH_BLOCK = {
   location: 'Act 1, Scene 4 — Macbeth',
   backgroundImage: '/English/Macbeth/heroes/macbeth-generic-banner.svg',
   context: {
-    label: 'The moment before',
     beats: [
       'King Duncan names Malcolm as the next heir to the throne.',
       'Macbeth realises Malcolm now stands between him and the crown.',
     ],
     transition: 'Macbeth turns his thoughts towards the stars…',
-    continueLabel: 'Hear what Macbeth reveals',
   },
   interpretationPrompt: 'What do you think this quote reveals?',
   interpretationInstruction: 'Use your own words. A rough idea is enough.',
