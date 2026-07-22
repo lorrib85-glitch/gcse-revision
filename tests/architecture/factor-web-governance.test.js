@@ -104,7 +104,7 @@ describe('FactorWeb governance', () => {
     expect(source).not.toContain('cx={slot.focalAnchorX}')
   })
 
-  it('sources geometry, visual intensity and choreography from dedicated tokens', () => {
+  it('sources geometry, restrained visual intensity and choreography from dedicated tokens', () => {
     const tokens = read(tokensPath)
 
     expect(source).toContain('FACTOR_WEB_LAYOUT,')
@@ -121,11 +121,16 @@ describe('FactorWeb governance', () => {
     expect(tokens).toContain('focalDiameter: FOCAL_DIAMETER')
     expect(tokens).toContain('focalRadius: FOCAL_DIAMETER / 2')
     expect(tokens).toContain('connectorUnderlap: 0.6')
-    expect(tokens).toContain('connectorIdleOpacity: 0.13')
-    expect(tokens).toContain('connectorExploredOpacity: 0.28')
-    expect(tokens).toContain('connectorActiveOpacity: 0.52')
+    expect(tokens).toContain('haloOpacity: 0.15')
+    expect(tokens).toContain('focalGlowOpacity: 0.18')
+    expect(tokens).toContain('nodeActiveBorderOpacity: 0.58')
+    expect(tokens).toContain('nodeActiveRingOpacity: 0.035')
+    expect(tokens).toContain('connectorIdleOpacity: 0.10')
+    expect(tokens).toContain('connectorExploredOpacity: 0.21')
+    expect(tokens).toContain('connectorActiveOpacity: 0.40')
     expect(tokens).toContain('connectorIdleWidth: 0.30')
-    expect(tokens).toContain('connectorActiveWidth: 0.46')
+    expect(tokens).toContain('connectorActiveWidth: 0.43')
+    expect(tokens).toContain('exploredIndicatorGlowOpacity: 0.20')
     expect(tokens).toContain("durationSeconds(MOTION.duration.standard)")
   })
 
