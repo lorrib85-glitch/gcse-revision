@@ -72,6 +72,19 @@ export default {
       interpretationPrompt: 'What do you think Macbeth is revealing here?',
       interpretationPlaceholder: 'I think Macbeth is showing...',
       interpretationHints: ['What is he feeling?', 'What does he want?', 'Why might he hide it?'],
+      interpretationSupport: {
+        noAnswerTitle: 'Give me an idea to work with',
+        noAnswerBody: 'That answer does not explain the quote yet. Try one sentence about what Macbeth feels, wants or is trying to hide.',
+        starterHeading: 'Start with one of these:',
+        sentenceStarters: [
+          'Macbeth is feeling...',
+          'He wants to hide...',
+          'The word “black” suggests...',
+        ],
+        hint: 'Look closely at “hide” and “black”. What do those words suggest about Macbeth’s thoughts?',
+        retryLabel: 'Try my answer again',
+        hintLabel: 'Give me one hint',
+      },
       analysisIdeas: [
         {
           idea: 'Macbeth feels guilt, shame or moral unease because he knows his ambition is wrong.',
