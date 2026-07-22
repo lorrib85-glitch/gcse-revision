@@ -4,6 +4,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import CinematicDivider from '../core/CinematicDivider.jsx'
 
 function ensureStyles() {
   if (document.getElementById('qa-styles')) return
@@ -167,16 +168,12 @@ function LiteraryHeader({ title, scene, onBack, accentRgb, text }) {
   )
 }
 
-function QuoteScene({ words, parchment, accentRgb, analysisWords }) {
+function QuoteScene({ words, parchment, accent, accentRgb, analysisWords }) {
   return (
-    <section className="qa-motion" style={{ position: 'relative', padding: '28px 16px 24px', animation: 'qa-rise 0.35s ease both' }}>
+    <section className="qa-motion" style={{ position: 'relative', padding: '28px 16px 20px', animation: 'qa-rise 0.35s ease both' }}>
       <div aria-hidden="true" style={{ position: 'absolute', left: 10, top: 13, fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 50, lineHeight: 1, color: `rgba(${accentRgb}, 0.62)` }}>“</div>
       <QuoteText words={words} visibleWords={words.length} parchment={parchment} accentRgb={accentRgb} analysisWords={analysisWords} variant="reference" />
-      <div aria-hidden="true" style={{ display: 'flex', alignItems: 'center', gap: 8, width: 96, margin: '22px auto 0' }}>
-        <span style={{ height: 1, flex: 1, background: GENERAL.line.medium }} />
-        <span style={{ width: 5, height: 5, transform: 'rotate(45deg)', border: `1px solid rgba(${accentRgb}, 0.62)` }} />
-        <span style={{ height: 1, flex: 1, background: GENERAL.line.medium }} />
-      </div>
+      <CinematicDivider accent={accent} accentRgb={accentRgb} size="standard" style={{ margin: '22px auto 0' }} />
       <div aria-hidden="true" style={{ position: 'absolute', inset: 'auto 14% 0', height: 24, background: `radial-gradient(ellipse at center, rgba(${accentRgb}, 0.10), transparent 68%)`, filter: 'blur(8px)', opacity: 0.8 }} />
     </section>
   )
@@ -274,7 +271,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   const steps = ['context', ...BASE_STEPS]
   const analysisWords = block.wordAnalysis && typeof block.wordAnalysis === 'object' ? block.wordAnalysis : LEGACY_WORDS
   const meaningSections = Array.isArray(block.meaningSections) && block.meaningSections.length ? block.meaningSections : LEGACY_MEANING
-  const interpretationLabel = block.interpretationLabel || 'Your interpretation'
+  const interpretationPrompt = block.interpretationPrompt || 'What do you think this quote reveals?'
   const interpretationInstruction = block.interpretationInstruction || 'Use your own words. A rough idea is enough.'
   const interpretationStarters = resolveDefaultStarters(block, literaryMeta)
   const interpretationStarterHeading = block.interpretationStarterHeading || 'Need a way in?'
@@ -410,14 +407,9 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
 
   const outer = { position: 'relative', minHeight: '100dvh', overflow: 'hidden', background: palette.background, color: parchment }
   const page = { position: 'relative', zIndex: 1, width: '100%', maxWidth: 430, minHeight: '100dvh', margin: '0 auto', padding: 'max(18px, env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom))', display: 'flex', flexDirection: 'column' }
-  const interpretationSurface = {
-    padding: '20px 18px 18px',
-    borderRadius: 22,
-    background: `linear-gradient(180deg, rgba(${accentRgb}, 0.08), ${GENERAL.backgroundSunken} 26%, rgba(${accentRgb}, 0.025) 100%)`,
-    border: `1px solid ${GENERAL.line.medium}`,
-    boxShadow: GENERAL.shadow.raised,
-    backdropFilter: 'blur(8px)',
-    WebkitBackdropFilter: 'blur(8px)',
+  const interpretationLayout = {
+    padding: '4px 4px 24px',
+    animation: 'qa-rise 0.42s ease 0.08s both',
   }
 
   function Atmosphere({ cinematic = false }) {
@@ -489,13 +481,12 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
       <Atmosphere cinematic />
       <main style={{ ...page, overflowY: 'auto', paddingLeft: 18, paddingRight: 18 }}>
         <LiteraryHeader title={literaryMeta.title} scene={literaryMeta.scene} onBack={back} accentRgb={accentRgb} text={text} />
-        <QuoteScene words={words} parchment={parchment} accentRgb={accentRgb} analysisWords={analysisWords} />
+        <QuoteScene words={words} parchment={parchment} accent={accent} accentRgb={accentRgb} analysisWords={analysisWords} />
 
-        <section className="qa-motion" style={{ ...interpretationSurface, animation: 'qa-rise 0.42s ease 0.08s both' }}>
+        <section className="qa-motion" style={interpretationLayout}>
           {!feedback ? <>
-            <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 20, color: text.textPrimary, marginBottom: 10 }}>{interpretationLabel}</div>
-            <p style={{ ...TYPE.bodyLarge, color: text.textPrimary, margin: 0, maxWidth: 350 }}>{block.interpretationPrompt || 'What do you think this quote reveals?'}</p>
-            <p style={{ ...TYPE.bodySmall, color: text.textSecondary, margin: '7px 0 15px' }}>{interpretationInstruction}</p>
+            <h1 style={{ ...TYPE.displaySection, color: text.textPrimary, margin: 0, maxWidth: 350 }}>{interpretationPrompt}</h1>
+            <p style={{ ...TYPE.bodySmall, color: text.textSecondary, margin: '9px 0 17px' }}>{interpretationInstruction}</p>
             <textarea
               ref={textareaRef}
               className="qa-interpretation-input"
@@ -543,8 +534,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
             <ContinueCTA onClick={checkInterpretation} label={checking ? 'Checking your interpretation…' : 'Check my interpretation'} accent={accent} textColor={parchment} disabled={checking || interpretation.trim().length < 12} style={{ marginTop: 8 }} />
             {checkError && <button type="button" onClick={next} style={{ width: '100%', minHeight: 44, marginTop: 8, border: 0, background: 'none', color: text.textSecondary, cursor: 'pointer', ...TYPE.button }}>Continue without checking</button>}
           </> : needsRetry ? <>
-            <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 20, color: text.textPrimary, marginBottom: 10 }}>{interpretationLabel}</div>
-            <h2 style={{ ...TYPE.displaySection, color: text.textPrimary, margin: 0 }}>{support.noAnswerTitle}</h2>
+            <h1 style={{ ...TYPE.displaySection, color: text.textPrimary, margin: 0 }}>{support.noAnswerTitle}</h1>
             <p style={{ ...TYPE.body, color: text.textSecondary, margin: '10px 0 17px' }}>{support.noAnswerBody}</p>
 
             <div style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 5 }}>{support.starterHeading}</div>
@@ -571,7 +561,6 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
             <ContinueCTA onClick={() => retryInterpretation('')} label={support.retryLabel} accent={accent} textColor={parchment} style={{ marginTop: 18 }} />
             <button type="button" onClick={() => setShowInterpretationHint(current => !current)} style={{ width: '100%', minHeight: 44, marginTop: 7, border: 0, background: 'none', color: text.textSecondary, cursor: 'pointer', ...TYPE.button }}>{support.hintLabel}</button>
           </> : <>
-            <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 20, color: text.textPrimary, marginBottom: 10 }}>{interpretationLabel}</div>
             <div style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 7 }}>What you understood</div>
             <p style={{ ...TYPE.bodyLarge, color: text.textPrimary, margin: '0 0 19px' }}>{feedback.verdict}</p>
 
@@ -582,7 +571,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
                 : <p style={{ ...TYPE.body, color: text.textSecondary, margin: 0 }}>You have made a start. Now connect the idea to one exact word from the quote.</p>}
             </div>
 
-            <div style={{ margin: '20px -18px 0', padding: '18px', background: `linear-gradient(90deg, rgba(${accentRgb}, 0.13), rgba(${accentRgb}, 0.03) 72%, transparent)`, borderTop: `1px solid rgba(${accentRgb}, 0.22)`, borderBottom: `1px solid rgba(${accentRgb}, 0.18)` }}>
+            <div style={{ margin: '20px -4px 0', padding: '18px 4px 18px 16px', background: `linear-gradient(90deg, rgba(${accentRgb}, 0.13), rgba(${accentRgb}, 0.03) 72%, transparent)`, borderTop: `1px solid rgba(${accentRgb}, 0.22)`, borderBottom: `1px solid rgba(${accentRgb}, 0.18)` }}>
               <div style={{ ...TYPE.label, color: text.textPrimary, marginBottom: 14 }}>One more layer</div>
               <FeedbackInsight insight={feedback.nextLayer} accentRgb={accentRgb} />
             </div>
