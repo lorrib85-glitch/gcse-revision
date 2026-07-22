@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
-import { ScreenTitle } from '../core/ScreenText.jsx'
+import { ScreenTitle, ScreenIntro } from '../core/ScreenText.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 
 const CSS = `
@@ -384,14 +384,9 @@ export default function ColSortBlock({ block, subject = 'Biology', onComplete })
             {title}
           </ScreenTitle>
 
-          <p style={{
-            ...TYPE.bodyLarge,
-            color: GENERAL.cinematic.textSecondary,
-            margin: '10px 0 0',
-            maxWidth: 'min(360px, 100%)',
-          }}>
+          <ScreenIntro>
             {subtitle}
-          </p>
+          </ScreenIntro>
 
           {!!items.length && (
             <SequenceProgress

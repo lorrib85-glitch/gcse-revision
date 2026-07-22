@@ -44,6 +44,16 @@ const mono = { fontFamily: "'Sora', sans-serif" }
 const FULLBLEED_PREVIEW_WIDTH = 390
 const FULLBLEED_PREVIEW_SCALE = 0.78
 
+// Full-bleed preview display modes. 'actual' renders the virtual 390px screen at
+// scale(1) inside a vertically scrollable frame — the trustworthy mode for
+// comparing typography across components. 'fit' keeps the scaled-down whole-screen
+// overview so a full interaction can be inspected at once. Dev-tool only; the
+// production component is never altered to compensate for preview scaling.
+const PREVIEW_MODES = [
+  { id: 'actual', label: 'Actual size' },
+  { id: 'fit',    label: 'Fit screen' },
+]
+
 // Leave the lab by dropping the ?componentReview flag and reloading into the
 // normal learner app. Used from the index header so production users (the app
 // owner) are never trapped in the lab.
@@ -81,6 +91,9 @@ export default function ComponentReviewLab() {
   const [activeId, setActiveId] = useState(null)   // null = index view
   const [previewKey, setPreviewKey] = useState(0)  // bump to reset/replay a preview
   const [questionsOpen, setQuestionsOpen] = useState(false)
+  // Full-bleed display mode lives here (not in PreviewView) so it survives moving
+  // between components — PreviewView remounts per entry and must not reset it.
+  const [previewMode, setPreviewMode] = useState('actual')
   const [vw, setVw] = useState(typeof window !== 'undefined' ? window.innerWidth : 0)
 
   useEffect(() => {
@@ -125,6 +138,8 @@ export default function ComponentReviewLab() {
           vw={vw}
           questionsOpen={questionsOpen}
           onToggleQuestions={() => setQuestionsOpen(o => !o)}
+          previewMode={previewMode}
+          onPreviewMode={setPreviewMode}
           onBack={goToIndex}
           onPrev={() => step(-1)}
           onNext={() => step(1)}
@@ -215,12 +230,14 @@ function IndexView({ filtered, filter, onFilter, onOpen }) {
 }
 
 // ─── Preview view ────────────────────────────────────────────────────────────
-function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQuestions, onBack, onPrev, onNext, onReset }) {
+function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQuestions, previewMode, onPreviewMode, onBack, onPrev, onNext, onReset }) {
   const accent = (SUBJECTS[entry.subject] || SUBJECTS.History).accent
   const variants = entry.variants ?? []
   const [activeVariantId, setActiveVariantId] = useState(variants[0]?.id ?? null)
   const [renderError, setRenderError] = useState(null)
   const activeVariant = variants.find(variant => variant.id === activeVariantId) ?? null
+  // Only full-bleed previews are scaled, so the display toggle only applies to them.
+  const isFullbleed = (activeVariant?.renderMode ?? entry.renderMode) === 'fullbleed'
 
   // Fresh error state per component / variant / replay.
   useEffect(() => { setRenderError(null) }, [entry.id, activeVariantId, previewKey])
@@ -316,10 +333,46 @@ function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQ
           </div>
         )}
 
-        <div style={{ ...mono, fontSize: 11, color: GENERAL.slate, margin: '10px 2px 8px', display: 'flex', gap: 12 }}>
+        <div style={{ ...mono, fontSize: 11, color: GENERAL.slate, margin: '10px 2px 8px', display: 'flex', gap: 12, alignItems: 'center' }}>
           <span>Viewport: <b style={{ color: vw >= 360 && vw <= 430 ? GENERAL.teal : GENERAL.coral }}>{vw}px</b></span>
           <span>Target ~390px</span>
         </div>
+
+        {isFullbleed && (
+          <div style={{ margin: '0 2px 8px' }}>
+            <div style={{ ...mono, fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: GENERAL.slate, marginBottom: 7 }}>
+              Preview display
+            </div>
+            <div role="tablist" aria-label="Preview display mode" style={{ display: 'flex', gap: 7 }}>
+              {PREVIEW_MODES.map(mode => {
+                const selected = mode.id === previewMode
+                return (
+                  <button
+                    key={mode.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={selected}
+                    onClick={() => onPreviewMode(mode.id)}
+                    style={{
+                      ...mono, fontSize: 11.5, fontWeight: 650, cursor: 'pointer',
+                      minHeight: 34, padding: '6px 12px', borderRadius: 8,
+                      border: `1px solid ${selected ? accent : GENERAL.line.strong}`,
+                      background: selected ? `${accent}1F` : GENERAL.backgroundSurface,
+                      color: selected ? accent : GENERAL.slate,
+                    }}
+                  >
+                    {mode.label}
+                  </button>
+                )
+              })}
+            </div>
+            <p style={{ ...mono, fontSize: 11.5, lineHeight: 1.45, color: GENERAL.slate, margin: '7px 0 0' }}>
+              {previewMode === 'actual'
+                ? 'Real 390px screen at 100% — scroll the frame to see the whole screen. Use this to compare typography.'
+                : 'Whole screen scaled to ~78% so the full interaction fits at once. Smaller text here is preview scaling, not a token difference.'}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Live component preview */}
@@ -327,6 +380,7 @@ function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQ
         key={`${previewKey}:${activeVariantId ?? 'default'}`}
         entry={entry}
         variant={activeVariant}
+        previewMode={previewMode}
         onDone={onDone}
         onError={setRenderError}
         error={renderError}
@@ -364,7 +418,7 @@ class RenderBoundary extends Component {
   }
 }
 
-function PreviewFrame({ entry, variant, onDone, onError, accent }) {
+function PreviewFrame({ entry, variant, previewMode, onDone, onError, accent }) {
   const renderMode = variant?.renderMode ?? entry.renderMode
   const render = variant?.render ?? entry.render
   const fixture = Object.prototype.hasOwnProperty.call(variant ?? {}, 'fixture')
@@ -374,15 +428,22 @@ function PreviewFrame({ entry, variant, onDone, onError, accent }) {
   const resetKey = `${entry.id}:${variant?.id ?? 'default'}`
 
   // Full-screen components still lay themselves out at a genuine 390px mobile
-  // viewport and 100dvh height. The lab scales that complete virtual screen down
-  // to 78% so bottom sheets, progress and Continue remain visible together rather
-  // than being clipped by a shorter gallery frame.
+  // viewport and 100dvh height, in both display modes.
+  //  • 'fit'    scales the complete virtual screen down to 78% so bottom sheets,
+  //             progress and Continue stay visible together in a short frame.
+  //  • 'actual' keeps the screen at scale(1) and lets the frame scroll vertically,
+  //             so title/intro typography reads at its true 390px size.
+  // Either way a transform + contain on the inner box establishes a containing
+  // block for the component's position:fixed shell, so its 100dvh layout is
+  // captured before any scaling — the production component is never touched.
   if (fullbleed) {
+    const actual = previewMode === 'actual'
+    const scale = actual ? 1 : FULLBLEED_PREVIEW_SCALE
     return (
       <div
-        data-review-fullscreen-fit="true"
+        data-review-preview-mode={actual ? 'actual' : 'fit'}
         data-review-viewport-width={FULLBLEED_PREVIEW_WIDTH}
-        data-review-viewport-scale={FULLBLEED_PREVIEW_SCALE}
+        data-review-viewport-scale={scale}
         style={{
           position: 'relative',
           width: '100%',
@@ -390,20 +451,20 @@ function PreviewFrame({ entry, variant, onDone, onError, accent }) {
           marginTop: 12,
           display: 'flex',
           justifyContent: 'center',
+          alignItems: 'flex-start',
           border: `1px solid ${GENERAL.line.soft}`,
           borderTop: `2px solid ${accent}`,
-          overflow: 'hidden',
+          overflowX: 'hidden',
+          overflowY: actual ? 'auto' : 'hidden',
           background: '#000',
         }}
       >
-        {/* A transformed ancestor contains fixed descendants and preserves their
-            real 100dvh layout before the complete screen is scaled to fit. */}
         <div style={{
           position: 'relative',
           width: FULLBLEED_PREVIEW_WIDTH,
           height: '100dvh',
           flex: '0 0 auto',
-          transform: `scale(${FULLBLEED_PREVIEW_SCALE})`,
+          transform: `scale(${scale})`,
           transformOrigin: 'top center',
           contain: 'layout paint size',
           overflow: 'hidden',

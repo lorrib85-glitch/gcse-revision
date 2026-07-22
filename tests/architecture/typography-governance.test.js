@@ -135,7 +135,7 @@ const SCREEN_TITLE_OWNED_COMPONENTS = [
   'src/components/learning/BuilderBlock.jsx',
   'src/components/learning/CentreImageReveal.jsx',
   'src/components/learning/CinematicCarousel.jsx',
-  'src/components/learning/ColSortBlock.jsx',
+  'src/components/learning/ColSortBlockCore.jsx',
   'src/components/learning/ExaminerExplainsScreen.jsx',
   'src/components/learning/ExplainReveal.jsx',
   'src/components/learning/GuidedAnswerCoach.jsx',

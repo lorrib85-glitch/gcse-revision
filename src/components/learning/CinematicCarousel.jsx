@@ -8,7 +8,7 @@ import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
-import { ScreenTitle } from '../core/ScreenText.jsx'
+import { ScreenTitle, ScreenIntro } from '../core/ScreenText.jsx'
 
 // ─── CinematicCarousel / ImageReveal ─────────────────────────────────────────
 //
@@ -172,13 +172,9 @@ function ImageReveal({ block, subject, onContinue }) {
             </ScreenTitle>
           )}
           {block.intro && (
-            <p style={{
-              ...TYPE.body,
-              color: 'rgba(245,245,245,0.60)',
-              margin: `${SPACING.standard}px 0 0`,
-            }}>
+            <ScreenIntro style={{ margin: '10px auto 0' }}>
               {block.intro}
-            </p>
+            </ScreenIntro>
           )}
         </div>
 
@@ -315,13 +311,9 @@ function DefaultCarousel({ block, subject, onContinue }) {
             </ScreenTitle>
           )}
           {block.intro && (
-            <p style={{
-              ...TYPE.body,
-              color: 'rgba(245,245,245,0.60)',
-              margin: `${SPACING.standard}px 0 0`,
-            }}>
+            <ScreenIntro>
               {block.intro}
-            </p>
+            </ScreenIntro>
           )}
         </div>
 

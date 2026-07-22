@@ -70,6 +70,26 @@ export function ScreenBody({ children, style }) {
   )
 }
 
+// Screen introduction — the one short framing line that sits directly beneath a
+// ScreenTitle. Deliberately larger than ScreenBody (TYPE.bodyLarge) because it
+// introduces the whole screen rather than being ordinary body copy, and it owns
+// the title→intro gap so callers never hand-space it. Like the other primitives
+// here it fixes typography, colour, readable width and spacing centrally; the
+// style prop is for layout/colour only (e.g. centring under a centred title).
+export function ScreenIntro({ children, style }) {
+  return (
+    <p style={{
+      ...TYPE.bodyLarge,
+      color: 'rgba(255,255,255,0.62)',
+      maxWidth: '34ch',
+      margin: '10px 0 0',
+      ...style,
+    }}>
+      {children}
+    </p>
+  )
+}
+
 // Supporting text — source attribution, exam tip, contextual note.
 export function ScreenCaption({ children, style }) {
   return (
