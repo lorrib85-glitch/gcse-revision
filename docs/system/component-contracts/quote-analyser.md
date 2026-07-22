@@ -37,6 +37,21 @@ It should:
 
 Do not add a background, border, shadow, blur or rounded container around the entire interpretation section. Visual hierarchy must come from typography, spacing and the meaningful interaction surfaces.
 
+## Interpretation feedback
+
+The feedback screen is a **brief bridge** into key-word analysis, not a second teaching screen.
+
+It should:
+
+- credit no more than one idea the learner genuinely expressed;
+- add no more than one useful missing layer;
+- use no more than two short pieces of evidence for either idea;
+- avoid explaining the evidence in detail, because the next stage teaches the words;
+- keep the governed `ContinueCTA` visible immediately after the feedback;
+- move directly into the key-word analysis stage.
+
+The feedback should be short enough to scan without scrolling on a typical mobile screen. Detailed connotations, methods and effects belong in the word-analysis stage.
+
 ## Data contract
 
 ```js
