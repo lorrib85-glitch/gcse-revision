@@ -37,6 +37,9 @@ export const SCREEN_TYPE_FUNCTIONS = {
   keyPoint: { functions: ['teach-mechanism'], interaction: 'passive' },
   workedExample: { functions: ['teach-mechanism', 'apply'], interaction: 'passive' },
   mediaPlaceholder: { functions: ['teach-mechanism'], interaction: 'passive' },
+  // Infographic: TeachScreenShell heading + intro then one governed infographic
+  // media slot (a reserved diagram or an auto-building quadrant reveal).
+  infographic: { functions: ['teach-mechanism'], interaction: 'passive' },
 
   // Reveal interactions — active but unassessed
   conceptReveal: { functions: ['teach-mechanism'], interaction: 'reveal' },

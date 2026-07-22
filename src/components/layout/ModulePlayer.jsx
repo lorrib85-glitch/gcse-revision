@@ -12,6 +12,7 @@ import KeyPoint from '../core/KeyPoint.jsx'
 import WorkedExample from '../core/WorkedExample.jsx'
 import MediaPlaceholder from '../core/MediaPlaceholder.jsx'
 import TeachScreenShell from '../core/TeachScreenShell.jsx'
+import Infographic from '../learning/Infographic.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
 import QuickRecallScreen from '../learning/QuickRecallScreen.jsx'
 import TieredQuizScreen from '../learning/TieredQuizScreen.jsx'
@@ -659,6 +660,19 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'misconceptionCheck' && <MisconceptionCheck block={block} subject={subject} onContinue={onScreenComplete} />}
         </div>
       ))
+
+  // Infographic screens are the canonical heading + intro + governed media slot
+  // composition; the component owns that shape so content just supplies the data.
+  if (screen.type === 'infographic') {
+    return (
+      <Infographic
+        subject={subject}
+        heading={screen.heading}
+        intro={screen.intro}
+        media={screen.media}
+      />
+    )
+  }
 
   // Teach screens compose through TeachScreenShell so the header token and
   // vertical rhythm come from the design system, not the generic block shell.

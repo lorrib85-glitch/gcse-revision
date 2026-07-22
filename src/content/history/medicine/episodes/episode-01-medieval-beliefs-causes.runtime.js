@@ -56,23 +56,19 @@ const fourHumoursRevealConfig = {
 function splitTheoryOfOppositesScreen(screen) {
   if (screen.heading !== THEORY_OF_OPPOSITES_HEADING) return [screen]
 
-  const blocks = screen.blocks || []
-  const mediaIndex = blocks.findIndex(block => block.type === 'mediaPlaceholder')
-  const diagramBlocks = blocks.slice(0, mediaIndex + 1).map(block => (
-    block.type === 'mediaPlaceholder'
-      ? {
-          ...block,
-          kind: 'imageReveal',
-          aspect: '1:1',
-          caption: fourHumoursRevealConfig,
-        }
-      : block
-  ))
+  // Deliver the four-humours opposites wheel as the canonical infographic screen:
+  // heading + intro + one governed infographic media slot (the quadrant reveal).
+  const { shell: _shell, blocks: _blocks, sub: _sub, ...rest } = screen
   return [{
-    ...screen,
+    ...rest,
+    type: 'infographic',
     heading: 'Galen treated with opposites',
-    sub: "Galen took Hippocrates' theory of the Four Humours one step further. He believed illness happened when one humour became too dominant — so treatment should use the opposite qualities to restore balance.",
-    blocks: diagramBlocks,
+    intro: "Galen took Hippocrates' theory of the Four Humours one step further. He believed illness happened when one humour became too dominant — so treatment should use the opposite qualities to restore balance.",
+    media: {
+      kind: 'imageReveal',
+      aspect: '1:1',
+      caption: fourHumoursRevealConfig,
+    },
   }]
 }
 

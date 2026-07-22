@@ -338,9 +338,9 @@ export const REVIEW_ENTRIES = [
   },
   {
     id: 'infographic', name: 'Infographic', group: 'library',
-    status: 'reference', subject: 'History', renderMode: 'inline',
-    function: 'Canonical screen for block type infographic: one teaching heading and framing line (owned by the approved TeachScreenShell) then a single governed infographic media slot (MediaPlaceholder) — either a reserved diagram or a progressive quadrant reveal.',
-    usage: 'New canonical component for the infographic screen type. Not yet routed in ModulePlayer or used by content — it exists as the build target so future type: infographic screens have one clear composition. Fixture: Episode 1 "Galen treated with opposites".',
+    status: 'one-off', subject: 'History', renderMode: 'inline',
+    function: 'Canonical screen for type infographic: one teaching heading and framing line (owned by the approved TeachScreenShell) then a single governed infographic media slot (MediaPlaceholder) — either a reserved diagram or a progressive quadrant reveal.',
+    usage: 'Routed in ModulePlayer (type: infographic) and used by Episode 1 "Galen treated with opposites" — the first infographic screen. Reusable across subjects for any heading + intro + infographic composition.',
     alternative: 'Compose TeachScreenShell + MediaPlaceholder directly; MediaPlaceholder alone for a bare media slot.',
     render: (fx) => <Infographic subject="History" heading={fx.heading} intro={fx.intro} media={fx.media} />,
     fixture: FIX.infographic,

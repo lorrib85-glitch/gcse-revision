@@ -96,6 +96,7 @@ fails.
 | Walk a concrete worked example | `WorkedExample` |
 | Compose a teaching screen (rhythm + spacing) | `TeachScreenShell` |
 | Reserve an image/diagram the author will supply | `MediaPlaceholder` |
+| Present a captioned infographic / diagram screen (heading + intro + one media slot) | `Infographic` |
 | Teach a concept, test-after-teach | `factorWeb` / `centreImageReveal` (per their contracts) |
 | Introduce a key person | `keyFigureReveal` |
 | Anchor one idea with a memorable analogy/mnemonic | `MemoryHook` |

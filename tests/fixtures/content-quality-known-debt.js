@@ -266,7 +266,6 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:screens[26].heading:run:0",
     "SENTENCE_CASE:screens[26].heading:run:1",
     "SENTENCE_CASE:screens[4].title:run:0",
-    "SENTENCE_CASE:screens[8].sub:run:0",
     "SENTENCE_CASE:stageNavigation[0].title:run:0",
     "SENTENCE_CASE:stageNavigation[1].title:run:0",
     "SENTENCE_CASE:stageNavigation[1].title:run:1",
