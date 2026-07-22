@@ -104,6 +104,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
   const namespace = `builder-block-${subjectKey.toLowerCase()}`
   const focusClass = `${namespace}-control`
   const pieceClass = `${namespace}-piece`
+  const bankPieceClass = `${namespace}-bank-piece`
   const errorClass = `${namespace}-error`
   const resolveClass = `${namespace}-resolve`
   const transition = BUTTONS.compact.transition
@@ -222,6 +223,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
   function renderSlot(slotIndex, { inline = false, quote = false, maths = false } = {}) {
     const { piece, showCorrect, showIncorrect, selected, locked, accent } = getSlotAppearance(slotIndex)
     const emptyMark = maths ? '?' : '…'
+    const quoteSlot = inline && quote
 
     return (
       <button
@@ -236,20 +238,30 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         style={{
           width: inline ? 'auto' : '100%',
           minWidth: inline
-            ? (maths ? BUTTONS.compact.height * 1.5 : BUTTONS.compact.height * 2.25)
+            ? (maths
+                ? BUTTONS.compact.height * 1.5
+                : quoteSlot
+                  ? BUTTONS.compact.height * 2
+                  : BUTTONS.compact.height * 2.25)
             : 0,
           minHeight: inline ? COMPONENT_SIZE.touchTarget : BUTTONS.compact.height,
           padding: inline
-            ? `${SPACING.micro}px ${SPACING.compact}px`
+            ? quoteSlot
+              ? `${SPACING.micro / 2}px ${SPACING.micro}px`
+              : `${SPACING.micro}px ${SPACING.compact}px`
             : `0 ${SPACING.micro}px`,
-          background: selected
-            ? theme.glowStrong
-            : piece
-              ? GENERAL.surfaceTint
-              : 'transparent',
+          background: quoteSlot
+            ? selected
+              ? theme.glowStrong
+              : 'transparent'
+            : selected
+              ? theme.glowStrong
+              : piece
+                ? GENERAL.surfaceTint
+                : 'transparent',
           border: 'none',
           borderBottom: `${selected ? COMPONENT_SIZE.focusRing : COMPONENT_SIZE.hairline}px ${piece ? 'solid' : 'dashed'} ${selected || showCorrect || showIncorrect ? accent : GENERAL.line.strong}`,
-          borderRadius: RADII.small,
+          borderRadius: quoteSlot ? 0 : RADII.small,
           display: inline ? 'inline-flex' : 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -284,7 +296,13 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
 
         if (resolved) {
           return (
-            <span key={`answer-${slotIndex}`} style={{ color: isQuoteLayout ? theme.accentSecondary : GENERAL.feedbackText, fontWeight: 600 }}>
+            <span
+              key={`answer-${slotIndex}`}
+              style={{
+                color: isQuoteLayout ? theme.accentSecondary : GENERAL.feedbackText,
+                fontWeight: 600,
+              }}
+            >
               {answerLabel(block.answer?.[slotIndex])}
             </span>
           )
@@ -307,15 +325,13 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         style={{
           margin: 0,
           padding: isQuoteLayout
-            ? `${SPACING.standard}px ${SPACING.compact}px ${SPACING.standard}px ${SPACING.standard}px`
+            ? `${SPACING.micro}px 0 ${SPACING.standard}px ${SPACING.compact}px`
             : SPACING.standard,
-          background: isQuoteLayout
-            ? `linear-gradient(90deg, ${theme.glowStrong} 0%, transparent 72%)`
-            : 'transparent',
+          background: 'transparent',
           borderLeft: isQuoteLayout
             ? `${COMPONENT_SIZE.accentRail}px solid ${theme.accent}`
             : undefined,
-          borderRadius: isQuoteLayout ? RADII.small : 0,
+          borderRadius: 0,
           fontFamily: isQuoteLayout ? "'IBM Plex Serif', serif" : "'Sora', sans-serif",
           fontSize: isQuoteLayout ? 'clamp(19px, 5.3vw, 24px)' : 'clamp(22px, 7vw, 30px)',
           lineHeight: isQuoteLayout ? 1.72 : 1.35,
@@ -324,7 +340,6 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
           textAlign: isMathLayout ? 'center' : 'left',
           whiteSpace: 'pre-wrap',
           color: isQuoteLayout ? quoteText : GENERAL.feedbackText,
-          textShadow: isQuoteLayout ? GENERAL.cinematic.actionShadow : undefined,
         }}
       >
         {renderTemplateContent(resolved)}
@@ -381,7 +396,15 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         }}
       >
         {values.map((value, index) => (
-          <div key={index} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro, flex: resolved ? '0 1 auto' : '1 1 92px' }}>
+          <div
+            key={index}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: SPACING.micro,
+              flex: resolved ? '0 1 auto' : '1 1 92px',
+            }}
+          >
             {resolved ? (
               <span style={{ ...TYPE.titleMedium, color: GENERAL.feedbackText }}>
                 {answerLabel(value)}
@@ -456,6 +479,11 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         .${pieceClass} {
           animation: ${namespace}-piece-in 180ms cubic-bezier(.16,1,.3,1) both;
         }
+        .${bankPieceClass}:hover:not(:disabled) {
+          color: ${theme.accentSecondary};
+          border-color: ${theme.accent};
+          background: ${isQuoteLayout ? 'transparent' : theme.glowStrong};
+        }
         .${errorClass} {
           animation: ${namespace}-error 220ms ease both;
         }
@@ -524,20 +552,25 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
               </div>
               <div
                 aria-label={bankLabel}
-                style={{ display: 'flex', flexWrap: 'wrap', gap: SPACING.micro }}
+                style={{ display: 'flex', flexWrap: 'wrap', gap: isQuoteLayout ? SPACING.compact : SPACING.micro }}
               >
                 {available.map(piece => (
                   <button
                     key={piece.id}
                     type="button"
-                    className={focusClass}
+                    className={`${focusClass} ${bankPieceClass}`}
                     onClick={() => place(piece)}
                     style={{
                       minHeight: COMPONENT_SIZE.touchTarget,
-                      padding: `0 ${SPACING.compact}px`,
+                      padding: `0 ${isQuoteLayout ? SPACING.micro : SPACING.compact}px`,
                       background: 'transparent',
-                      border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.strong}`,
-                      borderRadius: RADII.small,
+                      border: isQuoteLayout
+                        ? 'none'
+                        : `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.strong}`,
+                      borderBottom: isQuoteLayout
+                        ? `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.strong}`
+                        : undefined,
+                      borderRadius: isQuoteLayout ? 0 : RADII.small,
                       ...TYPE.button,
                       fontFamily: isQuoteLayout ? "'IBM Plex Serif', serif" : TYPE.button.fontFamily,
                       fontSize: isQuoteLayout ? '1rem' : TYPE.button.fontSize,
@@ -547,15 +580,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                         : GENERAL.feedbackText,
                       cursor: 'pointer',
                       boxShadow: 'none',
-                      transition: `background-color ${transition}, border-color ${transition}, color ${transition}, transform ${transition}, box-shadow ${transition}`,
-                    }}
-                    onMouseEnter={event => {
-                      event.currentTarget.style.background = theme.glowStrong
-                      event.currentTarget.style.borderColor = theme.accent
-                    }}
-                    onMouseLeave={event => {
-                      event.currentTarget.style.background = 'transparent'
-                      event.currentTarget.style.borderColor = GENERAL.line.strong
+                      transition: `background-color ${transition}, border-color ${transition}, color ${transition}, transform ${transition}`,
                     }}
                   >
                     {piece.label}
@@ -565,7 +590,18 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
             </div>
           )}
 
-          <div aria-live="polite" aria-atomic="true" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap' }}>
+          <div
+            aria-live="polite"
+            aria-atomic="true"
+            style={{
+              position: 'absolute',
+              width: COMPONENT_SIZE.hairline,
+              height: COMPONENT_SIZE.hairline,
+              overflow: 'hidden',
+              clip: 'rect(0 0 0 0)',
+              whiteSpace: 'nowrap',
+            }}
+          >
             {announcement}
           </div>
 
