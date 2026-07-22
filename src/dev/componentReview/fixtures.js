@@ -1,6 +1,22 @@
 export * from './fixtures.base.js'
 
-import { quoteAnalyser as baseQuoteAnalyser } from './fixtures.base.js'
+import {
+  quoteAnalyser as baseQuoteAnalyser,
+  visualNarrative as baseVisualNarrative,
+} from './fixtures.base.js'
+
+export const visualNarrative = {
+  ...baseVisualNarrative,
+  beats: baseVisualNarrative.beats.map((beat, index) => (
+    index === baseVisualNarrative.beats.length - 1
+      ? {
+          ...beat,
+          headline: 'Galen could be wrong',
+          body: 'For the first time, careful observation could openly correct medicine’s most trusted authority.',
+        }
+      : beat
+  )),
+}
 
 export const quoteAnalyser = {
   ...baseQuoteAnalyser,
