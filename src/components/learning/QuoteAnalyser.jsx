@@ -116,7 +116,17 @@ function EditorialSection({ children, accentRgb }) {
   )
 }
 
-function QuoteText({ words, visibleWords, parchment, accentRgb, analysisWords, interactive = false, onWord, variant = 'analysis' }) {
+function QuoteText({
+  words,
+  visibleWords,
+  parchment,
+  accentRgb,
+  analysisWords,
+  interactive = false,
+  onWord,
+  openedWords = [],
+  variant = 'analysis',
+}) {
   const centred = variant === 'hero' || variant === 'reference'
   const fontSize = variant === 'hero'
     ? 'clamp(34px, 9.1vw, 46px)'
@@ -141,29 +151,41 @@ function QuoteText({ words, visibleWords, parchment, accentRgb, analysisWords, i
         {words.map((word, index) => {
           const key = clean(word)
           const marked = Boolean(analysisWords[key])
+          const explored = openedWords.includes(key)
+
           if (interactive && marked) {
             return (
               <button
                 key={`${word}-${index}`}
                 type="button"
+                aria-pressed={explored}
+                aria-label={`${word.replace(/[“”";,.?!]/g, '')}: ${explored ? 'explored' : 'open word analysis'}`}
                 onClick={() => onWord(key)}
                 style={{
                   opacity: index < visibleWords ? 1 : 0,
                   minHeight: 44,
-                  padding: '0 0.08em',
+                  marginInline: '0.035em',
+                  padding: '0 0.06em',
                   border: 0,
-                  borderBottom: `2px solid rgba(${accentRgb}, 0.75)`,
-                  background: `rgba(${accentRgb}, 0.12)`,
-                  color: GENERAL.cinematic.textPrimary,
+                  borderBottom: explored
+                    ? `1px solid rgba(${accentRgb}, 0.34)`
+                    : `2px solid rgba(${accentRgb}, 0.78)`,
+                  background: explored
+                    ? `rgba(${accentRgb}, 0.045)`
+                    : `rgba(${accentRgb}, 0.14)`,
+                  boxShadow: explored ? `inset 0 -0.10em rgba(${accentRgb}, 0.10)` : 'none',
+                  color: explored ? GENERAL.cinematic.textSecondary : GENERAL.cinematic.textPrimary,
                   font: 'inherit',
                   lineHeight: 'inherit',
                   cursor: 'pointer',
+                  transition: 'background 0.18s ease, border-color 0.18s ease, color 0.18s ease',
                 }}
               >
                 {word}{' '}
               </button>
             )
           }
+
           return (
             <span
               className="qa-motion"
@@ -325,7 +347,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   const [showAttribution, setShowAttribution] = useState(false)
   const [showCTA, setShowCTA] = useState(false)
   const [activeWord, setActiveWord] = useState(null)
-  const [openedWords, setOpenedWords] = useState(new Set())
+  const [openedWords, setOpenedWords] = useState([])
   const [reducedMotion, setReducedMotion] = useState(false)
   const [interpretation, setInterpretation] = useState('')
   const [feedback, setFeedback] = useState(null)
@@ -334,7 +356,9 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   const [showInterpretationHint, setShowInterpretationHint] = useState(false)
   const [promptsExpanded, setPromptsExpanded] = useState(false)
   const textareaRef = useRef(null)
-  const allWordsOpened = markedWordKeys.length > 0 && markedWordKeys.every(key => openedWords.has(key))
+
+  const exploredWordCount = markedWordKeys.filter(key => openedWords.includes(key)).length
+  const allWordsOpened = markedWordKeys.length > 0 && exploredWordCount === markedWordKeys.length
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return undefined
@@ -389,7 +413,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   }
 
   function openWord(word) {
-    setOpenedWords(current => new Set([...current, word]))
+    setOpenedWords(current => current.includes(word) ? current : [...current, word])
     setActiveWord(word)
   }
 
@@ -591,16 +615,38 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   }
 
   if (step === 'words') {
+    const progressMessage = allWordsOpened
+      ? (block.wordAnalysisCompleteMessage || 'All key words explored.')
+      : `${exploredWordCount} of ${markedWordKeys.length} key words explored`
+
     return (
       <div style={outer}>
         <Atmosphere cinematic />
         <main style={{ ...page, overflowY: 'auto', paddingLeft: 18, paddingRight: 18 }}>
           <Nav label={block.wordAnalysisLabel || 'Break down words'} />
           <EditorialSection accentRgb={accentRgb}>
-            <QuoteText words={words} visibleWords={words.length} parchment={parchment} accentRgb={accentRgb} analysisWords={analysisWords} interactive onWord={openWord} />
+            <QuoteText
+              words={words}
+              visibleWords={words.length}
+              parchment={parchment}
+              accentRgb={accentRgb}
+              analysisWords={analysisWords}
+              interactive
+              onWord={openWord}
+              openedWords={openedWords}
+            />
             <CinematicDivider accent={accent} accentRgb={accentRgb} size="standard" style={{ margin: '24px auto 0' }} />
             <p style={{ ...TYPE.bodyLarge, color: text.textSecondary, margin: '22px 0 0' }}>{block.wordAnalysisInstruction || 'Tap each marked word to uncover what it is doing.'}</p>
-            {allWordsOpened && <ContinueCTA onClick={() => setStep(wordAnalysisNextStep)} label={wordAnalysisCompleteLabel} accent={accent} textColor={parchment} style={{ marginTop: 26 }} />}
+            <p aria-live="polite" style={{ ...TYPE.caption, color: allWordsOpened ? text.textPrimary : text.textMuted, margin: '12px 0 0' }}>{progressMessage}</p>
+            {allWordsOpened && (
+              <ContinueCTA
+                onClick={() => setStep(wordAnalysisNextStep)}
+                label={wordAnalysisCompleteLabel}
+                accent={accent}
+                textColor={parchment}
+                style={{ marginTop: 20 }}
+              />
+            )}
           </EditorialSection>
         </main>
         {activeWord && <WordSheet word={activeWord} analysisWords={analysisWords} accentRgb={accentRgb} parchment={parchment} onClose={() => setActiveWord(null)} />}
