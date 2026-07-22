@@ -28,6 +28,8 @@ export const quoteAnalyser = {
     'Macbeth wants to hide…',
     'This reveals that Macbeth is…',
   ],
+  wordAnalysisNextStep: 'essay',
+  wordAnalysisCompleteLabel: 'Use it in an essay',
   interpretationSupport: {
     noAnswerTitle: 'Give me an idea to work with',
     noAnswerBody: 'That answer does not explain the quote yet. Try one sentence about what Macbeth feels, wants or is trying to hide.',
