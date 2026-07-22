@@ -32,7 +32,6 @@ export const quoteAnalyser = {
     transition: 'Macbeth turns his thoughts towards the stars…',
   },
   quoteContinueLabel: 'What do you think it means?',
-  interpretationLabel: 'Your interpretation',
   interpretationPrompt: 'What do you think this quote reveals?',
   interpretationInstruction: 'Use your own words. A rough idea is enough.',
   interpretationPlaceholder: 'Write your interpretation...',
