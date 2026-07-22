@@ -3,7 +3,7 @@ import { readFileSync } from 'fs'
 import { resolve } from 'path'
 
 const root = resolve(process.cwd())
-const read = (relativePath) => readFileSync(resolve(root, relativePath), 'utf8')
+const read = relativePath => readFileSync(resolve(root, relativePath), 'utf8')
 
 const componentPath = 'src/components/learning/FactorWeb.jsx'
 const storyPath = 'src/components/learning/FactorWeb.stories.jsx'
@@ -72,21 +72,20 @@ describe('FactorWeb governance', () => {
     expect(source).not.toContain('/images/pasteur-1861.png')
   })
 
-  it('keeps the full question outside the centre focal point and the label beneath the media', () => {
+  it('keeps the full question outside the centre focal point and positions the label independently beneath the media', () => {
     expect(source).toContain('const centreLabel =')
     expect(source).toContain('{centreLabel}')
     expect(source).toContain('{heading}')
-    expect(source).toContain('marginTop: FACTOR_WEB_LAYOUT.focalLabelGap')
+    expect(source).toContain('top: `calc(100% + ${FACTOR_WEB_LAYOUT.focalLabelGap}px)`')
     expect(source).not.toMatch(/<span[^>]*>[\s\S]*?\{block\.question\}[\s\S]*?<\/span>/)
   })
 
-  it('keeps motion elements centred without letting Framer Motion overwrite their offset', () => {
-    const centredOffsets = source.match(/translate:\s*'-50% -50%'/g) ?? []
-    expect(
-      centredOffsets.length,
-      'The focal point and outer factor buttons must use the independent CSS translate property.',
-    ).toBeGreaterThanOrEqual(2)
-
+  it('centres the visible focal circle on the exact SVG coordinate used by connector geometry', () => {
+    expect(source).toContain('left: `${FACTOR_WEB_LAYOUT.focalCenterX}%`')
+    expect(source).toContain('top: `${FACTOR_WEB_LAYOUT.focalCenterY}%`')
+    expect(source).toContain('width: `${FACTOR_WEB_LAYOUT.focalDiameter}%`')
+    expect(source).toContain("translate: '-50% -50%'")
+    expect(source).not.toContain('width: FACTOR_WEB_LAYOUT.focalSize')
     expect(source).not.toContain("transform: 'translate(-50%, -50%)'")
     expect(source).toContain("overflowX: 'hidden'")
     expect(source).toContain("overscrollBehaviorX: 'none'")
@@ -96,7 +95,7 @@ describe('FactorWeb governance', () => {
     expect(source).toContain('export function getFactorConnectorPath')
     expect(source).toContain('FACTOR_WEB_LAYOUT.connectorControlOffset')
     expect(source).toContain('getFocalAnchorX')
-    expect(source).toContain('FACTOR_WEB_LAYOUT.focalRadius')
+    expect(source).toContain('FACTOR_WEB_LAYOUT.focalRadius - FACTOR_WEB_LAYOUT.connectorUnderlap')
     expect(source).toContain('<motion.path')
 
     const dotCount = source.match(/<motion\.circle/g) ?? []
@@ -105,24 +104,44 @@ describe('FactorWeb governance', () => {
     expect(source).not.toContain('cx={slot.focalAnchorX}')
   })
 
-  it('sources component geometry and softened connector styling from dedicated tokens', () => {
+  it('sources geometry, visual intensity and choreography from dedicated tokens', () => {
     const tokens = read(tokensPath)
 
-    expect(source).toContain("import { FACTOR_WEB_LAYOUT, FACTOR_WEB_VISUAL } from '../../constants/factorWeb.js'")
+    expect(source).toContain('FACTOR_WEB_LAYOUT,')
+    expect(source).toContain('FACTOR_WEB_MOTION,')
+    expect(source).toContain('FACTOR_WEB_VISUAL,')
     expect(source).toContain('FACTOR_WEB_LAYOUT.nodeWidth')
-    expect(source).toContain('FACTOR_WEB_LAYOUT.focalSize')
+    expect(source).toContain('FACTOR_WEB_LAYOUT.focalDiameter')
     expect(source).toContain('FACTOR_WEB_VISUAL.haloBlur')
     expect(source).toContain('FACTOR_WEB_VISUAL.connectorActiveOpacity')
+    expect(source).toContain('FACTOR_WEB_MOTION.duration.standard')
 
     expect(tokens).toContain('rowsByCount')
     expect(tokens).toContain('focalRowsByCount')
-    expect(tokens).toContain('focalRadius')
-    expect(tokens).toContain('haloSize')
+    expect(tokens).toContain('focalDiameter: FOCAL_DIAMETER')
+    expect(tokens).toContain('focalRadius: FOCAL_DIAMETER / 2')
+    expect(tokens).toContain('connectorUnderlap: 0.6')
     expect(tokens).toContain('connectorIdleOpacity: 0.13')
     expect(tokens).toContain('connectorExploredOpacity: 0.28')
     expect(tokens).toContain('connectorActiveOpacity: 0.52')
     expect(tokens).toContain('connectorIdleWidth: 0.30')
     expect(tokens).toContain('connectorActiveWidth: 0.46')
+    expect(tokens).toContain("durationSeconds(MOTION.duration.standard)")
+  })
+
+  it('uses shared neutral, line and shadow tokens rather than local colour recipes', () => {
+    expect(source).toContain("import { GENERAL } from '../../constants/generalTheme.js'")
+    expect(source).toContain('GENERAL.cinematic.textPrimary')
+    expect(source).toContain('GENERAL.cinematic.textSecondary')
+    expect(source).toContain('GENERAL.cinematic.textMuted')
+    expect(source).toContain('GENERAL.line.soft')
+    expect(source).toContain('GENERAL.line.medium')
+    expect(source).toContain('GENERAL.surfaceTint')
+    expect(source).toContain('GENERAL.shadow.raised')
+    expect(source).toContain('GENERAL.shadow.overlay')
+    expect(source).not.toMatch(/rgba\(245,245,245/)
+    expect(source).not.toMatch(/rgba\(255,255,255/)
+    expect(source).not.toContain('rgba(15,14,12')
   })
 
   it('uses a lighter body token for node copy', () => {
@@ -177,5 +196,4 @@ describe('FactorWeb governance', () => {
     expect(goldRegister).toContain('approved Vesalius portrait')
     expect(goldRegister).toContain('centre dots removed')
   })
-
 })
