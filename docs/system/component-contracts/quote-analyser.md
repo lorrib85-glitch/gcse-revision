@@ -39,18 +39,29 @@ Do not add a background, border, shadow, blur or rounded container around the en
 
 ## Interpretation feedback
 
-The feedback screen is a **brief bridge** into key-word analysis, not a second teaching screen.
+Feedback is a short bridge into close reading, not a second teaching screen.
 
 It should:
 
-- credit no more than one idea the learner genuinely expressed;
-- add no more than one useful missing layer;
-- use no more than two short pieces of evidence for either idea;
-- avoid explaining the evidence in detail, because the next stage teaches the words;
-- keep the governed `ContinueCTA` visible immediately after the feedback;
-- move directly into the key-word analysis stage.
+- credit at most one idea the learner genuinely expressed;
+- add at most one useful layer they missed;
+- keep evidence snippets brief;
+- avoid repeating full explanations that belong in the word-analysis stage;
+- end with the governed CTA that moves into word analysis.
 
-The feedback should be short enough to scan without scrolling on a typical mobile screen. Detailed connotations, methods and effects belong in the word-analysis stage.
+## Word-analysis stage
+
+The word-analysis stage uses the supplied cinematic background rather than a torn-paper or jagged-edge surface.
+
+It should:
+
+- keep the quotation as the visual focus;
+- make only supplied `wordAnalysis` keys interactive;
+- record a word as explored when the learner opens its analysis;
+- withhold the completion CTA until every interactive word present in the quotation has been explored;
+- use `wordAnalysisCompleteLabel` for the earned CTA;
+- route to `wordAnalysisNextStep`, allowing content to move directly to `essay` or retain the optional `meaning` stage;
+- remain an open editorial composition rather than a boxed card.
 
 ## Data contract
 
@@ -79,6 +90,9 @@ The feedback should be short enough to scan without scrolling on a typical mobil
   interpretationSupport?: object,
   analysisIdeas?: object[],
   wordAnalysis?: object,
+  wordAnalysisInstruction?: string,
+  wordAnalysisCompleteLabel?: string,
+  wordAnalysisNextStep?: 'meaning' | 'essay',
   meaningSections?: object[],
   essayExample?,
 }
@@ -92,4 +106,6 @@ The feedback should be short enough to scan without scrolling on a typical mobil
 - `interpretationPrompt` is the only task heading on the initial interpretation screen.
 - Keep `interpretationStarterHeading` short enough to work as a single accordion row.
 - Sentence starters should use the supplied speaker where appropriate and remain editable by the learner.
+- Only define word-analysis entries for words the learner is expected to explore.
+- Use `wordAnalysisNextStep: 'essay'` when key-word analysis already supplies the meaning needed before exam application.
 - Word analysis, meaning sections and essay examples belong in content data rather than component constants.
