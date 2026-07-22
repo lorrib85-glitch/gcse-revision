@@ -99,7 +99,7 @@ Let the student explore before formal teaching. Science should feel like evidenc
 
 - `InteractiveHotspotImage`
 - `VisualLearning`
-- `VisualNarrativeScreen`
+- `TimelineChain` (`variant: 'reveal'`) — the retired `VisualNarrativeScreen`'s replacement
 - `CardContainer`
 
 **Pattern**

@@ -543,7 +543,21 @@ Person-to-person comparison. Two named people with portraits kept as compact hea
 
 ---
 
-> **VisualNarrativeScreen — removed.** Its beat-based narrative behaviour was absorbed into `TimelineChain`'s `reveal` variant (see above). Legacy `type: 'visualNarrative'` content is mapped to the reveal variant via `src/data/visualNarrativeCompat.js`.
+> **VisualNarrativeScreen — RETIRED. Do not recreate, restore, or register it.**
+> Its beat-based progressive-reveal behaviour was absorbed into `TimelineChain`'s
+> `reveal` variant (see above) — that variant is now the **sole** source of truth for
+> this interaction pattern.
+> - New progressive narrative / statement-sequence screens **must** use `TimelineChain`
+>   with `variant: 'reveal'`.
+> - Interactive ordering / causal-chain screens continue to use `TimelineChain`'s
+>   default `interactive` variant.
+> - Legacy `type: 'visualNarrative'` content is mapped to the reveal variant via
+>   `src/data/visualNarrativeCompat.js` — this is **migration-only** compatibility code.
+>   Never author new content as `visualNarrative`, and never build new features on the
+>   compat mapper.
+>
+> Any older per-module architecture doc that lists `VisualNarrativeScreen` as a
+> suggested component is superseded by this entry.
 
 ---
 

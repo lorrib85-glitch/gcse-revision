@@ -68,7 +68,7 @@ Introduce the first major part of the topic.
 **Typical Components**
 
 - `VisualLearning`
-- `VisualNarrativeScreen`
+- `TimelineChain` (`variant: 'reveal'`) — the retired `VisualNarrativeScreen`'s replacement
 - `CinematicRevealMoment`
 - `InteractiveHotspotImage`
 - `InteractiveCollectionExplorer`
@@ -95,7 +95,7 @@ Introduce new knowledge while revisiting earlier learning.
 **Typical Components**
 
 - `VisualLearning`
-- `VisualNarrativeScreen`
+- `TimelineChain` (`variant: 'reveal'`) — the retired `VisualNarrativeScreen`'s replacement
 - `InteractiveCollectionExplorer`
 - `GuidedChoiceCarousel`
 - `MatchingTask`
@@ -129,7 +129,7 @@ depending on the chapter.
 **Typical Components**
 
 - `VisualLearning`
-- `VisualNarrativeScreen`
+- `TimelineChain` (`variant: 'reveal'`) — the retired `VisualNarrativeScreen`'s replacement
 - `InteractiveHotspotImage`
 - `GuidedChoiceCarousel`
 - `MatchingTask`
@@ -161,7 +161,7 @@ Often used for:
 **Typical Components**
 
 - `VisualLearning`
-- `VisualNarrativeScreen`
+- `TimelineChain` (`variant: 'reveal'`) — the retired `VisualNarrativeScreen`'s replacement
 - `CinematicRevealMoment`
 - `ExplainReveal`
 - `ColSortBlock`
@@ -410,7 +410,7 @@ Default assumption: **Use an existing component.**
 **When teaching:**
 
 1. `VisualLearning`
-2. `VisualNarrativeScreen`
+2. `TimelineChain` (`variant: 'reveal'`) — the retired `VisualNarrativeScreen`'s replacement
 3. `InteractiveHotspotImage`
 4. `InteractiveCollectionExplorer`
 5. `GuidedChoiceCarousel`
@@ -425,7 +425,7 @@ Default assumption: **Use an existing component.**
 **When explaining cause and effect:**
 
 1. `ExplainReveal`
-2. `VisualNarrativeScreen`
+2. `TimelineChain` (`variant: 'reveal'`) — the retired `VisualNarrativeScreen`'s replacement
 
 **When creating atmosphere:**
 

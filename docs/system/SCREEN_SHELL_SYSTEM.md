@@ -48,7 +48,7 @@ The two defaults operate at different layers and do not conflict:
 ## ContentShell
 
 **File:** `src/components/layout/ContentShell.jsx`  
-**Use for:** The structural frame for knowledge-delivery screens. A teaching or explanation screen composes through `TeachScreenShell` (Route A) *inside* this shell — `ContentShell` supplies the safe-area frame and background; `TeachScreenShell` supplies the heading token and rhythm. Approved cinematic knowledge-delivery components that own their own layout (ConceptReveal, KeyFigureReveal, ExaminerExplainsScreen, VisualLearning, VisualNarrativeScreen, ExplainReveal) are Route C and may sit directly in this shell per their contracts.
+**Use for:** The structural frame for knowledge-delivery screens. A teaching or explanation screen composes through `TeachScreenShell` (Route A) *inside* this shell — `ContentShell` supplies the safe-area frame and background; `TeachScreenShell` supplies the heading token and rhythm. Approved cinematic knowledge-delivery components that own their own layout (ConceptReveal, KeyFigureReveal, ExaminerExplainsScreen, VisualLearning, ExplainReveal, and `TimelineChain` — including its `variant: 'reveal'`, which replaced the retired VisualNarrativeScreen) are Route C and may sit directly in this shell per their contracts.
 
 ### Alignment guarantees
 

@@ -165,7 +165,7 @@ const accent = SUBJECTS[subject].accent
 
 ### 2. Cinematic Reveal CTA
 
-Used only on full-screen cinematic "reveal moment" screens with no button chrome (e.g. `CinematicRevealMoment`, `CinematicCarousel`, `TimelineChain`, `TimelineCanvas`, `VisualNarrativeScreen`, `GuidedChoiceCarousel`, `ExaminerExplainsScreen`). **The only implementation allowed is `<CinematicContinueCTA>`** (`src/components/core/CinematicContinueCTA.jsx`, LOCKED) — never an inline `<span>`/`<button>`.
+Used only on full-screen cinematic "reveal moment" screens with no button chrome (e.g. `CinematicRevealMoment`, `CinematicCarousel`, `TimelineChain`, `TimelineCanvas`, `GuidedChoiceCarousel`, `ExaminerExplainsScreen`). **The only implementation allowed is `<CinematicContinueCTA>`** (`src/components/core/CinematicContinueCTA.jsx`, LOCKED) — never an inline `<span>`/`<button>`.
 
 ```js
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'

@@ -125,7 +125,7 @@ Do NOT teach Pasteur's germ theory inside Episode 6. It belongs in Episode 7 (`h
 ## Decision: Mary Seacole scope (Episode 10)
 
 Seacole gets exactly:
-1. **One dedicated `VisualNarrativeScreen`** in Section 5 — who she was, what she did, why she was rejected and how she responded
+1. **One dedicated `TimelineChain` (`variant: 'reveal'`)** in Section 5 — who she was, what she did, why she was rejected and how she responded
 2. **One comparison interaction** (preferably `ColSortBlock`) in Section 5 — Nightingale vs Seacole across: nursing approach, funding/backing, battlefield vs hospital, legacy/recognition, barriers faced
 
 Keep Nightingale as the primary arc of the episode. Seacole is a comparison/sophistication point for high-mark exam answers, not a co-equal protagonist.
@@ -138,7 +138,7 @@ Do NOT weave Seacole through multiple sections. Her material is confined to Sect
 
 **Allowed (use from existing registry):**
 - `CinematicRevealMoment`, `PriorKnowledgeRecall` — Section 1
-- `VisualLearning`, `VisualNarrativeScreen`, `InteractiveHotspotImage`, `InteractiveCollectionExplorer`, `GuidedChoiceCarousel` — teaching
+- `VisualLearning`, `TimelineChain` (`variant: 'reveal'`), `InteractiveHotspotImage`, `InteractiveCollectionExplorer`, `GuidedChoiceCarousel` — teaching
 - `QuickRecallScreen`, `MatchingTask`, `ColSortBlock` — retrieval/interaction
 - `ExplainReveal` — cause-and-effect chains
 - `TheoryCompareBlock` — side-by-side comparisons
@@ -184,7 +184,7 @@ Do NOT weave Seacole through multiple sections. Her material is confined to Sect
 
 **Key Section 2 content:** Smallpox and inoculation — the pre-Jenner context. Inoculation vs vaccination table is exam-essential.
 
-**Key Section 3 content:** Jenner's observation + the Phipps experiment. `VisualNarrativeScreen` or `InteractiveHotspotImage` for the farmyard / experiment steps.
+**Key Section 3 content:** Jenner's observation + the Phipps experiment. `TimelineChain` (`variant: 'reveal'`) or `InteractiveHotspotImage` for the farmyard / experiment steps.
 
 **Key Section 4 content:** Opposition (Church, inoculators, London establishment) + government role (1840 ban on inoculation, 1853 compulsory vaccination). `GuidedChoiceCarousel` or `MatchingTask`.
 
@@ -206,12 +206,12 @@ Do NOT weave Seacole through multiple sections. Her material is confined to Sect
 
 **Key Section 2 content:** Hospitals before Nightingale — voluntary hospitals, cottage hospitals, poor conditions, low nursing status. `VisualLearning` or `InteractiveHotspotImage`.
 
-**Key Section 3 content:** Scutari — what Nightingale found, what she changed, death rate 40% → 2%. `VisualNarrativeScreen` + `ExplainReveal` for the cause-effect chain.
+**Key Section 3 content:** Scutari — what Nightingale found, what she changed, death rate 40% → 2%. `TimelineChain` (`variant: 'reveal'`) + `ExplainReveal` for the cause-effect chain.
 
 **Key Section 4 content:** Nightingale's long-term impact — Nightingale School for Nurses (1860), pavilion plan hospital design, *Notes on Nursing* (1859). `MatchingTask` or `GuidedChoiceCarousel`.
 
 **Key Section 5 content:**
-- `VisualNarrativeScreen` — Mary Seacole (dedicated screen: who she was, what she did, why she was rejected, her self-funded journey)
+- `TimelineChain` (`variant: 'reveal'`) — Mary Seacole (dedicated screen: who she was, what she did, why she was rejected, her self-funded journey)
 - `ColSortBlock` — Nightingale vs Seacole comparison (nursing approach / funding/backing / battlefield vs hospital / legacy and recognition / barriers faced)
 - `QuickRecallScreen` — reinforce chapter core message
 

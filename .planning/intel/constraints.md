@@ -68,7 +68,7 @@ Section 6 — Summary and Examiner (mandatory order):
 3. Meet the Examiner / Exam practice
 4. Chapter completion screen — module always ends here
 
-Component Selection Hierarchy (teaching): VisualLearning > VisualNarrativeScreen > InteractiveHotspotImage > InteractiveCollectionExplorer > GuidedChoiceCarousel.
+Component Selection Hierarchy (teaching): VisualLearning > TimelineChain (variant: 'reveal', the retired VisualNarrativeScreen's replacement) > InteractiveHotspotImage > InteractiveCollectionExplorer > GuidedChoiceCarousel.
 Component Selection Hierarchy (checking understanding): QuickRecallScreen > MatchingTask > ColSortBlock > GuidedChoiceCarousel.
 Component Repetition Limit: no feature component used more than twice in a single chapter (exceptions: Section 1/6 mandatory components; QuickRecallScreen and PriorKnowledgeRecall which deliberately recur).
 
@@ -238,7 +238,7 @@ Core Science Rule: every chapter must answer "Why does this happen?" Definitions
 
 Part 1 — Situation and prediction: hook curiosity, real-world scenario, prediction question, "You will learn" section (2-4 outcomes). Components: CinematicRevealMoment, ChapterHookScreen, RetrievalFrame.
 
-Part 2 — Investigate the evidence: explore before formal teaching. Components: InteractiveHotspotImage, VisualLearning, VisualNarrativeScreen, CardContainer. One visual idea per screen.
+Part 2 — Investigate the evidence: explore before formal teaching. Components: InteractiveHotspotImage, VisualLearning, TimelineChain (variant: 'reveal', replaces the retired VisualNarrativeScreen), CardContainer. One visual idea per screen.
 
 Part 3 — Discover the science: teach core concept after evidence. Components: ConceptReveal, ExplainReveal, TheoryCompareBlock, CardContainer, KeyFigureReveal. Teach in order: what/why/precise GCSE term/real life/common mistake.
 

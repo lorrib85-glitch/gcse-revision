@@ -143,6 +143,10 @@ Screen-level learning interaction components.
 - `VisualLearning.jsx` — Click-to-continue cinematic scene sequence with background images, animated headlines, and optional final reveal.
 - `WeakSpotRecovery.jsx` — Full-screen behavioural intervention screen shown when a learner struggles.
 
+### Retired components — do not recreate
+
+- **`VisualNarrativeScreen` — RETIRED.** Do not create, restore, register, refine, or lock a standalone `VisualNarrativeScreen` component. Its progressive numbered-reveal behaviour is now owned solely by `TimelineChain` with `variant: 'reveal'` (`timelineChainReveal.js`). New progressive narrative / statement-sequence screens **must** use the reveal variant; interactive ordering/causal-chain screens continue to use `TimelineChain`'s default `interactive` variant. Legacy `type: 'visualNarrative'` lesson data is supported **only** through `src/data/visualNarrativeCompat.js`, which is migration-only compatibility code — never author new content as `visualNarrative`, and never build new features on the compat mapper. Any older per-module architecture or planning doc that still lists `VisualNarrativeScreen` under "suggested components" is **superseded** by this rule; use the reveal variant instead.
+
 ### `src/components/layout/`
 Module-level orchestration and chapter framing screens.
 - `ChapterCompleteScreen.jsx` — End-of-chapter completion screen with score and stats.

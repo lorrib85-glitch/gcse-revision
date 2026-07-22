@@ -91,7 +91,7 @@ gcse-revision/
 │   │   │   ├── FillInTheBlanksBlock.jsx   # Inline blanks filling
 │   │   │   ├── KeyFigureReveal.jsx        # Portrait hero bio
 │   │   │   ├── GuidedChoiceCarousel.jsx   # Single-choice carousel
-│   │   │   ├── VisualNarrativeScreen.jsx  # Narrative beat screen
+│   │   │   ├── timelineChainReveal.js      # TimelineChain reveal-variant logic (retired VisualNarrativeScreen)
 │   │   │   ├── VisualLearning.jsx         # Scene sequence
 │   │   │   ├── TheoryCompareBlock.jsx     # Side-by-side compare
 │   │   │   ├── TheoryLab.jsx              # Diagnostic scenario
