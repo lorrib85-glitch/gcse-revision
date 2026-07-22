@@ -251,9 +251,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
               : `${SPACING.micro}px ${SPACING.compact}px`
             : `0 ${SPACING.micro}px`,
           background: quoteSlot
-            ? selected
-              ? theme.glowStrong
-              : 'transparent'
+            ? 'transparent'
             : selected
               ? theme.glowStrong
               : piece
@@ -269,7 +267,9 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
           margin: inline ? `${COMPONENT_SIZE.focusOffset}px ${SPACING.micro / 2}px` : undefined,
           cursor: locked ? 'default' : 'pointer',
           boxShadow: selected
-            ? `0 0 0 ${COMPONENT_SIZE.focusOffset}px ${theme.glowStrong}, 0 0 ${SPACING.standard}px ${theme.glow}`
+            ? quoteSlot
+              ? `0 ${COMPONENT_SIZE.focusOffset}px ${SPACING.standard}px ${theme.glow}`
+              : `0 0 0 ${COMPONENT_SIZE.focusOffset}px ${theme.glowStrong}, 0 0 ${SPACING.standard}px ${theme.glow}`
             : 'none',
           ...TYPE.titleMedium,
           fontFamily: quote ? "'IBM Plex Serif', serif" : TYPE.titleMedium.fontFamily,
@@ -325,7 +325,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         style={{
           margin: 0,
           padding: isQuoteLayout
-            ? `${SPACING.micro}px 0 ${SPACING.standard}px ${SPACING.compact}px`
+            ? `${SPACING.compact}px 0 ${SPACING.separation}px ${SPACING.compact}px`
             : SPACING.standard,
           background: 'transparent',
           borderLeft: isQuoteLayout
@@ -340,6 +340,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
           textAlign: isMathLayout ? 'center' : 'left',
           whiteSpace: 'pre-wrap',
           color: isQuoteLayout ? quoteText : GENERAL.feedbackText,
+          textShadow: isQuoteLayout && contextImage ? GENERAL.cinematic.actionShadow : undefined,
         }}
       >
         {renderTemplateContent(resolved)}
@@ -466,6 +467,10 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
     ? `linear-gradient(180deg, ${theme.overlay} 0%, ${GENERAL.backgroundSurface} 88%), url(${contextImage}) center / cover`
     : `radial-gradient(circle at 12% 0%, ${theme.glow} 0%, transparent 46%), linear-gradient(155deg, ${theme.backgroundSecondary} 0%, ${GENERAL.backgroundSurface} 58%, ${GENERAL.backgroundSunken} 100%)`
 
+  const quoteAtmosphere = contextImage
+    ? `linear-gradient(180deg, ${GENERAL.backgroundApp} 0%, transparent 18%, transparent 72%, ${GENERAL.backgroundApp} 100%), linear-gradient(180deg, ${theme.overlay} 0%, ${GENERAL.backgroundApp} 100%), url(${contextImage}) center / cover`
+    : `linear-gradient(180deg, ${GENERAL.backgroundApp} 0%, transparent 18%, transparent 72%, ${GENERAL.backgroundApp} 100%), radial-gradient(circle at 16% 26%, ${theme.glow} 0%, transparent 52%)`
+
   return (
     <div style={{ margin: `${SPACING.compact}px 0` }}>
       <style>{`
@@ -482,7 +487,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         .${bankPieceClass}:hover:not(:disabled) {
           color: ${theme.accentSecondary};
           border-color: ${theme.accent};
-          background: ${isQuoteLayout ? 'transparent' : theme.glowStrong};
+          background: ${theme.glowStrong};
         }
         .${errorClass} {
           animation: ${namespace}-error 220ms ease both;
@@ -521,38 +526,61 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
       <section
         style={{
           position: 'relative',
-          overflow: 'hidden',
+          overflow: isQuoteLayout ? 'visible' : 'hidden',
           isolation: 'isolate',
-          background: atmosphereBackground,
-          border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.faint}`,
-          borderRadius: RADII.panel,
-          boxShadow: GENERAL.shadow.raised,
+          background: isQuoteLayout ? 'transparent' : atmosphereBackground,
+          border: isQuoteLayout ? 'none' : `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.faint}`,
+          borderRadius: isQuoteLayout ? 0 : RADII.panel,
+          boxShadow: isQuoteLayout ? 'none' : GENERAL.shadow.raised,
         }}
       >
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            pointerEvents: 'none',
-            background: `linear-gradient(180deg, transparent 0%, ${GENERAL.backgroundSurface} 72%, ${GENERAL.backgroundSunken} 100%)`,
-            opacity: contextImage ? 0.9 : 0.5,
-          }}
-        />
+        {isQuoteLayout ? (
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: `-${SPACING.standard}px`,
+              zIndex: 0,
+              pointerEvents: 'none',
+              background: quoteAtmosphere,
+              opacity: contextImage ? (block.backgroundOpacity ?? 0.82) : 1,
+              filter: contextImage ? 'saturate(.72) contrast(1.04) brightness(.72)' : 'none',
+            }}
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',
+              background: `linear-gradient(180deg, transparent 0%, ${GENERAL.backgroundSurface} 72%, ${GENERAL.backgroundSunken} 100%)`,
+              opacity: contextImage ? 0.9 : 0.5,
+            }}
+          />
+        )}
 
-        <div style={{ position: 'relative', zIndex: 1, padding: SPACING.standard }}>
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            padding: isQuoteLayout
+              ? `${SPACING.separation}px 0 ${SPACING.standard}px`
+              : SPACING.standard,
+          }}
+        >
           <div className={isCompleted ? resolveClass : undefined}>
             {renderWorkspace(isCompleted)}
           </div>
 
           {!isCompleted && canEdit && (
-            <div style={{ marginTop: SPACING.standard }}>
+            <div style={{ marginTop: isQuoteLayout ? SPACING.compact : SPACING.standard }}>
               <div style={{ ...TYPE.label, color: GENERAL.cinematic.textMuted, marginBottom: SPACING.compact }}>
                 {bankLabel}
               </div>
               <div
                 aria-label={bankLabel}
-                style={{ display: 'flex', flexWrap: 'wrap', gap: isQuoteLayout ? SPACING.compact : SPACING.micro }}
+                style={{ display: 'flex', flexWrap: 'wrap', gap: SPACING.micro }}
               >
                 {available.map(piece => (
                   <button
@@ -562,15 +590,10 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                     onClick={() => place(piece)}
                     style={{
                       minHeight: COMPONENT_SIZE.touchTarget,
-                      padding: `0 ${isQuoteLayout ? SPACING.micro : SPACING.compact}px`,
-                      background: 'transparent',
-                      border: isQuoteLayout
-                        ? 'none'
-                        : `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.strong}`,
-                      borderBottom: isQuoteLayout
-                        ? `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.strong}`
-                        : undefined,
-                      borderRadius: isQuoteLayout ? 0 : RADII.small,
+                      padding: `0 ${SPACING.compact}px`,
+                      background: isQuoteLayout ? GENERAL.surfaceTint : 'transparent',
+                      border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.strong}`,
+                      borderRadius: isQuoteLayout ? RADII.pill : RADII.small,
                       ...TYPE.button,
                       fontFamily: isQuoteLayout ? "'IBM Plex Serif', serif" : TYPE.button.fontFamily,
                       fontSize: isQuoteLayout ? '1rem' : TYPE.button.fontSize,
@@ -619,17 +642,17 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                   width: '100%',
                   height: BUTTONS.continue.height,
                   padding: `0 ${BUTTONS.continue.paddingX}px`,
-                  background: allFilled ? theme.accent : 'transparent',
-                  border: `${COMPONENT_SIZE.hairline}px solid ${allFilled ? theme.accent : GENERAL.line.soft}`,
+                  background: allFilled ? theme.accent : GENERAL.surfaceTint,
+                  border: `${COMPONENT_SIZE.hairline}px solid ${allFilled ? theme.accent : GENERAL.line.strong}`,
                   borderRadius: BUTTONS.continue.borderRadius,
                   fontFamily: BUTTONS.continue.fontFamily,
                   fontSize: BUTTONS.continue.fontSize,
                   fontWeight: BUTTONS.continue.fontWeight,
-                  color: allFilled ? GENERAL.textOnAccent : GENERAL.cinematic.textSubtle,
+                  color: allFilled ? GENERAL.textOnAccent : GENERAL.cinematic.textSecondary,
                   cursor: allFilled ? 'pointer' : 'default',
-                  opacity: allFilled ? 1 : 0.72,
-                  boxShadow: allFilled ? `0 0 ${SPACING.standard}px ${theme.glow}` : 'none',
-                  transition: `background-color ${BUTTONS.continue.transition}, border-color ${BUTTONS.continue.transition}, color ${BUTTONS.continue.transition}, opacity ${BUTTONS.continue.transition}, box-shadow ${BUTTONS.continue.transition}, transform ${BUTTONS.continue.transition}`,
+                  opacity: 1,
+                  boxShadow: allFilled ? `0 0 ${SPACING.standard}px ${theme.glow}` : `inset 0 0 0 ${COMPONENT_SIZE.hairline}px ${GENERAL.line.faint}`,
+                  transition: `background-color ${BUTTONS.continue.transition}, border-color ${BUTTONS.continue.transition}, color ${BUTTONS.continue.transition}, box-shadow ${BUTTONS.continue.transition}, transform ${BUTTONS.continue.transition}`,
                 }}
               >
                 {allFilled ? 'Check answer' : incompleteLabel}

@@ -1,8 +1,15 @@
 export * from './fixtures.base.js'
 
 import {
+  builderQuote as baseBuilderQuote,
   quoteAnalyser as baseQuoteAnalyser,
 } from './fixtures.base.js'
+
+export const builderQuote = {
+  ...baseBuilderQuote,
+  backgroundImage: '/English/Macbeth/heroes/macbeth-generic-banner.svg',
+  backgroundOpacity: 0.82,
+}
 
 export const quoteAnalyser = {
   ...baseQuoteAnalyser,
