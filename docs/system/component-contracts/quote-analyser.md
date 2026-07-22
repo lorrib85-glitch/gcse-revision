@@ -18,6 +18,22 @@ It should:
 
 Do not add a generic heading such as “The moment before”. The content itself should make the page’s introductory purpose clear.
 
+## Interpretation screen
+
+The interpretation screen uses an **open editorial layout**, not a surrounding card or form panel.
+
+It should:
+
+- retain the quote and the governed `CinematicDivider` above the task;
+- use `interpretationPrompt` as the main `TYPE.displaySection` heading;
+- place the support sentence directly beneath the heading;
+- keep the textarea as the main bordered interaction surface;
+- show sentence starters as quiet rows separated by governed line tokens;
+- avoid a redundant label such as “Your interpretation” above the main question;
+- preserve the same open layout for retry and AI-feedback states.
+
+Do not add a background, border, shadow, blur or rounded container around the entire interpretation section. Visual hierarchy must come from typography, spacing and the meaningful interaction surfaces.
+
 ## Data contract
 
 ```js
@@ -38,7 +54,12 @@ Do not add a generic heading such as “The moment before”. The content itself
     label?: string,          // optional exceptional label; normally omit
   },
   interpretationPrompt?,
+  interpretationInstruction?,
+  interpretationPlaceholder?,
+  interpretationStarterHeading?,
+  interpretationMoreLabel?,
   interpretationStarters?: string[],
+  interpretationSupport?: object,
   analysisIdeas?: object[],
   wordAnalysis?: object,
   meaningSections?: object[],
@@ -51,5 +72,6 @@ Do not add a generic heading such as “The moment before”. The content itself
 - Keep context beats short enough to scan on mobile.
 - Supply all text through the block; do not add play-, poem- or character-specific copy inside the component.
 - The context page establishes events, not meaning. Interpretation begins only after the quotation reveal.
+- `interpretationPrompt` is the only task heading on the initial interpretation screen.
 - Sentence starters should use the supplied speaker where appropriate and remain editable by the learner.
 - Word analysis, meaning sections and essay examples belong in content data rather than component constants.
