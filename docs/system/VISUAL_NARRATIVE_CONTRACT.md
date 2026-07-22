@@ -16,6 +16,8 @@ Any screen using `type: 'visualNarrative'` must keep this structure:
    - No card frame, dashboard panel, glass tile stack, or generic AI-app styling.
    - Each beat may supply its own image. Text-only beats reuse the most recent image.
    - Use `imageMode: 'full'` or `imageMode: 'upper'` only when the default placement is unsuitable.
+   - The default upper-image treatment retains faint image texture behind the narrative block rather than ending in a separate black section.
+   - The governed vignette may be disabled with `imageVignette: false` when the source image already supplies sufficient focus.
 
 2. **No eyebrow by default**
    - Beat labels are hidden unless `showLabel: true` is explicitly set.
@@ -23,7 +25,7 @@ Any screen using `type: 'visualNarrative'` must keep this structure:
    - The opening image/title should do the work.
 
 3. **Large cinematic headline**
-   - Headline is the dominant element.
+   - Headline is the dominant element without becoming a landing-page hero.
    - It must use `TYPE.displayCinematic` without local typography overrides.
    - Sentence case preferred.
    - Short, punchy, GCSE-useful wording.
@@ -37,6 +39,7 @@ Any screen using `type: 'visualNarrative'` must keep this structure:
 5. **Cinematic continue only**
    - Opening narrative beats must use `CinematicContinueCTA`.
    - Do not use circular arrow buttons, floating glass buttons, or inline custom continue prompts.
+   - The shared cinematic CTA sits in the narrative text flow with governed spacing, so it stays connected to the copy and adapts to text length.
    - The CTA should feel like part of the atmosphere, not a separate app widget.
    - The shared CTA contains no decorative arrow.
 
@@ -55,6 +58,12 @@ Any screen using `type: 'visualNarrative'` must keep this structure:
    - A highlight is optional and must be supplied by the active beat.
    - Do not hardcode a location, era or named place into the component.
    - Highlight glow must use the subject accent unless content explicitly supplies an RGB value.
+
+9. **Token-governed composition**
+   - Typography comes from `TYPE`.
+   - Spacing comes from `SPACING` or `GENERAL.cinematic.visualNarrative` semantic layout tokens.
+   - Image fade, vignette, default crop and narrative placement are defined centrally, not tuned with local component values.
+   - Episode data controls the image and words; the reusable component contains no subject-specific copy.
 
 ## Data guidance
 
@@ -112,6 +121,7 @@ Optional label only when genuinely useful:
 - Do not use random glow/neon. Glow should only come from the subject accent or cinematic CTA.
 - Do not hardcode subject colours inside episode data when the subject palette can provide them.
 - Do not hardcode a portrait/timeline/England story model into the reusable component.
+- Do not pin the narrative CTA away from its associated copy.
 - Do not make a final non-facts beat a dead end.
 
 ## Related locked components
