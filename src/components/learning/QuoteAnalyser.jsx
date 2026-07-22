@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { RADII } from '../../constants/radii.js'
@@ -179,30 +179,35 @@ function QuoteScene({ words, parchment, accent, accentRgb, analysisWords }) {
   )
 }
 
-function StarterPrompts({ starters, heading, moreLabel, showMore, onToggleMore, onChoose, text }) {
+function StarterPrompts({ starters, heading, expanded, onToggle, onChoose, text }) {
+  const regionId = useId()
   if (!starters.length) return null
-  const visible = showMore ? starters : starters.slice(0, 2)
-  const hasMore = starters.length > 2
 
   return (
-    <div style={{ paddingTop: 14, marginTop: 14, borderTop: `1px solid ${GENERAL.line.soft}` }}>
-      <div style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 4 }}>{heading}</div>
-      <div>
-        {visible.map(starter => (
-          <button
-            key={starter}
-            type="button"
-            onClick={() => onChoose(starter)}
-            style={{ width: '100%', minHeight: 44, padding: '10px 0', border: 0, borderBottom: `1px solid ${GENERAL.line.soft}`, background: 'none', color: text.textFact, textAlign: 'left', cursor: 'pointer', ...TYPE.bodySmall }}
-          >
-            {starter}
-          </button>
-        ))}
-      </div>
-      {hasMore && (
-        <button type="button" onClick={onToggleMore} style={{ minHeight: 40, padding: '9px 0 0', border: 0, background: 'none', color: text.textSecondary, cursor: 'pointer', ...TYPE.button }}>
-          {showMore ? 'Fewer prompts' : moreLabel}
-        </button>
+    <div style={{ marginTop: 16, borderTop: `1px solid ${GENERAL.line.soft}`, borderBottom: `1px solid ${GENERAL.line.soft}` }}>
+      <button
+        type="button"
+        aria-expanded={expanded}
+        aria-controls={regionId}
+        onClick={onToggle}
+        style={{ width: '100%', minHeight: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '13px 0', border: 0, background: 'none', color: text.textPrimary, textAlign: 'left', cursor: 'pointer', ...TYPE.bodyStrong }}
+      >
+        <span>{heading}</span>
+        <span aria-hidden="true" className="qa-motion" style={{ flex: '0 0 auto', color: text.textSecondary, fontSize: 20, lineHeight: 1, transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>⌄</span>
+      </button>
+      {expanded && (
+        <div id={regionId} className="qa-motion" style={{ paddingBottom: 6, borderTop: `1px solid ${GENERAL.line.soft}`, animation: 'qa-rise 0.24s ease both' }}>
+          {starters.map(starter => (
+            <button
+              key={starter}
+              type="button"
+              onClick={() => onChoose(starter)}
+              style={{ width: '100%', minHeight: 46, padding: '11px 0', border: 0, borderBottom: `1px solid ${GENERAL.line.soft}`, background: 'none', color: text.textFact, textAlign: 'left', cursor: 'pointer', ...TYPE.bodySmall }}
+            >
+              {starter}
+            </button>
+          ))}
+        </div>
       )}
     </div>
   )
@@ -275,7 +280,6 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   const interpretationInstruction = block.interpretationInstruction || 'Use your own words. A rough idea is enough.'
   const interpretationStarters = resolveDefaultStarters(block, literaryMeta)
   const interpretationStarterHeading = block.interpretationStarterHeading || 'Need a way in?'
-  const interpretationMoreLabel = block.interpretationMoreLabel || 'More prompts'
   const support = {
     noAnswerTitle: block.interpretationSupport?.noAnswerTitle || 'Give me an idea to work with',
     noAnswerBody: block.interpretationSupport?.noAnswerBody || 'That answer does not explain the quote yet. Try one sentence about what the speaker feels, wants or hides.',
@@ -298,7 +302,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   const [checking, setChecking] = useState(false)
   const [checkError, setCheckError] = useState('')
   const [showInterpretationHint, setShowInterpretationHint] = useState(false)
-  const [showMoreStarters, setShowMoreStarters] = useState(false)
+  const [promptsExpanded, setPromptsExpanded] = useState(false)
   const textareaRef = useRef(null)
 
   useEffect(() => {
@@ -360,7 +364,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
     setFeedback(null)
     setCheckError('')
     setShowInterpretationHint(false)
-    setShowMoreStarters(false)
+    setPromptsExpanded(false)
   }
 
   function insertStarter(starter) {
@@ -368,6 +372,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
       const existing = current.trimEnd()
       return `${existing}${existing ? '\n' : ''}${starter} `
     })
+    setPromptsExpanded(false)
     window.requestAnimationFrame(() => textareaRef.current?.focus())
   }
 
@@ -521,9 +526,8 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
             <StarterPrompts
               starters={interpretationStarters}
               heading={interpretationStarterHeading}
-              moreLabel={interpretationMoreLabel}
-              showMore={showMoreStarters}
-              onToggleMore={() => setShowMoreStarters(current => !current)}
+              expanded={promptsExpanded}
+              onToggle={() => setPromptsExpanded(current => !current)}
               onChoose={insertStarter}
               text={text}
             />
