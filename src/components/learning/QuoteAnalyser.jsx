@@ -11,12 +11,13 @@ function ensureStyles() {
   style.textContent = `
     @keyframes qa-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes qa-drift { 0%,100% { transform: scale(1.04) translate3d(-1%, -1%, 0); } 50% { transform: scale(1.07) translate3d(1%, 1%, 0); } }
+    @keyframes qa-pulse { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
     @media (prefers-reduced-motion: reduce) { .qa-motion { animation: none !important; transition: none !important; } }
   `
   document.head.appendChild(style)
 }
 
-const STEPS = ['read', 'words', 'meaning', 'essay']
+const STEPS = ['read', 'interpret', 'words', 'meaning', 'essay']
 const TEMP_MACBETH_BACKGROUND = '/English/Macbeth/heroes/macbeth-generic-banner.svg'
 
 const WORDS = {
@@ -65,7 +66,7 @@ function Paper({ children, accentRgb, background }) {
 function QuoteText({ words, visibleWords, parchment, accent, accentRgb, interactive = false, onWord, centred = false, compact = false }) {
   return (
     <blockquote style={{ margin: 0 }}>
-      <p style={{ margin: 0, fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: compact ? 'clamp(25px, 7vw, 34px)' : 'clamp(34px, 9.1vw, 46px)', lineHeight: centred ? 1.13 : 1.08, fontWeight: centred ? 500 : 600, letterSpacing: centred ? '-0.025em' : '-0.035em', color: parchment, textAlign: centred ? 'center' : 'left', textWrap: 'balance', textShadow: centred ? '0 16px 40px rgba(0,0,0,0.62)' : 'none' }}>
+      <p style={{ margin: 0, fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: compact ? 'clamp(24px, 6.8vw, 33px)' : 'clamp(34px, 9.1vw, 46px)', lineHeight: centred ? 1.13 : 1.08, fontWeight: centred ? 500 : 600, letterSpacing: centred ? '-0.025em' : '-0.035em', color: parchment, textAlign: centred ? 'center' : 'left', textWrap: 'balance', textShadow: centred ? '0 16px 40px rgba(0,0,0,0.62)' : 'none' }}>
         {words.map((word, index) => {
           const key = clean(word)
           const marked = Boolean(WORDS[key])
@@ -76,6 +77,30 @@ function QuoteText({ words, visibleWords, parchment, accent, accentRgb, interact
         })}
       </p>
     </blockquote>
+  )
+}
+
+function EvidenceTags({ evidence, accentRgb }) {
+  if (!Array.isArray(evidence) || evidence.length === 0) return null
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 10 }}>
+      {evidence.map(item => (
+        <span key={item} style={{ ...TYPE.caption, color: 'rgba(233,225,211,0.86)', padding: '5px 9px', borderRadius: RADII.pill, background: `rgba(${accentRgb}, 0.14)`, border: `1px solid rgba(${accentRgb}, 0.25)` }}>
+          “{item}”
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function FeedbackInsight({ insight, accent, accentRgb }) {
+  if (!insight) return null
+  return (
+    <div style={{ paddingLeft: 14, borderLeft: `2px solid rgba(${accentRgb}, 0.62)` }}>
+      <p style={{ ...TYPE.bodyStrong, color: 'rgba(233,225,211,0.92)', margin: 0 }}>{insight.idea}</p>
+      <EvidenceTags evidence={insight.evidence} accentRgb={accentRgb} />
+      {insight.explanation && <p style={{ ...TYPE.bodySmall, color: 'rgba(233,225,211,0.66)', margin: '10px 0 0' }}>{insight.explanation}</p>}
+    </div>
   )
 }
 
@@ -117,6 +142,10 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   const [activeWord, setActiveWord] = useState(null)
   const [openedWords, setOpenedWords] = useState(new Set())
   const [reducedMotion, setReducedMotion] = useState(false)
+  const [interpretation, setInterpretation] = useState('')
+  const [feedback, setFeedback] = useState(null)
+  const [checking, setChecking] = useState(false)
+  const [checkError, setCheckError] = useState('')
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return undefined
@@ -172,6 +201,39 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
     setActiveWord(null)
   }
 
+  async function checkInterpretation() {
+    const answer = interpretation.trim()
+    if (answer.length < 12 || checking) return
+
+    setChecking(true)
+    setCheckError('')
+
+    const controller = new AbortController()
+    const timeout = window.setTimeout(() => controller.abort(), 25000)
+
+    try {
+      const response = await fetch(block.analysisEndpoint || '/api/quoteAnalysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({
+          quote: block.quote,
+          location: block.location,
+          answer,
+          referenceIdeas: block.analysisIdeas || [],
+        }),
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(data.error || 'The interpretation could not be checked just now')
+      setFeedback(data)
+    } catch (error) {
+      setCheckError(error.name === 'AbortError' ? 'That took too long. Try checking it again.' : error.message)
+    } finally {
+      window.clearTimeout(timeout)
+      setChecking(false)
+    }
+  }
+
   const outer = { position: 'relative', minHeight: '100dvh', overflow: 'hidden', background: palette.background, color: parchment }
   const page = { position: 'relative', zIndex: 1, width: '100%', maxWidth: 430, minHeight: '100dvh', margin: '0 auto', padding: 'max(18px, env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom))', display: 'flex', flexDirection: 'column' }
 
@@ -183,7 +245,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   }
 
   function Nav({ label }) {
-    return <div style={{ display: 'flex', alignItems: 'center', minHeight: 42, margin: '0 6px 12px' }}><button type="button" onClick={back} style={{ minHeight: 40, border: 0, background: 'none', color: 'rgba(233,225,211,0.72)', ...TYPE.label }}>← Back</button><div style={{ flex: 1, textAlign: 'right', ...TYPE.caption, color: `rgba(${accentRgb}, 0.78)` }}>{label}</div></div>
+    return <div style={{ display: 'flex', alignItems: 'center', minHeight: 42, margin: '0 6px 12px' }}><button type="button" onClick={back} style={{ minHeight: 40, border: 0, background: 'none', color: 'rgba(233,225,211,0.72)', cursor: 'pointer', ...TYPE.label }}>← Back</button><div style={{ flex: 1, textAlign: 'right', ...TYPE.caption, color: `rgba(${accentRgb}, 0.78)` }}>{label}</div></div>
   }
 
   if (step === 'read') {
@@ -202,6 +264,61 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
         <div className="qa-motion" aria-hidden={!showCTA} style={{ opacity: showCTA ? 1 : 0, transform: showCTA ? 'translateY(0)' : 'translateY(18px)', transition: 'opacity 0.55s ease, transform 0.55s ease', pointerEvents: showCTA ? 'auto' : 'none' }}>
           <ContinueCTA onClick={next} label="What do you think it means?" accent={accent} textColor={parchment} />
         </div>
+      </main>
+    </div>
+  }
+
+  if (step === 'interpret') {
+    const hints = block.interpretationHints || ['What is the speaker feeling?', 'What do they want?', 'Why might they hide it?']
+    return <div style={outer}>
+      <Atmosphere cinematic />
+      <main style={{ ...page, overflowY: 'auto', paddingLeft: 18, paddingRight: 18 }}>
+        <Nav label="Your interpretation" />
+        <div className="qa-motion" style={{ padding: '14px 10px 20px', animation: 'qa-rise 0.35s ease both' }}>
+          <QuoteText words={words} visibleWords={words.length} parchment={parchment} accent={accent} accentRgb={accentRgb} centred compact />
+          <p style={{ ...TYPE.caption, color: 'rgba(233,225,211,0.52)', textAlign: 'center', margin: '10px 0 0' }}>{block.location}</p>
+        </div>
+
+        <section className="qa-motion" style={{ marginTop: 8, padding: '22px 18px 18px', borderRadius: 28, background: 'linear-gradient(180deg, rgba(31,28,27,0.98), rgba(15,14,15,0.99))', border: `1px solid rgba(${accentRgb}, 0.28)`, boxShadow: '0 24px 70px rgba(0,0,0,0.42)', animation: 'qa-rise 0.42s ease 0.08s both' }}>
+          {!feedback ? <>
+            <h2 style={{ ...TYPE.displaySection, color: parchment, margin: 0 }}>{block.interpretationPrompt || 'What do you think this quote reveals?'}</h2>
+            <p style={{ ...TYPE.bodySmall, color: 'rgba(233,225,211,0.62)', margin: '9px 0 16px' }}>Use your own words. A rough idea is enough.</p>
+            <textarea
+              value={interpretation}
+              onChange={event => { setInterpretation(event.target.value); setCheckError('') }}
+              placeholder={block.interpretationPlaceholder || 'I think Macbeth is showing...'}
+              maxLength={1400}
+              rows={6}
+              aria-label="Your interpretation of the quote"
+              style={{ width: '100%', minHeight: 142, resize: 'vertical', boxSizing: 'border-box', padding: '14px 15px', borderRadius: 18, border: `1px solid rgba(${accentRgb}, 0.30)`, outline: 'none', background: 'rgba(233,225,211,0.055)', color: parchment, caretColor: accent, ...TYPE.body, lineHeight: 1.55 }}
+            />
+            <p style={{ ...TYPE.caption, color: 'rgba(233,225,211,0.46)', margin: '11px 2px 0' }}>Think about: {hints.join(' · ')}</p>
+            <div aria-live="polite" style={{ minHeight: checkError || checking ? 34 : 14, marginTop: 8 }}>
+              {checking && <p className="qa-motion" style={{ ...TYPE.caption, color: accent, margin: 0, animation: 'qa-pulse 1.2s ease-in-out infinite' }}>Reading your interpretation…</p>}
+              {checkError && <p style={{ ...TYPE.caption, color: '#DFA0A8', margin: 0 }}>{checkError}</p>}
+            </div>
+            <ContinueCTA onClick={checkInterpretation} label={checking ? 'Checking your interpretation…' : 'Check my interpretation'} accent={accent} textColor={parchment} disabled={checking || interpretation.trim().length < 12} style={{ marginTop: 10 }} />
+            {checkError && <button type="button" onClick={next} style={{ width: '100%', minHeight: 44, marginTop: 8, border: 0, background: 'none', color: 'rgba(233,225,211,0.60)', cursor: 'pointer', ...TYPE.button }}>Continue without checking</button>}
+          </> : <>
+            <div style={{ ...TYPE.label, color: accent, marginBottom: 7 }}>What you understood</div>
+            <p style={{ ...TYPE.bodyLarge, color: parchment, margin: '0 0 19px' }}>{feedback.verdict}</p>
+
+            <div style={{ padding: '16px 15px', borderRadius: 20, background: 'rgba(233,225,211,0.045)', border: '1px solid rgba(233,225,211,0.10)' }}>
+              <div style={{ ...TYPE.label, color: 'rgba(233,225,211,0.72)', marginBottom: 14 }}>{feedback.strengths?.length ? 'You spotted' : 'Your starting point'}</div>
+              {feedback.strengths?.length
+                ? <div style={{ display: 'grid', gap: 18 }}>{feedback.strengths.map((insight, index) => <FeedbackInsight key={`${insight.idea}-${index}`} insight={insight} accent={accent} accentRgb={accentRgb} />)}</div>
+                : <p style={{ ...TYPE.body, color: 'rgba(233,225,211,0.72)', margin: 0 }}>You have made a start. Now we can anchor the idea to the writer’s exact words.</p>}
+            </div>
+
+            <div style={{ marginTop: 12, padding: '16px 15px', borderRadius: 20, background: `rgba(${accentRgb}, 0.10)`, border: `1px solid rgba(${accentRgb}, 0.22)` }}>
+              <div style={{ ...TYPE.label, color: accent, marginBottom: 14 }}>One more layer</div>
+              <FeedbackInsight insight={feedback.nextLayer} accent={accent} accentRgb={accentRgb} />
+            </div>
+
+            <ContinueCTA onClick={next} label="Look closer at the words" accent={accent} textColor={parchment} style={{ marginTop: 20 }} />
+            <button type="button" onClick={() => { setFeedback(null); setCheckError('') }} style={{ width: '100%', minHeight: 44, marginTop: 7, border: 0, background: 'none', color: 'rgba(233,225,211,0.58)', cursor: 'pointer', ...TYPE.button }}>Edit my answer</button>
+          </>}
+        </section>
       </main>
     </div>
   }
