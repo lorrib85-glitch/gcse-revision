@@ -1,4 +1,5 @@
 import ColSortBlockCore from './ColSortBlockCore.jsx'
+import { SUBJECTS } from '../../constants/subjects.js'
 
 const POLISH_CSS = `
   .colsort-polish header {
@@ -13,7 +14,14 @@ const POLISH_CSS = `
     min-height: 138px !important;
   }
 
+  /* Both destinations are valid choices, so they share equal resting emphasis. */
+  .colsort-polish .csb-tray > div:first-child > span:first-child {
+    color: var(--colsort-accent) !important;
+    border-color: color-mix(in srgb, var(--colsort-accent) 34%, transparent) !important;
+  }
+
   .colsort-polish .csb-tray > div:first-child > span:last-child {
+    color: var(--colsort-accent) !important;
     font-size: 0.92em !important;
     line-height: 1.12 !important;
   }
@@ -29,7 +37,7 @@ const POLISH_CSS = `
     align-items: center !important;
     justify-content: center !important;
     gap: 6px !important;
-    color: rgba(245,238,225,0.50) !important;
+    color: rgba(245,238,225,0.64) !important;
   }
 
   .colsort-polish .csb-tray:not(:has(.csb-sorted-tile)) > div:last-child::before {
@@ -37,7 +45,7 @@ const POLISH_CSS = `
     display: block;
     font-size: 14px;
     line-height: 1;
-    color: rgba(245,238,225,0.28);
+    color: rgba(245,238,225,0.36);
     transition: color 180ms ease, transform 180ms ease;
   }
 
@@ -50,31 +58,25 @@ const POLISH_CSS = `
     isolation: isolate;
   }
 
-  .colsort-polish .csb-current-card::before,
-  .colsort-polish .csb-current-card::after {
+  /* One quiet rear card suggests a queue without creating a heavy stack. */
+  .colsort-polish .csb-current-card::before {
     content: '';
     position: absolute;
+    z-index: -1;
     pointer-events: none;
     border-radius: inherit;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(12,12,15,0.88);
+    inset: 5px 7px -6px;
+    border: 1px solid rgba(255,255,255,0.055);
+    background: rgba(12,12,15,0.74);
+    opacity: 0.46;
     transition: opacity 160ms ease, transform 160ms ease;
   }
 
-  .colsort-polish .csb-current-card::before {
-    z-index: -1;
-    inset: 5px 7px -6px;
-    opacity: 0.72;
-  }
-
   .colsort-polish .csb-current-card::after {
-    z-index: -2;
-    inset: 10px 13px -11px;
-    opacity: 0.42;
+    content: none !important;
   }
 
-  .colsort-polish .csb-current-card:active::before,
-  .colsort-polish .csb-current-card:active::after {
+  .colsort-polish .csb-current-card:active::before {
     opacity: 0;
     transform: translateY(-3px);
   }
@@ -94,13 +96,20 @@ const POLISH_CSS = `
   }
 
   .colsort-polish .csb-current-card + div {
-    color: rgba(245,238,225,0.52) !important;
+    color: rgba(245,238,225,0.54) !important;
+    font-size: 0 !important;
     font-weight: 500 !important;
     letter-spacing: 0 !important;
   }
 
+  .colsort-polish .csb-current-card + div::after {
+    content: 'Tap a column or drag the card';
+    font: 500 0.82rem/1.2 'Sora', sans-serif;
+    letter-spacing: 0;
+  }
+
   .colsort-polish:has(.csb-current-card:active) .csb-tray {
-    opacity: 0.52 !important;
+    opacity: 0.48 !important;
   }
 
   .colsort-polish:has(.csb-current-card:active) .csb-tray[style*='translateY(-3px)'] {
@@ -109,7 +118,6 @@ const POLISH_CSS = `
 
   @media (prefers-reduced-motion: reduce) {
     .colsort-polish .csb-current-card::before,
-    .colsort-polish .csb-current-card::after,
     .colsort-polish .csb-tray:not(:has(.csb-sorted-tile)) > div:last-child::before {
       transition: none !important;
     }
@@ -124,6 +132,8 @@ export default function ColSortBlock({ block, ...props }) {
   const columnNames = (block.columns || []).map(column => firstLine(column.label))
   const changeContinuity = columnNames.includes('changed') && columnNames.includes('continued')
   const treatmentInsight = /treatment.*(?:slow|much more slowly)/i.test(block.explanation || '')
+  const subject = props.subject || 'Biology'
+  const theme = SUBJECTS[subject] || SUBJECTS.Biology
 
   const resolvedBlock = {
     ...block,
@@ -140,7 +150,10 @@ export default function ColSortBlock({ block, ...props }) {
   }
 
   return (
-    <div className="colsort-polish">
+    <div
+      className="colsort-polish"
+      style={{ '--colsort-accent': theme.accent }}
+    >
       <style>{POLISH_CSS}</style>
       <ColSortBlockCore block={resolvedBlock} {...props} />
     </div>
