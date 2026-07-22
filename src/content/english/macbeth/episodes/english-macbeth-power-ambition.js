@@ -73,13 +73,11 @@ export default {
       location: 'Act 1, Scene 4 — Macbeth',
       backgroundImage: '/English/Macbeth/heroes/macbeth-generic-banner.svg',
       context: {
-        label: 'The moment before',
         beats: [
           'King Duncan names Malcolm as the next heir to the throne.',
           'Macbeth realises Malcolm now stands between him and the crown.',
         ],
         transition: 'Macbeth turns his thoughts towards the stars…',
-        continueLabel: 'Hear what Macbeth reveals',
       },
       quoteContinueLabel: 'What do you think it means?',
       interpretationLabel: 'Your interpretation',
