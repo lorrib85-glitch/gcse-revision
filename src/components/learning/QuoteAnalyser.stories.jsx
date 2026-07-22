@@ -34,6 +34,8 @@ const MACBETH_BLOCK = {
     'Macbeth wants to hide…',
     'This reveals that Macbeth is…',
   ],
+  wordAnalysisNextStep: 'essay',
+  wordAnalysisCompleteLabel: 'Use it in an essay',
   wordAnalysis: {
     fires: {
       technique: 'Light imagery',
