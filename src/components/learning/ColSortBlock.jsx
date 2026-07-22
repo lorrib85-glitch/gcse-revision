@@ -3,7 +3,8 @@ import { SUBJECTS } from '../../constants/subjects.js'
 
 const FOCUS_CSS = `
   .colsort-focus section {
-    padding-bottom: 48px !important;
+    padding-top: 28px !important;
+    padding-bottom: 82px !important;
   }
 
   .colsort-focus section > div:last-child {
@@ -13,7 +14,9 @@ const FOCUS_CSS = `
 
   .colsort-focus .csb-heading {
     order: 1;
-    margin-bottom: 14px !important;
+    margin-bottom: 22px !important;
+    animation: none !important;
+    transform: none !important;
   }
 
   /* The thinking cue belongs before the choices, where it can guide the sort. */
@@ -23,8 +26,8 @@ const FOCUS_CSS = `
 
   .colsort-focus .csb-card-stage > div:last-child:has(svg) {
     order: 2;
-    margin: 0 0 14px !important;
-    padding: 8px 2px 8px 12px !important;
+    margin: 0 0 20px !important;
+    padding: 10px 4px 10px 14px !important;
     border: 0 !important;
     border-left: 2px solid color-mix(in srgb, var(--colsort-accent) 48%, transparent) !important;
     border-radius: 0 !important;
@@ -38,7 +41,8 @@ const FOCUS_CSS = `
 
   .colsort-focus .csb-trays {
     order: 3;
-    margin-bottom: 12px !important;
+    gap: 16px !important;
+    margin-bottom: 20px !important;
   }
 
   /* Trays are destinations, not the primary content. Keep them calm until targeted. */
@@ -68,6 +72,7 @@ const FOCUS_CSS = `
   /* The statement being handled is the visual focus of the interaction. */
   .colsort-focus .csb-current-card {
     order: 4;
+    margin-top: 2px !important;
     border-color: color-mix(in srgb, var(--colsort-accent) 82%, transparent) !important;
     background:
       radial-gradient(circle at 12% 50%, color-mix(in srgb, var(--colsort-accent) 11%, transparent), transparent 34%),
@@ -90,6 +95,7 @@ const FOCUS_CSS = `
 
   .colsort-focus .csb-current-card + div {
     order: 5;
+    margin-top: 13px !important;
   }
 
   .colsort-focus .csb-current-card + div + div {
@@ -100,17 +106,31 @@ const FOCUS_CSS = `
     order: 4;
   }
 
-  /* Keep local progress visible but quiet, centred beneath the whole task. */
+  /* Local sequence progress sits alone at the bottom of the task. */
   .colsort-focus .csb-progress {
     position: absolute !important;
     left: 50% !important;
-    bottom: 8px !important;
-    width: 132px !important;
+    bottom: 12px !important;
+    width: auto !important;
     margin: 0 !important;
     transform: translateX(-50%) !important;
     animation: none !important;
-    opacity: 0.76;
+    opacity: 0.8;
     z-index: 2;
+  }
+
+  .colsort-focus .csb-progress > div {
+    width: auto !important;
+    justify-content: center !important;
+    gap: 9px !important;
+  }
+
+  .colsort-focus .csb-progress > div > div {
+    flex: 0 0 7px !important;
+    width: 7px !important;
+    max-width: 7px !important;
+    height: 7px !important;
+    border-radius: 999px !important;
   }
 
   @media (prefers-reduced-motion: reduce) {
