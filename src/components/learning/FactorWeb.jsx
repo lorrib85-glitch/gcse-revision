@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { COMPONENT_TEXT_LIMITS } from '../../constants/contentLimits.js'
-import { FACTOR_WEB_LAYOUT, FACTOR_WEB_VISUAL } from '../../constants/factorWeb.js'
+import {
+  FACTOR_WEB_LAYOUT,
+  FACTOR_WEB_MOTION,
+  FACTOR_WEB_VISUAL,
+} from '../../constants/factorWeb.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { SPACING } from '../../constants/spacing.js'
@@ -19,6 +24,8 @@ const DEFAULT_CENTRE_LABELS = {
   themes: 'Big picture',
   process: 'How it worked',
 }
+
+const subjectRgba = (rgb, opacity) => `rgba(${rgb},${opacity})`
 
 export const FACTOR_WEB_TITLE_MAX_LENGTH = COMPONENT_TEXT_LIMITS.factorWeb.title
 
@@ -52,8 +59,12 @@ function focalRowsForCount(count) {
 
 export function getFocalAnchorX(side, focalAnchorY) {
   const verticalOffset = focalAnchorY - FACTOR_WEB_LAYOUT.focalCenterY
+  const connectorRadius = Math.max(
+    FACTOR_WEB_LAYOUT.focalRadius - FACTOR_WEB_LAYOUT.connectorUnderlap,
+    0,
+  )
   const horizontalOffset = Math.sqrt(
-    Math.max(FACTOR_WEB_LAYOUT.focalRadius ** 2 - verticalOffset ** 2, 0),
+    Math.max(connectorRadius ** 2 - verticalOffset ** 2, 0),
   )
 
   return FACTOR_WEB_LAYOUT.focalCenterX + (side === 'left' ? -horizontalOffset : horizontalOffset)
@@ -120,26 +131,35 @@ function FocalPlaceholderGlyph({ accent }) {
 function FactorDetail({ factor, accent, rgb, prefersReduced }) {
   const transition = prefersReduced
     ? { duration: 0 }
-    : { duration: 0.28, ease: 'easeOut' }
+    : {
+        duration: FACTOR_WEB_MOTION.duration.standard,
+        ease: FACTOR_WEB_MOTION.ease,
+      }
 
   return (
     <motion.section
       key={factor.id}
       aria-live="polite"
-      initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 12 }}
+      initial={{
+        opacity: prefersReduced ? 1 : 0,
+        y: prefersReduced ? 0 : FACTOR_WEB_MOTION.detailEnterY,
+      }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: prefersReduced ? 0 : 8 }}
+      exit={{
+        opacity: 0,
+        y: prefersReduced ? 0 : FACTOR_WEB_MOTION.detailExitY,
+      }}
       transition={transition}
       style={{
         padding: SPACING.standard,
         borderRadius: RADII.large,
-        background: 'rgba(255,255,255,0.035)',
-        border: `1px solid rgba(${rgb},0.20)`,
+        background: GENERAL.surfaceTint,
+        border: `${FACTOR_WEB_VISUAL.borderWidth}px solid ${subjectRgba(rgb, FACTOR_WEB_VISUAL.detailBorderOpacity)}`,
       }}
     >
       <h2 style={{
         ...TYPE.displayCard,
-        color: 'rgba(245,245,245,0.96)',
+        color: GENERAL.cinematic.textPrimary,
         margin: 0,
       }}>
         {factor.title}
@@ -158,7 +178,7 @@ function FactorDetail({ factor, accent, rgb, prefersReduced }) {
       <div style={{
         marginTop: SPACING.compact,
         paddingTop: SPACING.compact,
-        borderTop: '1px solid rgba(255,255,255,0.07)',
+        borderTop: `${FACTOR_WEB_VISUAL.borderWidth}px solid ${GENERAL.line.soft}`,
         display: 'flex',
         flexDirection: 'column',
         gap: SPACING.compact,
@@ -167,7 +187,7 @@ function FactorDetail({ factor, accent, rgb, prefersReduced }) {
           <p style={{ ...TYPE.label, color: accent, margin: `0 0 ${SPACING.micro}px` }}>
             What it means
           </p>
-          <p style={{ ...TYPE.body, color: 'rgba(245,245,245,0.78)', margin: 0 }}>
+          <p style={{ ...TYPE.body, color: GENERAL.cinematic.textSecondary, margin: 0 }}>
             {factor.whatItMeans}
           </p>
         </div>
@@ -176,20 +196,24 @@ function FactorDetail({ factor, accent, rgb, prefersReduced }) {
           <p style={{ ...TYPE.label, color: accent, margin: `0 0 ${SPACING.micro}px` }}>
             Why it mattered
           </p>
-          <p style={{ ...TYPE.body, color: 'rgba(245,245,245,0.78)', margin: 0 }}>
+          <p style={{ ...TYPE.body, color: GENERAL.cinematic.textSecondary, margin: 0 }}>
             {factor.whyItMattered}
           </p>
         </div>
 
         {factor.linkedFactor && (
           <div style={{
-            borderLeft: `2px solid rgba(${rgb},0.55)`,
+            borderLeft: `${FACTOR_WEB_VISUAL.linkedBorderWidth}px solid ${subjectRgba(rgb, FACTOR_WEB_VISUAL.linkedBorderOpacity)}`,
             paddingLeft: SPACING.compact,
           }}>
-            <p style={{ ...TYPE.label, color: `rgba(${rgb},0.82)`, margin: `0 0 ${SPACING.micro}px` }}>
+            <p style={{
+              ...TYPE.label,
+              color: subjectRgba(rgb, FACTOR_WEB_VISUAL.linkedLabelOpacity),
+              margin: `0 0 ${SPACING.micro}px`,
+            }}>
               Linked factor
             </p>
-            <p style={{ ...TYPE.bodySmall, color: 'rgba(245,245,245,0.62)', margin: 0 }}>
+            <p style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted, margin: 0 }}>
               {factor.linkedFactor}
             </p>
           </div>
@@ -202,21 +226,30 @@ function FactorDetail({ factor, accent, rgb, prefersReduced }) {
 function CentreFocal({ block, centreLabel, accent, rgb, prefersReduced }) {
   const centreImage = block.centreImage || block.centerImage
   const centreImageAlt = block.centreImageAlt || block.centerImageAlt
+  const centreImagePosition = block.centreImagePosition
+    || block.centerImagePosition
+    || FACTOR_WEB_VISUAL.focalImagePosition
 
   return (
     <motion.div
-      initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.94 }}
+      initial={{
+        opacity: prefersReduced ? 1 : 0,
+        scale: prefersReduced ? 1 : FACTOR_WEB_MOTION.centreInitialScale,
+      }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={prefersReduced ? { duration: 0 } : { duration: 0.42, ease: 'easeOut' }}
+      transition={prefersReduced
+        ? { duration: 0 }
+        : {
+            duration: FACTOR_WEB_MOTION.duration.slow,
+            ease: FACTOR_WEB_MOTION.ease,
+          }}
       style={{
         position: 'absolute',
-        left: '50%',
+        left: `${FACTOR_WEB_LAYOUT.focalCenterX}%`,
         top: `${FACTOR_WEB_LAYOUT.focalCenterY}%`,
         translate: '-50% -50%',
-        width: FACTOR_WEB_LAYOUT.focalColumnWidth,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        width: `${FACTOR_WEB_LAYOUT.focalDiameter}%`,
+        aspectRatio: '1',
         zIndex: 3,
       }}
     >
@@ -224,15 +257,15 @@ function CentreFocal({ block, centreLabel, accent, rgb, prefersReduced }) {
         aria-hidden="true"
         style={{
           position: 'absolute',
-          top: 0,
           left: '50%',
-          translate: '-50% -20%',
-          width: FACTOR_WEB_VISUAL.haloSize,
-          height: FACTOR_WEB_VISUAL.haloSize,
+          top: '50%',
+          translate: '-50% -50%',
+          width: `${FACTOR_WEB_VISUAL.haloScale * 100}%`,
+          aspectRatio: '1',
           borderRadius: '50%',
-          background: `rgba(${rgb},${FACTOR_WEB_VISUAL.haloOpacity})`,
+          background: subjectRgba(rgb, FACTOR_WEB_VISUAL.haloOpacity),
           filter: `blur(${FACTOR_WEB_VISUAL.haloBlur}px)`,
-          opacity: 0.74,
+          opacity: FACTOR_WEB_VISUAL.haloLayerOpacity,
           pointerEvents: 'none',
           zIndex: -2,
         }}
@@ -242,14 +275,10 @@ function CentreFocal({ block, centreLabel, accent, rgb, prefersReduced }) {
         aria-hidden="true"
         style={{
           position: 'absolute',
-          top: 0,
-          left: '50%',
-          translate: '-50% -4%',
-          width: FACTOR_WEB_LAYOUT.focalSize,
-          height: FACTOR_WEB_LAYOUT.focalSize,
+          inset: 0,
           borderRadius: '50%',
-          background: `radial-gradient(circle, rgba(${rgb},${FACTOR_WEB_VISUAL.haloCoreOpacity}), transparent 68%)`,
-          boxShadow: `0 0 30px rgba(${rgb},0.30)`,
+          background: `radial-gradient(circle, ${subjectRgba(rgb, FACTOR_WEB_VISUAL.haloCoreOpacity)}, transparent ${FACTOR_WEB_VISUAL.haloCoreStop}%)`,
+          boxShadow: `0 0 ${FACTOR_WEB_VISUAL.focalGlowBlur}px ${subjectRgba(rgb, FACTOR_WEB_VISUAL.focalGlowOpacity)}`,
           pointerEvents: 'none',
           zIndex: -1,
         }}
@@ -260,17 +289,22 @@ function CentreFocal({ block, centreLabel, accent, rgb, prefersReduced }) {
         aria-label={centreImage ? undefined : `Image placeholder for ${centreLabel}`}
         style={{
           position: 'relative',
-          width: FACTOR_WEB_LAYOUT.focalSize,
-          height: FACTOR_WEB_LAYOUT.focalSize,
-          flexShrink: 0,
+          width: '100%',
+          height: '100%',
           borderRadius: '50%',
           overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: centreImage ? 'rgba(8,8,8,0.94)' : `rgba(${rgb},0.055)`,
-          border: `1.5px ${centreImage ? 'solid' : 'dashed'} rgba(${rgb},0.76)`,
-          boxShadow: `0 0 0 5px rgba(${rgb},0.045), 0 0 26px rgba(${rgb},0.24), 0 16px 36px rgba(0,0,0,0.36)`,
+          background: centreImage
+            ? GENERAL.backgroundApp
+            : subjectRgba(rgb, FACTOR_WEB_VISUAL.focalPlaceholderFillOpacity),
+          border: `${FACTOR_WEB_VISUAL.activeBorderWidth}px ${centreImage ? 'solid' : 'dashed'} ${subjectRgba(rgb, FACTOR_WEB_VISUAL.focalBorderOpacity)}`,
+          boxShadow: [
+            `0 0 0 ${FACTOR_WEB_VISUAL.focalOuterRingWidth}px ${subjectRgba(rgb, FACTOR_WEB_VISUAL.focalOuterRingOpacity)}`,
+            `0 0 ${FACTOR_WEB_VISUAL.focalGlowBlur}px ${subjectRgba(rgb, FACTOR_WEB_VISUAL.focalGlowOpacity)}`,
+            GENERAL.shadow.overlay,
+          ].join(', '),
         }}
       >
         {centreImage ? (
@@ -281,8 +315,8 @@ function CentreFocal({ block, centreLabel, accent, rgb, prefersReduced }) {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              objectPosition: block.centreImagePosition || block.centerImagePosition || 'center 22%',
-              filter: 'saturate(0.82) contrast(1.05) brightness(0.84)',
+              objectPosition: centreImagePosition,
+              filter: FACTOR_WEB_VISUAL.focalImageFilter,
             }}
           />
         ) : (
@@ -295,7 +329,7 @@ function CentreFocal({ block, centreLabel, accent, rgb, prefersReduced }) {
             position: 'absolute',
             inset: FACTOR_WEB_LAYOUT.focalRingInset,
             borderRadius: '50%',
-            border: `1px solid rgba(${rgb},0.20)`,
+            border: `${FACTOR_WEB_VISUAL.borderWidth}px solid ${subjectRgba(rgb, FACTOR_WEB_VISUAL.focalRingOpacity)}`,
             pointerEvents: 'none',
           }}
         />
@@ -303,10 +337,13 @@ function CentreFocal({ block, centreLabel, accent, rgb, prefersReduced }) {
 
       <div style={{
         ...TYPE.titleMedium,
+        position: 'absolute',
+        top: `calc(100% + ${FACTOR_WEB_LAYOUT.focalLabelGap}px)`,
+        left: '50%',
+        translate: '-50% 0',
+        width: FACTOR_WEB_LAYOUT.focalColumnWidth,
         color: accent,
         textAlign: 'center',
-        marginTop: FACTOR_WEB_LAYOUT.focalLabelGap,
-        maxWidth: FACTOR_WEB_LAYOUT.focalColumnWidth,
       }}>
         {centreLabel}
       </div>
@@ -330,7 +367,7 @@ function FactorConnector({ entry, slot, accent, rgb, isActive, isExplored, prefe
     : FACTOR_WEB_VISUAL.anchorIdleRadius
 
   const dotStyle = {
-    filter: `drop-shadow(0 0 ${FACTOR_WEB_VISUAL.anchorGlowRadius}px rgba(${rgb},0.48))`,
+    filter: `drop-shadow(0 0 ${FACTOR_WEB_VISUAL.anchorGlowRadius}px ${subjectRgba(rgb, FACTOR_WEB_VISUAL.anchorGlowOpacity)})`,
   }
 
   return (
@@ -341,13 +378,21 @@ function FactorConnector({ entry, slot, accent, rgb, isActive, isExplored, prefe
         strokeWidth={strokeWidth}
         fill="none"
         strokeLinecap="round"
-        initial={{ pathLength: prefersReduced ? 1 : 0, strokeOpacity: 0.08 }}
+        initial={{
+          pathLength: prefersReduced ? 1 : 0,
+          strokeOpacity: FACTOR_WEB_VISUAL.connectorInitialOpacity,
+        }}
         animate={{ pathLength: 1, strokeOpacity: opacity }}
         transition={prefersReduced
           ? { duration: 0 }
           : {
-              pathLength: { delay: 0.16 + entry.originalIndex * 0.06, duration: 0.44, ease: 'easeOut' },
-              strokeOpacity: { duration: 0.2 },
+              pathLength: {
+                delay: FACTOR_WEB_MOTION.connectorDelay
+                  + entry.originalIndex * FACTOR_WEB_MOTION.connectorStagger,
+                duration: FACTOR_WEB_MOTION.duration.slow,
+                ease: FACTOR_WEB_MOTION.ease,
+              },
+              strokeOpacity: { duration: FACTOR_WEB_MOTION.duration.fast },
             }}
       />
 
@@ -359,7 +404,13 @@ function FactorConnector({ entry, slot, accent, rgb, isActive, isExplored, prefe
         style={dotStyle}
         initial={{ opacity: prefersReduced ? opacity : 0 }}
         animate={{ opacity }}
-        transition={prefersReduced ? { duration: 0 } : { delay: 0.30 + entry.originalIndex * 0.06, duration: 0.22 }}
+        transition={prefersReduced
+          ? { duration: 0 }
+          : {
+              delay: FACTOR_WEB_MOTION.anchorDelay
+                + entry.originalIndex * FACTOR_WEB_MOTION.connectorStagger,
+              duration: FACTOR_WEB_MOTION.duration.fast,
+            }}
       />
     </g>
   )
@@ -377,11 +428,19 @@ function FactorNode({ entry, slot, activeId, explored, onNodeTap, accent, rgb, p
       onClick={() => onNodeTap(factor)}
       aria-label={`${isExplored ? 'Review' : 'Explore'} ${factor.title}`}
       aria-pressed={isActive}
-      initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.92 }}
+      initial={{
+        opacity: prefersReduced ? 1 : 0,
+        scale: prefersReduced ? 1 : FACTOR_WEB_MOTION.nodeInitialScale,
+      }}
       animate={{ opacity: 1, scale: 1 }}
       transition={prefersReduced
         ? { duration: 0 }
-        : { delay: 0.26 + entry.originalIndex * 0.07, duration: 0.32, ease: 'easeOut' }}
+        : {
+            delay: FACTOR_WEB_MOTION.nodeDelay
+              + entry.originalIndex * FACTOR_WEB_MOTION.nodeStagger,
+            duration: FACTOR_WEB_MOTION.duration.standard,
+            ease: FACTOR_WEB_MOTION.ease,
+          }}
       style={{
         position: 'absolute',
         left: `${slot.x}%`,
@@ -392,21 +451,21 @@ function FactorNode({ entry, slot, activeId, explored, onNodeTap, accent, rgb, p
         padding: `${SPACING.micro}px ${SPACING.compact}px`,
         borderRadius: RADII.medium,
         border: isActive
-          ? `1.5px solid rgba(${rgb},0.82)`
+          ? `${FACTOR_WEB_VISUAL.activeBorderWidth}px solid ${subjectRgba(rgb, FACTOR_WEB_VISUAL.nodeActiveBorderOpacity)}`
           : isExplored
-            ? `1px solid rgba(${rgb},0.36)`
-            : '1px solid rgba(255,255,255,0.11)',
+            ? `${FACTOR_WEB_VISUAL.borderWidth}px solid ${subjectRgba(rgb, FACTOR_WEB_VISUAL.nodeExploredBorderOpacity)}`
+            : `${FACTOR_WEB_VISUAL.borderWidth}px solid ${GENERAL.line.medium}`,
         background: isActive
-          ? `rgba(${rgb},0.11)`
-          : 'rgba(15,14,12,0.84)',
+          ? subjectRgba(rgb, FACTOR_WEB_VISUAL.nodeActiveFillOpacity)
+          : GENERAL.backgroundSunken,
         color: isActive
           ? accent
           : isExplored
-            ? `rgba(${rgb},0.88)`
-            : 'rgba(245,245,245,0.76)',
+            ? subjectRgba(rgb, FACTOR_WEB_VISUAL.nodeExploredTextOpacity)
+            : GENERAL.cinematic.textSecondary,
         boxShadow: isActive
-          ? `0 0 0 3px rgba(${rgb},0.08), 0 10px 26px rgba(0,0,0,0.30)`
-          : '0 8px 20px rgba(0,0,0,0.18)',
+          ? `0 0 0 ${FACTOR_WEB_VISUAL.nodeActiveRingWidth}px ${subjectRgba(rgb, FACTOR_WEB_VISUAL.nodeActiveRingOpacity)}, ${GENERAL.shadow.raised}`
+          : GENERAL.shadow.raised,
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
@@ -433,11 +492,11 @@ function FactorNode({ entry, slot, activeId, explored, onNodeTap, accent, rgb, p
             position: 'absolute',
             right: SPACING.micro,
             top: SPACING.micro,
-            width: 5,
-            height: 5,
+            width: FACTOR_WEB_LAYOUT.exploredIndicatorSize,
+            height: FACTOR_WEB_LAYOUT.exploredIndicatorSize,
             borderRadius: '50%',
             background: accent,
-            boxShadow: `0 0 8px rgba(${rgb},0.42)`,
+            boxShadow: `0 0 ${FACTOR_WEB_VISUAL.exploredIndicatorGlowRadius}px ${subjectRgba(rgb, FACTOR_WEB_VISUAL.exploredIndicatorGlowOpacity)}`,
           }}
         />
       )}
@@ -457,7 +516,10 @@ function FactorWebDiagram({
 }) {
   const activeIndex = factors.findIndex(factor => factor.id === activeId)
   const viewed = exploredIndexes(factors, explored)
-  const centreLabel = block.centreLabel || block.centerLabel || DEFAULT_CENTRE_LABELS[block.mode] || 'Key factors'
+  const centreLabel = block.centreLabel
+    || block.centerLabel
+    || DEFAULT_CENTRE_LABELS[block.mode]
+    || 'Key factors'
   const columns = splitFactorColumns(factors)
   const entries = [...columns.left, ...columns.right]
 
@@ -479,7 +541,7 @@ function FactorWebDiagram({
         margin: '0 auto',
       }}>
         <svg
-          viewBox="0 0 100 100"
+          viewBox={FACTOR_WEB_LAYOUT.canvasViewBox}
           aria-hidden="true"
           style={{
             position: 'absolute',
@@ -551,7 +613,7 @@ function FactorWebDiagram({
       {explored.size === 0 && (
         <p style={{
           ...TYPE.label,
-          color: `rgba(${rgb},0.68)`,
+          color: subjectRgba(rgb, FACTOR_WEB_VISUAL.linkedLabelOpacity),
           textAlign: 'center',
           margin: `${SPACING.micro}px 0 0`,
         }}>
@@ -565,11 +627,17 @@ function FactorWebDiagram({
 function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent, rgb, prefersReduced }) {
   const transition = prefersReduced
     ? { duration: 0 }
-    : { duration: 0.35, ease: 'easeOut' }
+    : {
+        duration: FACTOR_WEB_MOTION.duration.standard,
+        ease: FACTOR_WEB_MOTION.ease,
+      }
 
   return (
     <motion.div
-      initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 14 }}
+      initial={{
+        opacity: prefersReduced ? 1 : 0,
+        y: prefersReduced ? 0 : FACTOR_WEB_MOTION.judgementEnterY,
+      }}
       animate={{ opacity: 1, y: 0 }}
       transition={transition}
       style={{ display: 'flex', flexDirection: 'column', gap: SPACING.standard }}
@@ -588,7 +656,7 @@ function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent
               onClick={() => onSelect(factor.id)}
               aria-pressed={isSelected}
               style={{
-                minHeight: 52,
+                minHeight: FACTOR_WEB_LAYOUT.judgementOptionMinHeight,
                 width: '100%',
                 display: 'flex',
                 alignItems: 'center',
@@ -597,12 +665,12 @@ function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent
                 padding: `${SPACING.micro}px ${SPACING.compact}px`,
                 borderRadius: RADII.medium,
                 border: isSelected
-                  ? `1.5px solid ${accent}`
-                  : '1px solid rgba(255,255,255,0.10)',
+                  ? `${FACTOR_WEB_VISUAL.activeBorderWidth}px solid ${accent}`
+                  : `${FACTOR_WEB_VISUAL.borderWidth}px solid ${GENERAL.line.medium}`,
                 background: isSelected
-                  ? `rgba(${rgb},0.12)`
-                  : 'rgba(255,255,255,0.03)',
-                color: isSelected ? accent : 'rgba(245,245,245,0.78)',
+                  ? subjectRgba(rgb, FACTOR_WEB_VISUAL.judgementSelectedFillOpacity)
+                  : GENERAL.surfaceTint,
+                color: isSelected ? accent : GENERAL.cinematic.textSecondary,
                 cursor: 'pointer',
                 ...TYPE.button,
               }}
@@ -619,23 +687,26 @@ function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent
       <AnimatePresence>
         {selected && (
           <motion.section
-            initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 10 }}
+            initial={{
+              opacity: prefersReduced ? 1 : 0,
+              y: prefersReduced ? 0 : FACTOR_WEB_MOTION.revealEnterY,
+            }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={prefersReduced ? { duration: 0 } : { duration: 0.28, ease: 'easeOut' }}
+            transition={transition}
             style={{
               padding: SPACING.standard,
               borderRadius: RADII.large,
-              background: 'rgba(255,255,255,0.035)',
-              border: `1px solid rgba(${rgb},0.20)`,
+              background: GENERAL.surfaceTint,
+              border: `${FACTOR_WEB_VISUAL.borderWidth}px solid ${subjectRgba(rgb, FACTOR_WEB_VISUAL.detailBorderOpacity)}`,
             }}
           >
-            <h2 style={{ ...TYPE.displayCard, color: 'rgba(245,245,245,0.96)', margin: 0 }}>
+            <h2 style={{ ...TYPE.displayCard, color: GENERAL.cinematic.textPrimary, margin: 0 }}>
               Explain your judgement
             </h2>
             <p style={{
               ...TYPE.body,
-              color: 'rgba(245,245,245,0.74)',
+              color: GENERAL.cinematic.textSecondary,
               margin: `${SPACING.micro}px 0 0`,
             }}>
               {block.judgementPrompt || 'Use one piece of evidence. Explain why your factor mattered and how it linked to another factor.'}
@@ -645,12 +716,12 @@ function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent
               <div style={{
                 marginTop: SPACING.compact,
                 paddingTop: SPACING.compact,
-                borderTop: '1px solid rgba(255,255,255,0.07)',
+                borderTop: `${FACTOR_WEB_VISUAL.borderWidth}px solid ${GENERAL.line.soft}`,
               }}>
                 <p style={{ ...TYPE.label, color: accent, margin: `0 0 ${SPACING.micro}px` }}>
                   Thinking tip
                 </p>
-                <p style={{ ...TYPE.bodySmall, color: 'rgba(245,245,245,0.62)', margin: 0 }}>
+                <p style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted, margin: 0 }}>
                   {block.thinkingTip}
                 </p>
               </div>
@@ -669,10 +740,10 @@ function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent
   )
 }
 
-// ── FactorWeb v1 — LOCKED COMPONENT ────────────────────────────────────────────────────────────────
+// ── FactorWeb v1 — LOCKED COMPONENT ──────────────────────────────────────────
 // A mobile-first causation and judgement screen. Factors sit in two balanced
-// columns around one historical focal image (or a governed image placeholder),
-// then expand into teaching and a supported relative-importance judgement.
+// columns around one focal image (or a governed image placeholder), then expand
+// into teaching and a supported relative-importance judgement.
 export default function FactorWeb({ block, subject = 'History', onContinue }) {
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const accent = theme.accent
@@ -724,7 +795,7 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
           overflowX: 'hidden',
           overscrollBehaviorX: 'none',
           WebkitOverflowScrolling: 'touch',
-          padding: `${SPACING.compact}px 0 96px`,
+          padding: `${SPACING.compact}px 0 ${FACTOR_WEB_LAYOUT.scrollBottomClearance}px`,
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.standard }}>
@@ -736,9 +807,9 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
             {intro && (
               <p style={{
                 ...TYPE.body,
-                color: 'rgba(245,245,245,0.60)',
+                color: GENERAL.cinematic.textMuted,
                 margin: `${SPACING.compact}px 0 0`,
-                maxWidth: '36ch',
+                maxWidth: FACTOR_WEB_LAYOUT.introMaxWidth,
               }}>
                 {intro}
               </p>
@@ -752,7 +823,9 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
                 initial={{ opacity: prefersReduced ? 1 : 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={prefersReduced ? { duration: 0 } : { duration: 0.24 }}
+                transition={prefersReduced
+                  ? { duration: 0 }
+                  : { duration: FACTOR_WEB_MOTION.duration.standard }}
                 style={{ display: 'flex', flexDirection: 'column', gap: SPACING.standard }}
               >
                 <FactorWebDiagram
@@ -779,9 +852,17 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
 
                 {allExplored && (
                   <motion.div
-                    initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 10 }}
+                    initial={{
+                      opacity: prefersReduced ? 1 : 0,
+                      y: prefersReduced ? 0 : FACTOR_WEB_MOTION.revealEnterY,
+                    }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={prefersReduced ? { duration: 0 } : { duration: 0.3, ease: 'easeOut' }}
+                    transition={prefersReduced
+                      ? { duration: 0 }
+                      : {
+                          duration: FACTOR_WEB_MOTION.duration.standard,
+                          ease: FACTOR_WEB_MOTION.ease,
+                        }}
                   >
                     <ContinueCTA
                       onClick={() => setPhase('judgement')}
