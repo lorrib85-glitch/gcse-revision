@@ -78,6 +78,8 @@ function resolveContext(block, literaryMeta) {
       beats: suppliedBeats,
       transition: supplied.transition || '',
       continueLabel: supplied.continueLabel || 'Reveal the quote',
+      showWorkTitle: supplied.showWorkTitle === true,
+      showScene: supplied.showScene !== false,
     }
   }
 
@@ -88,6 +90,8 @@ function resolveContext(block, literaryMeta) {
     beats: [scene ? `${speaker} speaks in ${scene}.` : 'This quote comes from a key moment in the text.'],
     transition: supplied.transition || 'Now listen for what the speaker reveals.',
     continueLabel: supplied.continueLabel || 'Reveal the quote',
+    showWorkTitle: supplied.showWorkTitle === true,
+    showScene: supplied.showScene !== false,
   }
 }
 
@@ -428,23 +432,27 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   }
 
   if (step === 'context') {
+    const hasContextMeta = (context.showWorkTitle && literaryMeta.title) || (context.showScene && literaryMeta.scene)
+
     return <div style={outer}>
       <Atmosphere cinematic />
       <main style={{ ...page, paddingLeft: 22, paddingRight: 22 }}>
-        <div style={{ textAlign: 'center', paddingTop: 4 }}>
-          {literaryMeta.title && <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 19, fontStyle: 'italic', color: text.textPrimary }}>{literaryMeta.title}</div>}
-          {literaryMeta.scene && <div style={{ ...TYPE.caption, color: text.textMuted, marginTop: 4 }}>{literaryMeta.scene}</div>}
-        </div>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '7vh 4px 5vh' }}>
-          <div className="qa-motion" style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 18, animation: 'qa-rise 0.45s ease both' }}>{context.label}</div>
-          <div style={{ display: 'grid', gap: 16 }}>
+        {hasContextMeta && (
+          <div style={{ textAlign: 'center', paddingTop: 4 }}>
+            {context.showWorkTitle && literaryMeta.title && <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 19, fontStyle: 'italic', color: text.textPrimary }}>{literaryMeta.title}</div>}
+            {context.showScene && literaryMeta.scene && <div style={{ ...TYPE.caption, color: text.textMuted, marginTop: context.showWorkTitle && literaryMeta.title ? 4 : 0 }}>{literaryMeta.scene}</div>}
+          </div>
+        )}
+        <div style={{ padding: 'clamp(44px, 6.5vh, 70px) 4px 32px' }}>
+          <div className="qa-motion" style={{ ...TYPE.label, color: text.textSecondary, marginBottom: 16, animation: 'qa-rise 0.45s ease both' }}>{context.label}</div>
+          <div style={{ display: 'grid', gap: 14 }}>
             {context.beats.map((beat, index) => (
               <p key={`${beat}-${index}`} className="qa-motion" style={{ ...TYPE.displaySection, fontWeight: 480, color: text.textPrimary, margin: 0, animation: `qa-rise 0.55s ease ${index * 0.32}s both` }}>{beat}</p>
             ))}
           </div>
-          {context.transition && <p className="qa-motion" style={{ ...TYPE.bodyLarge, color: text.textSecondary, fontStyle: 'italic', margin: '28px 0 0', animation: `qa-rise 0.55s ease ${context.beats.length * 0.32 + 0.18}s both` }}>{context.transition}</p>}
+          {context.transition && <p className="qa-motion" style={{ ...TYPE.bodyLarge, color: text.textSecondary, fontStyle: 'italic', margin: '24px 0 0', animation: `qa-rise 0.55s ease ${context.beats.length * 0.32 + 0.18}s both` }}>{context.transition}</p>}
         </div>
-        <div className="qa-motion" style={{ animation: `qa-rise 0.55s ease ${context.beats.length * 0.32 + 0.5}s both` }}>
+        <div className="qa-motion" style={{ marginTop: 'auto', animation: `qa-rise 0.55s ease ${context.beats.length * 0.32 + 0.5}s both` }}>
           <ContinueCTA onClick={next} label={context.continueLabel} accent={accent} textColor={parchment} />
         </div>
       </main>
