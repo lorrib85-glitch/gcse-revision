@@ -40,9 +40,8 @@ export default function VisualLearning({ block, subject, onComplete }) {
   // Memoized so the `|| []` fallback doesn't create a new array identity on
   // every render, which would re-fire the preload effect below needlessly.
   const scenes = useMemo(() => block?.scenes || [], [block?.scenes])
-  const palette    = SUBJECTS[subject] || SUBJECTS.History
-  const accent     = palette.accent    || '#C89B6D'
-  const accentRgb  = palette.accentRgb || '200,155,60'
+  const palette = SUBJECTS[subject] || SUBJECTS.History
+  const { accent, accentRgb } = palette
 
   const [idx,     setIdx]     = useState(0)
   const [animKey, setAnimKey] = useState(0)
