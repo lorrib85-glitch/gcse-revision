@@ -323,7 +323,7 @@ export default function GuidedChoiceCarousel({
                       backfaceVisibility: 'hidden',
                       WebkitBackfaceVisibility: 'hidden',
                       overflow: 'hidden',
-                      background: '#101218',
+                      background: GENERAL.backgroundSunken,
                     }}>
                       {opt.image ? (
                         <img
