@@ -9,6 +9,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { TYPE } from '../../constants/typography.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion.js'
 
 function tokenize(text) {
   const parts = String(text || '').split(/(\s+)/)
@@ -78,6 +79,7 @@ export default function GuidedChoiceCarousel({
   onContinue,
   onBack: _onBack,
 }) {
+  const reduceMotion = usePrefersReducedMotion()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [flippedIndex, setFlippedIndex] = useState(null)
   const [selectedIndex, setSelectedIndex] = useState(null)
@@ -116,13 +118,15 @@ export default function GuidedChoiceCarousel({
   const bodyLines = revealLines.slice(1).map(displayText)
 
   const onTouchStart = useCallback((e) => {
+    if (reduceMotion) return
     const t = e.touches[0]
     touchRef.current = { startX: t.clientX, startY: t.clientY, isDrag: false, moved: false }
     setIsDragging(true)
     setDragOffset(0)
-  }, [])
+  }, [reduceMotion])
 
   const onTouchMove = useCallback((e) => {
+    if (reduceMotion) return
     const t = e.touches[0]
     const dx = t.clientX - touchRef.current.startX
     const dy = t.clientY - touchRef.current.startY
@@ -141,9 +145,10 @@ export default function GuidedChoiceCarousel({
       e.preventDefault()
       setDragOffset(dx)
     }
-  }, [])
+  }, [reduceMotion])
 
   const onTouchEnd = useCallback((e) => {
+    if (reduceMotion) return
     const endX = e.changedTouches[0]?.clientX ?? touchRef.current.startX
     const dx = endX - touchRef.current.startX
 
@@ -162,11 +167,13 @@ export default function GuidedChoiceCarousel({
       setCurrentIndex(i => i - 1)
       setFlippedIndex(null)
     }
-  }, [])
+  }, [reduceMotion])
 
   useEffect(() => {
+    if (reduceMotion) return undefined
+
     const el = carouselEl.current
-    if (!el) return
+    if (!el) return undefined
     el.addEventListener('touchstart', onTouchStart, { passive: true })
     el.addEventListener('touchmove', onTouchMove, { passive: false })
     el.addEventListener('touchend', onTouchEnd, { passive: true })
@@ -175,7 +182,7 @@ export default function GuidedChoiceCarousel({
       el.removeEventListener('touchmove', onTouchMove)
       el.removeEventListener('touchend', onTouchEnd)
     }
-  }, [onTouchStart, onTouchMove, onTouchEnd])
+  }, [onTouchStart, onTouchMove, onTouchEnd, reduceMotion])
 
   function handleCardClick(idx) {
     if (touchRef.current.isDrag) return
@@ -191,12 +198,21 @@ export default function GuidedChoiceCarousel({
     if (isChosen || choosing.current) return
     choosing.current = true
     setSelectedIndex(currentIndex)
+
+    if (reduceMotion) {
+      setShowReveal(true)
+      return
+    }
+
     setTimeout(() => setShowReveal(true), 450)
   }
 
-  const liveOffset = isDragging ? dragOffset : 0
+  const liveOffset = reduceMotion ? 0 : isDragging ? dragOffset : 0
   const trackTransX = `calc(${SIDE_OFFSET}vw - (${currentIndex} * (${CARD_VW}vw + ${CARD_GAP}px)) + ${liveOffset}px)`
   const currentLabel = displayText(currentOption.title || 'this option')
+  const resolvedHelperText = reduceMotion
+    ? 'Tap a healer to explore the options, then choose one.'
+    : displayText(helperText).replace('Swipe to explore your options.', 'Swipe through the healers, then choose one.')
 
   return (
     <InteractionShell
@@ -214,6 +230,13 @@ export default function GuidedChoiceCarousel({
           display: none;
           width: 0;
           height: 0;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          [data-guided-choice-motion],
+          [data-guided-choice-motion] * {
+            animation: none !important;
+            transition: none !important;
+          }
         }
       `}</style>
 
@@ -248,20 +271,21 @@ export default function GuidedChoiceCarousel({
             fontSize: 14,
             color: 'rgba(245,238,225,0.46)',
           }}>
-            {displayText(helperText).replace('Swipe to explore your options.', 'Swipe through the healers, then choose one.')}
+            {resolvedHelperText}
           </div>
         )}
       </div>
 
       <div
         ref={carouselEl}
+        data-guided-choice-motion="true"
         style={{
           flex: '1 1 0',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          cursor: 'grab',
+          cursor: reduceMotion ? 'default' : 'grab',
           marginLeft: -SPACING.compact,
           marginRight: -SPACING.compact,
         }}
@@ -270,8 +294,8 @@ export default function GuidedChoiceCarousel({
           display: 'flex',
           gap: CARD_GAP,
           transform: `translateX(${trackTransX})`,
-          transition: isDragging ? 'none' : `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-          willChange: 'transform',
+          transition: reduceMotion || isDragging ? 'none' : `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+          willChange: reduceMotion ? undefined : 'transform',
           alignItems: 'stretch',
         }}>
           {options.map((opt, idx) => {
@@ -291,9 +315,9 @@ export default function GuidedChoiceCarousel({
                   width: `${CARD_VW}vw`,
                   height: `min(60vh, calc(${CARD_VW}vw * 1.34))`,
                   cursor: 'pointer',
-                  transform: `scale(${isSelected ? 1.02 : isFaded ? 0.96 : 1})`,
+                  transform: reduceMotion ? 'none' : `scale(${isSelected ? 1.02 : isFaded ? 0.96 : 1})`,
                   opacity: isFaded ? 0.22 : 1,
-                  transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}, opacity ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+                  transition: reduceMotion ? 'none' : `transform ${MOTION.duration.standard} ${MOTION.easing.standard}, opacity ${MOTION.duration.standard} ${MOTION.easing.standard}`,
                   display: 'flex',
                   flexDirection: 'column',
                   borderRadius: RADII.large,
@@ -306,7 +330,7 @@ export default function GuidedChoiceCarousel({
                 <div style={{
                   flex: '1 1 0',
                   minHeight: 0,
-                  perspective: 1200,
+                  perspective: reduceMotion ? undefined : 1200,
                   position: 'relative',
                 }}>
                   <div style={{
@@ -314,7 +338,7 @@ export default function GuidedChoiceCarousel({
                     height: '100%',
                     transformStyle: 'preserve-3d',
                     transform: isCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                    transition: `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`,
+                    transition: reduceMotion ? 'none' : `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`,
                     position: 'relative',
                   }}>
                     <div style={{
@@ -546,16 +570,19 @@ export default function GuidedChoiceCarousel({
               }
             `}</style>
 
-            <div style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 1100,
-              background: GENERAL.backgroundApp,
-              overflow: 'hidden',
-              cursor: 'default',
-              userSelect: 'none',
-              WebkitUserSelect: 'none',
-            }}>
+            <div
+              data-guided-choice-motion="true"
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 1100,
+                background: GENERAL.backgroundApp,
+                overflow: 'hidden',
+                cursor: 'default',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+              }}
+            >
               {selectedOption.image && (
                 <img
                   src={selectedOption.image}
@@ -612,7 +639,7 @@ export default function GuidedChoiceCarousel({
                       tok.space ? tok.text : (
                         <span key={tok.key} style={{
                           display: 'inline-block',
-                          animation: `gcc-word 220ms ease ${260 + tok.wordIdx * 65}ms both`,
+                          animation: reduceMotion ? 'none' : `gcc-word 220ms ease ${260 + tok.wordIdx * 65}ms both`,
                         }}>
                           {tok.text}
                         </span>
@@ -631,7 +658,7 @@ export default function GuidedChoiceCarousel({
                           lineHeight: isPunchline ? 1.3 : 1.65,
                           letterSpacing: isPunchline ? '-0.02em' : 0,
                           color: isPunchline ? accent : 'rgba(255,255,255,0.62)',
-                          animation: `gcc-line 380ms cubic-bezier(0.16,1,0.3,1) ${520 + i * 120}ms both`,
+                          animation: reduceMotion ? 'none' : `gcc-line 380ms cubic-bezier(0.16,1,0.3,1) ${520 + i * 120}ms both`,
                           marginTop: isPunchline ? 8 : 0,
                         }}>
                           {line}
@@ -645,7 +672,7 @@ export default function GuidedChoiceCarousel({
               <CinematicContinueCTA
                 onClick={() => onContinue(selectedOption.nextScreenId, selectedOption)}
                 accent={accent}
-                animation="crm-fade 700ms ease 900ms both, crm-pulse 2.8s ease-in-out 1600ms infinite"
+                animation={reduceMotion ? 'none' : 'crm-fade 700ms ease 900ms both, crm-pulse 2.8s ease-in-out 1600ms infinite'}
               />
             </div>
           </>
