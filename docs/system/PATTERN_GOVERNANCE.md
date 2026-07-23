@@ -76,7 +76,7 @@ cut.
 
 This is the top control against overloaded screens (the "teaching three
 things" failure): one screen, one job, one sentence. Supporting elements (a
-`MediaPlaceholder`, a single `KeyPoint`) are allowed only in service of the
+`MediaPlaceholder`, a single `MemoryHook`) are allowed only in service of the
 one primary intent — they are never second and third intents smuggled in.
 
 `content-review` and the critique gate run this test **first**, before
@@ -92,7 +92,7 @@ fails.
 
 | Screen intent | Approved component |
 |---|---|
-| Land the takeaway / payoff of a screen | `KeyPoint` |
+| Land the takeaway / payoff of a screen | `MemoryHook` |
 | Compose a teaching screen (rhythm + spacing) | `TeachScreenShell` |
 | Reserve an image/diagram the author will supply | `MediaPlaceholder` |
 | Present a captioned infographic / diagram screen (heading + intro + one media slot) | `Infographic` |
@@ -388,8 +388,8 @@ Structural rules a composed screen must satisfy; checked in the render pass
   of the same kind must not have different header sizes.
 - **No box-in-a-box.** A content component must not nest an accent/callout
   box inside another content card. One container level per content surface.
-- **One emphasis box per screen.** At most one accent-tinted payoff box
-  (the `KeyPoint`'s role). A component must not introduce a second accent
+- **One emphasis box per screen.** At most one payoff box (the
+  `MemoryHook`'s role). A component must not introduce a second accent
   box that competes with it for "the point."
 - **Let it breathe.** Prefer negative space over stacked containers. If a
   screen reads as two or more heavy boxes crammed together, it fails.
@@ -446,7 +446,7 @@ These design-system rules are checked on every screen (sources in brackets):
   introduced merely to make ordinary headings or labels feel more important.
 - **Points land in a box, not as caption text** — a key takeaway rendered as
   small muted footer text is a hierarchy inversion; it belongs in
-  `KeyPoint`.
+  `MemoryHook`.
 - **Gradual key-point reveal** — payoff boxes reveal gradually, never static
   all-at-once. (`MOTION_SYSTEM.md` → Key-point reveal.)
 

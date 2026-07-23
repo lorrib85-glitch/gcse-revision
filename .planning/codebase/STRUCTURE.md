@@ -50,7 +50,6 @@ gcse-revision/
 │   │   │   ├── ExitButton.jsx         # LOCKED: only exit navigation allowed
 │   │   │   ├── LearningHeader.jsx     # Floating capsule header + progress
 │   │   │   ├── LearningProgressHeader.jsx  # LOCKED: progress rail
-│   │   │   ├── KeyPoint.jsx           # Callout box for key concepts
 │   │   │   ├── WorkedExample.jsx      # Worked example wrapper
 │   │   │   ├── TeachScreenShell.jsx   # Teaching screen container
 │   │   │   ├── MediaPlaceholder.jsx   # Image/video placeholder

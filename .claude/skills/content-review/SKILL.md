@@ -146,11 +146,11 @@ For every screen in scope, in this order:
    the approved component for that intent? Score it against that
    component's 9-field contract (`component-contracts/`) — field 9 (review
    checks) is where composition controls and the design-rule checks
-   (no box-in-a-box, no decorative eyebrow/uppercase, gradual key-point
-   reveal, points land in `KeyPoint` not as caption text, one emphasis box
+   (no box-in-a-box, no decorative eyebrow/uppercase, points land in
+   `MemoryHook` not as caption text, one emphasis box
    per screen) actually live; don't re-derive them, run what the contract
    lists. Flag any ad-hoc element that should have been a pattern component
-   (`TeachScreenShell` / `KeyPoint` / `MediaPlaceholder`).
+   (`TeachScreenShell` / `MemoryHook` / `MediaPlaceholder`).
 4. **Composition route** — for the in-module screen, identify and record:
    (a) its one primary intent, (b) the approved component serving it,
    (c) the approved learning-composition route (A teaching → `TeachScreenShell`
@@ -279,7 +279,7 @@ observable failure, not a personal style preference.
   execution-contract, meaningful-interaction, feedback/progression, mobile
   behaviour and asset-resolution checks above.
 - Do not merge components that Pattern Governance intentionally keeps separate
-  (for example, `KeyPoint` and `MemoryHook`). If a fix requires a new
+  (for example, `MemoryHook` and `AcronymMemorise`). If a fix requires a new
   component or visual language, report the issue and escalate instead of
   inventing an ungoverned solution.
 

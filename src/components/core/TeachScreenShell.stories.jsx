@@ -1,6 +1,6 @@
 import TeachScreenShell from './TeachScreenShell'
 import MediaPlaceholder from './MediaPlaceholder'
-import KeyPoint from './KeyPoint'
+import MemoryHook from '../learning/MemoryHook.jsx'
 
 export default {
   component: TeachScreenShell,
@@ -13,7 +13,7 @@ export default {
 }
 
 // Gold example — the reworked Galen teach screen: heading → intro → reserved
-// diagram slot → one key point (the rule takeaway). No eyebrow (the heading
+// diagram slot → one memory hook (a memorable analogy). No eyebrow (the heading
 // carries the point).
 export const Gold = {
   name: 'Gold — Galen teach screen',
@@ -25,15 +25,15 @@ export const Gold = {
       <MediaPlaceholder kind="diagram" aspect="4:3" subject="History"
         caption="The four humours placed on hot–cold and wet–dry axes, with an arrow crossing to the opposite quadrant." />
     ),
-    keyPoint: (
-      <KeyPoint subject="History">
-        The rule was simple: treat every illness with its <span style={{ color: '#D69B45' }}>opposite</span> quality.
-      </KeyPoint>
+    memoryHook: (
+      <MemoryHook subject="History" block={{
+        hook: 'Think of a see-saw: too much of one quality, so you add its opposite to bring the body back to balance.',
+      }} />
     ),
   },
 }
 
-// Minimal — heading + intro only, no visual, no key point.
+// Minimal — heading + intro only, no visual, no memory hook.
 export const Minimal = {
   name: 'Minimal — heading + intro',
   args: {

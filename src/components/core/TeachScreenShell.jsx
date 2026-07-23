@@ -6,8 +6,8 @@ import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 // ─── TeachScreenShell ────────────────────────────────────────────────────────
 // Composes a teaching screen with the approved vertical rhythm so spacing
 // stops being a per-session judgement call. Slots render in a fixed order —
-// eyebrow → heading → intro → body → keyPoint — with token-driven gaps and a
-// calm entrance; the keyPoint slot reveals gradually, slightly after the rest.
+// eyebrow → heading → intro → body → memoryHook — with token-driven gaps and a
+// calm entrance; the memoryHook slot sits last, after the rest.
 //
 // This IS Route A — the default learning-composition route for new teaching
 // and explanation screens. It owns the screen heading (TYPE.displayScreen) and
@@ -25,7 +25,7 @@ import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 //              (see the eyebrow rule). Rendered sentence case, never uppercase.
 //   intro    — optional; one short framing line under the heading
 //   children — the teaching body (at most one visual — a MediaPlaceholder)
-//   keyPoint — optional node rendered last with a gradual reveal (a KeyPoint)
+//   memoryHook — optional node rendered last (a MemoryHook)
 //   subject  — palette key for the accent (default 'History')
 
 let stylesInjected = false
@@ -43,7 +43,7 @@ function ensureStyles() {
   document.head.appendChild(el)
 }
 
-export default function TeachScreenShell({ heading, eyebrow, intro, children, keyPoint, subject = 'History' }) {
+export default function TeachScreenShell({ heading, eyebrow, intro, children, memoryHook, subject = 'History' }) {
   ensureStyles()
 
   const theme = SUBJECTS[subject] || SUBJECTS.History
@@ -100,10 +100,10 @@ export default function TeachScreenShell({ heading, eyebrow, intro, children, ke
         </div>
       )}
 
-      {/* keyPoint owns its own gradual reveal (see KeyPoint); the shell only positions it last */}
-      {keyPoint != null && (
+      {/* the shell only positions the memoryHook slot last */}
+      {memoryHook != null && (
         <div style={{ marginTop: SPACING.separation }}>
-          {keyPoint}
+          {memoryHook}
         </div>
       )}
 

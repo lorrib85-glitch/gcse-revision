@@ -8,7 +8,6 @@ import { recordActivity, MODULE_GROUPS, getModuleState, saveModuleState } from '
 import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialModuleState, clampScreenIndex, resolveFinishAction, getModuleGate } from '../../app/moduleNavigation.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
-import KeyPoint from '../core/KeyPoint.jsx'
 import MediaPlaceholder from '../core/MediaPlaceholder.jsx'
 import TeachScreenShell from '../core/TeachScreenShell.jsx'
 import Infographic from '../learning/Infographic.jsx'
@@ -645,7 +644,6 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
           {block.type === 'boss'          && <ExamQuestionFrame block={block} subject={subject} mode="practice" onSkip={onScreenComplete} />}
           {block.type === 'explainReveal' && <ExplainReveal block={block} subject={subject} onComplete={onScreenComplete} />}
-          {block.type === 'keyPoint'       && <div style={{ marginTop: i > 0 ? 28 : 0 }}><KeyPoint subject={subject} text={block.text} emphasis={block.emphasis} icon={block.icon} /></div>}
           {block.type === 'mediaPlaceholder' && <div style={{ marginTop: i > 0 ? 28 : 0 }}><MediaPlaceholder subject={subject} kind={block.kind} aspect={block.aspect} caption={block.caption} /></div>}
           {block.type === 'fillblanks'    && <FillInTheBlanksBlock block={block} subject={subject} />}
           {block.type === 'theoryCompare' && <TheoryCompare block={block} subject={subject} />}

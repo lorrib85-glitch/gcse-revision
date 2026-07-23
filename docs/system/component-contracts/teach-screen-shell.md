@@ -54,7 +54,7 @@ turn the screen into a Route B interaction-owned screen.
 
 Slots render in this fixed order; every one except `heading` is optional:
 
-`eyebrow` → `heading` → `intro` → `children` (teaching body) → `keyPoint`
+`eyebrow` → `heading` → `intro` → `children` (teaching body) → `memoryHook`
 
 - `heading` (required) — the screen's single teaching heading, sentence case.
 - `eyebrow` — only if it passes the eyebrow rule (adds information the
@@ -62,10 +62,10 @@ Slots render in this fixed order; every one except `heading` is optional:
 - `children` — the teaching body. **At most one visual** (one
   `MediaPlaceholder`). More than one visual means the screen is doing more
   than one job — split it.
-- `keyPoint` — at most one, rendered last (a `KeyPoint`).
+- `memoryHook` — at most one, rendered last (a `MemoryHook`).
 
-Enforces one-job-per-screen: if the screen needs two headings or two key
-points, it is two screens.
+Enforces one-job-per-screen: if the screen needs two headings or two memory
+hooks, it is two screens.
 
 ## 5. Token rules
 
@@ -74,7 +74,7 @@ points, it is two screens.
   the parent `ContentShell` already clears the fixed learning header.
 - Heading ↔ intro spacing is `SPACING.standard`. This creates a clearer
   heading/paragraph rhythm without pushing the teaching body too far down.
-- Body and keyPoint are separated by `SPACING.separation`.
+- Body and memoryHook are separated by `SPACING.separation`.
 - Type from `TYPE` (`TYPE.displayScreen` heading, `TYPE.body` intro,
   `TYPE.label` eyebrow). Accent from `SUBJECTS[subject]`.
 - `TYPE.displayScreen` is the canonical non-cinematic module heading,
@@ -89,16 +89,16 @@ points, it is two screens.
 
 - Slots enter toward the reader (`tss-rise`: fade + translateY from below),
   lightly staggered, using `MOTION.duration.slow` / `MOTION.easing.standard`.
-- The `keyPoint` slot reveals **gradually and last** (delayed fade-and-rise,
-  `MOTION.easing.gentle`) per `MOTION_SYSTEM.md` → Key-point reveal.
-- `prefers-reduced-motion`: no animation; final state shown, keyPoint still
+- The `memoryHook` slot renders **last** in reading order. It is passive and
+  does not animate itself (see `MemoryHook`); the shell only positions it.
+- `prefers-reduced-motion`: no animation; final state shown, memoryHook still
   last in reading order.
 
 ## 7. Gold example
 
 `TeachScreenShell.stories.jsx` → **Gold — Galen teach screen**: heading
 "Every illness had an opposite" (no eyebrow — the heading carries the point)
-→ intro → a `MediaPlaceholder` diagram slot → one key point. The title uses the
+→ intro → a `MediaPlaceholder` diagram slot → one memory hook. The title uses the
 same canonical size and weight as the verified TimelineCanvas heading "How the
 plague travelled". It reads clean at 390px with token-driven rhythm: high
 enough under the learning header to avoid a dead top half, with enough
@@ -114,7 +114,7 @@ buried as 14px muted footer text. Everything this shell exists to prevent.
 
 - ⚙ No raw px spacing/type — tokens only.
 - ⚙ At most one visual (`MediaPlaceholder`) in the body.
-- ⚙ Exactly one heading; at most one `keyPoint`.
+- ⚙ Exactly one heading; at most one `memoryHook`.
 - ⚙ Heading consumes `TYPE.displayScreen` without local type-property
   overrides.
 - 👁 **The teach screen actually composes through this shell** (content sets

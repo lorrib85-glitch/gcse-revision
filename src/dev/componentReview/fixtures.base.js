@@ -817,10 +817,3 @@ export const weakSpotRecovery = {
 // Shape: a valid key from src/data/recoveryQuizzes.js.
 export const recoveryQuizId = 'history-four-humours-recovery-1'
 
-// KeyPoint (History) — inline rule takeaway block.
-// Shape: { text, emphasis:[word] }.
-export const keyPoint = {
-  text: 'The rule was simple: treat every illness with its opposite quality.',
-  emphasis: ['opposite'],
-}
-

@@ -45,7 +45,6 @@ import UnifiedQuestionScreen from '../../components/learning/UnifiedQuestionScre
 import TieredQuizScreen from '../../components/learning/TieredQuizScreen.jsx'
 import WeakSpotRecovery from '../../components/learning/WeakSpotRecovery.jsx'
 import RecoveryQuizPlayer from '../../components/learning/RecoveryQuizPlayer.jsx'
-import KeyPoint from '../../components/core/KeyPoint.jsx'
 import ContentShell from '../../components/layout/ContentShell.jsx'
 import TeachScreenShell from '../../components/core/TeachScreenShell.jsx'
 import ButtonsAndProgressPage from './ButtonsAndProgressPage.jsx'
@@ -417,7 +416,7 @@ export const REVIEW_ENTRIES = [
     status: 'routed-unused', subject: 'Biology', renderMode: 'inline',
     function: 'In-page "make it stick" reminder: anchors one hard idea with a memorable analogy/mnemonic. Optional thumbnail; learner can rewrite the hook in their own words (persisted via storage.js).',
     usage: 'Routed in ModulePlayer (type: memoryHook); available for placement within any subject page. No content file uses it yet.',
-    alternative: 'KeyPoint (states the screen’s rule); AcronymMemorise (interactive acronym drill).',
+    alternative: 'AcronymMemorise (interactive acronym drill).',
     render: (fx) => <MemoryHook block={fx} subject="Biology" />,
     fixture: FIX.memoryHook,
   },
@@ -698,14 +697,5 @@ export const REVIEW_ENTRIES = [
     alternative: 'GuidedExamResponse (written scaffold); GraphView (data, not procedure).',
     render: (fx, { onDone }) => <CalculationBreakdown block={fx} onContinue={onDone} />,
     fixture: FIX.calculationBreakdown,
-  },
-  {
-    id: 'key-point', name: 'KeyPoint', group: 'library',
-    status: 'comparison', subject: 'History', renderMode: 'inline',
-    function: 'Inline rule takeaway: states the one rule a teach screen leaves the learner with, with optional accented words and icon.',
-    usage: 'Routed in ModulePlayer (type: keypoint); used across subjects to fix the screen’s core rule.',
-    alternative: 'MemoryHook (analogy/mnemonic).',
-    render: (fx) => <KeyPoint text={fx.text} emphasis={fx.emphasis} subject="History" />,
-    fixture: FIX.keyPoint,
   },
 ]

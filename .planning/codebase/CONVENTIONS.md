@@ -6,7 +6,7 @@
 
 **Files:**
 - React components: PascalCase (e.g., `AnswerInteraction.jsx`, `BackButton.jsx`, `CircularTimer.jsx`)
-- Stories: Same name as component with `.stories.jsx` suffix (e.g., `KeyPoint.stories.jsx`)
+- Stories: Same name as component with `.stories.jsx` suffix (e.g., `TeachScreenShell.stories.jsx`)
 - Utilities/helpers: camelCase (e.g., `progress.js`, `storage.js`)
 - Tests: Descriptive with `.test.js` suffix in matching hierarchy (e.g., `src/components/core/` → `tests/unit/*/`)
 

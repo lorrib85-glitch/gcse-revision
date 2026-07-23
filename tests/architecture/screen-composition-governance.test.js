@@ -75,7 +75,6 @@ const OWNERSHIP_GRANT_PHRASE = 'owns full-screen composition'
 const PRE_CLASSIFICATION_CONTRACTS = [
   'interactive-hotspot-image.md',
   'key-figure-reveal.md',
-  'key-point.md',
   'matching-task.md',
   'media-placeholder.md',
   'quick-recall.md',

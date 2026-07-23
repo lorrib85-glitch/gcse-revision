@@ -20,8 +20,6 @@ Use the optional image only when it genuinely strengthens recall.
 
 ## 3. When NOT to use
 
-- **To state the screen's rule / takeaway** — that is `KeyPoint`. A memory
-  hook is a mnemonic aid, not the conclusion the screen was building toward.
 - **To drill an acronym interactively** — that is `AcronymMemorise`.
 - **As a generic emphasis box** for any text that wants a border.
 - **More than once per screen** — a second hook competes for the one thing
@@ -64,8 +62,6 @@ square visual anchor and lightweight copy at 390px.
 ## 8. Below-bar counterexample
 
 - An ALL-CAPS "MEMORY HOOK" eyebrow.
-- The screen's actual takeaway rule dropped into MemoryHook instead of
-  `KeyPoint`.
 - A fully tinted or glowing subject-colour card competing with the page.
 - A tiny image that reads as decoration rather than a recall cue.
 - Large or bold copy that makes the component feel like another teaching card.

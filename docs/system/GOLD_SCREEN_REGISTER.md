@@ -77,7 +77,7 @@ runtime; its per-screen findings are in
   **write-contract debt**, taken on when content work next hits a quality
   problem on that component (per `component-contracts/README.md`).
 - **Verified Storybook stories: 0 of 8** — **story debt** for all eight.
-  (Stories exist for the pattern primitives `TeachScreenShell`, `KeyPoint`,
+  (Stories exist for the pattern primitives `TeachScreenShell`,
   `MediaPlaceholder` and for `OrderedRouteTask`,
   `MedievalDiagnosisScene`, `QuoteAnalyser` — none of the eight priority
   learning components.)

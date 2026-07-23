@@ -33,7 +33,7 @@ export const SCREEN_TYPE_FUNCTIONS = {
   examinerExplains: { functions: ['exam-technique'], interaction: 'passive' },
 
   // Pattern components (docs/system/PATTERN_GOVERNANCE.md)
-  keyPoint: { functions: ['teach-mechanism'], interaction: 'passive' },
+  memoryHook: { functions: ['teach-mechanism'], interaction: 'passive' },
   mediaPlaceholder: { functions: ['teach-mechanism'], interaction: 'passive' },
   // Infographic: TeachScreenShell heading + intro then one governed infographic
   // media slot (a reserved diagram or an auto-building quadrant reveal).

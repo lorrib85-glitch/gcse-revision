@@ -396,7 +396,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 **File:** `src/components/learning/MemoryHook.jsx`
 **Purpose:** In-page "make it stick" reminder block. Anchors one hard idea with a memorable analogy or mnemonic, optionally beside a small author-supplied thumbnail. A pencil affordance lets the learner rewrite the hook in their own words (generation effect); the personalised version persists per hook via `src/lib/storage.js` and shows a "Your version" caption.
-**Best used for:** Dropping a light, memorable recall aid *within* a page "here and there" — not for stating the screen's rule (use `KeyPoint`) or drilling an acronym interactively (use `AcronymMemorise`). Reusable across all subjects.
+**Best used for:** Dropping a light, memorable recall aid *within* a page "here and there", or landing a screen's takeaway — not for drilling an acronym interactively (use `AcronymMemorise`). Reusable across all subjects.
 **Props:** `block` (`{ id?, label?, hook, image?, imageAlt? }`), `subject`
 **Dependencies:** `SUBJECTS`, `GENERAL`, `SPACING`, `RADII`, `MOTION`, `TYPE`, `storage.js`
 **Block type:** `memoryHook` (routed in `ModulePlayer`).
