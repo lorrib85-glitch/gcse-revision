@@ -1,6 +1,8 @@
 export * from './fixtures.base.js'
 
 import {
+  builderBlock as baseBuilderBlock,
+  builderMaths as baseBuilderMaths,
   builderQuote as baseBuilderQuote,
   matchingTask as baseMatchingTask,
   quoteAnalyser as baseQuoteAnalyser,
@@ -11,6 +13,22 @@ export const matchingTask = {
   leftLabel: 'Belief',
   rightLabel: 'Response',
   backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+}
+
+export const builderBlock = {
+  ...baseBuilderBlock,
+  backgroundImage: '/headers/bio-energyforlife.webp',
+  backgroundOpacity: 0.72,
+}
+
+export const builderMaths = {
+  ...baseBuilderMaths,
+  backgroundImage: '/headers/maths-numbers.webp',
+  backgroundOpacity: 0.7,
+  numeric: true,
+  workspaceLabel: 'Missing-value expression',
+  slotGroupLabel: 'Expression',
+  bankLabel: 'Value choices',
 }
 
 export const builderQuote = {
