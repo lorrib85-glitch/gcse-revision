@@ -90,13 +90,12 @@ export const GENERAL = {
     imageFilterUpper: 'brightness(1.12) saturate(1.04)',
     actionShadow:  '0 1px 16px rgba(0,0,0,0.60)',
 
-    // Completion moments use a quieter image treatment than chapter openers.
-    // The image establishes subject/module atmosphere; the overlay protects
-    // the completion hierarchy and keeps the lower action area calm.
-    completionBackdropOpacity: 0.42,
-    completionBackdropFilter: 'saturate(0.82) brightness(0.62)',
-    completionOverlay: 'linear-gradient(180deg, rgba(8,9,13,0.36) 0%, rgba(8,9,13,0.80) 38%, rgba(8,9,13,0.98) 72%, #08090D 100%)',
-    completionGlowOpacity: 0.36,
+    // Completion artwork remains visible through the achievement moment, then
+    // dissolves into an opaque action area rather than dimming the whole frame.
+    completionBackdropOpacity: 0.70,
+    completionBackdropFilter: 'saturate(0.90) brightness(0.76)',
+    completionOverlay: 'linear-gradient(180deg, rgba(8,9,13,0.08) 0%, rgba(8,9,13,0.22) 30%, rgba(8,9,13,0.68) 58%, rgba(8,9,13,0.97) 78%, #08090D 100%)',
+    completionGlowOpacity: 0,
 
     motion: {
       fast: '420ms',
