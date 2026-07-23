@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 import CinematicShell from '../layout/CinematicShell.jsx'
+import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion.js'
 
 const STEP_MS = 380
 const HIPPOCRATES_PROFILE_REVEAL = 'His name was Hippocrates.'
@@ -11,6 +12,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
   const theme = SUBJECTS[subjectProp] || SUBJECTS.History
   const accent = theme.accent
   const palBg = theme.background
+  const reduceMotion = usePrefersReducedMotion()
   const legacyHippocratesIntro = steps.length === 2 && steps[1]?.mainText === HIPPOCRATES_PROFILE_REVEAL
   const initialStepIdx = legacyHippocratesIntro ? 1 : 0
 
@@ -71,6 +73,12 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
 
   function finishReveal() {
     markRevealStarted()
+
+    if (reduceMotion) {
+      onContinue?.()
+      return
+    }
+
     setFinishing(true)
     window.setTimeout(() => onContinue?.(), 260)
   }
@@ -122,14 +130,24 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
           from { opacity:1; transform:translateY(0) }
           to   { opacity:0; transform:translateY(-10px) }
         }
+        @media (prefers-reduced-motion: reduce) {
+          [data-concept-reveal],
+          [data-concept-reveal] * {
+            animation: none !important;
+            transition: none !important;
+          }
+        }
       `}</style>
 
-      <CinematicShell style={{
-        background: useWidthLockedBackground ? palBg : bg,
-        backgroundSize: useWidthLockedBackground ? undefined : (step.backgroundSize || 'cover'),
-        backgroundPosition: useWidthLockedBackground ? undefined : (step.backgroundPosition || 'center'),
-        zIndex: 100,
-      }}>
+      <CinematicShell
+        data-concept-reveal="true"
+        style={{
+          background: useWidthLockedBackground ? palBg : bg,
+          backgroundSize: useWidthLockedBackground ? undefined : (step.backgroundSize || 'cover'),
+          backgroundPosition: useWidthLockedBackground ? undefined : (step.backgroundPosition || 'center'),
+          zIndex: 100,
+        }}
+      >
         {useWidthLockedBackground && (
           <img
             aria-hidden="true"
@@ -175,12 +193,20 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-end',
-              animation: finishing
-                ? 'crTextOut 240ms ease both'
-                : `crSlideIn ${STEP_MS}ms cubic-bezier(.16,1,.3,1) both`,
+              animation: reduceMotion
+                ? 'none'
+                : finishing
+                  ? 'crTextOut 240ms ease both'
+                  : `crSlideIn ${STEP_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}
           >
-            <MainReveal text={step.mainText} emphasis={step.emphasis} accent={accent} slow={step.slowReveal} />
+            <MainReveal
+              text={step.mainText}
+              emphasis={step.emphasis}
+              accent={accent}
+              slow={step.slowReveal}
+              reduceMotion={reduceMotion}
+            />
 
             {step.supportText && (
               <p style={{
@@ -188,7 +214,11 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
                 color: 'rgba(245,238,225,.64)',
                 margin: '14px 0 0',
                 maxWidth: '34ch',
-                animation: step.slowReveal ? 'crLineIn 520ms ease 520ms both' : undefined,
+                animation: reduceMotion
+                  ? 'none'
+                  : step.slowReveal
+                    ? 'crLineIn 520ms ease 520ms both'
+                    : undefined,
               }}>
                 {step.supportText}
               </p>
@@ -235,7 +265,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
               <CinematicContinueCTA
                 onClick={finishReveal}
                 accent={accent}
-                animation="crm-fade 520ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite"
+                animation={reduceMotion ? 'none' : 'crm-fade 520ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite'}
                 style={{ position: 'static', left: 'auto', right: 'auto', bottom: 'auto' }}
               />
             </div>
@@ -246,7 +276,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
   )
 }
 
-function MainReveal({ text, emphasis, accent, slow = false }) {
+function MainReveal({ text, emphasis, accent, slow = false, reduceMotion = false }) {
   if (!text) return null
 
   const base = {
@@ -256,7 +286,7 @@ function MainReveal({ text, emphasis, accent, slow = false }) {
     wordBreak: 'break-word',
     maxWidth: '18ch',
     textShadow: '0 2px 28px rgba(0,0,0,.62)',
-    animation: slow ? 'crLineIn 520ms ease 140ms both' : undefined,
+    animation: reduceMotion ? 'none' : slow ? 'crLineIn 520ms ease 140ms both' : undefined,
   }
 
   if (!emphasis) return <div style={base}>{text}</div>
