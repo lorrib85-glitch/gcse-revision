@@ -3,6 +3,10 @@
 // and The British sector of the Western Front, 1914–18
 // Ref: 1HI0/11 | Thursday 18 May 2023 | 1 hour 15 minutes | 52 marks
 
+import { SUBJECTS } from '../constants/subjects.js'
+
+const PAPER_SUBJECT = 'History'
+
 // ── Sources Booklet ───────────────────────────────────────────────────────────
 
 export const J23_SOURCE_A = {
@@ -139,8 +143,8 @@ export const MEDICINE_2023_PAPER = {
   date: 'Thursday 18 May 2023',
   totalMarks: 52,
   timeMins: 75,
-  subject: 'History',
-  color: '#C89B6D',
+  subject: PAPER_SUBJECT,
+  color: SUBJECTS[PAPER_SUBJECT].subjectBrowserAccent,
   // Paper-level learning-graph tags; each question keeps its own concept tags
   tags: ['history:medicine', 'paper:medicine', 'examboard:edexcel', 'tier:gcse'],
   // Full ordered question list for the paper view (with rendering metadata)
