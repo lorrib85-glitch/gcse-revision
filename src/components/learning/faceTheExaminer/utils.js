@@ -31,40 +31,129 @@ export function annotationDot(type, accent) {
 }
 
 export const TAB_LABELS = {
-  answer: 'Model answer',
+  answer: 'Student answer',
   marking: 'Examiner view',
 }
 
-export function buildAnnotatedSegments(text, annotations = []) {
+function warnAnnotation(message) {
+  if (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
+    console.warn(message)
+  }
+}
+
+export function findOccurrenceIndex(text = '', target = '', occurrence = 1) {
+  if (!target) return -1
+
+  const requestedOccurrence = Number.isInteger(occurrence) && occurrence > 0 ? occurrence : 1
+  let cursor = 0
+  let foundIndex = -1
+
+  for (let current = 0; current < requestedOccurrence; current += 1) {
+    foundIndex = text.indexOf(target, cursor)
+    if (foundIndex === -1) return -1
+    cursor = foundIndex + target.length
+  }
+
+  return foundIndex
+}
+
+export function resolveAnnotationRange(text = '', annotation = {}) {
+  const target = String(annotation.target || '')
+  const start = findOccurrenceIndex(text, target, annotation.occurrence)
+  if (start === -1) return null
+
+  return {
+    annotation,
+    start,
+    end: start + target.length,
+  }
+}
+
+export function buildAnnotatedSegments(text = '', annotations = []) {
+  const source = String(text || '')
+  const ranges = annotations
+    .map(annotation => {
+      const range = resolveAnnotationRange(source, annotation)
+      if (!range) warnAnnotation(`FTE: annotation "${annotation.id}" target not found`)
+      return range
+    })
+    .filter(Boolean)
+    .sort((left, right) => left.start - right.start)
+
   let cursor = 0
   const segments = []
-  for (const ann of annotations) {
-    const idx = text.indexOf(ann.target, cursor)
-    if (idx === -1) {
-      if (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
-        console.warn(`FTE: annotation "${ann.id}" target not found`)
-      }
-      continue
+
+  ranges.forEach(range => {
+    if (range.start < cursor) {
+      warnAnnotation(`FTE: annotation "${range.annotation.id}" overlaps an earlier annotation`)
+      return
     }
-    if (idx > cursor) segments.push({ type: 'plain', text: text.slice(cursor, idx) })
-    segments.push({ type: 'ann', ann, text: ann.target })
-    cursor = idx + ann.target.length
-  }
-  if (cursor < text.length) segments.push({ type: 'plain', text: text.slice(cursor) })
+
+    if (range.start > cursor) {
+      segments.push({ type: 'plain', text: source.slice(cursor, range.start) })
+    }
+
+    segments.push({
+      type: 'ann',
+      ann: range.annotation,
+      text: source.slice(range.start, range.end),
+    })
+    cursor = range.end
+  })
+
+  if (cursor < source.length) segments.push({ type: 'plain', text: source.slice(cursor) })
   return segments
 }
 
-export function buildAnswerSections(text = '') {
-  const clean = text.trim()
+export function replaceAnnotatedTargets(text = '', annotations = [], edits = {}) {
+  const source = String(text || '')
+  const replacements = annotations
+    .map(annotation => {
+      const replacement = String(edits[annotation.id] || '').trim()
+      if (!replacement) return null
+      const range = resolveAnnotationRange(source, annotation)
+      return range ? { ...range, replacement } : null
+    })
+    .filter(Boolean)
+    .sort((left, right) => right.start - left.start)
+
+  return replacements.reduce(
+    (answer, replacement) => answer.slice(0, replacement.start) + replacement.replacement + answer.slice(replacement.end),
+    source,
+  )
+}
+
+export function getPrimaryImprovementAnnotation(annotations = [], preferredId) {
+  const weakAnnotations = annotations.filter(annotation => annotation.type === 'weak')
+  if (preferredId) {
+    const preferred = weakAnnotations.find(annotation => annotation.id === preferredId)
+    if (preferred) return preferred
+  }
+  return weakAnnotations[0] || null
+}
+
+export function buildAnswerSections(text = '', explicitSections = []) {
+  const suppliedSections = Array.isArray(explicitSections)
+    ? explicitSections
+      .map((section, index) => ({
+        label: String(section?.label || `Section ${index + 1}`),
+        text: String(section?.text || '').trim(),
+      }))
+      .filter(section => section.text)
+    : []
+
+  if (suppliedSections.length > 0) return suppliedSections
+
+  const clean = String(text || '').trim()
   if (!clean) return []
 
   const markerPattern = /\b(Firstly|Secondly|First|Second|One way|Another way),?/gi
   const matches = [...clean.matchAll(markerPattern)]
     .map(match => match.index)
     .filter(index => typeof index === 'number')
-    .sort((a, b) => a - b)
+    .sort((left, right) => left - right)
 
-  if (matches.length < 2) return [{ label: 'Model answer', text: clean }]
+  if (matches.length < 2) return [{ label: 'Student answer', text: clean }]
 
   const sections = []
   const intro = clean.slice(0, matches[0]).trim()
