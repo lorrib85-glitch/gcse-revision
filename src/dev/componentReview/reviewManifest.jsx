@@ -33,6 +33,7 @@ import AcronymMemorise from '../../components/learning/AcronymMemorise.jsx'
 import MemoryHook from '../../components/learning/MemoryHook.jsx'
 import BuilderBlock from '../../components/learning/BuilderBlock.jsx'
 import ChapterOutcomeScreen from '../../components/layout/ChapterOutcomeScreen.jsx'
+import ChapterCompleteScreen from '../../components/layout/ChapterCompleteScreen.jsx'
 import ContentShell from '../../components/layout/ContentShell.jsx'
 import TeachScreenShell from '../../components/core/TeachScreenShell.jsx'
 import ButtonsAndProgressPage from './ButtonsAndProgressPage.jsx'
@@ -501,5 +502,25 @@ export const REVIEW_ENTRIES = [
       />
     ),
     fixture: FIX.chapterOutcome,
+  },
+  {
+    id: 'chapter-complete-screen', name: 'ChapterCompleteScreen', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'End-of-chapter completion screen: animated checkmark ring, "Complete" headline, continue-to-next-chapter primary CTA, quick-quiz row, optional past-paper row and Return Home.',
+    usage: 'Shown as the chapter-complete overlay in LegacyApp (view: chapter-complete) at the end of every module chapter.',
+    alternative: 'ChapterOutcomeScreen (chapter opening, not completion).',
+    render: (fx, { onDone }) => (
+      <ChapterCompleteScreen
+        accent={SUBJECT_ACCENTS.History}
+        completedChapter={fx.completedChapter}
+        supportingCopy={fx.supportingCopy}
+        nextChapterNum={fx.nextChapterNum}
+        nextChapterTitle={fx.nextChapterTitle}
+        nextChapterLabel={fx.nextChapterLabel}
+        onContinue={onDone} onQuiz={onDone} onHome={onDone}
+        tab="subjects" setTab={() => {}}
+      />
+    ),
+    fixture: FIX.chapterComplete,
   },
 ]

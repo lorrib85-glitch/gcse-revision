@@ -458,6 +458,17 @@ export const chapterOutcome = {
   ],
 }
 
+// ChapterCompleteScreen (History) — end-of-chapter completion screen with the
+// checkmark ring, "Complete" headline, continue-to-next-chapter primary CTA,
+// quick-quiz row and Return Home. Shape mirrors chapterCompleteData in LegacyApp.
+export const chapterComplete = {
+  completedChapter: 'The boy, the cow and the cure',
+  supportingCopy: "That's another one locked in.",
+  nextChapterNum: 8,
+  nextChapterTitle: 'The invisible enemy',
+  nextChapterLabel: 'Chapter',
+}
+
 // KeyFigureReveal (History) — scrollable portrait hero + knowledge sections.
 export const keyFigureReveal = {
   portrait: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
