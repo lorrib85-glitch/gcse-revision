@@ -20,8 +20,8 @@
   --science-bg:  rgba(56,210,122,.10);
   --maths:       #3B82FF;
   --maths2:      #70B8FF;
-  --english:     #6A343D;
-  --english2:    #8A6A6E;
+  --english:     #B96F78;
+  --english2:    #D5A7AC;
   --sociology:   #FF5C7A;
   --drama:       #FF4FC3;
   --music:       #34D5FF;
@@ -178,73 +178,6 @@ div[style*="padding: 20px 24px 8px"] button[style*="width: 136px"] > div[style*=
   align-items: center !important;
   height: 100% !important;
   padding: 0 !important;
-}
-
-div[style*="padding: 20px 24px 8px"] button[style*="width: 136px"] div[style*="font-size: 11px"] {
-  color: rgba(255,255,255,.78) !important;
-  font-size: 12px !important;
+  font-size: .78rem !important;
   line-height: 1 !important;
-  letter-spacing: .02em !important;
-  text-transform: none !important;
-  white-space: nowrap !important;
-  display: block !important;
-}
-
-/* Make the active lesson a cleaner action card, not a second full hero. */
-button[style*="height: 206px"][style*="border-radius: 24px"] {
-  height: 176px !important;
-  border-radius: 22px !important;
-  animation: none !important;
-  box-shadow: 0 0 22px rgba(200,155,109,.18), inset 0 1px 0 rgba(255,255,255,.08) !important;
-}
-
-button[style*="height: 206px"] > div[style*="height: 112px"] {
-  height: 82px !important;
-}
-
-/* Remove the small progress percentage ring from the current card image. */
-button[style*="height: 206px"] > div[style*="height: 112px"] > div[style*="width: 44px"] {
-  display: none !important;
-}
-
-button[style*="height: 206px"] > div[style*="padding: 10px 16px 12px"] {
-  padding: 12px 16px 14px !important;
-  gap: 10px !important;
-}
-
-button[style*="height: 206px"] div[style*="font-size: 16px"] {
-  font-size: 17px !important;
-}
-
-button[style*="height: 206px"] div[style*="height: 40px"][style*="border-radius: 12px"] {
-  height: 38px !important;
-  padding: 0 16px !important;
-}
-
-/* Soften the timeline so it supports the list instead of competing with it. */
-div[style*="width: 64px"][style*="z-index: 2"] {
-  width: 54px !important;
-}
-
-div[style*="width: 56px"][style*="height: 56px"][style*="animation: sbCurrentGlow"] {
-  width: 48px !important;
-  height: 48px !important;
-  animation: none !important;
-  box-shadow: 0 0 14px rgba(200,155,109,.26) !important;
-}
-
-/* Make inactive episodes readable rather than buried. */
-button[style*="height: 80px"][style*="opacity: 0.55"] {
-  opacity: .78 !important;
-  background: rgba(255,255,255,.04) !important;
-  border-color: rgba(255,255,255,.075) !important;
-}
-
-button[style*="height: 80px"][style*="opacity: 0.55"] div[style*="font-size: 15px"] {
-  color: rgba(255,255,255,.72) !important;
-}
-
-button[style*="height: 80px"] div[style*="filter: grayscale"] {
-  filter: grayscale(.25) !important;
-  opacity: .82 !important;
 }
