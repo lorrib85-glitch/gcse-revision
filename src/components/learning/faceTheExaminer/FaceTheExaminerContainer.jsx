@@ -9,7 +9,7 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
   const theme = SUBJECTS[module.subject] || SUBJECTS.History
   const accent = theme.accent
   const bg = theme.background
-  const screenTitle = 'Mark the answer'
+  const screenTitle = examiner.screenTitle || module.faceTheExaminerTitle || 'Mark the answer'
 
   const [phase, setPhase] = useState('intro')
   const [overlayDark, setOverlayDark] = useState(false)
