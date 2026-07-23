@@ -1,29 +1,24 @@
 import { useEffect, useState } from 'react'
 import { GENERAL } from '../../../constants/generalTheme.js'
 import { RADII } from '../../../constants/radii.js'
-import { SPACING } from '../../../constants/spacing.js'
 import { TYPE } from '../../../constants/typography.js'
 import { annotationDot, annotationStyle, buildAnswerSections, getPrimaryImprovementAnnotation } from './utils.js'
 
-function AnnotationList({ title, notes, accent }) {
-  if (notes.length === 0) return null
-
-  return (
-    <div style={{ marginTop: 18 }}>
-      <div style={{ ...TYPE.label, color: GENERAL.cinematic.textMuted, marginBottom: 10 }}>{title}</div>
-      {notes.map(annotation => (
-        <div key={annotation.id} style={{ display: 'flex', alignItems: 'flex-start', gap: SPACING.micro, marginBottom: SPACING.micro }}>
-          <div style={{ width: 8, height: 8, borderRadius: RADII.pill, marginTop: 7, flexShrink: 0, background: annotationDot(annotation.type, accent) }} />
-          <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textSecondary }}>
-            {annotation.comment}
-          </div>
-        </div>
-      ))}
-    </div>
-  )
+function annotationLabel(annotation, examiner) {
+  if (annotation.type === 'strong') return examiner.annotationStrengthLabel || 'Earned a mark'
+  if (annotation.type === 'irrelevant') return examiner.annotationIrrelevantLabel || 'Not needed'
+  return examiner.annotationImprovementLabel || 'Needs improvement'
 }
 
-function AnswerContent({ accent, answerSections, segments }) {
+function AnswerContent({
+  accent,
+  answerSections,
+  segments,
+  annotations = [],
+  interactive = false,
+  selectedAnnotationId,
+  onSelectAnnotation,
+}) {
   if (segments.length === 0) {
     return (
       <div style={{ display: 'grid', gap: 22 }}>
@@ -49,24 +44,138 @@ function AnswerContent({ accent, answerSections, segments }) {
 
   return (
     <div style={{ ...TYPE.examAnswer, color: GENERAL.cinematic.textFact }}>
-      {segments.map((segment, index) => (
-        segment.type === 'plain'
-          ? <span key={index}>{segment.text}</span>
-          : <span key={index} style={annotationStyle(segment.ann.type, accent)}>{segment.text}</span>
-      ))}
+      {segments.map((segment, index) => {
+        if (segment.type === 'plain') return <span key={index}>{segment.text}</span>
+
+        const annotationIndex = annotations.findIndex(annotation => annotation.id === segment.ann.id)
+        const annotationNumber = annotationIndex >= 0 ? annotationIndex + 1 : null
+        const colour = annotationDot(segment.ann.type, accent)
+        const selected = selectedAnnotationId === segment.ann.id
+
+        if (!interactive) {
+          return <span key={index} style={annotationStyle(segment.ann.type, accent)}>{segment.text}</span>
+        }
+
+        return (
+          <button
+            key={index}
+            type="button"
+            className="fte-annotation-target"
+            aria-pressed={selected}
+            aria-label={`Annotation ${annotationNumber}: ${segment.ann.comment}`}
+            onClick={() => onSelectAnnotation?.(segment.ann.id)}
+            style={{
+              display: 'inline',
+              padding: '1px 2px',
+              margin: '0 1px',
+              border: 'none',
+              borderBottom: `1.5px solid ${colour}`,
+              borderRadius: 3,
+              background: selected ? `${colour}18` : 'transparent',
+              color: 'inherit',
+              font: 'inherit',
+              lineHeight: 'inherit',
+              cursor: 'pointer',
+              boxDecorationBreak: 'clone',
+              WebkitBoxDecorationBreak: 'clone',
+              transition: 'background 160ms ease, box-shadow 160ms ease',
+              boxShadow: selected ? `0 0 0 1px ${colour}44` : 'none',
+            }}
+          >
+            {segment.text}
+            {annotationNumber !== null && (
+              <span
+                aria-hidden="true"
+                style={{
+                  display: 'inline-grid',
+                  placeItems: 'center',
+                  width: 18,
+                  height: 18,
+                  marginLeft: 4,
+                  borderRadius: RADII.pill,
+                  background: colour,
+                  color: GENERAL.textOnAccent,
+                  fontSize: 10,
+                  fontWeight: 800,
+                  lineHeight: 1,
+                  verticalAlign: '0.12em',
+                }}
+              >
+                {annotationNumber}
+              </span>
+            )}
+          </button>
+        )
+      })}
     </div>
   )
 }
 
-function MarkedAnswerToggle({ accent, answerSections, segments, examiner }) {
-  const [open, setOpen] = useState(false)
+function AnnotationNote({ annotation, annotationNumber, accent, examiner }) {
+  if (!annotation) return null
+  const colour = annotationDot(annotation.type, accent)
 
   return (
-    <div style={{ marginTop: 24, borderTop: `1px solid ${GENERAL.line.faint}` }}>
+    <div
+      role="status"
+      aria-live="polite"
+      style={{
+        marginTop: 18,
+        padding: '14px 16px',
+        borderLeft: `2px solid ${colour}`,
+        borderRadius: `0 ${RADII.small}px ${RADII.small}px 0`,
+        background: `${colour}0F`,
+        animation: 'fte-panel-up 220ms ease both',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7 }}>
+        <span style={{
+          display: 'inline-grid',
+          placeItems: 'center',
+          width: 22,
+          height: 22,
+          borderRadius: RADII.pill,
+          background: colour,
+          color: GENERAL.textOnAccent,
+          fontSize: 11,
+          fontWeight: 800,
+        }}>
+          {annotationNumber}
+        </span>
+        <span style={{ ...TYPE.label, color: colour }}>
+          {annotationLabel(annotation, examiner)}
+        </span>
+      </div>
+      <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textSecondary }}>
+        {annotation.comment}
+      </div>
+    </div>
+  )
+}
+
+function MarkedAnswerToggle({ accent, answerSections, segments, annotations, examiner }) {
+  const [open, setOpen] = useState(false)
+  const [selectedAnnotationId, setSelectedAnnotationId] = useState(null)
+  const selectedAnnotation = annotations.find(annotation => annotation.id === selectedAnnotationId) || null
+  const selectedAnnotationNumber = selectedAnnotation
+    ? annotations.findIndex(annotation => annotation.id === selectedAnnotation.id) + 1
+    : null
+
+  function toggleOpen() {
+    setOpen(previous => {
+      const next = !previous
+      if (next && !selectedAnnotationId && annotations.length > 0) setSelectedAnnotationId(annotations[0].id)
+      return next
+    })
+  }
+
+  return (
+    <div style={{ marginTop: 10 }}>
       <button
         type="button"
+        className="fte-marked-toggle"
         aria-expanded={open}
-        onClick={() => setOpen(previous => !previous)}
+        onClick={toggleOpen}
         style={{
           ...TYPE.label,
           width: '100%',
@@ -83,13 +192,32 @@ function MarkedAnswerToggle({ accent, answerSections, segments, examiner }) {
           textAlign: 'left',
         }}
       >
-        <span>{examiner.markedAnswerToggleLabel || 'View marked answer'}</span>
+        <span>{examiner.markedAnswerToggleLabel || 'Review the marked answer'}</span>
         <span aria-hidden="true" style={{ fontSize: 18, lineHeight: 1, transform: open ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 180ms ease' }}>+</span>
       </button>
 
       {open && (
         <div style={{ padding: '16px 0 8px', borderTop: `1px solid ${GENERAL.line.faint}`, animation: 'fte-panel-up 260ms ease both' }}>
-          <AnswerContent accent={accent} answerSections={answerSections} segments={segments} />
+          {annotations.length > 0 && (
+            <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted, marginBottom: 14 }}>
+              {examiner.annotationInstruction || 'Tap a numbered highlight to see the examiner’s note.'}
+            </div>
+          )}
+          <AnswerContent
+            accent={accent}
+            answerSections={answerSections}
+            segments={segments}
+            annotations={annotations}
+            interactive={annotations.length > 0}
+            selectedAnnotationId={selectedAnnotationId}
+            onSelectAnnotation={setSelectedAnnotationId}
+          />
+          <AnnotationNote
+            annotation={selectedAnnotation}
+            annotationNumber={selectedAnnotationNumber}
+            accent={accent}
+            examiner={examiner}
+          />
         </div>
       )}
     </div>
@@ -108,8 +236,6 @@ export default function AnswerPanel({
 }) {
   const answerSections = buildAnswerSections(examiner.sampleAnswer, examiner.answerSections)
   const annotations = examiner.annotations || []
-  const earnedNotes = annotations.filter(annotation => annotation.type === 'strong')
-  const improvementNotes = annotations.filter(annotation => annotation.type !== 'strong')
   const primaryImprovement = getPrimaryImprovementAnnotation(annotations, examiner.primaryImprovementId)
   const repairPrompt = primaryImprovement ? examiner.improvementPrompts?.[primaryImprovement.id] : null
   const editValue = primaryImprovement ? (studentEdits[primaryImprovement.id] || '') : ''
@@ -128,13 +254,6 @@ export default function AnswerPanel({
         borderRadius: `0 ${RADII.medium}px ${RADII.medium}px 0`,
         padding: '20px 18px 22px 20px',
       }}>
-        <div style={{ ...TYPE.displayCard, color: accent, marginBottom: 6 }}>
-          {examiner.repairTitle || 'Fix one weakness'}
-        </div>
-        <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textSecondary, marginBottom: 22 }}>
-          {examiner.repairInstruction || 'Keep the useful knowledge and add the missing link.'}
-        </div>
-
         <div style={{ marginBottom: 18 }}>
           <div style={{ ...TYPE.label, color: GENERAL.cinematic.textMuted, marginBottom: 8 }}>
             {examiner.originalSentenceLabel || 'Original sentence'}
@@ -167,28 +286,27 @@ export default function AnswerPanel({
           onChange={event => setStudentEdits(previous => ({ ...previous, [primaryImprovement.id]: event.target.value }))}
         />
 
-        <MarkedAnswerToggle accent={accent} answerSections={answerSections} segments={segments} examiner={examiner} />
+        <MarkedAnswerToggle
+          accent={accent}
+          answerSections={answerSections}
+          segments={segments}
+          annotations={annotations}
+          examiner={examiner}
+        />
       </article>
     )
   }
 
   if (isReveal) {
     return (
-      <article style={{
-        background: 'rgba(8,9,13,0.14)',
-        borderLeft: `2px solid ${accent}88`,
-        borderRadius: `0 ${RADII.medium}px ${RADII.medium}px 0`,
-        padding: '4px 18px 18px 20px',
-      }}>
-        {annotations.length > 0 ? (
-          <>
-            <AnnotationList title={examiner.earnedMarksLabel || 'What earned marks'} notes={earnedNotes} accent={accent} />
-            <AnnotationList title={examiner.nextMarkLabel || 'What stopped the next mark'} notes={improvementNotes} accent={accent} />
-            <MarkedAnswerToggle accent={accent} answerSections={answerSections} segments={segments} examiner={examiner} />
-          </>
-        ) : (
-          <AnswerContent accent={accent} answerSections={answerSections} segments={segments} />
-        )}
+      <article>
+        <MarkedAnswerToggle
+          accent={accent}
+          answerSections={answerSections}
+          segments={segments}
+          annotations={annotations}
+          examiner={examiner}
+        />
       </article>
     )
   }
