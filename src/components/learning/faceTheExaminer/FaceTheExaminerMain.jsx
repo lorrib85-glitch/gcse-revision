@@ -72,10 +72,20 @@ export default function FaceTheExaminerMain(props) {
   const questionParts = splitQuestionAndMarks(examiner.question, examiner.marks)
   const hasCriteriaChoices = (examiner.criteriaOptions || []).length > 0
   const readyToReveal = guessedMark !== null && (!hasCriteriaChoices || selectedCriteria.length > 0)
+  const showFooter = (phase === 'reading' && activeTab === 'answer')
+    || (phase === 'judging' && activeTab === 'marking')
+    || isReveal
+    || isImproving
+    || isRemarking
 
   function startQuestionIntroDock() {
     setQuestionIntroDocking(true)
     setTimeout(() => setQuestionIntroVisible(false), 560)
+  }
+
+  function handleTabChange(nextTab) {
+    setActiveTab(nextTab)
+    if (nextTab === 'marking' && phase === 'reading') setPhase('judging')
   }
 
   return (
@@ -220,10 +230,11 @@ export default function FaceTheExaminerMain(props) {
               ariaLabel="Answer review view"
               value={activeTab}
               accent={accent}
-              onChange={setActiveTab}
+              variant="tabs"
+              onChange={handleTabChange}
               options={[
                 { value: 'answer', label: examiner.answerTabLabel || TAB_LABELS.answer },
-                { value: 'marking', label: examiner.examinerTabLabel || TAB_LABELS.marking, disabled: phase === 'reading' },
+                { value: 'marking', label: examiner.examinerTabLabel || TAB_LABELS.marking },
               ]}
             />
           </div>
@@ -235,7 +246,7 @@ export default function FaceTheExaminerMain(props) {
             flex: 1,
             overflowY: 'auto',
             padding: `${SCREEN_TEXT_LAYOUT.blockGap}px ${SCREEN_TEXT_LAYOUT.mobileInset}px`,
-            paddingBottom: 108,
+            paddingBottom: showFooter ? 108 : SCREEN_TEXT_LAYOUT.blockGap,
             WebkitOverflowScrolling: 'touch',
             position: 'relative',
             zIndex: 1,
@@ -254,85 +265,87 @@ export default function FaceTheExaminerMain(props) {
           )}
         </div>
 
-        <div style={{
-          flexShrink: 0,
-          padding: '12px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
-          background: `linear-gradient(180deg, rgba(8,9,13,0) 0%, ${GENERAL.backgroundApp} 32%, ${GENERAL.backgroundApp} 100%)`,
-          position: 'relative',
-          zIndex: 2,
-          opacity: introBlocksMainInteraction ? 0 : 1,
-          transform: introBlocksMainInteraction ? 'translateY(18px)' : 'translateY(0)',
-          transition: 'opacity 240ms ease 620ms, transform 240ms ease 620ms',
-        }}>
-          {phase === 'reading' && activeTab === 'answer' && (
-            <ContinueCTA
-              accent={accent}
-              label={examiner.reviewCtaLabel || 'Review as examiner'}
-              onClick={() => {
-                setActiveTab('marking')
-                setPhase('judging')
-              }}
-            />
-          )}
-
-          {phase === 'judging' && (
-            <>
-              {!readyToReveal && (
-                <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted, textAlign: 'center', marginBottom: 8 }}>
-                  {guessedMark === null
-                    ? (examiner.chooseMarkInstruction || 'Choose a mark to continue.')
-                    : (examiner.chooseObservationInstruction || 'Choose at least one observation to continue.')}
-                </div>
-              )}
+        {showFooter && (
+          <div style={{
+            flexShrink: 0,
+            padding: '12px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
+            background: `linear-gradient(180deg, rgba(8,9,13,0) 0%, ${GENERAL.backgroundApp} 32%, ${GENERAL.backgroundApp} 100%)`,
+            position: 'relative',
+            zIndex: 2,
+            opacity: introBlocksMainInteraction ? 0 : 1,
+            transform: introBlocksMainInteraction ? 'translateY(18px)' : 'translateY(0)',
+            transition: 'opacity 240ms ease 620ms, transform 240ms ease 620ms',
+          }}>
+            {phase === 'reading' && activeTab === 'answer' && (
               <ContinueCTA
                 accent={accent}
-                label={examiner.revealCtaLabel || 'Reveal examiner report'}
-                disabled={!readyToReveal}
+                label={examiner.reviewCtaLabel || 'Review as examiner'}
                 onClick={() => {
-                  setActiveTab('answer')
-                  setPhase('reveal')
+                  setActiveTab('marking')
+                  setPhase('judging')
                 }}
               />
-            </>
-          )}
+            )}
 
-          {isReveal && (
-            <ContinueCTA
-              accent={accent}
-              label={canImprove ? (examiner.improveCtaLabel || 'Fix the weakest sentence') : 'Continue'}
-              onClick={() => setPhase(canImprove ? 'improving' : 'done')}
-            />
-          )}
+            {phase === 'judging' && activeTab === 'marking' && (
+              <>
+                {!readyToReveal && (
+                  <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted, textAlign: 'center', marginBottom: 8 }}>
+                    {guessedMark === null
+                      ? (examiner.chooseMarkInstruction || 'Choose a mark to continue.')
+                      : (examiner.chooseObservationInstruction || 'Choose at least one observation to continue.')}
+                  </div>
+                )}
+                <ContinueCTA
+                  accent={accent}
+                  label={examiner.revealCtaLabel || 'Reveal examiner report'}
+                  disabled={!readyToReveal}
+                  onClick={() => {
+                    setActiveTab('answer')
+                    setPhase('reveal')
+                  }}
+                />
+              </>
+            )}
 
-          {isImproving && (
-            <div>
-              {!hasAnyEdit && (
-                <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted, textAlign: 'center', marginBottom: 8 }}>
-                  {examiner.repairRequiredInstruction || 'Rewrite the highlighted sentence to continue.'}
-                </div>
-              )}
+            {isReveal && (
               <ContinueCTA
                 accent={accent}
-                label={remarkLoading ? 'Re-marking…' : 'Re-mark my answer'}
-                disabled={!hasAnyEdit || remarkLoading}
-                onClick={handleRemark}
+                label={canImprove ? (examiner.improveCtaLabel || 'Fix the weakest sentence') : 'Continue'}
+                onClick={() => setPhase(canImprove ? 'improving' : 'done')}
               />
-              <button
-                type="button"
-                onClick={() => setPhase('done')}
-                style={{ ...TYPE.bodySmall, display: 'block', width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: GENERAL.cinematic.textSubtle, padding: '12px 0 0', textAlign: 'center' }}
-              >
-                Continue without improving
-              </button>
-            </div>
-          )}
+            )}
 
-          {isRemarking && (
-            <div role="status" aria-live="polite" style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center', ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
-              Reviewing your changes…
-            </div>
-          )}
-        </div>
+            {isImproving && (
+              <div>
+                {!hasAnyEdit && (
+                  <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted, textAlign: 'center', marginBottom: 8 }}>
+                    {examiner.repairRequiredInstruction || 'Rewrite the highlighted sentence to continue.'}
+                  </div>
+                )}
+                <ContinueCTA
+                  accent={accent}
+                  label={remarkLoading ? 'Re-marking…' : 'Re-mark my answer'}
+                  disabled={!hasAnyEdit || remarkLoading}
+                  onClick={handleRemark}
+                />
+                <button
+                  type="button"
+                  onClick={() => setPhase('done')}
+                  style={{ ...TYPE.bodySmall, display: 'block', width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: GENERAL.cinematic.textSubtle, padding: '12px 0 0', textAlign: 'center' }}
+                >
+                  Continue without improving
+                </button>
+              </div>
+            )}
+
+            {isRemarking && (
+              <div role="status" aria-live="polite" style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center', ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
+                Reviewing your changes…
+              </div>
+            )}
+          </div>
+        )}
 
         {questionIntroVisible && phase === 'reading' && (
           <div style={{
