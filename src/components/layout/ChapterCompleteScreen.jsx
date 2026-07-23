@@ -17,6 +17,7 @@ const SEAL_SIZE = 72
 const SEAL_STROKE = 2.5
 const SEAL_RADIUS = SEAL_SIZE / 2 - SEAL_STROKE / 2
 const SEAL_CIRC = 2 * Math.PI * SEAL_RADIUS
+const completionDelay = step => `${MOTION.stagger.standardMs * step}ms`
 
 function hexToRgb(hex) {
   const value = Number.parseInt(hex.replace('#', ''), 16)
@@ -281,7 +282,7 @@ export default function ChapterCompleteScreen({
           animation: ccs-seal-settle ${GENERAL.cinematic.motion.slow} ${MOTION.easing.standard} both;
         }
         .ccs-artwork {
-          animation: ccs-art-settle 1400ms ${MOTION.easing.gentle} both;
+          animation: ccs-art-settle ${MOTION.duration.settle} ${MOTION.easing.gentle} both;
         }
         .ccs-secondary:hover {
           background: ${GENERAL.surfaceTint} !important;
@@ -472,7 +473,7 @@ export default function ChapterCompleteScreen({
                   color: resolvedAccent,
                   textAlign: 'center',
                   margin: `0 0 ${SPACING.micro}px`,
-                  animationDelay: '260ms',
+                  animationDelay: completionDelay(2),
                 }}
               >
                 {completionLabel}
@@ -488,7 +489,7 @@ export default function ChapterCompleteScreen({
                   width: '100%',
                   maxWidth: 340,
                   margin: `0 0 ${SPACING.compact}px`,
-                  animationDelay: '360ms',
+                  animationDelay: completionDelay(3),
                 }}
               >
                 {completedChapter}
@@ -502,7 +503,7 @@ export default function ChapterCompleteScreen({
                   textAlign: 'center',
                   margin: 0,
                   maxWidth: 310,
-                  animationDelay: '480ms',
+                  animationDelay: completionDelay(4),
                 }}
               >
                 {supportingCopy}
@@ -515,7 +516,7 @@ export default function ChapterCompleteScreen({
               style={{
                 width: '100%',
                 maxWidth: 360,
-                animationDelay: '640ms',
+                animationDelay: completionDelay(5),
               }}
             >
               {!isFinalChapter && nextChapterTitle && (
@@ -601,7 +602,7 @@ export default function ChapterCompleteScreen({
                 label={continueLabel}
                 accent={resolvedAccent}
                 textColor={textOnAccent}
-                style={{ animation: `ccs-in ${MOTION.duration.slow} ${MOTION.easing.standard} 760ms both` }}
+                style={{ animation: `ccs-in ${MOTION.duration.slow} ${MOTION.easing.standard} ${completionDelay(6)} both` }}
               />
             </section>
 
@@ -623,7 +624,7 @@ export default function ChapterCompleteScreen({
                     detail={`${quizQuestionCount} questions · ${quizDuration}`}
                     ariaLabel={`Start a ${quizQuestionCount}-question quiz from ${quizScope}`}
                     onClick={onQuiz}
-                    animationDelay="900ms"
+                    animationDelay={completionDelay(7)}
                   />
                 )}
 
@@ -636,7 +637,7 @@ export default function ChapterCompleteScreen({
                     detail={`Real exam questions from ${quizScope}`}
                     ariaLabel={pastPaperLabel || 'Practice past paper questions'}
                     onClick={onPastPaper}
-                    animationDelay="980ms"
+                    animationDelay={completionDelay(8)}
                   />
                 )}
               </section>
@@ -656,7 +657,7 @@ export default function ChapterCompleteScreen({
                   cursor: 'pointer',
                   WebkitTapHighlightColor: 'transparent',
                   transition: `opacity ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
-                  animationDelay: '1060ms',
+                  animationDelay: completionDelay(9),
                   ...TYPE.bodySmall,
                 }}
               >
