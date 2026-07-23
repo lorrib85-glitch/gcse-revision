@@ -70,8 +70,7 @@ Introduce the first major part of the topic.
 - `VisualLearning`
 - `TimelineChain` (`variant: 'reveal'`) — the retired `VisualNarrativeScreen`'s replacement
 - `CinematicRevealMoment`
-- `InteractiveHotspotImage`
-- `InteractiveCollectionExplorer`
+- `InteractiveHotspotImage` — `detail` (default) or `reveal` variant
 - `GuidedChoiceCarousel`
 - `MatchingTask`
 - `QuickRecallScreen`
@@ -96,7 +95,7 @@ Introduce new knowledge while revisiting earlier learning.
 
 - `VisualLearning`
 - `TimelineChain` (`variant: 'reveal'`) — the retired `VisualNarrativeScreen`'s replacement
-- `InteractiveCollectionExplorer`
+- `InteractiveHotspotImage` (`variant: 'reveal'`)
 - `GuidedChoiceCarousel`
 - `MatchingTask`
 - `ExplainReveal`
@@ -411,9 +410,8 @@ Default assumption: **Use an existing component.**
 
 1. `VisualLearning`
 2. `TimelineChain` (`variant: 'reveal'`) — the retired `VisualNarrativeScreen`'s replacement
-3. `InteractiveHotspotImage`
-4. `InteractiveCollectionExplorer`
-5. `GuidedChoiceCarousel`
+3. `InteractiveHotspotImage` — `detail` (default) or `reveal` variant
+4. `GuidedChoiceCarousel`
 
 **When checking understanding:**
 

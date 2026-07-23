@@ -528,7 +528,7 @@ during the audit and is recorded as debt for a brief, not fixed here.
 |---|---|---|---|
 | `guidedChoiceCarousel` | 3 | ✓ Ep1 s12 (rest + flip + reveal) | `bio_building_blocks` s1 (imageless cards) |
 | `cinematic` | 2 | ✓ Ep2 s1 (full reveal) | none render-reviewed — debt |
-| `collectionExplorer` | 2 | ✓ Ep1 s18 (rest + sheet + synthesis) | `history-medicine-western-front` s2 (phase-label mismatch + gridded hotspots) |
+| `interactiveImage` (reveal) | 2 | ✓ Ep1 s18 (rest + sheet + synthesis) | `history-medicine-western-front` s2 (gridded hotspots — re-review after reveal-variant migration) |
 
 ### `guidedChoiceCarousel`
 
@@ -605,42 +605,37 @@ during the audit and is recorded as debt for a brief, not fixed here.
   chapter's moment? Is there exactly one headline? Does the staggered copy
   build to a single named payoff? Is the copy legible over the scrim?
 
-### `collectionExplorer`
+### `interactiveImage` (reveal variant)
 
 - **Learning intent:** explore a themed set of items by tapping hotspots on
   a scene, each opening a multi-step reveal, ending on a synthesis + exam
-  takeaway (teach, exploratory). Routed through
-  `InteractiveCollectionExplorer`; its sheet phase labels are hardcoded to a
-  **five-beat** structure (`Hook · What is it? · Why does it matter? ·
-  Common mistake · Exam takeaway`).
+  takeaway (teach, exploratory). Routed through `InteractiveHotspotImage`
+  with `variant: 'reveal'` (absorbed the former `InteractiveCollectionExplorer`).
+  The reveal card shows a neutral `n / total` step counter and progress bar —
+  the old hardcoded five-beat phase labels (`Hook · What is it? · …`) were
+  deliberately dropped, so reveal counts no longer need to be exactly five.
 - **Strongest composed runtime use:** `history-medicine-medieval-beliefs-causes`
   screen **18** ("Staying well in 1400"). Verified at 390px across rest
-  (scene + pulsing hotspots + "0 of 4 explored"), an open hotspot sheet
-  ("HOOK 1/5"), and the synthesis screen ("Prevention followed belief" +
+  (scene + pulsing hotspots), an open hotspot reveal card ("1 / 5" step
+  counter), and the synthesis screen ("Prevention followed belief" +
   exam takeaway).
 - **Why it is the current gold example:** each of the 4 items carries
-  **exactly 5 reveals**, so the hardcoded phase labels are truthful — the
-  first reveal really is a hook, the last really is the exam takeaway; the
+  **5 well-paced reveals** that move from hook to exam-relevant logic; the
   hotspots sit over distinct regions of an atmospheric medieval street; the
   reveals teach then end on exam-relevant logic; the synthesis lands a real
   connective takeaway ("The belief determined the prevention"). Strengthened
   verdict: the phase scaffold matches the content, one hotspot-at-a-time
   keeps a single focal, the synthesis exceeds a plain list.
 - **Below-bar counterexample:** `history-medicine-western-front` screen **2**
-  ("What made treatment so difficult?"). Two explore-phase failures: (1)
-  every item carries only **3 reveals**, but the phase labels are hardcoded
-  to the 5-beat set — so three flat factual sentences get mislabelled
-  "HOOK" / "What is it?" / "Why does it matter?", labels the content does
-  not support; (2) the 6 hotspots sit in a rigid 2-column × 3-row grid
-  (x 18/60, y 28/52/75) floating over a single blurred trench photo, not
-  anchored to six distinct tappable objects — so "tap each object" has no
-  objects to tap. Note the *synthesis* payload here is itself strong (three
-  types of problem + a shell-shock exam takeaway); the below-bar problems
-  are confined to the explore/sheet phase.
-- **Why the counterexample fails:** the component's phase taxonomy assumes a
-  5-beat reveal per item; feeding it 3-beat items produces mislabelled
-  headers, and gridded hotspots break the scene→object bond the explore
-  mechanic depends on.
+  ("What made treatment so difficult?"). The former phase-label mismatch
+  (its items carry only **3 reveals**, previously mislabelled against the
+  5-beat set) is **resolved** by the reveal variant's neutral step counter.
+  One concern remains to verify at 390px: the 6 hotspots sit in a rigid
+  2-column × 3-row grid (x 18/60, y 28/52/75) floating over a single blurred
+  trench photo, not anchored to six distinct tappable objects — so "tap each
+  object" has weak objects to tap; nudge the coordinates onto distinct
+  features during the render pass. The synthesis payload here is itself
+  strong (three types of problem + a shell-shock exam takeaway).
 - **Softness (both uses, not bar-affecting):** the synthesis screen's
   "Collection complete" eyebrow renders *under* the module `LearningHeader`
   capsule and is partly obscured at 390px — a mild header-clearance issue,
@@ -678,7 +673,7 @@ below.
 
 *(2026-07-12 PM: `guidedExamResponse`, formerly rank 1, was fixed and
 seated. 2026-07-12 later: the rank-1 recurring patterns
-`guidedChoiceCarousel`, `cinematic` and `collectionExplorer` were seated in
+`guidedChoiceCarousel`, `cinematic` and `interactiveImage` (reveal) were seated in
 the third-wave audit above.)*
 
 **The structural headline sits outside the register's normal scope but is

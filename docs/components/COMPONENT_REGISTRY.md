@@ -242,8 +242,8 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### InteractiveHotspotImage
 
 **File:** `src/components/learning/InteractiveHotspotImage.jsx`
-**Purpose:** Full-screen image with tappable hotspots. Two-phase: intro reveal → explore hotspots. Used for diagrams and labelling tasks.
-**Props:** `block`, `subject`, `onContinue`, `onBack`
+**Purpose:** Full-screen image with tappable hotspots. Two-phase: intro reveal → explore hotspots. Two variants: `detail` (default — one card of labelled rows per hotspot) and `reveal` (pages through multiple pieces of information per hotspot, `reveals[]`). Optional `synthesis` shows a "collection complete" summary once all hotspots are explored.
+**Props:** `subject`, `title`, `introText`, `image`, `imageAlt`, `hotspots`, `ctaLabel`, `variant`, `synthesis`, `onBack`, `onEnterExplore`, `onContinue`
 **Dependencies:** `SUBJECTS`, `MOTION`
 
 ---
@@ -323,15 +323,6 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Purpose:** Horizontally scrollable single-choice carousel with atmospheric visual option cards. Used for healer/role selection scenes. The chosen option is passed to `onContinue` so downstream screens can personalise content.
 **Props:** `subject`, `headline`, `question`, `helperText`, `promptVisual`, `options`, `onBack`, `onContinue(nextScreenId, selectedOption)`
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`
-
----
-
-### InteractiveCollectionExplorer
-
-**File:** `src/components/learning/InteractiveCollectionExplorer.jsx`
-**Purpose:** Theme-based explorer where learners browse colour-coded content sheets. Supports fuzzy-match text input validation for active recall moments.
-**Props:** `screen`, `subject`, `onComplete`
-**Dependencies:** `SUBJECTS`, `MOTION`
 
 ---
 

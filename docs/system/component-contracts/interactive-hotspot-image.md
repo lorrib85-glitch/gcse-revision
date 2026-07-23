@@ -57,3 +57,22 @@ screen `id: 'four-humours-hotspot'`) is the standard. It works because:
    the reveal card (capped at `47vh`, scrollable) buries the point below
    the fold, or the inline label (`shortLabel || title`) is long enough
    to force a wrap it isn't designed to handle.
+
+## Variants
+
+- `variant="detail"` (default) — the bar above: one reveal card of labelled
+  rows per hotspot (`description` → Meaning/Believed effect, `extraFact` →
+  Treatment logic).
+- `variant="reveal"` — each hotspot carries a `reveals: [{ text }]` array; the
+  card pages through them (Next → … → "Mark explored →"), showing an
+  `n / total` step counter and a segmented progress bar. A hotspot is only
+  marked visited when its final reveal is reached. Absorbed from the former
+  `InteractiveCollectionExplorer`; the old hardcoded five-beat phase labels
+  are deliberately dropped.
+- Optional `synthesis={ heading, points[], examTakeaway? }` — when supplied,
+  a "collection complete" summary screen replaces the bare Continue once all
+  hotspots are explored. Works with either variant.
+
+Reveal-variant copy standard: each `reveals[i].text` is one self-contained
+beat; order them narrative → explanation → exam relevance. Keep each beat to
+1–3 sentences so the card (capped `47vh`) never buries the point.
