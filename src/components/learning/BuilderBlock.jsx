@@ -48,6 +48,11 @@ function range(start, end) {
   return Array.from({ length: Math.max(0, end - start) }, (_, index) => start + index)
 }
 
+function isNumericLabel(value) {
+  const label = answerLabel(value).trim()
+  return label !== '' && Number.isFinite(Number(label))
+}
+
 export default function BuilderBlock({ block, subject = 'Biology', onComplete }) {
   const { key: subjectKey, theme } = resolveSubject(subject)
   const pieces = useMemo(() => normalisePieces(block.pieces), [block.pieces])
@@ -59,19 +64,24 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
   const layout = requestedLayout ?? (hasReactionGroups ? 'reaction' : 'equation')
   const usesReactionLayout = layout === 'reaction'
   const isQuoteLayout = layout === 'quote' || layout === 'sentence'
-  const isMathLayout = layout === 'equation' || layout === 'calculation'
-  const usesTemplate = Boolean(block.template) && (isQuoteLayout || isMathLayout)
+  const isExpressionLayout = layout === 'equation' || layout === 'calculation'
+  const usesTemplate = Boolean(block.template) && (isQuoteLayout || isExpressionLayout)
+  const usesTabularNumerals = block.numeric ?? (
+    pieces.length > 0
+    && pieces.every(piece => isNumericLabel(piece.label))
+    && (block.answer ?? []).every(isNumericLabel)
+  )
   const reactantIndexes = hasReactionGroups ? range(0, arrowIndex + 1) : []
   const productIndexes = hasReactionGroups ? range(arrowIndex + 1, slotCount) : []
   const groupLabels = block.groupLabels ?? ['Reactants', 'Products']
   const instruction = block.instruction ?? (
     isQuoteLayout
       ? 'Choose the missing words or phrases to restore the quotation.'
-      : isMathLayout && usesTemplate
-        ? 'Choose the missing value for each gap in the calculation.'
+      : isExpressionLayout && usesTemplate
+        ? 'Choose the missing value or term for each gap.'
         : usesReactionLayout
-          ? `Place each substance under ${groupLabels[0]} or ${groupLabels[1]}.`
-          : 'Tap a gap, then choose the word or phrase that belongs there.'
+          ? `Place each item under ${groupLabels[0]} or ${groupLabels[1]}.`
+          : 'Tap a gap, then choose the option that belongs there.'
   )
   const contextImage = block.contextImage ?? block.backgroundImage ?? null
   const blockKey = `${block.label ?? ''}:${(block.answer ?? []).map(answerLabel).join('|')}`
@@ -171,7 +181,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
     if (slotCorrectness.every(Boolean)) {
       setMode('completed')
       setSelectedSlot(null)
-      setAnnouncement(`Correct. The completed ${isQuoteLayout ? 'quotation' : isMathLayout ? 'calculation' : 'equation'} is now shown.`)
+      setAnnouncement(`Correct. The completed ${isQuoteLayout ? 'quotation' : usesReactionLayout ? 'relationship' : 'expression'} is now shown.`)
       return
     }
 
@@ -199,10 +209,11 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
   }
 
   function slotGroupName(index) {
-    if (isQuoteLayout) return 'Quotation'
-    if (isMathLayout) return 'Calculation'
-    if (!hasReactionGroups) return 'Equation'
-    return index <= arrowIndex ? groupLabels[0] : groupLabels[1]
+    if (isQuoteLayout) return block.slotGroupLabel ?? 'Quotation'
+    if (usesReactionLayout && hasReactionGroups) {
+      return index <= arrowIndex ? groupLabels[0] : groupLabels[1]
+    }
+    return block.slotGroupLabel ?? 'Expression'
   }
 
   function getSlotAppearance(slotIndex) {
@@ -220,9 +231,9 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
     return { piece, showCorrect, showIncorrect, selected, locked, accent }
   }
 
-  function renderSlot(slotIndex, { inline = false, quote = false, maths = false } = {}) {
+  function renderSlot(slotIndex, { inline = false, quote = false, symbolic = false } = {}) {
     const { piece, showCorrect, showIncorrect, selected, locked, accent } = getSlotAppearance(slotIndex)
-    const emptyMark = maths ? '?' : '…'
+    const emptyMark = symbolic ? '?' : '…'
     const quoteSlot = inline && quote
 
     return (
@@ -238,28 +249,24 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         style={{
           width: inline ? 'auto' : '100%',
           minWidth: inline
-            ? (maths
-                ? BUTTONS.compact.height * 1.5
-                : quoteSlot
-                  ? BUTTONS.compact.height * 2
-                  : BUTTONS.compact.height * 2.25)
+            ? (symbolic ? BUTTONS.compact.height * 1.5 : BUTTONS.compact.height * 2)
             : 0,
           minHeight: inline ? COMPONENT_SIZE.touchTarget : BUTTONS.compact.height,
           padding: inline
-            ? quoteSlot
-              ? `${SPACING.micro / 2}px ${SPACING.micro}px`
-              : `${SPACING.micro}px ${SPACING.compact}px`
+            ? `${SPACING.micro / 2}px ${quoteSlot ? SPACING.micro : SPACING.compact}px`
             : `0 ${SPACING.micro}px`,
           background: quoteSlot
             ? 'transparent'
             : selected
               ? theme.glowStrong
-              : piece
-                ? GENERAL.surfaceTint
-                : 'transparent',
-          border: 'none',
-          borderBottom: `${selected ? COMPONENT_SIZE.focusRing : COMPONENT_SIZE.hairline}px ${piece ? 'solid' : 'dashed'} ${selected || showCorrect || showIncorrect ? accent : GENERAL.line.strong}`,
-          borderRadius: quoteSlot ? 0 : RADII.small,
+              : GENERAL.surfaceTint,
+          border: quoteSlot
+            ? 'none'
+            : `${selected ? COMPONENT_SIZE.focusRing : COMPONENT_SIZE.hairline}px solid ${selected || showCorrect || showIncorrect ? accent : GENERAL.line.strong}`,
+          borderBottom: quoteSlot
+            ? `${selected ? COMPONENT_SIZE.focusRing : COMPONENT_SIZE.hairline}px ${piece ? 'solid' : 'dashed'} ${selected || showCorrect || showIncorrect ? accent : GENERAL.line.strong}`
+            : undefined,
+          borderRadius: quoteSlot ? 0 : RADII.pill,
           display: inline ? 'inline-flex' : 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -273,8 +280,8 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
             : 'none',
           ...TYPE.titleMedium,
           fontFamily: quote ? "'IBM Plex Serif', serif" : TYPE.titleMedium.fontFamily,
-          fontSize: quote ? '1.02em' : maths ? '1em' : TYPE.titleMedium.fontSize,
-          fontVariantNumeric: maths ? 'tabular-nums' : undefined,
+          fontSize: quote ? '1.02em' : symbolic ? '1em' : TYPE.titleMedium.fontSize,
+          fontVariantNumeric: usesTabularNumerals ? 'tabular-nums' : undefined,
           color: piece ? GENERAL.feedbackText : selected ? theme.accentSecondary : GENERAL.slate,
           transition: `background-color ${transition}, border-color ${transition}, box-shadow ${transition}, color ${transition}, transform ${transition}`,
         }}
@@ -310,7 +317,11 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
 
         return (
           <span key={`slot-${slotIndex}`} style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
-            {renderSlot(slotIndex, { inline: true, quote: isQuoteLayout, maths: isMathLayout })}
+            {renderSlot(slotIndex, {
+              inline: true,
+              quote: isQuoteLayout,
+              symbolic: isExpressionLayout,
+            })}
           </span>
         )
       })
@@ -322,11 +333,12 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
 
     return (
       <TemplateElement
+        aria-label={!isQuoteLayout ? (block.workspaceLabel ?? 'Expression builder') : undefined}
         style={{
           margin: 0,
           padding: isQuoteLayout
             ? `${SPACING.compact}px 0 ${SPACING.separation}px ${SPACING.compact}px`
-            : SPACING.standard,
+            : `${SPACING.separation}px 0`,
           background: 'transparent',
           borderLeft: isQuoteLayout
             ? `${COMPONENT_SIZE.accentRail}px solid ${theme.accent}`
@@ -336,11 +348,11 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
           fontSize: isQuoteLayout ? 'clamp(19px, 5.3vw, 24px)' : 'clamp(22px, 7vw, 30px)',
           lineHeight: isQuoteLayout ? 1.72 : 1.35,
           fontWeight: isQuoteLayout ? 400 : 600,
-          fontVariantNumeric: isMathLayout ? 'tabular-nums' : undefined,
-          textAlign: isMathLayout ? 'center' : 'left',
+          fontVariantNumeric: usesTabularNumerals ? 'tabular-nums' : undefined,
+          textAlign: isQuoteLayout ? 'left' : 'center',
           whiteSpace: 'pre-wrap',
           color: isQuoteLayout ? quoteText : GENERAL.feedbackText,
-          textShadow: isQuoteLayout && contextImage ? GENERAL.cinematic.actionShadow : undefined,
+          textShadow: contextImage ? GENERAL.cinematic.actionShadow : undefined,
         }}
       >
         {renderTemplateContent(resolved)}
@@ -350,8 +362,14 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
 
   function renderGroup(indexes, label, resolved = false) {
     return (
-      <section aria-label={label} style={{ minWidth: 0 }}>
-        <div style={{ ...TYPE.label, color: GENERAL.cinematic.textMuted, marginBottom: SPACING.micro }}>
+      <section
+        aria-label={label}
+        style={{
+          minWidth: 0,
+          padding: `${SPACING.compact}px 0`,
+        }}
+      >
+        <div style={{ ...TYPE.label, color: theme.accentSecondary, marginBottom: SPACING.compact }}>
           {label}
         </div>
         <div
@@ -368,7 +386,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                 <span style={{ ...TYPE.titleMedium, color: GENERAL.feedbackText, textAlign: 'center' }}>
                   {answerLabel(block.answer?.[slotIndex])}
                 </span>
-              ) : renderSlot(slotIndex)}
+              ) : renderSlot(slotIndex, { symbolic: true })}
               {position < indexes.length - 1 && (
                 <span aria-hidden="true" style={{ ...TYPE.titleMedium, color: GENERAL.slate, textAlign: 'center' }}>
                   {operators[slotIndex] || '+'}
@@ -381,19 +399,19 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
     )
   }
 
-  function renderLinearEquation(resolved = false) {
+  function renderLinearExpression(resolved = false) {
     const values = resolved ? (block.answer ?? []) : slots
 
     return (
       <div
-        aria-label={resolved ? 'Completed equation' : 'Equation gaps'}
+        aria-label={resolved ? 'Completed expression' : 'Expression gaps'}
         style={{
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'center',
           gap: SPACING.micro,
-          padding: SPACING.standard,
+          padding: `${SPACING.separation}px 0`,
         }}
       >
         {values.map((value, index) => (
@@ -410,7 +428,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
               <span style={{ ...TYPE.titleMedium, color: GENERAL.feedbackText }}>
                 {answerLabel(value)}
               </span>
-            ) : renderSlot(index)}
+            ) : renderSlot(index, { symbolic: true })}
             {index < values.length - 1 && (
               <span aria-hidden="true" style={{ ...TYPE.titleMedium, color: theme.accentSecondary }}>
                 {operators[index] || '+'}
@@ -427,11 +445,11 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
 
     if (usesReactionLayout) {
       return (
-        <div style={{ display: 'grid', gap: SPACING.compact, padding: SPACING.standard }}>
+        <div style={{ display: 'grid', gap: SPACING.micro, padding: `${SPACING.compact}px 0` }}>
           {renderGroup(reactantIndexes, groupLabels[0], resolved)}
           <div
-            aria-label="becomes"
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: SPACING.micro }}
+            aria-label={block.relationshipLabel ?? 'becomes'}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: SPACING.compact }}
           >
             <div style={{ height: COMPONENT_SIZE.hairline, flex: 1, background: GENERAL.line.faint }} />
             <span aria-hidden="true" style={{ ...TYPE.titleLarge, color: theme.accentSecondary }}>→</span>
@@ -442,7 +460,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
       )
     }
 
-    return renderLinearEquation(resolved)
+    return renderLinearExpression(resolved)
   }
 
   const placementHelp = allFilled
@@ -453,23 +471,25 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
   const completedInstruction = block.completedInstruction ?? (
     isQuoteLayout
       ? 'You restored the quotation.'
-      : isMathLayout
-        ? 'You completed the calculation.'
-        : 'You built the full relationship.'
+      : usesReactionLayout
+        ? 'You built the full relationship.'
+        : 'You completed the expression.'
   )
   const successHeading = block.successHeading ?? (
-    isQuoteLayout ? 'Quotation restored' : isMathLayout ? 'Calculation complete' : 'Equation complete'
+    isQuoteLayout
+      ? 'Quotation restored'
+      : usesReactionLayout
+        ? 'Relationship complete'
+        : 'Expression complete'
   )
-  const bankLabel = block.bankLabel ?? (isQuoteLayout ? 'Word choices' : isMathLayout ? 'Number choices' : 'Word bank')
-  const incompleteLabel = block.incompleteLabel ?? (isQuoteLayout ? 'Complete all gaps' : 'Complete all spaces')
+  const bankLabel = block.bankLabel ?? (
+    isQuoteLayout ? 'Word choices' : usesTabularNumerals ? 'Value choices' : 'Choices'
+  )
+  const incompleteLabel = block.incompleteLabel ?? 'Complete all gaps'
 
-  const atmosphereBackground = contextImage
-    ? `linear-gradient(180deg, ${theme.overlay} 0%, ${GENERAL.backgroundSurface} 88%), url(${contextImage}) center / cover`
-    : `radial-gradient(circle at 12% 0%, ${theme.glow} 0%, transparent 46%), linear-gradient(155deg, ${theme.backgroundSecondary} 0%, ${GENERAL.backgroundSurface} 58%, ${GENERAL.backgroundSunken} 100%)`
-
-  const quoteAtmosphere = contextImage
+  const stageAtmosphere = contextImage
     ? `linear-gradient(180deg, ${GENERAL.backgroundApp} 0%, transparent 18%, transparent 72%, ${GENERAL.backgroundApp} 100%), linear-gradient(180deg, ${theme.overlay} 0%, ${GENERAL.backgroundApp} 100%), url(${contextImage}) center / cover`
-    : `linear-gradient(180deg, ${GENERAL.backgroundApp} 0%, transparent 18%, transparent 72%, ${GENERAL.backgroundApp} 100%), radial-gradient(circle at 16% 26%, ${theme.glow} 0%, transparent 52%)`
+    : `linear-gradient(180deg, ${GENERAL.backgroundApp} 0%, transparent 18%, transparent 74%, ${GENERAL.backgroundApp} 100%), radial-gradient(circle at 18% 24%, ${theme.glow} 0%, transparent 50%), linear-gradient(155deg, ${theme.backgroundSecondary} 0%, ${GENERAL.backgroundApp} 68%)`
 
   return (
     <div style={{ margin: `${SPACING.compact}px 0` }}>
@@ -517,7 +537,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
       `}</style>
 
       <div style={{ marginBottom: SPACING.standard }}>
-        <ScreenTitle>{block.label || 'Build the equation'}</ScreenTitle>
+        <ScreenTitle>{block.label || 'Complete the builder'}</ScreenTitle>
         <ScreenBody style={{ color: GENERAL.slate, margin: 0 }}>
           {isCompleted ? completedInstruction : instruction}
         </ScreenBody>
@@ -526,47 +546,32 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
       <section
         style={{
           position: 'relative',
-          overflow: isQuoteLayout ? 'visible' : 'hidden',
+          overflow: 'visible',
           isolation: 'isolate',
-          background: isQuoteLayout ? 'transparent' : atmosphereBackground,
-          border: isQuoteLayout ? 'none' : `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.faint}`,
-          borderRadius: isQuoteLayout ? 0 : RADII.panel,
-          boxShadow: isQuoteLayout ? 'none' : GENERAL.shadow.raised,
+          background: 'transparent',
+          border: 'none',
+          borderRadius: 0,
+          boxShadow: 'none',
         }}
       >
-        {isQuoteLayout ? (
-          <div
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              inset: `-${SPACING.standard}px`,
-              zIndex: 0,
-              pointerEvents: 'none',
-              background: quoteAtmosphere,
-              opacity: contextImage ? (block.backgroundOpacity ?? 0.82) : 1,
-              filter: contextImage ? 'saturate(.72) contrast(1.04) brightness(.72)' : 'none',
-            }}
-          />
-        ) : (
-          <div
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              pointerEvents: 'none',
-              background: `linear-gradient(180deg, transparent 0%, ${GENERAL.backgroundSurface} 72%, ${GENERAL.backgroundSunken} 100%)`,
-              opacity: contextImage ? 0.9 : 0.5,
-            }}
-          />
-        )}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: `-${SPACING.standard}px`,
+            zIndex: 0,
+            pointerEvents: 'none',
+            background: stageAtmosphere,
+            opacity: contextImage ? (block.backgroundOpacity ?? 0.78) : 1,
+            filter: contextImage ? 'saturate(.72) contrast(1.04) brightness(.7)' : 'none',
+          }}
+        />
 
         <div
           style={{
             position: 'relative',
             zIndex: 1,
-            padding: isQuoteLayout
-              ? `${SPACING.separation}px 0 ${SPACING.standard}px`
-              : SPACING.standard,
+            padding: `${SPACING.separation}px 0 ${SPACING.standard}px`,
           }}
         >
           <div className={isCompleted ? resolveClass : undefined}>
@@ -574,7 +579,7 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
           </div>
 
           {!isCompleted && canEdit && (
-            <div style={{ marginTop: isQuoteLayout ? SPACING.compact : SPACING.standard }}>
+            <div style={{ marginTop: SPACING.compact }}>
               <div style={{ ...TYPE.label, color: GENERAL.cinematic.textMuted, marginBottom: SPACING.compact }}>
                 {bankLabel}
               </div>
@@ -591,13 +596,13 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                     style={{
                       minHeight: COMPONENT_SIZE.touchTarget,
                       padding: `0 ${SPACING.compact}px`,
-                      background: isQuoteLayout ? GENERAL.surfaceTint : 'transparent',
+                      background: GENERAL.surfaceTint,
                       border: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.strong}`,
-                      borderRadius: isQuoteLayout ? RADII.pill : RADII.small,
+                      borderRadius: RADII.pill,
                       ...TYPE.button,
                       fontFamily: isQuoteLayout ? "'IBM Plex Serif', serif" : TYPE.button.fontFamily,
                       fontSize: isQuoteLayout ? '1rem' : TYPE.button.fontSize,
-                      fontVariantNumeric: isMathLayout ? 'tabular-nums' : undefined,
+                      fontVariantNumeric: usesTabularNumerals ? 'tabular-nums' : undefined,
                       color: isQuoteLayout
                         ? (theme.palette?.parchment ?? GENERAL.feedbackText)
                         : GENERAL.feedbackText,
@@ -651,7 +656,9 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
                   color: allFilled ? GENERAL.textOnAccent : GENERAL.cinematic.textSecondary,
                   cursor: allFilled ? 'pointer' : 'default',
                   opacity: 1,
-                  boxShadow: allFilled ? `0 0 ${SPACING.standard}px ${theme.glow}` : `inset 0 0 0 ${COMPONENT_SIZE.hairline}px ${GENERAL.line.faint}`,
+                  boxShadow: allFilled
+                    ? `0 0 ${SPACING.standard}px ${theme.glow}`
+                    : `inset 0 0 0 ${COMPONENT_SIZE.hairline}px ${GENERAL.line.faint}`,
                   transition: `background-color ${BUTTONS.continue.transition}, border-color ${BUTTONS.continue.transition}, color ${BUTTONS.continue.transition}, box-shadow ${BUTTONS.continue.transition}, transform ${BUTTONS.continue.transition}`,
                 }}
               >
