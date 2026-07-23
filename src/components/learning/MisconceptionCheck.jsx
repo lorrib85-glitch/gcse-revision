@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 // CinematicShell used here because the full-bleed radial-gradient background and cinematic
 // one-statement-at-a-time reveal require the screen to fill the entire viewport with no padding.
 import CinematicShell from '../layout/CinematicShell.jsx'
@@ -66,7 +67,7 @@ export default function MisconceptionCheck({ block, subject = 'Biology', onConti
 
   return (
     <CinematicShell style={{
-      background: `radial-gradient(ellipse at 50% 18%, rgba(${rgb},0.10) 0%, #0A0F0C 58%)`,
+      background: `radial-gradient(ellipse at 50% 18%, rgba(${rgb},0.10) 0%, ${GENERAL.backgroundApp} 58%)`,
       zIndex: 1000,
       WebkitTapHighlightColor: 'transparent',
     }}>
