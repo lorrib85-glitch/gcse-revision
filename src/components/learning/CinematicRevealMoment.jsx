@@ -80,6 +80,10 @@ export default function CinematicRevealMoment({
   const videoRef = useRef(null)
   const timers   = useRef([])
 
+  const [reduceMotion] = useState(() =>
+    typeof window !== 'undefined'
+      && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  )
   const [videoEnded,      setVideoEnded]      = useState(false)
   const [videoError,      setVideoError]      = useState(false)
   const [yearVisible,     setYearVisible]     = useState(false)
@@ -100,12 +104,12 @@ export default function CinematicRevealMoment({
   useEffect(() => () => clearTimers(), [])
 
   // Safety net: if video stalls, start the learning reveal quickly rather than making
-  // the screen feel broken. Still-image reveals wait for the user's tap.
+  // the screen feel broken. Reduced-motion and still-image reveals wait for the user's tap.
   useEffect(() => {
-    if (!videoSrc) return undefined
+    if (!videoSrc || reduceMotion) return undefined
     const t = setTimeout(() => startReveal(), VIDEO_SAFETY_MS)
     return () => clearTimeout(t)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [videoSrc, reduceMotion]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function clearTimers() {
     timers.current.forEach(clearTimeout)
@@ -129,6 +133,12 @@ export default function CinematicRevealMoment({
 
   function startReveal() {
     if (videoEnded) return
+
+    if (reduceMotion) {
+      revealAllText()
+      return
+    }
+
     clearTimers()
     setVideoEnded(true)
 
@@ -168,7 +178,7 @@ export default function CinematicRevealMoment({
 
   function handleTap() {
     if (!videoEnded) {
-      // Tap skips/ends the video and starts the reveal.
+      // Tap skips/ends the video or still image and starts the reveal.
       if (videoRef.current) videoRef.current.pause()
       startReveal()
       return
@@ -185,6 +195,10 @@ export default function CinematicRevealMoment({
 
   function handleVideoEnd() { startReveal() }
   function handleVideoError() { setVideoError(true); startReveal() }
+
+  const textAnimation = reduceMotion
+    ? 'none'
+    : `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`
 
   return (
     <>
@@ -206,8 +220,8 @@ export default function CinematicRevealMoment({
         }}
       >
 
-        {/* Video */}
-        {!videoError && videoSrc && (
+        {/* Video is omitted entirely for reduced-motion users. */}
+        {!reduceMotion && !videoError && videoSrc && (
           <video
             ref={videoRef}
             src={videoSrc}
@@ -226,7 +240,7 @@ export default function CinematicRevealMoment({
         )}
 
         {/* Fallback still image */}
-        {(videoError || !videoSrc) && fallbackImage && (
+        {(reduceMotion || videoError || !videoSrc) && fallbackImage && (
           <div style={{
             position: 'absolute', inset: 0,
             backgroundImage: `url(${fallbackImage})`,
@@ -257,7 +271,7 @@ export default function CinematicRevealMoment({
           position: 'absolute', inset: 0, pointerEvents: 'none',
           background: 'rgba(0,0,0,0.38)',
           opacity: videoEnded ? 1 : 0,
-          transition: `opacity ${OVERLAY_FADE_MS}ms ease`,
+          transition: reduceMotion ? 'none' : `opacity ${OVERLAY_FADE_MS}ms ease`,
         }} />
 
         {/* Text content — anchored to lower portion of screen */}
@@ -274,7 +288,7 @@ export default function CinematicRevealMoment({
               color: CINEMATIC_LABEL_COLOR,
               marginBottom: 10,
               textShadow: '0 1px 16px rgba(0,0,0,0.5)',
-              animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
+              animation: textAnimation,
             }}>
               {resolvedLabel}
             </div>
@@ -288,7 +302,7 @@ export default function CinematicRevealMoment({
               marginBottom: 14,
               maxWidth: 320,
               textShadow: '0 2px 24px rgba(0,0,0,0.55)',
-              animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
+              animation: textAnimation,
             }}>
               {resolvedHeadline}
             </div>
@@ -311,7 +325,7 @@ export default function CinematicRevealMoment({
                     marginBottom: i < bodyLines.length - 1 ? 20 : 0,
                     color: isFinalLine ? CINEMATIC_FINAL_LINE_COLOR : CINEMATIC_BODY_COLOR,
                     fontWeight: isFinalLine ? 600 : undefined,
-                    animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
+                    animation: textAnimation,
                   }}>
                     {line}
                   </p>
@@ -327,7 +341,7 @@ export default function CinematicRevealMoment({
               color: accent,
               marginBottom: 24,
               textShadow: '0 2px 28px rgba(0,0,0,0.55)',
-              animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
+              animation: textAnimation,
             }}>
               {year}
             </div>
@@ -341,7 +355,7 @@ export default function CinematicRevealMoment({
               margin: 0,
               marginBottom: i < paragraphs.length - 1 ? 22 : 0,
               textShadow: '0 1px 20px rgba(0,0,0,0.5)',
-              animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
+              animation: textAnimation,
             }}>
               {renderHighlighted(para.text, para.highlights, accent)}
             </p>
