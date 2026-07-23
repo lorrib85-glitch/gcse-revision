@@ -77,7 +77,7 @@ export default function RecoveryQuizPlayer({
     return (
       <div style={{
         position: 'fixed', inset: 0, zIndex: 1000,
-        background: '#080C1A',
+        background: GENERAL.backgroundApp,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         color: '#E0E6F0',
         fontFamily: "'Sora', sans-serif",
