@@ -121,6 +121,8 @@ export const theoryComparePeople = {
   title: 'Galen and Vesalius',
   heroImage: '/figures/history/medicine/renaissance/galen-vesalius-hero.webp',
   heroImageAlt: 'Galen in Roman dress before classical ruins and animal anatomy sketches, standing back to back with Vesalius in Renaissance dress beside an anatomical book and a human skeleton',
+  heroObjectPosition: 'center 24%',
+  emphasisSide: 'right',
   leftPerson: {
     name: 'Galen',
     subtitle: 'Ancient Roman doctor',
