@@ -471,18 +471,50 @@ export const REVIEW_ENTRIES = [
   {
     id: 'guided-exam-response', name: 'GuidedExamResponse', group: 'library',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
-    function: 'Guided written-answer scaffold: dark beat → "your turn" intro → section-by-section writing lanes, then examiner marking with a mark-by-mark breakdown and a rewritten sentence.',
-    usage: 'Used in Episode 3 (Vesalius 12-marker), type: guidedExamResponse. Also drives the worked-answer stages of GuidedAnswerCoach in Exam Mode.',
+    function: 'Cross-subject written-response scaffold: optional opening beat, governed exam prompt, section-by-section writing support and AI marking against the supplied board-specific mark scheme.',
+    usage: 'Used in History episodes and GuidedAnswerCoach. Component Lab variants verify History, English, Biology, Maths and Sociology question structures through the same API.',
     alternative: 'FaceTheExaminer (mark-the-answer diagnostic); GuidedAnswerCoach (full multi-stage exam-technique flow).',
     render: (fx, { onDone }) => (
       <GuidedExamResponse
-        module={{ id: 'review-lab-ger', subject: 'History' }}
+        module={{ id: `review-lab-ger-${fx.subject || 'general'}`, subject: fx.subject }}
         exam={fx}
         onExit={() => {}}
         onContinue={onDone}
       />
     ),
     fixture: FIX.guidedExamResponse,
+    variants: [
+      {
+        id: 'history',
+        label: 'History',
+        description: 'Edexcel explain-why response with two developed reasons and staged factual prompts.',
+        fixture: FIX.guidedExamResponse,
+      },
+      {
+        id: 'english',
+        label: 'English',
+        description: 'AQA literature response using an extract, interpretation, close analysis and a whole-text link.',
+        fixture: FIX.guidedExamResponseEnglish,
+      },
+      {
+        id: 'science',
+        label: 'Science',
+        description: 'AQA Biology required-practical response covering method, variables and a measurable end point.',
+        fixture: FIX.guidedExamResponseScience,
+      },
+      {
+        id: 'maths',
+        label: 'Maths',
+        description: 'AQA calculation response with working, a final answer and light method support.',
+        fixture: FIX.guidedExamResponseMaths,
+      },
+      {
+        id: 'sociology',
+        label: 'Sociology',
+        description: 'AQA evaluation response with supporting argument, challenge and reasoned judgement.',
+        fixture: FIX.guidedExamResponseSociology,
+      },
+    ],
   },
   {
     id: 'buttons-and-progress', name: 'Buttons and progress', group: 'library',
@@ -565,7 +597,7 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Themed explorer: tap objects on a background scene to open colour-coded sheets that reveal one line at a time, then a synthesis screen.',
     usage: 'Routed in ModulePlayer (type: collectionExplorer); used in Episodes 1 and 14.',
-    alternative: 'InteractiveHotspotImage (image-anchored hotspots); CinematicCarousel.',
+    alternative: 'InteractiveHotspotImage (themed sheets, no image anchoring); CinematicCarousel.',
     render: (fx, { onDone }) => (
       <InteractiveCollectionExplorer
         subject="History" title={fx.title} description={fx.description}
