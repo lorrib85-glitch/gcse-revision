@@ -9,14 +9,14 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { GENERAL } from '../../constants/generalTheme.js'
-import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
+import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import CinematicShell from './CinematicShell.jsx'
 
-const R_SIZE = 96
-const R_STROKE = 7
-const R_RADIUS = R_SIZE / 2 - R_STROKE / 2
-const R_CIRC = 2 * Math.PI * R_RADIUS
+const SEAL_SIZE = 72
+const SEAL_STROKE = 2.5
+const SEAL_RADIUS = SEAL_SIZE / 2 - SEAL_STROKE / 2
+const SEAL_CIRC = 2 * Math.PI * SEAL_RADIUS
 
 function hexToRgb(hex) {
   const value = Number.parseInt(hex.replace('#', ''), 16)
@@ -41,13 +41,13 @@ const QUIZ_SCOPES = {
 }
 
 function SecondaryAction({
-  iconBorder,
   icon,
   label,
   detail,
   onClick,
   ariaLabel,
-  showDivider = false,
+  accent,
+  accentRgb,
   animationDelay,
 }) {
   return (
@@ -57,10 +57,9 @@ function SecondaryAction({
       onClick={onClick}
       style={{
         width: '100%',
-        minHeight: 68,
-        padding: `${SPACING.micro}px 0`,
+        minHeight: 58,
+        padding: `${SPACING.micro}px ${SPACING.micro / 2}px`,
         border: 'none',
-        borderTop: showDivider ? `1px solid ${GENERAL.line.faint}` : 'none',
         background: 'transparent',
         color: GENERAL.cinematic.textPrimary,
         display: 'flex',
@@ -68,25 +67,26 @@ function SecondaryAction({
         textAlign: 'left',
         cursor: 'pointer',
         WebkitTapHighlightColor: 'transparent',
-        transition: `opacity ${MOTION.duration.fast} ${MOTION.easing.gentle}, transform ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+        transition: `opacity ${MOTION.duration.fast} ${MOTION.easing.gentle}, transform ${MOTION.duration.fast} ${MOTION.easing.gentle}, background ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
         animationDelay,
       }}
     >
       <span style={{
-        width: SPACING.separation,
-        height: SPACING.separation,
+        width: 34,
+        height: 34,
         borderRadius: RADII.pill,
-        border: `1px solid ${iconBorder}`,
+        border: `1px solid rgba(${accentRgb},0.26)`,
+        background: `rgba(${accentRgb},0.06)`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,
-        opacity: 0.72,
+        color: accent,
       }}>
         {icon}
       </span>
       <span style={{ marginLeft: SPACING.compact, flex: 1, minWidth: 0 }}>
-        <span style={{ ...TYPE.displayCard, color: GENERAL.cinematic.textPrimary, display: 'block' }}>
+        <span style={{ ...TYPE.titleMedium, color: GENERAL.cinematic.textPrimary, display: 'block' }}>
           {label}
         </span>
         <span style={{
@@ -109,12 +109,16 @@ export default function ChapterCompleteScreen({
   completionType,
   nextChapterNum,
   nextChapterTitle,
+  nextChapterSubtitle,
+  nextChapterImage,
+  nextChapterImagePosition,
   nextChapterLabel = 'Chapter',
   supportingCopy = 'Momentum matters.',
   isFinalChapter = false,
   backgroundAsset,
   backgroundPosition,
   primaryActionLabel,
+  homeLabel = 'Return to subjects',
   pastPaperLabel,
   quizQuestionCount = 10,
   quizScopeLabel,
@@ -127,9 +131,9 @@ export default function ChapterCompleteScreen({
   const accentSubject = Object.entries(SUBJECTS)
     .find(([, candidate]) => candidate.accent === accent)?.[0]
 
-  // Direct props remain the component contract. The metadata lookup is only a
-  // backwards-compatible bridge for the existing app hand-off, which currently
-  // supplies the completed title and accent but not the newer artwork props.
+  // Direct props remain the public component contract. Metadata is only used as
+  // a flexible fallback so production and Component Lab fixtures can supply a
+  // title without duplicating artwork, subtitle or subject information.
   const matchedModule = MODULES.find(module =>
     module.title === completedChapter
     && (!subject || module.subject === subject)
@@ -138,10 +142,28 @@ export default function ChapterCompleteScreen({
   const resolvedSubject = subject || matchedModule?.subject || accentSubject || 'History'
   const theme = SUBJECTS[resolvedSubject] || SUBJECTS.History
   const resolvedAccent = accent || theme.accent
+  const accentRgb = hexToRgb(resolvedAccent).join(',')
   const resolvedCompletionType = completionType
     || (isFinalChapter ? 'subject' : nextChapterLabel === 'Next Module' ? 'module' : 'chapter')
   const completionLabel = COMPLETION_LABELS[resolvedCompletionType] || COMPLETION_LABELS.chapter
   const quizScope = quizScopeLabel || QUIZ_SCOPES[resolvedCompletionType] || QUIZ_SCOPES.chapter
+
+  const matchedNextModule = MODULES.find(module =>
+    module.title === nextChapterTitle
+    && module.subject === resolvedSubject
+  )
+  const resolvedNextSubtitle = nextChapterSubtitle || matchedNextModule?.subtitle
+  const resolvedNextImage = nextChapterImage === false
+    ? null
+    : nextChapterImage
+      || matchedNextModule?.headerImage
+      || SUBJECT_BACKDROPS[resolvedSubject]
+      || SUBJECT_BACKDROPS.History
+  const resolvedNextImagePosition = nextChapterImagePosition
+    || (matchedNextModule?.headerImage ? 'center 34%' : null)
+    || SUBJECT_BACKDROP_POSITIONS[resolvedSubject]
+    || SUBJECT_BACKDROP_POSITIONS.History
+
   const resolvedBackground = backgroundAsset === false
     ? null
     : backgroundAsset
@@ -154,17 +176,24 @@ export default function ChapterCompleteScreen({
     || (matchedModule?.headerImage ? 'center 30%' : null)
     || SUBJECT_BACKDROP_POSITIONS[resolvedSubject]
     || SUBJECT_BACKDROP_POSITIONS.History
+
   const textOnAccent = isLight(resolvedAccent)
     ? GENERAL.textOnAccent
     : GENERAL.cinematic.textPrimary
   const continueLabel = primaryActionLabel
     || (isFinalChapter
       ? 'View subject progress'
-      : nextChapterNum != null
-        ? `Start ${nextChapterLabel.toLowerCase()} ${nextChapterNum}`
-        : nextChapterTitle
-          ? `Start ${nextChapterLabel.toLowerCase()}`
-          : 'Continue')
+      : resolvedCompletionType === 'module'
+        ? 'Start the next module'
+        : 'Start the next chapter')
+  const nextMetaLabel = nextChapterNum != null
+    ? `${nextChapterLabel} ${nextChapterNum}`
+    : nextChapterLabel === 'Next Module'
+      ? 'Next module'
+      : nextChapterLabel
+  const quizMinutes = Math.max(1, Math.ceil(quizQuestionCount / 4))
+  const quizDuration = `about ${quizMinutes} minute${quizMinutes === 1 ? '' : 's'}`
+
   const [reduceMotion] = useState(() =>
     typeof window !== 'undefined'
       && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
@@ -188,11 +217,11 @@ export default function ChapterCompleteScreen({
 
   const quizIcon = (
     <svg
-      width="20"
-      height="20"
+      width="18"
+      height="18"
       viewBox="0 0 24 24"
       fill="none"
-      stroke={resolvedAccent}
+      stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -206,11 +235,11 @@ export default function ChapterCompleteScreen({
 
   const paperIcon = (
     <svg
-      width="20"
-      height="20"
+      width="18"
+      height="18"
       viewBox="0 0 24 24"
       fill="none"
-      stroke={resolvedAccent}
+      stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -227,18 +256,35 @@ export default function ChapterCompleteScreen({
     <>
       <style>{`
         @keyframes ccs-in {
-          from { opacity: 0; transform: translateY(${SPACING.micro}px); }
+          from { opacity: 0; transform: translateY(${SPACING.compact}px); }
           to { opacity: 1; transform: translateY(0); }
         }
         @keyframes ccs-check {
-          from { opacity: 0; transform: translate(-50%, -50%) scale(0.72); }
+          from { opacity: 0; transform: translate(-50%, -50%) scale(0.76); }
           to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        @keyframes ccs-seal-settle {
+          0%, 45% { filter: drop-shadow(0 0 12px rgba(${accentRgb},0.42)); }
+          100% { filter: none; }
+        }
+        @keyframes ccs-art-settle {
+          from { transform: scale(1.025); }
+          to { transform: scale(1); }
         }
         .ccs-in {
           animation: ccs-in ${MOTION.duration.slow} ${MOTION.easing.standard} both;
         }
         .ccs-checkmark {
           animation: ccs-check ${MOTION.duration.standard} ${MOTION.easing.standard} ${MOTION.duration.slow} both;
+        }
+        .ccs-seal {
+          animation: ccs-seal-settle ${GENERAL.cinematic.motion.slow} ${MOTION.easing.standard} both;
+        }
+        .ccs-artwork {
+          animation: ccs-art-settle 1400ms ${MOTION.easing.gentle} both;
+        }
+        .ccs-secondary:hover {
+          background: ${GENERAL.surfaceTint} !important;
         }
         .ccs-secondary:active {
           opacity: 0.62;
@@ -253,12 +299,18 @@ export default function ChapterCompleteScreen({
           outline-offset: 3px;
           border-radius: ${RADII.small}px;
         }
+        .ccs-scroll::-webkit-scrollbar {
+          display: none;
+        }
         @media (prefers-reduced-motion: reduce) {
           .ccs-in,
-          .ccs-checkmark {
+          .ccs-checkmark,
+          .ccs-seal,
+          .ccs-artwork {
             animation: none !important;
             opacity: 1 !important;
             transform: none !important;
+            filter: none !important;
           }
           .ccs-checkmark {
             transform: translate(-50%, -50%) !important;
@@ -266,8 +318,9 @@ export default function ChapterCompleteScreen({
         }
       `}</style>
 
-      {/* This is a full-viewport completion moment with fixed atmosphere layers.
-          CinematicShell keeps those layers stable while the inner column remains scrollable. */}
+      {/* This is a full-viewport cinematic completion moment with fixed artwork
+          and scrims. CinematicShell keeps those layers stable while the inner
+          content remains safe-area aware and scrollable on short devices. */}
       <CinematicShell
         role="main"
         aria-labelledby="chapter-complete-title"
@@ -275,6 +328,7 @@ export default function ChapterCompleteScreen({
       >
         {resolvedBackground && (
           <div
+            className="ccs-artwork"
             aria-hidden="true"
             data-chapter-complete-backdrop
             style={{
@@ -285,8 +339,8 @@ export default function ChapterCompleteScreen({
               backgroundPosition: resolvedBackgroundPosition,
               opacity: GENERAL.cinematic.completionBackdropOpacity,
               filter: GENERAL.cinematic.completionBackdropFilter,
-              WebkitMaskImage: 'linear-gradient(to bottom, #000 0%, #000 34%, transparent 72%)',
-              maskImage: 'linear-gradient(to bottom, #000 0%, #000 34%, transparent 72%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, #000 0%, #000 54%, transparent 84%)',
+              maskImage: 'linear-gradient(to bottom, #000 0%, #000 54%, transparent 84%)',
               pointerEvents: 'none',
               zIndex: 0,
             }}
@@ -305,24 +359,7 @@ export default function ChapterCompleteScreen({
         />
 
         <div
-          aria-hidden="true"
-          style={{
-            position: 'fixed',
-            top: SPACING.separation,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 240,
-            height: 240,
-            borderRadius: RADII.pill,
-            background: theme.glow,
-            filter: 'blur(90px)',
-            opacity: GENERAL.cinematic.completionGlowOpacity,
-            pointerEvents: 'none',
-            zIndex: 1,
-          }}
-        />
-
-        <div
+          className="ccs-scroll"
           data-chapter-complete-scroll
           style={{
             position: 'relative',
@@ -342,115 +379,135 @@ export default function ChapterCompleteScreen({
             maxWidth: 430,
             minHeight: '100dvh',
             margin: '0 auto',
-            padding: `calc(env(safe-area-inset-top, 0px) + ${SPACING.cinematic}px) ${SPACING.standard}px calc(env(safe-area-inset-bottom, 0px) + ${SPACING.standard}px)`,
+            padding: `env(safe-area-inset-top, 0px) ${SPACING.standard}px calc(env(safe-area-inset-bottom, 0px) + ${SPACING.separation}px)`,
             boxSizing: 'border-box',
           }}>
-            <div
-              className="ccs-in"
-              style={{
-                width: R_SIZE,
-                height: R_SIZE,
-                position: 'relative',
-                marginBottom: SPACING.standard,
-                flexShrink: 0,
-              }}
-            >
-              <svg
-                width={R_SIZE}
-                height={R_SIZE}
-                viewBox={`0 0 ${R_SIZE} ${R_SIZE}`}
-                aria-hidden="true"
-                style={{ transform: 'rotate(-90deg)', display: 'block' }}
-              >
-                <circle
-                  cx={R_SIZE / 2}
-                  cy={R_SIZE / 2}
-                  r={R_RADIUS}
-                  fill="none"
-                  stroke={GENERAL.line.medium}
-                  strokeWidth={R_STROKE}
-                />
-                <circle
-                  ref={strokeRef}
-                  cx={R_SIZE / 2}
-                  cy={R_SIZE / 2}
-                  r={R_RADIUS}
-                  fill="none"
-                  stroke={resolvedAccent}
-                  strokeWidth={R_STROKE}
-                  strokeLinecap="round"
-                  strokeDasharray={R_CIRC}
-                  strokeDashoffset={reduceMotion ? 0 : R_CIRC}
-                  style={{ filter: `drop-shadow(0 0 12px ${theme.glow})` }}
-                />
-              </svg>
+            <header style={{
+              width: '100%',
+              minHeight: 'min(58dvh, 520px)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              paddingTop: SPACING.section,
+              paddingBottom: SPACING.standard,
+              boxSizing: 'border-box',
+            }}>
               <div
-                className="ccs-checkmark"
+                className="ccs-seal ccs-in"
                 style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%) scale(0.72)',
-                  opacity: reduceMotion ? 1 : 0,
+                  width: SEAL_SIZE,
+                  height: SEAL_SIZE,
+                  position: 'relative',
+                  marginBottom: SPACING.compact,
+                  flexShrink: 0,
                 }}
               >
                 <svg
-                  width="34"
-                  height="34"
-                  viewBox="0 0 36 36"
-                  fill="none"
-                  stroke={GENERAL.cinematic.textPrimary}
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  width={SEAL_SIZE}
+                  height={SEAL_SIZE}
+                  viewBox={`0 0 ${SEAL_SIZE} ${SEAL_SIZE}`}
                   aria-hidden="true"
+                  style={{ transform: 'rotate(-90deg)', display: 'block' }}
                 >
-                  <path d="M8 18l7 7 13-13" />
+                  <circle
+                    cx={SEAL_SIZE / 2}
+                    cy={SEAL_SIZE / 2}
+                    r={SEAL_RADIUS - 4}
+                    fill="rgba(8,9,13,0.28)"
+                    stroke={GENERAL.line.faint}
+                    strokeWidth="1"
+                  />
+                  <circle
+                    cx={SEAL_SIZE / 2}
+                    cy={SEAL_SIZE / 2}
+                    r={SEAL_RADIUS}
+                    fill="none"
+                    stroke={GENERAL.line.medium}
+                    strokeWidth={SEAL_STROKE}
+                  />
+                  <circle
+                    ref={strokeRef}
+                    cx={SEAL_SIZE / 2}
+                    cy={SEAL_SIZE / 2}
+                    r={SEAL_RADIUS}
+                    fill="none"
+                    stroke={resolvedAccent}
+                    strokeWidth={SEAL_STROKE}
+                    strokeLinecap="round"
+                    strokeDasharray={SEAL_CIRC}
+                    strokeDashoffset={reduceMotion ? 0 : SEAL_CIRC}
+                  />
                 </svg>
+                <div
+                  className="ccs-checkmark"
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%) scale(0.76)',
+                    opacity: reduceMotion ? 1 : 0,
+                  }}
+                >
+                  <svg
+                    width="26"
+                    height="26"
+                    viewBox="0 0 36 36"
+                    fill="none"
+                    stroke={GENERAL.cinematic.textPrimary}
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M8 18l7 7 13-13" />
+                  </svg>
+                </div>
               </div>
-            </div>
 
-            <p
-              className="ccs-in"
-              style={{
-                ...TYPE.label,
-                color: resolvedAccent,
-                textAlign: 'center',
-                margin: `0 0 ${SPACING.micro}px`,
-                animationDelay: '40ms',
-              }}
-            >
-              {completionLabel}
-            </p>
+              <p
+                className="ccs-in"
+                style={{
+                  ...TYPE.label,
+                  color: resolvedAccent,
+                  textAlign: 'center',
+                  margin: `0 0 ${SPACING.micro}px`,
+                  animationDelay: '260ms',
+                }}
+              >
+                {completionLabel}
+              </p>
 
-            <h1
-              id="chapter-complete-title"
-              className="ccs-in"
-              style={{
-                ...TYPE.displayScreen,
-                ...HEADING_LAYOUT.screenTitle,
-                color: GENERAL.cinematic.textPrimary,
-                textAlign: 'center',
-                margin: `0 0 ${SPACING.micro}px`,
-                animationDelay: '70ms',
-              }}
-            >
-              {completedChapter}
-            </h1>
+              <h1
+                id="chapter-complete-title"
+                className="ccs-in"
+                style={{
+                  ...TYPE.displayCinematic,
+                  color: GENERAL.cinematic.textPrimary,
+                  textAlign: 'center',
+                  width: '100%',
+                  maxWidth: 340,
+                  margin: `0 0 ${SPACING.compact}px`,
+                  animationDelay: '360ms',
+                }}
+              >
+                {completedChapter}
+              </h1>
 
-            <p
-              className="ccs-in"
-              style={{
-                ...TYPE.bodyStrong,
-                color: GENERAL.cinematic.textSecondary,
-                textAlign: 'center',
-                margin: `0 0 ${SPACING.standard}px`,
-                maxWidth: 300,
-                animationDelay: '100ms',
-              }}
-            >
-              {supportingCopy}
-            </p>
+              <p
+                className="ccs-in"
+                style={{
+                  ...TYPE.bodyStrong,
+                  color: GENERAL.cinematic.textSecondary,
+                  textAlign: 'center',
+                  margin: 0,
+                  maxWidth: 310,
+                  animationDelay: '480ms',
+                }}
+              >
+                {supportingCopy}
+              </p>
+            </header>
 
             <section
               className="ccs-in"
@@ -458,20 +515,83 @@ export default function ChapterCompleteScreen({
               style={{
                 width: '100%',
                 maxWidth: 360,
-                animationDelay: '140ms',
+                animationDelay: '640ms',
               }}
             >
               {!isFinalChapter && nextChapterTitle && (
-                <div style={{ textAlign: 'center', marginBottom: SPACING.compact }}>
+                <div
+                  data-next-chapter-teaser
+                  style={{
+                    position: 'relative',
+                    minHeight: 112,
+                    overflow: 'hidden',
+                    borderRadius: RADII.medium,
+                    background: GENERAL.backgroundSunken,
+                    marginBottom: SPACING.compact,
+                    isolation: 'isolate',
+                  }}
+                >
+                  {resolvedNextImage && (
+                    <div
+                      aria-hidden="true"
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        backgroundImage: `url(${resolvedNextImage})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: resolvedNextImagePosition,
+                        filter: 'saturate(0.78) brightness(0.62)',
+                        opacity: 0.48,
+                        zIndex: -2,
+                      }}
+                    />
+                  )}
+                  <div
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(90deg, rgba(8,9,13,0.98) 0%, rgba(8,9,13,0.80) 58%, rgba(8,9,13,0.38) 100%)',
+                      zIndex: -1,
+                    }}
+                  />
+                  <div
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      top: SPACING.compact,
+                      bottom: SPACING.compact,
+                      left: 0,
+                      width: 2,
+                      borderRadius: RADII.pill,
+                      background: resolvedAccent,
+                    }}
+                  />
                   <div style={{
-                    ...TYPE.label,
-                    color: GENERAL.cinematic.textMuted,
-                    marginBottom: SPACING.micro,
+                    minHeight: 112,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'flex-start',
+                    padding: `${SPACING.compact}px ${SPACING.standard}px`,
+                    boxSizing: 'border-box',
                   }}>
-                    Up next
-                  </div>
-                  <div style={{ ...TYPE.displayCard, color: GENERAL.cinematic.textPrimary }}>
-                    {nextChapterTitle}
+                    <div style={{ ...TYPE.label, color: resolvedAccent, marginBottom: SPACING.micro / 2 }}>
+                      {nextMetaLabel}
+                    </div>
+                    <div style={{ ...TYPE.displayCard, color: GENERAL.cinematic.textPrimary }}>
+                      {nextChapterTitle}
+                    </div>
+                    {resolvedNextSubtitle && (
+                      <div style={{
+                        ...TYPE.bodySmall,
+                        color: GENERAL.cinematic.textSecondary,
+                        marginTop: SPACING.micro / 2,
+                        maxWidth: 270,
+                      }}>
+                        {resolvedNextSubtitle}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -481,6 +601,7 @@ export default function ChapterCompleteScreen({
                 label={continueLabel}
                 accent={resolvedAccent}
                 textColor={textOnAccent}
+                style={{ animation: `ccs-in ${MOTION.duration.slow} ${MOTION.easing.standard} 760ms both` }}
               />
             </section>
 
@@ -490,33 +611,32 @@ export default function ChapterCompleteScreen({
                 style={{
                   width: '100%',
                   maxWidth: 360,
-                  marginTop: SPACING.standard,
-                  borderTop: `1px solid ${GENERAL.line.soft}`,
-                  borderBottom: `1px solid ${GENERAL.line.soft}`,
+                  marginTop: SPACING.compact,
                 }}
               >
                 {showQuiz && onQuiz && (
                   <SecondaryAction
-                    iconBorder={theme.glowStrong}
+                    accent={resolvedAccent}
+                    accentRgb={accentRgb}
                     icon={quizIcon}
-                    label="Quick quiz"
-                    detail={`${quizQuestionCount} questions from ${quizScope}`}
-                    ariaLabel={`Start quick quiz with ${quizQuestionCount} questions`}
+                    label="Test what you remember"
+                    detail={`${quizQuestionCount} questions · ${quizDuration}`}
+                    ariaLabel={`Start a ${quizQuestionCount}-question quiz from ${quizScope}`}
                     onClick={onQuiz}
-                    animationDelay="180ms"
+                    animationDelay="900ms"
                   />
                 )}
 
                 {onPastPaper && (
                   <SecondaryAction
-                    iconBorder={theme.glowStrong}
+                    accent={resolvedAccent}
+                    accentRgb={accentRgb}
                     icon={paperIcon}
                     label={pastPaperLabel || 'Past paper questions'}
                     detail={`Real exam questions from ${quizScope}`}
                     ariaLabel={pastPaperLabel || 'Practice past paper questions'}
                     onClick={onPastPaper}
-                    showDivider={showQuiz && !!onQuiz}
-                    animationDelay="210ms"
+                    animationDelay="980ms"
                   />
                 )}
               </section>
@@ -525,39 +645,22 @@ export default function ChapterCompleteScreen({
             {onHome && (
               <button
                 className="ccs-home-row ccs-in"
-                aria-label="Return home"
+                aria-label={homeLabel}
                 onClick={onHome}
                 style={{
-                  marginTop: SPACING.standard,
+                  marginTop: SPACING.compact,
                   padding: SPACING.micro,
                   border: 'none',
                   background: 'none',
-                  color: GENERAL.cinematic.textPrimary,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: SPACING.micro,
-                  opacity: 0.68,
+                  color: GENERAL.cinematic.textMuted,
                   cursor: 'pointer',
                   WebkitTapHighlightColor: 'transparent',
                   transition: `opacity ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
-                  animationDelay: '240ms',
+                  animationDelay: '1060ms',
+                  ...TYPE.bodySmall,
                 }}
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                  <polyline points="9 22 9 12 15 12 15 22" />
-                </svg>
-                <span style={TYPE.bodyStrong}>Return home</span>
+                {homeLabel}
               </button>
             )}
           </div>
