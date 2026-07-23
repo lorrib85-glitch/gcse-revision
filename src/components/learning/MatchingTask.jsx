@@ -23,37 +23,35 @@ const DEFAULT_COPY = {
   takeaway: 'Each idea led to a response that seemed logical at the time.',
 }
 
-// Fisher-Yates shuffle
-function shuffle(arr) {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]]
+function shuffle(items) {
+  const result = [...items]
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [result[index], result[randomIndex]] = [result[randomIndex], result[index]]
   }
-  return a
+  return result
 }
 
 const CSS = `
   @keyframes mt-fade-in {
     from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
+    to { opacity: 1; transform: translateY(0); }
   }
+
   @keyframes mt-shake {
-    0%,100% { transform: translateX(0); }
+    0%, 100% { transform: translateX(0); }
     15% { transform: translateX(-5px); }
     45% { transform: translateX(5px); }
     65% { transform: translateX(-3px); }
     85% { transform: translateX(2px); }
   }
-  @keyframes mt-thread-draw {
-    from { stroke-dashoffset: 1; }
-    to { stroke-dashoffset: 0; }
-  }
+
   @keyframes mt-anchor-settle {
     0% { transform: translateY(-50%) scale(0.7); }
     65% { transform: translateY(-50%) scale(1.18); }
     100% { transform: translateY(-50%) scale(1); }
   }
+
   @media (prefers-reduced-motion: reduce) {
     .mt-motion {
       animation: none !important;
@@ -64,10 +62,10 @@ const CSS = `
 
 // CinematicShell is used because the full-bleed background and protective
 // overlays must fill the viewport rather than the padded interaction column.
-export default function MatchingTask({ screen, subject, onComplete }) {
+export default function MatchingTask({ screen = {}, subject, onComplete }) {
   const allPairs = screen.pairs || []
   const subjectKey = subject || screen.subject || 'History'
-  const bgImage = screen.backgroundImage || ''
+  const backgroundImage = screen.backgroundImage || ''
   const leftLabel = screen.leftLabel || DEFAULT_COPY.leftLabel
   const rightLabel = screen.rightLabel || DEFAULT_COPY.rightLabel
 
@@ -83,13 +81,19 @@ export default function MatchingTask({ screen, subject, onComplete }) {
   const borderSelected = `rgba(${accentRgb},0.62)`
   const wrongBorder = `rgba(${GENERAL.feedbackIncorrectRgb},0.72)`
 
-  // Split pairs into rounds: max 6 per round, balanced halves.
-  const numRounds = allPairs.length > ROUND_MAX ? Math.ceil(allPairs.length / ROUND_MAX) : 1
-  const chunkSize = numRounds > 1 ? Math.ceil(allPairs.length / numRounds) : allPairs.length
+  const numberOfRounds = allPairs.length > ROUND_MAX
+    ? Math.ceil(allPairs.length / ROUND_MAX)
+    : 1
+  const chunkSize = numberOfRounds > 1
+    ? Math.ceil(allPairs.length / numberOfRounds)
+    : allPairs.length
   const rounds = []
-  for (let i = 0; i < allPairs.length; i += chunkSize) rounds.push(allPairs.slice(i, i + chunkSize))
 
-  const [roundIdx, setRoundIdx] = useState(0)
+  for (let index = 0; index < allPairs.length; index += chunkSize) {
+    rounds.push(allPairs.slice(index, index + chunkSize))
+  }
+
+  const [roundIndex, setRoundIndex] = useState(0)
   const [shuffledAnswers, setShuffledAnswers] = useState([])
   const [selectedTermId, setSelectedTermId] = useState(null)
   const [lockedPairIds, setLockedPairIds] = useState([])
@@ -103,15 +107,17 @@ export default function MatchingTask({ screen, subject, onComplete }) {
   const termRefs = useRef({})
   const answerRefs = useRef({})
   const recentTimerRef = useRef(null)
+  const wrongTimerRef = useRef(null)
 
-  const currentRound = rounds[roundIdx] || []
-  const isLastRound = roundIdx === rounds.length - 1
-  const roundComplete = currentRound.length > 0 && currentRound.every(pair => lockedPairIds.includes(pair.id))
+  const currentRound = rounds[roundIndex] || []
+  const isLastRound = roundIndex === rounds.length - 1
+  const roundComplete = currentRound.length > 0
+    && currentRound.every(pair => lockedPairIds.includes(pair.id))
 
-  // Reset only when the actual round changes. currentRound is intentionally not
-  // a dependency because it is a fresh slice on every render.
   useEffect(() => {
-    setShuffledAnswers(shuffle(currentRound.map(pair => ({ id: pair.id, text: pair.answer }))))
+    setShuffledAnswers(shuffle(
+      currentRound.map(pair => ({ id: pair.id, text: pair.answer })),
+    ))
     setLockedPairIds([])
     setSelectedTermId(null)
     setPaths([])
@@ -124,34 +130,33 @@ export default function MatchingTask({ screen, subject, onComplete }) {
 
     return () => {
       if (recentTimerRef.current) window.clearTimeout(recentTimerRef.current)
+      if (wrongTimerRef.current) window.clearTimeout(wrongTimerRef.current)
     }
-  }, [roundIdx])
+  }, [roundIndex])
 
-  // Measure real rendered card positions so connectors remain responsive to
-  // text wrapping, viewport changes and different pair counts.
-  const computePaths = useCallback((locked) => {
+  const computePaths = useCallback((lockedIds) => {
     const panel = panelRef.current
     if (!panel) return
 
     const panelRect = panel.getBoundingClientRect()
     const nextPaths = []
 
-    for (const id of locked) {
-      const termEl = termRefs.current[id]
-      const answerEl = answerRefs.current[id]
-      if (!termEl || !answerEl) continue
+    for (const id of lockedIds) {
+      const termElement = termRefs.current[id]
+      const answerElement = answerRefs.current[id]
+      if (!termElement || !answerElement) continue
 
-      const termRect = termEl.getBoundingClientRect()
-      const answerRect = answerEl.getBoundingClientRect()
-      const x1 = termRect.right - panelRect.left
-      const y1 = termRect.top + termRect.height / 2 - panelRect.top
-      const x2 = answerRect.left - panelRect.left
-      const y2 = answerRect.top + answerRect.height / 2 - panelRect.top
-      const curve = Math.max((x2 - x1) * 0.46, SPACING.micro)
+      const termRect = termElement.getBoundingClientRect()
+      const answerRect = answerElement.getBoundingClientRect()
+      const startX = termRect.right - panelRect.left
+      const startY = termRect.top + termRect.height / 2 - panelRect.top
+      const endX = answerRect.left - panelRect.left
+      const endY = answerRect.top + answerRect.height / 2 - panelRect.top
+      const curve = Math.max((endX - startX) * 0.46, SPACING.micro)
 
       nextPaths.push({
         id,
-        d: `M ${x1} ${y1} C ${x1 + curve} ${y1}, ${x2 - curve} ${y2}, ${x2} ${y2}`,
+        d: `M ${startX} ${startY} C ${startX + curve} ${startY}, ${endX - curve} ${endY}, ${endX} ${endY}`,
       })
     }
 
@@ -159,17 +164,18 @@ export default function MatchingTask({ screen, subject, onComplete }) {
   }, [])
 
   useEffect(() => {
-    const handler = () => computePaths(lockedPairIds)
-    window.addEventListener('resize', handler)
+    const handleResize = () => computePaths(lockedPairIds)
+    window.addEventListener('resize', handleResize)
 
     const panel = panelRef.current
     const observer = panel && typeof ResizeObserver !== 'undefined'
-      ? new ResizeObserver(handler)
+      ? new ResizeObserver(handleResize)
       : null
+
     if (panel && observer) observer.observe(panel)
 
     return () => {
-      window.removeEventListener('resize', handler)
+      window.removeEventListener('resize', handleResize)
       observer?.disconnect()
     }
   }, [lockedPairIds, computePaths])
@@ -182,12 +188,13 @@ export default function MatchingTask({ screen, subject, onComplete }) {
 
   function handleAnswerSelect(answerId) {
     if (!selectedTermId || lockedPairIds.includes(answerId) || wrongTermId) return
+
     const pair = currentRound.find(item => item.id === selectedTermId)
     if (!pair) return
 
     if (pair.id === answerId) {
-      const newLocked = [...lockedPairIds, pair.id]
-      setLockedPairIds(newLocked)
+      const nextLockedIds = [...lockedPairIds, pair.id]
+      setLockedPairIds(nextLockedIds)
       setSelectedTermId(null)
       setFeedback('')
       setRecentMatchedId(pair.id)
@@ -198,33 +205,39 @@ export default function MatchingTask({ screen, subject, onComplete }) {
         GENERAL.cinematic.motion.attentionDelayMs,
       )
 
-      requestAnimationFrame(() => requestAnimationFrame(() => computePaths(newLocked)))
-    } else {
-      setWrongTermId(selectedTermId)
-      setWrongAnswerId(answerId)
-      setFeedback(screen.incorrectFeedback || DEFAULT_COPY.incorrect)
-      logWrongAnswer({
-        subject: subjectKey,
-        topic: pair.term,
-        questionId: `matching-${pair.id}`,
-        questionText: pair.term,
-        source: 'module',
-        questionType: 'connection',
-        marks: 1,
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => computePaths(nextLockedIds))
       })
-      setTimeout(() => {
-        setWrongTermId(null)
-        setWrongAnswerId(null)
-        setSelectedTermId(null)
-      }, Number.parseInt(MOTION.duration.slow, 10))
+      return
     }
+
+    setWrongTermId(selectedTermId)
+    setWrongAnswerId(answerId)
+    setFeedback(screen.incorrectFeedback || DEFAULT_COPY.incorrect)
+
+    logWrongAnswer({
+      subject: subjectKey,
+      topic: pair.term,
+      questionId: `matching-${pair.id}`,
+      questionText: pair.term,
+      source: 'module',
+      questionType: 'connection',
+      marks: 1,
+    })
+
+    if (wrongTimerRef.current) window.clearTimeout(wrongTimerRef.current)
+    wrongTimerRef.current = window.setTimeout(() => {
+      setWrongTermId(null)
+      setWrongAnswerId(null)
+      setSelectedTermId(null)
+    }, Number.parseInt(MOTION.duration.slow, 10))
   }
 
   const isCompactRound = currentRound.length >= 5
   const cardMinHeight = SPACING.micro * (isCompactRound ? 7 : 8)
   const rowGap = isCompactRound ? SPACING.micro : SPACING.compact
-  const termType = isCompactRound ? TYPE.bodySmall : TYPE.bodyStrong
-  const answerType = isCompactRound ? TYPE.caption : TYPE.bodySmall
+  const termTypography = isCompactRound ? TYPE.bodySmall : TYPE.bodyStrong
+  const answerTypography = isCompactRound ? TYPE.caption : TYPE.bodySmall
 
   const anchorStyle = (side, isActive, isLocked, isRecent, isWrong) => ({
     position: 'absolute',
@@ -254,8 +267,14 @@ export default function MatchingTask({ screen, subject, onComplete }) {
       ? `0 0 14px rgba(${accentRgb},0.38)`
       : 'none',
     zIndex: 3,
-    animation: isLocked ? 'mt-anchor-settle 360ms ease both' : 'none',
-    transition: `background ${MOTION.duration.fast} ${MOTION.easing.standard}, border-color ${MOTION.duration.fast} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+    animation: isLocked
+      ? `mt-anchor-settle ${MOTION.duration.slow} ${MOTION.easing.standard} both`
+      : 'none',
+    transition: [
+      `background ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+      `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+      `box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+    ].join(', '),
   })
 
   return (
@@ -267,23 +286,25 @@ export default function MatchingTask({ screen, subject, onComplete }) {
     }}>
       <style>{CSS}</style>
 
-      {bgImage && (
+      {backgroundImage && (
         <div style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: `url(${bgImage})`,
+          backgroundImage: `url(${backgroundImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           zIndex: 0,
         }} />
       )}
+
       <div style={{
         position: 'absolute',
         inset: 0,
         background: GENERAL.backgroundApp,
-        opacity: bgImage ? 0.64 : 1,
+        opacity: backgroundImage ? 0.64 : 1,
         zIndex: 0,
       }} />
+
       <div style={{
         position: 'absolute',
         inset: 0,
@@ -342,8 +363,8 @@ export default function MatchingTask({ screen, subject, onComplete }) {
           >
             <SequenceProgress
               total={rounds.length}
-              current={roundIdx}
-              completed={roundIdx}
+              current={roundIndex}
+              completed={roundIndex}
               accent={accent}
               accentRgb={accentRgb}
               ariaLabel="Round progress"
@@ -365,7 +386,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
             style={{
               position: 'absolute',
               inset: `-${SPACING.standard}px -${SPACING.compact}px`,
-              background: `radial-gradient(ellipse at center, rgba(8,9,13,0.38), rgba(8,9,13,0.08) 72%)`,
+              background: 'radial-gradient(ellipse at center, rgba(8,9,13,0.38), rgba(8,9,13,0.08) 72%)',
               pointerEvents: 'none',
               zIndex: 0,
             }}
@@ -389,16 +410,18 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                 <path
                   key={path.id}
                   d={path.d}
-                  pathLength="1"
                   fill="none"
                   stroke={`rgba(${accentRgb},${isRecent ? 0.82 : 0.38})`}
                   strokeWidth={isRecent ? COMPONENT_SIZE.focusRing : COMPONENT_SIZE.hairline}
                   strokeLinecap="round"
-                  strokeDasharray="1"
+                  vectorEffect="non-scaling-stroke"
+                  shapeRendering="geometricPrecision"
                   className="mt-motion"
                   style={{
-                    animation: `mt-thread-draw ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-                    transition: `stroke ${MOTION.duration.standard} ${MOTION.easing.standard}, stroke-width ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+                    transition: [
+                      `stroke ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+                      `stroke-width ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+                    ].join(', '),
                   }}
                 />
               )
@@ -453,22 +476,38 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                       borderRadius: RADII.medium,
                       background: isSelected ? cardSelected : isRecent ? cardRecent : cardRest,
                       border: `${COMPONENT_SIZE.hairline}px solid ${
-                        isWrong ? wrongBorder : isSelected ? borderSelected : isRecent ? borderRecent : borderRest
+                        isWrong
+                          ? wrongBorder
+                          : isSelected
+                            ? borderSelected
+                            : isRecent
+                              ? borderRecent
+                              : borderRest
                       }`,
                       boxShadow: isSelected && !isLocked
                         ? `0 0 0 ${COMPONENT_SIZE.hairline}px rgba(${accentRgb},0.12), 0 0 18px rgba(${accentRgb},0.14)`
                         : 'none',
-                      transform: isSelected && !isLocked ? `scale(${MOTION.scale.subtle})` : 'none',
+                      transform: isSelected && !isLocked
+                        ? `scale(${MOTION.scale.subtle})`
+                        : 'none',
                       opacity: isDeemphasised ? 0.68 : isLocked && !isRecent ? 0.72 : 1,
                       cursor: isLocked ? 'default' : 'pointer',
                       textAlign: 'left',
                       color: GENERAL.cinematic.textPrimary,
-                      transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}, background ${MOTION.duration.fast} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}, transform ${MOTION.duration.fast} ${MOTION.easing.standard}, opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-                      animation: isWrong ? `mt-shake ${MOTION.duration.slow} ${MOTION.easing.standard}` : 'none',
+                      transition: [
+                        `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                        `background ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                        `box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                        `transform ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                        `opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                      ].join(', '),
+                      animation: isWrong
+                        ? `mt-shake ${MOTION.duration.slow} ${MOTION.easing.standard}`
+                        : 'none',
                       position: 'relative',
                       zIndex: 2,
                       WebkitTapHighlightColor: 'transparent',
-                      ...termType,
+                      ...termTypography,
                     }}
                   >
                     {pair.term}
@@ -501,7 +540,9 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                       padding: `${SPACING.micro + 4}px ${SPACING.micro + 2}px`,
                       borderRadius: RADII.medium,
                       background: isRecent ? cardRecent : cardRest,
-                      border: `${COMPONENT_SIZE.hairline}px solid ${isWrong ? wrongBorder : isRecent ? borderRecent : borderRest}`,
+                      border: `${COMPONENT_SIZE.hairline}px solid ${
+                        isWrong ? wrongBorder : isRecent ? borderRecent : borderRest
+                      }`,
                       boxShadow: isAvailable && !isWrong
                         ? `inset ${COMPONENT_SIZE.accentRail}px 0 0 rgba(${accentRgb},0.34)`
                         : 'none',
@@ -509,12 +550,19 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                       textAlign: 'left',
                       color: GENERAL.cinematic.textPrimary,
                       opacity: isLocked && !isRecent ? 0.72 : selectedTermId ? 1 : 0.84,
-                      transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}, background ${MOTION.duration.fast} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}, opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-                      animation: isWrong ? `mt-shake ${MOTION.duration.slow} ${MOTION.easing.standard}` : 'none',
+                      transition: [
+                        `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                        `background ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                        `box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                        `opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                      ].join(', '),
+                      animation: isWrong
+                        ? `mt-shake ${MOTION.duration.slow} ${MOTION.easing.standard}`
+                        : 'none',
                       position: 'relative',
                       zIndex: 2,
                       WebkitTapHighlightColor: 'transparent',
-                      ...answerType,
+                      ...answerTypography,
                     }}
                   >
                     {answer.text}
@@ -562,8 +610,9 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                 {screen.completionTakeaway || DEFAULT_COPY.takeaway}
               </div>
             )}
+
             <ContinueCTA
-              onClick={isLastRound ? onComplete : () => setRoundIdx(round => round + 1)}
+              onClick={isLastRound ? onComplete : () => setRoundIndex(index => index + 1)}
               accent={accent}
             />
           </div>
