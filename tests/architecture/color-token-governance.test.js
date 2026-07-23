@@ -8,10 +8,11 @@ const read = (rel) => readFileSync(resolve(root, rel), 'utf8')
 
 // Values migrated to named tokens (see DEVELOPMENT_WORKFLOW.md file-hygiene
 // pass). Each must never reappear as a raw hex literal in src/components/**
-// or src/features/** — always reference the token instead. This list only
-// grows when a new value is deliberately migrated; it is not a grandfather
-// list for unmigrated debt (see .planning/codebase/CONCERNS.md for what's
-// still raw and why it wasn't touched in this pass).
+// or src/features/** — always reference the token instead. Selected migrations
+// also guard learner-facing data when the raw value previously lived there.
+// This list only grows when a new value is deliberately migrated; it is not a
+// grandfather list for unmigrated debt (see .planning/codebase/CONCERNS.md for
+// what's still raw and why it wasn't touched in this pass).
 const MIGRATED_VALUES = [
   { hex: '#0F0B07', token: 'SUBJECTS.History.background' },
   { hex: '#2A9D8F', token: 'GENERAL.teal' },
@@ -26,22 +27,33 @@ const MIGRATED_VALUES = [
   // subject-atmospheric gradient → resolved subject background token.
   { hex: '#080C1A', token: 'GENERAL.backgroundApp / SUBJECTS[subject].background' },
   // Bronze survives ONLY as its canonical SUBJECTS.History.subjectBrowserAccent
-  // definition (in src/constants, outside this guard's src/{components,features}
-  // scope). Components/content must never inline it: subject-selection chrome
-  // reads SUBJECTS.History.subjectBrowserAccent; the exam coach and its chooser
-  // resolve SUBJECTS[subject].accent from the coach type's subject.
-  { hex: '#C89B6D', token: 'SUBJECTS.History.subjectBrowserAccent / SUBJECTS[subject].accent' },
+  // definition (in src/constants, outside this guard) and the intentional
+  // Subjects-browser CSS selector. Components, features and learner-facing data
+  // must reference the canonical token or resolve SUBJECTS[subject].accent.
+  {
+    hex: '#C89B6D',
+    token: 'SUBJECTS.History.subjectBrowserAccent / SUBJECTS[subject].accent',
+    includeData: true,
+  },
 ]
 
-const srcFiles = globSync('src/{components,features}/**/*.{jsx,js}', {
+const componentFiles = globSync('src/{components,features}/**/*.{jsx,js}', {
+  cwd: root,
+  ignore: ['**/node_modules/**'],
+})
+
+const learnerDataFiles = globSync('src/data/**/*.{jsx,js}', {
   cwd: root,
   ignore: ['**/node_modules/**'],
 })
 
 describe('Colour token governance — migrated hex values do not regrow', () => {
-  for (const { hex, token } of MIGRATED_VALUES) {
+  for (const { hex, token, includeData = false } of MIGRATED_VALUES) {
     it(`${hex} does not reappear as a raw literal (use ${token})`, () => {
-      const offenders = srcFiles.filter((rel) => read(rel).includes(hex))
+      const guardedFiles = includeData
+        ? [...componentFiles, ...learnerDataFiles]
+        : componentFiles
+      const offenders = guardedFiles.filter((rel) => read(rel).includes(hex))
       expect(
         offenders,
         `${hex} found as a raw literal — replace with ${token}: ${offenders.join(', ')}`,
