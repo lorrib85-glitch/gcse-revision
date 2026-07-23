@@ -4,6 +4,7 @@ import { TYPE } from '../../../constants/typography.js'
 import ScoreNumberLine from '../../core/ScoreNumberLine.jsx'
 
 export default function MarkingPanel({ accent, examiner, guessedMark, setGuessedMark, selectedCriteria, setSelectedCriteria }) {
+  const criteriaOptions = examiner.criteriaOptions || []
   const criteriaUnlocked = guessedMark !== null
 
   return (
@@ -27,39 +28,43 @@ export default function MarkingPanel({ accent, examiner, guessedMark, setGuessed
         />
       </section>
 
-      <div style={{ height: 1, margin: '0 16px', background: GENERAL.line.faint }} />
+      {criteriaOptions.length > 0 && (
+        <>
+          <div style={{ height: 1, margin: '0 16px', background: GENERAL.line.faint }} />
 
-      <section
-        aria-disabled={!criteriaUnlocked}
-        style={{
-          padding: '16px 16px 18px',
-          opacity: criteriaUnlocked ? 1 : 0.42,
-          pointerEvents: criteriaUnlocked ? 'auto' : 'none',
-          transition: 'opacity 220ms ease',
-        }}
-      >
-        <div style={{ ...TYPE.displayCard, color: GENERAL.cinematic.textPrimary, marginBottom: 4 }}>What did you notice?</div>
-        <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted, marginBottom: 12 }}>
-          {criteriaUnlocked ? 'Choose at least one thing an examiner would reward or question.' : 'Choose a mark to unlock this step.'}
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {(examiner.criteriaOptions || []).map(opt => {
-            const selected = selectedCriteria.includes(opt)
-            return (
-              <button
-                key={opt}
-                type="button"
-                className={`fte-chip${selected ? ' selected' : ''}`}
-                aria-pressed={selected}
-                disabled={!criteriaUnlocked}
-                onClick={() => setSelectedCriteria(prev => (selected ? prev.filter(item => item !== opt) : [...prev, opt]))}
-              >
-                {selected ? '✓ ' : ''}{opt}
-              </button>
-            )
-          })}
-        </div>
-      </section>
+          <section
+            aria-disabled={!criteriaUnlocked}
+            style={{
+              padding: '16px 16px 18px',
+              opacity: criteriaUnlocked ? 1 : 0.42,
+              pointerEvents: criteriaUnlocked ? 'auto' : 'none',
+              transition: 'opacity 220ms ease',
+            }}
+          >
+            <div style={{ ...TYPE.displayCard, color: GENERAL.cinematic.textPrimary, marginBottom: 4 }}>What did you notice?</div>
+            <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted, marginBottom: 12 }}>
+              {criteriaUnlocked ? 'Choose at least one thing an examiner would reward or question.' : 'Choose a mark to unlock this step.'}
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {criteriaOptions.map(option => {
+                const selected = selectedCriteria.includes(option)
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    className={`fte-chip${selected ? ' selected' : ''}`}
+                    aria-pressed={selected}
+                    disabled={!criteriaUnlocked}
+                    onClick={() => setSelectedCriteria(previous => (selected ? previous.filter(item => item !== option) : [...previous, option]))}
+                  >
+                    {selected ? '✓ ' : ''}{option}
+                  </button>
+                )
+              })}
+            </div>
+          </section>
+        </>
+      )}
     </div>
   )
 }
