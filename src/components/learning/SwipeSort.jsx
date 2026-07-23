@@ -7,6 +7,7 @@ import CinematicShell from '../layout/CinematicShell.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { MOTION } from '../../constants/motion.js'
 import { ScreenTitle } from '../core/ScreenText.jsx'
 
 const SWIPE_THRESHOLD = 72
@@ -60,6 +61,16 @@ const CSS = `
 @keyframes ss-intro-right {
   from { opacity: 0; transform: translateX(18px); }
   to   { opacity: 1; transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-swipe-sort],
+  [data-swipe-sort] *,
+  [data-swipe-sort] *::before,
+  [data-swipe-sort] *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
 `
 
@@ -154,6 +165,10 @@ export default function SwipeSort({ block, subject, onComplete }) {
     return arr
   })
 
+  const [reduceMotion] = useState(() =>
+    typeof window !== 'undefined'
+      && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  )
   const [phase,    setPhase]    = useState('intro')
   const [cardIdx,  setCardIdx]  = useState(0)
   const [dragX,    setDragX]    = useState(0)
@@ -181,40 +196,52 @@ export default function SwipeSort({ block, subject, onComplete }) {
   const dragSide = dragX < -SWIPE_THRESHOLD ? 0 : dragX > SWIPE_THRESHOLD ? 1 : null
 
   const onTouchStart = useCallback(e => {
-    if (locked.current) return
+    if (reduceMotion || locked.current) return
     startX.current = e.touches[0].clientX
     setDragging(true)
     setDragX(0)
-  }, [])
+  }, [reduceMotion])
 
   const onTouchMove = useCallback(e => {
-    if (!dragging || locked.current) return
+    if (reduceMotion || !dragging || locked.current) return
     e.preventDefault()
     setDragX(e.touches[0].clientX - startX.current)
-  }, [dragging])
+  }, [dragging, reduceMotion])
 
   const onTouchEnd = useCallback(() => {
-    if (!dragging || locked.current) return
+    if (reduceMotion || !dragging || locked.current) return
     setDragging(false)
     if (dragSide !== null) commitChoice(dragSide)
     else setDragX(0)
-  }, [dragging, dragSide, commitChoice])
+  }, [dragging, dragSide, reduceMotion, commitChoice])
 
   const onMouseDown = e => {
-    if (locked.current) return
+    if (reduceMotion || locked.current) return
     startX.current = e.clientX
     setDragging(true)
     setDragX(0)
   }
   const onMouseMove = e => {
-    if (!dragging || locked.current) return
+    if (reduceMotion || !dragging || locked.current) return
     setDragX(e.clientX - startX.current)
   }
   const onMouseUp = () => {
-    if (!dragging || locked.current) return
+    if (reduceMotion || !dragging || locked.current) return
     setDragging(false)
     if (dragSide !== null) commitChoice(dragSide)
     else setDragX(0)
+  }
+
+  function advanceCard() {
+    setFlashCol(null)
+    setFlyDir(null)
+    if (cardIdx + 1 >= totalCards) {
+      setDone(true)
+    } else {
+      setCardIdx(i => i + 1)
+      setAnimKey(k => k + 1)
+    }
+    locked.current = false
   }
 
   function commitChoice(chosenCol) {
@@ -227,23 +254,28 @@ export default function SwipeSort({ block, subject, onComplete }) {
     if (correct) {
       setLastExpl(cur.explanation ?? '')
       setFlashCol('correct')
-      setFlyDir(chosenCol === 0 ? 'left' : 'right')
       setDragX(0)
-      setTimeout(() => {
-        setFlashCol(null)
-        setFlyDir(null)
-        if (cardIdx + 1 >= totalCards) {
-          setDone(true)
-        } else {
-          setCardIdx(i => i + 1)
-          setAnimKey(k => k + 1)
-        }
-        locked.current = false
-      }, 520)
+
+      if (reduceMotion) {
+        setTimeout(advanceCard, MOTION.stagger.standardMs)
+        return
+      }
+
+      setFlyDir(chosenCol === 0 ? 'left' : 'right')
+      setTimeout(advanceCard, 520)
     } else {
       setFlashCol('wrong')
-      setShaking(true)
       setDragX(0)
+
+      if (reduceMotion) {
+        setTimeout(() => {
+          setFlashCol(null)
+          locked.current = false
+        }, MOTION.stagger.standardMs)
+        return
+      }
+
+      setShaking(true)
       setTimeout(() => {
         setFlashCol(null)
         setShaking(false)
@@ -257,20 +289,24 @@ export default function SwipeSort({ block, subject, onComplete }) {
     commitChoice(colIdx)
   }
 
-  const cardRotate = dragging ? dragX * 0.035 : 0
-  const cardTransform = flyDir === 'left'
+  const cardRotate = reduceMotion ? 0 : dragging ? dragX * 0.035 : 0
+  const cardTransform = reduceMotion
+    ? `translateX(${dragX}px)`
+    : flyDir === 'left'
     ? 'translateX(-115vw) rotate(-16deg)'
     : flyDir === 'right'
     ? 'translateX(115vw) rotate(16deg)'
     : `translateX(${dragX}px) rotate(${cardRotate}deg)`
 
-  const cardTransition = flyDir
+  const cardTransition = reduceMotion
+    ? 'none'
+    : flyDir
     ? 'transform 0.44s cubic-bezier(.4,0,.2,1), opacity 0.44s'
     : dragging
     ? 'box-shadow 0.12s'
     : 'transform 0.32s cubic-bezier(.22,1,.36,1), opacity 0.28s, box-shadow 0.2s'
 
-  const cardOpacity = flyDir ? 0 : Math.max(0.42, 1 - Math.abs(dragX) / 420)
+  const cardOpacity = reduceMotion ? 1 : flyDir ? 0 : Math.max(0.42, 1 - Math.abs(dragX) / 420)
 
   const cardGlow = flashCol === 'correct'
     ? `0 0 44px rgba(${accentRgb},0.55), 0 0 92px rgba(${accentRgb},0.18), 0 14px 48px rgba(0,0,0,0.70)`
@@ -284,13 +320,16 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
   if (phase === 'intro') {
     return (
-      <CinematicShell style={{
-        background: GENERAL.backgroundApp,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
+      <CinematicShell
+        data-swipe-sort="true"
+        style={{
+          background: GENERAL.backgroundApp,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         {backgroundLayer(leftCol, rightCol, { intro: true })}
 
         <div style={{
@@ -360,13 +399,16 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
   if (done) {
     return (
-      <CinematicShell style={{
-        background: GENERAL.backgroundApp,
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        padding: '32px 24px',
-        animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) both',
-      }}>
+      <CinematicShell
+        data-swipe-sort="true"
+        style={{
+          background: GENERAL.backgroundApp,
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          padding: '32px 24px',
+          animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) both',
+        }}
+      >
         {backgroundLayer(leftCol, rightCol, { intro: true })}
 
         <div style={{ position: 'relative', zIndex: 3, textAlign: 'center', maxWidth: 400, width: '100%' }}>
@@ -418,10 +460,13 @@ export default function SwipeSort({ block, subject, onComplete }) {
   }
 
   return (
-    <CinematicShell style={{
-      background: GENERAL.backgroundApp,
-      animation: 'ss-game-in 360ms ease both',
-    }}>
+    <CinematicShell
+      data-swipe-sort="true"
+      style={{
+        background: GENERAL.backgroundApp,
+        animation: 'ss-game-in 360ms ease both',
+      }}
+    >
       <div style={{ position: 'absolute', inset: 0, userSelect: 'none', WebkitUserSelect: 'none' }}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
@@ -513,10 +558,12 @@ export default function SwipeSort({ block, subject, onComplete }) {
                   borderRadius: 24,
                   border: `1px solid rgba(245,238,225,${Math.abs(dragX) > 20 ? 0.25 : 0.14})`,
                   padding: '26px 24px',
-                  cursor: dragging ? 'grabbing' : 'grab',
+                  cursor: reduceMotion ? 'default' : dragging ? 'grabbing' : 'grab',
                   transform: cardTransform,
                   opacity: cardOpacity,
-                  animation: shaking
+                  animation: reduceMotion
+                    ? 'none'
+                    : shaking
                     ? 'ss-shake 520ms ease both'
                     : 'ss-card-in 360ms cubic-bezier(.22,1,.36,1) both',
                   transition: shaking ? 'none' : cardTransition,
@@ -555,7 +602,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
             padding: '8px 12px',
             backdropFilter: 'blur(8px)',
           }}>
-            {remaining} left · Swipe the card or tap a side
+            {remaining} left · {reduceMotion ? 'Tap a side to sort' : 'Swipe the card or tap a side'}
           </div>
         </div>
 
