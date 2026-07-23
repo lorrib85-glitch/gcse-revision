@@ -33,8 +33,36 @@ export const builderMaths = {
 
 export const builderQuote = {
   ...baseBuilderQuote,
+  layout: 'text',
+  textStyle: 'literary',
+  workspaceLabel: 'Quotation builder',
+  slotGroupLabel: 'Quotation',
+  completionNoun: 'quotation',
+  completedInstruction: 'You restored the quotation.',
+  successHeading: 'Quotation restored',
   backgroundImage: '/English/Macbeth/heroes/macbeth-generic-banner.svg',
   backgroundOpacity: 0.82,
+}
+
+export const builderConcept = {
+  layout: 'text',
+  textStyle: 'plain',
+  label: 'Rebuild the concept',
+  instruction: 'Choose the missing key terms to complete the definition.',
+  template: 'Primary socialisation is the process through which children learn the {{0}} and {{1}} of their society.',
+  slots: [null, null],
+  pieces: ['norms', 'values', 'status', 'sanctions'],
+  answer: ['norms', 'values'],
+  hint: 'Think about the shared rules and beliefs children learn first within the family.',
+  successText: 'Primary socialisation teaches children the norms and values of their society, mainly through the family.',
+  workspaceLabel: 'Sociology concept builder',
+  slotGroupLabel: 'Concept',
+  bankLabel: 'Key terms',
+  completionNoun: 'concept',
+  completedInstruction: 'You rebuilt the concept.',
+  successHeading: 'Concept complete',
+  backgroundImage: '/headers/sociology-family.webp',
+  backgroundOpacity: 0.72,
 }
 
 export const quoteAnalyser = {
