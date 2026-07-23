@@ -9,6 +9,7 @@ import ContinueCTA from '../core/ContinueCTA.jsx'
 import BackButton from '../core/BackButton.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 import CinematicShell from '../layout/CinematicShell.jsx'
+import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion.js'
 
 const HOTSPOT_HIT_SIZE = 44
 const HOTSPOT_VISUAL_SIZE = 28
@@ -85,7 +86,7 @@ function getDetailRows(selected) {
   ].filter(row => row.body)
 }
 
-function HotspotButton({ hotspot, isSelected, isVisited, accent, accentRgb, onSelect }) {
+function HotspotButton({ hotspot, isSelected, isVisited, accent, accentRgb, onSelect, reduceMotion }) {
   const dotShadow = isSelected
     ? `0 0 0 2px rgba(${accentRgb},0.75), 0 0 22px rgba(${accentRgb},0.92), 0 0 56px rgba(${accentRgb},0.45)`
     : isVisited
@@ -126,8 +127,8 @@ function HotspotButton({ hotspot, isSelected, isVisited, accent, accentRgb, onSe
           borderRadius: RADII.pill,
           background: isVisited ? `rgba(${accentRgb},0.16)` : 'rgba(255,255,255,0.04)',
           boxShadow: dotShadow,
-          animation: !isVisited ? 'ihi-pulse 2.8s ease-in-out infinite' : 'none',
-          transition: 'box-shadow 280ms cubic-bezier(0.22,1,0.36,1)',
+          animation: reduceMotion || isVisited ? 'none' : 'ihi-pulse 2.8s ease-in-out infinite',
+          transition: reduceMotion ? 'none' : 'box-shadow 280ms cubic-bezier(0.22,1,0.36,1)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -140,7 +141,7 @@ function HotspotButton({ hotspot, isSelected, isVisited, accent, accentRgb, onSe
             borderRadius: RADII.pill,
             background: isVisited ? accent : 'rgba(255,255,255,0.85)',
             boxShadow: isVisited ? `0 0 8px ${accent}` : 'none',
-            transition: 'all 280ms cubic-bezier(0.22,1,0.36,1)',
+            transition: reduceMotion ? 'none' : 'all 280ms cubic-bezier(0.22,1,0.36,1)',
           }}
         />
       </span>
@@ -148,15 +149,23 @@ function HotspotButton({ hotspot, isSelected, isVisited, accent, accentRgb, onSe
   )
 }
 
-function SynthesisScreen({ synthesis, accent, accentRgb, pageBg, text, muted, onContinue }) {
-  const [visible, setVisible] = useState(false)
+function SynthesisScreen({ synthesis, accent, accentRgb, pageBg, text, muted, onContinue, reduceMotion }) {
+  const [visible, setVisible] = useState(reduceMotion)
 
   useEffect(() => {
+    if (reduceMotion) {
+      setVisible(true)
+      return undefined
+    }
+
     const t = setTimeout(() => setVisible(true), 80)
     return () => clearTimeout(t)
-  }, [])
+  }, [reduceMotion])
 
   const pointsLen = synthesis.points?.length || 0
+  const transition = delay => reduceMotion
+    ? 'none'
+    : `opacity 400ms ${MOTION.easing.standard} ${delay}ms, transform 400ms ${MOTION.easing.standard} ${delay}ms`
 
   return (
     <div style={{
@@ -187,7 +196,7 @@ function SynthesisScreen({ synthesis, accent, accentRgb, pageBg, text, muted, on
           textTransform: 'uppercase',
           marginBottom: SPACING.compact,
           opacity: visible ? 1 : 0,
-          transition: `opacity 400ms ${MOTION.easing.standard}`,
+          transition: reduceMotion ? 'none' : `opacity 400ms ${MOTION.easing.standard}`,
         }}>
           Collection complete
         </div>
@@ -197,8 +206,8 @@ function SynthesisScreen({ synthesis, accent, accentRgb, pageBg, text, muted, on
           color: text,
           margin: `0 0 ${SPACING.separation}px`,
           opacity: visible ? 1 : 0,
-          transform: visible ? 'none' : 'translateY(16px)',
-          transition: `opacity 400ms ${MOTION.easing.standard} 80ms, transform 400ms ${MOTION.easing.standard} 80ms`,
+          transform: visible || reduceMotion ? 'none' : 'translateY(16px)',
+          transition: transition(80),
         }}>
           {synthesis.heading}
         </h2>
@@ -210,8 +219,8 @@ function SynthesisScreen({ synthesis, accent, accentRgb, pageBg, text, muted, on
               alignItems: 'flex-start',
               gap: SPACING.compact,
               opacity: visible ? 1 : 0,
-              transform: visible ? 'none' : 'translateY(14px)',
-              transition: `opacity 400ms ${MOTION.easing.standard} ${160 + i * 80}ms, transform 400ms ${MOTION.easing.standard} ${160 + i * 80}ms`,
+              transform: visible || reduceMotion ? 'none' : 'translateY(14px)',
+              transition: transition(160 + i * 80),
             }}>
               <div style={{
                 width: 6,
@@ -240,8 +249,8 @@ function SynthesisScreen({ synthesis, accent, accentRgb, pageBg, text, muted, on
             borderLeft: `2px solid rgba(${accentRgb}, 0.35)`,
             paddingLeft: SPACING.standard,
             opacity: visible ? 1 : 0,
-            transform: visible ? 'none' : 'translateY(14px)',
-            transition: `opacity 400ms ${MOTION.easing.standard} ${160 + pointsLen * 80 + 80}ms, transform 400ms ${MOTION.easing.standard} ${160 + pointsLen * 80 + 80}ms`,
+            transform: visible || reduceMotion ? 'none' : 'translateY(14px)',
+            transition: transition(160 + pointsLen * 80 + 80),
           }}>
             <div style={{
               ...TYPE.metadata,
@@ -287,6 +296,7 @@ export default function InteractiveHotspotImage({
   onEnterExplore,
   onContinue,
 }) {
+  const reduceMotion = usePrefersReducedMotion()
   const theme = getTheme(subject)
   const { accent, accentRgb, pageBg, imageFilter, selectedImageFilter, labelBg, imageText, imageMuted, cardBg, cardText, cardMuted, cardRule } = theme
 
@@ -295,7 +305,7 @@ export default function InteractiveHotspotImage({
   const [viewMode,     setViewMode]     = useState('intro')
   const [selectedId,   setSelectedId]   = useState(null)
   const [visited,      setVisited]      = useState(new Set())
-  const [ctaReady,     setCtaReady]     = useState(false)
+  const [ctaReady,     setCtaReady]     = useState(reduceMotion)
   const [revealStep,   setRevealStep]   = useState(0)
   const [showSynthesis, setShowSynthesis] = useState(false)
 
@@ -304,7 +314,7 @@ export default function InteractiveHotspotImage({
   const selected     = hotspots.find(h => h.id === selectedId) || null
   const allDone      = visited.size === hotspots.length && hotspots.length > 0
   const titleLines   = title.split('\n')
-  const ctaDelay     = 200 + titleLines.length * 420 + 260 + 460 + 300
+  const ctaDelay     = reduceMotion ? 0 : 200 + titleLines.length * 420 + 260 + 460 + 300
   const selectedRows = selected ? getDetailRows(selected) : []
   const selectedSubtitle = selected?.qualities || selected?.subtitle
   const revealCount  = selected?.reveals?.length || 0
@@ -312,16 +322,27 @@ export default function InteractiveHotspotImage({
   const showContinue = allDone && isExplore && !selected && !synthesis
 
   useEffect(() => {
+    if (reduceMotion) {
+      setCtaReady(true)
+      return undefined
+    }
+
     const t = setTimeout(() => setCtaReady(true), ctaDelay)
     return () => clearTimeout(t)
-  }, [ctaDelay])
+  }, [ctaDelay, reduceMotion])
 
   useEffect(() => {
     if (synthesis && allDone && !selected && !showSynthesis) {
+      if (reduceMotion) {
+        setShowSynthesis(true)
+        return undefined
+      }
+
       const t = setTimeout(() => setShowSynthesis(true), 500)
       return () => clearTimeout(t)
     }
-  }, [synthesis, allDone, selected, showSynthesis])
+    return undefined
+  }, [synthesis, allDone, selected, showSynthesis, reduceMotion])
 
   function handleTap(id) {
     setSelectedId(id)
@@ -350,7 +371,10 @@ export default function InteractiveHotspotImage({
   }
 
   return (
-    <CinematicShell style={{ background: pageBg, zIndex: 1000 }}>
+    <CinematicShell
+      data-interactive-hotspot="true"
+      style={{ background: pageBg, zIndex: 1000 }}
+    >
       <style>{`
         @keyframes ihi-line-in {
           from { opacity: 0; transform: translateY(18px); }
@@ -372,25 +396,35 @@ export default function InteractiveHotspotImage({
         .ihi-cta:active { opacity: 0.80; }
         .ihi-dot:active > span { transform: scale(0.88) !important; }
         .ihi-next:active { opacity: 0.80; }
+        @media (prefers-reduced-motion: reduce) {
+          [data-interactive-hotspot],
+          [data-interactive-hotspot] * {
+            animation: none !important;
+            transition: none !important;
+          }
+          [data-interactive-hotspot] .ihi-dot:active > span {
+            transform: none !important;
+          }
+        }
       `}</style>
 
-      <div style={{ position: 'absolute', inset: 0, opacity: introVisible ? 1 : 0, transition: 'opacity 500ms cubic-bezier(0.22,1,0.36,1)', pointerEvents: introVisible ? 'auto' : 'none' }}>
+      <div style={{ position: 'absolute', inset: 0, opacity: introVisible ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 500ms cubic-bezier(0.22,1,0.36,1)', pointerEvents: introVisible ? 'auto' : 'none' }}>
         <img src={image} alt={imageAlt} draggable={false} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', filter: 'brightness(0.65) saturate(0.85)', transform: 'scale(1.03)', userSelect: 'none' }} />
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(3,7,5,0.10) 0%, rgba(3,7,5,0.18) 30%, rgba(3,7,5,0.58) 68%, rgba(3,7,5,0.95) 100%)' }} />
         {onBack && <BackButton onClick={onBack} style={{ position: 'absolute', top: 'max(18px, calc(env(safe-area-inset-top, 0px) + 14px))', left: '16px', zIndex: 5 }} />}
         <div style={{ position: 'absolute', left: '28px', right: '28px', bottom: 'max(72px, calc(env(safe-area-inset-bottom, 0px) + 72px))', zIndex: 5 }}>
-          <div style={{ ...TYPE.displayHero, color: imageText }}>{titleLines.map((line, i) => <div key={i} style={{ animation: `ihi-line-in 400ms cubic-bezier(0.22,1,0.36,1) ${200 + i * 420}ms both` }}>{line}</div>)}</div>
-          <p style={{ ...TYPE.bodyStrong, margin: '20px 0 0', color: imageMuted, maxWidth: '28ch', animation: `ihi-line-in 400ms cubic-bezier(0.22,1,0.36,1) ${200 + titleLines.length * 420 + 260}ms both` }}>{introText}</p>
-          <div style={{ marginTop: '28px', opacity: ctaReady ? 1 : 0, transition: 'opacity 440ms ease', pointerEvents: ctaReady ? 'auto' : 'none' }}>
-            <button type="button" className="ihi-cta" onClick={enterExplore} style={{ display: 'flex', alignItems: 'center', height: '54px', padding: '0 26px', borderRadius: RADII.pill, background: `rgba(${accentRgb},0.16)`, backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: `1px solid rgba(${accentRgb},0.18)`, color: imageText, ...TYPE.buttonLarge, cursor: 'pointer', transition: 'background 160ms ease' }}>{ctaLabel}</button>
+          <div style={{ ...TYPE.displayHero, color: imageText }}>{titleLines.map((line, i) => <div key={i} style={{ animation: reduceMotion ? 'none' : `ihi-line-in 400ms cubic-bezier(0.22,1,0.36,1) ${200 + i * 420}ms both` }}>{line}</div>)}</div>
+          <p style={{ ...TYPE.bodyStrong, margin: '20px 0 0', color: imageMuted, maxWidth: '28ch', animation: reduceMotion ? 'none' : `ihi-line-in 400ms cubic-bezier(0.22,1,0.36,1) ${200 + titleLines.length * 420 + 260}ms both` }}>{introText}</p>
+          <div style={{ marginTop: '28px', opacity: ctaReady ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 440ms ease', pointerEvents: ctaReady ? 'auto' : 'none' }}>
+            <button type="button" className="ihi-cta" onClick={enterExplore} style={{ display: 'flex', alignItems: 'center', height: '54px', padding: '0 26px', borderRadius: RADII.pill, background: `rgba(${accentRgb},0.16)`, backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: `1px solid rgba(${accentRgb},0.18)`, color: imageText, ...TYPE.buttonLarge, cursor: 'pointer', transition: reduceMotion ? 'none' : 'background 160ms ease' }}>{ctaLabel}</button>
           </div>
         </div>
       </div>
 
-      <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', opacity: isExplore ? 1 : 0, transition: 'opacity 500ms cubic-bezier(0.22,1,0.36,1)', pointerEvents: isExplore ? 'auto' : 'none' }}>
+      <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', opacity: isExplore ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 500ms cubic-bezier(0.22,1,0.36,1)', pointerEvents: isExplore ? 'auto' : 'none' }}>
         <div style={{ position: 'relative', width: '100%', marginTop: 'calc(env(safe-area-inset-top, 0px) + 80px)' }}>
-          <img src={image} alt={imageAlt} draggable={false} style={{ display: 'block', width: '100%', height: 'auto', filter: selected ? selectedImageFilter : imageFilter, transition: 'filter 300ms cubic-bezier(0.22,1,0.36,1)', userSelect: 'none' }} />
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: selected ? 'radial-gradient(circle at 70% 22%, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.08) 24%, rgba(0,0,0,0.42) 100%)' : 'linear-gradient(180deg, transparent 55%, rgba(3,7,5,0.45) 100%)', transition: 'background 300ms cubic-bezier(0.22,1,0.36,1)' }} />
+          <img src={image} alt={imageAlt} draggable={false} style={{ display: 'block', width: '100%', height: 'auto', filter: selected ? selectedImageFilter : imageFilter, transition: reduceMotion ? 'none' : 'filter 300ms cubic-bezier(0.22,1,0.36,1)', userSelect: 'none' }} />
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: selected ? 'radial-gradient(circle at 70% 22%, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.08) 24%, rgba(0,0,0,0.42) 100%)' : 'linear-gradient(180deg, transparent 55%, rgba(3,7,5,0.45) 100%)', transition: reduceMotion ? 'none' : 'background 300ms cubic-bezier(0.22,1,0.36,1)' }} />
           <div style={{ position: 'absolute', top: '16px', right: '14px', pointerEvents: 'none', zIndex: 6 }}><SequenceProgress total={hotspots.length} current={-1} viewed={hotspots.map((h, i) => visited.has(h.id) ? i : -1).filter(i => i >= 0)} accent={accent} accentRgb={accentRgb} compact={true} ariaLabel="Hotspot progress" /></div>
 
           {hotspots.map(h => {
@@ -398,8 +432,8 @@ export default function InteractiveHotspotImage({
             const isVisited  = visited.has(h.id)
             return (
               <div key={h.id}>
-                <HotspotButton hotspot={h} isSelected={isSelected} isVisited={isVisited} accent={accent} accentRgb={accentRgb} onSelect={handleTap} />
-                {isSelected && <div style={{ position: 'absolute', ...getLabelPos(h), background: labelBg, backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', border: `1px solid rgba(${accentRgb},0.14)`, borderRadius: RADII.medium, padding: '9px 13px', ...TYPE.button, color: imageText, whiteSpace: 'nowrap', pointerEvents: 'none', zIndex: 9, animation: 'ihi-label-in 220ms ease both' }}>{h.shortLabel || h.title}</div>}
+                <HotspotButton hotspot={h} isSelected={isSelected} isVisited={isVisited} accent={accent} accentRgb={accentRgb} onSelect={handleTap} reduceMotion={reduceMotion} />
+                {isSelected && <div style={{ position: 'absolute', ...getLabelPos(h), background: labelBg, backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', border: `1px solid rgba(${accentRgb},0.14)`, borderRadius: RADII.medium, padding: '9px 13px', ...TYPE.button, color: imageText, whiteSpace: 'nowrap', pointerEvents: 'none', zIndex: 9, animation: reduceMotion ? 'none' : 'ihi-label-in 220ms ease both' }}>{h.shortLabel || h.title}</div>}
               </div>
             )
           })}
@@ -409,17 +443,17 @@ export default function InteractiveHotspotImage({
 
       {selected && isExplore && <div onClick={() => { setSelectedId(null); setRevealStep(0) }} style={{ position: 'absolute', inset: 0, zIndex: 25 }} />}
 
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 22px max(18px, env(safe-area-inset-bottom, 0px))', transform: (selected && isExplore) ? 'translateY(0)' : 'translateY(calc(100% + 28px))', transition: 'transform 380ms cubic-bezier(0.22,1,0.36,1)', zIndex: 30, pointerEvents: selected ? 'auto' : 'none' }}>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 22px max(18px, env(safe-area-inset-bottom, 0px))', transform: (selected && isExplore) ? 'translateY(0)' : 'translateY(calc(100% + 28px))', transition: reduceMotion ? 'none' : 'transform 380ms cubic-bezier(0.22,1,0.36,1)', zIndex: 30, pointerEvents: selected ? 'auto' : 'none' }}>
         {selected && isReveal && <article style={{ background: cardBg, color: cardText, border: `1px solid ${cardRule}`, borderRadius: RADII.panel, padding: '22px 22px 20px', boxShadow: `0 22px 70px rgba(0,0,0,0.44), 0 0 0 1px rgba(${accentRgb},0.08)`, maxHeight: '47vh', overflowY: 'auto' }}>
           <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: SPACING.compact }}>
             <h2 style={{ ...TYPE.displaySection, margin: 0, color: cardText, borderLeft: `3px solid rgba(${accentRgb},0.62)`, paddingLeft: SPACING.compact }}>{selected.title}</h2>
             <div style={{ ...TYPE.metadata, fontSize: 11, color: `rgba(${accentRgb},0.75)`, letterSpacing: '0.12em', flexShrink: 0, marginLeft: SPACING.compact }}>{revealStep + 1} / {revealCount}</div>
           </header>
           <div style={{ display: 'flex', gap: 4, marginBottom: SPACING.standard }}>
-            {selected.reveals.map((_, i) => <div key={i} style={{ flex: 1, height: 2, borderRadius: 2, background: i <= revealStep ? accent : `rgba(${accentRgb},0.16)`, transition: `background 300ms ${MOTION.easing.gentle}` }} />)}
+            {selected.reveals.map((_, i) => <div key={i} style={{ flex: 1, height: 2, borderRadius: 2, background: i <= revealStep ? accent : `rgba(${accentRgb},0.16)`, transition: reduceMotion ? 'none' : `background 300ms ${MOTION.easing.gentle}` }} />)}
           </div>
-          <p key={revealStep} style={{ ...TYPE.bodySmall, color: cardMuted, margin: `0 0 ${SPACING.standard}px`, lineHeight: 1.72, animation: `ihi-reveal-in 320ms ${MOTION.easing.standard} both` }}>{selected.reveals[revealStep]?.text}</p>
-          <button type="button" className="ihi-next" onClick={e => { e.stopPropagation(); handleRevealNext() }} style={{ width: '100%', height: 52, borderRadius: RADII.medium, background: isLastReveal ? `rgba(${accentRgb},0.20)` : `rgba(${accentRgb},0.10)`, border: `1px solid rgba(${accentRgb},${isLastReveal ? 0.38 : 0.20})`, color: cardText, ...TYPE.bodySmall, fontWeight: 700, cursor: 'pointer', transition: `background 200ms ${MOTION.easing.gentle}, border-color 200ms ${MOTION.easing.gentle}` }}>{isLastReveal ? 'Mark explored →' : 'Next →'}</button>
+          <p key={revealStep} style={{ ...TYPE.bodySmall, color: cardMuted, margin: `0 0 ${SPACING.standard}px`, lineHeight: 1.72, animation: reduceMotion ? 'none' : `ihi-reveal-in 320ms ${MOTION.easing.standard} both` }}>{selected.reveals[revealStep]?.text}</p>
+          <button type="button" className="ihi-next" onClick={e => { e.stopPropagation(); handleRevealNext() }} style={{ width: '100%', height: 52, borderRadius: RADII.medium, background: isLastReveal ? `rgba(${accentRgb},0.20)` : `rgba(${accentRgb},0.10)`, border: `1px solid rgba(${accentRgb},${isLastReveal ? 0.38 : 0.20})`, color: cardText, ...TYPE.bodySmall, fontWeight: 700, cursor: 'pointer', transition: reduceMotion ? 'none' : `background 200ms ${MOTION.easing.gentle}, border-color 200ms ${MOTION.easing.gentle}` }}>{isLastReveal ? 'Mark explored →' : 'Next →'}</button>
         </article>}
         {selected && !isReveal && <article style={{ background: cardBg, color: cardText, border: `1px solid ${cardRule}`, borderRadius: RADII.panel, padding: '22px 22px 20px', boxShadow: `0 22px 70px rgba(0,0,0,0.44), 0 0 0 1px rgba(${accentRgb},0.08)`, maxHeight: '47vh', overflowY: 'auto' }}>
           <header style={{ borderLeft: `3px solid rgba(${accentRgb},0.62)`, paddingLeft: SPACING.compact, marginBottom: SPACING.compact }}>
@@ -433,11 +467,11 @@ export default function InteractiveHotspotImage({
           </section>)}
         </article>}
       </div>
-      <div style={{ position: 'absolute', bottom: 'max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px))', left: '24px', right: '24px', zIndex: 22, opacity: showContinue ? 1 : 0, transform: showContinue ? 'translateY(0)' : 'translateY(16px)', transition: 'opacity 500ms cubic-bezier(0.22,1,0.36,1), transform 500ms cubic-bezier(0.22,1,0.36,1)', pointerEvents: showContinue ? 'auto' : 'none' }}>
+      <div style={{ position: 'absolute', bottom: 'max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px))', left: '24px', right: '24px', zIndex: 22, opacity: showContinue ? 1 : 0, transform: showContinue || reduceMotion ? 'translateY(0)' : 'translateY(16px)', transition: reduceMotion ? 'none' : 'opacity 500ms cubic-bezier(0.22,1,0.36,1), transform 500ms cubic-bezier(0.22,1,0.36,1)', pointerEvents: showContinue ? 'auto' : 'none' }}>
         <ContinueCTA onClick={onContinue} accent={accent} />
       </div>
 
-      {showSynthesis && synthesis && <SynthesisScreen synthesis={synthesis} accent={accent} accentRgb={accentRgb} pageBg={pageBg} text={imageText} muted={imageMuted} onContinue={onContinue} />}
+      {showSynthesis && synthesis && <SynthesisScreen synthesis={synthesis} accent={accent} accentRgb={accentRgb} pageBg={pageBg} text={imageText} muted={imageMuted} onContinue={onContinue} reduceMotion={reduceMotion} />}
     </CinematicShell>
   )
 }
