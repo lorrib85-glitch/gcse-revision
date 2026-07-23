@@ -2,9 +2,9 @@ import { GENERAL } from '../../../constants/generalTheme.js'
 import { RADII } from '../../../constants/radii.js'
 import { SPACING } from '../../../constants/spacing.js'
 import { TYPE } from '../../../constants/typography.js'
-import { ANN_DOT, ANN_STYLES, buildAnswerSections } from './utils.js'
+import { annotationDot, annotationStyle, buildAnswerSections } from './utils.js'
 
-function AnnotationList({ title, notes }) {
+function AnnotationList({ title, notes, accent }) {
   if (notes.length === 0) return null
 
   return (
@@ -12,7 +12,7 @@ function AnnotationList({ title, notes }) {
       <div style={{ ...TYPE.label, color: GENERAL.cinematic.textMuted, marginBottom: 8 }}>{title}</div>
       {notes.map(annotation => (
         <div key={annotation.id} style={{ display: 'flex', alignItems: 'flex-start', gap: SPACING.micro, marginBottom: SPACING.micro }}>
-          <div style={{ width: 8, height: 8, borderRadius: RADII.pill, marginTop: 6, flexShrink: 0, background: ANN_DOT[annotation.type] || GENERAL.ring.rest }} />
+          <div style={{ width: 8, height: 8, borderRadius: RADII.pill, marginTop: 6, flexShrink: 0, background: annotationDot(annotation.type, accent) }} />
           <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textSecondary }}>
             {annotation.comment}
           </div>
@@ -86,7 +86,7 @@ export default function AnswerPanel({
 
             return (
               <span key={index}>
-                <span style={ANN_STYLES[ann.type] || {}}>{segment.text}</span>
+                <span style={annotationStyle(ann.type, accent)}>{segment.text}</span>
                 {isImproving && isWeak && (
                   <>
                     {' '}
@@ -124,8 +124,8 @@ export default function AnswerPanel({
 
       {(isReveal || isImproving) && annotations.length > 0 && (
         <div style={{ marginTop: 22, borderTop: `1px solid ${GENERAL.line.faint}`, paddingTop: 2 }}>
-          <AnnotationList title="What earned marks" notes={earnedNotes} />
-          <AnnotationList title="What stopped the next mark" notes={improvementNotes} />
+          <AnnotationList title="What earned marks" notes={earnedNotes} accent={accent} />
+          <AnnotationList title="What stopped the next mark" notes={improvementNotes} accent={accent} />
         </div>
       )}
 
