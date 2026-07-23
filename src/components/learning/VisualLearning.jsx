@@ -6,6 +6,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion.js'
 
 const SLIDE_MS = 420
 
@@ -30,6 +31,13 @@ function injectStyles() {
       from { opacity: 0; transform: scale(0.97) translateY(16px); }
       to   { opacity: 1; transform: scale(1) translateY(0); }
     }
+    @media (prefers-reduced-motion: reduce) {
+      [data-visual-learning],
+      [data-visual-learning] * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   `
   document.head.appendChild(s)
 }
@@ -42,6 +50,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
   const scenes = useMemo(() => block?.scenes || [], [block?.scenes])
   const palette = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb } = palette
+  const reduceMotion = usePrefersReducedMotion()
 
   const [idx,     setIdx]     = useState(0)
   const [animKey, setAnimKey] = useState(0)
@@ -52,12 +61,15 @@ export default function VisualLearning({ block, subject, onComplete }) {
   const scene  = scenes[idx] || {}
   const isLast = idx === scenes.length - 1
 
-  // Show tap hint after a pause on each new scene
+  // Show tap hint after a pause on each new scene. Reduced-motion users do not
+  // wait for an animation-led cue; the static instruction is available at once.
   useEffect(() => {
-    setHint(false)
+    setHint(reduceMotion)
+    if (reduceMotion) return undefined
+
     const t = setTimeout(() => setHint(true), 1800)
     return () => clearTimeout(t)
-  }, [idx])
+  }, [idx, reduceMotion])
 
   // Preload next scene's image
   useEffect(() => {
@@ -71,7 +83,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
   function advance() {
     if (locked.current) return
     locked.current = true
-    setTimeout(() => { locked.current = false }, SLIDE_MS)
+    setTimeout(() => { locked.current = false }, reduceMotion ? 0 : SLIDE_MS)
     setHint(false)
     if (isLast) {
       onComplete?.()
@@ -87,7 +99,10 @@ export default function VisualLearning({ block, subject, onComplete }) {
   const isFinalReveal = !!scene.finalReveal
 
   return (
-    <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 100 }}>
+    <CinematicShell
+      data-visual-learning="true"
+      style={{ background: GENERAL.backgroundApp, zIndex: 100 }}
+    >
       <div
         onClick={advance}
         style={{
@@ -106,7 +121,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
             backgroundImage: `url(${scene.image})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            animation: `vl-bg-in ${SLIDE_MS}ms ease both`,
+            animation: reduceMotion ? 'none' : `vl-bg-in ${SLIDE_MS}ms ease both`,
           }}
         />
       )}
@@ -130,7 +145,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
             display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
             padding: '0 36px',
-            animation: `vl-reveal-in ${SLIDE_MS}ms cubic-bezier(.16,1,.3,1) both`,
+            animation: reduceMotion ? 'none' : `vl-reveal-in ${SLIDE_MS}ms cubic-bezier(.16,1,.3,1) both`,
           }}
         >
           <div style={{
@@ -160,7 +175,8 @@ export default function VisualLearning({ block, subject, onComplete }) {
               bottom: 'calc(44px + env(safe-area-inset-bottom, 0px))',
               left: 0, right: 0, textAlign: 'center',
               pointerEvents: 'none',
-              animation: 'vl-hint 2.8s ease infinite',
+              animation: reduceMotion ? 'none' : 'vl-hint 2.8s ease infinite',
+              opacity: reduceMotion ? 0.5 : undefined,
             }}>
               <span style={{
                 ...TYPE.eyebrow,
@@ -182,7 +198,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
             display: 'flex', flexDirection: 'column',
             justifyContent: 'flex-end',
             padding: '0 28px calc(88px + env(safe-area-inset-bottom, 0px))',
-            animation: `vl-in ${SLIDE_MS}ms cubic-bezier(.16,1,.3,1) both`,
+            animation: reduceMotion ? 'none' : `vl-in ${SLIDE_MS}ms cubic-bezier(.16,1,.3,1) both`,
           }}
         >
           <div style={{
@@ -224,7 +240,8 @@ export default function VisualLearning({ block, subject, onComplete }) {
               bottom: 'calc(44px + env(safe-area-inset-bottom, 0px))',
               left: 0, right: 0, textAlign: 'center',
               pointerEvents: 'none',
-              animation: 'vl-hint 2.8s ease infinite',
+              animation: reduceMotion ? 'none' : 'vl-hint 2.8s ease infinite',
+              opacity: reduceMotion ? 0.5 : undefined,
             }}>
               <span style={{
                 ...TYPE.eyebrow,
