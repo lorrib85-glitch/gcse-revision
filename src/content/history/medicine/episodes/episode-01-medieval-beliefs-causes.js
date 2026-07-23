@@ -758,18 +758,21 @@ export default {
     },
 
     {
-      type: 'collectionExplorer',
+      type: 'interactiveImage',
+      variant: 'reveal',
       stage: 'Prevention and care',
       id: 'staying-well-1400',
       label: 'Staying Well in 1400',
       title: 'Staying well in 1400',
-      description: 'Tap each object to find out how people tried to stay healthy — before anyone knew about germs.',
-      backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
-      items: [
+      introText: 'Tap each object to find out how people tried to stay healthy — before anyone knew about germs.',
+      image: '/figures/history/medicine/medieval/medieval-street.webp',
+      imageAlt: 'A medieval street scene in 1400',
+      ctaLabel: 'Explore',
+      hotspots: [
         {
           id: 'regimen-sanitatis',
           x: 22, y: 38,
-          label: "A physician's lifestyle chart",
+          title: "A physician's lifestyle chart",
           reveals: [
             { text: "A wealthy merchant keeps a written chart pinned to his wall — instructions for exactly how to eat, sleep and bathe." },
             { text: "This is a Regimen Sanitatis: a physician's personal guide to diet, exercise, sleep and bathing, written to keep a patient's humours in balance." },
@@ -781,7 +784,7 @@ export default {
         {
           id: 'stewes',
           x: 70, y: 60,
-          label: 'A public bathhouse',
+          title: 'A public bathhouse',
           reveals: [
             { text: "Down a side street, steam rises from a public bathhouse — and anyone can walk in." },
             { text: "These are stewes: medieval public baths. Unlike a Regimen Sanitatis, they were free to use." },
@@ -793,7 +796,7 @@ export default {
         {
           id: 'purifying-air',
           x: 45, y: 22,
-          label: 'A bunch of dried herbs',
+          title: 'A bunch of dried herbs',
           reveals: [
             { text: "A woman walking through town presses a small bunch of dried flowers to her nose." },
             { text: 'This is "purifying the air" — carrying sweet-smelling herbs (a posy) and ringing bells to keep the air moving, both believed to protect against miasma.' },
@@ -805,7 +808,7 @@ export default {
         {
           id: 'clean-water',
           x: 82, y: 80,
-          label: 'A water pipe',
+          title: 'A water pipe',
           reveals: [
             { text: "In Gloucester, water runs through lead pipes straight into a wealthy household. Across the country in Hull, a cart waits outside to empty the cesspit." },
             { text: 'Some towns invested in clean water and waste removal. Gloucester used lead pipes and an aqueduct — though mainly for the rich. Hull used "night carts" to empty cesspits.' },
