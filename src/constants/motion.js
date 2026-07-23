@@ -13,7 +13,16 @@ export const MOTION = {
     standard: '280ms',
     slow: '420ms',
     cinematic: '720ms',
+    settle: '1400ms',
     atmospheric: '12000ms',
+  },
+
+  // Numeric millisecond intervals used to build deliberate reveal sequences.
+  // Components should derive step delays from these values rather than inventing
+  // one-off delay ladders locally.
+  stagger: {
+    standardMs: 120,
+    cinematicMs: 180,
   },
 
   easing: {
