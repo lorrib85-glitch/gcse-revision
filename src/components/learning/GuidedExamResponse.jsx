@@ -28,6 +28,16 @@ function hasWritten(text, starter) {
   return trimmed.length > 0 && trimmed !== (starter || '').trim()
 }
 
+function renderFullScreen(node) {
+  // The review lab deliberately contains fixed full-screen components inside its
+  // virtual mobile viewport. Portalling to document.body would escape that frame
+  // and cover the lab toolbar, so render in place only inside the review preview.
+  const isReviewPreview = typeof document !== 'undefined'
+    && document.querySelector('[data-review-preview-mode]')
+
+  return isReviewPreview ? node : createPortal(node, document.body)
+}
+
 function SourcesCard({ sources, accent, open, onToggle }) {
   if (!Array.isArray(sources) || sources.length === 0) return null
   return (
@@ -236,18 +246,17 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
   }
 
   if (phase === 'darkBeat') {
-    return createPortal(
+    return renderFullScreen(
       <div onClick={() => setPhase('intro')} style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000, background: '#050505', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
         <div style={{ ...TYPE.displayScreen, color: 'rgba(245,238,225,0.92)', textAlign: 'center', padding: `0 ${SPACING.section}px`, opacity: beatVisible ? 1 : 0, transition: `opacity ${MOTION.duration.cinematic} ${MOTION.easing.standard}` }}>
           {exam.beatText || 'Last task — give it a go yourself'}
         </div>
-      </div>,
-      document.body
+      </div>
     )
   }
 
   if (phase === 'intro') {
-    return createPortal(
+    return renderFullScreen(
       <>
         <style>{`@keyframes ger-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }`}</style>
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000, background: bg, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -268,13 +277,12 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
             <button onClick={() => setPhase('writing')} style={ctaStyle(true)}>Start writing →</button>
           </div>
         </div>
-      </>,
-      document.body
+      </>
     )
   }
 
   if (phase === 'writing') {
-    return createPortal(
+    return renderFullScreen(
       <>
         <style>{`
           .ger-textarea { outline: none; resize: none; }
@@ -311,22 +319,20 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
             </div>
           </div>
         </div>
-      </>,
-      document.body
+      </>
     )
   }
 
   if (phase === 'marking') {
-    return createPortal(
+    return renderFullScreen(
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ ...TYPE.metadata, fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>Marking your answer…</div>
-      </div>,
-      document.body
+      </div>
     )
   }
 
   if (phase === 'result' && result) {
-    return createPortal(
+    return renderFullScreen(
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000, background: bg, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {!embedded && (
           <div style={headerStyle}>
@@ -386,8 +392,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
         <div style={{ flexShrink: 0, padding: `${SPACING.compact}px ${SPACING.standard}px calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`, background: bg, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <ContinueCTA onClick={advance} accent={accent} />
         </div>
-      </div>,
-      document.body
+      </div>
     )
   }
 
