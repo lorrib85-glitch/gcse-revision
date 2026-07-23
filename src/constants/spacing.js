@@ -27,6 +27,9 @@ export const COMPONENT_SIZE = {
   touchTarget: SPACING.separation,
   thumbnail: SPACING.cinematic,
   memoryHookImage: SPACING.section,
+  // Clears the fixed LearningHeader (safe-area offset + 44px controls) when a
+  // component programmatically scrolls newly revealed content into view.
+  learningHeaderClearance: SPACING.cinematic,
 }
 
 export const CONTENT_LIMITS = {
