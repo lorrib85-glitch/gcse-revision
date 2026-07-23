@@ -24,11 +24,11 @@ const DEFAULT_LABELS = {
   start: 'Start my response',
   submit: 'Submit my response',
   marking: 'Marking your response…',
-  estimatedStatus: 'Estimated',
   estimatedMark: 'Estimated mark',
-  sectionFeedback: 'Section by section',
-  improvements: 'Do this to gain more marks',
-  rewrite: 'Try it like this',
+  priority: 'Biggest improvement',
+  sectionFeedback: 'Section feedback',
+  improvements: 'How to improve it',
+  rewrite: 'See an improved version',
   noticed: 'Noticed',
   hint: 'Need a hint?',
   anotherHint: 'Show another hint',
@@ -106,6 +106,26 @@ function resolveSupportMode(exam) {
   if (beat.includes('no support') || beat.includes('independent')) return 'none'
   if (beat.includes('light support')) return 'light'
   return 'guided'
+}
+
+function getConciseRewrite(value, maxWords = 52) {
+  const clean = String(value || '').replace(/\s+/g, ' ').trim()
+  const words = clean.split(' ').filter(Boolean)
+  if (words.length <= maxWords) return clean
+
+  const candidate = words.slice(0, maxWords).join(' ')
+  const punctuation = Math.max(
+    candidate.lastIndexOf('. '),
+    candidate.lastIndexOf('? '),
+    candidate.lastIndexOf('! '),
+    candidate.lastIndexOf('; '),
+  )
+
+  if (punctuation > candidate.length * 0.55) {
+    return candidate.slice(0, punctuation + 1).trim()
+  }
+
+  return `${candidate.replace(/[,:;–—-]+$/, '')}…`
 }
 
 function GuidedExamStyles({ accent }) {
@@ -332,10 +352,58 @@ function StrategyLane({ section, value, onChange, accent, supportMode, labels })
   )
 }
 
+function FeedbackAccordion({ id, title, open, onToggle, accent, children }) {
+  const regionId = useId()
+
+  return (
+    <section style={{ borderTop: `1px solid ${GENERAL.line.faint}` }}>
+      <button
+        type="button"
+        className="ger-focusable"
+        onClick={() => onToggle(id)}
+        aria-expanded={open}
+        aria-controls={regionId}
+        style={{
+          ...TYPE.bodyStrong,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: SPACING.compact,
+          width: '100%',
+          minHeight: BUTTONS.compact.height,
+          padding: `${SPACING.compact}px 0`,
+          border: 'none',
+          background: 'transparent',
+          color: open ? accent : GENERAL.cinematic.textSecondary,
+          textAlign: 'left',
+          cursor: 'pointer',
+        }}
+      >
+        <span>{title}</span>
+        <span aria-hidden="true" style={{ ...TYPE.label, color: open ? accent : GENERAL.cinematic.textSubtle }}>
+          {open ? '−' : '+'}
+        </span>
+      </button>
+
+      {open && (
+        <div
+          id={regionId}
+          style={{
+            padding: `0 0 ${SPACING.standard}px ${SPACING.compact}px`,
+            borderLeft: `${COMPONENT_SIZE.accentRail}px solid ${accent}`,
+          }}
+        >
+          {children}
+        </div>
+      )}
+    </section>
+  )
+}
+
 // `embedded` — set by ModulePlayer when this screen runs inside a module,
 // where the floating LearningHeader capsule already owns back/exit and the
 // top strip. Standalone hosts keep this component's self-contained header.
-export default function GuidedExamResponse({ module = {}, exam, onExit, onContinue, theme, embedded = false }) {
+export default function GuidedExamResponse({ module = {}, exam = {}, onExit, onContinue, theme, embedded = false }) {
   const sections = Array.isArray(exam.sections) ? exam.sections : []
   const rawSubject = exam.subject || module?.subject || ''
   const resolvedSubject = resolveSubject(rawSubject, exam.subjectLabel)
@@ -355,6 +423,7 @@ export default function GuidedExamResponse({ module = {}, exam, onExit, onContin
   const [result, setResult] = useState(null)
   const [recurringPattern, setRecurringPattern] = useState(null)
   const [sourcesOpen, setSourcesOpen] = useState(false)
+  const [openFeedbackId, setOpenFeedbackId] = useState(null)
   const loggedRef = useRef(false)
 
   useEffect(() => {
@@ -399,6 +468,7 @@ export default function GuidedExamResponse({ module = {}, exam, onExit, onContin
       const data = await response.json()
       if (data.error) throw new Error(data.error)
       setResult(data)
+      setOpenFeedbackId(null)
 
       if (!loggedRef.current && Array.isArray(data.techniqueFlags) && data.techniqueFlags.length) {
         loggedRef.current = true
@@ -441,6 +511,10 @@ export default function GuidedExamResponse({ module = {}, exam, onExit, onContin
     return resolvedSubject.label ? `${base} · ${resolvedSubject.label}` : base
   }
 
+  function toggleFeedback(id) {
+    setOpenFeedbackId(current => current === id ? null : id)
+  }
+
   const headerStyle = {
     position: 'sticky',
     top: 0,
@@ -468,10 +542,9 @@ export default function GuidedExamResponse({ module = {}, exam, onExit, onContin
     color: accent,
     whiteSpace: 'nowrap',
   }
-  const sectionHeadingStyle = {
-    ...TYPE.label,
-    color: GENERAL.cinematic.textSubtle,
-    marginBottom: SPACING.compact,
+  const headerSpacerStyle = {
+    width: BUTTONS.compact.height,
+    flexShrink: 0,
   }
   const errorStyle = {
     ...TYPE.bodySmall,
@@ -725,6 +798,14 @@ export default function GuidedExamResponse({ module = {}, exam, onExit, onContin
   }
 
   if (phase === 'result' && result) {
+    const feedbackSections = Array.isArray(result.sectionFeedback) ? result.sectionFeedback : []
+    const suggestions = Array.isArray(result.improvementSuggestions)
+      ? result.improvementSuggestions.filter(Boolean)
+      : []
+    const primarySuggestion = suggestions[0] || null
+    const furtherSuggestions = suggestions.slice(1)
+    const conciseRewrite = getConciseRewrite(result.rewrittenSentence?.improvedSentence)
+
     return renderFullScreen(
       <>
         <GuidedExamStyles accent={accent} />
@@ -742,7 +823,7 @@ export default function GuidedExamResponse({ module = {}, exam, onExit, onContin
             <div style={headerStyle}>
               <BackButton onClick={onExit} />
               <div style={headerLabelStyle}>{headerText(labels.feedbackHeader)}</div>
-              <div style={marksLabelStyle}>{labels.estimatedStatus}</div>
+              <div aria-hidden="true" style={headerSpacerStyle} />
             </div>
           )}
 
@@ -764,68 +845,98 @@ export default function GuidedExamResponse({ module = {}, exam, onExit, onContin
               {result.verdict}
             </p>
 
-            {Array.isArray(result.sectionFeedback) && result.sectionFeedback.length > 0 && (
-              <div style={{ marginBottom: SPACING.standard }}>
-                <div style={sectionHeadingStyle}>{labels.sectionFeedback}</div>
-                {result.sectionFeedback.map((feedback, index) => (
-                  <div key={index} style={{ marginBottom: SPACING.compact }}>
-                    <div style={{ ...TYPE.label, color: accent, marginBottom: SPACING.micro }}>{feedback.label}</div>
-                    <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>{feedback.comment}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {Array.isArray(result.improvementSuggestions) && result.improvementSuggestions.length > 0 && (
-              <div style={{ marginBottom: SPACING.standard }}>
-                <div style={sectionHeadingStyle}>{labels.improvements}</div>
-                {result.improvementSuggestions.map((suggestion, index) => (
-                  <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: SPACING.micro, marginBottom: SPACING.micro }}>
-                    <div style={{
-                      width: SPACING.micro,
-                      height: SPACING.micro,
-                      borderRadius: RADII.pill,
-                      marginTop: SPACING.micro,
-                      flexShrink: 0,
-                      background: accent,
-                    }} />
-                    <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textSecondary }}>{suggestion}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {result.rewrittenSentence && (
-              <div style={{ marginBottom: SPACING.standard }}>
-                <div style={sectionHeadingStyle}>{labels.rewrite}</div>
-                <div style={{
-                  padding: SPACING.compact,
-                  borderLeft: `${COMPONENT_SIZE.accentRail}px solid ${accent}`,
-                  marginBottom: SPACING.micro,
-                }}>
-                  <div style={{ ...TYPE.examAnswer, color: GENERAL.cinematic.textPrimary }}>
-                    {result.rewrittenSentence.improvedSentence}
-                  </div>
-                </div>
-                <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
-                  {result.rewrittenSentence.whyItScoresBetter}
-                </div>
-              </div>
-            )}
-
-            {recurringPattern && (
+            {primarySuggestion && (
               <div style={{
-                padding: SPACING.compact,
-                borderRadius: RADII.medium,
-                background: GENERAL.surfaceTint,
-                border: `1px solid ${GENERAL.line.soft}`,
+                paddingLeft: SPACING.compact,
+                borderLeft: `${COMPONENT_SIZE.accentRail}px solid ${accent}`,
+                marginBottom: SPACING.standard,
               }}>
-                <div style={sectionHeadingStyle}>{labels.noticed}</div>
-                <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
-                  We've noticed you tend towards {TECHNIQUE_LABELS[recurringPattern.type] || 'the same kind of slip'} — we'll bring this back up.
+                <div style={{ ...TYPE.label, color: accent, marginBottom: SPACING.micro }}>
+                  {labels.priority}
+                </div>
+                <div style={{ ...TYPE.bodyStrong, color: GENERAL.cinematic.textPrimary }}>
+                  {primarySuggestion}
                 </div>
               </div>
             )}
+
+            <div style={{ borderBottom: `1px solid ${GENERAL.line.faint}` }}>
+              {feedbackSections.length > 0 && (
+                <FeedbackAccordion
+                  id="sections"
+                  title={labels.sectionFeedback}
+                  open={openFeedbackId === 'sections'}
+                  onToggle={toggleFeedback}
+                  accent={accent}
+                >
+                  {feedbackSections.map((feedback, index) => (
+                    <div key={feedback.label || index} style={{ marginBottom: index === feedbackSections.length - 1 ? 0 : SPACING.compact }}>
+                      <div style={{ ...TYPE.label, color: GENERAL.cinematic.textSecondary, marginBottom: SPACING.micro }}>
+                        {feedback.label}
+                      </div>
+                      <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
+                        {feedback.comment}
+                      </div>
+                    </div>
+                  ))}
+
+                  {recurringPattern && (
+                    <div style={{
+                      marginTop: SPACING.compact,
+                      paddingTop: SPACING.compact,
+                      borderTop: `1px solid ${GENERAL.line.faint}`,
+                    }}>
+                      <div style={{ ...TYPE.label, color: GENERAL.cinematic.textSecondary, marginBottom: SPACING.micro }}>
+                        {labels.noticed}
+                      </div>
+                      <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
+                        We've noticed you tend towards {TECHNIQUE_LABELS[recurringPattern.type] || 'the same kind of slip'} — we'll bring this back up.
+                      </div>
+                    </div>
+                  )}
+                </FeedbackAccordion>
+              )}
+
+              {furtherSuggestions.length > 0 && (
+                <FeedbackAccordion
+                  id="improvements"
+                  title={labels.improvements}
+                  open={openFeedbackId === 'improvements'}
+                  onToggle={toggleFeedback}
+                  accent={accent}
+                >
+                  {furtherSuggestions.map((suggestion, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        ...TYPE.bodySmall,
+                        color: GENERAL.cinematic.textMuted,
+                        marginBottom: index === furtherSuggestions.length - 1 ? 0 : SPACING.compact,
+                      }}
+                    >
+                      {suggestion}
+                    </div>
+                  ))}
+                </FeedbackAccordion>
+              )}
+
+              {result.rewrittenSentence && conciseRewrite && (
+                <FeedbackAccordion
+                  id="rewrite"
+                  title={labels.rewrite}
+                  open={openFeedbackId === 'rewrite'}
+                  onToggle={toggleFeedback}
+                  accent={accent}
+                >
+                  <div style={{ ...TYPE.examAnswer, color: GENERAL.cinematic.textPrimary, marginBottom: SPACING.micro }}>
+                    {conciseRewrite}
+                  </div>
+                  <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
+                    {result.rewrittenSentence.whyItScoresBetter}
+                  </div>
+                </FeedbackAccordion>
+              )}
+            </div>
           </div>
 
           <div style={{
