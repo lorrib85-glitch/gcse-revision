@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { GENERAL } from '../../../constants/generalTheme.js'
 import { RADII } from '../../../constants/radii.js'
 import { SPACING } from '../../../constants/spacing.js'
@@ -34,22 +35,26 @@ export default function AnswerPanel({
   setStudentEdits,
   expandedTextareaRef,
 }) {
+  const panelRef = useRef(null)
   const answerSections = buildAnswerSections(examiner.sampleAnswer, examiner.answerSections)
   const annotations = examiner.annotations || []
   const earnedNotes = annotations.filter(annotation => annotation.type === 'strong')
   const improvementNotes = annotations.filter(annotation => annotation.type !== 'strong')
   const primaryImprovement = getPrimaryImprovementAnnotation(annotations, examiner.primaryImprovementId)
 
+  useEffect(() => {
+    const scrollContainer = panelRef.current?.closest('.fte-scroll')
+    if (!scrollContainer) return
+    if (typeof scrollContainer.scrollTo === 'function') scrollContainer.scrollTo({ top: 0, behavior: 'auto' })
+    else scrollContainer.scrollTop = 0
+  }, [])
+
   return (
-    <article style={{
-      background: 'rgba(8,9,13,0.26)',
-      borderTop: `1px solid ${GENERAL.line.faint}`,
-      borderRight: `1px solid ${GENERAL.line.faint}`,
-      borderBottom: `1px solid ${GENERAL.line.faint}`,
+    <article ref={panelRef} style={{
+      background: 'rgba(8,9,13,0.14)',
       borderLeft: `2px solid ${accent}88`,
-      borderRadius: `0 ${RADII.large}px ${RADII.large}px 0`,
+      borderRadius: `0 ${RADII.medium}px ${RADII.medium}px 0`,
       padding: '18px 18px 20px 20px',
-      boxShadow: `inset 0 1px 0 ${GENERAL.line.faint}`,
     }}>
       {(isReveal || isImproving) && (
         <div style={{ ...TYPE.label, color: GENERAL.cinematic.textMuted, marginBottom: 14 }}>
