@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { SPACING } from '../../constants/spacing.js'
+import { SPACING, COMPONENT_SIZE } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
 import { RADII } from '../../constants/radii.js'
@@ -10,9 +10,9 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { logExamTechnique, getExamTechniquePatterns } from '../../unifiedWeaknessTracker.js'
 import BackButton from '../core/BackButton.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import { ScreenTitle } from '../core/ScreenText.jsx'
 
 const RECURRING_PATTERN_THRESHOLD = 3
-
 
 const TECHNIQUE_LABELS = {
   missingExample: 'making a claim without backing it up with a specific example',
@@ -29,41 +29,141 @@ function hasWritten(text, starter) {
 }
 
 function renderFullScreen(node) {
+  if (typeof document === 'undefined') return node
+
   // The review lab deliberately contains fixed full-screen components inside its
   // virtual mobile viewport. Portalling to document.body would escape that frame
   // and cover the lab toolbar, so render in place only inside the review preview.
-  const isReviewPreview = typeof document !== 'undefined'
-    && document.querySelector('[data-review-preview-mode]')
-
+  const isReviewPreview = document.querySelector('[data-review-preview-mode]')
   return isReviewPreview ? node : createPortal(node, document.body)
 }
 
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return undefined
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setReduced(query.matches)
+    update()
+    query.addEventListener?.('change', update)
+    return () => query.removeEventListener?.('change', update)
+  }, [])
+
+  return reduced
+}
+
+function GuidedExamStyles({ accent }) {
+  return (
+    <style>{`
+      .ger-focusable:focus-visible,
+      .ger-textarea:focus-visible {
+        outline: ${COMPONENT_SIZE.focusRing}px solid ${accent};
+        outline-offset: ${COMPONENT_SIZE.focusOffset}px;
+      }
+      .ger-textarea {
+        resize: vertical;
+      }
+      .ger-textarea::placeholder {
+        color: ${GENERAL.cinematic.textSubtle};
+        font-family: ${TYPE.body.fontFamily};
+      }
+      .ger-writing-scroll {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .ger-writing-scroll::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+      @keyframes ger-up {
+        from { opacity: 0; transform: translateY(${SPACING.compact}px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .ger-motion {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    `}</style>
+  )
+}
+
+function getSupportHints(section) {
+  const configured = Array.isArray(section.hints)
+    ? section.hints.filter(Boolean).slice(0, 2)
+    : []
+
+  if (configured.length) return configured
+
+  const legacyPrompt = (section.placeholder || '').trim()
+  const promptLike = /^(think|what|how|which|where|when|who|name|use|decide|choose|start|compare|explain)\b/i.test(legacyPrompt)
+
+  return [
+    promptLike
+      ? legacyPrompt
+      : section.starter
+        ? 'Build on the sentence starter with one precise fact.'
+        : 'Start by naming the key factor, comparison or judgement.',
+    'Then explain how that detail answers the question. Try “this meant that…” or “therefore…”.',
+  ]
+}
+
 function SourcesCard({ sources, accent, open, onToggle }) {
+  const regionId = useId()
   if (!Array.isArray(sources) || sources.length === 0) return null
+
   return (
     <div style={{
       borderRadius: RADII.medium,
-      border: `1px solid ${accent}40`,
-      background: `${accent}0F`,
+      border: `1px solid ${GENERAL.line.soft}`,
+      background: GENERAL.surfaceTint,
       marginBottom: SPACING.compact,
       overflow: 'hidden',
     }}>
-      <button onClick={onToggle} style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        width: '100%', padding: '10px 14px', background: 'none', border: 'none', cursor: 'pointer',
-        fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 11,
-        letterSpacing: '0.14em', textTransform: 'uppercase', color: accent,
-      }}>
-        <span>{sources.length > 1 ? `Sources (${sources.length})` : 'Source'}</span>
-        <span style={{ fontSize: 14 }}>{open ? '−' : '+'}</span>
+      <button
+        type="button"
+        className="ger-focusable"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-controls={regionId}
+        style={{
+          ...TYPE.label,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
+          minHeight: BUTTONS.compact.height,
+          padding: `0 ${SPACING.compact}px`,
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          color: accent,
+        }}
+      >
+        <span>{sources.length > 1 ? 'View sources' : 'View source'}</span>
+        <span aria-hidden="true">{open ? '−' : '+'}</span>
       </button>
       {open && (
-        <div style={{ padding: '0 14px 14px', display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
-          {sources.map(src => (
-            <div key={src.label}>
-              <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: accent, marginBottom: 4 }}>{src.label}</div>
-              {src.attribution && <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 11.5, fontStyle: 'italic', color: 'rgba(245,238,225,0.5)', marginBottom: 6 }}>{src.attribution}</div>}
-              <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 13.5, lineHeight: 1.6, color: 'rgba(245,238,225,0.85)', whiteSpace: 'pre-wrap' }}>{src.text}</div>
+        <div id={regionId} style={{ padding: `0 ${SPACING.compact}px ${SPACING.compact}px` }}>
+          {sources.map((src, index) => (
+            <div
+              key={src.label}
+              style={{
+                paddingTop: index === 0 ? 0 : SPACING.compact,
+                marginTop: index === 0 ? 0 : SPACING.compact,
+                borderTop: index === 0 ? 'none' : `1px solid ${GENERAL.line.faint}`,
+              }}
+            >
+              <div style={{ ...TYPE.label, color: accent, marginBottom: SPACING.micro }}>{src.label}</div>
+              {src.attribution && (
+                <div style={{ ...TYPE.caption, fontStyle: 'italic', color: GENERAL.cinematic.textMuted, marginBottom: SPACING.micro }}>
+                  {src.attribution}
+                </div>
+              )}
+              <div style={{ ...TYPE.examAnswer, color: GENERAL.cinematic.textFact, whiteSpace: 'pre-wrap' }}>{src.text}</div>
             </div>
           ))}
         </div>
@@ -72,47 +172,99 @@ function SourcesCard({ sources, accent, open, onToggle }) {
   )
 }
 
-function StrategyLane({ section, value, onChange, accent, index }) {
+function StrategyLane({ section, value, onChange, accent }) {
+  const [hintLevel, setHintLevel] = useState(0)
+  const hintRegionId = useId()
+  const hints = getSupportHints(section)
+  const revealedHint = hintLevel > 0 ? hints[hintLevel - 1] : null
+  const canRevealMore = hintLevel < hints.length
+
+  function handleHintAction() {
+    if (hintLevel === 0 || canRevealMore) {
+      setHintLevel(level => level + 1)
+      return
+    }
+    setHintLevel(0)
+  }
+
   return (
     <section style={{
       position: 'relative',
-      padding: '15px 15px 15px 17px',
-      borderRadius: 20,
-      background: 'linear-gradient(180deg, rgba(245,238,225,0.055), rgba(8,9,13,0.26))',
-      border: '1px solid rgba(245,238,225,0.085)',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 36px rgba(0,0,0,0.18)',
+      padding: SPACING.compact,
+      borderRadius: RADII.large,
+      background: GENERAL.surfaceTint,
+      border: `1px solid ${GENERAL.line.soft}`,
+      boxShadow: GENERAL.shadow.raised,
     }}>
-      <div style={{ position: 'absolute', left: 0, top: 14, bottom: 14, width: 2, borderRadius: 999, background: index === 0 ? accent : `rgba(245,238,225,${index === 1 ? 0.18 : 0.12})` }} />
       <div style={{
-        ...TYPE.eyebrow,
-        color: index === 0 ? accent : 'rgba(245,238,225,0.46)',
-        marginBottom: 9,
-      }}>
+        position: 'absolute',
+        left: 0,
+        top: SPACING.compact,
+        bottom: SPACING.compact,
+        width: COMPONENT_SIZE.accentRail,
+        borderRadius: RADII.pill,
+        background: accent,
+      }} />
+      <div style={{ ...TYPE.label, color: accent, marginBottom: SPACING.micro }}>
         {section.label}
       </div>
       <textarea
         className="ger-textarea"
         rows={4}
         value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={section.placeholder}
+        onChange={event => onChange(event.target.value)}
+        placeholder={section.inputPlaceholder || 'Write your response here…'}
         aria-label={section.label}
         style={{
+          ...TYPE.examAnswer,
           width: '100%',
           boxSizing: 'border-box',
-          border: 'none',
-          background: 'rgba(0,0,0,0.10)',
-          borderRadius: 14,
-          padding: '12px 12px',
-          fontFamily: "'Sora', sans-serif",
-          fontSize: 15,
-          fontWeight: 500,
-          lineHeight: 1.55,
-          color: 'rgba(245,238,225,0.9)',
+          minHeight: SPACING.section,
+          border: `1px solid ${GENERAL.line.soft}`,
+          background: GENERAL.backgroundSunken,
+          borderRadius: RADII.medium,
+          padding: SPACING.compact,
+          color: GENERAL.cinematic.textPrimary,
           caretColor: accent,
-          minHeight: 112,
         }}
       />
+
+      <button
+        type="button"
+        className="ger-focusable"
+        onClick={handleHintAction}
+        aria-expanded={hintLevel > 0}
+        aria-controls={hintRegionId}
+        style={{
+          ...TYPE.label,
+          minHeight: BUTTONS.compact.height,
+          padding: `${SPACING.micro}px 0 0`,
+          background: 'transparent',
+          border: 'none',
+          color: accent,
+          cursor: 'pointer',
+        }}
+      >
+        {hintLevel === 0 ? 'Need a hint?' : canRevealMore ? 'Show another hint' : 'Hide hints'}
+      </button>
+
+      {revealedHint && (
+        <div
+          id={hintRegionId}
+          role="status"
+          aria-live="polite"
+          style={{
+            ...TYPE.bodySmall,
+            padding: SPACING.compact,
+            borderRadius: RADII.medium,
+            background: GENERAL.backgroundSunken,
+            borderLeft: `${COMPONENT_SIZE.accentRail}px solid ${accent}`,
+            color: GENERAL.cinematic.textSecondary,
+          }}
+        >
+          {revealedHint}
+        </div>
+      )}
     </section>
   )
 }
@@ -128,11 +280,13 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
   const subjectTheme = SUBJECTS[capitalised] || SUBJECTS.History
   const isGeneral = theme === 'general'
   const accent = isGeneral ? GENERAL.teal : subjectTheme.accent
-  const bg = isGeneral ? GENERAL.neutral[0] : subjectTheme.background
+  const bg = isGeneral ? GENERAL.backgroundApp : subjectTheme.background
+  const beatText = exam.beatText?.trim() || ''
+  const reducedMotion = useReducedMotion()
 
-  const [phase, setPhase] = useState('darkBeat')
+  const [phase, setPhase] = useState(beatText ? 'darkBeat' : 'intro')
   const [beatVisible, setBeatVisible] = useState(false)
-  const [sectionTexts, setSectionTexts] = useState(() => exam.sections.map(s => s.starter || ''))
+  const [sectionTexts, setSectionTexts] = useState(() => exam.sections.map(section => section.starter || ''))
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
   const [result, setResult] = useState(null)
@@ -141,31 +295,40 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
   const loggedRef = useRef(false)
 
   useEffect(() => {
+    if (!beatText || reducedMotion) {
+      setBeatVisible(true)
+      return undefined
+    }
     const id = setTimeout(() => setBeatVisible(true), 140)
     return () => clearTimeout(id)
-  }, [])
+  }, [beatText, reducedMotion])
 
-  const allFilled = exam.sections.every((s, i) => hasWritten(sectionTexts[i], s.starter))
+  const allFilled = exam.sections.every((section, index) => hasWritten(sectionTexts[index], section.starter))
 
   async function handleSubmit() {
+    if (!allFilled || submitting) return
     setSubmitting(true)
     setError(null)
     setPhase('marking')
     try {
-      const res = await fetch('/api/guidedExamResponse', {
+      const response = await fetch('/api/guidedExamResponse', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question: exam.question,
           marks: exam.marks,
           markScheme: exam.markScheme,
-          sections: exam.sections.map((s, i) => ({ label: s.label, studentText: sectionTexts[i] })),
+          sections: exam.sections.map((section, index) => ({
+            label: section.label,
+            studentText: sectionTexts[index],
+          })),
           subject: exam.subject || module.subject,
           board: exam.board || 'edexcel',
           topic: exam.topic,
         }),
       })
-      const data = await res.json()
+      if (!response.ok) throw new Error('Marking request failed')
+      const data = await response.json()
       if (data.error) throw new Error(data.error)
       setResult(data)
 
@@ -182,14 +345,15 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
             source: 'module',
           })
         })
-        const flaggedTypes = new Set(data.techniqueFlags.map(f => f.type))
-        const recurring = getExamTechniquePatterns(RECURRING_PATTERN_THRESHOLD).find(p => flaggedTypes.has(p.type))
+        const flaggedTypes = new Set(data.techniqueFlags.map(flag => flag.type))
+        const recurring = getExamTechniquePatterns(RECURRING_PATTERN_THRESHOLD)
+          .find(pattern => flaggedTypes.has(pattern.type))
         if (recurring) setRecurringPattern(recurring)
       }
 
       setPhase('result')
     } catch {
-      setError("Marking failed — your answer hasn't been lost, just give it another go.")
+      setError("Marking failed — your answer hasn't been lost. Give it another go.")
       setPhase('writing')
     } finally {
       setSubmitting(false)
@@ -201,80 +365,169 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
   }
 
   const headerStyle = {
-    position: 'sticky', top: 0, zIndex: 20,
-    background: 'rgba(8,9,13,0.82)',
-    backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
-    borderBottom: '1px solid rgba(255,255,255,0.07)',
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    padding: '0 16px', height: 52, flexShrink: 0,
+    position: 'sticky',
+    top: 0,
+    zIndex: 20,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: SPACING.micro,
+    flexShrink: 0,
+    minHeight: BUTTONS.compact.height,
+    padding: `${SPACING.micro}px ${SPACING.compact}px`,
+    background: bg,
+    borderBottom: `1px solid ${GENERAL.line.faint}`,
   }
-  // Embedded: clear the module's floating LearningHeader capsule (same
-  // clearance idiom as ExaminerExplainsScreen).
-  const capsuleClearance = `calc(${SPACING.cinematic + SPACING.micro}px + env(safe-area-inset-top, 0px))`
-  const labelStyle = {
-    ...TYPE.eyebrow,
-    textTransform: 'uppercase',
-    color: 'rgba(255,255,255,0.55)',
+  const capsuleClearance = `calc(${SPACING.cinematic}px + env(safe-area-inset-top, 0px))`
+  const headerLabelStyle = {
+    ...TYPE.label,
+    flex: 1,
+    minWidth: 0,
+    textAlign: 'center',
+    color: GENERAL.cinematic.textMuted,
   }
-  const marksBadgeStyle = {
-    ...TYPE.eyebrow,
+  const marksLabelStyle = {
+    ...TYPE.label,
+    color: accent,
+    whiteSpace: 'nowrap',
   }
   const sectionHeadingStyle = {
-    ...TYPE.eyebrow,
-    fontSize: 9,
-    textTransform: 'uppercase',
-    color: 'rgba(255,255,255,0.3)',
-    marginBottom: 12,
+    ...TYPE.label,
+    color: GENERAL.cinematic.textSubtle,
+    marginBottom: SPACING.compact,
   }
-  const ctaStyle = enabled => ({
-    display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%',
-    height: BUTTONS.continue.height, borderRadius: BUTTONS.continue.borderRadius,
-    border: 'none',
-    background: enabled ? accent : 'rgba(255,255,255,0.08)',
-    color: enabled ? '#0D0F14' : 'rgba(255,255,255,0.3)',
-    fontFamily: BUTTONS.continue.fontFamily,
-    fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
-    cursor: enabled ? 'pointer' : 'default',
-    transition: `transform ${BUTTONS.continue.transition}`,
-  })
   const errorStyle = {
-    padding: '10px 14px', borderRadius: RADII.small,
-    background: 'rgba(192,80,85,0.12)',
-    border: '1px solid rgba(192,80,85,0.3)',
-    fontFamily: "'Sora', sans-serif",
-    fontSize: 12.5, color: '#E8746A',
+    ...TYPE.bodySmall,
+    padding: SPACING.compact,
+    borderRadius: RADII.medium,
+    background: GENERAL.surfaceTint,
+    border: `1px solid ${GENERAL.error}`,
+    color: GENERAL.errorSoft,
+  }
+  const ctaProps = {
+    accent,
+    textColor: GENERAL.textOnAccent,
+    disabledBackground: GENERAL.line.soft,
+    disabledColor: GENERAL.cinematic.textSubtle,
   }
 
   if (phase === 'darkBeat') {
     return renderFullScreen(
-      <div onClick={() => setPhase('intro')} style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000, background: '#050505', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-        <div style={{ ...TYPE.displayScreen, color: 'rgba(245,238,225,0.92)', textAlign: 'center', padding: `0 ${SPACING.section}px`, opacity: beatVisible ? 1 : 0, transition: `opacity ${MOTION.duration.cinematic} ${MOTION.easing.standard}` }}>
-          {exam.beatText || 'Last task — give it a go yourself'}
-        </div>
-      </div>
+      <>
+        <GuidedExamStyles accent={accent} />
+        <button
+          type="button"
+          className="ger-focusable ger-motion"
+          onClick={() => setPhase('intro')}
+          aria-label={`${beatText}. Continue to the exam question.`}
+          style={{
+            ...TYPE.displayScreen,
+            position: 'fixed',
+            inset: 0,
+            width: '100%',
+            height: '100dvh',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: SPACING.section,
+            border: 'none',
+            background: GENERAL.backgroundApp,
+            color: GENERAL.cinematic.textPrimary,
+            textAlign: 'center',
+            cursor: 'pointer',
+            opacity: beatVisible ? 1 : 0,
+            transition: reducedMotion ? 'none' : `opacity ${MOTION.duration.cinematic} ${MOTION.easing.standard}`,
+          }}
+        >
+          {beatText}
+        </button>
+      </>
     )
   }
 
   if (phase === 'intro') {
     return renderFullScreen(
       <>
-        <style>{`@keyframes ger-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000, background: bg, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <GuidedExamStyles accent={accent} />
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          height: '100dvh',
+          zIndex: 1000,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          background: bg,
+        }}>
           {!embedded && (
             <div style={headerStyle}>
               <BackButton onClick={onExit} />
-              <div style={labelStyle}>Exam practice<span style={{ color: accent, marginLeft: 6 }}>· {(module.subject || '').toUpperCase()}</span></div>
-              <div style={{ ...marksBadgeStyle, color: accent }}>{exam.marks} MARKS</div>
+              <div style={headerLabelStyle}>Exam practice · {capitalised}</div>
+              <div style={marksLabelStyle}>{exam.marks} marks</div>
             </div>
           )}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: embedded ? `${capsuleClearance} ${SPACING.standard}px 0` : `0 ${SPACING.standard}px` }}>
-            <div style={{ ...TYPE.eyebrow, color: accent, marginBottom: SPACING.compact, animation: `ger-up 500ms ${MOTION.easing.standard} both` }}>Your turn — no sample answer this time</div>
-            <SourcesCard sources={exam.sources} accent={accent} open={sourcesOpen} onToggle={() => setSourcesOpen(o => !o)} />
-            <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 24, lineHeight: 1.4, color: 'rgba(245,238,225,0.92)', marginBottom: SPACING.standard, animation: `ger-up 550ms ${MOTION.easing.standard} 90ms both` }}>{exam.question}</div>
-            <p style={{ ...TYPE.body, fontSize: 15, color: 'rgba(255,255,255,0.5)', margin: 0, animation: `ger-up 550ms ${MOTION.easing.standard} 180ms both` }}>Time to write your own answer. Build it up section by section, then we'll mark it properly and show you exactly how to gain more marks.</p>
+
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            <div style={{
+              maxWidth: 430,
+              margin: '0 auto',
+              padding: embedded
+                ? `${capsuleClearance} ${SPACING.standard}px ${SPACING.standard}px`
+                : `${SPACING.separation}px ${SPACING.standard}px ${SPACING.standard}px`,
+            }}>
+              <div
+                className="ger-motion"
+                style={{
+                  ...TYPE.label,
+                  color: accent,
+                  marginBottom: SPACING.compact,
+                  animation: reducedMotion ? 'none' : `ger-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+                }}
+              >
+                Your turn
+              </div>
+              <SourcesCard
+                sources={exam.sources}
+                accent={accent}
+                open={sourcesOpen}
+                onToggle={() => setSourcesOpen(open => !open)}
+              />
+              <ScreenTitle
+                className="ger-motion"
+                style={{
+                  color: GENERAL.cinematic.textPrimary,
+                  marginBottom: SPACING.compact,
+                  animation: reducedMotion ? 'none' : `ger-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+                }}
+              >
+                {exam.question}
+              </ScreenTitle>
+              <p
+                className="ger-motion"
+                style={{
+                  ...TYPE.body,
+                  maxWidth: '34ch',
+                  margin: 0,
+                  color: GENERAL.cinematic.textMuted,
+                  animation: reducedMotion ? 'none' : `ger-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+                }}
+              >
+                Build your answer section by section. You’ll get an estimated mark and clear feedback.
+              </p>
+            </div>
           </div>
-          <div style={{ flexShrink: 0, padding: `0 ${SPACING.standard}px calc(${SPACING.standard}px + env(safe-area-inset-bottom, 0px))` }}>
-            <button onClick={() => setPhase('writing')} style={ctaStyle(true)}>Start writing →</button>
+
+          <div style={{
+            flexShrink: 0,
+            padding: `0 ${SPACING.standard}px calc(${SPACING.standard}px + env(safe-area-inset-bottom, 0px))`,
+            background: bg,
+          }}>
+            <ContinueCTA
+              {...ctaProps}
+              onClick={() => setPhase('writing')}
+              label="Start my answer"
+            />
           </div>
         </div>
       </>
@@ -284,38 +537,76 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
   if (phase === 'writing') {
     return renderFullScreen(
       <>
-        <style>{`
-          .ger-textarea { outline: none; resize: none; }
-          .ger-textarea::placeholder { color: rgba(245,238,225,0.28); font-family: ${TYPE.body.fontFamily}; font-size: 14px; }
-          .ger-writing-scroll { scrollbar-width: none; -ms-overflow-style: none; }
-          .ger-writing-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
-        `}</style>
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000, background: bg, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <GuidedExamStyles accent={accent} />
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          height: '100dvh',
+          zIndex: 1000,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          background: bg,
+        }}>
           {!embedded && (
             <div style={headerStyle}>
               <BackButton onClick={onExit} />
-              <div style={labelStyle}>Write for the examiner<span style={{ color: accent, marginLeft: 6 }}>· {(module.subject || '').toUpperCase()}</span></div>
-              <div style={{ ...marksBadgeStyle, color: accent }}>{exam.marks} MARKS</div>
+              <div style={headerLabelStyle}>Write for the examiner · {capitalised}</div>
+              <div style={marksLabelStyle}>{exam.marks} marks</div>
             </div>
           )}
-          <div style={{ flexShrink: 0, padding: embedded ? `${capsuleClearance} ${SPACING.standard}px 0` : `${SPACING.compact}px ${SPACING.standard}px 0` }}>
-            <SourcesCard sources={exam.sources} accent={accent} open={sourcesOpen} onToggle={() => setSourcesOpen(o => !o)} />
-            <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 15.5, lineHeight: 1.5, color: 'rgba(245,238,225,0.78)' }}>{exam.question}</div>
+
+          <div style={{
+            flexShrink: 0,
+            padding: embedded
+              ? `${capsuleClearance} ${SPACING.standard}px 0`
+              : `${SPACING.compact}px ${SPACING.standard}px 0`,
+          }}>
+            <SourcesCard
+              sources={exam.sources}
+              accent={accent}
+              open={sourcesOpen}
+              onToggle={() => setSourcesOpen(open => !open)}
+            />
+            <div style={{ ...TYPE.examQuestion, color: GENERAL.cinematic.textSecondary }}>
+              {exam.question}
+            </div>
           </div>
+
           <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <div className="ger-writing-scroll" style={{ position: 'relative', flex: 1, overflowY: 'auto', padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.separation}px`, display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
-              {exam.sections.map((section, i) => (
+            <div
+              className="ger-writing-scroll"
+              style={{
+                position: 'relative',
+                flex: 1,
+                overflowY: 'auto',
+                padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.separation}px`,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: SPACING.compact,
+              }}
+            >
+              {exam.sections.map((section, index) => (
                 <StrategyLane
                   key={section.label}
                   section={section}
-                  value={sectionTexts[i]}
+                  value={sectionTexts[index]}
                   accent={accent}
-                  index={i}
-                  onChange={value => setSectionTexts(prev => prev.map((t, j) => (j === i ? value : t)))}
+                  onChange={value => setSectionTexts(previous => previous.map((text, textIndex) => (
+                    textIndex === index ? value : text
+                  )))}
                 />
               ))}
-              {error && <div style={errorStyle}>{error}</div>}
-              <button onClick={handleSubmit} disabled={!allFilled || submitting} style={ctaStyle(allFilled && !submitting)}>Submit my answer →</button>
+
+              {error && <div role="alert" style={errorStyle}>{error}</div>}
+
+              <ContinueCTA
+                {...ctaProps}
+                onClick={handleSubmit}
+                disabled={!allFilled || submitting}
+                label={submitting ? 'Submitting…' : 'Submit my answer'}
+                style={{ marginTop: SPACING.micro }}
+              />
             </div>
           </div>
         </div>
@@ -325,74 +616,143 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
 
   if (phase === 'marking') {
     return renderFullScreen(
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ ...TYPE.metadata, fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>Marking your answer…</div>
-      </div>
+      <>
+        <GuidedExamStyles accent={accent} />
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            height: '100dvh',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: bg,
+          }}
+        >
+          <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>Marking your answer…</div>
+        </div>
+      </>
     )
   }
 
   if (phase === 'result' && result) {
     return renderFullScreen(
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000, background: bg, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        {!embedded && (
-          <div style={headerStyle}>
-            <BackButton onClick={onExit} />
-            <div style={labelStyle}>Examiner's verdict<span style={{ color: accent, marginLeft: 6 }}>· {(module.subject || '').toUpperCase()}</span></div>
-            <div style={{ width: 24 }} />
-          </div>
-        )}
-        <div style={{ flex: 1, overflowY: 'auto', padding: embedded ? `${capsuleClearance} ${SPACING.standard}px ${SPACING.separation}px` : `${SPACING.standard}px ${SPACING.standard}px ${SPACING.separation}px` }}>
-          <div style={{ ...TYPE.displaySection, fontSize: 38, color: accent, marginBottom: 6 }}>
-            {result.marksAwarded}/{result.marksAvailable ?? exam.marks}
-            <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 400, fontSize: 13, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', textTransform: 'uppercase', marginLeft: 10 }}>examiner's mark</span>
-          </div>
-          <p style={{ ...TYPE.body, fontSize: 14, color: 'rgba(255,255,255,0.6)', margin: '0 0 24px' }}>{result.verdict}</p>
-
-          {Array.isArray(result.sectionFeedback) && result.sectionFeedback.length > 0 && (
-            <div style={{ marginBottom: 26 }}>
-              <div style={sectionHeadingStyle}>Section by section</div>
-              {result.sectionFeedback.map((sf, i) => (
-                <div key={i} style={{ marginBottom: SPACING.compact }}>
-                  <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 12.5, color: accent, marginBottom: 3 }}>{sf.label}</div>
-                  <div style={{ ...TYPE.bodySmall, fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>{sf.comment}</div>
-                </div>
-              ))}
+      <>
+        <GuidedExamStyles accent={accent} />
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          height: '100dvh',
+          zIndex: 1000,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          background: bg,
+        }}>
+          {!embedded && (
+            <div style={headerStyle}>
+              <BackButton onClick={onExit} />
+              <div style={headerLabelStyle}>Your feedback · {capitalised}</div>
+              <div style={marksLabelStyle}>Estimated</div>
             </div>
           )}
 
-          {Array.isArray(result.improvementSuggestions) && result.improvementSuggestions.length > 0 && (
-            <div style={{ marginBottom: 26 }}>
-              <div style={sectionHeadingStyle}>Do this to gain more marks</div>
-              {result.improvementSuggestions.map((s, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: SPACING.micro, marginBottom: SPACING.micro }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: `${accent}CC` }} />
-                  <div style={{ ...TYPE.bodySmall, fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>{s}</div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {result.rewrittenSentence && (
-            <div style={{ marginBottom: 26 }}>
-              <div style={sectionHeadingStyle}>Try it like this</div>
-              <div style={{ padding: SPACING.compact, borderRadius: RADII.medium, background: `${accent}14`, border: `1px solid ${accent}40`, marginBottom: SPACING.micro }}>
-                <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 14.5, lineHeight: 1.6, color: 'rgba(245,238,225,0.92)' }}>{result.rewrittenSentence.improvedSentence}</div>
+          <div style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: embedded
+              ? `${capsuleClearance} ${SPACING.standard}px ${SPACING.separation}px`
+              : `${SPACING.standard}px ${SPACING.standard}px ${SPACING.separation}px`,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: SPACING.micro, marginBottom: SPACING.micro }}>
+              <div style={{ ...TYPE.displaySection, color: accent }}>
+                {result.marksAwarded}/{result.marksAvailable ?? exam.marks}
               </div>
-              <div style={{ ...TYPE.bodySmall, fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>{result.rewrittenSentence.whyItScoresBetter}</div>
+              <div style={{ ...TYPE.label, color: GENERAL.cinematic.textSubtle }}>Estimated mark</div>
             </div>
-          )}
+            <p style={{ ...TYPE.body, color: GENERAL.cinematic.textSecondary, margin: `0 0 ${SPACING.standard}px` }}>
+              {result.verdict}
+            </p>
 
-          {recurringPattern && (
-            <div style={{ padding: SPACING.compact, borderRadius: RADII.medium, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <div style={sectionHeadingStyle}>Noticed</div>
-              <div style={{ ...TYPE.bodySmall, fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>We've noticed you tend towards {TECHNIQUE_LABELS[recurringPattern.type] || 'the same kind of slip'} — we'll bring this back up.</div>
-            </div>
-          )}
+            {Array.isArray(result.sectionFeedback) && result.sectionFeedback.length > 0 && (
+              <div style={{ marginBottom: SPACING.standard }}>
+                <div style={sectionHeadingStyle}>Section by section</div>
+                {result.sectionFeedback.map((feedback, index) => (
+                  <div key={index} style={{ marginBottom: SPACING.compact }}>
+                    <div style={{ ...TYPE.label, color: accent, marginBottom: SPACING.micro }}>{feedback.label}</div>
+                    <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>{feedback.comment}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {Array.isArray(result.improvementSuggestions) && result.improvementSuggestions.length > 0 && (
+              <div style={{ marginBottom: SPACING.standard }}>
+                <div style={sectionHeadingStyle}>Do this to gain more marks</div>
+                {result.improvementSuggestions.map((suggestion, index) => (
+                  <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: SPACING.micro, marginBottom: SPACING.micro }}>
+                    <div style={{
+                      width: SPACING.micro,
+                      height: SPACING.micro,
+                      borderRadius: RADII.pill,
+                      marginTop: SPACING.micro,
+                      flexShrink: 0,
+                      background: accent,
+                    }} />
+                    <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textSecondary }}>{suggestion}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {result.rewrittenSentence && (
+              <div style={{ marginBottom: SPACING.standard }}>
+                <div style={sectionHeadingStyle}>Try it like this</div>
+                <div style={{
+                  padding: SPACING.compact,
+                  borderRadius: RADII.medium,
+                  background: GENERAL.surfaceTint,
+                  borderLeft: `${COMPONENT_SIZE.accentRail}px solid ${accent}`,
+                  marginBottom: SPACING.micro,
+                }}>
+                  <div style={{ ...TYPE.examAnswer, color: GENERAL.cinematic.textPrimary }}>
+                    {result.rewrittenSentence.improvedSentence}
+                  </div>
+                </div>
+                <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
+                  {result.rewrittenSentence.whyItScoresBetter}
+                </div>
+              </div>
+            )}
+
+            {recurringPattern && (
+              <div style={{
+                padding: SPACING.compact,
+                borderRadius: RADII.medium,
+                background: GENERAL.surfaceTint,
+                border: `1px solid ${GENERAL.line.soft}`,
+              }}>
+                <div style={sectionHeadingStyle}>Noticed</div>
+                <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
+                  We've noticed you tend towards {TECHNIQUE_LABELS[recurringPattern.type] || 'the same kind of slip'} — we'll bring this back up.
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div style={{
+            flexShrink: 0,
+            padding: `${SPACING.compact}px ${SPACING.standard}px calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
+            background: bg,
+            borderTop: `1px solid ${GENERAL.line.faint}`,
+          }}>
+            <ContinueCTA {...ctaProps} onClick={advance} />
+          </div>
         </div>
-        <div style={{ flexShrink: 0, padding: `${SPACING.compact}px ${SPACING.standard}px calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`, background: bg, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <ContinueCTA onClick={advance} accent={accent} />
-        </div>
-      </div>
+      </>
     )
   }
 
