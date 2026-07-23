@@ -237,13 +237,9 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
                     : 'transparent',
                 border: 'none',
                 borderBottom: `${COMPONENT_SIZE.focusRing}px solid ${inputBorder}`,
-                borderRadius: RADII.tiny,
+                borderRadius: RADII.small,
                 ...TYPE.bodyStrong,
-                color: status === 'correct'
-                  ? GENERAL.feedbackCorrect
-                  : status === 'revealed'
-                    ? GENERAL.feedbackText
-                    : GENERAL.feedbackText,
+                color: status === 'correct' ? GENERAL.feedbackCorrect : GENERAL.feedbackText,
                 caretColor: accent,
                 transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}, color ${MOTION.duration.fast} ${MOTION.easing.gentle}, background ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
               }}
