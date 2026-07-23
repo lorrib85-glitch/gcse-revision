@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
+import { GENERAL } from '../../../constants/generalTheme.js'
 import { SUBJECTS } from '../../../constants/subjects.js'
 import FaceTheExaminerIntro from './FaceTheExaminerIntro.jsx'
 import FaceTheExaminerDone from './FaceTheExaminerDone.jsx'
 import FaceTheExaminerMain from './FaceTheExaminerMain.jsx'
-import { buildAnnotatedSegments } from './utils.js'
+import { buildAnnotatedSegments, replaceAnnotatedTargets } from './utils.js'
 
 export default function FaceTheExaminerContainer({ module, examiner, onExit, onContinue }) {
-  const theme = SUBJECTS[module.subject] || SUBJECTS.History
+  const theme = SUBJECTS[module.subject] || {
+    accent: GENERAL.teal,
+    background: GENERAL.backgroundApp,
+  }
   const accent = theme.accent
   const bg = theme.background
   const screenTitle = examiner.screenTitle || module.faceTheExaminerTitle || 'Mark the answer'
@@ -34,14 +38,8 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
   useEffect(() => {
-    if (phase !== 'done') return undefined
-    const id = setTimeout(() => advance(), 2200)
-    return () => clearTimeout(id)
-  }, [phase]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
     if (phase === 'reveal') {
-      const id = setTimeout(() => setRevealPanelVisible(true), 500)
+      const id = setTimeout(() => setRevealPanelVisible(true), 320)
       return () => clearTimeout(id)
     }
     setRevealPanelVisible(false)
@@ -55,7 +53,12 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
   }, [phase]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function advance() {
-    onContinue?.({ originalMark: examiner.mark, finalMark: remarkResult?.marksAwarded ?? examiner.mark, guessedMark })
+    onContinue?.({
+      originalMark: examiner.mark,
+      finalMark: remarkResult?.marksAwarded ?? examiner.mark,
+      guessedMark,
+      selectedCriteria,
+    })
   }
 
   function schedule(fn, delay) {
@@ -80,23 +83,14 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
   }
 
   function composeEditedAnswer() {
-    let text = examiner.sampleAnswer
-    const toInsert = (examiner.annotations || [])
-      .filter(a => studentEdits[a.id]?.trim())
-      .map(ann => {
-        const idx = text.indexOf(ann.target)
-        return idx !== -1 ? { end: idx + ann.target.length, addition: ` ${studentEdits[ann.id].trim()}` } : null
-      })
-      .filter(Boolean)
-      .sort((a, b) => b.end - a.end)
-
-    for (const { end, addition } of toInsert) text = text.slice(0, end) + addition + text.slice(end)
-    return text
+    return replaceAnnotatedTargets(examiner.sampleAnswer, examiner.annotations, studentEdits)
   }
 
   async function handleRemark() {
     setRemarkLoading(true)
     setRemarkError(null)
+    setPhase('remarking')
+
     try {
       const editedAnswer = composeEditedAnswer()
       const res = await fetch('/api/examiner', {
@@ -110,18 +104,19 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
           marks: examiner.marks,
           markScheme: examiner.markScheme,
           subject: examiner.subject || module.subject,
-          board: examiner.board || 'edexcel',
+          board: examiner.board || module.board || module.examBoard || undefined,
           type: examiner.type,
           originalMark: examiner.mark,
           studentEdits,
         }),
       })
       const data = await res.json()
-      if (data.error) throw new Error(data.error)
+      if (!res.ok || data.error) throw new Error(data.error || 'Unable to re-mark this answer.')
       setRemarkResult(data)
       setPhase('done')
     } catch (err) {
       setRemarkError(err.message || 'Failed to re-mark. Try again.')
+      setPhase('improving')
     } finally {
       setRemarkLoading(false)
     }
@@ -130,8 +125,8 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
   const isReveal = phase === 'reveal'
   const isImproving = phase === 'improving'
   const isRemarking = phase === 'remarking'
-  const canImprove = examiner.mark < examiner.marks && examiner.annotations?.some(ann => ann.type === 'weak')
-  const hasAnyEdit = Object.values(studentEdits).some(v => v?.trim())
+  const canImprove = examiner.mark < examiner.marks && examiner.annotations?.some(annotation => annotation.type === 'weak')
+  const hasAnyEdit = Object.values(studentEdits).some(value => value?.trim())
   const segments = ['reveal', 'improving', 'remarking'].includes(phase)
     ? buildAnnotatedSegments(examiner.sampleAnswer, examiner.annotations)
     : []
