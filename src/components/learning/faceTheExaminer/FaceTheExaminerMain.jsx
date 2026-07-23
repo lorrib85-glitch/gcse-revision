@@ -63,12 +63,19 @@ export default function FaceTheExaminerMain(props) {
   const backgroundOpacity = examiner.backgroundOpacity ?? 0.42
   const backgroundFilter = examiner.backgroundFilter || 'grayscale(4%) brightness(0.7)'
   const subjectLabel = examiner.subjectLabel || module.subject || examiner.subject || 'Exam practice'
-  const title = screenTitle || 'Mark the answer'
+  const title = isReveal
+    ? (examiner.verdictTitle || "Examiner's verdict")
+    : isImproving
+      ? (examiner.repairScreenTitle || 'Fix one weakness')
+      : isRemarking
+        ? (examiner.remarkingScreenTitle || 'Reviewing your answer')
+        : (screenTitle || 'Mark the answer')
   const showTabs = phase === 'reading' || phase === 'judging'
   const showAnswer = activeTab === 'answer' || !showTabs
   const showMarking = activeTab === 'marking' && showTabs
   const introBlocksMainInteraction = questionIntroVisible && phase === 'reading'
   const questionParts = splitQuestionAndMarks(examiner.question, examiner.marks)
+  const showQuestionMarks = !isReveal && !isImproving && !isRemarking
   const hasCriteriaChoices = (examiner.criteriaOptions || []).length > 0
   const readyToReveal = guessedMark !== null && (!hasCriteriaChoices || selectedCriteria.length > 0)
   const showFooter = (phase === 'reading' && activeTab === 'answer')
@@ -144,7 +151,8 @@ export default function FaceTheExaminerMain(props) {
         }
         .fte-textarea:focus { border-color: ${accent}88; box-shadow: 0 0 0 2px ${accent}18; }
         .fte-secondary-action:focus-visible,
-        .fte-marked-toggle:focus-visible { outline: 2px solid ${accent}88; outline-offset: 2px; }
+        .fte-marked-toggle:focus-visible,
+        .fte-annotation-target:focus-visible { outline: 2px solid ${accent}88; outline-offset: 2px; }
         .fte-scroll { scrollbar-width: none; -ms-overflow-style: none; }
         .fte-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
         @media (prefers-reduced-motion: reduce) {
@@ -202,7 +210,7 @@ export default function FaceTheExaminerMain(props) {
           bodyStyle={{ ...TYPE.examQuestion, color: GENERAL.cinematic.textSecondary }}
         >
           <span>{questionParts.question}</span>
-          {questionParts.marks && (
+          {showQuestionMarks && questionParts.marks && (
             <span style={{ ...TYPE.displaySection, display: 'block', color: accent, marginTop: SCREEN_TEXT_LAYOUT.blockGap }}>
               {questionParts.marks}
             </span>
