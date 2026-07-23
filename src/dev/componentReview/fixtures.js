@@ -2,8 +2,16 @@ export * from './fixtures.base.js'
 
 import {
   builderQuote as baseBuilderQuote,
+  matchingTask as baseMatchingTask,
   quoteAnalyser as baseQuoteAnalyser,
 } from './fixtures.base.js'
+
+export const matchingTask = {
+  ...baseMatchingTask,
+  leftLabel: 'Belief',
+  rightLabel: 'Response',
+  backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+}
 
 export const builderQuote = {
   ...baseBuilderQuote,
