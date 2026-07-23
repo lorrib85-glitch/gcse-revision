@@ -1,255 +1,277 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import SequenceProgress from '../core/SequenceProgress.jsx'
+import CheckAnswerCTA from '../core/CheckAnswerCTA.jsx'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
-import { BUTTONS } from '../../constants/buttons.js'
 
 function levenshtein(a, b) {
-  const m = a.length, n = b.length
+  const m = a.length
+  const n = b.length
   const dp = Array.from({ length: m + 1 }, (_, i) =>
     Array.from({ length: n + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
   )
-  for (let i = 1; i <= m; i++)
-    for (let j = 1; j <= n; j++)
+
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
       dp[i][j] = a[i - 1] === b[j - 1]
         ? dp[i - 1][j - 1]
         : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+    }
+  }
+
   return dp[m][n]
 }
 
-function normalise(s) {
-  return s.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ')
+function normalise(value) {
+  return value.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ')
 }
 
 function checkAnswer(input, sentence) {
   const raw = normalise(input)
   if (!raw) return false
-  const targets = [sentence.answer, ...(sentence.acceptedAnswers || [])].map(normalise)
-  return targets.some(t => {
-    if (raw === t) return true
-    const maxDist = t.length <= 4 ? 0 : t.length <= 7 ? 1 : 2
-    return levenshtein(raw, t) <= maxDist
+
+  const targets = [sentence.answer, ...(sentence.acceptedAnswers || [])]
+    .filter(Boolean)
+    .map(normalise)
+
+  return targets.some(target => {
+    if (raw === target) return true
+    const maxDistance = target.length <= 4 ? 0 : target.length <= 7 ? 1 : 2
+    return levenshtein(raw, target) <= maxDistance
   })
 }
 
-export default function FillInTheBlanksBlock({ block, subject = 'Biology', onContinue }) {
-  const subj    = SUBJECTS[subject] || SUBJECTS.Biology
-  const accent  = subj.accent
-  const rgb     = subj.accentRgb
+function getInputWidth(answer = '') {
+  return Math.min(292, Math.max(148, answer.length * 10 + 48))
+}
 
+export default function FillInTheBlanksBlock({ block, subject = 'Biology', onContinue }) {
+  const subjectData = SUBJECTS[subject] || SUBJECTS.Biology
+  const accent = subjectData.accent
+  const rgb = subjectData.accentRgb
   const sentences = block.sentences || []
 
-  const [values, setValues]   = useState(() => Object.fromEntries(sentences.map((_, i) => [i, ''])))
-  const [results, setResults] = useState(() => sentences.map(() => null))
-  const [checked, setChecked] = useState(false)
-  const [focusIdx, setFocusIdx] = useState(null)
-  const [pressed, setPressed] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [values, setValues] = useState(() => sentences.map(() => ''))
+  const [status, setStatus] = useState('answering')
+  const [attempts, setAttempts] = useState(() => sentences.map(() => 0))
+  const inputRef = useRef(null)
 
-  const allCorrect = sentences.length > 0 && results.every(r => r?.correct === true)
-  const anyFilled  = Object.values(values).some(v => v.trim().length > 0)
+  const sentence = sentences[currentIndex]
+  const value = values[currentIndex] || ''
+  const isLast = currentIndex === sentences.length - 1
+  const canCheck = value.trim().length > 0
 
-  function evaluate(currentValues) {
-    return sentences.map((s, i) => ({ correct: checkAnswer(currentValues[i], s) }))
+  useEffect(() => {
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 80)
+    return () => window.clearTimeout(timer)
+  }, [currentIndex])
+
+  if (!sentence) return null
+
+  function handleChange(nextValue) {
+    setValues(current => current.map((item, index) => index === currentIndex ? nextValue : item))
+    if (status === 'incorrect') setStatus('answering')
   }
 
   function handleCheck() {
-    setResults(evaluate(values))
-    setChecked(true)
+    if (!canCheck) return
+
+    if (checkAnswer(value, sentence)) {
+      setStatus('correct')
+      return
+    }
+
+    setAttempts(current => current.map((count, index) => index === currentIndex ? count + 1 : count))
+    setStatus('incorrect')
   }
 
-  function handleChange(i, val) {
-    const next = { ...values, [i]: val }
-    setValues(next)
-    if (checked) setResults(evaluate(next))
+  function handleAdvance() {
+    if (!isLast) {
+      setCurrentIndex(index => index + 1)
+      setStatus('answering')
+      return
+    }
+
+    const next = block.onContinue || onContinue
+    next?.()
   }
 
-  function handleContinue() {
-    const fn = block.onContinue || onContinue
-    if (fn) fn()
+  function handleKeyDown(event) {
+    if (event.key !== 'Enter') return
+    event.preventDefault()
+
+    if (status === 'correct') handleAdvance()
+    else handleCheck()
   }
+
+  const hintIndex = Math.max(0, (attempts[currentIndex] || 1) - 1)
+  const hint = sentence.hints?.[Math.min(hintIndex, sentence.hints.length - 1)]
+  const incorrectFeedback = hint || block.wrongMsg || 'Not quite — use the rest of the sentence to help you.'
+  const correctFeedback = sentence.feedback || (isLast && block.correctMsg) || 'That’s right.'
+
+  const inputBorder = status === 'correct'
+    ? GENERAL.feedbackCorrect
+    : status === 'incorrect'
+      ? GENERAL.feedbackIncorrect
+      : `rgba(${rgb},0.48)`
 
   return (
-    <div style={{ marginTop: SPACING.compact }}>
+    <section
+      aria-label="Fill in the blanks"
+      style={{
+        minHeight: 360,
+        marginTop: SPACING.compact,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <style>{`
         .fitb-input { outline: none; }
-        .fitb-input::placeholder { color: rgba(234,247,240,0.28); font-style: italic; }
-        @keyframes fitb-fade-in {
-          from { opacity: 0; transform: translateY(4px); }
-          to   { opacity: 1; transform: translateY(0); }
+        .fitb-input::placeholder {
+          color: ${GENERAL.cinematic.textSubtle};
+          font-style: normal;
         }
-        @keyframes fitb-card-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to   { opacity: 1; transform: translateY(0); }
+        .fitb-input:focus-visible {
+          box-shadow: 0 0 0 3px rgba(${rgb},0.16), 0 0 22px rgba(${rgb},0.10);
+        }
+        @keyframes fitb-question-in {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fitb-feedback-in {
+          from { opacity: 0; transform: translateY(5px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
 
-      {/* Badge */}
-      <div style={{
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        background: `rgba(${rgb},0.06)`,
-        border: `1px solid rgba(${rgb},0.18)`,
-        borderRadius: RADII.pill,
-        padding: '4px 12px',
-        marginBottom: SPACING.compact,
-      }}>
-        <span style={{
-          ...TYPE.eyebrow,
-          fontSize: '12px',
-          color: accent,
-          textTransform: 'uppercase',
-        }}>Close answers count</span>
-        <span style={{ fontSize: '10px', color: accent, opacity: 0.6 }}>✦</span>
-      </div>
+      <SequenceProgress
+        total={sentences.length}
+        current={currentIndex}
+        completed={currentIndex}
+        accent={accent}
+        accentRgb={rgb}
+        variant="sash"
+        stretch
+        compact
+        ariaLabel={`Fill in the blanks question ${currentIndex + 1} of ${sentences.length}`}
+        style={{ width: '100%', marginBottom: SPACING.standard }}
+      />
 
-      {/* Questions */}
-      {sentences.map((s, i) => {
-        const res       = results[i]
-        const isCorrect = res?.correct === true
-        const isWrong   = checked && res?.correct === false
-        const isFocused = focusIdx === i
-
-        const borderOpacity = isCorrect ? '0.50' : isFocused ? '0.34' : '0.16'
-        const borderColor = isCorrect
-          ? `rgba(${rgb},0.72)`
-          : isWrong
-            ? `rgba(${rgb},0.38)`
-            : isFocused
-              ? `rgba(${rgb},0.55)`
-              : `rgba(${rgb},0.22)`
-
-        const cardShadow = isCorrect
-          ? `inset 0 1px 0 rgba(${rgb},0.24), 0 0 28px rgba(${rgb},0.10), 0 4px 20px rgba(0,0,0,0.32)`
-          : isFocused
-            ? `inset 0 1px 0 rgba(${rgb},0.18), 0 4px 20px rgba(0,0,0,0.32)`
-            : `inset 0 1px 0 rgba(${rgb},0.10), 0 4px 20px rgba(0,0,0,0.28)`
-
-        return (
-          <div
-            key={i}
-            style={{
-              background: `linear-gradient(160deg, rgba(${rgb},0.07) 0%, rgba(0,0,0,0.22) 100%)`,
-              border: `1px solid rgba(${rgb},${borderOpacity})`,
-              boxShadow: cardShadow,
-              borderRadius: RADII.medium,
-              padding: `${SPACING.compact}px ${SPACING.compact}px 14px`,
-              marginBottom: SPACING.compact,
-              transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-              animation: `fitb-card-in ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-              animationDelay: `${i * 90}ms`,
-            }}
-          >
-            {/* Step counter */}
-            <span style={{
-              ...TYPE.metadata,
-              textTransform: 'uppercase',
-              color: `rgba(${rgb},0.48)`,
-              marginBottom: SPACING.micro,
-              display: 'block',
-            }}>
-              {String(i + 1).padStart(2, '0')}
-            </span>
-
-            <div style={{ ...TYPE.bodySmall, color: '#EAF7F0' }}>
-              {s.before && (
-                <p style={{ margin: `0 0 ${SPACING.micro}px` }}>{s.before}</p>
-              )}
-
-              <input
-                className="fitb-input"
-                aria-label={`Blank ${i + 1} of ${sentences.length}`}
-                value={values[i]}
-                disabled={isCorrect}
-                onChange={e => handleChange(i, e.target.value)}
-                onFocus={() => setFocusIdx(i)}
-                onBlur={() => setFocusIdx(null)}
-                onKeyDown={e => { if (e.key === 'Enter' && !allCorrect) handleCheck() }}
-                placeholder="Type answer..."
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  background: 'rgba(0,0,0,0.28)',
-                  border: `1.5px solid ${borderColor}`,
-                  borderRadius: RADII.small,
-                  padding: '11px 14px',
-                  ...TYPE.bodySmall,
-                  fontWeight: 500,
-                  color: isCorrect ? accent : '#EAF7F0',
-                  textShadow: isCorrect ? `0 0 20px ${accent}55` : 'none',
-                  boxShadow: isFocused && !isCorrect ? `0 0 0 3px rgba(${rgb},0.12)` : 'none',
-                  transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}, color ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
-                  cursor: isCorrect ? 'default' : 'text',
-                  boxSizing: 'border-box',
-                }}
-              />
-
-              {s.after && (
-                <p style={{ margin: `${SPACING.micro}px 0 0` }}>{s.after}</p>
-              )}
-            </div>
-
-            {/* Correct feedback */}
-            {isCorrect && (
-              <div style={{
-                marginTop: SPACING.micro,
-                ...TYPE.metadata,
-                fontWeight: 600,
-                color: accent,
-                textShadow: `0 0 14px ${accent}44`,
-                animation: 'fitb-fade-in 300ms ease forwards',
-              }}>
-                ✓ {s.feedback || 'Correct.'}
-              </div>
-            )}
-
-            {/* Wrong nudge */}
-            {isWrong && (
-              <div style={{
-                marginTop: SPACING.micro,
-                ...TYPE.metadata,
-                borderLeft: `2px solid rgba(${rgb},0.30)`,
-                paddingLeft: SPACING.micro,
-                color: 'rgba(245,238,225,0.45)',
-              }}>
-                Not quite — adjust your answer and check again.
-              </div>
-            )}
-          </div>
-        )
-      })}
-
-      {/* CTA */}
-      <button
-        onClick={allCorrect ? handleContinue : handleCheck}
-        disabled={!anyFilled}
-        onMouseDown={() => setPressed(true)}
-        onMouseUp={() => setPressed(false)}
-        onMouseLeave={() => setPressed(false)}
-        onTouchStart={() => setPressed(true)}
-        onTouchEnd={() => setPressed(false)}
+      <div
+        key={currentIndex}
         style={{
-          width: '100%',
-          height: BUTTONS.primary.height,
-          borderRadius: BUTTONS.primary.borderRadius,
-          background: allCorrect
-            ? `linear-gradient(135deg, ${accent}, rgba(${rgb},0.72))`
-            : `rgba(${rgb},0.10)`,
-          border: allCorrect ? 'none' : `1px solid rgba(${rgb},0.18)`,
-          cursor: anyFilled ? 'pointer' : 'default',
-          opacity: anyFilled ? 1 : 0.45,
-          fontFamily: TYPE.button.fontFamily,
-          fontSize: BUTTONS.primary.fontSize,
-          fontWeight: BUTTONS.primary.fontWeight,
-          color: allCorrect ? '#0A0804' : accent,
-          letterSpacing: '-0.02em',
-          boxShadow: allCorrect ? `0 4px 28px rgba(${rgb},0.28)` : 'none',
-          transition: `all ${BUTTONS.primary.transition}`,
-          transform: pressed && anyFilled ? `scale(${MOTION.scale.press})` : 'scale(1)',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          padding: `${SPACING.standard}px 0 ${SPACING.compact}px`,
+          borderTop: `1px solid ${GENERAL.line.faint}`,
+          borderBottom: `1px solid ${GENERAL.line.faint}`,
+          background: `radial-gradient(circle at 50% 42%, rgba(${rgb},0.07), transparent 68%)`,
+          animation: `fitb-question-in ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
         }}
       >
-        {allCorrect ? 'Continue →' : checked ? 'Try again' : 'Check answers'}
-      </button>
-    </div>
+        <p style={{
+          ...TYPE.displaySection,
+          margin: 0,
+          color: GENERAL.feedbackText,
+          lineHeight: 1.5,
+          textWrap: 'pretty',
+        }}>
+          {sentence.before && <span>{sentence.before}{' '}</span>}
+          <input
+            ref={inputRef}
+            className="fitb-input"
+            aria-label={`Answer for question ${currentIndex + 1}`}
+            value={value}
+            disabled={status === 'correct'}
+            onChange={event => handleChange(event.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type your answer"
+            autoComplete="off"
+            spellCheck={false}
+            style={{
+              display: 'inline-block',
+              width: getInputWidth(sentence.answer),
+              maxWidth: '100%',
+              minHeight: 52,
+              margin: '6px 4px',
+              padding: '10px 14px',
+              verticalAlign: 'middle',
+              boxSizing: 'border-box',
+              background: GENERAL.backgroundSunken,
+              border: `1.5px solid ${inputBorder}`,
+              borderRadius: RADII.small,
+              ...TYPE.bodyStrong,
+              color: status === 'correct' ? GENERAL.feedbackCorrect : GENERAL.feedbackText,
+              caretColor: accent,
+              transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}, color ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+            }}
+          />
+          {sentence.after && <span>{' '}{sentence.after}</span>}
+        </p>
+
+        <div
+          aria-live="polite"
+          style={{ minHeight: 58, marginTop: SPACING.compact }}
+        >
+          {status !== 'answering' && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: SPACING.micro,
+              ...TYPE.bodySmall,
+              color: status === 'correct' ? GENERAL.feedbackCorrect : GENERAL.feedbackText,
+              animation: `fitb-feedback-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
+            }}>
+              <span
+                aria-hidden="true"
+                style={{
+                  flexShrink: 0,
+                  width: 24,
+                  height: 24,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: RADII.pill,
+                  background: status === 'correct'
+                    ? 'rgba(76,175,125,0.14)'
+                    : `rgba(${GENERAL.feedbackIncorrectRgb},0.14)`,
+                  color: status === 'correct' ? GENERAL.feedbackCorrect : GENERAL.feedbackIncorrect,
+                  fontWeight: 700,
+                }}
+              >
+                {status === 'correct' ? '✓' : '×'}
+              </span>
+              <span style={{ paddingTop: 2 }}>{status === 'correct' ? correctFeedback : incorrectFeedback}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div style={{ marginTop: SPACING.standard }}>
+        {status === 'correct' ? (
+          <ContinueCTA
+            onClick={handleAdvance}
+            label={isLast ? 'Continue' : 'Next question'}
+            accent={accent}
+            textColor={GENERAL.textOnAccent}
+          />
+        ) : (
+          <CheckAnswerCTA
+            onClick={handleCheck}
+            label={status === 'incorrect' ? 'Check again' : 'Check answer'}
+            accent={accent}
+            disabled={!canCheck}
+          />
+        )}
+      </div>
+    </section>
   )
 }
