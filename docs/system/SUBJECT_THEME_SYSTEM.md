@@ -67,6 +67,7 @@ Rules:
 - Large background areas should use the subject `background` and `backgroundSecondary`, not the bright accent.
 - Glow should be restrained and tied to active progress, selected states, cinematic reveals or subject-specific visual motifs.
 - Rare highlight colours must stay rare. If they appear everywhere, they stop feeling premium.
+- A primary accent used for text must maintain at least 4.5:1 contrast against both subject backgrounds. Preserve darker brand shades as tertiary or named palette tokens rather than using them for small text.
 
 Anti-pattern examples:
 
@@ -111,30 +112,31 @@ Maths should feel precise, logical and blueprint-like. Use blue to signal clarit
 
 ### English
 ```
-accent:           #6A343D
-accentSecondary:  #8A6A6E
-accentTertiary:   #4C242B
+accent:           #B96F78
+accentSecondary:  #D5A7AC
+accentTertiary:   #6A343D
 background:       #0D0F10
 backgroundSecondary: #1F1C1B
-glow:             rgba(106,52,61,0.32)
-glowStrong:       rgba(138,106,110,0.20)
-progressFill:     #6A343D
-accentRgb:        106,52,61
+glow:             rgba(185,111,120,0.26)
+glowStrong:       rgba(213,167,172,0.18)
+progressFill:     #B96F78
+accentRgb:        185,111,120
 ```
 
 Extended English palette:
 
 | Token | Hex | Usage |
 |-------|-----|-------|
-| `oxblood` | `#6A343D` | Key actions, active states, progress highlights and important emphasis |
+| `rosewood` | `#B96F78` | Readable key actions, active states, progress and important emphasis on dark English surfaces |
+| `oxblood` | `#6A343D` | Deep literary shade for pressed states, imagery, large decorative areas and atmospheric depth |
 | `mahogany` | `#4C242B` | Secondary actions, interactive elements and subtle highlights |
 | `walnut` | `#3B2626` | Surfaces, cards and overlays to add warmth and depth |
-| `dustyRose` | `#8A6A6E` | Supportive elements, subtle highlights and soft accents |
+| `dustyRose` | `#D5A7AC` | Supportive elements, subtle highlights and soft accents |
 | `parchment` | `#E9E1D3` | Text on dark backgrounds and soft contrasting areas |
 | `ink` | `#1F1C1B` | Muted text, icons and disabled states |
 | `tealAccent` | `#2A9D8F` | Cross-subject consistency and active navigation only |
 
-English should feel rich, intelligent and literary — dark academic rather than purple neon. Use oxblood with intention. Do not let teal take over English screens.
+English should feel rich, intelligent and literary — dark academic rather than purple neon. Rosewood carries readable interface emphasis; oxblood preserves the deeper literary identity without being used for small text. Do not let teal take over English screens.
 
 ### Physics
 ```
@@ -323,7 +325,7 @@ Each subject palette was designed with a specific emotional character:
 | Subject | Emotional Identity |
 |---------|--------------------|
 | Maths | Precise, logical, blueprint blue, graphite and formula-paper clarity |
-| English | Rich, literary, oxblood, parchment and ink |
+| English | Rich, literary, readable rosewood, deep oxblood, parchment and ink |
 | Physics | Cosmic, fundamental, electric teal, particle gold and deep space |
 | Biology | Organic, cellular, moss, sage, microscopy glass and living systems |
 | Chemistry | Considered, intelligent, smoked violet glass and molecular precision |
