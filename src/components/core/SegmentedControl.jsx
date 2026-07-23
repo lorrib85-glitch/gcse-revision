@@ -7,6 +7,10 @@ import { TYPE } from '../../constants/typography.js'
  * Shared two-or-more option switcher for stable, mutually exclusive views.
  * Subject identity is supplied through `accent`; disabled options remain visible
  * so the learner can understand the sequence without being able to skip it.
+ *
+ * `variant="tabs"` presents each option as a clearly separate tab box. Use it
+ * when switching views is part of the task and needs stronger affordance than a
+ * compact segmented control.
  */
 export default function SegmentedControl({
   options,
@@ -14,10 +18,12 @@ export default function SegmentedControl({
   onChange,
   accent,
   ariaLabel = 'Choose a view',
+  variant = 'segmented',
 }) {
   const buttonRefs = useRef([])
   const enabledOptions = options.filter(option => !option.disabled)
   const activeEnabledIndex = enabledOptions.findIndex(option => option.value === value)
+  const isTabVariant = variant === 'tabs'
 
   function moveFocus(direction) {
     if (enabledOptions.length === 0) return
@@ -58,12 +64,12 @@ export default function SegmentedControl({
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))`,
-        gap: 4,
+        gap: isTabVariant ? 8 : 4,
         width: '100%',
-        padding: 4,
+        padding: isTabVariant ? 0 : 4,
         borderRadius: RADII.medium,
-        border: `1px solid ${GENERAL.line.soft}`,
-        background: GENERAL.backgroundSunken,
+        border: isTabVariant ? 'none' : `1px solid ${GENERAL.line.soft}`,
+        background: isTabVariant ? 'transparent' : GENERAL.backgroundSunken,
       }}
     >
       {options.map((option, index) => {
@@ -85,16 +91,26 @@ export default function SegmentedControl({
             style={{
               ...TYPE.label,
               minWidth: 0,
-              minHeight: 46,
-              padding: '0 10px',
-              borderRadius: RADII.small,
-              border: 'none',
-              background: active ? GENERAL.surfaceTint : 'transparent',
-              color: active ? accent : GENERAL.cinematic.textMuted,
-              boxShadow: active ? `inset 0 -2px 0 ${accent}` : 'none',
+              minHeight: isTabVariant ? 54 : 46,
+              padding: isTabVariant ? '0 14px' : '0 10px',
+              borderRadius: isTabVariant ? `${RADII.medium}px ${RADII.medium}px ${RADII.small}px ${RADII.small}px` : RADII.small,
+              border: isTabVariant
+                ? `1px solid ${active ? `${accent}88` : GENERAL.line.medium}`
+                : 'none',
+              background: isTabVariant
+                ? (active ? GENERAL.backgroundSurface : 'rgba(8,9,13,0.56)')
+                : (active ? GENERAL.surfaceTint : 'transparent'),
+              color: active
+                ? accent
+                : (isTabVariant ? GENERAL.cinematic.textSecondary : GENERAL.cinematic.textMuted),
+              boxShadow: isTabVariant
+                ? (active
+                    ? `inset 0 -3px 0 ${accent}, 0 10px 24px rgba(0,0,0,0.24)`
+                    : `inset 0 1px 0 ${GENERAL.line.faint}`)
+                : (active ? `inset 0 -2px 0 ${accent}` : 'none'),
               cursor: disabled ? 'default' : 'pointer',
               opacity: disabled ? 0.34 : 1,
-              transition: 'background 180ms ease, color 180ms ease, box-shadow 180ms ease, opacity 180ms ease',
+              transition: 'background 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease, opacity 180ms ease',
             }}
           >
             {option.label}
