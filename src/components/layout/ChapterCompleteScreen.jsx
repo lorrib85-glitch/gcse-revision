@@ -384,7 +384,7 @@ export default function ChapterCompleteScreen({
           }}>
             <header style={{
               width: '100%',
-              minHeight: 'min(58dvh, 520px)',
+              minHeight: 'min(55dvh, 500px)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
