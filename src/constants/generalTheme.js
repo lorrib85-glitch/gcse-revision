@@ -65,6 +65,7 @@ export const GENERAL = {
   // — deliberately calmer than `success` above, which stays as-is for any
   // existing call site that isn't part of this feedback-token migration.
   feedbackCorrect:      '#4CAF7D',
+  feedbackCorrectRgb:   '76,175,125',
   feedbackIncorrect:    '#E05A52',
   feedbackIncorrectRgb: '224,90,82',
   // Semantic alias for teal when used specifically as the hint/supportive
