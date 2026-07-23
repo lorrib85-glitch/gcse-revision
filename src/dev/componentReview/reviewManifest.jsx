@@ -47,6 +47,7 @@ import ExplainReveal from '../../components/learning/ExplainReveal.jsx'
 import ColSortBlock from '../../components/learning/ColSortBlock.jsx'
 import QuoteAnalyser from '../../components/learning/QuoteAnalyser.jsx'
 import KeyFigureReveal from '../../components/learning/KeyFigureReveal.jsx'
+import FaceTheExaminer from '../../components/learning/FaceTheExaminer.jsx'
 
 // The seven review questions are identical for every component (per brief), so
 // they live once here rather than being duplicated per entry.
@@ -435,6 +436,22 @@ export const REVIEW_ENTRIES = [
     alternative: 'MedievalDiagnosisScene (scene intro); ConceptReveal.',
     render: (fx, { onDone }) => <KeyFigureReveal block={fx} subject="History" onComplete={onDone} />,
     fixture: FIX.keyFigureReveal,
+  },
+  {
+    id: 'face-the-examiner', name: 'FaceTheExaminer', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Examiner-style marking flow: guess the mark, pick the criteria, reveal the annotated answer with strong/weak/irrelevant tags, then improve the weak points and re-mark.',
+    usage: 'Used as the module-level examiner in History episodes (1, 2, 3, 14), via module.examiner, and routable mid-module as type: faceExaminer.',
+    alternative: 'GuidedExamResponse (scaffolded written answer); MisconceptionCheck / SpotTheError (shorter diagnostic checks).',
+    render: (fx, { onDone }) => (
+      <FaceTheExaminer
+        module={{ id: 'review-lab-fte', subject: 'History' }}
+        examiner={fx}
+        onExit={() => {}}
+        onContinue={onDone}
+      />
+    ),
+    fixture: FIX.faceTheExaminer,
   },
   {
     id: 'buttons-and-progress', name: 'Buttons and progress', group: 'library',
