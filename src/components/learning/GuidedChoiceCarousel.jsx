@@ -104,9 +104,8 @@ export default function GuidedChoiceCarousel({
     stateRef.current.length = options.length
   }, [currentIndex, options.length])
 
-  const subjectData = SUBJECTS[subject] || {}
-  const accent = subjectData.accent || '#D9A441'
-  const accentRgb = subjectData.accentRgb || '217,164,65'
+  const subjectData = SUBJECTS[subject] || SUBJECTS.History
+  const { accent, accentRgb } = subjectData
   const backgroundImage = options[currentIndex]?.image || null
 
   const currentOption = options[currentIndex] || {}
