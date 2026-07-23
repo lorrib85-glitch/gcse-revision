@@ -48,6 +48,7 @@ import ColSortBlock from '../../components/learning/ColSortBlock.jsx'
 import QuoteAnalyser from '../../components/learning/QuoteAnalyser.jsx'
 import KeyFigureReveal from '../../components/learning/KeyFigureReveal.jsx'
 import FaceTheExaminer from '../../components/learning/FaceTheExaminer.jsx'
+import GuidedExamResponse from '../../components/learning/GuidedExamResponse.jsx'
 
 // The seven review questions are identical for every component (per brief), so
 // they live once here rather than being duplicated per entry.
@@ -461,6 +462,22 @@ export const REVIEW_ENTRIES = [
       />
     ),
     fixture: FIX.faceTheExaminer,
+  },
+  {
+    id: 'guided-exam-response', name: 'GuidedExamResponse', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Guided written-answer scaffold: dark beat → "your turn" intro → section-by-section writing lanes, then examiner marking with a mark-by-mark breakdown and a rewritten sentence.',
+    usage: 'Used in Episode 3 (Vesalius 12-marker), type: guidedExamResponse. Also drives the worked-answer stages of GuidedAnswerCoach in Exam Mode.',
+    alternative: 'FaceTheExaminer (mark-the-answer diagnostic); GuidedAnswerCoach (full multi-stage exam-technique flow).',
+    render: (fx, { onDone }) => (
+      <GuidedExamResponse
+        module={{ id: 'review-lab-ger', subject: 'History' }}
+        exam={fx}
+        onExit={() => {}}
+        onContinue={onDone}
+      />
+    ),
+    fixture: FIX.guidedExamResponse,
   },
   {
     id: 'buttons-and-progress', name: 'Buttons and progress', group: 'library',

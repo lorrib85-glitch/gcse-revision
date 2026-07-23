@@ -620,3 +620,40 @@ Do NOT award marks for identifying practices without explaining the religious re
     'Missing second way',
   ],
 }
+
+// GuidedExamResponse `exam` shape — mirrors Episode 3 screen 11 (the Vesalius
+// 12-marker) so the lab shows the real independent-write scaffold: dark beat →
+// "your turn" intro → section-by-section writing (Reason 1 / Reason 2).
+export const guidedExamResponse = {
+  board: 'edexcel',
+  subject: 'history',
+  topic: 'renaissance-medicine',
+  beatText: 'Now write it yourself. Two developed reasons.',
+  question: 'Explain why Vesalius was able to challenge Galen’s ideas during the Renaissance. (12 marks)',
+  marks: 12,
+  sections: [
+    {
+      label: 'Reason 1',
+      starter: 'One reason Vesalius could challenge Galen was...',
+      placeholder: '...human dissection let him study real bodies. He could compare Galen’s claims with human anatomy, and show errors such as the jaw being one bone...',
+    },
+    {
+      label: 'Reason 2',
+      starter: 'A second reason was...',
+      placeholder: '...printing. His 1543 book and drawings could be copied and shared widely. This meant more doctors could compare Galen with his evidence...',
+    },
+  ],
+  markScheme: `Total: 12 marks (Edexcel "Explain why" — AO1 knowledge and AO2 explanation). Reward developed reasons, not a list of factors.
+
+Valid reasons (any two developed fully):
+- Human dissection — Vesalius studied real human bodies and could test Galen’s claims directly.
+- Anatomy theatres — public dissection made observation a normal part of medical study.
+- Humanism — reason and direct study made people more willing to question old authority.
+- Reformation / weaker Church control — old authority felt less certain, creating space to challenge Galen.
+- Vesalius’s individual skill and confidence — he had the ability to dissect, compare and publish.
+- Printing — his 1543 book and drawings could be copied accurately and spread widely.
+
+Level 1 (1–4): simple statements, factors listed with little explanation.
+Level 2 (5–8): some explanation, but at least one reason is undeveloped.
+Level 3 (9–12): two developed reasons, each using precise evidence and explaining how it enabled the challenge.`,
+}
