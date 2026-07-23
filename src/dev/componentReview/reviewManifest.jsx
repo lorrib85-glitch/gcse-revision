@@ -34,6 +34,19 @@ import MemoryHook from '../../components/learning/MemoryHook.jsx'
 import BuilderBlock from '../../components/learning/BuilderBlock.jsx'
 import ChapterOutcomeScreen from '../../components/layout/ChapterOutcomeScreen.jsx'
 import ChapterCompleteScreen from '../../components/layout/ChapterCompleteScreen.jsx'
+import ChapterHookScreen from '../../components/layout/ChapterHookScreen.jsx'
+import FillInTheBlanksBlock from '../../components/learning/FillInTheBlanksBlock.jsx'
+import SwipeSort from '../../components/learning/SwipeSort.jsx'
+import InteractiveCollectionExplorer from '../../components/learning/InteractiveCollectionExplorer.jsx'
+import MedievalDiagnosisScene from '../../components/learning/MedievalDiagnosisScene.jsx'
+import QuickRecallScreen from '../../components/learning/QuickRecallScreen.jsx'
+import ExaminerExplainsScreen from '../../components/learning/ExaminerExplainsScreen.jsx'
+import UnifiedQuestionScreen from '../../components/learning/UnifiedQuestionScreen.jsx'
+import TieredQuizScreen from '../../components/learning/TieredQuizScreen.jsx'
+import WeakSpotRecovery from '../../components/learning/WeakSpotRecovery.jsx'
+import RecoveryQuizPlayer from '../../components/learning/RecoveryQuizPlayer.jsx'
+import KeyPoint from '../../components/core/KeyPoint.jsx'
+import WorkedExample from '../../components/core/WorkedExample.jsx'
 import ContentShell from '../../components/layout/ContentShell.jsx'
 import TeachScreenShell from '../../components/core/TeachScreenShell.jsx'
 import ButtonsAndProgressPage from './ButtonsAndProgressPage.jsx'
@@ -522,5 +535,159 @@ export const REVIEW_ENTRIES = [
       />
     ),
     fixture: FIX.chapterComplete,
+  },
+  {
+    id: 'chapter-hook-screen', name: 'ChapterHookScreen', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Chapter-opening true/false warm-up: a bold statement the learner judges true or false, then a reveal explaining why.',
+    usage: 'Routed in ModulePlayer as the chapter hook opener; completes the chapter-framing trio with ChapterOutcomeScreen and ChapterCompleteScreen.',
+    alternative: 'MisconceptionCheck (multi-statement trap); ConceptReveal (passive framing).',
+    render: (fx, { onDone }) => (
+      <ChapterHookScreen
+        subject="History" chapterNum={fx.chapterNum} chapterTitle={fx.chapterTitle}
+        statement={fx.statement} isTrue={fx.isTrue} accentWords={fx.accentWords}
+        explanation={fx.explanation} onBack={onDone} onContinue={onDone}
+      />
+    ),
+    fixture: FIX.chapterHook,
+  },
+  {
+    id: 'fill-in-the-blanks', name: 'FillInTheBlanksBlock', group: 'library',
+    status: 'comparison', subject: 'Biology', renderMode: 'inline',
+    function: 'Inline typed-gap recall block: complete each sentence with the exact term, with staged hints on a wrong answer.',
+    usage: 'Routed in ModulePlayer (type: fillblanks); used across History and Science episodes.',
+    alternative: 'BuilderBlock (select-and-place gaps); AcronymMemorise.',
+    render: (fx, { onDone }) => <FillInTheBlanksBlock block={fx} subject="Biology" onContinue={onDone} />,
+    fixture: FIX.fillInTheBlanks,
+  },
+  {
+    id: 'swipe-sort', name: 'SwipeSort', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Swipe-gesture sorting: swipe each card left or right into one of two labelled columns, with a per-item explanation on release.',
+    usage: 'Routed in ModulePlayer (type: naturalSupernaturalSwipe); used in Episodes 2, 4 and 5.',
+    alternative: 'ColSortBlock (tap-to-column, inline); MatchingTask.',
+    render: (fx, { onDone }) => <SwipeSort block={fx} subject="History" onComplete={onDone} />,
+    fixture: FIX.swipeSort,
+  },
+  {
+    id: 'interactive-collection-explorer', name: 'InteractiveCollectionExplorer', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Themed explorer: tap objects on a background scene to open colour-coded sheets that reveal one line at a time, then a synthesis screen.',
+    usage: 'Routed in ModulePlayer (type: collectionExplorer); used in Episodes 1 and 14.',
+    alternative: 'InteractiveHotspotImage (image-anchored hotspots); CinematicCarousel.',
+    render: (fx, { onDone }) => (
+      <InteractiveCollectionExplorer
+        subject="History" title={fx.title} description={fx.description}
+        backgroundImage={fx.backgroundImage} items={fx.items} synthesis={fx.synthesis}
+        onContinue={onDone}
+      />
+    ),
+    fixture: FIX.collectionExplorer,
+  },
+  {
+    id: 'medieval-diagnosis-scene', name: 'MedievalDiagnosisScene', group: 'library',
+    status: 'one-off', subject: 'History', renderMode: 'inline',
+    function: 'Cinematic 9:16 SVG scene: Thomas at a candlelit table with the four medieval explanations of illness as tappable zones. Opens the centreImageReveal select phase.',
+    usage: 'Used in Episode 1 (medieval beliefs). Reduced motion renders the static end state.',
+    alternative: 'InteractiveHotspotImage (photographic hotspots); KeyFigureReveal.',
+    render: (fx, { onDone }) => (
+      <MedievalDiagnosisScene
+        theories={fx.theories} completedIds={[]} playIntro={true} onSelectZone={onDone}
+      />
+    ),
+    fixture: FIX.medievalDiagnosisScene,
+  },
+  {
+    id: 'quick-recall-screen', name: 'QuickRecallScreen', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Rapid-fire retrieval: a short run of full-screen choice questions with immediate feedback, for end-of-chapter recall.',
+    usage: 'Routed in ModulePlayer (type: quickRecall); used across History episodes.',
+    alternative: 'TieredQuizScreen (learner picks difficulty); UnifiedQuestionScreen (single question).',
+    render: (fx, { onDone }) => (
+      <QuickRecallScreen
+        subject="History" chapterNum={fx.chapterNum} chapterTitle={fx.chapterTitle}
+        questions={fx.questions} onBack={onDone} onContinue={onDone}
+      />
+    ),
+    fixture: FIX.quickRecall,
+  },
+  {
+    id: 'examiner-explains-screen', name: 'ExaminerExplainsScreen', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'How-examiners-think reveal: an opening line, tips revealed one at a time, and a closing line — exam-technique framing before a written task.',
+    usage: 'Routed in ModulePlayer (type: examinerExplains); used across History episodes before exam-style questions.',
+    alternative: 'GuidedAnswerCoach (full multi-stage coach); FaceTheExaminer.',
+    render: (fx, { onDone }) => (
+      <ExaminerExplainsScreen subject="History" examinerExplains={fx} onBack={onDone} onContinue={onDone} />
+    ),
+    fixture: FIX.examinerExplains,
+  },
+  {
+    id: 'unified-question-screen', name: 'UnifiedQuestionScreen', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Single full-screen choice question with a hint, feedback and explanation — the shared question renderer used inside QuickRecall and TieredQuiz.',
+    usage: 'Composed by QuickRecallScreen and TieredQuizScreen; the canonical single-question screen.',
+    alternative: 'ExamQuestionFrame (mark-scheme reveal); MisconceptionCheck.',
+    render: (fx, { onDone }) => (
+      <UnifiedQuestionScreen
+        question={fx.question} type={fx.type} options={fx.options} correct={fx.correct}
+        hint={fx.hint} explanation={fx.explanation} subject="History" onComplete={onDone}
+      />
+    ),
+    fixture: FIX.unifiedQuestion,
+  },
+  {
+    id: 'tiered-quiz-screen', name: 'TieredQuizScreen', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Learner picks a difficulty tier, then answers that tier’s questions — self-levelled retrieval.',
+    usage: 'Routed in ModulePlayer (type: tieredquiz); used across Sociology and other modules.',
+    alternative: 'QuickRecallScreen (fixed single run); RecoveryQuizPlayer.',
+    render: (fx, { onDone }) => <TieredQuizScreen subject="History" tiers={fx.tiers} onContinue={onDone} />,
+    fixture: FIX.tieredQuiz,
+  },
+  {
+    id: 'weak-spot-recovery', name: 'WeakSpotRecovery', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Behavioural intervention screen shown when the tracker detects a struggling learner: names the gap and offers a targeted recovery quiz or a skip.',
+    usage: 'Shown by ModulePlayer when a weak spot is detected mid-module; routes into RecoveryQuizPlayer.',
+    alternative: 'RecoveryQuizPlayer (the quiz it launches); ProgressRecoveryCard.',
+    render: (fx, { onDone }) => (
+      <WeakSpotRecovery
+        block={fx} subject="History" progress={{ current: 3, total: 8 }}
+        onBack={onDone} onFixWeakSpot={onDone} onSkip={onDone}
+      />
+    ),
+    fixture: FIX.weakSpotRecovery,
+  },
+  {
+    id: 'recovery-quiz-player', name: 'RecoveryQuizPlayer', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Lightweight recovery quiz: 3–4 focused questions loaded by id from recoveryQuizzes.js, launched after a detected weak spot.',
+    usage: 'Launched by WeakSpotRecovery via recoveryQuizId; a short targeted retrieval loop.',
+    alternative: 'QuickRecallScreen (chapter recall); TieredQuizScreen.',
+    render: (fx, { onDone }) => <RecoveryQuizPlayer recoveryQuizId={fx} onComplete={onDone} onBack={onDone} />,
+    fixture: FIX.recoveryQuizId,
+  },
+  {
+    id: 'key-point', name: 'KeyPoint', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'inline',
+    function: 'Inline rule takeaway: states the one rule a teach screen leaves the learner with, with optional accented words and icon.',
+    usage: 'Routed in ModulePlayer (type: keypoint); used across subjects to fix the screen’s core rule.',
+    alternative: 'WorkedExample (applies the rule to a case); MemoryHook (analogy/mnemonic).',
+    render: (fx) => <KeyPoint text={fx.text} emphasis={fx.emphasis} subject="History" />,
+    fixture: FIX.keyPoint,
+  },
+  {
+    id: 'worked-example', name: 'WorkedExample', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'inline',
+    function: 'Inline case → apply → result block: walks one specific case through a rule, with chips for the given facts and a highlighted result.',
+    usage: 'Used across subjects (History, Maths) to demonstrate applying a rule to a worked case.',
+    alternative: 'KeyPoint (states the rule, no case); GuidedExamResponse (full written scaffold).',
+    render: (fx) => (
+      <WorkedExample
+        subject="History" chips={fx.chips} scenario={fx.scenario} working={fx.working} result={fx.result}
+      />
+    ),
+    fixture: FIX.workedExample,
   },
 ]

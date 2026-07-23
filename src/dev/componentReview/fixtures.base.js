@@ -668,3 +668,186 @@ Level 1 (1–4): simple statements, factors listed with little explanation.
 Level 2 (5–8): some explanation, but at least one reason is undeveloped.
 Level 3 (9–12): two developed reasons, each using precise evidence and explaining how it enabled the challenge.`,
 }
+
+// ─── Simple-batch fixtures — fixture-only components added to the lab ─────────
+
+// ChapterHookScreen (History) — chapter-opening true/false warm-up.
+// Shape: { chapterNum, chapterTitle, statement, isTrue, accentWords, explanation }.
+export const chapterHook = {
+  chapterNum: 1,
+  chapterTitle: 'A world without germs',
+  statement: 'In 1348, most people believed the Black Death was sent by God.',
+  isTrue: true,
+  accentWords: ['God'],
+  explanation: 'Religious explanations dominated. With no knowledge of germs, illness was widely seen as divine punishment for sin.',
+}
+
+// FillInTheBlanksBlock (Biology) — inline typed-gap block.
+// Shape: { sentences:[{before, after, answer, hints}], correctMsg, wrongMsg }.
+export const fillInTheBlanks = {
+  type: 'fillblanks',
+  sentences: [
+    { before: 'The structure of DNA was described as a', after: 'helix.', answer: 'double',
+      hints: ['It has two strands twisted together — a double…', 'Two spiralling strands. Double…'] },
+    { before: 'Watson and Crick published their DNA model in', after: '.', answer: '1953',
+      hints: ['Mid-20th century, after WWII.', 'Two years before the NHS turned seven.'] },
+    { before: 'Understanding DNA helped explain how diseases can be', after: 'through families.', answer: 'inherited',
+      hints: ['Passed from parent to child — like traits and conditions.', 'Think: family history of cancer, heart disease…'] },
+  ],
+  correctMsg: 'Good. DNA → double helix → 1953 → inherited disease. That chain scores marks.',
+  wrongMsg: 'Look back at the DNA content and try again with the exact term.',
+}
+
+// SwipeSort (History) — swipe items into one of two columns.
+// Shape: { columns:[{label,color,colorRgb,bg}], items:[{label,col,explanation}], label, explanation }.
+export const swipeSort = {
+  type: 'naturalSupernaturalSwipe',
+  label: '1348 vs 1665',
+  columns: [
+    { label: 'Changed by 1665', color: '#9A4820', colorRgb: '154,72,32', bg: 'rgba(154,72,32,.07)' },
+    { label: 'Still similar', color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)' },
+  ],
+  items: [
+    { label: 'Death bills counted deaths', col: 0, explanation: 'Officials tracked the crisis better.' },
+    { label: 'Watchmen guarded houses', col: 0, explanation: 'Government acted in a more organised way.' },
+    { label: 'People blamed miasma', col: 1, explanation: 'Bad air was still a major explanation.' },
+    { label: 'People prayed', col: 1, explanation: 'Religious ideas continued.' },
+    { label: 'No germ theory', col: 1, explanation: 'The real cause was still unknown.' },
+  ],
+  explanation: 'The Great Plague shows better public action, but not modern medicine.',
+}
+
+// InteractiveCollectionExplorer (History) — themed sheets with staged reveals.
+// Shape: { title, description, backgroundImage, items:[{id,x,y,label,reveals:[{text}]}], synthesis }.
+export const collectionExplorer = {
+  title: 'Staying well in 1400',
+  description: 'Tap each object to find out how people tried to stay healthy — before anyone knew about germs.',
+  backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
+  items: [
+    {
+      id: 'regimen-sanitatis', x: 30, y: 42, label: "A physician's lifestyle chart",
+      reveals: [
+        { text: "A wealthy merchant keeps a written chart pinned to his wall — instructions for exactly how to eat, sleep and bathe." },
+        { text: "This is a Regimen Sanitatis: a physician's guide to diet, exercise, sleep and bathing, written to keep a patient's humours in balance." },
+        { text: "Prevention followed the same logic as treatment. If the Four Humours explained illness, keeping them balanced through daily habits should stop illness before it started." },
+      ],
+    },
+    {
+      id: 'purifying-air', x: 68, y: 60, label: 'A bunch of dried herbs',
+      reveals: [
+        { text: "A woman walking through town presses a small bunch of dried flowers to her nose." },
+        { text: 'This is "purifying the air" — carrying sweet-smelling herbs and ringing bells to keep the air moving, both believed to protect against miasma.' },
+        { text: "If bad-smelling air carried disease, then good smells and moving air should push it away. A direct application of miasma theory to daily life." },
+      ],
+    },
+  ],
+  synthesis: {
+    heading: 'Prevention followed belief',
+    points: [
+      'A Regimen Sanitatis followed the Four Humours — diet, sleep and bathing kept the body in balance.',
+      'Sweet herbs and ringing bells followed miasma theory — pushing away the bad air believed to carry disease.',
+    ],
+    examTakeaway: 'Every prevention method connects back to a belief about the cause of disease. The belief determined the prevention.',
+  },
+}
+
+// MedievalDiagnosisScene (History) — tappable four-explanations SVG scene.
+// Shape: { theories:[{id}] } — ids map to the component's built-in zones.
+export const medievalDiagnosisScene = {
+  theories: [{ id: 'god-sin' }, { id: 'four-humours' }, { id: 'miasma' }, { id: 'astrology' }],
+}
+
+// QuickRecallScreen (History) — rapid-fire choice retrieval.
+// Shape: { chapterTitle, questions:[{type:'choice', question, options:[str], correct, explanation}] }.
+export const quickRecall = {
+  chapterNum: 5,
+  chapterTitle: 'Great Plague retrieval',
+  questions: [
+    { type: 'choice', question: 'What changed most between 1348 and 1665?',
+      options: ['Government organisation', 'Knowledge of bacteria', 'Use of antibiotics', 'Vaccination against plague'],
+      correct: 0, explanation: 'Government acted in a more organised way in 1665.' },
+    { type: 'choice', question: 'What stayed similar?',
+      options: ['Belief in miasma and religious causes', 'Use of germ theory', 'Modern hospitals', 'Antibiotic treatment'],
+      correct: 0, explanation: 'People still blamed bad air and God’s punishment.' },
+    { type: 'choice', question: 'What is the best judgement about 1665?',
+      options: ['More organised, still not medically modern', 'Fully modern medicine', 'No change at all', 'Germ theory in action'],
+      correct: 0, explanation: 'In 1665, public action improved before people knew the real cause.' },
+  ],
+}
+
+// ExaminerExplainsScreen (History) — how-examiners-think reveal.
+// Shape: { opening, tips:[{heading, body}], closing } (passed as examinerExplains prop).
+export const examinerExplains = {
+  opening: 'Great Plague answers compare two outbreaks.',
+  tips: [
+    { heading: 'Say what was similar', body: 'People in both years blamed bad air and God.' },
+    { heading: 'Say what changed', body: 'In 1665, officials used watchmen and death records.' },
+    { heading: 'Keep the judgement clear', body: 'Public action improved. Medical ideas stayed weak.' },
+  ],
+  closing: 'Compare beliefs and actions.',
+}
+
+// UnifiedQuestionScreen (History) — single full-screen choice question.
+// Shape: { question, type, options:[str], correct, hint, explanation }.
+export const unifiedQuestion = {
+  question: 'What did most people in 1348 believe caused the Black Death?',
+  type: 'choice',
+  options: ['God’s punishment and bad air', 'Bacteria spread by fleas', 'Contaminated drinking water', 'A virus passed by touch'],
+  correct: 0,
+  hint: 'Think about what people could and could not know in 1348.',
+  explanation: 'Without germ theory, illness was explained through religion (God’s punishment) and miasma (bad air).',
+}
+
+// TieredQuizScreen (History) — pick a difficulty tier, then answer its questions.
+// Shape: { tiers:[{emoji, label, questions:[{q, type, options:[str], correct, explanation}]}] }.
+export const tieredQuiz = {
+  tiers: [
+    {
+      emoji: '🟢', label: 'Warm up',
+      questions: [
+        { q: 'Who did people in 1348 often blame for the plague?', type: 'choice',
+          options: ['God', 'Bacteria', 'Viruses', 'Doctors'], correct: 0,
+          explanation: 'Religious explanation dominated in 1348.' },
+      ],
+    },
+    {
+      emoji: '🔵', label: 'Exam standard',
+      questions: [
+        { q: 'What was the biggest change in the response to plague by 1665?', type: 'choice',
+          options: ['More organised government action', 'Use of antibiotics', 'Germ theory', 'Vaccination'], correct: 0,
+          explanation: 'Watchmen and death bills show more organised public action.' },
+      ],
+    },
+  ],
+}
+
+// WeakSpotRecovery (History) — behavioural intervention screen.
+// Shape: { title, explanation, meta, recoveryQuizId, cta, skipText }.
+export const weakSpotRecovery = {
+  title: 'Let’s close a gap',
+  explanation: 'You’ve slipped on miasma theory a couple of times. A short recovery quiz will lock it back in before you move on.',
+  meta: 'Miasma theory · 3 questions',
+  recoveryQuizId: 'history-miasma-recovery-1',
+  cta: 'Fix this weak spot',
+  skipText: 'Skip for now',
+}
+
+// RecoveryQuizPlayer (History) — looks up a real recovery quiz by id.
+// Shape: a valid key from src/data/recoveryQuizzes.js.
+export const recoveryQuizId = 'history-four-humours-recovery-1'
+
+// KeyPoint (History) — inline rule takeaway block.
+// Shape: { text, emphasis:[word] }.
+export const keyPoint = {
+  text: 'The rule was simple: treat every illness with its opposite quality.',
+  emphasis: ['opposite'],
+}
+
+// WorkedExample (History) — inline case → apply → result block.
+// Shape: { chips:[str], scenario, working, result }.
+export const workedExample = {
+  chips: ['Fever', 'Red face', 'Sweating'],
+  scenario: 'A patient arrives with a fever, a red face and heavy sweating.',
+  working: 'Heat and wetness point to one humour in excess: too much blood, which is hot and wet.',
+  result: 'So the cure is to cool and dry the body — the opposite qualities.',
+}
