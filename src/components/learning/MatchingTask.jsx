@@ -14,6 +14,15 @@ const ROUND_MAX = 6
 const CONTENT_MAX_WIDTH = 430
 const ANCHOR_SIZE = SPACING.micro + 2
 
+const DEFAULT_COPY = {
+  title: 'Knowledge check',
+  instruction: 'Choose a term, then choose its matching description.',
+  leftLabel: 'Term',
+  rightLabel: 'Match',
+  incorrect: 'Not quite — think about the connection.',
+  takeaway: 'Each idea led to a response that seemed logical at the time.',
+}
+
 // Fisher-Yates shuffle
 function shuffle(arr) {
   const a = [...arr]
@@ -59,18 +68,18 @@ export default function MatchingTask({ screen, subject, onComplete }) {
   const allPairs = screen.pairs || []
   const subjectKey = subject || screen.subject || 'History'
   const bgImage = screen.backgroundImage || ''
-  const leftLabel = screen.leftLabel || 'Belief'
-  const rightLabel = screen.rightLabel || 'Response'
+  const leftLabel = screen.leftLabel || DEFAULT_COPY.leftLabel
+  const rightLabel = screen.rightLabel || DEFAULT_COPY.rightLabel
 
   const theme = SUBJECTS[subjectKey] || SUBJECTS.History
   const accent = theme.accent
   const accentRgb = theme.accentRgb
 
   const cardRest = GENERAL.surfaceTint
-  const cardLocked = `rgba(${accentRgb},0.09)`
+  const cardRecent = `rgba(${accentRgb},0.11)`
   const cardSelected = `rgba(${accentRgb},0.12)`
-  const borderRest = GENERAL.line.soft
-  const borderLocked = `rgba(${accentRgb},0.34)`
+  const borderRest = GENERAL.line.faint
+  const borderRecent = `rgba(${accentRgb},0.42)`
   const borderSelected = `rgba(${accentRgb},0.62)`
   const wrongBorder = `rgba(${GENERAL.feedbackIncorrectRgb},0.72)`
 
@@ -84,14 +93,16 @@ export default function MatchingTask({ screen, subject, onComplete }) {
   const [shuffledAnswers, setShuffledAnswers] = useState([])
   const [selectedTermId, setSelectedTermId] = useState(null)
   const [lockedPairIds, setLockedPairIds] = useState([])
+  const [recentMatchedId, setRecentMatchedId] = useState(null)
   const [wrongTermId, setWrongTermId] = useState(null)
   const [wrongAnswerId, setWrongAnswerId] = useState(null)
   const [feedback, setFeedback] = useState('')
-  const [lines, setLines] = useState([])
+  const [paths, setPaths] = useState([])
 
   const panelRef = useRef(null)
   const termRefs = useRef({})
   const answerRefs = useRef({})
+  const recentTimerRef = useRef(null)
 
   const currentRound = rounds[roundIdx] || []
   const isLastRound = roundIdx === rounds.length - 1
@@ -103,22 +114,27 @@ export default function MatchingTask({ screen, subject, onComplete }) {
     setShuffledAnswers(shuffle(currentRound.map(pair => ({ id: pair.id, text: pair.answer }))))
     setLockedPairIds([])
     setSelectedTermId(null)
-    setLines([])
+    setPaths([])
     setFeedback('')
+    setRecentMatchedId(null)
     setWrongTermId(null)
     setWrongAnswerId(null)
     termRefs.current = {}
     answerRefs.current = {}
+
+    return () => {
+      if (recentTimerRef.current) window.clearTimeout(recentTimerRef.current)
+    }
   }, [roundIdx])
 
-  // Measure the real rendered card positions so connectors remain responsive to
+  // Measure real rendered card positions so connectors remain responsive to
   // text wrapping, viewport changes and different pair counts.
-  const computeLines = useCallback((locked) => {
+  const computePaths = useCallback((locked) => {
     const panel = panelRef.current
     if (!panel) return
 
     const panelRect = panel.getBoundingClientRect()
-    const newLines = []
+    const nextPaths = []
 
     for (const id of locked) {
       const termEl = termRefs.current[id]
@@ -127,20 +143,23 @@ export default function MatchingTask({ screen, subject, onComplete }) {
 
       const termRect = termEl.getBoundingClientRect()
       const answerRect = answerEl.getBoundingClientRect()
-      newLines.push({
+      const x1 = termRect.right - panelRect.left
+      const y1 = termRect.top + termRect.height / 2 - panelRect.top
+      const x2 = answerRect.left - panelRect.left
+      const y2 = answerRect.top + answerRect.height / 2 - panelRect.top
+      const curve = Math.max((x2 - x1) * 0.46, SPACING.micro)
+
+      nextPaths.push({
         id,
-        x1: termRect.right - panelRect.left,
-        y1: termRect.top + termRect.height / 2 - panelRect.top,
-        x2: answerRect.left - panelRect.left,
-        y2: answerRect.top + answerRect.height / 2 - panelRect.top,
+        d: `M ${x1} ${y1} C ${x1 + curve} ${y1}, ${x2 - curve} ${y2}, ${x2} ${y2}`,
       })
     }
 
-    setLines(newLines)
+    setPaths(nextPaths)
   }, [])
 
   useEffect(() => {
-    const handler = () => computeLines(lockedPairIds)
+    const handler = () => computePaths(lockedPairIds)
     window.addEventListener('resize', handler)
 
     const panel = panelRef.current
@@ -153,7 +172,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
       window.removeEventListener('resize', handler)
       observer?.disconnect()
     }
-  }, [lockedPairIds, computeLines])
+  }, [lockedPairIds, computePaths])
 
   function handleTermSelect(id) {
     if (lockedPairIds.includes(id) || wrongTermId) return
@@ -171,16 +190,19 @@ export default function MatchingTask({ screen, subject, onComplete }) {
       setLockedPairIds(newLocked)
       setSelectedTermId(null)
       setFeedback('')
+      setRecentMatchedId(pair.id)
 
-      requestAnimationFrame(() => requestAnimationFrame(() => computeLines(newLocked)))
+      if (recentTimerRef.current) window.clearTimeout(recentTimerRef.current)
+      recentTimerRef.current = window.setTimeout(
+        () => setRecentMatchedId(null),
+        GENERAL.cinematic.motion.attentionDelayMs,
+      )
 
-      if (newLocked.length === currentRound.length && isLastRound) {
-        setTimeout(() => onComplete?.(), GENERAL.cinematic.motion.ctaDelayMs)
-      }
+      requestAnimationFrame(() => requestAnimationFrame(() => computePaths(newLocked)))
     } else {
       setWrongTermId(selectedTermId)
       setWrongAnswerId(answerId)
-      setFeedback('Not quite — think about the connection.')
+      setFeedback(screen.incorrectFeedback || DEFAULT_COPY.incorrect)
       logWrongAnswer({
         subject: subjectKey,
         topic: pair.term,
@@ -194,7 +216,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
         setWrongTermId(null)
         setWrongAnswerId(null)
         setSelectedTermId(null)
-      }, 420)
+      }, Number.parseInt(MOTION.duration.slow, 10))
     }
   }
 
@@ -204,7 +226,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
   const termType = isCompactRound ? TYPE.bodySmall : TYPE.bodyStrong
   const answerType = isCompactRound ? TYPE.caption : TYPE.bodySmall
 
-  const anchorStyle = (side, isActive, isLocked, isWrong) => ({
+  const anchorStyle = (side, isActive, isLocked, isRecent, isWrong) => ({
     position: 'absolute',
     top: '50%',
     [side]: -(ANCHOR_SIZE / 2),
@@ -214,22 +236,26 @@ export default function MatchingTask({ screen, subject, onComplete }) {
     transform: 'translateY(-50%)',
     background: isWrong
       ? GENERAL.feedbackIncorrect
-      : isLocked || isActive
+      : isRecent || isActive
         ? accent
-        : GENERAL.backgroundSurface,
+        : isLocked
+          ? `rgba(${accentRgb},0.58)`
+          : GENERAL.backgroundSurface,
     border: `${COMPONENT_SIZE.hairline}px solid ${
       isWrong
         ? GENERAL.feedbackIncorrect
-        : isLocked || isActive
+        : isRecent || isActive
           ? accent
-          : GENERAL.ring.rest
+          : isLocked
+            ? `rgba(${accentRgb},0.42)`
+            : GENERAL.ring.rest
     }`,
     boxShadow: isActive && !isLocked
       ? `0 0 14px rgba(${accentRgb},0.38)`
       : 'none',
     zIndex: 3,
     animation: isLocked ? 'mt-anchor-settle 360ms ease both' : 'none',
-    transition: `background ${MOTION.duration.fast} ease, border-color ${MOTION.duration.fast} ease, box-shadow ${MOTION.duration.fast} ease`,
+    transition: `background ${MOTION.duration.fast} ${MOTION.easing.standard}, border-color ${MOTION.duration.fast} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}`,
   })
 
   return (
@@ -287,10 +313,10 @@ export default function MatchingTask({ screen, subject, onComplete }) {
             ...HEADING_LAYOUT.screenTitle,
             color: GENERAL.cinematic.textPrimary,
             marginBottom: SPACING.micro,
-            animation: 'mt-fade-in 380ms ease both',
+            animation: `mt-fade-in ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
           }}
         >
-          {screen.title || 'Knowledge check'}
+          {screen.title || DEFAULT_COPY.title}
         </div>
 
         <div
@@ -300,16 +326,19 @@ export default function MatchingTask({ screen, subject, onComplete }) {
             color: GENERAL.cinematic.textSecondary,
             maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
             marginBottom: SPACING.standard,
-            animation: 'mt-fade-in 380ms ease 50ms both',
+            animation: `mt-fade-in ${MOTION.duration.slow} ${MOTION.easing.standard} 50ms both`,
           }}
         >
-          {screen.instruction || 'Choose a term, then choose its matching description.'}
+          {screen.instruction || DEFAULT_COPY.instruction}
         </div>
 
         {rounds.length > 1 && (
           <div
             className="mt-motion"
-            style={{ marginBottom: SPACING.compact, animation: 'mt-fade-in 380ms ease 70ms both' }}
+            style={{
+              marginBottom: SPACING.compact,
+              animation: `mt-fade-in ${MOTION.duration.slow} ${MOTION.easing.standard} 70ms both`,
+            }}
           >
             <SequenceProgress
               total={rounds.length}
@@ -328,9 +357,20 @@ export default function MatchingTask({ screen, subject, onComplete }) {
           style={{
             position: 'relative',
             width: '100%',
-            animation: 'mt-fade-in 380ms ease 90ms both',
+            animation: `mt-fade-in ${MOTION.duration.slow} ${MOTION.easing.standard} 90ms both`,
           }}
         >
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: `-${SPACING.standard}px -${SPACING.compact}px`,
+              background: `radial-gradient(ellipse at center, rgba(8,9,13,0.38), rgba(8,9,13,0.08) 72%)`,
+              pointerEvents: 'none',
+              zIndex: 0,
+            }}
+          />
+
           <svg
             aria-hidden="true"
             style={{
@@ -343,22 +383,26 @@ export default function MatchingTask({ screen, subject, onComplete }) {
               zIndex: 1,
             }}
           >
-            {lines.map(line => (
-              <line
-                key={line.id}
-                x1={line.x1}
-                y1={line.y1}
-                x2={line.x2}
-                y2={line.y2}
-                pathLength="1"
-                stroke={`rgba(${accentRgb},0.74)`}
-                strokeWidth={COMPONENT_SIZE.focusRing}
-                strokeLinecap="round"
-                strokeDasharray="1"
-                className="mt-motion"
-                style={{ animation: 'mt-thread-draw 440ms ease both' }}
-              />
-            ))}
+            {paths.map(path => {
+              const isRecent = path.id === recentMatchedId
+              return (
+                <path
+                  key={path.id}
+                  d={path.d}
+                  pathLength="1"
+                  fill="none"
+                  stroke={`rgba(${accentRgb},${isRecent ? 0.82 : 0.38})`}
+                  strokeWidth={isRecent ? COMPONENT_SIZE.focusRing : COMPONENT_SIZE.hairline}
+                  strokeLinecap="round"
+                  strokeDasharray="1"
+                  className="mt-motion"
+                  style={{
+                    animation: `mt-thread-draw ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+                    transition: `stroke ${MOTION.duration.standard} ${MOTION.easing.standard}, stroke-width ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+                  }}
+                />
+              )
+            })}
           </svg>
 
           <div style={{
@@ -366,6 +410,8 @@ export default function MatchingTask({ screen, subject, onComplete }) {
             gridTemplateColumns: '1fr 1fr',
             columnGap: SPACING.standard,
             marginBottom: SPACING.compact,
+            position: 'relative',
+            zIndex: 2,
           }}>
             {[leftLabel, rightLabel].map(label => (
               <div key={label} style={{
@@ -382,11 +428,13 @@ export default function MatchingTask({ screen, subject, onComplete }) {
             gridTemplateColumns: '1fr 1fr',
             columnGap: SPACING.standard,
             position: 'relative',
+            zIndex: 2,
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: rowGap }}>
               {currentRound.map(pair => {
                 const isSelected = selectedTermId === pair.id
                 const isLocked = lockedPairIds.includes(pair.id)
+                const isRecent = recentMatchedId === pair.id
                 const isWrong = wrongTermId === pair.id
                 const isDeemphasised = selectedTermId && !isSelected && !isLocked
 
@@ -403,20 +451,20 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                       minHeight: Math.max(cardMinHeight, COMPONENT_SIZE.touchTarget),
                       padding: `${SPACING.micro + 4}px ${SPACING.micro + 2}px`,
                       borderRadius: RADII.medium,
-                      background: isSelected ? cardSelected : isLocked ? cardLocked : cardRest,
+                      background: isSelected ? cardSelected : isRecent ? cardRecent : cardRest,
                       border: `${COMPONENT_SIZE.hairline}px solid ${
-                        isWrong ? wrongBorder : isSelected ? borderSelected : isLocked ? borderLocked : borderRest
+                        isWrong ? wrongBorder : isSelected ? borderSelected : isRecent ? borderRecent : borderRest
                       }`,
                       boxShadow: isSelected && !isLocked
                         ? `0 0 0 ${COMPONENT_SIZE.hairline}px rgba(${accentRgb},0.12), 0 0 18px rgba(${accentRgb},0.14)`
                         : 'none',
-                      transform: isSelected && !isLocked ? 'translateY(-1px)' : 'none',
-                      opacity: isDeemphasised ? 0.68 : isLocked ? 0.78 : 1,
+                      transform: isSelected && !isLocked ? `scale(${MOTION.scale.subtle})` : 'none',
+                      opacity: isDeemphasised ? 0.68 : isLocked && !isRecent ? 0.72 : 1,
                       cursor: isLocked ? 'default' : 'pointer',
                       textAlign: 'left',
                       color: GENERAL.cinematic.textPrimary,
-                      transition: `border-color ${MOTION.duration.fast} ease, background ${MOTION.duration.fast} ease, box-shadow ${MOTION.duration.fast} ease, transform ${MOTION.duration.fast} ease, opacity ${MOTION.duration.fast} ease`,
-                      animation: isWrong ? 'mt-shake 380ms ease' : 'none',
+                      transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}, background ${MOTION.duration.fast} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}, transform ${MOTION.duration.fast} ${MOTION.easing.standard}, opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                      animation: isWrong ? `mt-shake ${MOTION.duration.slow} ${MOTION.easing.standard}` : 'none',
                       position: 'relative',
                       zIndex: 2,
                       WebkitTapHighlightColor: 'transparent',
@@ -426,7 +474,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                     {pair.term}
                     <span
                       aria-hidden="true"
-                      style={anchorStyle('right', isSelected, isLocked, isWrong)}
+                      style={anchorStyle('right', isSelected, isLocked, isRecent, isWrong)}
                     />
                   </button>
                 )
@@ -436,6 +484,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: rowGap }}>
               {shuffledAnswers.map(answer => {
                 const isLocked = lockedPairIds.includes(answer.id)
+                const isRecent = recentMatchedId === answer.id
                 const isWrong = wrongAnswerId === answer.id
                 const isAvailable = Boolean(selectedTermId) && !isLocked
 
@@ -451,17 +500,17 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                       minHeight: Math.max(cardMinHeight, COMPONENT_SIZE.touchTarget),
                       padding: `${SPACING.micro + 4}px ${SPACING.micro + 2}px`,
                       borderRadius: RADII.medium,
-                      background: isLocked ? cardLocked : cardRest,
-                      border: `${COMPONENT_SIZE.hairline}px solid ${isWrong ? wrongBorder : isLocked ? borderLocked : borderRest}`,
+                      background: isRecent ? cardRecent : cardRest,
+                      border: `${COMPONENT_SIZE.hairline}px solid ${isWrong ? wrongBorder : isRecent ? borderRecent : borderRest}`,
                       boxShadow: isAvailable && !isWrong
                         ? `inset ${COMPONENT_SIZE.accentRail}px 0 0 rgba(${accentRgb},0.34)`
                         : 'none',
                       cursor: isLocked ? 'default' : selectedTermId ? 'pointer' : 'default',
                       textAlign: 'left',
                       color: GENERAL.cinematic.textPrimary,
-                      opacity: isLocked ? 0.78 : selectedTermId ? 1 : 0.84,
-                      transition: `border-color ${MOTION.duration.fast} ease, background ${MOTION.duration.fast} ease, box-shadow ${MOTION.duration.fast} ease, opacity ${MOTION.duration.fast} ease`,
-                      animation: isWrong ? 'mt-shake 380ms ease' : 'none',
+                      opacity: isLocked && !isRecent ? 0.72 : selectedTermId ? 1 : 0.84,
+                      transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}, background ${MOTION.duration.fast} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}, opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                      animation: isWrong ? `mt-shake ${MOTION.duration.slow} ${MOTION.easing.standard}` : 'none',
                       position: 'relative',
                       zIndex: 2,
                       WebkitTapHighlightColor: 'transparent',
@@ -471,7 +520,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                     {answer.text}
                     <span
                       aria-hidden="true"
-                      style={anchorStyle('left', isAvailable, isLocked, isWrong)}
+                      style={anchorStyle('left', isAvailable, isLocked, isRecent, isWrong)}
                     />
                   </button>
                 )
@@ -495,12 +544,29 @@ export default function MatchingTask({ screen, subject, onComplete }) {
           {feedback}
         </div>
 
-        {roundComplete && !isLastRound && (
-          <ContinueCTA
-            onClick={() => setRoundIdx(round => round + 1)}
-            accent={accent}
-            style={{ marginTop: SPACING.compact, animation: 'mt-fade-in 360ms ease both' }}
-          />
+        {roundComplete && (
+          <div
+            className="mt-motion"
+            style={{
+              marginTop: SPACING.micro,
+              animation: `mt-fade-in ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+            }}
+          >
+            {isLastRound && (
+              <div style={{
+                ...TYPE.bodyStrong,
+                color: GENERAL.cinematic.textFact,
+                marginBottom: SPACING.compact,
+                maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
+              }}>
+                {screen.completionTakeaway || DEFAULT_COPY.takeaway}
+              </div>
+            )}
+            <ContinueCTA
+              onClick={isLastRound ? onComplete : () => setRoundIdx(round => round + 1)}
+              accent={accent}
+            />
+          </div>
         )}
       </div>
     </CinematicShell>
