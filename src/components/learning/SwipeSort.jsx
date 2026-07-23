@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react'
-import { SUBJECTS } from '../../constants/subjects.js'
+import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
 // CinematicShell used here because the split full-bleed background images and swipe gesture
 // zone must reach all four viewport edges; InteractionShell's padding would clip the
 // image split and break gesture hit areas near the screen edges.
@@ -10,6 +10,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { ScreenTitle } from '../core/ScreenText.jsx'
 
 const SWIPE_THRESHOLD = 72
+const APP_BACKGROUND_RGB = hexToRgb(GENERAL.backgroundApp)
 const BACKGROUND_BRIGHTNESS = {
   intro: 0.94,
   gameLeft: 0.96,
@@ -110,12 +111,12 @@ function backgroundLayer(leftCol, rightCol, { focusSide = null, intro = false } 
           transition: 'opacity 0.26s ease, filter 0.26s ease',
         }} />
       </div>
-      <div style={{ position: 'absolute', inset: 0, background: intro ? 'rgba(5,6,10,0.38)' : 'rgba(5,6,10,0.20)', zIndex: 1 }} />
+      <div style={{ position: 'absolute', inset: 0, background: intro ? `rgba(${APP_BACKGROUND_RGB},0.38)` : `rgba(${APP_BACKGROUND_RGB},0.20)`, zIndex: 1 }} />
       <div style={{
         position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
         background: intro
-          ? 'radial-gradient(ellipse 86% 70% at 50% 48%, transparent 32%, rgba(5,6,10,0.58) 100%)'
-          : 'linear-gradient(180deg, rgba(5,6,10,0.46) 0%, rgba(5,6,10,0.08) 35%, rgba(5,6,10,0.14) 66%, rgba(5,6,10,0.52) 100%)',
+          ? `radial-gradient(ellipse 86% 70% at 50% 48%, transparent 32%, rgba(${APP_BACKGROUND_RGB},0.58) 100%)`
+          : `linear-gradient(180deg, rgba(${APP_BACKGROUND_RGB},0.46) 0%, rgba(${APP_BACKGROUND_RGB},0.08) 35%, rgba(${APP_BACKGROUND_RGB},0.14) 66%, rgba(${APP_BACKGROUND_RGB},0.52) 100%)`,
       }} />
       <div style={{
         position: 'absolute', top: 0, bottom: 0, left: '50%',
@@ -129,8 +130,9 @@ function backgroundLayer(leftCol, rightCol, { focusSide = null, intro = false } 
 export default function SwipeSort({ block, subject, onComplete }) {
   injectStyles()
 
-  const accent    = SUBJECTS[subject]?.accent    ?? '#D69B45'
-  const accentRgb = SUBJECTS[subject]?.accentRgb ?? '214,155,69'
+  const subjectData = SUBJECTS[subject] || SUBJECTS.History
+  const { accent, accentRgb } = subjectData
+  const neutralRgb = hexToRgb(GENERAL.slate)
 
   const {
     columns = [],
@@ -171,7 +173,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
   const remaining  = totalCards - cardIdx
   const cur        = items[cardIdx] ?? null
 
-  const leftCol  = columns[0] ?? { label: 'Supernatural\nGod, religion or magic', color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)' }
+  const leftCol  = columns[0] ?? { label: 'Supernatural\nGod, religion or magic', color: GENERAL.slate, colorRgb: neutralRgb, bg: `rgba(${neutralRgb},.07)` }
   const rightCol = columns[1] ?? { label: 'Rational\nObservation, nature or logic', color: accent, colorRgb: accentRgb, bg: `rgba(${accentRgb},.07)` }
 
   const leftText = splitLabel(leftCol)
@@ -275,7 +277,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
     : flashCol === 'wrong'
     ? '0 0 44px rgba(160,85,15,0.58), 0 0 80px rgba(160,85,15,0.18), 0 14px 48px rgba(0,0,0,0.70)'
     : dragX < -SWIPE_THRESHOLD
-    ? `0 0 42px rgba(${leftCol.colorRgb ?? '168,144,112'},0.38), 0 14px 48px rgba(0,0,0,0.62)`
+    ? `0 0 42px rgba(${leftCol.colorRgb ?? neutralRgb},0.38), 0 14px 48px rgba(0,0,0,0.62)`
     : dragX > SWIPE_THRESHOLD
     ? `0 0 42px rgba(${rightCol.colorRgb ?? accentRgb},0.38), 0 14px 48px rgba(0,0,0,0.62)`
     : '0 14px 48px rgba(0,0,0,0.58)'
@@ -283,7 +285,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
   if (phase === 'intro') {
     return (
       <CinematicShell style={{
-        background: '#05060A',
+        background: GENERAL.backgroundApp,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -317,14 +319,14 @@ export default function SwipeSort({ block, subject, onComplete }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, width: '100%', marginBottom: 34 }}>
             <div style={{
               background: 'rgba(10,12,18,0.54)',
-              border: `1px solid rgba(${leftCol.colorRgb ?? '168,144,112'},0.34)`,
+              border: `1px solid rgba(${leftCol.colorRgb ?? neutralRgb},0.34)`,
               borderRadius: 18,
               padding: '18px 14px',
               textAlign: 'center',
               backdropFilter: 'blur(8px)',
               animation: 'ss-intro-left 480ms cubic-bezier(.22,1,.36,1) 90ms both',
             }}>
-              <div style={{ ...TYPE.metadata, color: leftCol.color ?? '#A89070', marginBottom: 8 }}>{leftText.title}</div>
+              <div style={{ ...TYPE.metadata, color: leftCol.color ?? GENERAL.slate, marginBottom: 8 }}>{leftText.title}</div>
               <div style={{ ...TYPE.caption, color: GENERAL.slate }}>{leftText.detail}</div>
             </div>
             <div style={{
@@ -450,12 +452,12 @@ export default function SwipeSort({ block, subject, onComplete }) {
           style={{
             position: 'absolute', left: 18, bottom: 'calc(env(safe-area-inset-bottom, 0px) + 30px)',
             width: 'calc(50% - 28px)', minHeight: 82, zIndex: 5,
-            background: dragSide === 0 ? `rgba(${leftCol.colorRgb ?? '168,144,112'},0.18)` : 'rgba(8,10,16,0.54)',
-            border: `1px solid rgba(${leftCol.colorRgb ?? '168,144,112'},${dragSide === 0 ? 0.50 : 0.26})`,
+            background: dragSide === 0 ? `rgba(${leftCol.colorRgb ?? neutralRgb},0.18)` : 'rgba(8,10,16,0.54)',
+            border: `1px solid rgba(${leftCol.colorRgb ?? neutralRgb},${dragSide === 0 ? 0.50 : 0.26})`,
             borderRadius: 20,
-            color: leftCol.color ?? '#A89070',
+            color: leftCol.color ?? GENERAL.slate,
             cursor: 'pointer',
-            boxShadow: dragSide === 0 ? `0 0 30px rgba(${leftCol.colorRgb ?? '168,144,112'},0.20)` : '0 12px 30px rgba(0,0,0,0.28)',
+            boxShadow: dragSide === 0 ? `0 0 30px rgba(${leftCol.colorRgb ?? neutralRgb},0.20)` : '0 12px 30px rgba(0,0,0,0.28)',
             backdropFilter: 'blur(10px)',
             transition: 'background 0.2s, border-color 0.2s, box-shadow 0.2s',
             textAlign: 'center',
