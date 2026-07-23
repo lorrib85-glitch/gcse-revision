@@ -89,6 +89,15 @@ export const GENERAL = {
     imageFilterFull:  'brightness(2.5)',
     imageFilterUpper: 'brightness(1.12) saturate(1.04)',
     actionShadow:  '0 1px 16px rgba(0,0,0,0.60)',
+
+    // Completion moments use a quieter image treatment than chapter openers.
+    // The image establishes subject/module atmosphere; the overlay protects
+    // the completion hierarchy and keeps the lower action area calm.
+    completionBackdropOpacity: 0.42,
+    completionBackdropFilter: 'saturate(0.82) brightness(0.62)',
+    completionOverlay: 'linear-gradient(180deg, rgba(8,9,13,0.36) 0%, rgba(8,9,13,0.80) 38%, rgba(8,9,13,0.98) 72%, #08090D 100%)',
+    completionGlowOpacity: 0.36,
+
     motion: {
       fast: '420ms',
       standard: '500ms',
