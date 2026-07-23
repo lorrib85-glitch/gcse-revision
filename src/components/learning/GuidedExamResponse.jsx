@@ -10,17 +10,43 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { logExamTechnique, getExamTechniquePatterns } from '../../unifiedWeaknessTracker.js'
 import BackButton from '../core/BackButton.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
-import { ScreenTitle } from '../core/ScreenText.jsx'
+import ExamPrompt from '../core/ExamPrompt.jsx'
 
 const RECURRING_PATTERN_THRESHOLD = 3
+const SUPPORTED_SUPPORT_MODES = new Set(['guided', 'light', 'none'])
+
+const DEFAULT_LABELS = {
+  practiceHeader: 'Exam practice',
+  writingHeader: 'Write your response',
+  feedbackHeader: 'Your feedback',
+  introKicker: 'Your turn',
+  introBody: 'Build your response section by section. You’ll get an estimated mark and clear feedback.',
+  start: 'Start my response',
+  submit: 'Submit my response',
+  marking: 'Marking your response…',
+  estimatedStatus: 'Estimated',
+  estimatedMark: 'Estimated mark',
+  sectionFeedback: 'Section by section',
+  improvements: 'Do this to gain more marks',
+  rewrite: 'Try it like this',
+  noticed: 'Noticed',
+  hint: 'Need a hint?',
+  anotherHint: 'Show another hint',
+  hideHints: 'Hide hints',
+  continue: 'Continue',
+}
 
 const TECHNIQUE_LABELS = {
-  missingExample: 'making a claim without backing it up with a specific example',
-  noNamedMechanism: 'naming a method without explaining how it actually worked',
-  onlyOneIdeaDeveloped: 'developing one idea well but leaving the other underdeveloped',
-  vagueLanguage: 'reaching for vague phrases instead of precise detail',
+  missingExample: 'making a claim without supporting it with evidence',
+  noNamedMechanism: 'naming a process or factor without explaining how it works',
+  onlyOneIdeaDeveloped: 'developing one required point but leaving another underdeveloped',
+  vagueLanguage: 'using vague wording instead of precise subject vocabulary',
   repeatsQuestion: 'restating the question instead of answering it',
-  noSpecificDetail: 'leaving out the named, specific detail examiners reward',
+  noSpecificDetail: 'leaving out the precise detail the mark scheme rewards',
+  methodNotShown: 'jumping to an answer without showing enough method',
+  calculationSlip: 'making a calculation, substitution, unit or rounding slip',
+  weakAnalysisLink: 'using evidence without explaining what it shows',
+  missingEvaluation: 'giving an argument without weighing it up or reaching a judgement',
 }
 
 function hasWritten(text, starter) {
@@ -32,8 +58,7 @@ function renderFullScreen(node) {
   if (typeof document === 'undefined') return node
 
   // The review lab deliberately contains fixed full-screen components inside its
-  // virtual mobile viewport. Portalling to document.body would escape that frame
-  // and cover the lab toolbar, so render in place only inside the review preview.
+  // virtual mobile viewport. Portalling to document.body would escape that frame.
   const isReviewPreview = document.querySelector('[data-review-preview-mode]')
   return isReviewPreview ? node : createPortal(node, document.body)
 }
@@ -51,6 +76,36 @@ function useReducedMotion() {
   }, [])
 
   return reduced
+}
+
+function titleCase(value) {
+  return String(value || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
+
+function resolveSubject(rawSubject, suppliedLabel) {
+  const value = String(rawSubject || '').trim()
+  const key = Object.keys(SUBJECTS).find(subject => subject.toLowerCase() === value.toLowerCase()) || null
+
+  return {
+    label: suppliedLabel || key || titleCase(value) || null,
+    theme: key ? SUBJECTS[key] : null,
+  }
+}
+
+function resolveSupportMode(exam) {
+  if (SUPPORTED_SUPPORT_MODES.has(exam.supportMode)) return exam.supportMode
+
+  // Backwards compatibility for the existing GuidedAnswerCoach data. New content
+  // should provide supportMode explicitly rather than encode it in display copy.
+  const beat = String(exam.beatText || '').toLowerCase()
+  if (beat.includes('no support') || beat.includes('independent')) return 'none'
+  if (beat.includes('light support')) return 'light'
+  return 'guided'
 }
 
 function GuidedExamStyles({ accent }) {
@@ -91,24 +146,20 @@ function GuidedExamStyles({ accent }) {
   )
 }
 
-function getSupportHints(section) {
+function getSupportHints(section, supportMode) {
+  if (supportMode === 'none') return []
+
   const configured = Array.isArray(section.hints)
-    ? section.hints.filter(Boolean).slice(0, 2)
+    ? section.hints.filter(Boolean)
     : []
 
-  if (configured.length) return configured
-
-  const legacyPrompt = (section.placeholder || '').trim()
-  const promptLike = /^(think|what|how|which|where|when|who|name|use|decide|choose|start|compare|explain)\b/i.test(legacyPrompt)
-
-  return [
-    promptLike
-      ? legacyPrompt
-      : section.starter
-        ? 'Build on the sentence starter with one precise fact.'
-        : 'Start by naming the key factor, comparison or judgement.',
-    'Then explain how that detail answers the question. Try “this meant that…” or “therefore…”.',
+  const generic = [
+    'Add the next step in your response.',
+    'Check that each step directly answers the question.',
   ]
+
+  const hints = configured.length ? configured : generic
+  return hints.slice(0, supportMode === 'light' ? 1 : 2)
 }
 
 function SourcesCard({ sources, accent, open, onToggle }) {
@@ -146,24 +197,32 @@ function SourcesCard({ sources, accent, open, onToggle }) {
         <span>{sources.length > 1 ? 'View sources' : 'View source'}</span>
         <span aria-hidden="true">{open ? '−' : '+'}</span>
       </button>
+
       {open && (
         <div id={regionId} style={{ padding: `0 ${SPACING.compact}px ${SPACING.compact}px` }}>
-          {sources.map((src, index) => (
+          {sources.map((source, index) => (
             <div
-              key={src.label}
+              key={source.label}
               style={{
                 paddingTop: index === 0 ? 0 : SPACING.compact,
                 marginTop: index === 0 ? 0 : SPACING.compact,
                 borderTop: index === 0 ? 'none' : `1px solid ${GENERAL.line.faint}`,
               }}
             >
-              <div style={{ ...TYPE.label, color: accent, marginBottom: SPACING.micro }}>{src.label}</div>
-              {src.attribution && (
-                <div style={{ ...TYPE.caption, fontStyle: 'italic', color: GENERAL.cinematic.textMuted, marginBottom: SPACING.micro }}>
-                  {src.attribution}
+              <div style={{ ...TYPE.label, color: accent, marginBottom: SPACING.micro }}>{source.label}</div>
+              {source.attribution && (
+                <div style={{
+                  ...TYPE.caption,
+                  fontStyle: 'italic',
+                  color: GENERAL.cinematic.textMuted,
+                  marginBottom: SPACING.micro,
+                }}>
+                  {source.attribution}
                 </div>
               )}
-              <div style={{ ...TYPE.examAnswer, color: GENERAL.cinematic.textFact, whiteSpace: 'pre-wrap' }}>{src.text}</div>
+              <div style={{ ...TYPE.examAnswer, color: GENERAL.cinematic.textFact, whiteSpace: 'pre-wrap' }}>
+                {source.text}
+              </div>
             </div>
           ))}
         </div>
@@ -172,15 +231,15 @@ function SourcesCard({ sources, accent, open, onToggle }) {
   )
 }
 
-function StrategyLane({ section, value, onChange, accent }) {
+function StrategyLane({ section, value, onChange, accent, supportMode, labels }) {
   const [hintLevel, setHintLevel] = useState(0)
   const hintRegionId = useId()
-  const hints = getSupportHints(section)
+  const hints = getSupportHints(section, supportMode)
   const revealedHint = hintLevel > 0 ? hints[hintLevel - 1] : null
   const canRevealMore = hintLevel < hints.length
 
   function handleHintAction() {
-    if (hintLevel === 0 || canRevealMore) {
+    if (canRevealMore) {
       setHintLevel(level => level + 1)
       return
     }
@@ -190,36 +249,36 @@ function StrategyLane({ section, value, onChange, accent }) {
   return (
     <section style={{
       position: 'relative',
-      padding: SPACING.compact,
-      borderRadius: RADII.large,
-      background: GENERAL.surfaceTint,
-      border: `1px solid ${GENERAL.line.soft}`,
-      boxShadow: GENERAL.shadow.raised,
+      paddingLeft: SPACING.compact,
     }}>
       <div style={{
         position: 'absolute',
         left: 0,
-        top: SPACING.compact,
-        bottom: SPACING.compact,
+        top: 0,
+        bottom: hints.length ? BUTTONS.compact.height : 0,
         width: COMPONENT_SIZE.accentRail,
         borderRadius: RADII.pill,
         background: accent,
       }} />
+
       <div style={{ ...TYPE.label, color: accent, marginBottom: SPACING.micro }}>
         {section.label}
       </div>
+
       <textarea
         className="ger-textarea"
-        rows={4}
+        rows={3}
         value={value}
         onChange={event => onChange(event.target.value)}
         placeholder={section.inputPlaceholder || 'Write your response here…'}
         aria-label={section.label}
+        inputMode={section.inputMode || 'text'}
+        spellCheck={section.spellCheck ?? true}
         style={{
           ...TYPE.examAnswer,
           width: '100%',
           boxSizing: 'border-box',
-          minHeight: SPACING.section,
+          minHeight: SPACING.cinematic + SPACING.micro,
           border: `1px solid ${GENERAL.line.soft}`,
           background: GENERAL.backgroundSunken,
           borderRadius: RADII.medium,
@@ -229,24 +288,30 @@ function StrategyLane({ section, value, onChange, accent }) {
         }}
       />
 
-      <button
-        type="button"
-        className="ger-focusable"
-        onClick={handleHintAction}
-        aria-expanded={hintLevel > 0}
-        aria-controls={hintRegionId}
-        style={{
-          ...TYPE.label,
-          minHeight: BUTTONS.compact.height,
-          padding: `${SPACING.micro}px 0 0`,
-          background: 'transparent',
-          border: 'none',
-          color: accent,
-          cursor: 'pointer',
-        }}
-      >
-        {hintLevel === 0 ? 'Need a hint?' : canRevealMore ? 'Show another hint' : 'Hide hints'}
-      </button>
+      {hints.length > 0 && (
+        <button
+          type="button"
+          className="ger-focusable"
+          onClick={handleHintAction}
+          aria-expanded={hintLevel > 0}
+          aria-controls={hintRegionId}
+          style={{
+            ...TYPE.label,
+            minHeight: BUTTONS.compact.height,
+            padding: `${SPACING.micro}px 0 0`,
+            background: 'transparent',
+            border: 'none',
+            color: accent,
+            cursor: 'pointer',
+          }}
+        >
+          {hintLevel === 0
+            ? labels.hint
+            : canRevealMore
+              ? labels.anotherHint
+              : labels.hideHints}
+        </button>
+      )}
 
       {revealedHint && (
         <div
@@ -255,9 +320,7 @@ function StrategyLane({ section, value, onChange, accent }) {
           aria-live="polite"
           style={{
             ...TYPE.bodySmall,
-            padding: SPACING.compact,
-            borderRadius: RADII.medium,
-            background: GENERAL.backgroundSunken,
+            padding: `0 0 ${SPACING.micro}px ${SPACING.compact}px`,
             borderLeft: `${COMPONENT_SIZE.accentRail}px solid ${accent}`,
             color: GENERAL.cinematic.textSecondary,
           }}
@@ -271,22 +334,22 @@ function StrategyLane({ section, value, onChange, accent }) {
 
 // `embedded` — set by ModulePlayer when this screen runs inside a module,
 // where the floating LearningHeader capsule already owns back/exit and the
-// top strip: the component's own header band is suppressed and content
-// clears the capsule instead. Standalone hosts (GuidedAnswerCoach in Exam
-// Mode) omit it and keep the self-contained header.
-export default function GuidedExamResponse({ module, exam, onExit, onContinue, theme, embedded = false }) {
-  const rawSubject = exam.subject || module.subject || 'history'
-  const capitalised = rawSubject.charAt(0).toUpperCase() + rawSubject.slice(1).toLowerCase()
-  const subjectTheme = SUBJECTS[capitalised] || SUBJECTS.History
-  const isGeneral = theme === 'general'
-  const accent = isGeneral ? GENERAL.teal : subjectTheme.accent
-  const bg = isGeneral ? GENERAL.backgroundApp : subjectTheme.background
+// top strip. Standalone hosts keep this component's self-contained header.
+export default function GuidedExamResponse({ module = {}, exam, onExit, onContinue, theme, embedded = false }) {
+  const sections = Array.isArray(exam.sections) ? exam.sections : []
+  const rawSubject = exam.subject || module?.subject || ''
+  const resolvedSubject = resolveSubject(rawSubject, exam.subjectLabel)
+  const isGeneral = theme === 'general' || !resolvedSubject.theme
+  const accent = isGeneral ? GENERAL.teal : resolvedSubject.theme.accent
+  const bg = isGeneral ? GENERAL.backgroundApp : resolvedSubject.theme.background
   const beatText = exam.beatText?.trim() || ''
+  const supportMode = resolveSupportMode(exam)
+  const labels = { ...DEFAULT_LABELS, ...(exam.labels || {}) }
   const reducedMotion = useReducedMotion()
 
   const [phase, setPhase] = useState(beatText ? 'darkBeat' : 'intro')
   const [beatVisible, setBeatVisible] = useState(false)
-  const [sectionTexts, setSectionTexts] = useState(() => exam.sections.map(section => section.starter || ''))
+  const [sectionTexts, setSectionTexts] = useState(() => sections.map(section => section.starter || ''))
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
   const [result, setResult] = useState(null)
@@ -303,30 +366,35 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
     return () => clearTimeout(id)
   }, [beatText, reducedMotion])
 
-  const allFilled = exam.sections.every((section, index) => hasWritten(sectionTexts[index], section.starter))
+  const allFilled = sections.length > 0
+    && sections.every((section, index) => hasWritten(sectionTexts[index], section.starter))
 
   async function handleSubmit() {
     if (!allFilled || submitting) return
     setSubmitting(true)
     setError(null)
     setPhase('marking')
+
     try {
       const response = await fetch('/api/guidedExamResponse', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question: exam.question,
+          questionType: exam.questionType || null,
           marks: exam.marks,
           markScheme: exam.markScheme,
-          sections: exam.sections.map((section, index) => ({
+          sections: sections.map((section, index) => ({
             label: section.label,
+            starter: section.starter || '',
             studentText: sectionTexts[index],
           })),
-          subject: exam.subject || module.subject,
-          board: exam.board || 'edexcel',
-          topic: exam.topic,
+          subject: rawSubject || null,
+          board: exam.board || null,
+          topic: exam.topic || null,
         }),
       })
+
       if (!response.ok) throw new Error('Marking request failed')
       const data = await response.json()
       if (data.error) throw new Error(data.error)
@@ -334,17 +402,19 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
 
       if (!loggedRef.current && Array.isArray(data.techniqueFlags) && data.techniqueFlags.length) {
         loggedRef.current = true
-        const flagSubject = module.subject || exam.subject
+        const trackedSubject = resolvedSubject.label || 'General'
+
         data.techniqueFlags.forEach(flag => {
           logExamTechnique({
-            subject: flagSubject,
+            subject: trackedSubject,
             type: flag.type,
             evidence: flag.evidence,
             suggestion: flag.suggestion,
-            questionId: `${module.id || 'module'}-${exam.topic || 'exam'}-${exam.marks}`,
+            questionId: `${module?.id || 'module'}-${exam.topic || exam.questionType || 'exam'}-${exam.marks}`,
             source: 'module',
           })
         })
+
         const flaggedTypes = new Set(data.techniqueFlags.map(flag => flag.type))
         const recurring = getExamTechniquePatterns(RECURRING_PATTERN_THRESHOLD)
           .find(pattern => flaggedTypes.has(pattern.type))
@@ -353,7 +423,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
 
       setPhase('result')
     } catch {
-      setError("Marking failed — your answer hasn't been lost. Give it another go.")
+      setError("Marking failed — your response hasn't been lost. Give it another go.")
       setPhase('writing')
     } finally {
       setSubmitting(false)
@@ -361,7 +431,14 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
   }
 
   function advance() {
-    onContinue?.({ marksAwarded: result?.marksAwarded ?? 0, marksAvailable: exam.marks })
+    onContinue?.({
+      marksAwarded: result?.marksAwarded ?? 0,
+      marksAvailable: exam.marks,
+    })
+  }
+
+  function headerText(base) {
+    return resolvedSubject.label ? `${base} · ${resolvedSubject.label}` : base
   }
 
   const headerStyle = {
@@ -419,7 +496,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
           type="button"
           className="ger-focusable ger-motion"
           onClick={() => setPhase('intro')}
-          aria-label={`${beatText}. Continue to the exam question.`}
+          aria-label={`${beatText}. Continue to the question.`}
           style={{
             ...TYPE.displayScreen,
             position: 'fixed',
@@ -432,7 +509,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
             justifyContent: 'center',
             padding: SPACING.section,
             border: 'none',
-            background: GENERAL.backgroundApp,
+            background: bg,
             color: GENERAL.cinematic.textPrimary,
             textAlign: 'center',
             cursor: 'pointer',
@@ -463,7 +540,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
           {!embedded && (
             <div style={headerStyle}>
               <BackButton onClick={onExit} />
-              <div style={headerLabelStyle}>Exam practice · {capitalised}</div>
+              <div style={headerLabelStyle}>{headerText(labels.practiceHeader)}</div>
               <div style={marksLabelStyle}>{exam.marks} marks</div>
             </div>
           )}
@@ -474,7 +551,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
               margin: '0 auto',
               padding: embedded
                 ? `${capsuleClearance} ${SPACING.standard}px ${SPACING.standard}px`
-                : `${SPACING.separation}px ${SPACING.standard}px ${SPACING.standard}px`,
+                : `${SPACING.standard}px ${SPACING.standard}px ${SPACING.standard}px`,
             }}>
               <div
                 className="ger-motion"
@@ -485,24 +562,28 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
                   animation: reducedMotion ? 'none' : `ger-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
                 }}
               >
-                Your turn
+                {labels.introKicker}
               </div>
+
               <SourcesCard
                 sources={exam.sources}
                 accent={accent}
                 open={sourcesOpen}
                 onToggle={() => setSourcesOpen(open => !open)}
               />
-              <ScreenTitle
-                className="ger-motion"
+
+              <ExamPrompt
+                question={exam.displayQuestion || exam.question}
+                marks={exam.marks}
+                accent={accent}
+                variant="hero"
+                showMarks={embedded}
                 style={{
-                  color: GENERAL.cinematic.textPrimary,
                   marginBottom: SPACING.compact,
                   animation: reducedMotion ? 'none' : `ger-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
                 }}
-              >
-                {exam.question}
-              </ScreenTitle>
+              />
+
               <p
                 className="ger-motion"
                 style={{
@@ -513,7 +594,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
                   animation: reducedMotion ? 'none' : `ger-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
                 }}
               >
-                Build your answer section by section. You’ll get an estimated mark and clear feedback.
+                {exam.introText || labels.introBody}
               </p>
             </div>
           </div>
@@ -526,7 +607,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
             <ContinueCTA
               {...ctaProps}
               onClick={() => setPhase('writing')}
-              label="Start my answer"
+              label={labels.start}
             />
           </div>
         </div>
@@ -551,7 +632,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
           {!embedded && (
             <div style={headerStyle}>
               <BackButton onClick={onExit} />
-              <div style={headerLabelStyle}>Write for the examiner · {capitalised}</div>
+              <div style={headerLabelStyle}>{headerText(labels.writingHeader)}</div>
               <div style={marksLabelStyle}>{exam.marks} marks</div>
             </div>
           )}
@@ -568,9 +649,13 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
               open={sourcesOpen}
               onToggle={() => setSourcesOpen(open => !open)}
             />
-            <div style={{ ...TYPE.examQuestion, color: GENERAL.cinematic.textSecondary }}>
-              {exam.question}
-            </div>
+            <ExamPrompt
+              question={exam.displayQuestion || exam.question}
+              marks={exam.marks}
+              accent={accent}
+              variant="compact"
+              showMarks={embedded}
+            />
           </div>
 
           <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
@@ -583,15 +668,17 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
                 padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.separation}px`,
                 display: 'flex',
                 flexDirection: 'column',
-                gap: SPACING.compact,
+                gap: SPACING.standard,
               }}
             >
-              {exam.sections.map((section, index) => (
+              {sections.map((section, index) => (
                 <StrategyLane
-                  key={section.label}
+                  key={section.id || section.label}
                   section={section}
                   value={sectionTexts[index]}
                   accent={accent}
+                  supportMode={supportMode}
+                  labels={labels}
                   onChange={value => setSectionTexts(previous => previous.map((text, textIndex) => (
                     textIndex === index ? value : text
                   )))}
@@ -604,8 +691,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
                 {...ctaProps}
                 onClick={handleSubmit}
                 disabled={!allFilled || submitting}
-                label={submitting ? 'Submitting…' : 'Submit my answer'}
-                style={{ marginTop: SPACING.micro }}
+                label={submitting ? labels.marking : labels.submit}
               />
             </div>
           </div>
@@ -632,7 +718,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
             background: bg,
           }}
         >
-          <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>Marking your answer…</div>
+          <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>{labels.marking}</div>
         </div>
       </>
     )
@@ -655,8 +741,8 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
           {!embedded && (
             <div style={headerStyle}>
               <BackButton onClick={onExit} />
-              <div style={headerLabelStyle}>Your feedback · {capitalised}</div>
-              <div style={marksLabelStyle}>Estimated</div>
+              <div style={headerLabelStyle}>{headerText(labels.feedbackHeader)}</div>
+              <div style={marksLabelStyle}>{labels.estimatedStatus}</div>
             </div>
           )}
 
@@ -671,15 +757,16 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
               <div style={{ ...TYPE.displaySection, color: accent }}>
                 {result.marksAwarded}/{result.marksAvailable ?? exam.marks}
               </div>
-              <div style={{ ...TYPE.label, color: GENERAL.cinematic.textSubtle }}>Estimated mark</div>
+              <div style={{ ...TYPE.label, color: GENERAL.cinematic.textSubtle }}>{labels.estimatedMark}</div>
             </div>
+
             <p style={{ ...TYPE.body, color: GENERAL.cinematic.textSecondary, margin: `0 0 ${SPACING.standard}px` }}>
               {result.verdict}
             </p>
 
             {Array.isArray(result.sectionFeedback) && result.sectionFeedback.length > 0 && (
               <div style={{ marginBottom: SPACING.standard }}>
-                <div style={sectionHeadingStyle}>Section by section</div>
+                <div style={sectionHeadingStyle}>{labels.sectionFeedback}</div>
                 {result.sectionFeedback.map((feedback, index) => (
                   <div key={index} style={{ marginBottom: SPACING.compact }}>
                     <div style={{ ...TYPE.label, color: accent, marginBottom: SPACING.micro }}>{feedback.label}</div>
@@ -691,7 +778,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
 
             {Array.isArray(result.improvementSuggestions) && result.improvementSuggestions.length > 0 && (
               <div style={{ marginBottom: SPACING.standard }}>
-                <div style={sectionHeadingStyle}>Do this to gain more marks</div>
+                <div style={sectionHeadingStyle}>{labels.improvements}</div>
                 {result.improvementSuggestions.map((suggestion, index) => (
                   <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: SPACING.micro, marginBottom: SPACING.micro }}>
                     <div style={{
@@ -710,11 +797,9 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
 
             {result.rewrittenSentence && (
               <div style={{ marginBottom: SPACING.standard }}>
-                <div style={sectionHeadingStyle}>Try it like this</div>
+                <div style={sectionHeadingStyle}>{labels.rewrite}</div>
                 <div style={{
                   padding: SPACING.compact,
-                  borderRadius: RADII.medium,
-                  background: GENERAL.surfaceTint,
                   borderLeft: `${COMPONENT_SIZE.accentRail}px solid ${accent}`,
                   marginBottom: SPACING.micro,
                 }}>
@@ -735,7 +820,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
                 background: GENERAL.surfaceTint,
                 border: `1px solid ${GENERAL.line.soft}`,
               }}>
-                <div style={sectionHeadingStyle}>Noticed</div>
+                <div style={sectionHeadingStyle}>{labels.noticed}</div>
                 <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
                   We've noticed you tend towards {TECHNIQUE_LABELS[recurringPattern.type] || 'the same kind of slip'} — we'll bring this back up.
                 </div>
@@ -749,7 +834,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
             background: bg,
             borderTop: `1px solid ${GENERAL.line.faint}`,
           }}>
-            <ContinueCTA {...ctaProps} onClick={advance} />
+            <ContinueCTA {...ctaProps} onClick={advance} label={labels.continue} />
           </div>
         </div>
       </>
