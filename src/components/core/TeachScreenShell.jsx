@@ -85,7 +85,7 @@ export default function TeachScreenShell({ heading, eyebrow, intro, children, ke
           ...TYPE.body,
           color: 'rgba(245,245,245,0.60)',
           margin: `${SPACING.standard}px 0 0`,
-          animationDelay: '120ms',
+          animationDelay: MOTION.duration.instant,
         }}>
           {intro}
         </p>
@@ -94,7 +94,7 @@ export default function TeachScreenShell({ heading, eyebrow, intro, children, ke
       {children != null && (
         <div className="tss-in" style={{
           marginTop: SPACING.separation,
-          animationDelay: '180ms',
+          animationDelay: MOTION.duration.fast,
         }}>
           {children}
         </div>
