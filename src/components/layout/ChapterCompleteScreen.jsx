@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { MODULES } from '../../modules.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import {
   SUBJECT_BACKDROPS,
@@ -102,7 +103,7 @@ function SecondaryAction({
 }
 
 export default function ChapterCompleteScreen({
-  subject = 'History',
+  subject,
   accent,
   completedChapter = 'Chapter',
   completionType,
@@ -123,7 +124,19 @@ export default function ChapterCompleteScreen({
   onPastPaper,
   onHome,
 }) {
-  const theme = SUBJECTS[subject] || SUBJECTS.History
+  const accentSubject = Object.entries(SUBJECTS)
+    .find(([, candidate]) => candidate.accent === accent)?.[0]
+
+  // Direct props remain the component contract. The metadata lookup is only a
+  // backwards-compatible bridge for the existing app hand-off, which currently
+  // supplies the completed title and accent but not the newer artwork props.
+  const matchedModule = MODULES.find(module =>
+    module.title === completedChapter
+    && (!subject || module.subject === subject)
+    && (!accentSubject || module.subject === accentSubject)
+  )
+  const resolvedSubject = subject || matchedModule?.subject || accentSubject || 'History'
+  const theme = SUBJECTS[resolvedSubject] || SUBJECTS.History
   const resolvedAccent = accent || theme.accent
   const resolvedCompletionType = completionType
     || (isFinalChapter ? 'subject' : nextChapterLabel === 'Next Module' ? 'module' : 'chapter')
@@ -131,9 +144,15 @@ export default function ChapterCompleteScreen({
   const quizScope = quizScopeLabel || QUIZ_SCOPES[resolvedCompletionType] || QUIZ_SCOPES.chapter
   const resolvedBackground = backgroundAsset === false
     ? null
-    : backgroundAsset || SUBJECT_BACKDROPS[subject] || SUBJECT_BACKDROPS.History
+    : backgroundAsset
+      || matchedModule?.completionBackground
+      || matchedModule?.headerImage
+      || SUBJECT_BACKDROPS[resolvedSubject]
+      || SUBJECT_BACKDROPS.History
   const resolvedBackgroundPosition = backgroundPosition
-    || SUBJECT_BACKDROP_POSITIONS[subject]
+    || matchedModule?.completionBackgroundPosition
+    || (matchedModule?.headerImage ? 'center 30%' : null)
+    || SUBJECT_BACKDROP_POSITIONS[resolvedSubject]
     || SUBJECT_BACKDROP_POSITIONS.History
   const textOnAccent = isLight(resolvedAccent)
     ? GENERAL.textOnAccent
