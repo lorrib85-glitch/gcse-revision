@@ -288,6 +288,7 @@ function PeopleCompareBlock({ block, subject, onComplete }) {
           right={right}
           accent={accent}
           bg={subj.background}
+          bgSecondary={subj.backgroundSecondary}
         />
       )}
 
@@ -404,7 +405,7 @@ function PeopleCompareBlock({ block, subject, onComplete }) {
   )
 }
 
-function HeroHeader({ block, left, right, accent, bg }) {
+function HeroHeader({ block, left, right, accent, bg, bgSecondary }) {
   const objectPosition = block.heroObjectPosition || 'center center'
 
   return (
@@ -414,31 +415,49 @@ function HeroHeader({ block, left, right, accent, bg }) {
       marginInline: -SPACING.compact,
       marginBottom: SPACING.standard,
       ...PEOPLE_HERO_SIZE,
-      overflow: 'hidden',
+      isolation: 'isolate',
     }}>
-      <img
-        src={block.heroImage}
-        alt={block.heroImageAlt || `${left.name} and ${right.name}`}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+        <img
+          src={block.heroImage}
+          alt={block.heroImageAlt || `${left.name} and ${right.name}`}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition,
+            display: 'block',
+          }}
+        />
+        <div aria-hidden="true" style={{
+          position: 'absolute',
+          inset: 0,
+          background: `linear-gradient(180deg, rgba(0,0,0,0) 36%, ${bg} 100%)`,
+        }} />
+      </div>
+
+      <div
+        aria-hidden="true"
+        data-hero-atmosphere="true"
         style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          objectPosition,
-          display: 'block',
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: -SPACING.standard,
+          height: SPACING.separation,
+          background: `linear-gradient(180deg, transparent 0%, ${bg} 36%, ${bgSecondary || bg} 68%, transparent 100%)`,
+          pointerEvents: 'none',
+          zIndex: 1,
         }}
       />
-      <div aria-hidden="true" style={{
-        position: 'absolute',
-        inset: 0,
-        background: `linear-gradient(180deg, rgba(0,0,0,0) 36%, ${bg} 100%)`,
-      }} />
-      <div style={{ position: 'absolute', left: SPACING.compact, bottom: SPACING.micro, maxWidth: '46%' }}>
+
+      <div style={{ position: 'absolute', left: SPACING.compact, bottom: SPACING.micro, maxWidth: '46%', zIndex: 2 }}>
         <div style={{ ...TYPE.titleLarge, color: accent }}>{left.name}</div>
         {left.subtitle && (
           <div style={{ ...TYPE.caption, color: GENERAL.cinematic.textSecondary }}>{left.subtitle}</div>
         )}
       </div>
-      <div style={{ position: 'absolute', right: SPACING.compact, bottom: SPACING.micro, maxWidth: '46%', textAlign: 'right' }}>
+      <div style={{ position: 'absolute', right: SPACING.compact, bottom: SPACING.micro, maxWidth: '46%', textAlign: 'right', zIndex: 2 }}>
         <div style={{ ...TYPE.titleLarge, color: accent }}>{right.name}</div>
         {right.subtitle && (
           <div style={{ ...TYPE.caption, color: GENERAL.cinematic.textSecondary }}>{right.subtitle}</div>
@@ -514,6 +533,8 @@ function ComparisonRow({
       className="tcp-anim tcp-reveal-target"
       role="group"
       aria-label={comparison.prompt}
+      data-emphasis-side={emphasisSide}
+      style={{ scrollMarginTop: COMPONENT_SIZE.learningHeaderClearance }}
     >
       {comparison.prompt && (
         <h4 style={{
@@ -606,14 +627,17 @@ function ColumnLabels({ left, right, pairGrid, accent, rgb }) {
 // tappable answer options. The restrained centre rule carries the relationship.
 function ComparisonPair({ children, pairGrid, rgb }) {
   return (
-    <div style={{
-      position: 'relative',
-      ...pairGrid,
-      overflow: 'hidden',
-      borderRadius: RADII.large,
-      border: `1px solid ${GENERAL.line.soft}`,
-      background: GENERAL.surfaceTint,
-    }}>
+    <div
+      data-comparison-pair="true"
+      style={{
+        position: 'relative',
+        ...pairGrid,
+        overflow: 'hidden',
+        borderRadius: RADII.medium,
+        border: `1px solid ${GENERAL.line.soft}`,
+        background: GENERAL.surfaceTint,
+      }}
+    >
       <div aria-hidden="true" style={{
         position: 'absolute',
         top: 0,
@@ -634,17 +658,20 @@ function ComparisonPair({ children, pairGrid, rgb }) {
 // visual column labels keep the left/right relationship clear after the hero.
 function Cell({ text, person, rgb, emphasised }) {
   return (
-    <div style={{
-      height: '100%',
-      padding: `${SPACING.standard}px ${SPACING.compact}px`,
-      background: emphasised ? `rgba(${rgb},0.07)` : 'transparent',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      textAlign: 'center',
-      ...TYPE.bodyStrong,
-      color: GENERAL.cinematic.textPrimary,
-    }}>
+    <div
+      data-emphasised={emphasised ? 'true' : 'false'}
+      style={{
+        height: '100%',
+        padding: `${SPACING.standard}px ${SPACING.compact}px`,
+        background: emphasised ? `rgba(${rgb},0.07)` : 'transparent',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        ...TYPE.bodyStrong,
+        color: GENERAL.cinematic.textPrimary,
+      }}
+    >
       <span className="tcp-sr-only">{person.name}: </span>{text}
     </div>
   )
