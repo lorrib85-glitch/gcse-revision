@@ -8,32 +8,22 @@ import ContinueCTA from '../core/ContinueCTA.jsx'
 
 // ─── CalculationBreakdown ────────────────────────────────────────────────────
 //
-// Full-screen, multi-phase maths walkthrough: it breaks one calculation into
-// simple stages and checks understanding as the learner moves through it.
+// Full-screen, multi-phase maths walkthrough. Content lives entirely in the
+// `block` prop so the mechanic can support equations, percentages, fractions,
+// geometry and other calculations without knowing the topic itself.
 //
-//   understand  → the question, what's happening, a goal, a check
-//   worked step → the examiner shows a transformation + why + a "check this step"
-//   your-turn   → the learner applies the next step themselves (typed answer)
-//   solution    → the full solution, why it works, and what's next
-//
-// Content lives entirely in the `block` prop so the mechanic is reusable across
-// every Maths topic. Accent defaults to the interface teal (matching the
-// reference design) and is overridable per subject.
-//
-// Labels are sentence case by design — the eyebrow pattern is prohibited
-// (TYPOGRAPHY_SYSTEM.md, "Label case"). Equations render in Sora (the app's
-// only body face) at a calm, larger size rather than a separate maths face.
+// The opening phase has one job: help the learner understand what the question
+// wants, why that goal matters and which useful decision comes first.
 
 export default function CalculationBreakdown({ block, accent = GENERAL.teal, onContinue }) {
   const {
-    goalPrompt = 'Solve for x',
+    goalPrompt = 'Work out the answer',
     problem = '',
     understand = {},
     steps = [],
     solution = {},
   } = block || {}
 
-  // Phase list: understand → each step → solution.
   const phases = [
     { kind: 'understand' },
     ...steps.map((step, i) => ({ kind: 'step', step, stepIndex: i })),
@@ -43,14 +33,13 @@ export default function CalculationBreakdown({ block, accent = GENERAL.teal, onC
 
   const [phaseIdx, setPhaseIdx] = useState(0)
   const phase = phases[phaseIdx]
-
-  const isFirst = phaseIdx === 0
   const stepCount = steps.length
 
   function advance() {
     if (phaseIdx < total - 1) setPhaseIdx(phaseIdx + 1)
     else onContinue?.()
   }
+
   function back() {
     if (phaseIdx > 0) setPhaseIdx(phaseIdx - 1)
     else onContinue?.()
@@ -63,7 +52,6 @@ export default function CalculationBreakdown({ block, accent = GENERAL.teal, onC
 
   return (
     <div style={styles.screen}>
-      {/* Header: back · title · bookmark */}
       <div style={styles.header}>
         <IconButton label="Go back" onClick={back}>
           <ChevronLeft />
@@ -84,6 +72,7 @@ export default function CalculationBreakdown({ block, accent = GENERAL.teal, onC
             goalPrompt={goalPrompt}
             problem={problem}
             understand={understand}
+            steps={steps}
             accent={accent}
             onContinue={advance}
           />
@@ -110,52 +99,167 @@ export default function CalculationBreakdown({ block, accent = GENERAL.teal, onC
   )
 }
 
-// ─── Phase 1 — understand the question ───────────────────────────────────────
-function UnderstandPhase({ goalPrompt, problem, understand, accent, onContinue }) {
-  const { whatsHappening, goal, check } = understand
-  const [answered, setAnswered] = useState(false)
+// ─── Phase 1 — orient the learner ─────────────────────────────────────────────
+function UnderstandPhase({ goalPrompt, problem, understand, steps, accent, onContinue }) {
+  const intro = understand.intro ?? understand.whatsHappening
+  const goal = understand.goal
+  const whyGoal = understand.whyGoal
+    ?? (goal ? 'Reaching this goal gives us a result we can read and check.' : null)
+  const decision = understand.decision
+    ?? buildFirstMoveDecision(steps)
+    ?? understand.check
+  const [resolved, setResolved] = useState(false)
 
   return (
     <>
-      <Card>
-        <FieldLabel>Question</FieldLabel>
+      <Card emphasis accent={accent}>
+        <FieldLabel>{understand.questionLabel || 'Question'}</FieldLabel>
         <div style={{ ...TYPE.bodySmall, color: GENERAL.slate, marginBottom: SPACING.compact }}>
-          {goalPrompt}:
+          {goalPrompt}
         </div>
-        <MathLine expr={problem} size={26} />
+        <MathLine expr={problem} size={30} wrap />
+
+        {(intro || goal || whyGoal) && (
+          <div style={orientationDivider}>
+            <FieldLabel>{understand.heading || 'What are we trying to do?'}</FieldLabel>
+            {intro && <p style={bodyStyle}>{intro}</p>}
+
+            {goal && (
+              <div style={goalChip(accent)}>
+                <Target accent={accent} />
+                <span style={{ ...TYPE.bodySmall, color: GENERAL.softWhite, fontWeight: 600 }}>
+                  {understand.goalLabel || 'Goal'}: {goal}
+                </span>
+              </div>
+            )}
+
+            {whyGoal && (
+              <div style={whyGoalRow(accent)}>
+                <Lightbulb accent={accent} />
+                <div>
+                  <div style={{ ...TYPE.label, color: accent, marginBottom: 2 }}>Why this matters</div>
+                  <p style={bodyStyle}>{whyGoal}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </Card>
 
-      {whatsHappening && (
+      {decision && (
         <Card>
-          <FieldLabel>What's happening</FieldLabel>
-          <p style={bodyStyle}>{whatsHappening}</p>
-          {goal && (
-            <div style={goalChip(accent)}>
-              <Target accent={accent} />
-              <span style={{ ...TYPE.bodySmall, color: GENERAL.softWhite, fontWeight: 600 }}>
-                Goal: {goal}
-              </span>
-            </div>
+          <FieldLabel>{decision.label || 'Choose the first move'}</FieldLabel>
+          <p style={{ ...bodyStyle, color: GENERAL.softWhite, marginBottom: SPACING.micro }}>
+            {decision.question}
+          </p>
+          {decision.support && (
+            <p style={{ ...bodyStyle, marginBottom: SPACING.compact }}>{decision.support}</p>
           )}
+          <OrientationChoiceList
+            decision={decision}
+            accent={accent}
+            onResolved={() => setResolved(true)}
+          />
         </Card>
       )}
 
-      {check && (
-        <Card>
-          <FieldLabel>Check your understanding</FieldLabel>
-          <p style={{ ...bodyStyle, marginBottom: SPACING.compact }}>{check.question}</p>
-          <ChoiceList check={check} accent={accent} onResolved={() => setAnswered(true)} />
-        </Card>
+      {(!decision || resolved) && (
+        <ContinueCTA
+          onClick={onContinue}
+          accent={accent}
+          style={{ marginTop: SPACING.micro }}
+        />
       )}
-
-      <ContinueCTA
-        onClick={onContinue}
-        accent={accent}
-        disabled={Boolean(check) && !answered}
-        style={{ marginTop: SPACING.micro }}
-      />
     </>
   )
+}
+
+function buildFirstMoveDecision(steps) {
+  const usableSteps = steps.filter(step => step?.title)
+  if (usableSteps.length < 2) return null
+
+  return {
+    question: 'Which move should come first?',
+    support: 'Choose the step that makes the later moves possible.',
+    options: usableSteps.map((step, index) => ({
+      label: step.title,
+      feedback: index === 0
+        ? step.whyStep || step.why || 'This is the first move that simplifies the calculation.'
+        : 'That step may be useful later, but an earlier part of the calculation needs dealing with first.',
+    })),
+    correct: 0,
+  }
+}
+
+function OrientationChoiceList({ decision, accent, onResolved }) {
+  const { options = [], correct = 0 } = decision
+  const [picked, setPicked] = useState(null)
+  const resolved = picked === correct
+  const pickedOption = picked === null ? null : options[picked]
+  const pickedFeedback = getOptionFeedback(decision, pickedOption, picked === correct)
+
+  function pick(index) {
+    if (resolved) return
+    setPicked(index)
+    if (index === correct) onResolved?.()
+  }
+
+  return (
+    <>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.micro }}>
+        {options.map((option, index) => {
+          const label = typeof option === 'string' ? option : option.label
+          const isCorrect = resolved && index === correct
+          const isWrong = picked === index && index !== correct
+          const border = isCorrect ? accent : isWrong ? GENERAL.feedbackIncorrect : GENERAL.line.strong
+          const background = isCorrect
+            ? `${accent}1F`
+            : isWrong
+              ? `rgba(${GENERAL.feedbackIncorrectRgb},0.12)`
+              : GENERAL.line.faint
+
+          return (
+            <button
+              key={`${label}-${index}`}
+              onClick={() => pick(index)}
+              disabled={resolved}
+              style={{
+                ...choiceRow,
+                borderColor: border,
+                background,
+                cursor: resolved ? 'default' : 'pointer',
+              }}
+            >
+              <span style={choiceBadge(isCorrect || isWrong ? border : GENERAL.slate)}>
+                {String.fromCharCode(65 + index)}
+              </span>
+              <span style={{ ...TYPE.body, color: GENERAL.softWhite, flex: 1, textAlign: 'left', minWidth: 0 }}>
+                {label}
+              </span>
+              {isCorrect && <Check accent={accent} />}
+            </button>
+          )
+        })}
+      </div>
+
+      {picked !== null && (
+        <div style={decisionFeedback(picked === correct, accent)} aria-live="polite">
+          <div style={{ ...TYPE.label, color: picked === correct ? accent : GENERAL.feedbackIncorrect }}>
+            {picked === correct ? 'Why this helps' : 'Not yet'}
+          </div>
+          <p style={{ ...bodyStyle, color: GENERAL.feedbackText, marginTop: SPACING.micro }}>
+            {pickedFeedback}
+          </p>
+        </div>
+      )}
+    </>
+  )
+}
+
+function getOptionFeedback(decision, option, isCorrect) {
+  if (option && typeof option === 'object' && option.feedback) return option.feedback
+  if (isCorrect) return decision.correctFeedback || 'That gives us a useful first step.'
+  return decision.incorrectFeedback || 'That is not the most useful first move yet. Try another option.'
 }
 
 // ─── Phase 2 — worked / your-turn step ───────────────────────────────────────
@@ -233,11 +337,11 @@ function StepPhase({ step, stepIndex, accent, onContinue }) {
 
 function YourTurn({ answer, hint, resultExpr, accent, onSolved }) {
   const [value, setValue] = useState('')
-  const [status, setStatus] = useState(null) // null | 'correct' | 'wrong'
+  const [status, setStatus] = useState(null)
   const [showHint, setShowHint] = useState(false)
 
   function check() {
-    const norm = s => String(s ?? '').replace(/\s+/g, '').toLowerCase()
+    const norm = valueToNormalise => String(valueToNormalise ?? '').replace(/\s+/g, '').toLowerCase()
     if (norm(value) === norm(answer)) {
       setStatus('correct')
       onSolved?.()
@@ -261,8 +365,8 @@ function YourTurn({ answer, hint, resultExpr, accent, onSolved }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
           <input
             value={value}
-            onChange={e => { setValue(e.target.value); if (status) setStatus(null) }}
-            onKeyDown={e => e.key === 'Enter' && check()}
+            onChange={event => { setValue(event.target.value); if (status) setStatus(null) }}
+            onKeyDown={event => event.key === 'Enter' && check()}
             placeholder="x = ?"
             aria-label="Your answer"
             style={inputStyle(status, accent)}
@@ -288,7 +392,7 @@ function YourTurn({ answer, hint, resultExpr, accent, onSolved }) {
 
       {hint && !solved && (
         <div style={{ marginTop: SPACING.compact }}>
-          <button onClick={() => setShowHint(h => !h)} style={hintToggle(accent)}>
+          <button onClick={() => setShowHint(current => !current)} style={hintToggle(accent)}>
             <Lightbulb accent={accent} />
             {showHint ? 'Hide hint' : 'Need a hint?'}
           </button>
@@ -304,11 +408,10 @@ function YourTurn({ answer, hint, resultExpr, accent, onSolved }) {
 // ─── Phase 3 — the solution ──────────────────────────────────────────────────
 function SolutionPhase({ solution, steps, accent, onContinue }) {
   const { result, why, celebrateTitle = 'Well done!', celebrateSubtitle } = solution || {}
-  // Prefer an explicit full-solution list; otherwise derive from the steps.
   const rows = solution?.rows
     ?? steps
-      .filter(s => s.transform?.from && s.transform?.to)
-      .map(s => ({ title: s.title, from: s.transform.from, to: s.transform.to }))
+      .filter(step => step.transform?.from && step.transform?.to)
+      .map(step => ({ title: step.title, from: step.transform.from, to: step.transform.to }))
 
   return (
     <>
@@ -328,9 +431,16 @@ function SolutionPhase({ solution, steps, accent, onContinue }) {
         <Card>
           <FieldLabel>Full solution</FieldLabel>
           <ol style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-            {rows.map((row, i) => (
-              <li key={i} style={{ display: 'flex', gap: SPACING.compact, marginBottom: i === rows.length - 1 ? 0 : SPACING.compact }}>
-                <span style={stepNumber(accent)}>{i + 1}</span>
+            {rows.map((row, index) => (
+              <li
+                key={`${row.title}-${index}`}
+                style={{
+                  display: 'flex',
+                  gap: SPACING.compact,
+                  marginBottom: index === rows.length - 1 ? 0 : SPACING.compact,
+                }}
+              >
+                <span style={stepNumber(accent)}>{index + 1}</span>
                 <div style={{ minWidth: 0, flex: 1 }}>
                   <div style={{ ...TYPE.bodySmall, color: GENERAL.softWhite, fontWeight: 600, marginBottom: 4 }}>
                     {row.title}
@@ -360,37 +470,47 @@ function SolutionPhase({ solution, steps, accent, onContinue }) {
 }
 
 // ─── Shared pieces ───────────────────────────────────────────────────────────
-
-// Multiple-choice check. Reveals the correct answer once tapped; a wrong tap
-// shows which option is wrong and keeps the correct one highlighted.
 function ChoiceList({ check, accent, mono = false, onResolved }) {
   const { options = [], correct = 0 } = check
   const [picked, setPicked] = useState(null)
   const resolved = picked === correct
 
-  function pick(i) {
+  function pick(index) {
     if (resolved) return
-    setPicked(i)
-    if (i === correct) onResolved?.()
+    setPicked(index)
+    if (index === correct) onResolved?.()
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.micro }}>
-      {options.map((opt, i) => {
-        const isCorrect = resolved && i === correct
-        const isWrong = picked === i && i !== correct
+      {options.map((option, index) => {
+        const isCorrect = resolved && index === correct
+        const isWrong = picked === index && index !== correct
         const border = isCorrect ? accent : isWrong ? GENERAL.feedbackIncorrect : GENERAL.line.strong
-        const bg = isCorrect ? `${accent}1F` : isWrong ? `rgba(${GENERAL.feedbackIncorrectRgb},0.12)` : GENERAL.line.faint
+        const background = isCorrect
+          ? `${accent}1F`
+          : isWrong
+            ? `rgba(${GENERAL.feedbackIncorrectRgb},0.12)`
+            : GENERAL.line.faint
+
         return (
-          <button key={i} onClick={() => pick(i)} disabled={resolved} style={{ ...choiceRow, borderColor: border, background: bg, cursor: resolved ? 'default' : 'pointer' }}>
+          <button
+            key={`${option}-${index}`}
+            onClick={() => pick(index)}
+            disabled={resolved}
+            style={{ ...choiceRow, borderColor: border, background, cursor: resolved ? 'default' : 'pointer' }}
+          >
             <span style={choiceBadge(isCorrect || isWrong ? border : GENERAL.slate)}>
-              {String.fromCharCode(65 + i)}
+              {String.fromCharCode(65 + index)}
             </span>
             <span style={{
               ...(mono ? { ...TYPE.body, fontStyle: 'italic' } : TYPE.body),
-              color: GENERAL.softWhite, flex: 1, textAlign: 'left', minWidth: 0,
+              color: GENERAL.softWhite,
+              flex: 1,
+              textAlign: 'left',
+              minWidth: 0,
             }}>
-              {opt}
+              {option}
             </span>
             {isCorrect && <Check accent={accent} />}
           </button>
@@ -400,9 +520,6 @@ function ChoiceList({ check, accent, mono = false, onResolved }) {
   )
 }
 
-// A worked transformation: top line, optional per-side operations, a downward
-// step, then the resulting line — the visual grammar of "do the same to both
-// sides" that the reference leans on.
 function WorkedTransform({ transform, accent, revealResult = true }) {
   const { from, leftOp, rightOp, to } = transform
   return (
@@ -424,9 +541,7 @@ function WorkedTransform({ transform, accent, revealResult = true }) {
   )
 }
 
-// Equation line. Rendered in Sora (the app body face) at a calm larger size —
-// mathematical notation, not decorative type.
-function MathLine({ expr, size = 22, accent, align = 'center', muted = false }) {
+function MathLine({ expr, size = 22, accent, align = 'center', muted = false, wrap = false }) {
   if (!expr) return null
   return (
     <div style={{
@@ -437,15 +552,23 @@ function MathLine({ expr, size = 22, accent, align = 'center', muted = false }) 
       lineHeight: 1.3,
       textAlign: align,
       color: muted ? GENERAL.slate : accent || GENERAL.softWhite,
-      whiteSpace: 'nowrap',
+      whiteSpace: wrap ? 'normal' : 'nowrap',
+      overflowWrap: wrap ? 'anywhere' : 'normal',
     }}>
       {expr}
     </div>
   )
 }
 
-function Card({ children }) {
-  return <div style={cardStyle}>{children}</div>
+function Card({ children, emphasis = false, accent }) {
+  return (
+    <div style={{
+      ...cardStyle,
+      ...(emphasis && accent ? { borderColor: `${accent}40` } : {}),
+    }}>
+      {children}
+    </div>
+  )
 }
 
 function FieldLabel({ children }) {
@@ -455,11 +578,11 @@ function FieldLabel({ children }) {
 function ProgressRail({ total, index, accent }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: `0 ${SPACING.standard}px ${SPACING.compact}px`, justifyContent: 'center' }}>
-      {Array.from({ length: total }).map((_, i) => {
-        const done = i < index
-        const active = i === index
+      {Array.from({ length: total }).map((_, railIndex) => {
+        const done = railIndex < index
+        const active = railIndex === index
         return (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div key={railIndex} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{
               width: active ? 9 : 7,
               height: active ? 9 : 7,
@@ -467,7 +590,7 @@ function ProgressRail({ total, index, accent }) {
               background: done || active ? accent : GENERAL.line.strong,
               transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
             }} />
-            {i < total - 1 && (
+            {railIndex < total - 1 && (
               <span style={{ width: 14, height: 2, borderRadius: RADII.pill, background: done ? accent : GENERAL.line.soft }} />
             )}
           </div>
@@ -480,15 +603,24 @@ function ProgressRail({ total, index, accent }) {
 function IconButton({ children, onClick, label }) {
   return (
     <button onClick={onClick} aria-label={label} style={{
-      width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'transparent', border: 'none', color: GENERAL.slate, cursor: 'pointer', padding: 0, flexShrink: 0,
+      width: 34,
+      height: 34,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'transparent',
+      border: 'none',
+      color: GENERAL.slate,
+      cursor: 'pointer',
+      padding: 0,
+      flexShrink: 0,
     }}>
       {children}
     </button>
   )
 }
 
-// ─── Inline icons (SVG, currentColor / accent) ───────────────────────────────
+// ─── Inline icons ─────────────────────────────────────────────────────────────
 const ChevronLeft = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
 )
@@ -514,20 +646,27 @@ const Lightbulb = ({ accent }) => (
 // ─── Styles ──────────────────────────────────────────────────────────────────
 const styles = {
   screen: {
-    position: 'absolute', inset: 0,
-    display: 'flex', flexDirection: 'column',
+    position: 'absolute',
+    inset: 0,
+    display: 'flex',
+    flexDirection: 'column',
     background: GENERAL.backgroundApp,
     color: GENERAL.softWhite,
     overflow: 'hidden',
   },
   header: {
-    display: 'flex', alignItems: 'center', gap: SPACING.micro,
+    display: 'flex',
+    alignItems: 'center',
+    gap: SPACING.micro,
     padding: `max(${SPACING.compact}px, env(safe-area-inset-top)) ${SPACING.compact}px ${SPACING.compact}px`,
   },
   body: {
-    flex: 1, overflowY: 'auto',
+    flex: 1,
+    overflowY: 'auto',
     padding: `0 ${SPACING.compact}px calc(${SPACING.separation}px + env(safe-area-inset-bottom))`,
-    display: 'flex', flexDirection: 'column', gap: SPACING.compact,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: SPACING.compact,
   },
 }
 
@@ -540,17 +679,31 @@ const cardStyle = {
 
 const bodyStyle = { ...TYPE.bodySmall, color: GENERAL.slate, margin: 0 }
 
+const orientationDivider = {
+  marginTop: SPACING.standard,
+  paddingTop: SPACING.compact,
+  borderTop: `1px solid ${GENERAL.line.soft}`,
+}
+
 const choiceRow = {
-  display: 'flex', alignItems: 'center', gap: SPACING.micro,
-  border: '1px solid', borderRadius: RADII.small,
+  display: 'flex',
+  alignItems: 'center',
+  gap: SPACING.micro,
+  border: '1px solid',
+  borderRadius: RADII.small,
   padding: `${SPACING.micro + 2}px ${SPACING.compact}px`,
   transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
 }
 
 const choiceBadge = borderColor => ({
-  ...TYPE.caption, fontWeight: 700,
-  width: 22, height: 22, flexShrink: 0,
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  ...TYPE.caption,
+  fontWeight: 700,
+  width: 22,
+  height: 22,
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   borderRadius: RADII.pill,
   border: `1px solid ${borderColor}`,
   color: borderColor,
@@ -558,7 +711,9 @@ const choiceBadge = borderColor => ({
 
 function goalChip(accent) {
   return {
-    display: 'inline-flex', alignItems: 'center', gap: SPACING.micro,
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: SPACING.micro,
     marginTop: SPACING.compact,
     padding: `${SPACING.micro}px ${SPACING.compact}px`,
     borderRadius: RADII.small,
@@ -567,10 +722,35 @@ function goalChip(accent) {
   }
 }
 
+function whyGoalRow(accent) {
+  return {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: SPACING.micro,
+    marginTop: SPACING.compact,
+    paddingTop: SPACING.compact,
+    borderTop: `1px solid ${accent}24`,
+  }
+}
+
+function decisionFeedback(isCorrect, accent) {
+  return {
+    marginTop: SPACING.compact,
+    padding: SPACING.compact,
+    borderRadius: RADII.small,
+    border: `1px solid ${isCorrect ? `${accent}40` : GENERAL.feedbackIncorrect}`,
+    background: isCorrect ? `${accent}10` : `rgba(${GENERAL.feedbackIncorrectRgb},0.08)`,
+  }
+}
+
 function opTag(accent) {
   return {
-    fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 500,
-    color: accent, minWidth: 40, textAlign: 'center',
+    fontFamily: "'Sora', sans-serif",
+    fontSize: 16,
+    fontWeight: 500,
+    color: accent,
+    minWidth: 40,
+    textAlign: 'center',
   }
 }
 
@@ -580,8 +760,11 @@ function inputStyle(status, accent) {
     : status === 'wrong' ? GENERAL.feedbackIncorrect
     : GENERAL.line.strong
   return {
-    ...TYPE.body, color: GENERAL.softWhite, fontWeight: 600,
-    width: '100%', height: 52,
+    ...TYPE.body,
+    color: GENERAL.softWhite,
+    fontWeight: 600,
+    width: '100%',
+    height: 52,
     padding: `0 ${SPACING.compact}px`,
     borderRadius: RADII.small,
     border: `1.5px solid ${border}`,
@@ -592,9 +775,16 @@ function inputStyle(status, accent) {
 
 function hintToggle(accent) {
   return {
-    display: 'inline-flex', alignItems: 'center', gap: 6,
-    ...TYPE.bodySmall, fontWeight: 600, color: accent,
-    background: 'transparent', border: 'none', padding: 0, cursor: 'pointer',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    ...TYPE.bodySmall,
+    fontWeight: 600,
+    color: accent,
+    background: 'transparent',
+    border: 'none',
+    padding: 0,
+    cursor: 'pointer',
   }
 }
 
@@ -611,9 +801,14 @@ function resultBox(accent) {
 
 function stepNumber(accent) {
   return {
-    ...TYPE.caption, fontWeight: 700,
-    width: 22, height: 22, flexShrink: 0,
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    ...TYPE.caption,
+    fontWeight: 700,
+    width: 22,
+    height: 22,
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: RADII.pill,
     border: `1px solid ${accent}`,
     color: accent,
