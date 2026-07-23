@@ -310,11 +310,20 @@ export const REVIEW_ENTRIES = [
   {
     id: 'theory-compare-block', name: 'TheoryCompareBlock', group: 'comparison',
     status: 'comparison', subject: 'History', renderMode: 'inline',
-    function: 'Side-by-side theory comparison block with staggered fade-in.',
-    usage: 'Used in Episodes 2 and 3, type: theoryCompare.',
+    function: 'Belief-versus-reality comparison with a staggered reveal and final takeaway.',
+    usage: 'Used in Episode 2 (Black Death), type: theoryCompare.',
     alternative: 'BeforeAfterImageSlider (interactive); MisconceptionCheck.',
     render: (fx) => <TheoryCompareBlock block={fx} subject="History" />,
     fixture: FIX.theoryCompareBlock,
+  },
+  {
+    id: 'theory-compare-people', name: 'TheoryCompareBlock — people', group: 'comparison',
+    status: 'comparison', subject: 'History', renderMode: 'inline',
+    function: 'Cinematic person-to-person comparison with paired hero art, progressive comparison prompts and a final evidence-based takeaway.',
+    usage: 'Used in Episode 3 (Galen and Vesalius), type: theoryCompare, variant: people.',
+    alternative: 'KeyFigureReveal for one person; ColSortBlock for assessed classification.',
+    render: (fx, { onDone }) => <TheoryCompareBlock block={fx} subject="History" onComplete={onDone} />,
+    fixture: FIX.theoryComparePeople,
   },
   {
     id: 'misconception-check', name: 'MisconceptionCheck', group: 'comparison',
