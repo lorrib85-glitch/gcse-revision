@@ -1,3 +1,6 @@
+import { useRef, useState } from 'react'
+import { GENERAL } from '../../constants/generalTheme.js'
+import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 
 export default function ScoreNumberLine({
@@ -9,100 +12,154 @@ export default function ScoreNumberLine({
   label = 'Score',
   disabled = false,
 }) {
+  const trackRef = useRef(null)
+  const [dragging, setDragging] = useState(false)
+  const [focused, setFocused] = useState(false)
   const scores = Array.from({ length: max - min + 1 }, (_, i) => min + i)
-  const selected = typeof value === 'number' ? value : null
+  const selected = typeof value === 'number' ? Math.min(max, Math.max(min, value)) : null
   const selectedIndex = selected === null ? -1 : scores.indexOf(selected)
   const percent = selectedIndex < 0 || scores.length <= 1 ? 0 : (selectedIndex / (scores.length - 1)) * 100
 
+  function selectFromClientX(clientX) {
+    const bounds = trackRef.current?.getBoundingClientRect()
+    if (!bounds || disabled) return
+    const ratio = Math.min(1, Math.max(0, (clientX - bounds.left) / bounds.width))
+    const next = min + Math.round(ratio * (max - min))
+    onChange?.(next)
+  }
+
+  function handlePointerDown(event) {
+    if (disabled) return
+    setDragging(true)
+    event.currentTarget.setPointerCapture?.(event.pointerId)
+    selectFromClientX(event.clientX)
+  }
+
+  function handlePointerMove(event) {
+    if (dragging) selectFromClientX(event.clientX)
+  }
+
+  function handlePointerUp(event) {
+    setDragging(false)
+    event.currentTarget.releasePointerCapture?.(event.pointerId)
+  }
+
+  function handleKeyDown(event) {
+    if (disabled) return
+    const current = selected ?? min
+    let next = current
+
+    if (event.key === 'ArrowRight' || event.key === 'ArrowUp') next = Math.min(max, current + 1)
+    else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') next = Math.max(min, current - 1)
+    else if (event.key === 'Home') next = min
+    else if (event.key === 'End') next = max
+    else return
+
+    event.preventDefault()
+    onChange?.(next)
+  }
+
   return (
-    <div role="group" aria-label={label} style={{ width: '100%' }}>
-      <div style={{
-        position: 'relative',
-        padding: '18px 6px 8px',
-      }}>
+    <div style={{ width: '100%' }}>
+      <div
+        ref={trackRef}
+        role="slider"
+        tabIndex={disabled ? -1 : 0}
+        aria-label={label}
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={selected ?? min}
+        aria-valuetext={selected === null ? 'No mark selected' : `${selected} out of ${max}`}
+        aria-disabled={disabled}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        onKeyDown={handleKeyDown}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={() => setDragging(false)}
+        style={{
+          position: 'relative',
+          width: '100%',
+          padding: '14px 0 4px',
+          borderRadius: RADII.medium,
+          outline: 'none',
+          boxShadow: focused ? `0 0 0 2px ${accent}66` : 'none',
+          cursor: disabled ? 'default' : dragging ? 'grabbing' : 'pointer',
+          touchAction: 'none',
+          transition: 'box-shadow 160ms ease',
+        }}
+      >
         <div style={{
           position: 'absolute',
-          left: 14,
-          right: 14,
-          top: 31,
+          left: '5.5%',
+          right: '5.5%',
+          top: 34,
           height: 2,
-          borderRadius: 999,
-          background: 'rgba(245,238,225,0.12)',
+          borderRadius: RADII.pill,
+          background: GENERAL.line.strong,
           pointerEvents: 'none',
         }} />
         <div style={{
           position: 'absolute',
-          left: 14,
-          top: 31,
-          width: `calc((100% - 28px) * ${percent / 100})`,
+          left: '5.5%',
+          top: 34,
+          width: `calc(89% * ${percent / 100})`,
           height: 2,
-          borderRadius: 999,
+          borderRadius: RADII.pill,
           background: selected === null ? 'transparent' : accent,
-          boxShadow: selected === null ? 'none' : `0 0 16px ${accent}55`,
-          transition: 'width 180ms ease',
+          transition: dragging ? 'none' : 'width 180ms ease',
           pointerEvents: 'none',
         }} />
+
         <div style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${scores.length}, minmax(0, 1fr))`,
-          gap: 0,
           position: 'relative',
           zIndex: 1,
+          pointerEvents: 'none',
         }}>
           {scores.map(score => {
             const isSelected = score === selected
             const isPast = selected !== null && score < selected
+
             return (
-              <button
+              <span
                 key={score}
-                type="button"
-                disabled={disabled}
-                aria-pressed={isSelected}
-                aria-label={`${score} out of ${max}`}
-                onClick={() => onChange?.(score)}
+                aria-hidden="true"
                 style={{
                   minWidth: 0,
-                  minHeight: 42,
-                  padding: 0,
-                  border: 'none',
-                  background: 'transparent',
+                  minHeight: 52,
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'flex-start',
                   gap: 8,
-                  cursor: disabled ? 'not-allowed' : 'pointer',
                 }}
               >
                 <span style={{
-                  width: isSelected ? 28 : 16,
-                  height: isSelected ? 28 : 16,
-                  borderRadius: 999,
+                  width: isSelected ? 28 : 18,
+                  height: isSelected ? 28 : 18,
+                  marginTop: isSelected ? 0 : 5,
+                  borderRadius: RADII.pill,
                   display: 'grid',
                   placeItems: 'center',
-                  background: isSelected ? accent : isPast ? `${accent}55` : 'rgba(245,238,225,0.10)',
-                  border: isSelected ? `1px solid ${accent}` : `1px solid ${isPast ? `${accent}55` : 'rgba(245,238,225,0.16)'}`,
-                  boxShadow: isSelected ? `0 0 20px ${accent}44` : 'none',
-                  color: isSelected ? '#090A0E' : isPast ? 'rgba(245,238,225,0.84)' : 'rgba(245,238,225,0.58)',
-                  transition: 'all 160ms ease',
+                  background: isSelected ? accent : isPast ? `${accent}55` : GENERAL.surfaceTint,
+                  border: `1px solid ${isSelected ? accent : isPast ? `${accent}66` : GENERAL.line.strong}`,
+                  boxShadow: isSelected ? `0 0 0 4px ${accent}18` : 'none',
+                  transition: dragging ? 'none' : 'all 160ms ease',
                 }}>
-                  {isSelected && (
-                    <span style={{ ...TYPE.bodySmall, fontWeight: 900, fontSize: 13, lineHeight: 1 }}>
-                      {score}
-                    </span>
-                  )}
+                  {isSelected && <span style={{ width: 8, height: 8, borderRadius: RADII.pill, background: GENERAL.textOnAccent }} />}
                 </span>
-                {!isSelected && (
-                  <span style={{
-                    ...TYPE.bodySmall,
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: isPast ? `rgba(245,238,225,0.56)` : 'rgba(245,238,225,0.34)',
-                  }}>
-                    {score}
-                  </span>
-                )}
-              </button>
+                <span style={{
+                  ...TYPE.bodySmall,
+                  fontSize: 12,
+                  fontWeight: isSelected ? 800 : 700,
+                  color: isSelected ? accent : isPast ? GENERAL.cinematic.textSecondary : GENERAL.cinematic.textSubtle,
+                }}>
+                  {score}
+                </span>
+              </span>
             )
           })}
         </div>
