@@ -16,7 +16,8 @@ export const SUBJECT_BACKDROPS = {
   Chemistry: '/chemsistrybacker.webp',
   Physics:   '/physicsbacker.webp',
   English:   '/Englishbacker.webp',
-  Music:     '/historybacker.webp', // no Music backer asset yet
+  Drama:     null, // subject-token atmosphere is used until a dedicated asset exists
+  Music:     null, // subject-token atmosphere is used until a dedicated asset exists
 }
 
 // Mobile-first focal positions for full-screen subject backdrops. These preserve
@@ -30,5 +31,13 @@ export const SUBJECT_BACKDROP_POSITIONS = {
   Chemistry: '70% center',
   Physics:   '66% center',
   English:   '62% center',
-  Music:     '64% center',
+  Drama:     'center',
+  Music:     'center',
+}
+
+// Shared treatment for restrained backdrops inside an inline learning block.
+// The image supports subject identity without becoming a second focal point.
+export const INLINE_SUBJECT_BACKDROP = {
+  opacity: 0.18,
+  filter: 'saturate(0.78) brightness(0.62)',
 }
