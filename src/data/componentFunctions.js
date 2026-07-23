@@ -54,7 +54,6 @@ export const SCREEN_TYPE_FUNCTIONS = {
   timelineCanvas: { functions: ['sequence-process'], interaction: 'reveal' },
   timelineChain: { functions: ['sequence-process'], interaction: 'reveal' },
   beforeAfterSlider: { functions: ['teach-comparison'], interaction: 'reveal' },
-  collectionExplorer: { functions: ['teach-mechanism'], interaction: 'reveal' },
   flashcards: { functions: ['retrieve'], interaction: 'reveal' },
   // RevealBlock: tap a prompt card to reveal its answer — no scoring
   reveal: { functions: ['teach-mechanism'], interaction: 'reveal' },

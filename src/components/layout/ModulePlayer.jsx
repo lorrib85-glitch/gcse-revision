@@ -47,7 +47,6 @@ import SwipeSort from '../learning/SwipeSort.jsx'
 import OppositeQualitiesReveal from '../learning/OppositeQualitiesReveal.jsx'
 import VisualLearning from '../learning/VisualLearning.jsx'
 import KeyFigureReveal from '../learning/KeyFigureReveal.jsx'
-import InteractiveCollectionExplorer from '../learning/InteractiveCollectionExplorer.jsx'
 import CentreImageReveal from '../learning/CentreImageReveal.jsx'
 import MatchingTask from '../learning/MatchingTask.jsx'
 import OrderedRouteTask from '../learning/OrderedRouteTask.jsx'
@@ -1871,27 +1870,10 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           imageAlt={cur.imageAlt || cur.title}
           hotspots={cur.hotspots || []}
           ctaLabel={cur.ctaLabel}
+          variant={cur.variant}
+          synthesis={cur.synthesis || null}
           onBack={headerOnBack}
           onEnterExplore={() => setIhmExploreScreen(screen)}
-          onContinue={isLast ? handleFinish : () => go(1)}
-        />
-        {jumpSheetPortal}
-      </>
-    )
-  }
-
-  // ── Interactive collection explorer — tappable object discovery ─────────────
-  if (cur?.type === 'collectionExplorer') {
-    return (
-      <>
-        <LearningHeader {...H} visible={true} />
-        <InteractiveCollectionExplorer
-          subject={module.subject}
-          title={cur.title}
-          description={cur.description}
-          backgroundImage={cur.backgroundImage}
-          items={cur.items || []}
-          synthesis={cur.synthesis || null}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
         {jumpSheetPortal}

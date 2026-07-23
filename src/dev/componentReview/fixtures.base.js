@@ -697,15 +697,16 @@ export const swipeSort = {
   explanation: 'The Great Plague shows better public action, but not modern medicine.',
 }
 
-// InteractiveCollectionExplorer (History) — themed sheets with staged reveals.
-// Shape: { title, description, backgroundImage, items:[{id,x,y,label,reveals:[{text}]}], synthesis }.
-export const collectionExplorer = {
+// InteractiveHotspotImage — reveal variant (History): paged reveals per hotspot + synthesis.
+// Shape: { title, introText, image, imageAlt, hotspots:[{id,x,y,title,reveals:[{text}]}], synthesis }.
+export const interactiveHotspotReveal = {
   title: 'Staying well in 1400',
-  description: 'Tap each object to find out how people tried to stay healthy — before anyone knew about germs.',
-  backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
-  items: [
+  introText: 'Tap each object to find out how people tried to stay healthy — before anyone knew about germs.',
+  image: '/figures/history/medicine/medieval/medieval-street.webp',
+  imageAlt: 'A medieval street scene in 1400',
+  hotspots: [
     {
-      id: 'regimen-sanitatis', x: 30, y: 42, label: "A physician's lifestyle chart",
+      id: 'regimen-sanitatis', x: 30, y: 42, title: "A physician's lifestyle chart",
       reveals: [
         { text: "A wealthy merchant keeps a written chart pinned to his wall — instructions for exactly how to eat, sleep and bathe." },
         { text: "This is a Regimen Sanitatis: a physician's guide to diet, exercise, sleep and bathing, written to keep a patient's humours in balance." },
@@ -713,7 +714,7 @@ export const collectionExplorer = {
       ],
     },
     {
-      id: 'purifying-air', x: 68, y: 60, label: 'A bunch of dried herbs',
+      id: 'purifying-air', x: 68, y: 60, title: 'A bunch of dried herbs',
       reveals: [
         { text: "A woman walking through town presses a small bunch of dried flowers to her nose." },
         { text: 'This is "purifying the air" — carrying sweet-smelling herbs and ringing bells to keep the air moving, both believed to protect against miasma.' },

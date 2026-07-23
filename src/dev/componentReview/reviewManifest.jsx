@@ -37,7 +37,6 @@ import ChapterCompleteScreen from '../../components/layout/ChapterCompleteScreen
 import ChapterHookScreen from '../../components/layout/ChapterHookScreen.jsx'
 import FillInTheBlanksBlock from '../../components/learning/FillInTheBlanksBlock.jsx'
 import SwipeSort from '../../components/learning/SwipeSort.jsx'
-import InteractiveCollectionExplorer from '../../components/learning/InteractiveCollectionExplorer.jsx'
 import MedievalDiagnosisScene from '../../components/learning/MedievalDiagnosisScene.jsx'
 import QuickRecallScreen from '../../components/learning/QuickRecallScreen.jsx'
 import ExaminerExplainsScreen from '../../components/learning/ExaminerExplainsScreen.jsx'
@@ -101,7 +100,7 @@ export const REVIEW_ENTRIES = [
     status: 'routed-unused', subject: 'Biology', renderMode: 'fullbleed',
     function: 'Full-screen deep-dive carousel: one large image at a time with a sliding name + key-facts panel, for browsing a small related set.',
     usage: 'Routed in ModulePlayer (type: cinematicCarousel) but no content file uses it.',
-    alternative: 'InteractiveCollectionExplorer; CinematicRevealMoment (imageReveal mode).',
+    alternative: 'InteractiveHotspotImage (reveal variant); CinematicRevealMoment (imageReveal mode).',
     render: (fx, { onDone }) => <CinematicCarousel block={fx} subject="Biology" onContinue={onDone} />,
     fixture: FIX.cinematicCarousel,
   },
@@ -303,7 +302,7 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Click-to-continue cinematic scene sequence with animated headlines.',
     usage: 'Used across History episodes (1, 2, 3, 14), type: visualLearning.',
-    alternative: 'InteractiveCollectionExplorer; CinematicRevealMoment; ConceptReveal; TimelineChain (reveal variant).',
+    alternative: 'InteractiveHotspotImage (reveal variant); CinematicRevealMoment; ConceptReveal; TimelineChain (reveal variant).',
     render: (fx, { onDone }) => <VisualLearning block={fx} subject="History" onComplete={onDone} />,
     fixture: FIX.visualLearning,
   },
@@ -312,7 +311,7 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Scrollable single-choice carousel with atmospheric option cards.',
     usage: 'Used in Episodes 1 and 2, type: guidedChoiceCarousel.',
-    alternative: 'InteractiveCollectionExplorer; CinematicCarousel.',
+    alternative: 'InteractiveHotspotImage (reveal variant); CinematicCarousel.',
     render: (fx, { onDone }) => (
       <GuidedChoiceCarousel
         subject="History" headline={fx.headline} question={fx.question} helperText={fx.helperText}
@@ -372,7 +371,7 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Full-screen image with a two-phase intro → explore flow: tap glowing hotspots to read a label, description and extra fact for each point on the image.',
     usage: 'Used in Episode 1 (Tap the Four Humours) and Episode 2 (the dock at Melcombe), type: interactiveImage.',
-    alternative: 'InteractiveCollectionExplorer (themed sheets, no image anchoring); CinematicCarousel.',
+    alternative: 'InteractiveHotspotImage reveal variant; CinematicCarousel.',
     render: (fx, { onDone }) => (
       <InteractiveHotspotImage
         subject="History" title={fx.title} introText={fx.introText}
@@ -381,6 +380,21 @@ export const REVIEW_ENTRIES = [
       />
     ),
     fixture: FIX.interactiveHotspotImage,
+  },
+  {
+    id: 'interactive-hotspot-image-reveal', name: 'InteractiveHotspotImage (reveal)', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Reveal variant: tap a hotspot to page through multiple pieces of information (reveals), then a synthesis "collection complete" screen once all are explored.',
+    usage: 'Used in Episode 1 (staying well in 1400) and Episode 14 (trench conditions), type: interactiveImage + variant: reveal.',
+    alternative: 'InteractiveHotspotImage (detail variant) for single-card hotspots.',
+    render: (fx, { onDone }) => (
+      <InteractiveHotspotImage
+        subject="History" variant="reveal" title={fx.title} introText={fx.introText}
+        image={fx.image} imageAlt={fx.imageAlt} hotspots={fx.hotspots} synthesis={fx.synthesis}
+        onContinue={onDone}
+      />
+    ),
+    fixture: FIX.interactiveHotspotReveal,
   },
   {
     id: 'cinematic-reveal-moment', name: 'CinematicRevealMoment', group: 'library',
@@ -590,21 +604,6 @@ export const REVIEW_ENTRIES = [
     alternative: 'ColSortBlock (tap-to-column, inline); MatchingTask.',
     render: (fx, { onDone }) => <SwipeSort block={fx} subject="History" onComplete={onDone} />,
     fixture: FIX.swipeSort,
-  },
-  {
-    id: 'interactive-collection-explorer', name: 'InteractiveCollectionExplorer', group: 'library',
-    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
-    function: 'Themed explorer: tap objects on a background scene to open colour-coded sheets that reveal one line at a time, then a synthesis screen.',
-    usage: 'Routed in ModulePlayer (type: collectionExplorer); used in Episodes 1 and 14.',
-    alternative: 'InteractiveHotspotImage (themed sheets, no image anchoring); CinematicCarousel.',
-    render: (fx, { onDone }) => (
-      <InteractiveCollectionExplorer
-        subject="History" title={fx.title} description={fx.description}
-        backgroundImage={fx.backgroundImage} items={fx.items} synthesis={fx.synthesis}
-        onContinue={onDone}
-      />
-    ),
-    fixture: FIX.collectionExplorer,
   },
   {
     id: 'medieval-diagnosis-scene', name: 'MedievalDiagnosisScene', group: 'library',
