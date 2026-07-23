@@ -1,3 +1,5 @@
+import { GENERAL } from '../../../constants/generalTheme.js'
+
 export const IMAGES = {
   History: '/historybacker.webp',
   Biology: '/biologybacker.webp',
@@ -8,16 +10,24 @@ export const IMAGES = {
   English: '/Englishbacker.webp',
 }
 
-export const ANN_STYLES = {
-  strong: { borderBottom: '1.5px solid rgba(143,214,163,0.55)', color: 'inherit' },
-  weak: { borderBottom: '1.5px solid rgba(232,169,58,0.6)', color: 'inherit' },
-  irrelevant: { borderBottom: '1.5px solid rgba(192,80,85,0.5)', color: 'inherit', opacity: 0.65 },
+export function annotationStyle(type, accent) {
+  const colour = type === 'strong'
+    ? GENERAL.feedbackCorrect
+    : type === 'irrelevant'
+      ? GENERAL.feedbackIncorrect
+      : accent
+
+  return {
+    borderBottom: `1.5px solid ${colour}99`,
+    color: 'inherit',
+    opacity: type === 'irrelevant' ? 0.65 : 1,
+  }
 }
 
-export const ANN_DOT = {
-  strong: 'rgba(143,214,163,0.8)',
-  weak: 'rgba(232,169,58,0.85)',
-  irrelevant: 'rgba(192,80,85,0.7)',
+export function annotationDot(type, accent) {
+  if (type === 'strong') return GENERAL.feedbackCorrect
+  if (type === 'irrelevant') return GENERAL.feedbackIncorrect
+  return accent
 }
 
 export const TAB_LABELS = {
