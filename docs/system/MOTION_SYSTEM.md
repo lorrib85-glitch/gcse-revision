@@ -29,7 +29,17 @@ import { MOTION } from '../../constants/motion.js'
 | `MOTION.duration.standard` | `280ms` | Most transitions, screen element appearances |
 | `MOTION.duration.slow` | `420ms` | Page-level transitions, modal appearances |
 | `MOTION.duration.cinematic` | `720ms` | Dramatic reveals, chapter hooks, emotional moments |
+| `MOTION.duration.settle` | `1400ms` | Slow artwork or atmosphere settling into its resting state |
 | `MOTION.duration.atmospheric` | `12000ms` | Ambient/looping atmosphere (background breathing, subtle parallax) |
+
+### Stagger cadence
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `MOTION.stagger.standardMs` | `120` | Calm sequential reveals and compact completion ladders |
+| `MOTION.stagger.cinematicMs` | `180` | More spacious dramatic reveal sequences |
+
+Stagger tokens are numeric milliseconds so components can derive deliberate step delays without creating one-off local ladders.
 
 ### Easings
 
@@ -55,6 +65,17 @@ import { MOTION } from '../../constants/motion.js'
 - `MOTION.easing.gentle` for element entrances and subtle state changes
 - Press feedback should always use `MOTION.scale.press` — never `0.97` or `0.96`
 - Hover lift should always use `MOTION.scale.subtle` — never `1.02` or `1.03`
+- Use `MOTION.stagger.*Ms` to derive reveal sequences rather than maintaining bespoke timing ladders
+
+---
+
+## Reduced-motion baseline
+
+`src/globals.css` provides the mandatory app-level safety net for both the production app and Component Lab. Under `prefers-reduced-motion: reduce`, animation and transition delays are removed and durations settle in `0.01ms`.
+
+This uses near-instant durations rather than `animation: none`, because some reveal components depend on animation fill states to finish visible. The baseline therefore removes perceptible movement while still allowing elements to land in their intended final state.
+
+Component-level handling is still required when motion is driven by JavaScript or media rather than CSS. Examples include autoplay video, `requestAnimationFrame`, timers that deliberately step through motion states, or gesture logic that triggers a spring/fly-off sequence. Those branches must show a static final state or provide an equivalent non-motion interaction.
 
 ---
 
