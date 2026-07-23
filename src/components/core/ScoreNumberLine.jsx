@@ -8,22 +8,29 @@ export default function ScoreNumberLine({
   max = 8,
   min = 0,
   onChange,
-  accent = '#D9A441',
+  accent = GENERAL.teal,
   label = 'Score',
   disabled = false,
 }) {
   const trackRef = useRef(null)
   const [dragging, setDragging] = useState(false)
   const [focused, setFocused] = useState(false)
-  const scores = Array.from({ length: max - min + 1 }, (_, i) => min + i)
+  const scores = Array.from({ length: Math.max(1, max - min + 1) }, (_, index) => min + index)
   const selected = typeof value === 'number' ? Math.min(max, Math.max(min, value)) : null
   const selectedIndex = selected === null ? -1 : scores.indexOf(selected)
   const percent = selectedIndex < 0 || scores.length <= 1 ? 0 : (selectedIndex / (scores.length - 1)) * 100
+  const edgeOffsetPercent = 50 / scores.length
+  const trackWidthPercent = 100 - (edgeOffsetPercent * 2)
+  const dense = scores.length > 13
+  const labelInterval = scores.length > 17 ? 4 : dense ? 2 : 1
 
   function selectFromClientX(clientX) {
     const bounds = trackRef.current?.getBoundingClientRect()
     if (!bounds || disabled) return
-    const ratio = Math.min(1, Math.max(0, (clientX - bounds.left) / bounds.width))
+
+    const edgeInset = bounds.width / (scores.length * 2)
+    const usableWidth = Math.max(1, bounds.width - (edgeInset * 2))
+    const ratio = Math.min(1, Math.max(0, (clientX - bounds.left - edgeInset) / usableWidth))
     const next = min + Math.round(ratio * (max - min))
     onChange?.(next)
   }
@@ -66,9 +73,10 @@ export default function ScoreNumberLine({
         role="slider"
         tabIndex={disabled ? -1 : 0}
         aria-label={label}
+        aria-orientation="horizontal"
         aria-valuemin={min}
         aria-valuemax={max}
-        aria-valuenow={selected ?? min}
+        aria-valuenow={selected ?? undefined}
         aria-valuetext={selected === null ? 'No mark selected' : `${selected} out of ${max}`}
         aria-disabled={disabled}
         onFocus={() => setFocused(true)}
@@ -92,8 +100,8 @@ export default function ScoreNumberLine({
       >
         <div style={{
           position: 'absolute',
-          left: '5.5%',
-          right: '5.5%',
+          left: `${edgeOffsetPercent}%`,
+          right: `${edgeOffsetPercent}%`,
           top: 34,
           height: 2,
           borderRadius: RADII.pill,
@@ -102,9 +110,9 @@ export default function ScoreNumberLine({
         }} />
         <div style={{
           position: 'absolute',
-          left: '5.5%',
+          left: `${edgeOffsetPercent}%`,
           top: 34,
-          width: `calc(89% * ${percent / 100})`,
+          width: `calc(${trackWidthPercent}% * ${percent / 100})`,
           height: 2,
           borderRadius: RADII.pill,
           background: selected === null ? 'transparent' : accent,
@@ -122,6 +130,8 @@ export default function ScoreNumberLine({
           {scores.map(score => {
             const isSelected = score === selected
             const isPast = selected !== null && score < selected
+            const showLabel = isSelected || score === min || score === max || ((score - min) % labelInterval === 0)
+            const restDotSize = dense ? 14 : 18
 
             return (
               <span
@@ -138,9 +148,9 @@ export default function ScoreNumberLine({
                 }}
               >
                 <span style={{
-                  width: isSelected ? 28 : 18,
-                  height: isSelected ? 28 : 18,
-                  marginTop: isSelected ? 0 : 5,
+                  width: isSelected ? 28 : restDotSize,
+                  height: isSelected ? 28 : restDotSize,
+                  marginTop: isSelected ? 0 : (28 - restDotSize) / 2,
                   borderRadius: RADII.pill,
                   display: 'grid',
                   placeItems: 'center',
@@ -153,9 +163,11 @@ export default function ScoreNumberLine({
                 </span>
                 <span style={{
                   ...TYPE.bodySmall,
-                  fontSize: 12,
+                  minHeight: 16,
+                  fontSize: dense ? 11 : 12,
                   fontWeight: isSelected ? 800 : 700,
                   color: isSelected ? accent : isPast ? GENERAL.cinematic.textSecondary : GENERAL.cinematic.textSubtle,
+                  visibility: showLabel ? 'visible' : 'hidden',
                 }}>
                   {score}
                 </span>
