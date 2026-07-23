@@ -27,7 +27,6 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
   const [activeTab, setActiveTab] = useState('answer')
   const [guessedMark, setGuessedMark] = useState(null)
   const [selectedCriteria, setSelectedCriteria] = useState([])
-  const [revealPanelVisible, setRevealPanelVisible] = useState(false)
   const [studentEdits, setStudentEdits] = useState({})
   const [expandedEdit, setExpandedEdit] = useState(null)
   const expandedTextareaRef = useRef(null)
@@ -36,15 +35,6 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
   const [remarkError, setRemarkError] = useState(null)
 
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
-
-  useEffect(() => {
-    if (phase === 'reveal') {
-      const id = setTimeout(() => setRevealPanelVisible(true), 320)
-      return () => clearTimeout(id)
-    }
-    setRevealPanelVisible(false)
-    return undefined
-  }, [phase])
 
   useEffect(() => {
     if (phase !== 'intro') return undefined
@@ -139,5 +129,5 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
     return <FaceTheExaminerDone bg={bg} accent={accent} examiner={examiner} remarkResult={remarkResult} onAdvance={advance} />
   }
 
-  return <FaceTheExaminerMain module={module} examiner={examiner} screenTitle={screenTitle} bg={bg} accent={accent} activeTab={activeTab} setActiveTab={setActiveTab} phase={phase} setPhase={setPhase} guessedMark={guessedMark} setGuessedMark={setGuessedMark} selectedCriteria={selectedCriteria} setSelectedCriteria={setSelectedCriteria} revealPanelVisible={revealPanelVisible} setRevealPanelVisible={setRevealPanelVisible} isReveal={isReveal} isImproving={isImproving} isRemarking={isRemarking} segments={segments} expandedEdit={expandedEdit} setExpandedEdit={setExpandedEdit} studentEdits={studentEdits} setStudentEdits={setStudentEdits} expandedTextareaRef={expandedTextareaRef} hasAnyEdit={hasAnyEdit} remarkLoading={remarkLoading} remarkError={remarkError} handleRemark={handleRemark} onExit={onExit} canImprove={canImprove} />
+  return <FaceTheExaminerMain module={module} examiner={examiner} screenTitle={screenTitle} bg={bg} accent={accent} activeTab={activeTab} setActiveTab={setActiveTab} phase={phase} setPhase={setPhase} guessedMark={guessedMark} setGuessedMark={setGuessedMark} selectedCriteria={selectedCriteria} setSelectedCriteria={setSelectedCriteria} isReveal={isReveal} isImproving={isImproving} isRemarking={isRemarking} segments={segments} expandedEdit={expandedEdit} setExpandedEdit={setExpandedEdit} studentEdits={studentEdits} setStudentEdits={setStudentEdits} expandedTextareaRef={expandedTextareaRef} hasAnyEdit={hasAnyEdit} remarkLoading={remarkLoading} remarkError={remarkError} handleRemark={handleRemark} onExit={onExit} canImprove={canImprove} />
 }
