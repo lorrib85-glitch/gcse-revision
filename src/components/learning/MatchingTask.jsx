@@ -1,14 +1,18 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import SequenceProgress from '../core/SequenceProgress.jsx'
+import ContinueCTA from '../core/ContinueCTA.jsx'
+import CinematicShell from '../layout/CinematicShell.jsx'
 import { MOTION } from '../../constants/motion.js'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { GENERAL } from '../../constants/generalTheme.js'
+import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
+import { SPACING, COMPONENT_SIZE } from '../../constants/spacing.js'
+import { RADII } from '../../constants/radii.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
-import ContinueCTA from '../core/ContinueCTA.jsx'
-// CinematicShell used here because the full-bleed background image and vignette overlays
-// (position:absolute, inset:0) must fill the entire viewport; InteractionShell's 16px
-// horizontal padding would constrain them to the content column width.
-import CinematicShell from '../layout/CinematicShell.jsx'
-import { TYPE } from '../../constants/typography.js'
+
+const ROUND_MAX = 6
+const CONTENT_MAX_WIDTH = 430
+const ANCHOR_SIZE = SPACING.micro + 2
 
 // Fisher-Yates shuffle
 function shuffle(arr) {
@@ -19,10 +23,6 @@ function shuffle(arr) {
   }
   return a
 }
-
-const CARD_BORDER_WRONG = 'rgba(168,76,53,0.75)'
-const TEXT_PRIMARY = 'rgba(245,238,225,0.92)'
-const TEXT_DIM     = 'rgba(245,238,225,0.72)'
 
 const CSS = `
   @keyframes mt-fade-in {
@@ -36,120 +36,150 @@ const CSS = `
     65% { transform: translateX(-3px); }
     85% { transform: translateX(2px); }
   }
+  @keyframes mt-thread-draw {
+    from { stroke-dashoffset: 1; }
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes mt-anchor-settle {
+    0% { transform: translateY(-50%) scale(0.7); }
+    65% { transform: translateY(-50%) scale(1.18); }
+    100% { transform: translateY(-50%) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mt-motion {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
 `
 
-// ── Main export ───────────────────────────────────────────────────────────────
-
+// CinematicShell is used because the full-bleed background and protective
+// overlays must fill the viewport rather than the padded interaction column.
 export default function MatchingTask({ screen, subject, onComplete }) {
-  const allPairs    = screen.pairs || []
-  const subjectKey  = subject || screen.subject || 'History'
-  const bgImage     = screen.backgroundImage || ''
+  const allPairs = screen.pairs || []
+  const subjectKey = subject || screen.subject || 'History'
+  const bgImage = screen.backgroundImage || ''
+  const leftLabel = screen.leftLabel || 'Belief'
+  const rightLabel = screen.rightLabel || 'Response'
 
-  const theme    = SUBJECTS[subjectKey] || SUBJECTS.History
-  const accent   = theme.accent
+  const theme = SUBJECTS[subjectKey] || SUBJECTS.History
+  const accent = theme.accent
   const accentRgb = theme.accentRgb
 
-  const CARD_BG          = `rgba(${accentRgb},0.08)`
-  const CARD_BG_LOCKED   = `rgba(${accentRgb},0.15)`
-  const CARD_BORDER      = `rgba(${accentRgb},0.22)`
-  const CARD_BORDER_LOCKED   = `rgba(${accentRgb},0.50)`
-  const CARD_BORDER_SELECTED = `rgba(${accentRgb},0.65)`
+  const cardRest = GENERAL.surfaceTint
+  const cardLocked = `rgba(${accentRgb},0.09)`
+  const cardSelected = `rgba(${accentRgb},0.12)`
+  const borderRest = GENERAL.line.soft
+  const borderLocked = `rgba(${accentRgb},0.34)`
+  const borderSelected = `rgba(${accentRgb},0.62)`
+  const wrongBorder = `rgba(${GENERAL.feedbackIncorrectRgb},0.72)`
 
-  // Split pairs into rounds: max 6 per round, balanced halves
-  const ROUND_MAX  = 6
-  const numRounds  = allPairs.length > ROUND_MAX ? Math.ceil(allPairs.length / ROUND_MAX) : 1
-  const chunkSize  = numRounds > 1 ? Math.ceil(allPairs.length / numRounds) : allPairs.length
-  const rounds     = []
+  // Split pairs into rounds: max 6 per round, balanced halves.
+  const numRounds = allPairs.length > ROUND_MAX ? Math.ceil(allPairs.length / ROUND_MAX) : 1
+  const chunkSize = numRounds > 1 ? Math.ceil(allPairs.length / numRounds) : allPairs.length
+  const rounds = []
   for (let i = 0; i < allPairs.length; i += chunkSize) rounds.push(allPairs.slice(i, i + chunkSize))
 
-  const [roundIdx,        setRoundIdx]        = useState(0)
-  const [shuffledAnswers, setShuffledAnswers]  = useState([])
-  const [selectedTermId,  setSelectedTermId]   = useState(null)
-  const [lockedPairIds,   setLockedPairIds]    = useState([])
-  const [wrongTermId,     setWrongTermId]      = useState(null)
-  const [feedback,        setFeedback]         = useState('')
-  const [lines,           setLines]            = useState([])
+  const [roundIdx, setRoundIdx] = useState(0)
+  const [shuffledAnswers, setShuffledAnswers] = useState([])
+  const [selectedTermId, setSelectedTermId] = useState(null)
+  const [lockedPairIds, setLockedPairIds] = useState([])
+  const [wrongTermId, setWrongTermId] = useState(null)
+  const [wrongAnswerId, setWrongAnswerId] = useState(null)
+  const [feedback, setFeedback] = useState('')
+  const [lines, setLines] = useState([])
 
-  const panelRef  = useRef(null)
-  const termRefs  = useRef({})
+  const panelRef = useRef(null)
+  const termRefs = useRef({})
   const answerRefs = useRef({})
 
   const currentRound = rounds[roundIdx] || []
-  const isLastRound  = roundIdx === rounds.length - 1
-  const roundComplete = currentRound.length > 0 && currentRound.every(p => lockedPairIds.includes(p.id))
+  const isLastRound = roundIdx === rounds.length - 1
+  const roundComplete = currentRound.length > 0 && currentRound.every(pair => lockedPairIds.includes(pair.id))
 
-  // Reset on round change. `currentRound` isn't a dependency: it's a fresh
-  // slice of `rounds` recomputed every render from `roundIdx` + the stable
-  // `allPairs` prop, so it would never be referentially equal across
-  // renders — listing it here would re-run this effect (and reset state)
-  // on every render instead of only on an actual round change.
+  // Reset only when the actual round changes. currentRound is intentionally not
+  // a dependency because it is a fresh slice on every render.
   useEffect(() => {
-    setShuffledAnswers(shuffle(currentRound.map(p => ({ id: p.id, text: p.answer }))))
+    setShuffledAnswers(shuffle(currentRound.map(pair => ({ id: pair.id, text: pair.answer }))))
     setLockedPairIds([])
     setSelectedTermId(null)
     setLines([])
     setFeedback('')
     setWrongTermId(null)
+    setWrongAnswerId(null)
     termRefs.current = {}
     answerRefs.current = {}
   }, [roundIdx])
 
-  // Compute SVG lines from locked pair card positions
+  // Measure the real rendered card positions so connectors remain responsive to
+  // text wrapping, viewport changes and different pair counts.
   const computeLines = useCallback((locked) => {
     const panel = panelRef.current
     if (!panel) return
+
     const panelRect = panel.getBoundingClientRect()
     const newLines = []
+
     for (const id of locked) {
-      const tEl = termRefs.current[id]
-      const aEl = answerRefs.current[id]
-      if (!tEl || !aEl) continue
-      const tRect = tEl.getBoundingClientRect()
-      const aRect = aEl.getBoundingClientRect()
+      const termEl = termRefs.current[id]
+      const answerEl = answerRefs.current[id]
+      if (!termEl || !answerEl) continue
+
+      const termRect = termEl.getBoundingClientRect()
+      const answerRect = answerEl.getBoundingClientRect()
       newLines.push({
         id,
-        x1: tRect.right  - panelRect.left,
-        y1: tRect.top    + tRect.height / 2 - panelRect.top,
-        x2: aRect.left   - panelRect.left,
-        y2: aRect.top    + aRect.height / 2 - panelRect.top,
+        x1: termRect.right - panelRect.left,
+        y1: termRect.top + termRect.height / 2 - panelRect.top,
+        x2: answerRect.left - panelRect.left,
+        y2: answerRect.top + answerRect.height / 2 - panelRect.top,
       })
     }
+
     setLines(newLines)
   }, [])
 
   useEffect(() => {
     const handler = () => computeLines(lockedPairIds)
     window.addEventListener('resize', handler)
-    return () => window.removeEventListener('resize', handler)
+
+    const panel = panelRef.current
+    const observer = panel && typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(handler)
+      : null
+    if (panel && observer) observer.observe(panel)
+
+    return () => {
+      window.removeEventListener('resize', handler)
+      observer?.disconnect()
+    }
   }, [lockedPairIds, computeLines])
 
-  // Interactions
   function handleTermSelect(id) {
     if (lockedPairIds.includes(id) || wrongTermId) return
-    setSelectedTermId(prev => prev === id ? null : id)
+    setSelectedTermId(previous => previous === id ? null : id)
     setFeedback('')
   }
 
   function handleAnswerSelect(answerId) {
     if (!selectedTermId || lockedPairIds.includes(answerId) || wrongTermId) return
-    const pair = currentRound.find(p => p.id === selectedTermId)
+    const pair = currentRound.find(item => item.id === selectedTermId)
     if (!pair) return
 
     if (pair.id === answerId) {
-      // Correct match
       const newLocked = [...lockedPairIds, pair.id]
       setLockedPairIds(newLocked)
       setSelectedTermId(null)
       setFeedback('')
-      // Recompute lines after paint
+
       requestAnimationFrame(() => requestAnimationFrame(() => computeLines(newLocked)))
-      // Advance on completion
+
       if (newLocked.length === currentRound.length && isLastRound) {
-        setTimeout(() => onComplete?.(), 700)
+        setTimeout(() => onComplete?.(), GENERAL.cinematic.motion.ctaDelayMs)
       }
     } else {
-      // Wrong match
       setWrongTermId(selectedTermId)
+      setWrongAnswerId(answerId)
       setFeedback('Not quite — think about the connection.')
       logWrongAnswer({
         subject: subjectKey,
@@ -162,80 +192,125 @@ export default function MatchingTask({ screen, subject, onComplete }) {
       })
       setTimeout(() => {
         setWrongTermId(null)
+        setWrongAnswerId(null)
         setSelectedTermId(null)
       }, 420)
     }
   }
 
-  const n              = currentRound.length
-  const cardMinHeight  = n >= 5 ? 56 : 64
-  const rowGap         = n >= 5 ? 10 : 14
-  const answerFontSize = n >= 5 ? 11.5 : 12.5
+  const isCompactRound = currentRound.length >= 5
+  const cardMinHeight = SPACING.micro * (isCompactRound ? 7 : 8)
+  const rowGap = isCompactRound ? SPACING.micro : SPACING.compact
+  const termType = isCompactRound ? TYPE.bodySmall : TYPE.bodyStrong
+  const answerType = isCompactRound ? TYPE.caption : TYPE.bodySmall
+
+  const anchorStyle = (side, isActive, isLocked, isWrong) => ({
+    position: 'absolute',
+    top: '50%',
+    [side]: -(ANCHOR_SIZE / 2),
+    width: ANCHOR_SIZE,
+    height: ANCHOR_SIZE,
+    borderRadius: RADII.pill,
+    transform: 'translateY(-50%)',
+    background: isWrong
+      ? GENERAL.feedbackIncorrect
+      : isLocked || isActive
+        ? accent
+        : GENERAL.backgroundSurface,
+    border: `${COMPONENT_SIZE.hairline}px solid ${
+      isWrong
+        ? GENERAL.feedbackIncorrect
+        : isLocked || isActive
+          ? accent
+          : GENERAL.ring.rest
+    }`,
+    boxShadow: isActive && !isLocked
+      ? `0 0 14px rgba(${accentRgb},0.38)`
+      : 'none',
+    zIndex: 3,
+    animation: isLocked ? 'mt-anchor-settle 360ms ease both' : 'none',
+    transition: `background ${MOTION.duration.fast} ease, border-color ${MOTION.duration.fast} ease, box-shadow ${MOTION.duration.fast} ease`,
+  })
 
   return (
     <CinematicShell style={{
       zIndex: 1000,
-      display: 'flex', flexDirection: 'column',
-      fontFamily: "'Sora', sans-serif",
+      display: 'flex',
+      flexDirection: 'column',
+      background: GENERAL.backgroundApp,
     }}>
       <style>{CSS}</style>
 
-      {/* Background */}
       {bgImage && (
         <div style={{
-          position: 'absolute', inset: 0,
+          position: 'absolute',
+          inset: 0,
           backgroundImage: `url(${bgImage})`,
-          backgroundSize: 'cover', backgroundPosition: 'center',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           zIndex: 0,
         }} />
       )}
       <div style={{
-        position: 'absolute', inset: 0,
-        background: 'rgba(12,14,18,0.68)',
+        position: 'absolute',
+        inset: 0,
+        background: GENERAL.backgroundApp,
+        opacity: bgImage ? 0.64 : 1,
         zIndex: 0,
       }} />
-      {/* Vignette: darker top/bottom */}
       <div style={{
-        position: 'absolute', inset: 0,
-        background: 'linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, transparent 28%, transparent 68%, rgba(0,0,0,0.48) 100%)',
-        zIndex: 0, pointerEvents: 'none',
+        position: 'absolute',
+        inset: 0,
+        background: GENERAL.cinematic.overlay,
+        zIndex: 0,
+        pointerEvents: 'none',
       }} />
 
-      {/* Scrollable content */}
       <div style={{
-        position: 'relative', zIndex: 1,
-        flex: 1, overflowY: 'auto', overflowX: 'hidden',
-        display: 'flex', flexDirection: 'column',
-        padding: `calc(66px + env(safe-area-inset-top, 0px)) 16px calc(20px + env(safe-area-inset-bottom, 0px))`,
-        maxWidth: 430, width: '100%', margin: '0 auto',
+        position: 'relative',
+        zIndex: 1,
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: `calc(${SPACING.cinematic}px + env(safe-area-inset-top, 0px)) ${SPACING.compact}px calc(${SPACING.standard}px + env(safe-area-inset-bottom, 0px))`,
+        maxWidth: CONTENT_MAX_WIDTH,
+        width: '100%',
+        margin: '0 auto',
         boxSizing: 'border-box',
       }}>
-
-        {/* Header */}
-        <div style={{
-          ...TYPE.displaySection,
-          color: TEXT_PRIMARY,
-          marginBottom: 8,
-          maxWidth: '90%',
-          animation: 'mt-fade-in 380ms ease both',
-        }}>
+        <div
+          className="mt-motion"
+          style={{
+            ...TYPE.displayScreen,
+            ...HEADING_LAYOUT.screenTitle,
+            color: GENERAL.cinematic.textPrimary,
+            marginBottom: SPACING.micro,
+            animation: 'mt-fade-in 380ms ease both',
+          }}
+        >
           {screen.title || 'Knowledge check'}
         </div>
 
-        {/* Instruction */}
-        <div style={{
-          ...TYPE.bodySmall,
-          color: TEXT_DIM,
-          maxWidth: 340,
-          marginBottom: 18,
-          animation: 'mt-fade-in 380ms ease 50ms both',
-        }}>
-          {screen.instruction || 'Match each term to its description.'}
+        <div
+          className="mt-motion"
+          style={{
+            ...TYPE.bodySmall,
+            color: GENERAL.cinematic.textSecondary,
+            maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
+            marginBottom: SPACING.standard,
+            animation: 'mt-fade-in 380ms ease 50ms both',
+          }}
+        >
+          {screen.instruction || 'Choose a term, then choose its matching description.'}
         </div>
 
-        {/* Round progress */}
         {rounds.length > 1 && (
-          <div style={{ marginBottom: 12, animation: 'mt-fade-in 380ms ease 70ms both' }}>
+          <div
+            className="mt-motion"
+            style={{ marginBottom: SPACING.compact, animation: 'mt-fade-in 380ms ease 70ms both' }}
+          >
             <SequenceProgress
               total={rounds.length}
               current={roundIdx}
@@ -247,148 +322,157 @@ export default function MatchingTask({ screen, subject, onComplete }) {
           </div>
         )}
 
-        {/* ── Task panel ── */}
         <div
           ref={panelRef}
+          className="mt-motion"
           style={{
             position: 'relative',
             width: '100%',
-            borderRadius: 24,
-            padding: '16px 12px 18px',
-            background: 'rgba(12,14,22,0.72)',
-            border: `1px solid rgba(${accentRgb},0.18)`,
-            boxShadow: '0 18px 48px rgba(0,0,0,0.38)',
-            backdropFilter: 'blur(6px)',
-            WebkitBackdropFilter: 'blur(6px)',
             animation: 'mt-fade-in 380ms ease 90ms both',
           }}
         >
-          {/* SVG line layer — above cards so lines are always visible */}
           <svg
+            aria-hidden="true"
             style={{
-              position: 'absolute', inset: 0,
-              width: '100%', height: '100%',
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
               overflow: 'visible',
               pointerEvents: 'none',
-              zIndex: 10,
+              zIndex: 1,
             }}
           >
-            {lines.map(l => (
+            {lines.map(line => (
               <line
-                key={l.id}
-                x1={l.x1} y1={l.y1}
-                x2={l.x2} y2={l.y2}
-                stroke={`rgba(${accentRgb},0.72)`}
-                strokeWidth={2}
+                key={line.id}
+                x1={line.x1}
+                y1={line.y1}
+                x2={line.x2}
+                y2={line.y2}
+                pathLength="1"
+                stroke={`rgba(${accentRgb},0.74)`}
+                strokeWidth={COMPONENT_SIZE.focusRing}
                 strokeLinecap="round"
+                strokeDasharray="1"
+                className="mt-motion"
+                style={{ animation: 'mt-thread-draw 440ms ease both' }}
               />
             ))}
           </svg>
 
-          {/* Column labels */}
           <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: 14,
-            marginBottom: 8,
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            columnGap: SPACING.standard,
+            marginBottom: SPACING.compact,
           }}>
-            {['Term', 'Meaning'].map(label => (
+            {[leftLabel, rightLabel].map(label => (
               <div key={label} style={{
-                ...TYPE.metadata,
-                textTransform: 'uppercase',
-                color: `rgba(${accentRgb},0.50)`,
-              }}>{label}</div>
+                ...TYPE.label,
+                color: GENERAL.cinematic.textMuted,
+              }}>
+                {label}
+              </div>
             ))}
           </div>
 
-          {/* Card grid */}
           <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: 14,
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            columnGap: SPACING.standard,
             position: 'relative',
           }}>
-            {/* Terms */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: rowGap }}>
               {currentRound.map(pair => {
                 const isSelected = selectedTermId === pair.id
-                const isLocked   = lockedPairIds.includes(pair.id)
-                const isWrong    = wrongTermId === pair.id
+                const isLocked = lockedPairIds.includes(pair.id)
+                const isWrong = wrongTermId === pair.id
+                const isDeemphasised = selectedTermId && !isSelected && !isLocked
+
                 return (
                   <button
                     key={pair.id}
-                    ref={el => { termRefs.current[pair.id] = el }}
-                    onClick={() => !isLocked && handleTermSelect(pair.id)}
+                    ref={element => { termRefs.current[pair.id] = element }}
+                    type="button"
+                    disabled={isLocked}
+                    aria-pressed={isSelected}
+                    onClick={() => handleTermSelect(pair.id)}
+                    className="mt-motion"
                     style={{
-                      minHeight: cardMinHeight,
-                      padding: '11px 10px',
-                      borderRadius: 14,
-                      background: isLocked ? CARD_BG_LOCKED : CARD_BG,
-                      border: `1px solid ${
-                        isLocked   ? CARD_BORDER_LOCKED   :
-                        isWrong    ? CARD_BORDER_WRONG    :
-                        isSelected ? CARD_BORDER_SELECTED :
-                        CARD_BORDER
+                      minHeight: Math.max(cardMinHeight, COMPONENT_SIZE.touchTarget),
+                      padding: `${SPACING.micro + 4}px ${SPACING.micro + 2}px`,
+                      borderRadius: RADII.medium,
+                      background: isSelected ? cardSelected : isLocked ? cardLocked : cardRest,
+                      border: `${COMPONENT_SIZE.hairline}px solid ${
+                        isWrong ? wrongBorder : isSelected ? borderSelected : isLocked ? borderLocked : borderRest
                       }`,
                       boxShadow: isSelected && !isLocked
-                        ? `0 0 0 1px rgba(${accentRgb},0.18), 0 0 18px rgba(${accentRgb},0.18)`
+                        ? `0 0 0 ${COMPONENT_SIZE.hairline}px rgba(${accentRgb},0.12), 0 0 18px rgba(${accentRgb},0.14)`
                         : 'none',
                       transform: isSelected && !isLocked ? 'translateY(-1px)' : 'none',
+                      opacity: isDeemphasised ? 0.68 : isLocked ? 0.78 : 1,
                       cursor: isLocked ? 'default' : 'pointer',
                       textAlign: 'left',
-                      fontFamily: "'Sora', sans-serif",
-                      fontWeight: 600,
-                      fontSize: 13.5,
-                      lineHeight: 1.3,
-                      color: TEXT_PRIMARY,
-                      transition: `border-color ${MOTION.duration.fast} ease, box-shadow ${MOTION.duration.fast} ease, transform 120ms ease`,
+                      color: GENERAL.cinematic.textPrimary,
+                      transition: `border-color ${MOTION.duration.fast} ease, background ${MOTION.duration.fast} ease, box-shadow ${MOTION.duration.fast} ease, transform ${MOTION.duration.fast} ease, opacity ${MOTION.duration.fast} ease`,
                       animation: isWrong ? 'mt-shake 380ms ease' : 'none',
                       position: 'relative',
+                      zIndex: 2,
                       WebkitTapHighlightColor: 'transparent',
+                      ...termType,
                     }}
                   >
                     {pair.term}
-                    {isLocked && (
-                      <span style={{
-                        position: 'absolute', top: 6, right: 8,
-                        fontSize: 10, color: accent, lineHeight: 1,
-                      }}>✓</span>
-                    )}
+                    <span
+                      aria-hidden="true"
+                      style={anchorStyle('right', isSelected, isLocked, isWrong)}
+                    />
                   </button>
                 )
               })}
             </div>
 
-            {/* Answers (shuffled) */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: rowGap }}>
-              {shuffledAnswers.map(ans => {
-                const isLocked = lockedPairIds.includes(ans.id)
+              {shuffledAnswers.map(answer => {
+                const isLocked = lockedPairIds.includes(answer.id)
+                const isWrong = wrongAnswerId === answer.id
+                const isAvailable = Boolean(selectedTermId) && !isLocked
+
                 return (
                   <button
-                    key={ans.id}
-                    ref={el => { answerRefs.current[ans.id] = el }}
-                    onClick={() => !isLocked && handleAnswerSelect(ans.id)}
+                    key={answer.id}
+                    ref={element => { answerRefs.current[answer.id] = element }}
+                    type="button"
+                    disabled={isLocked}
+                    onClick={() => handleAnswerSelect(answer.id)}
+                    className="mt-motion"
                     style={{
-                      minHeight: cardMinHeight,
-                      padding: '11px 10px',
-                      borderRadius: 14,
-                      background: isLocked ? CARD_BG_LOCKED : CARD_BG,
-                      border: `1px solid ${isLocked ? CARD_BORDER_LOCKED : CARD_BORDER}`,
-                      cursor: isLocked ? 'default' : 'pointer',
+                      minHeight: Math.max(cardMinHeight, COMPONENT_SIZE.touchTarget),
+                      padding: `${SPACING.micro + 4}px ${SPACING.micro + 2}px`,
+                      borderRadius: RADII.medium,
+                      background: isLocked ? cardLocked : cardRest,
+                      border: `${COMPONENT_SIZE.hairline}px solid ${isWrong ? wrongBorder : isLocked ? borderLocked : borderRest}`,
+                      boxShadow: isAvailable && !isWrong
+                        ? `inset ${COMPONENT_SIZE.accentRail}px 0 0 rgba(${accentRgb},0.34)`
+                        : 'none',
+                      cursor: isLocked ? 'default' : selectedTermId ? 'pointer' : 'default',
                       textAlign: 'left',
-                      fontFamily: "'Sora', sans-serif",
-                      fontWeight: 400,
-                      fontSize: answerFontSize,
-                      lineHeight: 1.25,
-                      color: TEXT_PRIMARY,
-                      transition: `border-color ${MOTION.duration.fast} ease`,
+                      color: GENERAL.cinematic.textPrimary,
+                      opacity: isLocked ? 0.78 : selectedTermId ? 1 : 0.84,
+                      transition: `border-color ${MOTION.duration.fast} ease, background ${MOTION.duration.fast} ease, box-shadow ${MOTION.duration.fast} ease, opacity ${MOTION.duration.fast} ease`,
+                      animation: isWrong ? 'mt-shake 380ms ease' : 'none',
                       position: 'relative',
+                      zIndex: 2,
                       WebkitTapHighlightColor: 'transparent',
+                      ...answerType,
                     }}
                   >
-                    {ans.text}
-                    {isLocked && (
-                      <span style={{
-                        position: 'absolute', top: 6, right: 8,
-                        fontSize: 10, color: accent, lineHeight: 1,
-                      }}>✓</span>
-                    )}
+                    {answer.text}
+                    <span
+                      aria-hidden="true"
+                      style={anchorStyle('left', isAvailable, isLocked, isWrong)}
+                    />
                   </button>
                 )
               })}
@@ -396,23 +480,26 @@ export default function MatchingTask({ screen, subject, onComplete }) {
           </div>
         </div>
 
-        {/* Feedback area */}
-        <div style={{
-          marginTop: 14,
-          minHeight: 44,
-          fontSize: 13,
-          color: 'rgba(245,225,190,0.82)',
-          display: 'flex', alignItems: 'center',
-        }}>
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            ...TYPE.bodySmall,
+            marginTop: SPACING.compact,
+            minHeight: SPACING.standard,
+            color: GENERAL.feedbackIncorrect,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
           {feedback}
         </div>
 
-        {/* Continue to next round */}
         {roundComplete && !isLastRound && (
           <ContinueCTA
-            onClick={() => setRoundIdx(r => r + 1)}
+            onClick={() => setRoundIdx(round => round + 1)}
             accent={accent}
-            style={{ marginTop: 14, animation: 'mt-fade-in 360ms ease both' }}
+            style={{ marginTop: SPACING.compact, animation: 'mt-fade-in 360ms ease both' }}
           />
         )}
       </div>
