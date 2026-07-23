@@ -22,7 +22,7 @@ function getInputWidth(answer = '') {
   const contentWidth = String(answer ?? '').length * SPACING.micro + SPACING.separation
   return Math.min(
     COMPONENT_SIZE.typedAnswerMaxWidth,
-    Math.max(COMPONENT_SIZE.typedAnswerMinWidth, contentWidth),
+    Math.max(COMPONENT_SIZE.touchTarget * 2, contentWidth),
   )
 }
 
@@ -54,7 +54,6 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
     setValues(current => current.map((item, index) => (
       index === currentIndex ? nextValue : item
     )))
-    if (status === 'incorrect') setStatus('answering')
   }
 
   function handleCheck() {
@@ -65,10 +64,20 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
       return
     }
 
+    const attemptCount = attempts[currentIndex] || 0
     setAttempts(current => current.map((count, index) => (
       index === currentIndex ? count + 1 : count
     )))
-    setStatus('incorrect')
+
+    if (attemptCount === 0) {
+      setStatus('hint')
+      return
+    }
+
+    setValues(current => current.map((item, index) => (
+      index === currentIndex ? String(sentence.answer ?? '') : item
+    )))
+    setStatus('revealed')
   }
 
   function handleAdvance() {
@@ -86,13 +95,14 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
     if (event.key !== 'Enter') return
     event.preventDefault()
 
-    if (status === 'correct') handleAdvance()
+    if (status === 'correct' || status === 'revealed') handleAdvance()
     else handleCheck()
   }
 
-  const hintIndex = Math.max(0, (attempts[currentIndex] || 1) - 1)
-  const hint = sentence.hints?.[Math.min(hintIndex, sentence.hints.length - 1)]
-  const incorrectFeedback = hint || block.wrongMsg || 'Not quite — use the rest of the sentence to help you.'
+  const hint = sentence.hint
+    || sentence.hints?.[0]
+    || block.wrongMsg
+    || 'Use the words around the gap to narrow it down.'
   const correctFeedback = sentence.feedback || (isLast && block.correctMsg) || 'That’s right.'
   const matchMode = resolveFillBlankMatchMode(sentence)
   const inputMode = sentence.inputMode || (matchMode === 'numeric' ? 'decimal' : 'text')
@@ -108,9 +118,13 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
 
   const inputBorder = status === 'correct'
     ? GENERAL.feedbackCorrect
-    : status === 'incorrect'
-      ? GENERAL.feedbackIncorrect
-      : `rgba(${rgb},0.48)`
+    : status === 'revealed'
+      ? accent
+      : status === 'hint'
+        ? GENERAL.feedbackIncorrect
+        : `rgba(${rgb},0.48)`
+
+  const isResolved = status === 'correct' || status === 'revealed'
 
   return (
     <section
@@ -129,7 +143,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
           font-style: normal;
         }
         .fitb-input:focus-visible {
-          box-shadow: 0 0 0 ${COMPONENT_SIZE.accentRail}px rgba(${rgb},0.16), 0 0 ${SPACING.standard}px ${subjectData.glow};
+          box-shadow: 0 ${COMPONENT_SIZE.focusRing}px 0 rgba(${rgb},0.32), 0 0 ${SPACING.standard}px ${subjectData.glow};
         }
         @keyframes fitb-question-in {
           from { opacity: 0; transform: translateY(${SPACING.micro}px); }
@@ -163,7 +177,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
           flexDirection: 'column',
           justifyContent: 'center',
           overflow: 'hidden',
-          padding: `${SPACING.standard}px 0 ${SPACING.compact}px`,
+          padding: `${SPACING.standard}px ${SPACING.compact}px`,
           borderTop: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.faint}`,
           borderBottom: `${COMPONENT_SIZE.hairline}px solid ${GENERAL.line.faint}`,
           background: `radial-gradient(circle, ${subjectData.glowStrong}, ${subjectData.background})`,
@@ -199,7 +213,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
               className="fitb-input"
               aria-label={sentence.ariaLabel || `Answer for question ${currentIndex + 1}`}
               value={value}
-              disabled={status === 'correct'}
+              disabled={isResolved}
               onChange={event => handleChange(event.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={sentence.placeholder || block.placeholder || 'Your answer'}
@@ -213,16 +227,25 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
                 maxWidth: '100%',
                 minHeight: COMPONENT_SIZE.typedAnswerHeight,
                 margin: `${SPACING.micro}px 0`,
-                padding: `${SPACING.micro}px ${SPACING.compact}px`,
+                padding: `${SPACING.micro}px`,
                 verticalAlign: 'middle',
                 boxSizing: 'border-box',
-                background: GENERAL.backgroundSunken,
-                border: `${COMPONENT_SIZE.focusRing}px solid ${inputBorder}`,
-                borderRadius: RADII.small,
+                background: status === 'revealed'
+                  ? `rgba(${rgb},0.10)`
+                  : status === 'correct'
+                    ? `rgba(${GENERAL.feedbackCorrectRgb},0.08)`
+                    : 'transparent',
+                border: 'none',
+                borderBottom: `${COMPONENT_SIZE.focusRing}px solid ${inputBorder}`,
+                borderRadius: RADII.tiny,
                 ...TYPE.bodyStrong,
-                color: status === 'correct' ? GENERAL.feedbackCorrect : GENERAL.feedbackText,
+                color: status === 'correct'
+                  ? GENERAL.feedbackCorrect
+                  : status === 'revealed'
+                    ? GENERAL.feedbackText
+                    : GENERAL.feedbackText,
                 caretColor: accent,
-                transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}, color ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}, color ${MOTION.duration.fast} ${MOTION.easing.gentle}, background ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
               }}
             />
             {sentence.after && <span>{' '}{sentence.after}</span>}
@@ -235,13 +258,49 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
               marginTop: SPACING.compact,
             }}
           >
-            {status !== 'answering' && (
+            {status === 'hint' && (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: `${COMPONENT_SIZE.accentRail}px 1fr`,
+                gap: SPACING.compact,
+                alignItems: 'stretch',
+                padding: `${SPACING.micro}px 0`,
+                color: GENERAL.cinematic.textSecondary,
+                animation: `fitb-feedback-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
+              }}>
+                <span
+                  aria-hidden="true"
+                  style={{
+                    width: COMPONENT_SIZE.accentRail,
+                    borderRadius: RADII.pill,
+                    background: GENERAL.feedbackHint,
+                  }}
+                />
+                <div>
+                  <div style={{
+                    ...TYPE.label,
+                    color: GENERAL.feedbackHint,
+                    marginBottom: SPACING.micro,
+                  }}>
+                    Hint
+                  </div>
+                  <div style={{
+                    ...TYPE.bodySmall,
+                    color: GENERAL.cinematic.textSecondary,
+                  }}>
+                    {hint}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {status === 'correct' && (
               <div style={{
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: SPACING.micro,
                 ...TYPE.bodySmall,
-                color: status === 'correct' ? GENERAL.feedbackCorrect : GENERAL.feedbackText,
+                color: GENERAL.feedbackCorrect,
                 animation: `fitb-feedback-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
               }}>
                 <span
@@ -254,18 +313,24 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderRadius: RADII.pill,
-                    background: status === 'correct'
-                      ? `rgba(${GENERAL.feedbackCorrectRgb},0.14)`
-                      : `rgba(${GENERAL.feedbackIncorrectRgb},0.14)`,
-                    color: status === 'correct'
-                      ? GENERAL.feedbackCorrect
-                      : GENERAL.feedbackIncorrect,
+                    background: `rgba(${GENERAL.feedbackCorrectRgb},0.14)`,
+                    color: GENERAL.feedbackCorrect,
                     fontWeight: TYPE.label.fontWeight,
                   }}
                 >
-                  {status === 'correct' ? '✓' : '×'}
+                  ✓
                 </span>
-                <span>{status === 'correct' ? correctFeedback : incorrectFeedback}</span>
+                <span>{correctFeedback}</span>
+              </div>
+            )}
+
+            {status === 'revealed' && (
+              <div style={{
+                ...TYPE.label,
+                color: accent,
+                animation: `fitb-feedback-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
+              }}>
+                Correct answer
               </div>
             )}
           </div>
@@ -273,7 +338,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
       </div>
 
       <div style={{ marginTop: SPACING.standard }}>
-        {status === 'correct' ? (
+        {isResolved ? (
           <ContinueCTA
             onClick={handleAdvance}
             label={isLast ? 'Continue' : 'Next question'}
@@ -283,7 +348,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
         ) : (
           <CheckAnswerCTA
             onClick={handleCheck}
-            label={status === 'incorrect' ? 'Check again' : 'Check answer'}
+            label={status === 'hint' ? 'Try again' : 'Check answer'}
             accent={accent}
             disabled={!canCheck}
           />
