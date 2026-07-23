@@ -40,7 +40,7 @@ import FillInTheBlanksBlock from '../../components/learning/FillInTheBlanksBlock
 import SwipeSort from '../../components/learning/SwipeSort.jsx'
 import MedievalDiagnosisScene from '../../components/learning/MedievalDiagnosisScene.jsx'
 import QuickRecallScreen from '../../components/learning/QuickRecallScreen.jsx'
-import ExaminerExplainsScreen from '../../components/learning/ExaminerExplainsScreen.jsx'
+import WhatExaminersLookFor from '../../components/learning/WhatExaminersLookFor.jsx'
 import UnifiedQuestionScreen from '../../components/learning/UnifiedQuestionScreen.jsx'
 import TieredQuizScreen from '../../components/learning/TieredQuizScreen.jsx'
 import WeakSpotRecovery from '../../components/learning/WeakSpotRecovery.jsx'
@@ -60,7 +60,7 @@ import ExplainReveal from '../../components/learning/ExplainReveal.jsx'
 import ColSortBlock from '../../components/learning/ColSortBlock.jsx'
 import QuoteAnalyser from '../../components/learning/QuoteAnalyser.jsx'
 import KeyFigureReveal from '../../components/learning/KeyFigureReveal.jsx'
-import FaceTheExaminer from '../../components/learning/FaceTheExaminer.jsx'
+import FaceTheExaminerContainer from '../../components/learning/faceTheExaminer/FaceTheExaminerContainer.jsx'
 import GuidedExamResponse from '../../components/learning/GuidedExamResponse.jsx'
 
 // The seven review questions are identical for every component (per brief), so
@@ -238,7 +238,7 @@ export const REVIEW_ENTRIES = [
     status: 'routed-unused', subject: 'Biology', renderMode: 'fullbleed',
     function: 'Diagnostic precision check: select the error in a statement, explain why it is wrong, then rewrite it correctly.',
     usage: 'Routed in ModulePlayer (type: spotTheError) but no content file uses it. (Brief lists it under one-off; evidence shows it is unused.)',
-    alternative: 'MisconceptionCheck (true/false trap); FaceTheExaminer.',
+    alternative: 'MisconceptionCheck (true/false trap); FaceTheExaminerContainer.',
     render: (fx, { onDone }) => <SpotTheError block={fx} subject="Biology" onContinue={onDone} />,
     fixture: FIX.spotTheError,
   },
@@ -335,7 +335,7 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Cinematic true/false misconception trap, one statement at a time, with a calm reveal.',
     usage: 'Used across History episodes (1, 2, 3, 14), type: misconceptionCheck.',
-    alternative: 'SpotTheError; FaceTheExaminer.',
+    alternative: 'SpotTheError; FaceTheExaminerContainer.',
     render: (fx, { onDone }) => <MisconceptionCheck block={fx} subject="History" onContinue={onDone} />,
     fixture: FIX.misconceptionCheck,
   },
@@ -467,13 +467,13 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.keyFigureReveal,
   },
   {
-    id: 'face-the-examiner', name: 'FaceTheExaminer', group: 'library',
+    id: 'face-the-examiner', name: 'FaceTheExaminerContainer', group: 'library',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Examiner-style marking flow: guess the mark, pick the criteria, reveal the annotated answer with strong/weak/irrelevant tags, then improve the weak points and re-mark.',
     usage: 'Used as the module-level examiner in History episodes (1, 2, 3, 14), via module.examiner, and routable mid-module as type: faceExaminer.',
     alternative: 'GuidedExamResponse (scaffolded written answer); MisconceptionCheck / SpotTheError (shorter diagnostic checks).',
     render: (fx, { onDone }) => (
-      <FaceTheExaminer
+      <FaceTheExaminerContainer
         module={{ id: 'review-lab-fte', subject: 'History' }}
         examiner={fx}
         onExit={() => {}}
@@ -487,7 +487,7 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Cross-subject written-response scaffold: optional opening beat, governed exam prompt, section-by-section writing support and AI marking against the supplied board-specific mark scheme.',
     usage: 'Used in History episodes and GuidedAnswerCoach. Component Lab variants verify History, English, Biology, Maths and Sociology question structures through the same API.',
-    alternative: 'FaceTheExaminer (mark-the-answer diagnostic); GuidedAnswerCoach (full multi-stage exam-technique flow).',
+    alternative: 'FaceTheExaminerContainer (mark-the-answer diagnostic); GuidedAnswerCoach (full multi-stage exam-technique flow).',
     render: (fx, { onDone }) => (
       <GuidedExamResponse
         module={{ id: `review-lab-ger-${fx.subject || 'general'}`, subject: fx.subject }}
@@ -634,13 +634,13 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.quickRecall,
   },
   {
-    id: 'examiner-explains-screen', name: 'ExaminerExplainsScreen', group: 'library',
+    id: 'examiner-explains-screen', name: 'WhatExaminersLookFor', group: 'library',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
-    function: 'How-examiners-think reveal: an opening line, tips revealed one at a time, and a closing line — exam-technique framing before a written task.',
-    usage: 'Routed in ModulePlayer (type: examinerExplains); used across History episodes before exam-style questions.',
-    alternative: 'GuidedAnswerCoach (full multi-stage coach); FaceTheExaminer.',
+    function: 'Pre-question examiner briefing: introduces the priorities an examiner rewards before the learner begins a written task.',
+    usage: 'Canonical WhatExaminersLookFor component, routed through the legacy ModulePlayer type examinerExplains while content migrates.',
+    alternative: 'GuidedAnswerCoach (full multi-stage coach); FaceTheExaminerContainer.',
     render: (fx, { onDone }) => (
-      <ExaminerExplainsScreen subject="History" examinerExplains={fx} onBack={onDone} onContinue={onDone} />
+      <WhatExaminersLookFor subject="History" whatExaminersLookFor={fx} onBack={onDone} onContinue={onDone} />
     ),
     fixture: FIX.examinerExplains,
   },
