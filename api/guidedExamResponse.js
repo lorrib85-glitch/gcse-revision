@@ -1,48 +1,58 @@
 export const config = { runtime: 'edge' }
 
-const SYSTEM_PROMPT = `You are an experienced Edexcel GCSE History examiner marking a student's own written answer to a real exam question. The student has written their answer in scaffolded sections (each continuing a sentence starter you will be shown). Your job is to mark the combined answer rigorously against the supplied mark scheme, then give the student clear, encouraging, and specific guidance on how to raise their mark.
+const SYSTEM_PROMPT = `You are an experienced GCSE examiner marking a student's own response to a real exam-style question.
 
-You will receive: the exam question, the marks available, the mark scheme, and the student's answer broken into labelled sections.
+The request supplies the subject, exam board, question type, marks available, mark scheme and the student's response split into labelled sections. Apply the supplied mark scheme exactly. Do not import requirements from a different subject, board or question type. If a board or subject is not supplied, mark only against the explicit mark scheme and question.
 
-In addition to marking content, you must classify the answer's APPROACH — independent of whether the history is accurate — against this fixed taxonomy of exam-technique issues:
-- missingExample: makes a claim with no specific example, name, date or detail to back it up
-- noNamedMechanism: names a method or factor but never explains HOW it actually worked
-- onlyOneIdeaDeveloped: develops one point well but leaves the other underdeveloped or absent
-- vagueLanguage: relies on vague phrases ("it spread quickly", "people were dirty") instead of precise detail
-- repeatsQuestion: restates the question as if it were an answer, without adding new information
-- noSpecificDetail: generally accurate but lacks the precise, named detail examiners reward
+Your job is to:
+1. estimate a rigorous mark against the supplied criteria;
+2. explain briefly what received credit and what is missing in each section;
+3. identify the clearest next actions that could raise the mark;
+4. improve the weakest sentence, calculation line or reasoning step without replacing the student's entire response.
 
-Only return technique flags that are CLEARLY evidenced in this specific answer — do not invent or guess at patterns that aren't there. It is fine to return an empty techniqueFlags array if nothing is clearly evidenced. Each flag must quote or closely paraphrase the exact bit of the student's answer that shows the issue (the "evidence"), and pair it with one concrete, specific "suggestion" for what to do differently next time.
+Classify the response's APPROACH using only clearly evidenced issues from this taxonomy:
+- missingExample: makes a claim with no supporting example, quotation, value, name, date or detail
+- noNamedMechanism: names a method, factor or process but never explains how it works
+- onlyOneIdeaDeveloped: develops one required point well but leaves another underdeveloped or absent
+- vagueLanguage: relies on vague wording instead of precise subject vocabulary or evidence
+- repeatsQuestion: restates the question without adding an answer
+- noSpecificDetail: is broadly accurate but lacks the precise detail the mark scheme rewards
+- methodNotShown: gives an answer without enough working or method to earn available method marks
+- calculationSlip: makes an arithmetic, substitution, sign, unit or rounding error
+- weakAnalysisLink: includes evidence but does not explain what it shows or how it answers the question
+- missingEvaluation: presents an argument but does not weigh it up or reach the judgement required
+
+Only return flags that are clearly evidenced. It is fine to return an empty techniqueFlags array. Each flag must quote or closely paraphrase the student's own response and give one concrete next action.
 
 Respond ONLY in this exact JSON format with no other text:
 {
   "marksAwarded": <number>,
   "marksAvailable": <number>,
   "sectionFeedback": [
-    { "label": "<section label as given>", "comment": "<one or two sentences: what was credited, what was missing, specific to this section>" }
+    { "label": "<section label as given>", "comment": "<one or two concise sentences: what was credited and what was missing>" }
   ],
-  "verdict": "<one warm but honest sentence summing up the answer overall>",
-  "improvementSuggestions": ["<specific next action to gain more marks>", "<another, max 3 total>"],
+  "verdict": "<one warm but honest sentence summing up the response>",
+  "improvementSuggestions": ["<specific next action>", "<another, maximum 3 total>"],
   "rewrittenSentence": {
-    "originalWeakness": "<the exact sentence or short passage from the student's answer that is weakest>",
-    "improvedSentence": "<that sentence rewritten so it earns more credit>",
-    "whyItScoresBetter": "<one line: what changed and why it now earns more credit>"
+    "originalWeakness": "<the weakest sentence, calculation line or short passage from the student's response>",
+    "improvedSentence": "<a stronger version that would earn more credit>",
+    "whyItScoresBetter": "<one line explaining what changed and why it gains credit>"
   },
   "techniqueFlags": [
-    { "type": "<one taxonomy key>", "evidence": "<short quote or close paraphrase from the student's answer>", "suggestion": "<concrete next-time action>" }
+    { "type": "<one taxonomy key>", "evidence": "<short quote or close paraphrase>", "suggestion": "<concrete next-time action>" }
   ]
 }
 
 MARKING GUIDELINES:
-- Mark strictly against the mark scheme provided — follow its point structure (e.g. marks per valid way/point) exactly
-- Be fair: credit any valid point that meets the scheme's criteria, even if phrased differently from the exemplar
-- Never award more than the marks available
-- If a section is blank or just repeats its sentence starter with no real content, award 0 for that section and say so plainly but kindly
-- improvementSuggestions must always diagnose the missing SKILL, not just say "add more detail" — e.g. "Explain why this caused the change, not just that it happened", "Link this evidence back to the question's focus", "Use your own knowledge to explain why the source is useful for this enquiry", "Compare directly with the second period using 'similarly' or 'in contrast'". Phrase each as a direct next step, never generic praise or vague encouragement
-- sectionFeedback comments must also name the missing skill where marks were lost, not just "needs more detail" — be specific about what kind of thinking or content is missing
-- rewrittenSentence: pick the single weakest sentence the student actually wrote (quote it in originalWeakness), rewrite it so it would earn more credit against the mark scheme, and explain in one line what changed and why it now scores better. If the student's answer has no usable sentence to rewrite (e.g. a section was left blank), base it on the weakest section's starter instead
-- Keep sectionFeedback comments concise — one or two sentences each, specific to what that section actually contains
-- Keep the overall verdict to one sentence`
+- Mark strictly against the supplied mark scheme and never award more than the marks available.
+- Credit any valid method, interpretation, evidence or argument allowed by the scheme, even if it differs from an exemplar.
+- For Maths and Science calculations, preserve method marks where the scheme allows and check substitutions, units, significant figures and rounding.
+- For English and Drama, distinguish quotation or textual evidence from analysis of language, form, structure, performance or effect where the scheme requires it.
+- For History and Sociology, distinguish accurate knowledge from explanation, analysis, evaluation and judgement where the scheme requires it.
+- If a section is blank or only repeats its starter, award no credit for that section and say so plainly but kindly.
+- Diagnose the missing skill rather than saying only "add more detail".
+- Keep each section comment to one or two sentences and the overall verdict to one sentence.
+- If there is no usable sentence or line to improve, use the weakest section starter as the basis for the improved version.`
 
 export default async function handler(req) {
   if (req.method !== 'POST') {
@@ -55,41 +65,71 @@ export default async function handler(req) {
   }
 
   let body
-  try { body = await req.json() } catch {
+  try {
+    body = await req.json()
+  } catch {
     return new Response(JSON.stringify({ error: 'Invalid request body' }), { status: 400 })
   }
 
-  const { question, marks, markScheme, sections, subject, board, topic } = body
+  const {
+    question,
+    marks,
+    markScheme,
+    sections,
+    subject,
+    board,
+    topic,
+    questionType,
+  } = body
+
   if (!question || !marks || !Array.isArray(sections) || sections.length === 0) {
     return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400 })
   }
 
-  const combinedLength = sections.reduce((sum, s) => sum + (s.studentText || '').trim().length, 0)
+  const combinedLength = sections.reduce(
+    (sum, section) => sum + (section.studentText || '').trim().length,
+    0,
+  )
+
   if (combinedLength < 4) {
     return new Response(JSON.stringify({
       marksAwarded: 0,
       marksAvailable: marks,
-      sectionFeedback: sections.map(s => ({ label: s.label, comment: 'Nothing was written here yet — give it a go, even a rough attempt earns marks.' })),
-      verdict: "You haven't written an answer yet — have a go and you'll get proper feedback.",
-      improvementSuggestions: ['Write at least one full sentence in each section, continuing the starter you were given.'],
+      sectionFeedback: sections.map(section => ({
+        label: section.label,
+        comment: 'Nothing was written here yet — give it a go, even a rough attempt can earn credit.',
+      })),
+      verdict: "You haven't written a response yet — have a go and you'll get proper feedback.",
+      improvementSuggestions: ['Write at least one complete step or sentence in each required section.'],
       techniqueFlags: [],
     }), { status: 200, headers: { 'Content-Type': 'application/json' } })
   }
 
   const sectionsBlock = sections
-    .map((s, i) => `Section ${i + 1} — "${s.label}"\nStarter: ${s.starter || ''}\nStudent wrote: ${s.studentText || '(left blank)'}`)
+    .map((section, index) => [
+      `Section ${index + 1} — "${section.label}"`,
+      `Starter: ${section.starter || '(none)'}`,
+      `Student wrote: ${section.studentText || '(left blank)'}`,
+    ].join('\n'))
     .join('\n\n')
 
-  const userMessage = `Subject: ${subject || 'History'} (${board || 'edexcel'})${topic ? ` · Topic: ${topic}` : ''}
+  const contextLines = [
+    `Subject: ${subject || 'Not supplied'}`,
+    `Exam board: ${board || 'Not supplied'}`,
+    `Question type: ${questionType || 'Not supplied'}`,
+    topic ? `Topic: ${topic}` : null,
+  ].filter(Boolean).join('\n')
+
+  const userMessage = `${contextLines}
 
 Question: ${question}
 
 Marks available: ${marks}
 
 Mark scheme:
-${markScheme || 'Award marks fairly based on accuracy, relevance and development of points.'}
+${markScheme || 'Award credit only for accurate, relevant work that directly answers the question.'}
 
-Student's answer, in scaffolded sections:
+Student response, in scaffolded sections:
 ${sectionsBlock}`
 
   try {
@@ -109,8 +149,8 @@ ${sectionsBlock}`
     })
 
     if (!response.ok) {
-      const err = await response.text()
-      return new Response(JSON.stringify({ error: `API error: ${err}` }), { status: 500 })
+      const errorText = await response.text()
+      return new Response(JSON.stringify({ error: `API error: ${errorText}` }), { status: 500 })
     }
 
     const data = await response.json()
@@ -129,7 +169,7 @@ ${sectionsBlock}`
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     })
-  } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 })
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), { status: 500 })
   }
 }
