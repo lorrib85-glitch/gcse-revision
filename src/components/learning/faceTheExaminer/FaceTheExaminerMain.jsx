@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import BackButton from '../../core/BackButton.jsx'
 import ContinueCTA from '../../core/ContinueCTA.jsx'
 import SegmentedControl from '../../core/SegmentedControl.jsx'
@@ -43,8 +43,6 @@ export default function FaceTheExaminerMain(props) {
     isImproving,
     isRemarking,
     segments,
-    expandedEdit,
-    setExpandedEdit,
     studentEdits,
     setStudentEdits,
     expandedTextareaRef,
@@ -58,6 +56,7 @@ export default function FaceTheExaminerMain(props) {
 
   const [questionIntroVisible, setQuestionIntroVisible] = useState(phase === 'reading')
   const [questionIntroDocking, setQuestionIntroDocking] = useState(false)
+  const scrollRef = useRef(null)
 
   const backerImage = examiner.backgroundImage || IMAGES[module.subject] || null
   const backgroundPosition = examiner.backgroundPosition || 'center right'
@@ -78,6 +77,17 @@ export default function FaceTheExaminerMain(props) {
     || isImproving
     || isRemarking
 
+  function resetContentScroll() {
+    const scrollContainer = scrollRef.current
+    if (!scrollContainer) return
+    if (typeof scrollContainer.scrollTo === 'function') scrollContainer.scrollTo({ top: 0, behavior: 'auto' })
+    else scrollContainer.scrollTop = 0
+  }
+
+  useEffect(() => {
+    resetContentScroll()
+  }, [phase])
+
   function startQuestionIntroDock() {
     setQuestionIntroDocking(true)
     setTimeout(() => setQuestionIntroVisible(false), 560)
@@ -86,6 +96,7 @@ export default function FaceTheExaminerMain(props) {
   function handleTabChange(nextTab) {
     setActiveTab(nextTab)
     if (nextTab === 'marking' && phase === 'reading') setPhase('judging')
+    setTimeout(resetContentScroll, 0)
   }
 
   return (
@@ -116,26 +127,6 @@ export default function FaceTheExaminerMain(props) {
         .fte-chip:focus-visible { outline: 2px solid ${accent}88; outline-offset: 2px; }
         .fte-chip.selected { background: ${accent}18; border-color: ${accent}88; color: ${accent}; }
         .fte-chip:disabled { cursor: default; }
-        .fte-improve-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          min-height: 44px;
-          padding: 7px 11px;
-          border-radius: 10px;
-          margin: 8px 0 0;
-          font-family: ${TYPE.body.fontFamily};
-          font-size: ${TYPE.bodySmall.fontSize};
-          font-weight: 700;
-          cursor: pointer;
-          vertical-align: middle;
-          background: ${accent}18;
-          border: 1px solid ${accent}55;
-          color: ${accent};
-          transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
-        }
-        .fte-improve-btn.edited { background: ${GENERAL.feedbackCorrect}18; border-color: ${GENERAL.feedbackCorrect}66; color: ${GENERAL.feedbackCorrect}; }
-        .fte-improve-btn:focus-visible { outline: 2px solid ${accent}88; outline-offset: 2px; }
         .fte-textarea {
           width: 100%;
           box-sizing: border-box;
@@ -152,6 +143,8 @@ export default function FaceTheExaminerMain(props) {
           margin: 0;
         }
         .fte-textarea:focus { border-color: ${accent}88; box-shadow: 0 0 0 2px ${accent}18; }
+        .fte-secondary-action:focus-visible,
+        .fte-marked-toggle:focus-visible { outline: 2px solid ${accent}88; outline-offset: 2px; }
         .fte-scroll { scrollbar-width: none; -ms-overflow-style: none; }
         .fte-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
         @media (prefers-reduced-motion: reduce) {
@@ -241,6 +234,7 @@ export default function FaceTheExaminerMain(props) {
         )}
 
         <div
+          ref={scrollRef}
           className="fte-scroll"
           style={{
             flex: 1,
@@ -256,7 +250,7 @@ export default function FaceTheExaminerMain(props) {
           }}
         >
           {isReveal && <ExaminerVerdict examiner={examiner} guessedMark={guessedMark} accent={accent} />}
-          {showAnswer && <AnswerPanel accent={accent} examiner={examiner} segments={segments} isReveal={isReveal} isImproving={isImproving} expandedEdit={expandedEdit} setExpandedEdit={setExpandedEdit} studentEdits={studentEdits} setStudentEdits={setStudentEdits} expandedTextareaRef={expandedTextareaRef} />}
+          {showAnswer && <AnswerPanel accent={accent} examiner={examiner} segments={segments} isReveal={isReveal} isImproving={isImproving} studentEdits={studentEdits} setStudentEdits={setStudentEdits} expandedTextareaRef={expandedTextareaRef} />}
           {showMarking && <MarkingPanel accent={accent} examiner={examiner} guessedMark={guessedMark} setGuessedMark={setGuessedMark} selectedCriteria={selectedCriteria} setSelectedCriteria={setSelectedCriteria} />}
           {remarkError && (
             <div role="alert" style={{ marginTop: 12, padding: '10px 14px', borderRadius: 10, background: `${GENERAL.feedbackIncorrect}18`, border: `1px solid ${GENERAL.feedbackIncorrect}55`, ...TYPE.bodySmall, color: GENERAL.feedbackIncorrect }}>
@@ -318,11 +312,6 @@ export default function FaceTheExaminerMain(props) {
 
             {isImproving && (
               <div>
-                {!hasAnyEdit && (
-                  <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted, textAlign: 'center', marginBottom: 8 }}>
-                    {examiner.repairRequiredInstruction || 'Rewrite the highlighted sentence to continue.'}
-                  </div>
-                )}
                 <ContinueCTA
                   accent={accent}
                   label={remarkLoading ? 'Re-marking…' : 'Re-mark my answer'}
@@ -331,10 +320,23 @@ export default function FaceTheExaminerMain(props) {
                 />
                 <button
                   type="button"
+                  className="fte-secondary-action"
                   onClick={() => setPhase('done')}
-                  style={{ ...TYPE.bodySmall, display: 'block', width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: GENERAL.cinematic.textSubtle, padding: '12px 0 0', textAlign: 'center' }}
+                  style={{
+                    ...TYPE.bodySmall,
+                    display: 'block',
+                    width: '100%',
+                    minHeight: 44,
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: GENERAL.cinematic.textSecondary,
+                    fontWeight: 600,
+                    padding: '10px 0 0',
+                    textAlign: 'center',
+                  }}
                 >
-                  Continue without improving
+                  {examiner.skipRepairLabel || 'Continue without improving'}
                 </button>
               </div>
             )}
