@@ -101,7 +101,7 @@ export default function MisconceptionCheck({ block, subject = 'Biology', onConti
               ...TYPE.displayScreen,
               fontSize: 'clamp(26px, 7.5vw, 34px)',
               lineHeight: 1.22,
-              color: '#F4FFF8',
+              color: GENERAL.cinematic.textPrimary,
               textAlign: 'center',
               margin: 0,
               animation: `mck-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
@@ -131,7 +131,7 @@ export default function MisconceptionCheck({ block, subject = 'Biology', onConti
                   fontFamily: BUTTONS.secondary.fontFamily,
                   fontSize: BUTTONS.secondary.fontSize,
                   fontWeight: 700,
-                  color: '#F4FFF8',
+                  color: GENERAL.cinematic.textPrimary,
                   letterSpacing: '-0.01em',
                   transition: `all ${MOTION.duration.fast} ${MOTION.easing.standard}`,
                   transform: pressed === opt.label ? `scale(${MOTION.scale.press})` : 'scale(1)',
@@ -169,7 +169,7 @@ export default function MisconceptionCheck({ block, subject = 'Biology', onConti
           </div>
 
           {current.reveal && (
-            <p style={{ ...TYPE.body, color: '#EAF7F0', lineHeight: 1.7, margin: `0 0 ${SPACING.standard}px` }}>
+            <p style={{ ...TYPE.body, color: GENERAL.feedbackText, lineHeight: 1.7, margin: `0 0 ${SPACING.standard}px` }}>
               {current.reveal}
             </p>
           )}
