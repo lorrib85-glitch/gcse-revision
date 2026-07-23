@@ -50,7 +50,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
   const isLast = stepIdx === steps.length - 1
   const bg = step.backgroundImage
     ? `url(${step.backgroundImage})`
-    : `linear-gradient(160deg, ${palBg} 0%, #080C1A 100%)`
+    : `linear-gradient(160deg, ${theme.backgroundSecondary} 0%, ${palBg} 100%)`
   const useWidthLockedBackground = step.backgroundFit === 'width'
 
   function markRevealStarted() {

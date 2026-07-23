@@ -7,23 +7,22 @@ import { TYPE } from '../../constants/typography.js'
 import { RADII } from '../../constants/radii.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import GuidedExamResponse from './GuidedExamResponse.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import { ScreenTitle } from '../core/ScreenText.jsx'
 import { logCoachTypeResult } from '../../unifiedWeaknessTracker.js'
 
-const BRONZE = '#C89B6D'
-
 // Splits `question` around the first occurrence of `commandWord` so the
-// command word can be highlighted in bronze — History metadata accent only.
-function renderQuestion(question, commandWord) {
+// command word can be highlighted in the resolved subject accent.
+function renderQuestion(question, commandWord, accent) {
   if (!commandWord) return question
   const idx = question.indexOf(commandWord)
   if (idx === -1) return question
   return (
     <>
       {question.slice(0, idx)}
-      <span style={{ color: BRONZE, fontWeight: 700 }}>{commandWord}</span>
+      <span style={{ color: accent, fontWeight: 700 }}>{commandWord}</span>
       {question.slice(idx + commandWord.length)}
     </>
   )
@@ -48,9 +47,8 @@ const bulletRowStyle = { display: 'flex', alignItems: 'flex-start', gap: SPACING
 const bulletTextStyle = { ...TYPE.body, fontSize: 13.5, color: 'rgba(255,255,255,0.7)' }
 const bulletDotStyle = (color) => ({ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: color })
 
-// Primary Progression CTA — accent-filled, in GENERAL teal (or bronze, for the
-// stage-4 "Your turn" handoff) rather than a subject accent, since this coach
-// has no single subject context.
+// Primary Progression CTA — accent-filled, in GENERAL teal (or the resolved
+// subject accent, for the stage-4 "Your turn" handoff into the modelled answer).
 const ctaStyle = (enabled, accent = GENERAL.teal) => ({
   display: 'flex', alignItems: 'center', justifyContent: 'center',
   width: '100%',
@@ -134,6 +132,13 @@ function StageShell({ stageNum, onExit, children, footer }) {
 export default function GuidedAnswerCoach({ coachType, onExit }) {
   const { worked, attempts } = coachType
 
+  // Resolve the coach type's subject to the canonical theme accent, so History
+  // renders its gold accent and any future subject uses its own — no literals.
+  const subject = coachType.subject || 'History'
+  const theme = SUBJECTS[subject] || SUBJECTS.History
+  const accent = theme.accent
+  const board = coachType.board || 'Edexcel'
+
   const [stage, setStage] = useState('q')
   const [results, setResults] = useState({ supported: null, light: null, independent: null })
 
@@ -165,10 +170,10 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
           border: '1px solid rgba(255,255,255,0.06)', padding: SPACING.standard,
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: SPACING.compact, marginBottom: SPACING.compact }}>
-            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: BRONZE }}>
-              Edexcel · History
+            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: accent }}>
+              {board} · {subject}
             </div>
-            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: '0.04em', color: BRONZE, whiteSpace: 'nowrap' }}>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: '0.04em', color: accent, whiteSpace: 'nowrap' }}>
               {coachType.marksLabel}
             </div>
           </div>
@@ -176,7 +181,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
             fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 17, lineHeight: 1.6,
             color: 'rgba(245,238,225,0.92)', whiteSpace: 'pre-wrap',
           }}>
-            {renderQuestion(worked.question, coachType.commandWord)}
+            {renderQuestion(worked.question, coachType.commandWord, accent)}
           </div>
         </div>
       </StageShell>
@@ -299,11 +304,11 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
             onClick={() => setStrongRevealed(true)}
             style={{
               padding: SPACING.compact, borderRadius: RADII.medium,
-              background: `${BRONZE}14`, border: `1.5px solid ${BRONZE}`,
+              background: `${accent}14`, border: `1.5px solid ${accent}`,
               cursor: strongRevealed ? 'default' : 'pointer',
             }}
           >
-            <div style={{ ...sectionHeadingStyle, color: BRONZE }}>A stronger answer</div>
+            <div style={{ ...sectionHeadingStyle, color: accent }}>A stronger answer</div>
             <div style={{
               fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 15, lineHeight: 1.6,
               color: 'rgba(245,238,225,0.92)',
@@ -311,11 +316,11 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
               {beat.strongerIdea}
             </div>
             {strongRevealed ? (
-              <div style={{ marginTop: SPACING.compact, ...TYPE.bodySmall, fontSize: 13, color: BRONZE }}>
+              <div style={{ marginTop: SPACING.compact, ...TYPE.bodySmall, fontSize: 13, color: accent }}>
                 {beat.whyBetter}
               </div>
             ) : (
-              <div style={{ marginTop: SPACING.compact, fontFamily: "'Sora', sans-serif", fontSize: 11.5, fontWeight: 600, color: BRONZE }}>
+              <div style={{ marginTop: SPACING.compact, fontFamily: "'Sora', sans-serif", fontSize: 11.5, fontWeight: 600, color: accent }}>
                 Tap to see what makes this better →
               </div>
             )}
@@ -331,7 +336,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
   if (stage === 'model') {
     return (
       <StageShell stageNum={4} onExit={onExit} footer={
-        <ContinueCTA onClick={() => setStage('supported')} accent={BRONZE} />
+        <ContinueCTA onClick={() => setStage('supported')} accent={accent} />
       }>
         <div style={kickerStyle}>4 · Model answer</div>
         <ScreenTitle style={{ color: GENERAL.softWhite, marginBottom: 6, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
@@ -342,8 +347,8 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         </p>
 
         <div style={{
-          background: `linear-gradient(160deg, ${BRONZE}1A, ${BRONZE}08)`,
-          border: `1px solid ${BRONZE}40`, borderRadius: RADII.large,
+          background: `linear-gradient(160deg, ${accent}1A, ${accent}08)`,
+          border: `1px solid ${accent}40`, borderRadius: RADII.large,
           padding: SPACING.standard,
         }}>
           {worked.sources?.length > 0 && (
@@ -351,9 +356,9 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
               {worked.sources.map(src => (
                 <div key={src.label} style={{
                   padding: SPACING.compact, borderRadius: RADII.medium,
-                  background: 'rgba(0,0,0,0.18)', border: `1px solid ${BRONZE}30`,
+                  background: 'rgba(0,0,0,0.18)', border: `1px solid ${accent}30`,
                 }}>
-                  <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: BRONZE, marginBottom: 6 }}>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: accent, marginBottom: 6 }}>
                     {src.label}
                   </div>
                   <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontStyle: 'italic', color: 'rgba(245,238,225,0.55)', marginBottom: SPACING.micro }}>
@@ -367,7 +372,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
             </div>
           )}
 
-          <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: BRONZE, marginBottom: SPACING.compact }}>
+          <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: accent, marginBottom: SPACING.compact }}>
             Model answer
           </div>
 
@@ -380,7 +385,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
                     fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 16, lineHeight: 1.65,
                     color: 'rgba(245,238,225,0.92)', cursor: 'pointer',
                     padding: '2px 4px', borderRadius: RADII.small,
-                    background: openNoteIdx === i ? `${BRONZE}1F` : 'transparent',
+                    background: openNoteIdx === i ? `${accent}1F` : 'transparent',
                     transition: `background ${MOTION.duration.fast} ${MOTION.easing.standard}`,
                   }}
                 >
@@ -389,8 +394,8 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
                 {openNoteIdx === i && (
                   <div style={{
                     marginTop: 6, padding: '8px 10px', borderRadius: RADII.small,
-                    background: 'rgba(0,0,0,0.2)', borderLeft: `2px solid ${BRONZE}`,
-                    ...TYPE.bodySmall, fontSize: 12.5, color: BRONZE,
+                    background: 'rgba(0,0,0,0.2)', borderLeft: `2px solid ${accent}`,
+                    ...TYPE.bodySmall, fontSize: 12.5, color: accent,
                   }}>
                     {s.note}
                   </div>
@@ -412,13 +417,13 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
       <GuidedExamResponse
         key={stage}
         theme="general"
-        module={{ id: 'examCoach', subject: 'history' }}
+        module={{ id: 'examCoach', subject: subject.toLowerCase() }}
         exam={attempts[stage]}
         onExit={onExit}
         onContinue={(res) => {
           logCoachTypeResult({
             typeId: coachType.id,
-            subject: 'History',
+            subject,
             marksAwarded: res.marksAwarded,
             marksAvailable: res.marksAvailable,
           })

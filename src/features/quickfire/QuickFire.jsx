@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { TYPE }     from '../../constants/typography.js'
 import { GENERAL }  from '../../constants/generalTheme.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { SOCIOLOGY_GROUPS } from '../../data/sociologyGroups.js'
 import { CHEM_IMAGES } from '../../data/chemImages.js'
 import { recordScore } from '../../progress.js'
@@ -497,7 +498,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
 
   const EXAM_SUBJECTS = [
     { logo: '/headers/sociology-main.webp', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: () => setSociologyOpen(true) },
-    { logo: '/headers/history-main.webp',   label: 'History',   color: '#C89B6D', completed: 6,  total: 12, action: () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
+    { logo: '/headers/history-main.webp',   label: 'History',   color: SUBJECTS.History.subjectBrowserAccent, completed: 6,  total: 12, action: () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
     { logo: '/headers/bio-main.webp',       label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: () => startTopic({ topicId: 'tb_cells', label: 'Biology', subject: 'Biology' }) },
     { logo: '/headers/chem-logo.webp',      label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: () => setChemistryOpen(true) },
     { logo: '/headers/maths-main.webp',     label: 'Maths',     color: '#2DD4BF', completed: 0,  total: 20, action: () => setMathsOpen(true) },
@@ -589,15 +590,15 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
 
           <button onClick={() => {}} style={{ width: '100%', boxSizing: 'border-box', background: '#0E1122', border: '1px solid rgba(200,155,109,0.22)', borderRadius: 24, padding: 20, display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer', textAlign: 'left', marginBottom: 10 }}>
             <div style={{ width: 54, height: 54, borderRadius: 15, background: 'rgba(200,155,109,0.1)', border: '1px solid rgba(200,155,109,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C89B6D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="12" y2="15"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={SUBJECTS.History.subjectBrowserAccent} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="12" y2="15"/></svg>
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ ...TYPE.button, color: '#F0F3FA', lineHeight: 1.25, marginBottom: 3 }}>Edexcel History Paper 1 — June 2023</div>
-              <div style={{ ...TYPE.metadata, color: '#C89B6D', marginBottom: 2 }}>1HI0/11 · 52 marks · 75 min timer</div>
+              <div style={{ ...TYPE.metadata, color: SUBJECTS.History.subjectBrowserAccent, marginBottom: 2 }}>1HI0/11 · 52 marks · 75 min timer</div>
               <div style={{ ...TYPE.metadata, color: '#4A5578' }}>Medicine in Britain & Western Front 1914–18</div>
             </div>
             <div style={{ background: 'rgba(200,155,109,0.15)', border: '1px solid rgba(200,155,109,0.3)', borderRadius: 8, padding: '5px 10px', flexShrink: 0 }}>
-              <span style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: '#C89B6D' }}>Timed</span>
+              <span style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: SUBJECTS.History.subjectBrowserAccent }}>Timed</span>
             </div>
           </button>
 

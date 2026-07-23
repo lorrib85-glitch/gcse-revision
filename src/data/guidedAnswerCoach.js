@@ -71,7 +71,7 @@ const TYPE_B = {
   marksLabel: '4 marks',
   shortDesc: 'Make the comparison explicit — don\'t just describe both sides.',
   commandWord: 'Explain',
-  accent: '#C89B6D',
+  subject: 'History',
   worked: {
     question: J23_Q3.q,
     marks: 4,
@@ -156,7 +156,7 @@ const TYPE_C = {
   marksLabel: '8 marks',
   shortDesc: 'Useful for THIS enquiry — link content, provenance and your own knowledge.',
   commandWord: 'How useful',
-  accent: '#C89B6D',
+  subject: 'History',
   worked: {
     question: J23_Q2A.q,
     marks: 8,
@@ -248,7 +248,7 @@ const TYPE_D = {
   marksLabel: '4 marks',
   shortDesc: 'A 4-part task, not an essay — detail, question, source type, how it helps.',
   commandWord: 'How could you follow up',
-  accent: '#C89B6D',
+  subject: 'History',
   worked: {
     question: J23_Q2B.q,
     marks: 4,
@@ -347,7 +347,7 @@ const TYPE_E = {
   marksLabel: '12 marks',
   shortDesc: 'Causes, not a timeline. Go beyond the stimulus points.',
   commandWord: 'Explain why',
-  accent: '#C89B6D',
+  subject: 'History',
   worked: {
     question: J23_Q4.q,
     marks: 12,
@@ -435,7 +435,7 @@ const TYPE_F = {
   marksLabel: '16 marks + 4 SPaG',
   shortDesc: 'Sustained judgement throughout — not "balance" with a bolted-on ending.',
   commandWord: 'How far do you agree',
-  accent: '#C89B6D',
+  subject: 'History',
   worked: {
     question: J23_Q5.q,
     marks: 16,
@@ -523,7 +523,7 @@ const TYPE_A = {
   marksLabel: '4 marks',
   shortDesc: 'Pick two features and develop each one — not a list of four.',
   commandWord: 'Describe',
-  accent: '#C89B6D',
+  subject: 'History',
   worked: {
     question: J23_Q1.q,
     marks: 4,

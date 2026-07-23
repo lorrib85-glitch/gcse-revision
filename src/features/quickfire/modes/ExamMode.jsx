@@ -3,6 +3,7 @@ import { SPACING } from '../../../constants/spacing.js'
 import { RADII } from '../../../constants/radii.js'
 import { TYPE } from '../../../constants/typography.js'
 import { GENERAL } from '../../../constants/generalTheme.js'
+import { SUBJECTS } from '../../../constants/subjects.js'
 import { MEDICINE_2023_PAPER } from '../../../data/medicineExamPapers.js'
 import { ALL_EXAM_PAPERS } from '../../../data/examPapers/index.js'
 import { ExamPaperRunner } from '../../exampaper/ExamPaperRunner.jsx'
@@ -209,7 +210,7 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
 
   const EXAM_SUBJECTS = [
     { logo: '/headers/sociology-main.webp', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: () => startExamRound('Sociology') },
-    { logo: '/headers/history-main.webp',   label: 'History',   color: '#C89B6D', completed: 6,  total: 12, action: () => startExamRound('History') },
+    { logo: '/headers/history-main.webp',   label: 'History',   color: SUBJECTS.History.subjectBrowserAccent, completed: 6,  total: 12, action: () => startExamRound('History') },
     { logo: '/headers/bio-main.webp',       label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: () => startExamRound('Biology') },
     { logo: '/headers/chem-logo.webp',      label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: () => startExamRound('Chemistry') },
     { logo: '/headers/maths-main.webp',     label: 'Maths',     color: '#2DD4BF', completed: 0,  total: 20, action: () => startExamRound('Maths') },
@@ -274,7 +275,7 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
                   )}
                   {q.sourcesBooklet && q.sourcesBooklet.map((src, si) => (
                     <div key={si} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: '18px 20px', marginBottom: 14 }}>
-                      <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: '#C89B6D', marginBottom: 8 }}>{src.label}</div>
+                      <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: SUBJECTS.History.subjectBrowserAccent, marginBottom: 8 }}>{src.label}</div>
                       <div style={{ ...TYPE.caption, fontStyle: 'italic', color: 'rgba(245,245,245,0.48)', marginBottom: 10 }}>{src.attribution}</div>
                       <div style={{ ...TYPE.body, color: 'rgba(245,245,245,0.82)', whiteSpace: 'pre-wrap', maxHeight: 240, overflowY: 'auto', WebkitOverflowScrolling: 'touch', paddingRight: 4 }}>{src.text}</div>
                       {src.credit && <div style={{ ...TYPE.metadata, color: 'rgba(245,245,245,0.3)', marginTop: 10, fontStyle: 'italic' }}>{src.credit}</div>}
@@ -406,8 +407,8 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
                   flexShrink: 0, whiteSpace: 'nowrap', padding: '8px 14px', borderRadius: RADII.pill,
                   ...TYPE.label,
                   background: isHistory ? 'rgba(200,155,109,0.14)' : GENERAL.neutral[1],
-                  border: isHistory ? '1px solid #C89B6D' : '1px solid rgba(255,255,255,0.06)',
-                  color: isHistory ? '#C89B6D' : 'rgba(168,176,178,0.45)',
+                  border: isHistory ? `1px solid ` : '1px solid rgba(255,255,255,0.06)',
+                  color: isHistory ? SUBJECTS.History.subjectBrowserAccent : 'rgba(168,176,178,0.45)',
                 }}>
                   {subj.label}
                   {!isHistory && (
@@ -420,19 +421,21 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
             })}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {GUIDED_COACH_TYPES.map(coachType => (
+            {GUIDED_COACH_TYPES.map(coachType => {
+              const coachAccent = SUBJECTS[coachType.subject]?.accent ?? SUBJECTS.History.accent
+              return (
               <button key={coachType.id} onClick={() => setActiveCoachType(coachType.id)} style={{
                 position: 'relative', display: 'flex', alignItems: 'center', gap: 14, width: '100%', textAlign: 'left',
                 padding: '14px 16px', cursor: 'pointer', borderRadius: RADII.large,
                 background: GENERAL.neutral[1], border: '1px solid rgba(255,255,255,0.06)',
-                borderLeft: `2px solid ${coachType.accent}`,
+                borderLeft: `2px solid ${coachAccent}`,
               }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: coachType.accent, marginBottom: 4 }}>{coachType.marksLabel}</div>
+                  <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: coachAccent, marginBottom: 4 }}>{coachType.marksLabel}</div>
                   <div style={{ ...TYPE.displaySection, fontSize: 18, color: GENERAL.softWhite, marginBottom: 4 }}>{coachType.title}</div>
                   <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>{coachType.shortDesc}</div>
                 </div>
-                <NavArrow color={coachType.accent} />
+                <NavArrow color={coachAccent} />
                 {coachType.id === suggestedTypeId && (
                   <div style={{
                     position: 'absolute', top: 10, right: 12,
@@ -445,7 +448,7 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
                   </div>
                 )}
               </button>
-            ))}
+            )})}
           </div>
         </div>
       </div>
@@ -474,17 +477,17 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
               display: 'flex', alignItems: 'center', gap: 14, width: '100%', textAlign: 'left',
               padding: '14px 16px', cursor: 'pointer', borderRadius: RADII.large,
               background: GENERAL.neutral[1], border: '1px solid rgba(255,255,255,0.06)',
-              borderLeft: '2px solid #C89B6D',
+              borderLeft: `2px solid `,
             }}>
-              <div style={{ width: 46, height: 46, borderRadius: '50%', flexShrink: 0, border: '1.5px solid #C89B6D', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C89B6D" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="12" y2="15"/></svg>
+              <div style={{ width: 46, height: 46, borderRadius: '50%', flexShrink: 0, border: `1.5px solid `, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={SUBJECTS.History.subjectBrowserAccent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="12" y2="15"/></svg>
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: '#C89B6D', marginBottom: 4 }}>Timed</div>
+                <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: SUBJECTS.History.subjectBrowserAccent, marginBottom: 4 }}>Timed</div>
                 <div style={{ ...TYPE.displaySection, fontSize: 18, color: GENERAL.softWhite, marginBottom: 4 }}>Edexcel history paper 1 — June 2023</div>
                 <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>1HI0/11 · 52 marks · 75 min · medicine in Britain & Western Front</div>
               </div>
-              <NavArrow color="#C89B6D" />
+              <NavArrow color={SUBJECTS.History.subjectBrowserAccent} />
             </button>
             {ALL_EXAM_PAPERS.map(paper => (
               <button key={paper.id} onClick={() => { setPaperChooserOpen(false); setActivePaper(paper) }} style={{

@@ -3,6 +3,7 @@ import { SPACING } from '../../../constants/spacing.js'
 import { RADII } from '../../../constants/radii.js'
 import { TYPE } from '../../../constants/typography.js'
 import { GENERAL } from '../../../constants/generalTheme.js'
+import { SUBJECTS } from '../../../constants/subjects.js'
 import { recordScore, getAllConfidenceRatings } from '../../../progress.js'
 import { getJson, setJson } from '../../../lib/storage.js'
 import { logWrongAnswer, logCorrectAnswer, getWeakTopics } from '../../../unifiedWeaknessTracker.js'
@@ -54,7 +55,7 @@ const QUICK_FIRE_QUESTIONS = [
 // ─── Subject metadata ─────────────────────────────────────────────────────────
 
 const QUICK_FIRE_SUBJECT_META = {
-  History:      { icon: '🏛️', logo: '/headers/history-main.webp',   color: '#C89B6D', moduleId: 'history-medicine-medieval-beliefs-causes' },
+  History:      { icon: '🏛️', logo: '/headers/history-main.webp',   color: SUBJECTS.History.subjectBrowserAccent, moduleId: 'history-medicine-medieval-beliefs-causes' },
   Maths:        { icon: '✖️', logo: '/headers/maths-main.webp',     color: '#2DD4BF', moduleId: null },
   Sociology:    { icon: '👥', logo: '/headers/sociology-main.webp', color: '#FF5C7A', moduleId: null },
   Chemistry:    { icon: '⚗️', logo: '/headers/chem-logo.webp',      color: '#9B59E8', moduleId: null },

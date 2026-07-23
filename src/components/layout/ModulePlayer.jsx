@@ -1050,7 +1050,7 @@ function IntroScreen({ module, onDone }) {
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#080C1A',
+      minHeight: '100vh', background: GENERAL.backgroundApp,
       padding: '28px 22px 120px',
       animation: 'fadeIn .4s ease',
     }}>
@@ -1647,7 +1647,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     }
     return (
       <>
-      <div style={{ position: 'fixed', inset: 0, background: '#080C1A', display: 'flex', flexDirection: 'column', zIndex: 60 }}>
+      <div style={{ position: 'fixed', inset: 0, background: GENERAL.backgroundApp, display: 'flex', flexDirection: 'column', zIndex: 60 }}>
         <LearningHeader {...H} visible={true} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '0 24px 48px' }}>
           <div style={{ maxWidth: 480, margin: '0 auto', width: '100%' }}>

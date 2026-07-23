@@ -18,6 +18,19 @@ const MIGRATED_VALUES = [
   { hex: '#E76F51', token: 'GENERAL.coral' },
   { hex: '#0D0D0D', token: 'GENERAL.neutral[900]' },
   { hex: '#E0836B', token: 'GENERAL.coral' },
+  // GuidedChoiceCarousel off-token gold → resolved subject accent.
+  { hex: '#D9A441', token: 'SUBJECTS[subject].accent' },
+  // SwipeSort bespoke near-black backdrop → resolved subject background.
+  { hex: '#05060A', token: 'SUBJECTS[subject].background' },
+  // ModulePlayer full-screen shells → GENERAL.backgroundApp; ConceptReveal
+  // subject-atmospheric gradient → resolved subject background token.
+  { hex: '#080C1A', token: 'GENERAL.backgroundApp / SUBJECTS[subject].background' },
+  // Bronze survives ONLY as its canonical SUBJECTS.History.subjectBrowserAccent
+  // definition (in src/constants, outside this guard's src/{components,features}
+  // scope). Components/content must never inline it: subject-selection chrome
+  // reads SUBJECTS.History.subjectBrowserAccent; the exam coach and its chooser
+  // resolve SUBJECTS[subject].accent from the coach type's subject.
+  { hex: '#C89B6D', token: 'SUBJECTS.History.subjectBrowserAccent / SUBJECTS[subject].accent' },
 ]
 
 const srcFiles = globSync('src/{components,features}/**/*.{jsx,js}', {
