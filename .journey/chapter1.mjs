@@ -1,6 +1,6 @@
 /**
  * Journey: Medicine Through Time — Module 1 "Trust me, I'm Following Jupiter"
- * Hook → WYL → screens 0-6 (visualNarrative, conceptReveal ×2, interactiveImage,
+ * Hook → WYL → screens 0-6 (timelineChain(reveal), conceptReveal ×2, interactiveImage,
  *                            unknown, galensDiagnostic, quickRecall)
  */
 import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
@@ -60,6 +60,44 @@ const advanceScreen = async (page, label, maxTaps = 15) => {
   }
   say(`    [${label}] gave up after ${maxTaps} taps`);
   return false;
+};
+
+// Drive a TimelineChain `variant: 'reveal'` screen — the native replacement for the
+// retired visualNarrative screen type. Behaviour under test:
+//   • the first step is visible immediately (before any reveal)
+//   • the "Reveal next" CTA exposes exactly one more step per press
+//   • once the last step shows, the CTA becomes the standard "Continue" button
+//   • clicking Continue advances to the next screen
+// Steps render as accessible list items (<li>), so we count by the `listitem` role
+// rather than any class or DOM depth; the CTA is targeted by its accessible name.
+const revealTimelineChain = async (page, label, maxReveals = 12) => {
+  const revealBtn = () => page.locator('button').filter({ hasText: /^Reveal next$/i }).first();
+  const stepCount = () => page.getByRole('listitem').count();
+
+  // Wait for the reveal screen to render its first step + CTA.
+  const start = Date.now();
+  while (Date.now() - start < 8000) {
+    if ((await revealBtn().count()) && (await revealBtn().isVisible())) break;
+    const done = page.locator('button').filter({ hasText: /^Continue$/i }).first();
+    if ((await done.count()) && (await done.isVisible())) break;
+    await page.waitForTimeout(300);
+  }
+
+  let prev = await stepCount();
+  say(`  [${label}] initial steps visible: ${prev}`);
+
+  for (let i = 0; i < maxReveals; i++) {
+    const btn = revealBtn();
+    if (!(await btn.count()) || !(await btn.isVisible())) break; // last step reached
+    await btn.click({ timeout: 3000 });
+    await page.waitForTimeout(500);
+    const now = await stepCount();
+    say(`  [${label}] reveal ${i + 1}: ${prev} → ${now} step(s) ${now === prev + 1 ? '✓' : '⚠ expected +1'}`);
+    prev = now;
+  }
+
+  // Final state: the standard Continue CTA. Clicking it advances to the next screen.
+  return waitAndTap(page, /^Continue$/i, 5000, 'Continue (reveal → next screen)');
 };
 
 // ─── Browser ──────────────────────────────────────────────────────────────────
@@ -123,12 +161,13 @@ const wylDone = await waitAndTap(page, /Start chapter/i, 6000, 'Start chapter �
 await page.waitForTimeout(800);
 await snap(page, '08-wyl-done');
 
-// ─── 4. Screen 0 — visualNarrative ───────────────────────────────────────────
-say('\n── 4. Screen 0: visualNarrative ──');
+// ─── 4. Screen 0 — timelineChain (reveal) ────────────────────────────────────
+say('\n── 4. Screen 0: timelineChain (reveal) ──');
 await page.waitForTimeout(600);
 await snap(page, '09-s0-start');
-// visualNarrative: tap through image beats, then Continue
-await advanceScreen(page, 'visualNarrative', 18);
+// timelineChain reveal: first step visible, then "Reveal next" one step at a time,
+// then the standard Continue CTA advances to screen 1.
+await revealTimelineChain(page, 'timelineChain-reveal', 12);
 await page.waitForTimeout(700);
 await snap(page, '10-s0-done');
 
