@@ -191,7 +191,7 @@ export default function RecoveryQuizPlayer({
               <h2 style={{
                 ...TYPE.displaySection,
                 fontSize: 28,
-                color: '#F5F7FB',
+                color: GENERAL.feedbackText,
                 margin: '0 0 8px',
               }}>
                 Weak spot fixed
