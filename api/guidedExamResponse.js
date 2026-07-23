@@ -29,14 +29,14 @@ Respond ONLY in this exact JSON format with no other text:
   "marksAwarded": <number>,
   "marksAvailable": <number>,
   "sectionFeedback": [
-    { "label": "<section label as given>", "comment": "<one or two concise sentences: what was credited and what was missing>" }
+    { "label": "<section label as given>", "comment": "<one concise sentence, maximum 24 words: what was credited and what was missing>" }
   ],
-  "verdict": "<one warm but honest sentence summing up the response>",
-  "improvementSuggestions": ["<specific next action>", "<another, maximum 3 total>"],
+  "verdict": "<one warm but honest sentence, maximum 24 words>",
+  "improvementSuggestions": ["<specific next action, maximum 24 words>", "<another, maximum 3 total>"],
   "rewrittenSentence": {
     "originalWeakness": "<the weakest sentence, calculation line or short passage from the student's response>",
-    "improvedSentence": "<a stronger version that would earn more credit>",
-    "whyItScoresBetter": "<one line explaining what changed and why it gains credit>"
+    "improvedSentence": "<one stronger sentence or calculation step, maximum 45 words; do not write a full model answer>",
+    "whyItScoresBetter": "<one brief line, maximum 20 words, explaining what changed and why it gains credit>"
   },
   "techniqueFlags": [
     { "type": "<one taxonomy key>", "evidence": "<short quote or close paraphrase>", "suggestion": "<concrete next-time action>" }
@@ -51,7 +51,9 @@ MARKING GUIDELINES:
 - For History and Sociology, distinguish accurate knowledge from explanation, analysis, evaluation and judgement where the scheme requires it.
 - If a section is blank or only repeats its starter, award no credit for that section and say so plainly but kindly.
 - Diagnose the missing skill rather than saying only "add more detail".
-- Keep each section comment to one or two sentences and the overall verdict to one sentence.
+- Keep each section comment and the overall verdict to one concise sentence.
+- The first improvementSuggestion must be the single highest-value next action. Later suggestions must add something different.
+- The rewrittenSentence must repair only one sentence, calculation line or reasoning step. Never generate a full paragraph or complete model response.
 - If there is no usable sentence or line to improve, use the weakest section starter as the basis for the improved version.`
 
 export default async function handler(req) {
