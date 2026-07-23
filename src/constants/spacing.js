@@ -27,6 +27,11 @@ export const COMPONENT_SIZE = {
   touchTarget: SPACING.separation,
   thumbnail: SPACING.cinematic,
   memoryHookImage: SPACING.section,
+  typedAnswerHeight: 52,
+  typedAnswerMinWidth: 148,
+  typedAnswerMaxWidth: 292,
+  typedRecallMinHeight: 360,
+  answerFeedbackReserve: 58,
   // Clears the fixed LearningHeader (safe-area offset + 44px controls) when a
   // component programmatically scrolls newly revealed content into view.
   learningHeaderClearance: SPACING.cinematic,
