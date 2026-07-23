@@ -2,7 +2,7 @@ import { GENERAL } from '../../../constants/generalTheme.js'
 import { RADII } from '../../../constants/radii.js'
 import { SPACING } from '../../../constants/spacing.js'
 import { TYPE } from '../../../constants/typography.js'
-import { annotationDot, annotationStyle, buildAnswerSections } from './utils.js'
+import { annotationDot, annotationStyle, buildAnswerSections, getPrimaryImprovementAnnotation } from './utils.js'
 
 function AnnotationList({ title, notes, accent }) {
   if (notes.length === 0) return null
@@ -34,10 +34,11 @@ export default function AnswerPanel({
   setStudentEdits,
   expandedTextareaRef,
 }) {
-  const answerSections = buildAnswerSections(examiner.sampleAnswer)
+  const answerSections = buildAnswerSections(examiner.sampleAnswer, examiner.answerSections)
   const annotations = examiner.annotations || []
   const earnedNotes = annotations.filter(annotation => annotation.type === 'strong')
   const improvementNotes = annotations.filter(annotation => annotation.type !== 'strong')
+  const primaryImprovement = getPrimaryImprovementAnnotation(annotations, examiner.primaryImprovementId)
 
   return (
     <article style={{
@@ -51,8 +52,19 @@ export default function AnswerPanel({
       boxShadow: `inset 0 1px 0 ${GENERAL.line.faint}`,
     }}>
       {(isReveal || isImproving) && (
-        <div style={{ ...TYPE.eyebrow, color: GENERAL.cinematic.textMuted, marginBottom: 14 }}>
-          Examiner report
+        <div style={{ ...TYPE.label, color: GENERAL.cinematic.textMuted, marginBottom: 14 }}>
+          {examiner.reportLabel || 'Examiner report'}
+        </div>
+      )}
+
+      {isImproving && primaryImprovement && (
+        <div style={{ marginBottom: 20, paddingBottom: 18, borderBottom: `1px solid ${GENERAL.line.faint}` }}>
+          <div style={{ ...TYPE.displayCard, color: accent, marginBottom: 5 }}>
+            {examiner.repairTitle || 'Fix one weakness'}
+          </div>
+          <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textSecondary }}>
+            {examiner.repairInstruction || 'Rewrite the highlighted sentence. Keep the useful knowledge and add the missing link.'}
+          </div>
         </div>
       )}
 
@@ -79,37 +91,48 @@ export default function AnswerPanel({
         <div style={{ ...TYPE.examAnswer, color: GENERAL.cinematic.textFact }}>
           {segments.map((segment, index) => {
             if (segment.type === 'plain') return <span key={index}>{segment.text}</span>
+
             const { ann } = segment
-            const isWeak = ann.type === 'weak'
+            const canEdit = isImproving && ann.id === primaryImprovement?.id
             const isExpanded = expandedEdit === ann.id
-            const hasEdit = studentEdits[ann.id]?.trim()
+            const editValue = studentEdits[ann.id] || ''
+            const hasEdit = Boolean(editValue.trim())
+            const prompt = examiner.improvementPrompts?.[ann.id]
+            const textareaId = `fte-repair-${ann.id}`
 
             return (
               <span key={index}>
                 <span style={annotationStyle(ann.type, accent)}>{segment.text}</span>
-                {isImproving && isWeak && (
+                {canEdit && (
                   <>
                     {' '}
                     <button
                       type="button"
                       className={`fte-improve-btn${hasEdit ? ' edited' : ''}`}
+                      aria-expanded={isExpanded}
+                      aria-controls={textareaId}
                       onClick={() => {
                         const next = isExpanded ? null : ann.id
                         setExpandedEdit(next)
                         if (next) setTimeout(() => expandedTextareaRef.current?.focus(), 50)
                       }}
                     >
-                      {hasEdit ? '✓ edited' : (examiner.improvementPrompts?.[ann.id]?.prompt || 'Improve this')}
+                      {hasEdit ? 'Edited — review' : (prompt?.buttonLabel || 'Rewrite this sentence')}
                     </button>
                     {isExpanded && (
-                      <span style={{ display: 'block' }}>
+                      <span id={textareaId} style={{ display: 'block', marginTop: 10 }}>
+                        {(prompt?.prompt || ann.comment) && (
+                          <span style={{ ...TYPE.bodySmall, display: 'block', color: GENERAL.cinematic.textMuted, marginBottom: 8 }}>
+                            {prompt?.prompt || ann.comment}
+                          </span>
+                        )}
                         <textarea
                           ref={expandedTextareaRef}
                           className="fte-textarea"
-                          rows={3}
-                          aria-label={`Improve: ${ann.target}`}
-                          placeholder={examiner.improvementPrompts?.[ann.id]?.placeholder || 'Add your improvement here…'}
-                          value={studentEdits[ann.id] || ''}
+                          rows={4}
+                          aria-label={`Rewrite: ${ann.target}`}
+                          placeholder={prompt?.placeholder || 'Rewrite the complete sentence here…'}
+                          value={editValue}
                           onChange={event => setStudentEdits(previous => ({ ...previous, [ann.id]: event.target.value }))}
                         />
                       </span>
@@ -124,14 +147,8 @@ export default function AnswerPanel({
 
       {(isReveal || isImproving) && annotations.length > 0 && (
         <div style={{ marginTop: 22, borderTop: `1px solid ${GENERAL.line.faint}`, paddingTop: 2 }}>
-          <AnnotationList title="What earned marks" notes={earnedNotes} accent={accent} />
-          <AnnotationList title="What stopped the next mark" notes={improvementNotes} accent={accent} />
-        </div>
-      )}
-
-      {isImproving && (
-        <div style={{ ...TYPE.eyebrow, marginTop: 20, color: accent }}>
-          Fix the weakest sentence
+          <AnnotationList title={examiner.earnedMarksLabel || 'What earned marks'} notes={earnedNotes} accent={accent} />
+          <AnnotationList title={examiner.nextMarkLabel || 'What stopped the next mark'} notes={improvementNotes} accent={accent} />
         </div>
       )}
     </article>
