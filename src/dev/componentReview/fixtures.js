@@ -93,3 +93,60 @@ export const quoteAnalyser = {
   ],
   essayExample: 'Shakespeare uses light and dark imagery in “Stars, hide your fires” to show that Macbeth recognises his ambition is morally corrupt and wants to conceal it from judgement.',
 }
+
+// Live Episode 3 shape, kept as its own Component Lab entry so the cinematic
+// person-to-person comparison can be reviewed separately from the older
+// belief-versus-reality variant.
+export const theoryComparePeople = {
+  type: 'theoryCompare',
+  variant: 'people',
+  title: 'Galen and Vesalius',
+  heroImage: '/figures/history/medicine/renaissance/galen-vesalius-hero.webp',
+  heroImageAlt: 'Galen in Roman dress before classical ruins and animal anatomy sketches, standing back to back with Vesalius in Renaissance dress beside an anatomical book and a human skeleton',
+  leftPerson: {
+    name: 'Galen',
+    subtitle: 'Ancient Roman doctor',
+    image: '/figures/history/medicine/medieval/galen-portrait.png',
+    imageAlt: 'Portrait of the ancient Roman doctor Galen',
+  },
+  rightPerson: {
+    name: 'Vesalius',
+    subtitle: 'Renaissance anatomist',
+    image: '/images/vesalius-1543.png',
+    imageAlt: 'Portrait of the Renaissance anatomist Andreas Vesalius',
+  },
+  comparisons: [
+    {
+      id: 'evidence-source',
+      prompt: 'What did they study?',
+      left: 'Relied mainly on animal dissection',
+      right: 'Dissected real human bodies himself',
+      explanation: 'Human dissection was severely restricted in Galen’s time, so he used animal bodies and assumed some features were the same in humans. Vesalius had greater access to human bodies and could check those claims directly.',
+    },
+    {
+      id: 'method',
+      prompt: 'How did they build knowledge?',
+      left: 'Used observation, existing theory and animal anatomy',
+      right: 'Checked ancient claims against direct human evidence',
+      explanation: 'Vesalius did not reject old knowledge simply because it was old. He tested it. When the evidence disagreed with Galen’s books, he trusted what he could observe.',
+    },
+    {
+      id: 'conclusions',
+      prompt: 'What did they conclude?',
+      rows: [
+        { label: 'Jaw', left: 'The human jaw had two bones', right: 'The human jaw was one bone' },
+        { label: 'Ribs', left: 'Men had fewer ribs than women', right: 'Men and women had the same number of ribs' },
+        { label: 'Breastbone', left: 'The human breastbone had seven parts', right: 'The human breastbone had three main parts' },
+      ],
+      note: 'Vesalius identified around 300 errors in Galen’s anatomical writing.',
+    },
+    {
+      id: 'impact',
+      prompt: 'What was their impact?',
+      left: 'His books shaped medical teaching for more than a thousand years',
+      right: 'He showed that respected authority could be corrected by evidence',
+      explanation: 'Vesalius improved knowledge of anatomy, but he did not immediately improve treatment. Doctors still used the Four Humours, bloodletting and purging.',
+    },
+  ],
+  takeaway: 'Vesalius did not prove that everything Galen believed was wrong. He proved that old ideas should be checked against evidence.',
+}
