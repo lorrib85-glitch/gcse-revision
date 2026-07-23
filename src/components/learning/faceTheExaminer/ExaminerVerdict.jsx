@@ -1,6 +1,18 @@
 import { GENERAL } from '../../../constants/generalTheme.js'
 import { TYPE } from '../../../constants/typography.js'
-import { markComparisonText } from './utils.js'
+
+function ScoreComparisonRow({ label, value, accent, emphasised = false }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16 }}>
+      <div style={{ ...TYPE.body, color: emphasised ? GENERAL.cinematic.textPrimary : GENERAL.cinematic.textSecondary }}>
+        {label}
+      </div>
+      <div style={{ ...TYPE.displayCard, color: emphasised ? accent : GENERAL.cinematic.textPrimary, flexShrink: 0 }}>
+        {value}
+      </div>
+    </div>
+  )
+}
 
 export default function ExaminerVerdict({ examiner, guessedMark, accent, visible = true }) {
   if (!visible) return null
@@ -10,36 +22,27 @@ export default function ExaminerVerdict({ examiner, guessedMark, accent, visible
       role="status"
       aria-live="polite"
       style={{
+        display: 'grid',
+        gap: 10,
         padding: '2px 0 22px',
-        marginBottom: 22,
+        marginBottom: 10,
         borderBottom: `1px solid ${GENERAL.line.faint}`,
         animation: 'fte-panel-up 500ms cubic-bezier(0.22, 1, 0.36, 1) both',
       }}
     >
-      <div style={{ ...TYPE.label, color: GENERAL.cinematic.textMuted, marginBottom: 8 }}>
-        {examiner.verdictLabel || 'Examiner verdict'}
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 6 }}>
-        <div style={{ ...TYPE.displayHero, color: accent }}>
-          {examiner.mark}/{examiner.marks}
-        </div>
-        <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
-          examiner mark
-        </div>
-      </div>
-
       {guessedMark !== null && (
-        <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textSecondary, marginBottom: 12 }}>
-          You gave {guessedMark}/{examiner.marks}. {markComparisonText(guessedMark, examiner.mark)}
-        </div>
+        <ScoreComparisonRow
+          label={examiner.learnerScoreLabel || 'You scored it'}
+          value={`${guessedMark}/${examiner.marks}`}
+          accent={accent}
+        />
       )}
-
-      {examiner.summary && (
-        <p style={{ ...TYPE.body, color: GENERAL.cinematic.textSecondary, margin: 0 }}>
-          {examiner.summary}
-        </p>
-      )}
+      <ScoreComparisonRow
+        label={examiner.examinerScoreLabel || 'The examiner scored it'}
+        value={`${examiner.mark}/${examiner.marks}`}
+        accent={accent}
+        emphasised
+      />
     </section>
   )
 }
