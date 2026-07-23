@@ -11,6 +11,7 @@
 import * as FIX from './fixtures.js'
 import { SUBJECT_ACCENTS } from '../../constants/subjects.js'
 
+import CalculationBreakdown from '../../components/learning/CalculationBreakdown.jsx'
 import CinematicCarousel from '../../components/learning/CinematicCarousel.jsx'
 import GraphView from '../../components/learning/GraphView.jsx'
 import TimelineChain from '../../components/learning/TimelineChain.jsx'
@@ -688,6 +689,15 @@ export const REVIEW_ENTRIES = [
     alternative: 'QuickRecallScreen (chapter recall); TieredQuizScreen.',
     render: (fx, { onDone }) => <RecoveryQuizPlayer recoveryQuizId={fx} onComplete={onDone} onBack={onDone} />,
     fixture: FIX.recoveryQuizId,
+  },
+  {
+    id: 'calculation-breakdown', name: 'CalculationBreakdown', group: 'library',
+    status: 'comparison', subject: 'Maths', renderMode: 'fullbleed',
+    function: 'Multi-step maths walkthrough: breaks one calculation into stages (understand → worked steps → learner-applied step → full solution) and checks understanding at each stage.',
+    usage: 'New component — pending review; not yet routed in ModulePlayer.',
+    alternative: 'GuidedExamResponse (written scaffold); GraphView (data, not procedure).',
+    render: (fx, { onDone }) => <CalculationBreakdown block={fx} onContinue={onDone} />,
+    fixture: FIX.calculationBreakdown,
   },
   {
     id: 'key-point', name: 'KeyPoint', group: 'library',

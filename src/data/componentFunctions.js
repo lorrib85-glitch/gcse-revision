@@ -38,6 +38,9 @@ export const SCREEN_TYPE_FUNCTIONS = {
   // Infographic: TeachScreenShell heading + intro then one governed infographic
   // media slot (a reserved diagram or an auto-building quadrant reveal).
   infographic: { functions: ['teach-mechanism'], interaction: 'passive' },
+  // CalculationBreakdown: step-by-step maths walkthrough with a check at each
+  // stage and a learner-applied step — teaches the procedure, then assesses.
+  calculationBreakdown: { functions: ['sequence-process', 'apply'], interaction: 'assessed' },
 
   // Reveal interactions — active but unassessed
   conceptReveal: { functions: ['teach-mechanism'], interaction: 'reveal' },

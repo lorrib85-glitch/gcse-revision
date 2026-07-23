@@ -163,6 +163,20 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ---
 
 
+### CalculationBreakdown
+
+**File:** `src/components/learning/CalculationBreakdown.jsx`
+**What it is:** Full-screen, multi-phase maths walkthrough. It breaks one calculation into stages — understand the question, one or more worked steps (the transformation shown with a "do the same to both sides" grammar plus a "check this step"), a learner-applied step (typed answer with a hint), then a full solution with a "why this works" summary. A progress rail tracks the stages; understanding is checked before each advance.
+**Best used for:** Any procedural GCSE Maths problem where the method matters as much as the answer — solving equations, rearranging formulae, multi-step arithmetic. Content lives entirely in the `block` prop so the mechanic is reusable across every Maths topic.
+**Props:** `block`, `accent` (defaults to `GENERAL.teal`), `onContinue`
+**Block shape:** `{ goalPrompt?, problem, understand: { whatsHappening?, goal?, check? }, steps: [{ mode: 'worked' | 'yourTurn', title, why?, transform: { from, leftOp?, rightOp?, to }, whyStep?, check?, answer?, resultExpr?, hint?, cta? }], solution: { celebrateTitle?, celebrateSubtitle?, result, rows?, why? } }` — a `check` is `{ question, options: string[], correct: index }`.
+**Screen type:** `calculationBreakdown` (full-screen; not yet routed in `ModulePlayer.jsx` — new component pending review)
+**Dependencies:** `GENERAL`, `TYPE`, `SPACING`, `RADII`, `MOTION`, `ContinueCTA`
+**Closest alternatives:** `GuidedExamResponse` (written-answer scaffold, not a numeric procedure); `GraphView` (interpreting data, not carrying out a method).
+
+---
+
+
 ### CinematicCarousel
 
 **File:** `src/components/learning/CinematicCarousel.jsx`
