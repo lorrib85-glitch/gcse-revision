@@ -52,6 +52,8 @@ const GALEN_VESALIUS_BLOCK = {
   title: 'Galen and Vesalius',
   heroImage: '/figures/history/medicine/renaissance/galen-vesalius-hero.webp',
   heroImageAlt: 'Galen in Roman dress before classical ruins and animal anatomy sketches, standing back to back with Vesalius in Renaissance dress beside an anatomical book and a human skeleton',
+  heroObjectPosition: 'center 24%',
+  emphasisSide: 'right',
   leftPerson: {
     name: 'Galen',
     subtitle: 'Ancient Roman doctor',
@@ -104,8 +106,8 @@ export const PeopleGalenVesalius = {
   args: { block: GALEN_VESALIUS_BLOCK, subject: 'History' },
 }
 
-// A single comparison with no explanation and no takeaway — the variant must
-// render without either optional field.
+// A single neutral comparison with no explanation or takeaway. Omitting
+// emphasisSide must keep both people visually equal.
 export const PeopleMinimal = {
   args: {
     subject: 'History',
