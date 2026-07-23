@@ -58,6 +58,29 @@
   --radius-full: 9999px;
 }
 
+/*
+  Accessibility baseline: every app and Component Lab animation must honour the
+  device's reduced-motion preference, even when a component forgets a local
+  branch. Durations settle almost instantly rather than using animation: none,
+  so keyframes with a final fill state still land visibly and reliably.
+*/
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    Cinematic Learning Screen — component layer
    ────────────────────────────────────────────────────────────────────────
