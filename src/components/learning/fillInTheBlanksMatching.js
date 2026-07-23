@@ -1,4 +1,4 @@
-const MATHS_SYMBOL_PATTERN = /[+\-−×÷*/=^²³%⁄/]/
+const MATHS_SYMBOL_PATTERN = /[+\-−×÷*\/=^²³%⁄]/
 const NUMERIC_PATTERN = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i
 
 function asString(value) {
