@@ -1,8 +1,8 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef } from 'react'
 import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
-// CinematicShell used here because the split full-bleed background images and swipe gesture
+// CinematicShell used here because the split full-bleed background and swipe gesture
 // zone must reach all four viewport edges; InteractionShell's padding would clip the
-// image split and break gesture hit areas near the screen edges.
+// split surface and break gesture hit areas near the screen edges.
 import CinematicShell from '../layout/CinematicShell.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import { TYPE } from '../../constants/typography.js'
@@ -11,7 +11,6 @@ import { MOTION } from '../../constants/motion.js'
 import { ScreenTitle } from '../core/ScreenText.jsx'
 
 const SWIPE_THRESHOLD = 72
-const APP_BACKGROUND_RGB = hexToRgb(GENERAL.backgroundApp)
 const BACKGROUND_BRIGHTNESS = {
   intro: 0.94,
   gameLeft: 0.96,
@@ -76,108 +75,160 @@ const CSS = `
 
 function injectStyles() {
   if (document.getElementById('swipesort-css')) return
-  const s = document.createElement('style')
-  s.id = 'swipesort-css'
-  s.textContent = CSS
-  document.head.appendChild(s)
+  const style = document.createElement('style')
+  style.id = 'swipesort-css'
+  style.textContent = CSS
+  document.head.appendChild(style)
 }
 
 function splitLabel(column) {
-  const [title = '', detail = ''] = String(column?.label ?? '').split('\n')
-  const detailCopy = {
-    'Based on religion or belief': 'God, religion or magic',
-    'Religion or belief': 'God, religion or magic',
-    'Based on observation or logic': 'Observation, nature or logic',
-    'Observation or logic': 'Observation, nature or logic',
+  if (column?.title || column?.detail) {
+    return {
+      title: String(column.title || column.label || ''),
+      detail: String(column.detail || ''),
+    }
   }
-  return { title, detail: detailCopy[detail] ?? detail }
+
+  const [title = '', ...detailLines] = String(column?.label || '').split('\n')
+  return { title, detail: detailLines.join(' ') }
 }
 
-function backgroundLayer(leftCol, rightCol, { focusSide = null, intro = false } = {}) {
+function resolveColumn(column, index, subjectData) {
+  const fallbackColor = index === 0
+    ? (subjectData.accentSecondary || GENERAL.slate)
+    : subjectData.accent
+  const color = column?.color || fallbackColor
+  const colorRgb = column?.colorRgb || hexToRgb(color)
+
+  return {
+    ...column,
+    label: column?.label || (index === 0 ? 'Category one' : 'Category two'),
+    color,
+    colorRgb,
+    bg: column?.bg || `rgba(${colorRgb},0.10)`,
+    image: column?.image || null,
+  }
+}
+
+function columnBackdrop(column, subjectData, side, brightness) {
+  if (column.image) {
+    return {
+      backgroundImage: `url(${column.image})`,
+      backgroundSize: column.backgroundSize || 'cover',
+      backgroundPosition: column.backgroundPosition || 'center top',
+      filter: `saturate(0.96) brightness(${brightness})`,
+    }
+  }
+
+  const focalPoint = side === 0 ? '28% 26%' : '72% 26%'
+  return {
+    background: `radial-gradient(circle at ${focalPoint}, rgba(${column.colorRgb},0.24), transparent 42%), linear-gradient(180deg, ${subjectData.backgroundSecondary}, ${subjectData.background})`,
+  }
+}
+
+function BackgroundLayer({ leftCol, rightCol, subjectData, focusSide = null, intro = false }) {
   const leftActive = focusSide === 0
   const rightActive = focusSide === 1
   const baseOpacity = intro ? 0.78 : 0.88
   const leftBrightness = intro ? BACKGROUND_BRIGHTNESS.intro : BACKGROUND_BRIGHTNESS.gameLeft
   const rightBrightness = intro ? BACKGROUND_BRIGHTNESS.intro : BACKGROUND_BRIGHTNESS.gameRight
+  const backgroundRgb = hexToRgb(subjectData.background)
 
   return (
     <>
       <div style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 0 }}>
         <div style={{
           flex: 1,
-          backgroundImage: `url(${leftCol.image ?? '/swipe-supernatural.webp'})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center top',
+          ...columnBackdrop(leftCol, subjectData, 0, leftBrightness),
           opacity: leftActive ? 0.94 : baseOpacity,
-          filter: `saturate(0.96) brightness(${leftBrightness})`,
           transition: 'opacity 0.26s ease, filter 0.26s ease',
         }} />
         <div style={{
           flex: 1,
-          backgroundImage: `url(${rightCol.image ?? '/swipe-natural.webp'})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center top',
+          ...columnBackdrop(rightCol, subjectData, 1, rightBrightness),
           opacity: rightActive ? 0.94 : baseOpacity,
-          filter: `saturate(0.96) brightness(${rightBrightness})`,
           transition: 'opacity 0.26s ease, filter 0.26s ease',
         }} />
       </div>
-      <div style={{ position: 'absolute', inset: 0, background: intro ? `rgba(${APP_BACKGROUND_RGB},0.38)` : `rgba(${APP_BACKGROUND_RGB},0.20)`, zIndex: 1 }} />
       <div style={{
-        position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
-        background: intro
-          ? `radial-gradient(ellipse 86% 70% at 50% 48%, transparent 32%, rgba(${APP_BACKGROUND_RGB},0.58) 100%)`
-          : `linear-gradient(180deg, rgba(${APP_BACKGROUND_RGB},0.46) 0%, rgba(${APP_BACKGROUND_RGB},0.08) 35%, rgba(${APP_BACKGROUND_RGB},0.14) 66%, rgba(${APP_BACKGROUND_RGB},0.52) 100%)`,
+        position: 'absolute',
+        inset: 0,
+        background: intro ? `rgba(${backgroundRgb},0.38)` : `rgba(${backgroundRgb},0.20)`,
+        zIndex: 1,
       }} />
       <div style={{
-        position: 'absolute', top: 0, bottom: 0, left: '50%',
-        width: 1, zIndex: 2, pointerEvents: 'none',
-        background: 'linear-gradient(180deg, transparent 0%, rgba(245,238,225,0.10) 25%, rgba(245,238,225,0.18) 50%, rgba(245,238,225,0.10) 75%, transparent 100%)',
+        position: 'absolute',
+        inset: 0,
+        zIndex: 2,
+        pointerEvents: 'none',
+        background: intro
+          ? `radial-gradient(ellipse 86% 70% at 50% 48%, transparent 32%, rgba(${backgroundRgb},0.58) 100%)`
+          : `linear-gradient(180deg, rgba(${backgroundRgb},0.46) 0%, rgba(${backgroundRgb},0.08) 35%, rgba(${backgroundRgb},0.14) 66%, rgba(${backgroundRgb},0.52) 100%)`,
+      }} />
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: '50%',
+        width: 1,
+        zIndex: 2,
+        pointerEvents: 'none',
+        background: `linear-gradient(180deg, transparent 0%, ${GENERAL.line.soft} 25%, ${GENERAL.line.strong} 50%, ${GENERAL.line.soft} 75%, transparent 100%)`,
       }} />
     </>
   )
 }
 
-export default function SwipeSort({ block, subject, onComplete }) {
+export default function SwipeSort({ block = {}, subject = 'History', onComplete }) {
   injectStyles()
 
   const subjectData = SUBJECTS[subject] || SUBJECTS.History
-  const { accent, accentRgb } = subjectData
-  const neutralRgb = hexToRgb(GENERAL.slate)
+  const {
+    accent,
+    accentRgb,
+    background = GENERAL.backgroundApp,
+    backgroundSecondary = GENERAL.backgroundSurface,
+  } = subjectData
+  const backgroundRgb = hexToRgb(background)
+  const backgroundSecondaryRgb = hexToRgb(backgroundSecondary)
+  const incorrectRgb = GENERAL.feedbackIncorrectRgb
 
   const {
     columns = [],
     items: rawItems = [],
     explanation = '',
-    introTitle = 'One disease. Two explanations.',
-    introText  = 'Decide whether each explanation is supernatural or rational.',
-    gameTitle  = 'Sort the cause',
-    gamePrompt = 'Is this belief-based or observation-based?',
+    introTitle = 'Sort the ideas',
+    introText = 'Decide which category each item belongs to.',
+    gameTitle = 'Choose the category',
+    gamePrompt = 'Where does this item belong?',
     startLabel = 'Start sorting',
+    completionTitle = 'All sorted.',
+    interactionHint = 'Swipe the card or tap a side',
+    reducedMotionHint = 'Tap a side to sort',
   } = block
 
   const [items] = useState(() => {
-    const arr = [...rawItems]
-    for (let i = arr.length - 1; i > 0; i--) {
+    const shuffled = [...rawItems]
+    for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
-      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
     }
-    return arr
+    return shuffled
   })
 
   const [reduceMotion] = useState(() =>
     typeof window !== 'undefined'
       && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
   )
-  const [phase,    setPhase]    = useState('intro')
-  const [cardIdx,  setCardIdx]  = useState(0)
-  const [dragX,    setDragX]    = useState(0)
+  const [phase, setPhase] = useState('intro')
+  const [cardIdx, setCardIdx] = useState(0)
+  const [dragX, setDragX] = useState(0)
   const [dragging, setDragging] = useState(false)
   const [flashCol, setFlashCol] = useState(null)
-  const [shaking,  setShaking]  = useState(false)
-  const [flyDir,   setFlyDir]   = useState(null)
-  const [animKey,  setAnimKey]  = useState(0)
-  const [done,     setDone]     = useState(false)
+  const [shaking, setShaking] = useState(false)
+  const [flyDir, setFlyDir] = useState(null)
+  const [animKey, setAnimKey] = useState(0)
+  const [done, setDone] = useState(false)
   const [lastExpl, setLastExpl] = useState('')
 
   const locked = useRef(false)
@@ -185,47 +236,49 @@ export default function SwipeSort({ block, subject, onComplete }) {
   const cardRef = useRef(null)
 
   const totalCards = items.length
-  const remaining  = totalCards - cardIdx
-  const cur        = items[cardIdx] ?? null
+  const remaining = totalCards - cardIdx
+  const cur = items[cardIdx] || null
 
-  const leftCol  = columns[0] ?? { label: 'Supernatural\nGod, religion or magic', color: GENERAL.slate, colorRgb: neutralRgb, bg: `rgba(${neutralRgb},.07)` }
-  const rightCol = columns[1] ?? { label: 'Rational\nObservation, nature or logic', color: accent, colorRgb: accentRgb, bg: `rgba(${accentRgb},.07)` }
-
+  const leftCol = resolveColumn(columns[0], 0, subjectData)
+  const rightCol = resolveColumn(columns[1], 1, subjectData)
+  const resolvedColumns = [leftCol, rightCol]
   const leftText = splitLabel(leftCol)
   const rightText = splitLabel(rightCol)
   const dragSide = dragX < -SWIPE_THRESHOLD ? 0 : dragX > SWIPE_THRESHOLD ? 1 : null
 
-  const onTouchStart = useCallback(e => {
+  function onTouchStart(event) {
     if (reduceMotion || locked.current) return
-    startX.current = e.touches[0].clientX
+    startX.current = event.touches[0].clientX
     setDragging(true)
     setDragX(0)
-  }, [reduceMotion])
+  }
 
-  const onTouchMove = useCallback(e => {
+  function onTouchMove(event) {
     if (reduceMotion || !dragging || locked.current) return
-    e.preventDefault()
-    setDragX(e.touches[0].clientX - startX.current)
-  }, [dragging, reduceMotion])
+    event.preventDefault()
+    setDragX(event.touches[0].clientX - startX.current)
+  }
 
-  const onTouchEnd = useCallback(() => {
+  function onTouchEnd() {
     if (reduceMotion || !dragging || locked.current) return
     setDragging(false)
     if (dragSide !== null) commitChoice(dragSide)
     else setDragX(0)
-  }, [dragging, dragSide, reduceMotion, commitChoice])
+  }
 
-  const onMouseDown = e => {
+  function onMouseDown(event) {
     if (reduceMotion || locked.current) return
-    startX.current = e.clientX
+    startX.current = event.clientX
     setDragging(true)
     setDragX(0)
   }
-  const onMouseMove = e => {
+
+  function onMouseMove(event) {
     if (reduceMotion || !dragging || locked.current) return
-    setDragX(e.clientX - startX.current)
+    setDragX(event.clientX - startX.current)
   }
-  const onMouseUp = () => {
+
+  function onMouseUp() {
     if (reduceMotion || !dragging || locked.current) return
     setDragging(false)
     if (dragSide !== null) commitChoice(dragSide)
@@ -238,8 +291,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
     if (cardIdx + 1 >= totalCards) {
       setDone(true)
     } else {
-      setCardIdx(i => i + 1)
-      setAnimKey(k => k + 1)
+      setCardIdx(index => index + 1)
+      setAnimKey(key => key + 1)
     }
     locked.current = false
   }
@@ -252,8 +305,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
     const correct = cur.col === chosenCol
 
     if (correct) {
-      setLastExpl(cur.explanation ?? '')
-      setFlashCol('correct')
+      setLastExpl(cur.explanation || '')
+      setFlashCol(chosenCol)
       setDragX(0)
 
       if (reduceMotion) {
@@ -263,90 +316,99 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
       setFlyDir(chosenCol === 0 ? 'left' : 'right')
       setTimeout(advanceCard, 520)
-    } else {
-      setFlashCol('wrong')
-      setDragX(0)
+      return
+    }
 
-      if (reduceMotion) {
-        setTimeout(() => {
-          setFlashCol(null)
-          locked.current = false
-        }, MOTION.stagger.standardMs)
-        return
-      }
+    setFlashCol('wrong')
+    setDragX(0)
 
-      setShaking(true)
+    if (reduceMotion) {
       setTimeout(() => {
         setFlashCol(null)
-        setShaking(false)
         locked.current = false
-      }, 560)
+      }, MOTION.stagger.standardMs)
+      return
     }
+
+    setShaking(true)
+    setTimeout(() => {
+      setFlashCol(null)
+      setShaking(false)
+      locked.current = false
+    }, 560)
   }
 
-  function tapColumn(colIdx) {
+  function tapColumn(columnIndex) {
     if (locked.current || done) return
-    commitChoice(colIdx)
+    commitChoice(columnIndex)
   }
 
   const cardRotate = reduceMotion ? 0 : dragging ? dragX * 0.035 : 0
   const cardTransform = reduceMotion
-    ? `translateX(${dragX}px)`
+    ? 'translateX(0)'
     : flyDir === 'left'
-    ? 'translateX(-115vw) rotate(-16deg)'
-    : flyDir === 'right'
-    ? 'translateX(115vw) rotate(16deg)'
-    : `translateX(${dragX}px) rotate(${cardRotate}deg)`
+      ? 'translateX(-115vw) rotate(-16deg)'
+      : flyDir === 'right'
+        ? 'translateX(115vw) rotate(16deg)'
+        : `translateX(${dragX}px) rotate(${cardRotate}deg)`
 
   const cardTransition = reduceMotion
     ? 'none'
     : flyDir
-    ? 'transform 0.44s cubic-bezier(.4,0,.2,1), opacity 0.44s'
-    : dragging
-    ? 'box-shadow 0.12s'
-    : 'transform 0.32s cubic-bezier(.22,1,.36,1), opacity 0.28s, box-shadow 0.2s'
+      ? 'transform 0.44s cubic-bezier(.4,0,.2,1), opacity 0.44s'
+      : dragging
+        ? 'box-shadow 0.12s'
+        : 'transform 0.32s cubic-bezier(.22,1,.36,1), opacity 0.28s, box-shadow 0.2s'
 
   const cardOpacity = reduceMotion ? 1 : flyDir ? 0 : Math.max(0.42, 1 - Math.abs(dragX) / 420)
+  const correctColumn = typeof flashCol === 'number' ? resolvedColumns[flashCol] : null
 
-  const cardGlow = flashCol === 'correct'
-    ? `0 0 44px rgba(${accentRgb},0.55), 0 0 92px rgba(${accentRgb},0.18), 0 14px 48px rgba(0,0,0,0.70)`
+  const cardGlow = correctColumn
+    ? `0 0 44px rgba(${correctColumn.colorRgb},0.55), 0 0 92px rgba(${correctColumn.colorRgb},0.18), 0 14px 48px rgba(0,0,0,0.70)`
     : flashCol === 'wrong'
-    ? '0 0 44px rgba(160,85,15,0.58), 0 0 80px rgba(160,85,15,0.18), 0 14px 48px rgba(0,0,0,0.70)'
-    : dragX < -SWIPE_THRESHOLD
-    ? `0 0 42px rgba(${leftCol.colorRgb ?? neutralRgb},0.38), 0 14px 48px rgba(0,0,0,0.62)`
-    : dragX > SWIPE_THRESHOLD
-    ? `0 0 42px rgba(${rightCol.colorRgb ?? accentRgb},0.38), 0 14px 48px rgba(0,0,0,0.62)`
-    : '0 14px 48px rgba(0,0,0,0.58)'
+      ? `0 0 44px rgba(${incorrectRgb},0.52), 0 0 80px rgba(${incorrectRgb},0.16), 0 14px 48px rgba(0,0,0,0.70)`
+      : dragX < -SWIPE_THRESHOLD
+        ? `0 0 42px rgba(${leftCol.colorRgb},0.38), 0 14px 48px rgba(0,0,0,0.62)`
+        : dragX > SWIPE_THRESHOLD
+          ? `0 0 42px rgba(${rightCol.colorRgb},0.38), 0 14px 48px rgba(0,0,0,0.62)`
+          : '0 14px 48px rgba(0,0,0,0.58)'
 
   if (phase === 'intro') {
     return (
       <CinematicShell
         data-swipe-sort="true"
         style={{
-          background: GENERAL.backgroundApp,
+          background,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        {backgroundLayer(leftCol, rightCol, { intro: true })}
+        <BackgroundLayer leftCol={leftCol} rightCol={rightCol} subjectData={subjectData} intro />
 
         <div style={{
-          position: 'relative', zIndex: 3,
-          display: 'flex', flexDirection: 'column', alignItems: 'center',
-          padding: '30px 24px', maxWidth: 420, width: '100%',
+          position: 'relative',
+          zIndex: 3,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '30px 24px',
+          maxWidth: 420,
+          width: '100%',
         }}>
           <ScreenTitle style={{
-            color: 'rgba(245,238,225,0.94)',
-            textShadow: '0 2px 28px rgba(0,0,0,0.66)',
+            color: GENERAL.cinematic.textPrimary,
+            textShadow: GENERAL.cinematic.actionShadow,
             textAlign: 'center',
             animation: 'ss-intro-in 560ms cubic-bezier(.22,1,.36,1) both',
-          }}>{introTitle}</ScreenTitle>
+          }}>
+            {introTitle}
+          </ScreenTitle>
 
           <div style={{
             ...TYPE.body,
-            color: GENERAL.slate,
+            color: GENERAL.cinematic.textSecondary,
             textAlign: 'center',
             maxWidth: 330,
             marginBottom: 28,
@@ -357,28 +419,28 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, width: '100%', marginBottom: 34 }}>
             <div style={{
-              background: 'rgba(10,12,18,0.54)',
-              border: `1px solid rgba(${leftCol.colorRgb ?? neutralRgb},0.34)`,
+              background: `rgba(${backgroundSecondaryRgb},0.72)`,
+              border: `1px solid rgba(${leftCol.colorRgb},0.34)`,
               borderRadius: 18,
               padding: '18px 14px',
               textAlign: 'center',
               backdropFilter: 'blur(8px)',
               animation: 'ss-intro-left 480ms cubic-bezier(.22,1,.36,1) 90ms both',
             }}>
-              <div style={{ ...TYPE.metadata, color: leftCol.color ?? GENERAL.slate, marginBottom: 8 }}>{leftText.title}</div>
-              <div style={{ ...TYPE.caption, color: GENERAL.slate }}>{leftText.detail}</div>
+              <div style={{ ...TYPE.metadata, color: leftCol.color, marginBottom: leftText.detail ? 8 : 0 }}>{leftText.title}</div>
+              {leftText.detail && <div style={{ ...TYPE.caption, color: GENERAL.cinematic.textMuted }}>{leftText.detail}</div>}
             </div>
             <div style={{
-              background: 'rgba(10,12,18,0.54)',
-              border: `1px solid rgba(${rightCol.colorRgb ?? accentRgb},0.36)`,
+              background: `rgba(${backgroundSecondaryRgb},0.72)`,
+              border: `1px solid rgba(${rightCol.colorRgb},0.36)`,
               borderRadius: 18,
               padding: '18px 14px',
               textAlign: 'center',
               backdropFilter: 'blur(8px)',
               animation: 'ss-intro-right 480ms cubic-bezier(.22,1,.36,1) 130ms both',
             }}>
-              <div style={{ ...TYPE.metadata, color: rightCol.color ?? accent, marginBottom: 8 }}>{rightText.title}</div>
-              <div style={{ ...TYPE.caption, color: GENERAL.slate }}>{rightText.detail}</div>
+              <div style={{ ...TYPE.metadata, color: rightCol.color, marginBottom: rightText.detail ? 8 : 0 }}>{rightText.title}</div>
+              {rightText.detail && <div style={{ ...TYPE.caption, color: GENERAL.cinematic.textMuted }}>{rightText.detail}</div>}
             </div>
           </div>
 
@@ -402,27 +464,31 @@ export default function SwipeSort({ block, subject, onComplete }) {
       <CinematicShell
         data-swipe-sort="true"
         style={{
-          background: GENERAL.backgroundApp,
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
+          background,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
           padding: '32px 24px',
           animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) both',
         }}
       >
-        {backgroundLayer(leftCol, rightCol, { intro: true })}
+        <BackgroundLayer leftCol={leftCol} rightCol={rightCol} subjectData={subjectData} intro />
 
         <div style={{ position: 'relative', zIndex: 3, textAlign: 'center', maxWidth: 400, width: '100%' }}>
           <ScreenTitle style={{
-            color: 'rgba(245,238,225,0.95)',
-            textShadow: '0 2px 28px rgba(0,0,0,0.58)',
+            color: GENERAL.cinematic.textPrimary,
+            textShadow: GENERAL.cinematic.actionShadow,
             margin: '0 auto 20px',
             animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) 0ms both',
-          }}>All sorted.</ScreenTitle>
+          }}>
+            {completionTitle}
+          </ScreenTitle>
 
           {lastExpl && (
             <div style={{
               ...TYPE.bodySmall,
-              color: 'rgba(245,245,245,0.68)',
+              color: GENERAL.cinematic.textSecondary,
               marginBottom: 14,
               padding: '14px 16px',
               background: `rgba(${accentRgb},0.08)`,
@@ -437,7 +503,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
           {explanation && (
             <div style={{
               ...TYPE.body,
-              color: 'rgba(245,245,245,0.78)',
+              color: GENERAL.cinematic.textSecondary,
               marginBottom: 30,
               animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) 250ms both',
             }}>
@@ -463,80 +529,105 @@ export default function SwipeSort({ block, subject, onComplete }) {
     <CinematicShell
       data-swipe-sort="true"
       style={{
-        background: GENERAL.backgroundApp,
+        background,
         animation: 'ss-game-in 360ms ease both',
       }}
     >
-      <div style={{ position: 'absolute', inset: 0, userSelect: 'none', WebkitUserSelect: 'none' }}
+      <div
+        style={{ position: 'absolute', inset: 0, userSelect: 'none', WebkitUserSelect: 'none' }}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onMouseLeave={onMouseUp}
       >
-        {backgroundLayer(leftCol, rightCol, { focusSide: dragSide })}
+        <BackgroundLayer
+          leftCol={leftCol}
+          rightCol={rightCol}
+          subjectData={subjectData}
+          focusSide={dragSide}
+        />
 
         <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none' }}>
           <div style={{
-            position: 'absolute', left: 22, right: 22, top: 'calc(env(safe-area-inset-top, 0px) + 74px)',
+            position: 'absolute',
+            left: 22,
+            right: 22,
+            top: 'calc(env(safe-area-inset-top, 0px) + 74px)',
             textAlign: 'center',
           }}>
             <div style={{
               ...TYPE.displaySection,
-              color: 'rgba(245,238,225,0.94)',
-              textShadow: '0 2px 24px rgba(0,0,0,0.70)',
+              color: GENERAL.cinematic.textPrimary,
+              textShadow: GENERAL.cinematic.actionShadow,
               marginBottom: 6,
-            }}>{gameTitle}</div>
-            <div style={{
-              ...TYPE.bodySmall,
-              color: 'rgba(245,245,245,0.62)',
-            }}>{gamePrompt}</div>
+            }}>
+              {gameTitle}
+            </div>
+            <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted }}>
+              {gamePrompt}
+            </div>
           </div>
         </div>
 
         <button
+          type="button"
+          aria-label={`Sort into ${leftText.title}`}
           onClick={() => tapColumn(0)}
           style={{
-            position: 'absolute', left: 18, bottom: 'calc(env(safe-area-inset-bottom, 0px) + 30px)',
-            width: 'calc(50% - 28px)', minHeight: 82, zIndex: 5,
-            background: dragSide === 0 ? `rgba(${leftCol.colorRgb ?? neutralRgb},0.18)` : 'rgba(8,10,16,0.54)',
-            border: `1px solid rgba(${leftCol.colorRgb ?? neutralRgb},${dragSide === 0 ? 0.50 : 0.26})`,
+            position: 'absolute',
+            left: 18,
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 30px)',
+            width: 'calc(50% - 28px)',
+            minHeight: 82,
+            zIndex: 5,
+            background: dragSide === 0 ? leftCol.bg : `rgba(${backgroundSecondaryRgb},0.76)`,
+            border: `1px solid rgba(${leftCol.colorRgb},${dragSide === 0 ? 0.50 : 0.26})`,
             borderRadius: 20,
-            color: leftCol.color ?? GENERAL.slate,
+            color: leftCol.color,
             cursor: 'pointer',
-            boxShadow: dragSide === 0 ? `0 0 30px rgba(${leftCol.colorRgb ?? neutralRgb},0.20)` : '0 12px 30px rgba(0,0,0,0.28)',
+            boxShadow: dragSide === 0 ? `0 0 30px rgba(${leftCol.colorRgb},0.20)` : '0 12px 30px rgba(0,0,0,0.28)',
             backdropFilter: 'blur(10px)',
             transition: 'background 0.2s, border-color 0.2s, box-shadow 0.2s',
             textAlign: 'center',
             padding: '14px 10px',
           }}
         >
-          <div style={{ ...TYPE.button, marginBottom: 5 }}>← {leftText.title}</div>
-          <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.46)' }}>{leftText.detail}</div>
+          <div style={{ ...TYPE.button, marginBottom: leftText.detail ? 5 : 0 }}>← {leftText.title}</div>
+          {leftText.detail && <div style={{ ...TYPE.caption, color: GENERAL.cinematic.textMuted }}>{leftText.detail}</div>}
         </button>
 
         <button
+          type="button"
+          aria-label={`Sort into ${rightText.title}`}
           onClick={() => tapColumn(1)}
           style={{
-            position: 'absolute', right: 18, bottom: 'calc(env(safe-area-inset-bottom, 0px) + 30px)',
-            width: 'calc(50% - 28px)', minHeight: 82, zIndex: 5,
-            background: dragSide === 1 ? `rgba(${rightCol.colorRgb ?? accentRgb},0.18)` : 'rgba(8,10,16,0.54)',
-            border: `1px solid rgba(${rightCol.colorRgb ?? accentRgb},${dragSide === 1 ? 0.50 : 0.26})`,
+            position: 'absolute',
+            right: 18,
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 30px)',
+            width: 'calc(50% - 28px)',
+            minHeight: 82,
+            zIndex: 5,
+            background: dragSide === 1 ? rightCol.bg : `rgba(${backgroundSecondaryRgb},0.76)`,
+            border: `1px solid rgba(${rightCol.colorRgb},${dragSide === 1 ? 0.50 : 0.26})`,
             borderRadius: 20,
-            color: rightCol.color ?? accent,
+            color: rightCol.color,
             cursor: 'pointer',
-            boxShadow: dragSide === 1 ? `0 0 30px rgba(${rightCol.colorRgb ?? accentRgb},0.20)` : '0 12px 30px rgba(0,0,0,0.28)',
+            boxShadow: dragSide === 1 ? `0 0 30px rgba(${rightCol.colorRgb},0.20)` : '0 12px 30px rgba(0,0,0,0.28)',
             backdropFilter: 'blur(10px)',
             transition: 'background 0.2s, border-color 0.2s, box-shadow 0.2s',
             textAlign: 'center',
             padding: '14px 10px',
           }}
         >
-          <div style={{ ...TYPE.button, marginBottom: 5 }}>{rightText.title} →</div>
-          <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.46)' }}>{rightText.detail}</div>
+          <div style={{ ...TYPE.button, marginBottom: rightText.detail ? 5 : 0 }}>{rightText.title} →</div>
+          {rightText.detail && <div style={{ ...TYPE.caption, color: GENERAL.cinematic.textMuted }}>{rightText.detail}</div>}
         </button>
 
         <div style={{
-          position: 'absolute', inset: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           zIndex: 4,
           padding: '158px 24px 160px',
           pointerEvents: 'none',
@@ -553,10 +644,12 @@ export default function SwipeSort({ block, subject, onComplete }) {
                   position: 'relative',
                   width: 'min(78vw, 320px)',
                   minHeight: 156,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: 'linear-gradient(180deg, rgba(23,25,36,0.98), rgba(14,16,25,0.98))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: `linear-gradient(180deg, ${backgroundSecondary}, ${background})`,
                   borderRadius: 24,
-                  border: `1px solid rgba(245,238,225,${Math.abs(dragX) > 20 ? 0.25 : 0.14})`,
+                  border: `1px solid ${Math.abs(dragX) > 20 ? GENERAL.line.strong : GENERAL.line.medium}`,
                   padding: '26px 24px',
                   cursor: reduceMotion ? 'default' : dragging ? 'grabbing' : 'grab',
                   transform: cardTransform,
@@ -564,8 +657,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
                   animation: reduceMotion
                     ? 'none'
                     : shaking
-                    ? 'ss-shake 520ms ease both'
-                    : 'ss-card-in 360ms cubic-bezier(.22,1,.36,1) both',
+                      ? 'ss-shake 520ms ease both'
+                      : 'ss-card-in 360ms cubic-bezier(.22,1,.36,1) both',
                   transition: shaking ? 'none' : cardTransition,
                   boxShadow: cardGlow,
                 }}
@@ -573,9 +666,9 @@ export default function SwipeSort({ block, subject, onComplete }) {
                 <div style={{
                   ...TYPE.displayHero,
                   fontSize: 'clamp(24px, 6.8vw, 34px)',
-                  color: 'rgba(245,238,225,0.96)',
+                  color: GENERAL.cinematic.textPrimary,
                   textAlign: 'center',
-                  textShadow: '0 2px 20px rgba(0,0,0,0.35)',
+                  textShadow: GENERAL.cinematic.actionShadow,
                 }}>
                   {cur.label}
                 </div>
@@ -586,7 +679,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
         <div style={{
           position: 'absolute',
-          left: 0, right: 0,
+          left: 0,
+          right: 0,
           bottom: 'calc(env(safe-area-inset-bottom, 0px) + 126px)',
           zIndex: 5,
           display: 'flex',
@@ -595,21 +689,23 @@ export default function SwipeSort({ block, subject, onComplete }) {
         }}>
           <div style={{
             ...TYPE.caption,
-            color: 'rgba(245,245,245,0.42)',
-            background: 'rgba(8,10,16,0.42)',
-            border: '1px solid rgba(245,238,225,0.08)',
+            color: GENERAL.cinematic.textMuted,
+            background: `rgba(${backgroundRgb},0.64)`,
+            border: `1px solid ${GENERAL.line.soft}`,
             borderRadius: 999,
             padding: '8px 12px',
             backdropFilter: 'blur(8px)',
           }}>
-            {remaining} left · {reduceMotion ? 'Tap a side to sort' : 'Swipe the card or tap a side'}
+            {remaining} left · {reduceMotion ? reducedMotionHint : interactionHint}
           </div>
         </div>
 
-        {flashCol === 'correct' && (
+        {correctColumn && (
           <div style={{
-            position: 'absolute', inset: 0, zIndex: 10,
-            background: `radial-gradient(ellipse at center, rgba(${accentRgb},0.26), rgba(${accentRgb},0.04) 55%, transparent 75%)`,
+            position: 'absolute',
+            inset: 0,
+            zIndex: 10,
+            background: `radial-gradient(ellipse at center, rgba(${correctColumn.colorRgb},0.26), rgba(${correctColumn.colorRgb},0.04) 55%, transparent 75%)`,
             animation: 'ss-glow-correct 480ms ease both',
             pointerEvents: 'none',
           }} />
@@ -617,8 +713,10 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
         {flashCol === 'wrong' && (
           <div style={{
-            position: 'absolute', inset: 0, zIndex: 10,
-            background: 'rgba(160,85,15,0.22)',
+            position: 'absolute',
+            inset: 0,
+            zIndex: 10,
+            background: `rgba(${incorrectRgb},0.18)`,
             animation: 'ss-glow-wrong 540ms ease both',
             pointerEvents: 'none',
           }} />
