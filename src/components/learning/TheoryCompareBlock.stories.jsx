@@ -1,3 +1,4 @@
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import TheoryCompareBlock from './TheoryCompareBlock.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 
@@ -102,8 +103,77 @@ const GALEN_VESALIUS_BLOCK = {
   takeaway: 'Vesalius did not prove that everything Galen believed was wrong. He proved that old ideas should be checked against evidence.',
 }
 
+function replaceProperty(target, property, value) {
+  const descriptor = Object.getOwnPropertyDescriptor(target, property)
+  Object.defineProperty(target, property, { configurable: true, writable: true, value })
+  return () => {
+    if (descriptor) Object.defineProperty(target, property, descriptor)
+    else delete target[property]
+  }
+}
+
 export const PeopleGalenVesalius = {
-  args: { block: GALEN_VESALIUS_BLOCK, subject: 'History' },
+  args: { block: GALEN_VESALIUS_BLOCK, subject: 'History', onComplete: fn() },
+  play: async ({ canvasElement, args }) => {
+    args.onComplete.mockClear?.()
+    const canvas = within(canvasElement)
+    const scrollIntoView = fn()
+    const restoreScrollIntoView = replaceProperty(HTMLElement.prototype, 'scrollIntoView', scrollIntoView)
+
+    try {
+      const firstComparison = canvas.getByRole('group', { name: 'What did they study?' })
+
+      // The hero and every comparison retain the left/right identity, while the
+      // configured evidence side — not a hardcoded right column — owns emphasis.
+      expect(canvas.getAllByText('Galen').length).toBeGreaterThanOrEqual(2)
+      expect(canvas.getAllByText('Vesalius').length).toBeGreaterThanOrEqual(2)
+      expect(firstComparison).toHaveAttribute('data-emphasis-side', 'right')
+      expect(firstComparison.querySelectorAll('[data-emphasised="true"]')).toHaveLength(1)
+      expect(canvasElement.querySelector('[data-hero-atmosphere="true"]')).not.toBeNull()
+      expect(canvasElement.querySelector('[data-comparison-pair="true"]')).toHaveStyle({ borderRadius: '16px' })
+
+      await userEvent.click(canvas.getByRole('button', { name: 'Continue' }))
+
+      const secondComparison = await canvas.findByRole('group', { name: 'How did they build knowledge?' })
+      await waitFor(() => expect(secondComparison).toHaveFocus())
+      await waitFor(() => expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' }))
+      expect(canvas.queryByRole('group', { name: 'What did they study?' })).toBeNull()
+    } finally {
+      restoreScrollIntoView()
+    }
+  },
+}
+
+export const PeopleReducedMotion = {
+  args: { block: GALEN_VESALIUS_BLOCK, subject: 'History', onComplete: fn() },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const scrollIntoView = fn()
+    const reducedMotionQuery = fn().mockReturnValue({
+      matches: true,
+      media: '(prefers-reduced-motion: reduce)',
+      onchange: null,
+      addListener: fn(),
+      removeListener: fn(),
+      addEventListener: fn(),
+      removeEventListener: fn(),
+      dispatchEvent: fn(),
+    })
+    const restoreScrollIntoView = replaceProperty(HTMLElement.prototype, 'scrollIntoView', scrollIntoView)
+    const restoreMatchMedia = replaceProperty(window, 'matchMedia', reducedMotionQuery)
+
+    try {
+      await userEvent.click(canvas.getByRole('button', { name: 'Continue' }))
+      const secondComparison = await canvas.findByRole('group', { name: 'How did they build knowledge?' })
+
+      await waitFor(() => expect(secondComparison).toHaveFocus())
+      await waitFor(() => expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'auto', block: 'start' }))
+      expect(reducedMotionQuery).toHaveBeenCalledWith('(prefers-reduced-motion: reduce)')
+    } finally {
+      restoreMatchMedia()
+      restoreScrollIntoView()
+    }
+  },
 }
 
 // A single neutral comparison with no explanation or takeaway. Omitting
