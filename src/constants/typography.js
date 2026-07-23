@@ -177,6 +177,19 @@ const _quizHint = {
   lineHeight: 1.45,
 }
 
+// Long-form exam prompts need more authority than body copy but must remain
+// substantially calmer than a screen title. This role is shared across subjects
+// so a long History question, an English quotation and a Maths equation all fit
+// comfortably on a 390px screen without local size overrides.
+const _examPromptHero = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: 'clamp(20px, 5.8vw, 26px)',
+  lineHeight: 1.38,
+  fontWeight: 560,
+  letterSpacing: '-0.012em',
+  textWrap: 'balance',
+}
+
 const _examQuestion = {
   fontFamily: "'Sora', sans-serif",
   fontSize: 'clamp(14px, 3.8vw, 15.5px)',
@@ -223,6 +236,7 @@ export const TYPE = {
   quizQuestion: _quizQuestion,
   quizOption: _quizOption,
   quizHint: _quizHint,
+  examPromptHero: _examPromptHero,
   examQuestion: _examQuestion,
   examAnswer: _examAnswer,
   secondsMarker: _secondsMarker,
