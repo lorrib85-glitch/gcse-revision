@@ -1,18 +1,13 @@
-// ─── TheoryCompare "people" variant — pure reveal logic ───────────────────
-// Extracted from TheoryCompareBlock so the progressive-reveal ordering can be
+// ─── TheoryCompare — pure reveal logic ────────────────────────────────────
+// Extracted from TheoryCompare so the progressive-reveal ordering can be
 // unit-tested in the node project without a DOM. The component owns the pixels;
 // this file owns the sequence.
 //
 // Each Continue press replaces the current comparison theme with the next one.
-// The hero, people labels and shared progress marker remain stable, while one
+// The hero, side labels and shared progress marker remain stable, while one
 // complete idea occupies the learning area at a time. A theme's paired rows,
 // note and explanation arrive together so the learner keeps the whole idea in
 // working memory without creating an endlessly long page.
-
-/** True when a theoryCompare block should render as the person-to-person variant. */
-export function isPeopleVariant(block) {
-  return !!block && block.variant === 'people'
-}
 
 function hasRows(comparison) {
   return Array.isArray(comparison?.rows) && comparison.rows.length > 0
@@ -23,7 +18,7 @@ function hasRows(comparison) {
  * step: it appears with the final theme, then the screen-level Continue action
  * becomes available at the base of the completed comparison.
  */
-export function buildPeopleSteps(block) {
+export function buildComparisonSteps(block) {
   const comparisons = Array.isArray(block?.comparisons) ? block.comparisons : []
   return comparisons.map((_, comparisonIndex) => ({
     type: 'comparison',

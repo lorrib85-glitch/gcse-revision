@@ -260,26 +260,6 @@ export const guidedChoiceCarousel = {
   ],
 }
 
-// ── Comparison: TheoryCompareBlock (History) — reuses story shape ─────────────
-export const theoryCompareBlock = {
-  type: 'theoryCompare',
-  oldLabel: 'What people believed',
-  oldTitle: 'Three explanations',
-  oldPoints: [
-    'Cause — God’s punishment, bad air, or astrology',
-    'Carrier — bad smells, sinful behaviour, unlucky planets',
-    'Spread — poisoned air or divine judgement',
-  ],
-  newLabel: 'What was actually happening',
-  newTitle: 'One real cause',
-  newPoints: [
-    'Cause — Yersinia pestis bacteria',
-    'Carrier — fleas living on black rats',
-    'Spread — flea bites, infected rats, trade routes',
-  ],
-  takeaway: 'They blamed God, miasma and the planets. The real cause was a bacterium carried by fleas on black rats.',
-}
-
 // ── Comparison: MisconceptionCheck (History) — reuses shipped Episode-2 shape ─
 export const misconceptionCheck = {
   id: 'trap-medicine-changed',

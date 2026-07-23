@@ -124,7 +124,7 @@ Teach the core concept clearly after the student has seen the evidence.
 
 - `ConceptReveal`
 - `ExplainReveal`
-- `TheoryCompareBlock`
+- `TheoryCompare`
 - `CardContainer`
 - `KeyFigureReveal` where a scientist or discovery matters
 
@@ -391,7 +391,7 @@ Use for: cells, organs, circuits, microscope parts, leaf structure, particle dia
 
 Each hotspot should reveal: name, function, why it matters, one exam phrase if relevant.
 
-**`TheoryCompareBlock`**
+**`TheoryCompare`**
 
 Use for: plant vs animal cells, aerobic vs anaerobic respiration, diffusion vs osmosis vs active transport, series vs parallel circuits, ionic vs covalent bonding, exothermic vs endothermic reactions.
 

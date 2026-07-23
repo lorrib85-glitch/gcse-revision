@@ -140,12 +140,11 @@ export const quoteAnalyser = {
   essayExample: 'Shakespeare uses light and dark imagery in “Stars, hide your fires” to show that Macbeth recognises his ambition is morally corrupt and wants to conceal it from judgement.',
 }
 
-// Live Episode 3 shape, kept as its own Component Lab entry so the cinematic
-// person-to-person comparison can be reviewed separately from the older
-// belief-versus-reality variant.
-export const theoryComparePeople = {
+// Live Episode 3 shape — the cinematic person-to-person comparison reviewed in
+// the Component Lab. TheoryCompare also serves belief-versus-reality and
+// concept comparisons that supply no portraits.
+export const theoryCompare = {
   type: 'theoryCompare',
-  variant: 'people',
   title: 'Galen and Vesalius',
   heroImage: '/figures/history/medicine/renaissance/galen-vesalius-hero.webp',
   heroImageAlt: 'Galen in Roman dress before classical ruins and animal anatomy sketches, standing back to back with Vesalius in Renaissance dress beside an anatomical book and a human skeleton',

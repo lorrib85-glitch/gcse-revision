@@ -38,7 +38,7 @@ import { visualNarrativeToRevealChain } from '../../data/visualNarrativeCompat.j
 import TimelineCanvas from '../learning/TimelineCanvas.jsx'
 import CinematicCarousel from '../learning/CinematicCarousel.jsx'
 import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
-import TheoryCompareBlock from '../learning/TheoryCompareBlock.jsx'
+import TheoryCompare from '../learning/TheoryCompare.jsx'
 import GraphView from '../learning/GraphView.jsx'
 import ColSortBlock from '../learning/ColSortBlock.jsx'
 import SpotTheError from '../learning/SpotTheError.jsx'
@@ -651,7 +651,7 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'workedExample'  && <div style={{ marginTop: i > 0 ? 28 : 0 }}><WorkedExample subject={subject} scenario={block.scenario} chips={block.chips} working={block.working} result={block.result} /></div>}
           {block.type === 'mediaPlaceholder' && <div style={{ marginTop: i > 0 ? 28 : 0 }}><MediaPlaceholder subject={subject} kind={block.kind} aspect={block.aspect} caption={block.caption} /></div>}
           {block.type === 'fillblanks'    && <FillInTheBlanksBlock block={block} subject={subject} />}
-          {block.type === 'theoryCompare' && <TheoryCompareBlock block={block} subject={subject} />}
+          {block.type === 'theoryCompare' && <TheoryCompare block={block} subject={subject} />}
           {block.type === 'oppositeQualitiesReveal' && <OppositeQualitiesReveal block={block} subject={subject} />}
           {block.type === 'graphView'     && <GraphView block={block} subject={subject} />}
           {block.type === 'timelineChain' && <TimelineChainBlock block={block} subject={subject} />}

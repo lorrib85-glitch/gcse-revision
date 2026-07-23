@@ -433,58 +433,47 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
-### TheoryCompareBlock
+### TheoryCompare
 
-**File:** `src/components/learning/TheoryCompareBlock.jsx`
-**Reveal logic:** `src/components/learning/theoryComparePeople.js` (pure)
-**Story:** `src/components/learning/TheoryCompareBlock.stories.jsx`
+**File:** `src/components/learning/TheoryCompare.jsx`
+**Reveal logic:** `src/components/learning/theoryCompare.js` (pure)
+**Story:** `src/components/learning/TheoryCompare.stories.jsx`
 **Interaction class:** `reveal` (`teach-comparison`) — teaching-first and unassessed. Never a disguised quiz; no right/wrong judgement.
 **Pedagogical purpose:** teach a meaningful comparison through progressive reveal, so the learner understands *why* two things differ before any retrieval is expected.
-**Props:** `block`, `subject`
+**Props:** `block`, `subject`, `onComplete?`
 
-`theoryCompare` has two governed modes selected by `block.variant`; both preserve the same pedagogical function.
+Side-by-side comparison of any two approaches, people or theories. Two labelled sides kept as compact headers with a central division; one comparison theme revealed at a time; a full-width teaching explanation beneath the columns where needed; example rows within a theme; a single closing takeaway. `emphasisSide` (`'left' | 'right' | 'none'`) gives one side restrained subject-accent emphasis (e.g. the evidence-backed side of a belief-versus-reality comparison); `'none'` keeps both sides visually equal for a neutral concept comparison. All colour derives from the subject accent token — content data carries no raw colours.
 
-#### Simple mode (default — no `variant`)
-
-Old → new position comparison with staggered fade-in (learner taps once to reveal the "new" side, then a takeaway). Backwards-compatible; existing content depends on its exact data shape.
-
-- **Data shape:** `{ type: 'theoryCompare', title?, oldLabel, oldTitle, oldPoints[], newLabel, newTitle, newPoints[], takeaway? }`
-- **Use it when:**
-  - comparing an old explanation with a new explanation
-  - comparing belief with reality (e.g. Black Death "what people believed → what was actually happening")
-  - comparing two concise conceptual models
-
-#### People mode (`variant: 'people'`)
-
-Person-to-person comparison. Two named people with portraits kept as compact headers and a central division; one comparison theme revealed at a time; a full-width teaching explanation beneath the columns where needed; anatomical/example rows revealed one at a time within a theme; a single closing takeaway. Left side reads older and quieter; the right side carries restrained subject-accent (bronze for History) emphasis as evidence is revealed. All colour derives from the subject accent token — content data carries no raw colours.
+Portraits are optional. Supply `image`/`imageAlt` per side (and/or a `heroImage`) for a person-to-person comparison; when none are supplied the two portrait boxes render **empty**, ready for images to be added in future, and the labelled sides carry the comparison on their own.
 
 - **Data shape:**
   ```
   {
     type: 'theoryCompare',
-    variant: 'people',
-    title,
-    heroImage?, heroImageAlt?,   // optional cinematic dual-portrait banner (~30vh) that darkens into the screen; when omitted, two compact circular portraits are used instead
-    leftPerson:  { name, subtitle, image, imageAlt },
-    rightPerson: { name, subtitle, image, imageAlt },
+    title?,
+    emphasisSide?,               // 'left' | 'right' | 'none' (default 'none')
+    heroImage?, heroImageAlt?,   // optional cinematic dual-portrait banner (~30vh) that darkens into the screen; when omitted, two compact circular portrait boxes are used instead
+    leftPerson:  { name, subtitle?, image?, imageAlt? },
+    rightPerson: { name, subtitle?, image?, imageAlt? },
     comparisons: [
       // single-row theme
-      { id, prompt, left, right, explanation? },
-      // multi-example theme (rows reveal one at a time, optional summary note)
-      { id, prompt, rows: [{ label, left, right }], note?, explanation? },
+      { id, prompt?, left, right, explanation?, emphasisSide? },
+      // multi-example theme (optional summary note)
+      { id, prompt?, rows: [{ label, left, right }], note?, explanation?, emphasisSide? },
     ],
-    takeaway,
+    takeaway?,
   }
   ```
 - **Use it when:**
-  - two named people used meaningfully different approaches
-  - the learner must compare method, evidence, conclusion or impact
+  - two people, approaches or theories differ meaningfully (method, evidence, conclusion, impact)
+  - comparing belief with reality (e.g. Black Death "what people believed → what was actually happening")
+  - comparing two concise conceptual models (e.g. animal vs plant cell, eukaryotic vs prokaryotic)
   - the comparison itself explains why knowledge changed
-- **Do NOT use it (either mode) when:**
+- **Do NOT use it when:**
   - the learner needs to classify answers → use `colsort` / `matchingTask`
   - the learner needs to make an assessed judgement → use `factorWeb` / an exam-technique component
   - the content is a sequence rather than a comparison → use `timelineChain` / `orderedRouteTask`
-  - one side is merely correct and the other a cartoonishly foolish distractor (people mode must keep both sides historically fair)
+  - one side is merely correct and the other a cartoonishly foolish distractor (a person-to-person comparison must keep both sides historically fair)
   - the comparison requires long paragraphs in both columns (columns take short parallel phrases; longer teaching goes in the full-width `explanation`)
 
 **Accessibility expectations:** portraits carry meaningful `imageAlt`; each comparison cell exposes its person's name to screen readers via a visually-hidden prefix so the Galen/Vesalius relationship survives colour- and position-only cues; progression uses the governed `ContinueCTA` (keyboard-operable, visible focus); focus moves to the takeaway when it reveals; motion respects `prefers-reduced-motion`; DOM reading order is prompt → left → right → explanation.

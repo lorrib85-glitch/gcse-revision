@@ -239,19 +239,19 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       blocks: [
         {
           type: 'theoryCompare',
-          oldLabel: 'What people believed',
-          oldTitle: 'Three explanations',
-          oldPoints: [
-            'Cause — God’s punishment, bad air, or astrology',
-            'Carrier — bad smells, sinful behaviour, unlucky planets',
-            'Spread — poisoned air or divine judgement spreading through communities',
-          ],
-          newLabel: 'What was actually happening',
-          newTitle: 'One real cause',
-          newPoints: [
-            'Cause — Yersinia pestis bacteria',
-            'Carrier — fleas living on black rats',
-            'Spread — flea bites, infected rats, travel and trade routes',
+          emphasisSide: 'right',
+          leftPerson: { name: 'What people believed', subtitle: 'Three explanations' },
+          rightPerson: { name: 'What was actually happening', subtitle: 'One real cause' },
+          comparisons: [
+            {
+              id: 'plague-cause',
+              prompt: 'What caused the Black Death?',
+              rows: [
+                { label: 'Cause', left: 'God’s punishment, bad air, or astrology', right: 'Yersinia pestis bacteria' },
+                { label: 'Carrier', left: 'Bad smells, sinful behaviour, unlucky planets', right: 'Fleas living on black rats' },
+                { label: 'Spread', left: 'Poisoned air or divine judgement spreading through communities', right: 'Flea bites, infected rats, travel and trade routes' },
+              ],
+            },
           ],
           takeaway: 'They blamed God, miasma and the planets. The real cause was a bacterium carried by fleas on black rats.',
         },

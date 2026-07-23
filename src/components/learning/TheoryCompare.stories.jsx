@@ -1,9 +1,9 @@
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
-import TheoryCompareBlock from './TheoryCompareBlock.jsx'
+import TheoryCompare from './TheoryCompare.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 
 export default {
-  component: TheoryCompareBlock,
+  component: TheoryCompare,
   tags: ['ai-generated'],
   parameters: {
     layout: 'fullscreen',
@@ -22,34 +22,9 @@ export default {
   ],
 }
 
-// ─── Simple variant — unchanged, backwards-compatible (Black Death) ────────
-const BLACK_DEATH_BLOCK = {
-  type: 'theoryCompare',
-  oldLabel: 'What people believed',
-  oldTitle: 'Three explanations',
-  oldPoints: [
-    'Cause — God’s punishment, bad air, or astrology',
-    'Carrier — bad smells, sinful behaviour, unlucky planets',
-    'Spread — poisoned air or divine judgement spreading through communities',
-  ],
-  newLabel: 'What was actually happening',
-  newTitle: 'One real cause',
-  newPoints: [
-    'Cause — Yersinia pestis bacteria',
-    'Carrier — fleas living on black rats',
-    'Spread — flea bites, infected rats, travel and trade routes',
-  ],
-  takeaway: 'They blamed God, miasma and the planets. The real cause was a bacterium carried by fleas on black rats.',
-}
-
-export const SimpleBlackDeath = {
-  args: { block: BLACK_DEATH_BLOCK, subject: 'History' },
-}
-
-// ─── People variant — Galen vs Vesalius (Episode 3) ────────────────────────
+// ─── Person-to-person comparison — Galen vs Vesalius (Episode 3) ───────────
 const GALEN_VESALIUS_BLOCK = {
   type: 'theoryCompare',
-  variant: 'people',
   title: 'Galen and Vesalius',
   heroImage: '/figures/history/medicine/renaissance/galen-vesalius-hero.webp',
   heroImageAlt: 'Galen in Roman dress before classical ruins and animal anatomy sketches, standing back to back with Vesalius in Renaissance dress beside an anatomical book and a human skeleton',
@@ -183,13 +158,39 @@ export const PeopleMinimal = {
     subject: 'History',
     block: {
       type: 'theoryCompare',
-      variant: 'people',
       title: 'Two anatomists',
       leftPerson: { name: 'Galen', subtitle: 'Ancient Roman doctor', image: '/figures/history/medicine/medieval/galen-portrait.png', imageAlt: 'Portrait of Galen' },
       rightPerson: { name: 'Vesalius', subtitle: 'Renaissance anatomist', image: '/images/vesalius-1543.png', imageAlt: 'Portrait of Vesalius' },
       comparisons: [
         { id: 'evidence-source', prompt: 'What did they study?', left: 'Animal dissection', right: 'Human dissection' },
       ],
+    },
+  },
+}
+
+// Belief-versus-reality comparison with no portraits supplied. The two portrait
+// boxes render empty, ready for images in future; the paired rows carry the idea.
+export const ConceptNoPortraits = {
+  args: {
+    subject: 'History',
+    onComplete: fn(),
+    block: {
+      type: 'theoryCompare',
+      emphasisSide: 'right',
+      leftPerson: { name: 'What people believed', subtitle: 'Three explanations' },
+      rightPerson: { name: 'What was actually happening', subtitle: 'One real cause' },
+      comparisons: [
+        {
+          id: 'black-death-cause',
+          prompt: 'What caused the Black Death?',
+          rows: [
+            { label: 'Cause', left: 'God’s punishment, bad air, or astrology', right: 'Yersinia pestis bacteria' },
+            { label: 'Carrier', left: 'Bad smells, sinful behaviour, unlucky planets', right: 'Fleas living on black rats' },
+            { label: 'Spread', left: 'Poisoned air or divine judgement', right: 'Flea bites, infected rats, travel and trade routes' },
+          ],
+        },
+      ],
+      takeaway: 'They blamed God, miasma and the planets. The real cause was a bacterium carried by fleas on black rats.',
     },
   },
 }

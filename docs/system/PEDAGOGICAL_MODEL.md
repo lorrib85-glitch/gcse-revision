@@ -241,7 +241,7 @@ maps onto components that already exist. No new component families:
 | Misconception correction | Identified misconception | `MisconceptionCheck` (its exam-trap framing is exactly this job), correction copy from the registry |
 | Visual / re-explanation | Understanding gap, no misconception | Stage-aware support screen (`ConceptReveal`, `ExplainReveal`, hotspot/carousel screens) |
 | Worked example | Can't apply; procedure subjects (Maths) | `GuidedExamResponse`, `ExaminerExplainsScreen` |
-| Comparison | Two concepts confused | `TheoryCompareBlock`; misconception `contrastConcept` supplies the pair |
+| Comparison | Two concepts confused | `TheoryCompare`; misconception `contrastConcept` supplies the pair |
 | Retrieval refresh | Recall decay on previously secure cell | `QuickRecallScreen` / quickfire items — no teaching, just retrieval |
 | Exam walkthrough | Technique gap, content fine (`logExamTechnique` patterns) | `GuidedAnswerCoach` |
 

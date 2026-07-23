@@ -10,172 +10,16 @@ import SequenceProgress from '../core/SequenceProgress.jsx'
 import CinematicDivider from '../core/CinematicDivider.jsx'
 import { useInlineNavigationOwner } from '../core/InlineNavigationContext.jsx'
 import {
-  isPeopleVariant,
-  buildPeopleSteps,
+  buildComparisonSteps,
   deriveVisibleState,
   revealedComparisonCount,
-} from './theoryComparePeople.js'
+} from './theoryCompare.js'
 
-let stylesInjected = false
-function ensureStyles() {
-  if (stylesInjected) return
-  stylesInjected = true
-  const el = document.createElement('style')
-  el.textContent = `
-    @keyframes tcb-fade-up {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-  `
-  document.head.appendChild(el)
-}
-
-// ─── theoryCompare — default export (routes between variants) ──────────────
-export default function TheoryCompareBlock({ block, subject = 'Biology', onComplete }) {
-  if (isPeopleVariant(block)) {
-    return <PeopleCompareBlock block={block} subject={subject} onComplete={onComplete} />
-  }
-  return <SimpleCompareBlock block={block} subject={subject} />
-}
-
-// ─── Simple variant — unchanged, backwards-compatible ─────────────────────
-// old → new position comparison with staggered fade-in (e.g. Black Death
-// "what people believed" → "what was actually happening"). Do not alter its
-// data shape or behaviour; existing content depends on it.
-function SimpleCompareBlock({ block, subject }) {
-  const subj   = SUBJECTS[subject] || SUBJECTS.Biology
-  const accent = subj.accent
-  const rgb    = subj.accentRgb
-
-  const [newVisible,      setNewVisible]      = useState(false)
-  const [takeawayVisible, setTakeawayVisible] = useState(false)
-
-  useEffect(() => { ensureStyles() }, [])
-
-  return (
-    <div style={{ margin: '14px 0' }}>
-      {/* Optional block title */}
-      {block.title && (
-        <div style={{
-          ...TYPE.eyebrow,
-          textTransform: 'uppercase',
-          color: `rgba(${rgb},0.72)`,
-          marginBottom: 20,
-        }}>
-          {block.title}
-        </div>
-      )}
-
-      {/* Old section */}
-      <div style={{ marginBottom: newVisible ? 0 : 28 }}>
-        <div style={{
-          ...TYPE.eyebrow,
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.38)',
-          marginBottom: 10,
-        }}>
-          {block.oldLabel}
-        </div>
-        <div style={{
-          ...TYPE.displayHero,
-          fontSize: 26,
-          color: 'rgba(245,245,245,0.58)',
-          marginBottom: 14,
-        }}>
-          {block.oldTitle}
-        </div>
-        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {(block.oldPoints || []).map((pt, i) => (
-            <li key={i} style={{
-              ...TYPE.bodyStrong,
-              color: 'rgba(245,245,245,0.52)',
-              paddingLeft: 0,
-            }}>
-              <span style={{ color: 'rgba(255,255,255,0.22)', marginRight: 8 }}>—</span>{pt}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Continue button — shown while new section is hidden */}
-      {!newVisible && (
-        <button
-          onClick={() => setNewVisible(true)}
-          style={{
-            background: 'none', border: 'none', padding: 0,
-            cursor: 'pointer',
-            ...TYPE.eyebrow,
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.42)',
-            marginTop: 4,
-          }}
-        >
-          Continue ↓
-        </button>
-      )}
-
-      {/* Divider + new section */}
-      {newVisible && (
-        <>
-          <div style={{
-            height: 1,
-            background: `rgba(${rgb},0.15)`,
-            margin: '24px 0',
-            animation: 'tcb-fade-up 400ms ease both',
-          }} />
-          <div
-            style={{ animation: 'tcb-fade-up 400ms ease both' }}
-            onAnimationEnd={() => setTakeawayVisible(true)}
-          >
-            <div style={{
-              ...TYPE.eyebrow,
-              textTransform: 'uppercase',
-              color: `rgba(${rgb},0.82)`,
-              marginBottom: 10,
-            }}>
-              {block.newLabel}
-            </div>
-            <div style={{
-              ...TYPE.displayHero,
-              fontSize: 26,
-              color: accent,
-              marginBottom: 14,
-            }}>
-              {block.newTitle}
-            </div>
-            <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {(block.newPoints || []).map((pt, i) => (
-                <li key={i} style={{
-                  ...TYPE.bodyStrong,
-                  color: 'rgba(245,245,245,0.75)',
-                }}>
-                  <span style={{ color: `rgba(${rgb},0.55)`, marginRight: 8 }}>—</span>{pt}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </>
-      )}
-
-      {/* Takeaway */}
-      {takeawayVisible && block.takeaway && (
-        <div style={{
-          marginTop: 28,
-          ...TYPE.displayCard,
-          fontSize: 17,
-          color: accent,
-          animation: 'tcb-fade-up 400ms ease both',
-        }}>
-          {block.takeaway}
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ─── People variant — person-to-person comparison ─────────────────────────
-// One comparison theme is visible at a time. The hero and shared progress stay
-// stable; Continue swaps in the next complete comparison and moves focus to it.
+// ─── TheoryCompare — side-by-side comparison of two approaches, people or ──
+// theories. One comparison theme is visible at a time. The hero and shared
+// progress stay stable; Continue swaps in the next complete comparison and
+// moves focus to it. When no portraits or hero image are supplied, the two
+// portrait boxes render empty, ready for images to be added in future.
 const PEOPLE_HERO_SIZE = {
   height: '30vh',
   minHeight: 200,
@@ -214,7 +58,7 @@ function ensurePeopleStyles() {
   document.head.appendChild(el)
 }
 
-function PeopleCompareBlock({ block, subject, onComplete }) {
+export default function TheoryCompare({ block, subject = 'History', onComplete }) {
   const subj   = SUBJECTS[subject] || SUBJECTS.History
   const accent = subj.accent
   const rgb    = subj.accentRgb
@@ -224,7 +68,7 @@ function PeopleCompareBlock({ block, subject, onComplete }) {
   const comparisons = Array.isArray(block.comparisons) ? block.comparisons : []
   const defaultEmphasisSide = resolveEmphasisSide(block.emphasisSide)
 
-  const steps = buildPeopleSteps(block)
+  const steps = buildComparisonSteps(block)
   const [revealed, setRevealed] = useState(steps.length > 0 ? 1 : 0)
   const continueModule = useInlineNavigationOwner(true)
 

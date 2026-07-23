@@ -48,10 +48,8 @@ export const SCREEN_TYPE_FUNCTIONS = {
   // reveal before the detailed profile, so the learner meets the person before
   // reading their evidence cards. Keep the intro to one name line + one impact line.
   keyFigureReveal: { functions: ['introduce-figure'], interaction: 'reveal' },
-  // Two governed modes share this one taxonomy entry: the default simple
-  // old→new comparison and the `variant: 'people'` person-to-person comparison
-  // (see docs/components/COMPONENT_REGISTRY.md). Both teach a comparison through
-  // progressive reveal — same function, same interaction class, one entry.
+  // Side-by-side comparison of any two approaches, people or theories, taught
+  // through progressive reveal (see docs/components/COMPONENT_REGISTRY.md).
   theoryCompare: { functions: ['teach-comparison'], interaction: 'reveal' },
   oppositeQualitiesReveal: { functions: ['teach-comparison'], interaction: 'reveal' },
   timelineCanvas: { functions: ['sequence-process'], interaction: 'reveal' },

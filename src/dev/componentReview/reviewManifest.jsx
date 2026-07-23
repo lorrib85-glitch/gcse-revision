@@ -27,7 +27,7 @@ import CentreImageReveal from '../../components/learning/CentreImageReveal.jsx'
 import MatchingTask from '../../components/learning/MatchingTask.jsx'
 import VisualLearning from '../../components/learning/VisualLearning.jsx'
 import GuidedChoiceCarousel from '../../components/learning/GuidedChoiceCarousel.jsx'
-import TheoryCompareBlock from '../../components/learning/TheoryCompareBlock.jsx'
+import TheoryCompare from '../../components/learning/TheoryCompare.jsx'
 import MisconceptionCheck from '../../components/learning/MisconceptionCheck.jsx'
 import AcronymMemorise from '../../components/learning/AcronymMemorise.jsx'
 import MemoryHook from '../../components/learning/MemoryHook.jsx'
@@ -215,7 +215,7 @@ export const REVIEW_ENTRIES = [
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Full-screen drag slider comparing two states of the same image.',
     usage: 'Used in Episode 13 (Can we beat cancer?), type: beforeAfterSlider.',
-    alternative: 'TheoryCompareBlock (side-by-side, no interaction).',
+    alternative: 'TheoryCompare (side-by-side comparison).',
     render: (fx, { onDone }) => (
       <BeforeAfterImageSlider
         beforeSrc={fx.beforeSrc} afterSrc={fx.afterSrc} beforeAlt={fx.beforeAlt} afterAlt={fx.afterAlt}
@@ -323,22 +323,13 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.guidedChoiceCarousel,
   },
   {
-    id: 'theory-compare-block', name: 'TheoryCompareBlock', group: 'comparison',
+    id: 'theory-compare', name: 'TheoryCompare', group: 'comparison',
     status: 'comparison', subject: 'History', renderMode: 'inline',
-    function: 'Belief-versus-reality comparison with a staggered reveal and final takeaway.',
-    usage: 'Used in Episode 2 (Black Death), type: theoryCompare.',
-    alternative: 'BeforeAfterImageSlider (interactive); MisconceptionCheck.',
-    render: (fx) => <TheoryCompareBlock block={fx} subject="History" />,
-    fixture: FIX.theoryCompareBlock,
-  },
-  {
-    id: 'theory-compare-people', name: 'TheoryCompareBlock — people', group: 'comparison',
-    status: 'comparison', subject: 'History', renderMode: 'inline',
-    function: 'Cinematic person-to-person comparison with paired hero art, progressive comparison prompts and a final evidence-based takeaway.',
-    usage: 'Used in Episode 3 (Galen and Vesalius), type: theoryCompare, variant: people.',
-    alternative: 'KeyFigureReveal for one person; ColSortBlock for assessed classification.',
-    render: (fx, { onDone }) => <TheoryCompareBlock block={fx} subject="History" onComplete={onDone} />,
-    fixture: FIX.theoryComparePeople,
+    function: 'Side-by-side comparison of two approaches, people or theories: optional paired hero art, progressive comparison prompts and a final evidence-based takeaway. When no portraits are supplied the two portrait boxes render empty, ready for images in future.',
+    usage: 'Used in Episode 3 (Galen and Vesalius), Episode 2 (Black Death beliefs) and Biology cell comparisons, type: theoryCompare.',
+    alternative: 'KeyFigureReveal for one person; ColSortBlock for assessed classification; MisconceptionCheck.',
+    render: (fx, { onDone }) => <TheoryCompare block={fx} subject="History" onComplete={onDone} />,
+    fixture: FIX.theoryCompare,
   },
   {
     id: 'misconception-check', name: 'MisconceptionCheck', group: 'comparison',

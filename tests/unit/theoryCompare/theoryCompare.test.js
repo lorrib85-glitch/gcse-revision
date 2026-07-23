@@ -1,15 +1,13 @@
 import { describe, it, expect } from 'vitest'
 import {
-  isPeopleVariant,
-  buildPeopleSteps,
+  buildComparisonSteps,
   deriveVisibleState,
   revealedComparisonCount,
-} from '../../../src/components/learning/theoryComparePeople.js'
+} from '../../../src/components/learning/theoryCompare.js'
 
 // A trimmed Galen/Vesalius block that mirrors the Episode 3 shape.
 const PEOPLE_BLOCK = {
   type: 'theoryCompare',
-  variant: 'people',
   title: 'Galen and Vesalius',
   leftPerson: { name: 'Galen', subtitle: 'Ancient Roman doctor' },
   rightPerson: { name: 'Vesalius', subtitle: 'Renaissance anatomist' },
@@ -31,28 +29,9 @@ const PEOPLE_BLOCK = {
   takeaway: 'Old ideas should be checked against evidence.',
 }
 
-const SIMPLE_BLOCK = {
-  type: 'theoryCompare',
-  oldLabel: 'What people believed',
-  oldPoints: ['A', 'B'],
-  newLabel: 'What was happening',
-  newPoints: ['C', 'D'],
-  takeaway: 'Reality differed.',
-}
-
-describe('isPeopleVariant', () => {
-  it('is true only for variant: "people"', () => {
-    expect(isPeopleVariant(PEOPLE_BLOCK)).toBe(true)
-    expect(isPeopleVariant(SIMPLE_BLOCK)).toBe(false)
-    expect(isPeopleVariant({ variant: 'other' })).toBe(false)
-    expect(isPeopleVariant(null)).toBe(false)
-    expect(isPeopleVariant(undefined)).toBe(false)
-  })
-})
-
-describe('buildPeopleSteps — one complete theme per reveal', () => {
+describe('buildComparisonSteps — one complete theme per reveal', () => {
   it('creates one comparison step per comparison theme', () => {
-    const steps = buildPeopleSteps(PEOPLE_BLOCK)
+    const steps = buildComparisonSteps(PEOPLE_BLOCK)
     expect(steps).toEqual([
       { type: 'comparison', comparisonIndex: 0 },
       { type: 'comparison', comparisonIndex: 1 },
@@ -62,7 +41,7 @@ describe('buildPeopleSteps — one complete theme per reveal', () => {
   })
 
   it('does not split rows, notes or the takeaway into extra Continue presses', () => {
-    const steps = buildPeopleSteps(PEOPLE_BLOCK)
+    const steps = buildComparisonSteps(PEOPLE_BLOCK)
     expect(steps).toHaveLength(PEOPLE_BLOCK.comparisons.length)
     expect(steps.some(step => step.type === 'row')).toBe(false)
     expect(steps.some(step => step.type === 'note')).toBe(false)
@@ -70,20 +49,20 @@ describe('buildPeopleSteps — one complete theme per reveal', () => {
   })
 
   it('handles a single comparison', () => {
-    const steps = buildPeopleSteps({
+    const steps = buildComparisonSteps({
       comparisons: [{ id: 'x', prompt: 'p', left: 'l', right: 'r' }],
     })
     expect(steps).toEqual([{ type: 'comparison', comparisonIndex: 0 }])
   })
 
   it('returns an empty sequence for an empty block', () => {
-    expect(buildPeopleSteps({})).toEqual([])
-    expect(buildPeopleSteps(null)).toEqual([])
+    expect(buildComparisonSteps({})).toEqual([])
+    expect(buildComparisonSteps(null)).toEqual([])
   })
 })
 
 describe('deriveVisibleState — replacement reveal', () => {
-  const steps = buildPeopleSteps(PEOPLE_BLOCK)
+  const steps = buildComparisonSteps(PEOPLE_BLOCK)
 
   it('shows only the first comparison at the first step', () => {
     const view = deriveVisibleState(PEOPLE_BLOCK, steps, 1)
@@ -149,7 +128,7 @@ describe('deriveVisibleState — replacement reveal', () => {
 })
 
 describe('revealedComparisonCount — shared progress marker', () => {
-  const steps = buildPeopleSteps(PEOPLE_BLOCK)
+  const steps = buildComparisonSteps(PEOPLE_BLOCK)
 
   it('tracks how many themes have been reached even though only one is visible', () => {
     expect(revealedComparisonCount(PEOPLE_BLOCK, steps, 1)).toBe(1)

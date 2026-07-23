@@ -288,23 +288,31 @@ export default {
         {
           "type": "theoryCompare",
           "title": "What's shared — and what isn't",
-          "oldLabel": "ANIMAL CELL",
-          "oldTitle": "Animal cell",
-          "oldPoints": [
-            "Nucleus — controls the activities of the cell",
-            "Cytoplasm — site of most chemical reactions",
-            "Cell membrane — controls movement of substances in and out",
-            "Mitochondria — site of aerobic respiration",
-            "Ribosomes — site of protein synthesis",
-            "No structures beyond these are required for this GCSE comparison"
-          ],
-          "newLabel": "PLANT CELL",
-          "newTitle": "Plant cell",
-          "newPoints": [
-            "Has every structure an animal cell has — nucleus, cytoplasm, membrane, mitochondria, ribosomes",
-            "PLUS a cell wall — made of cellulose, gives the cell a rigid, fixed shape",
-            "PLUS chloroplasts — absorb light energy to carry out photosynthesis",
-            "PLUS a permanent vacuole — stores cell sap and keeps the cell firm"
+          "emphasisSide": "none",
+          "leftPerson": { "name": "Animal cell" },
+          "rightPerson": { "name": "Plant cell" },
+          "comparisons": [
+            {
+              "id": "cell-shared",
+              "prompt": "What do animal and plant cells share?",
+              "rows": [
+                { "label": "Nucleus", "left": "Controls the activities of the cell", "right": "Same" },
+                { "label": "Cytoplasm", "left": "Site of most chemical reactions", "right": "Same" },
+                { "label": "Cell membrane", "left": "Controls movement of substances in and out", "right": "Same" },
+                { "label": "Mitochondria", "left": "Site of aerobic respiration", "right": "Same" },
+                { "label": "Ribosomes", "left": "Site of protein synthesis", "right": "Same" }
+              ],
+              "note": "Every structure an animal cell has, a plant cell has too."
+            },
+            {
+              "id": "cell-extras",
+              "prompt": "What do plant cells add?",
+              "rows": [
+                { "label": "Cell wall", "left": "None", "right": "Made of cellulose — gives a rigid, fixed shape" },
+                { "label": "Chloroplasts", "left": "None", "right": "Absorb light energy to carry out photosynthesis" },
+                { "label": "Permanent vacuole", "left": "None", "right": "Stores cell sap and keeps the cell firm" }
+              ]
+            }
           ],
           "takeaway": "Typical plant cells share the main structures found in animal cells, but many plant cells also have extra structures such as a cell wall, permanent vacuole and chloroplasts. The exact structures depend on the cell's job."
         }
@@ -319,21 +327,22 @@ export default {
         {
           "type": "theoryCompare",
           "title": "Two fundamentally different cell types",
-          "oldLabel": "EUKARYOTIC",
-          "oldTitle": "Plant and animal cells",
-          "oldPoints": [
-            "Genetic material enclosed in a nucleus",
-            "Have cytoplasm and a cell membrane",
-            "Animal and plant cells are both examples",
-            "Plant cells may also have a cell wall, chloroplasts and a permanent vacuole"
-          ],
-          "newLabel": "PROKARYOTIC",
-          "newTitle": "Bacterial cells",
-          "newPoints": [
-            "No nucleus — genetic material is a single DNA loop in the cytoplasm",
-            "May contain plasmids — small rings of DNA",
-            "Have cytoplasm, a cell membrane and a cell wall",
-            "Much smaller than eukaryotic cells"
+          "emphasisSide": "none",
+          "leftPerson": { "name": "Eukaryotic", "subtitle": "Plant and animal cells" },
+          "rightPerson": { "name": "Prokaryotic", "subtitle": "Bacterial cells" },
+          "comparisons": [
+            {
+              "id": "euk-prok",
+              "prompt": "How are they built?",
+              "rows": [
+                { "label": "Genetic material", "left": "Enclosed in a nucleus", "right": "A single DNA loop free in the cytoplasm — no nucleus" },
+                { "label": "Plasmids", "left": "None", "right": "May contain plasmids — small rings of DNA" },
+                { "label": "Cytoplasm & membrane", "left": "Both present", "right": "Both present" },
+                { "label": "Cell wall", "left": "Plant cells only", "right": "Always present" },
+                { "label": "Size", "left": "Larger", "right": "Much smaller" }
+              ],
+              "note": "Eukaryotic plant cells may also have a cell wall, chloroplasts and a permanent vacuole."
+            }
           ],
           "takeaway": "EU-karyotes keep DNA in a nUcleus. PRO-karyotes are bacteria: no nucleus, just a DNA loop and sometimes plasmids."
         }
