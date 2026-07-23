@@ -20,7 +20,7 @@ const DEFAULT_COPY = {
   leftLabel: 'Term',
   rightLabel: 'Match',
   incorrect: 'Not quite — think about the connection.',
-  takeaway: 'Each idea led to a response that seemed logical at the time.',
+  takeaway: 'All connections matched.',
 }
 
 function shuffle(items) {
@@ -68,10 +68,12 @@ export default function MatchingTask({ screen = {}, subject, onComplete }) {
   const backgroundImage = screen.backgroundImage || ''
   const leftLabel = screen.leftLabel || DEFAULT_COPY.leftLabel
   const rightLabel = screen.rightLabel || DEFAULT_COPY.rightLabel
+  const completionTakeaway = screen.completionTakeaway ?? DEFAULT_COPY.takeaway
 
   const theme = SUBJECTS[subjectKey] || SUBJECTS.History
   const accent = theme.accent
   const accentRgb = theme.accentRgb
+  const subjectBackground = theme.background || GENERAL.backgroundApp
 
   const cardRest = GENERAL.surfaceTint
   const cardRecent = `rgba(${accentRgb},0.11)`
@@ -104,6 +106,7 @@ export default function MatchingTask({ screen = {}, subject, onComplete }) {
   const [paths, setPaths] = useState([])
 
   const panelRef = useRef(null)
+  const completionRef = useRef(null)
   const termRefs = useRef({})
   const answerRefs = useRef({})
   const recentTimerRef = useRef(null)
@@ -179,6 +182,21 @@ export default function MatchingTask({ screen = {}, subject, onComplete }) {
       observer?.disconnect()
     }
   }, [lockedPairIds, computePaths])
+
+  useEffect(() => {
+    if (!roundComplete || !completionRef.current) return undefined
+
+    const frame = window.requestAnimationFrame(() => {
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      completionRef.current?.scrollIntoView({
+        behavior: reduceMotion ? 'auto' : 'smooth',
+        block: 'nearest',
+      })
+      completionRef.current?.querySelector('button')?.focus({ preventScroll: true })
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [roundComplete, roundIndex])
 
   function handleTermSelect(id) {
     if (lockedPairIds.includes(id) || wrongTermId) return
@@ -282,7 +300,7 @@ export default function MatchingTask({ screen = {}, subject, onComplete }) {
       zIndex: 1000,
       display: 'flex',
       flexDirection: 'column',
-      background: GENERAL.backgroundApp,
+      background: subjectBackground,
     }}>
       <style>{CSS}</style>
 
@@ -300,7 +318,7 @@ export default function MatchingTask({ screen = {}, subject, onComplete }) {
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: GENERAL.backgroundApp,
+        background: subjectBackground,
         opacity: backgroundImage ? 0.64 : 1,
         zIndex: 0,
       }} />
@@ -453,7 +471,11 @@ export default function MatchingTask({ screen = {}, subject, onComplete }) {
             position: 'relative',
             zIndex: 2,
           }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: rowGap }}>
+            <div
+              role="group"
+              aria-label={leftLabel}
+              style={{ display: 'flex', flexDirection: 'column', gap: rowGap }}
+            >
               {currentRound.map(pair => {
                 const isSelected = selectedTermId === pair.id
                 const isLocked = lockedPairIds.includes(pair.id)
@@ -520,7 +542,11 @@ export default function MatchingTask({ screen = {}, subject, onComplete }) {
               })}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: rowGap }}>
+            <div
+              role="group"
+              aria-label={rightLabel}
+              style={{ display: 'flex', flexDirection: 'column', gap: rowGap }}
+            >
               {shuffledAnswers.map(answer => {
                 const isLocked = lockedPairIds.includes(answer.id)
                 const isRecent = recentMatchedId === answer.id
@@ -532,7 +558,7 @@ export default function MatchingTask({ screen = {}, subject, onComplete }) {
                     key={answer.id}
                     ref={element => { answerRefs.current[answer.id] = element }}
                     type="button"
-                    disabled={isLocked}
+                    disabled={isLocked || !selectedTermId}
                     onClick={() => handleAnswerSelect(answer.id)}
                     className="mt-motion"
                     style={{
@@ -577,37 +603,41 @@ export default function MatchingTask({ screen = {}, subject, onComplete }) {
           </div>
         </div>
 
-        <div
-          role="status"
-          aria-live="polite"
-          style={{
-            ...TYPE.bodySmall,
-            marginTop: SPACING.compact,
-            minHeight: SPACING.standard,
-            color: GENERAL.feedbackIncorrect,
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          {feedback}
-        </div>
+        {feedback && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="mt-motion"
+            style={{
+              ...TYPE.bodySmall,
+              marginTop: SPACING.compact,
+              color: GENERAL.feedbackIncorrect,
+              animation: `mt-fade-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
+            }}
+          >
+            {feedback}
+          </div>
+        )}
 
         {roundComplete && (
           <div
+            ref={completionRef}
             className="mt-motion"
+            tabIndex={-1}
             style={{
-              marginTop: SPACING.micro,
+              marginTop: SPACING.compact,
+              scrollMarginBottom: `calc(${SPACING.standard}px + env(safe-area-inset-bottom, 0px))`,
               animation: `mt-fade-in ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
             }}
           >
-            {isLastRound && (
+            {isLastRound && completionTakeaway && (
               <div style={{
                 ...TYPE.bodyStrong,
                 color: GENERAL.cinematic.textFact,
                 marginBottom: SPACING.compact,
                 maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
               }}>
-                {screen.completionTakeaway || DEFAULT_COPY.takeaway}
+                {completionTakeaway}
               </div>
             )}
 
