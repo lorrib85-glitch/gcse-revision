@@ -1,106 +1,125 @@
 import { useState } from 'react'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import { ScreenTitle } from '../core/ScreenText.jsx'
+import InteractionShell from '../layout/InteractionShell.jsx'
 
 // ─── CalculationBreakdown ────────────────────────────────────────────────────
 //
-// Full-screen, multi-phase maths walkthrough. Content lives entirely in the
-// `block` prop so the mechanic can support equations, percentages, fractions,
-// geometry and other calculations without knowing the topic itself.
+// A staged calculation walkthrough that lives inside the standard interaction
+// frame. The module owns global navigation and progress; this component only
+// owns the learning sequence inside the calculation itself.
 //
-// The opening phase has one job: help the learner understand what the question
-// wants, why that goal matters and which useful decision comes first.
+// Content lives entirely in `block`, so the same mechanic supports equations,
+// percentages, fractions, geometry and science calculations.
 
-export default function CalculationBreakdown({ block, accent = GENERAL.teal, onContinue }) {
+export default function CalculationBreakdown({
+  block,
+  subject = 'Maths',
+  accent: accentOverride,
+  onContinue,
+}) {
   const {
+    title = 'Calculation breakdown',
     goalPrompt = 'Work out the answer',
     problem = '',
     understand = {},
     steps = [],
     solution = {},
+    backgroundImage = null,
+    backgroundOpacity = 0.1,
   } = block || {}
+
+  const theme = SUBJECTS[subject] || SUBJECTS.Maths
+  const accent = accentOverride || theme.accent
+  const accentRgb = theme.accentRgb || GENERAL.tealRgb
 
   const phases = [
     { kind: 'understand' },
-    ...steps.map((step, i) => ({ kind: 'step', step, stepIndex: i })),
+    ...steps.map((step, stepIndex) => ({ kind: 'step', step, stepIndex })),
     { kind: 'solution' },
   ]
-  const total = phases.length
 
   const [phaseIdx, setPhaseIdx] = useState(0)
   const phase = phases[phaseIdx]
-  const stepCount = steps.length
 
   function advance() {
-    if (phaseIdx < total - 1) setPhaseIdx(phaseIdx + 1)
+    if (phaseIdx < phases.length - 1) setPhaseIdx(current => current + 1)
     else onContinue?.()
   }
 
-  function back() {
-    if (phaseIdx > 0) setPhaseIdx(phaseIdx - 1)
-    else onContinue?.()
+  function goBack() {
+    if (phaseIdx > 0) setPhaseIdx(current => current - 1)
   }
 
-  const title =
-    phase.kind === 'understand' ? 'Break it down'
-    : phase.kind === 'solution' ? 'Solution'
-    : `Step ${phase.stepIndex + 1} of ${stepCount}`
+  const phaseLabel = phase.kind === 'understand'
+    ? 'Understand the question'
+    : phase.kind === 'solution'
+      ? 'Complete solution'
+      : `Step ${phase.stepIndex + 1}`
 
   return (
-    <div style={styles.screen}>
-      <div style={styles.header}>
-        <IconButton label="Go back" onClick={back}>
-          <ChevronLeft />
-        </IconButton>
-        <div style={{ ...TYPE.titleMedium, color: GENERAL.softWhite, textAlign: 'center', flex: 1 }}>
-          {title}
+    <InteractionShell
+      subject={subject}
+      backgroundImage={backgroundImage}
+      backgroundOpacity={backgroundOpacity}
+    >
+      <div style={styles.viewport}>
+        <header style={styles.titleBlock}>
+          <ScreenTitle>{title}</ScreenTitle>
+          <p style={styles.screenIntro}>{goalPrompt}</p>
+        </header>
+
+        <div style={styles.scrollArea}>
+          <section style={stageFrame(accentRgb)} aria-live="polite">
+            <div style={styles.stageHeader}>
+              <span style={{ ...TYPE.label, color: accent }}>{phaseLabel}</span>
+            </div>
+
+            {phase.kind === 'understand' && (
+              <UnderstandPhase
+                problem={problem}
+                understand={understand}
+                steps={steps}
+                accent={accent}
+                onContinue={advance}
+              />
+            )}
+
+            {phase.kind === 'step' && (
+              <StepPhase
+                key={phase.stepIndex}
+                step={phase.step}
+                stepIndex={phase.stepIndex}
+                accent={accent}
+                onContinue={advance}
+                onBack={goBack}
+              />
+            )}
+
+            {phase.kind === 'solution' && (
+              <SolutionPhase
+                solution={solution}
+                steps={steps}
+                accent={accent}
+                onContinue={advance}
+                onBack={goBack}
+              />
+            )}
+          </section>
         </div>
-        <IconButton label="Bookmark" onClick={() => {}}>
-          <Bookmark />
-        </IconButton>
       </div>
-
-      <ProgressRail total={total} index={phaseIdx} accent={accent} />
-
-      <div style={styles.body}>
-        {phase.kind === 'understand' && (
-          <UnderstandPhase
-            goalPrompt={goalPrompt}
-            problem={problem}
-            understand={understand}
-            steps={steps}
-            accent={accent}
-            onContinue={advance}
-          />
-        )}
-        {phase.kind === 'step' && (
-          <StepPhase
-            key={phase.stepIndex}
-            step={phase.step}
-            stepIndex={phase.stepIndex}
-            accent={accent}
-            onContinue={advance}
-          />
-        )}
-        {phase.kind === 'solution' && (
-          <SolutionPhase
-            solution={solution}
-            steps={steps}
-            accent={accent}
-            onContinue={advance}
-          />
-        )}
-      </div>
-    </div>
+    </InteractionShell>
   )
 }
 
 // ─── Phase 1 — orient the learner ─────────────────────────────────────────────
-function UnderstandPhase({ goalPrompt, problem, understand, steps, accent, onContinue }) {
+function UnderstandPhase({ problem, understand, steps, accent, onContinue }) {
   const intro = understand.intro ?? understand.whatsHappening
   const goal = understand.goal
   const whyGoal = understand.whyGoal
@@ -112,64 +131,57 @@ function UnderstandPhase({ goalPrompt, problem, understand, steps, accent, onCon
 
   return (
     <>
-      <Card emphasis accent={accent}>
-        <FieldLabel>{understand.questionLabel || 'Question'}</FieldLabel>
-        <div style={{ ...TYPE.bodySmall, color: GENERAL.slate, marginBottom: SPACING.compact }}>
-          {goalPrompt}
-        </div>
-        <MathLine expr={problem} size={30} wrap />
+      <EquationHero expr={problem} accent={accent} />
 
-        {(intro || goal || whyGoal) && (
-          <div style={orientationDivider}>
-            <FieldLabel>{understand.heading || 'What are we trying to do?'}</FieldLabel>
-            {intro && <p style={bodyStyle}>{intro}</p>}
+      {(intro || goal || whyGoal) && (
+        <div style={styles.section}>
+          <SectionHeading>{understand.heading || 'What are we trying to do?'}</SectionHeading>
+          {intro && <p style={bodyStyle}>{intro}</p>}
 
-            {goal && (
-              <div style={goalChip(accent)}>
-                <Target accent={accent} />
-                <span style={{ ...TYPE.bodySmall, color: GENERAL.softWhite, fontWeight: 600 }}>
-                  {understand.goalLabel || 'Goal'}: {goal}
-                </span>
-              </div>
-            )}
-
-            {whyGoal && (
-              <div style={whyGoalRow(accent)}>
-                <Lightbulb accent={accent} />
-                <div>
-                  <div style={{ ...TYPE.label, color: accent, marginBottom: 2 }}>Why this matters</div>
-                  <p style={bodyStyle}>{whyGoal}</p>
+          {goal && (
+            <div style={goalLine(accent)}>
+              <Target accent={accent} />
+              <div>
+                <div style={{ ...TYPE.label, color: accent, marginBottom: 2 }}>
+                  {understand.goalLabel || 'Goal'}
                 </div>
+                <p style={{ ...bodyStyle, color: GENERAL.cinematic.textPrimary }}>{goal}</p>
               </div>
-            )}
-          </div>
-        )}
-      </Card>
+            </div>
+          )}
+
+          {whyGoal && (
+            <WhyCallout label="Why this matters" accent={accent}>
+              {whyGoal}
+            </WhyCallout>
+          )}
+        </div>
+      )}
 
       {decision && (
-        <Card>
-          <FieldLabel>{decision.label || 'Choose the first move'}</FieldLabel>
-          <p style={{ ...bodyStyle, color: GENERAL.softWhite, marginBottom: SPACING.micro }}>
+        <div style={styles.sectionWithDivider}>
+          <SectionHeading>{decision.label || 'Choose the first move'}</SectionHeading>
+          <p style={{ ...bodyStyle, color: GENERAL.cinematic.textPrimary }}>
             {decision.question}
           </p>
           {decision.support && (
-            <p style={{ ...bodyStyle, marginBottom: SPACING.compact }}>{decision.support}</p>
+            <p style={{ ...bodyStyle, marginTop: SPACING.micro }}>{decision.support}</p>
           )}
-          <OrientationChoiceList
-            decision={decision}
-            accent={accent}
-            onResolved={() => setResolved(true)}
-          />
-        </Card>
+          <div style={{ marginTop: SPACING.compact }}>
+            <OrientationChoiceList
+              decision={decision}
+              accent={accent}
+              onResolved={() => setResolved(true)}
+            />
+          </div>
+        </div>
       )}
 
-      {(!decision || resolved) && (
-        <ContinueCTA
-          onClick={onContinue}
-          accent={accent}
-          style={{ marginTop: SPACING.micro }}
-        />
-      )}
+      <PhaseActions
+        onContinue={onContinue}
+        accent={accent}
+        disabled={Boolean(decision) && !resolved}
+      />
     </>
   )
 }
@@ -206,38 +218,23 @@ function OrientationChoiceList({ decision, accent, onResolved }) {
 
   return (
     <>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.micro }}>
+      <div style={styles.choiceList}>
         {options.map((option, index) => {
           const label = typeof option === 'string' ? option : option.label
           const isCorrect = resolved && index === correct
           const isWrong = picked === index && index !== correct
-          const border = isCorrect ? accent : isWrong ? GENERAL.feedbackIncorrect : GENERAL.line.strong
-          const background = isCorrect
-            ? `${accent}1F`
-            : isWrong
-              ? `rgba(${GENERAL.feedbackIncorrectRgb},0.12)`
-              : GENERAL.line.faint
 
           return (
-            <button
+            <ChoiceButton
               key={`${label}-${index}`}
-              onClick={() => pick(index)}
+              label={label}
+              index={index}
+              isCorrect={isCorrect}
+              isWrong={isWrong}
+              accent={accent}
               disabled={resolved}
-              style={{
-                ...choiceRow,
-                borderColor: border,
-                background,
-                cursor: resolved ? 'default' : 'pointer',
-              }}
-            >
-              <span style={choiceBadge(isCorrect || isWrong ? border : GENERAL.slate)}>
-                {String.fromCharCode(65 + index)}
-              </span>
-              <span style={{ ...TYPE.body, color: GENERAL.softWhite, flex: 1, textAlign: 'left', minWidth: 0 }}>
-                {label}
-              </span>
-              {isCorrect && <Check accent={accent} />}
-            </button>
+              onClick={() => pick(index)}
+            />
           )
         })}
       </div>
@@ -263,7 +260,7 @@ function getOptionFeedback(decision, option, isCorrect) {
 }
 
 // ─── Phase 2 — worked / your-turn step ───────────────────────────────────────
-function StepPhase({ step, stepIndex, accent, onContinue }) {
+function StepPhase({ step, stepIndex, accent, onContinue, onBack }) {
   const {
     title,
     why,
@@ -280,27 +277,33 @@ function StepPhase({ step, stepIndex, accent, onContinue }) {
   const [checkDone, setCheckDone] = useState(false)
   const [solved, setSolved] = useState(false)
 
-  const gateReady =
-    mode === 'yourTurn' ? solved
-    : check ? checkDone
-    : true
+  const gateReady = mode === 'yourTurn'
+    ? solved
+    : check
+      ? checkDone
+      : true
 
   return (
     <>
-      <Card>
-        <FieldLabel>Step {stepIndex + 1}</FieldLabel>
-        <h2 style={{ ...TYPE.displayCard, color: GENERAL.softWhite, margin: `0 0 ${SPACING.micro}px` }}>
-          {title}
-        </h2>
-        {why && <p style={{ ...bodyStyle, marginBottom: SPACING.compact }}>{why}</p>}
-        {transform && <WorkedTransform transform={transform} accent={accent} revealResult={mode !== 'yourTurn'} />}
-      </Card>
+      <div style={styles.stepLead}>
+        <h2 style={styles.stepTitle}>{title}</h2>
+        {why && <p style={{ ...bodyStyle, marginTop: SPACING.micro }}>{why}</p>}
+      </div>
+
+      {transform && (
+        <EquationTransform
+          transform={transform}
+          accent={accent}
+          revealResult={mode !== 'yourTurn'}
+        />
+      )}
 
       {whyStep && (
-        <Card>
-          <FieldLabel>Why this step</FieldLabel>
-          <p style={bodyStyle}>{whyStep}</p>
-        </Card>
+        <div style={styles.sectionWithDivider}>
+          <WhyCallout label="Why this step" accent={accent}>
+            {whyStep}
+          </WhyCallout>
+        </div>
       )}
 
       {mode === 'yourTurn' ? (
@@ -312,25 +315,20 @@ function StepPhase({ step, stepIndex, accent, onContinue }) {
           onSolved={() => setSolved(true)}
         />
       ) : check ? (
-        <Card>
-          <FieldLabel>Check this step</FieldLabel>
+        <div style={styles.sectionWithDivider}>
+          <SectionHeading>Check this step</SectionHeading>
           <p style={{ ...bodyStyle, marginBottom: SPACING.compact }}>{check.question}</p>
           <ChoiceList check={check} accent={accent} mono onResolved={() => setCheckDone(true)} />
-        </Card>
+        </div>
       ) : null}
 
-      {mode !== 'yourTurn' && (
-        <ContinueCTA
-          onClick={onContinue}
-          accent={accent}
-          label={cta}
-          disabled={!gateReady}
-          style={{ marginTop: SPACING.micro }}
-        />
-      )}
-      {mode === 'yourTurn' && solved && (
-        <ContinueCTA onClick={onContinue} accent={accent} label={cta} style={{ marginTop: SPACING.micro }} />
-      )}
+      <PhaseActions
+        onContinue={onContinue}
+        onBack={onBack}
+        accent={accent}
+        label={cta}
+        disabled={!gateReady}
+      />
     </>
   )
 }
@@ -341,8 +339,8 @@ function YourTurn({ answer, hint, resultExpr, accent, onSolved }) {
   const [showHint, setShowHint] = useState(false)
 
   function check() {
-    const norm = valueToNormalise => String(valueToNormalise ?? '').replace(/\s+/g, '').toLowerCase()
-    if (norm(value) === norm(answer)) {
+    const normalise = input => String(input ?? '').replace(/\s+/g, '').toLowerCase()
+    if (normalise(value) === normalise(answer)) {
       setStatus('correct')
       onSolved?.()
     } else {
@@ -353,29 +351,32 @@ function YourTurn({ answer, hint, resultExpr, accent, onSolved }) {
   const solved = status === 'correct'
 
   return (
-    <Card>
-      <FieldLabel>Your turn</FieldLabel>
+    <div style={styles.sectionWithDivider}>
+      <SectionHeading>Your turn</SectionHeading>
       <p style={{ ...bodyStyle, marginBottom: SPACING.compact }}>
         {solved && resultExpr ? 'Correct — here it is written out:' : 'What’s the result?'}
       </p>
 
       {solved && resultExpr ? (
-        <MathLine expr={resultExpr} size={24} accent={accent} />
-      ) : (
-        <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
-          <input
-            value={value}
-            onChange={event => { setValue(event.target.value); if (status) setStatus(null) }}
-            onKeyDown={event => event.key === 'Enter' && check()}
-            placeholder="x = ?"
-            aria-label="Your answer"
-            style={inputStyle(status, accent)}
-          />
+        <div style={{ padding: `${SPACING.micro}px 0` }}>
+          <MathLine expr={resultExpr} size={26} accent={accent} />
         </div>
+      ) : (
+        <input
+          value={value}
+          onChange={event => {
+            setValue(event.target.value)
+            if (status) setStatus(null)
+          }}
+          onKeyDown={event => event.key === 'Enter' && check()}
+          placeholder="Type your answer"
+          aria-label="Your answer"
+          style={inputStyle(status, accent)}
+        />
       )}
 
       {status === 'wrong' && (
-        <p style={{ ...TYPE.bodySmall, color: GENERAL.feedbackIncorrect, marginTop: SPACING.micro }}>
+        <p style={{ ...TYPE.bodySmall, color: GENERAL.feedbackIncorrect, margin: `${SPACING.micro}px 0 0` }}>
           Not quite — try again.
         </p>
       )}
@@ -392,22 +393,24 @@ function YourTurn({ answer, hint, resultExpr, accent, onSolved }) {
 
       {hint && !solved && (
         <div style={{ marginTop: SPACING.compact }}>
-          <button onClick={() => setShowHint(current => !current)} style={hintToggle(accent)}>
+          <button type="button" onClick={() => setShowHint(current => !current)} style={hintToggle(accent)}>
             <Lightbulb accent={accent} />
             {showHint ? 'Hide hint' : 'Need a hint?'}
           </button>
           {showHint && (
-            <p style={{ ...TYPE.bodySmall, color: GENERAL.slate, marginTop: SPACING.micro }}>{hint}</p>
+            <p style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textSecondary, margin: `${SPACING.micro}px 0 0` }}>
+              {hint}
+            </p>
           )}
         </div>
       )}
-    </Card>
+    </div>
   )
 }
 
 // ─── Phase 3 — the solution ──────────────────────────────────────────────────
-function SolutionPhase({ solution, steps, accent, onContinue }) {
-  const { result, why, celebrateTitle = 'Well done!', celebrateSubtitle } = solution || {}
+function SolutionPhase({ solution, steps, accent, onContinue, onBack }) {
+  const { result, why, celebrateTitle = 'Solved', celebrateSubtitle } = solution || {}
   const rows = solution?.rows
     ?? steps
       .filter(step => step.transform?.from && step.transform?.to)
@@ -415,37 +418,32 @@ function SolutionPhase({ solution, steps, accent, onContinue }) {
 
   return (
     <>
-      <div style={{ textAlign: 'center', padding: `${SPACING.compact}px 0 ${SPACING.micro}px` }}>
-        <div style={{ ...TYPE.displaySection, color: accent, marginBottom: 4 }}>{celebrateTitle}</div>
+      <div style={styles.solutionHero}>
+        <div style={{ ...TYPE.displaySection, color: GENERAL.cinematic.textPrimary }}>
+          {celebrateTitle}
+        </div>
         {celebrateSubtitle && (
-          <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>{celebrateSubtitle}</div>
+          <p style={{ ...bodyStyle, marginTop: SPACING.micro }}>{celebrateSubtitle}</p>
         )}
         {result && (
-          <div style={resultBox(accent)}>
-            <MathLine expr={result} size={30} accent={accent} />
+          <div style={resultLine(accent)}>
+            <MathLine expr={result} size={32} accent={accent} />
           </div>
         )}
       </div>
 
       {rows?.length > 0 && (
-        <Card>
-          <FieldLabel>Full solution</FieldLabel>
-          <ol style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+        <div style={styles.sectionWithDivider}>
+          <SectionHeading>Full solution</SectionHeading>
+          <ol style={styles.solutionList}>
             {rows.map((row, index) => (
-              <li
-                key={`${row.title}-${index}`}
-                style={{
-                  display: 'flex',
-                  gap: SPACING.compact,
-                  marginBottom: index === rows.length - 1 ? 0 : SPACING.compact,
-                }}
-              >
+              <li key={`${row.title}-${index}`} style={styles.solutionRow}>
                 <span style={stepNumber(accent)}>{index + 1}</span>
                 <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={{ ...TYPE.bodySmall, color: GENERAL.softWhite, fontWeight: 600, marginBottom: 4 }}>
+                  <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textPrimary, fontWeight: 600 }}>
                     {row.title}
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro, flexWrap: 'wrap' }}>
+                  <div style={styles.solutionMathRow}>
                     <MathLine expr={row.from} size={15} align="left" muted />
                     <Arrow accent={accent} />
                     <MathLine expr={row.to} size={15} align="left" />
@@ -454,22 +452,59 @@ function SolutionPhase({ solution, steps, accent, onContinue }) {
               </li>
             ))}
           </ol>
-        </Card>
+        </div>
       )}
 
       {why && (
-        <Card>
-          <FieldLabel>Why this works</FieldLabel>
-          <p style={bodyStyle}>{why}</p>
-        </Card>
+        <div style={styles.sectionWithDivider}>
+          <WhyCallout label="Why this works" accent={accent}>{why}</WhyCallout>
+        </div>
       )}
 
-      <ContinueCTA onClick={onContinue} accent={accent} label="Next challenge" style={{ marginTop: SPACING.micro }} />
+      <PhaseActions
+        onContinue={onContinue}
+        onBack={onBack}
+        accent={accent}
+        label="Next challenge"
+      />
     </>
   )
 }
 
 // ─── Shared pieces ───────────────────────────────────────────────────────────
+function EquationHero({ expr, accent }) {
+  if (!expr) return null
+  return (
+    <div style={styles.equationHero}>
+      <span style={{ ...TYPE.label, color: GENERAL.cinematic.textMuted }}>Question</span>
+      <div style={{ marginTop: SPACING.compact }}>
+        <MathLine expr={expr} size={31} accent={accent} wrap />
+      </div>
+    </div>
+  )
+}
+
+function EquationTransform({ transform, accent, revealResult = true }) {
+  const { from, leftOp, rightOp, to } = transform
+  return (
+    <div style={styles.transformStage}>
+      <MathLine expr={from} size={24} />
+      {(leftOp || rightOp) && (
+        <div style={styles.operationRow}>
+          <span style={opTag(accent)}>{leftOp}</span>
+          <span style={opTag(accent)}>{rightOp}</span>
+        </div>
+      )}
+      {to && revealResult && (
+        <>
+          <ChevronDown accent={accent} />
+          <MathLine expr={to} size={25} accent={accent} />
+        </>
+      )}
+    </div>
+  )
+}
+
 function ChoiceList({ check, accent, mono = false, onResolved }) {
   const { options = [], correct = 0 } = check
   const [picked, setPicked] = useState(null)
@@ -482,62 +517,105 @@ function ChoiceList({ check, accent, mono = false, onResolved }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.micro }}>
-      {options.map((option, index) => {
-        const isCorrect = resolved && index === correct
-        const isWrong = picked === index && index !== correct
-        const border = isCorrect ? accent : isWrong ? GENERAL.feedbackIncorrect : GENERAL.line.strong
-        const background = isCorrect
-          ? `${accent}1F`
-          : isWrong
-            ? `rgba(${GENERAL.feedbackIncorrectRgb},0.12)`
-            : GENERAL.line.faint
-
-        return (
-          <button
-            key={`${option}-${index}`}
-            onClick={() => pick(index)}
-            disabled={resolved}
-            style={{ ...choiceRow, borderColor: border, background, cursor: resolved ? 'default' : 'pointer' }}
-          >
-            <span style={choiceBadge(isCorrect || isWrong ? border : GENERAL.slate)}>
-              {String.fromCharCode(65 + index)}
-            </span>
-            <span style={{
-              ...(mono ? { ...TYPE.body, fontStyle: 'italic' } : TYPE.body),
-              color: GENERAL.softWhite,
-              flex: 1,
-              textAlign: 'left',
-              minWidth: 0,
-            }}>
-              {option}
-            </span>
-            {isCorrect && <Check accent={accent} />}
-          </button>
-        )
-      })}
+    <div style={styles.choiceList}>
+      {options.map((option, index) => (
+        <ChoiceButton
+          key={`${option}-${index}`}
+          label={option}
+          index={index}
+          isCorrect={resolved && index === correct}
+          isWrong={picked === index && index !== correct}
+          accent={accent}
+          mono={mono}
+          disabled={resolved}
+          onClick={() => pick(index)}
+        />
+      ))}
     </div>
   )
 }
 
-function WorkedTransform({ transform, accent, revealResult = true }) {
-  const { from, leftOp, rightOp, to } = transform
+function ChoiceButton({
+  label,
+  index,
+  isCorrect,
+  isWrong,
+  accent,
+  mono = false,
+  disabled,
+  onClick,
+}) {
+  const border = isCorrect ? accent : isWrong ? GENERAL.feedbackIncorrect : GENERAL.line.strong
+  const background = isCorrect
+    ? `${accent}18`
+    : isWrong
+      ? `rgba(${GENERAL.feedbackIncorrectRgb},0.1)`
+      : GENERAL.surfaceTint
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, padding: `${SPACING.micro}px 0` }}>
-      <MathLine expr={from} size={22} />
-      {(leftOp || rightOp) && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: 220 }}>
-          <span style={opTag(accent)}>{leftOp}</span>
-          <span style={opTag(accent)}>{rightOp}</span>
-        </div>
-      )}
-      {to && revealResult && (
-        <>
-          <ChevronDown accent={accent} />
-          <MathLine expr={to} size={22} />
-        </>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        ...choiceRow,
+        borderColor: border,
+        background,
+        cursor: disabled ? 'default' : 'pointer',
+      }}
+    >
+      <span style={choiceBadge(isCorrect || isWrong ? border : GENERAL.cinematic.textMuted)}>
+        {String.fromCharCode(65 + index)}
+      </span>
+      <span style={{
+        ...(mono ? { ...TYPE.body, fontStyle: 'italic' } : TYPE.body),
+        color: GENERAL.cinematic.textPrimary,
+        flex: 1,
+        textAlign: 'left',
+        minWidth: 0,
+      }}>
+        {label}
+      </span>
+      {isCorrect && <Check accent={accent} />}
+    </button>
+  )
+}
+
+function PhaseActions({ onContinue, onBack, accent, label = 'Continue', disabled = false }) {
+  return (
+    <div style={styles.actions}>
+      <ContinueCTA
+        onClick={onContinue}
+        accent={accent}
+        label={label}
+        disabled={disabled}
+      />
+      {onBack && (
+        <button type="button" onClick={onBack} style={styles.previousButton}>
+          Review previous step
+        </button>
       )}
     </div>
+  )
+}
+
+function WhyCallout({ label, accent, children }) {
+  return (
+    <div style={whyCallout(accent)}>
+      <Lightbulb accent={accent} />
+      <div>
+        <div style={{ ...TYPE.label, color: accent, marginBottom: 3 }}>{label}</div>
+        <p style={bodyStyle}>{children}</p>
+      </div>
+    </div>
+  )
+}
+
+function SectionHeading({ children }) {
+  return (
+    <h3 style={{ ...TYPE.displayCard, color: GENERAL.cinematic.textPrimary, margin: `0 0 ${SPACING.micro}px` }}>
+      {children}
+    </h3>
   )
 }
 
@@ -549,9 +627,9 @@ function MathLine({ expr, size = 22, accent, align = 'center', muted = false, wr
       fontSize: size,
       fontWeight: 500,
       letterSpacing: '0.01em',
-      lineHeight: 1.3,
+      lineHeight: 1.35,
       textAlign: align,
-      color: muted ? GENERAL.slate : accent || GENERAL.softWhite,
+      color: muted ? GENERAL.cinematic.textMuted : accent || GENERAL.cinematic.textPrimary,
       whiteSpace: wrap ? 'normal' : 'nowrap',
       overflowWrap: wrap ? 'anywhere' : 'normal',
     }}>
@@ -560,146 +638,166 @@ function MathLine({ expr, size = 22, accent, align = 'center', muted = false, wr
   )
 }
 
-function Card({ children, emphasis = false, accent }) {
-  return (
-    <div style={{
-      ...cardStyle,
-      ...(emphasis && accent ? { borderColor: `${accent}40` } : {}),
-    }}>
-      {children}
-    </div>
-  )
-}
-
-function FieldLabel({ children }) {
-  return <div style={{ ...TYPE.label, color: GENERAL.slate, marginBottom: SPACING.micro }}>{children}</div>
-}
-
-function ProgressRail({ total, index, accent }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: `0 ${SPACING.standard}px ${SPACING.compact}px`, justifyContent: 'center' }}>
-      {Array.from({ length: total }).map((_, railIndex) => {
-        const done = railIndex < index
-        const active = railIndex === index
-        return (
-          <div key={railIndex} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{
-              width: active ? 9 : 7,
-              height: active ? 9 : 7,
-              borderRadius: RADII.pill,
-              background: done || active ? accent : GENERAL.line.strong,
-              transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-            }} />
-            {railIndex < total - 1 && (
-              <span style={{ width: 14, height: 2, borderRadius: RADII.pill, background: done ? accent : GENERAL.line.soft }} />
-            )}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-function IconButton({ children, onClick, label }) {
-  return (
-    <button onClick={onClick} aria-label={label} style={{
-      width: 34,
-      height: 34,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'transparent',
-      border: 'none',
-      color: GENERAL.slate,
-      cursor: 'pointer',
-      padding: 0,
-      flexShrink: 0,
-    }}>
-      {children}
-    </button>
-  )
-}
-
 // ─── Inline icons ─────────────────────────────────────────────────────────────
-const ChevronLeft = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-)
-const Bookmark = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
-)
 const ChevronDown = ({ accent }) => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
 )
+
 const Arrow = ({ accent }) => (
-  <svg width="18" height="14" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+  <svg width="18" height="14" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
 )
+
 const Check = ({ accent }) => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12" /></svg>
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }} aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
 )
+
 const Target = ({ accent }) => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" style={{ flexShrink: 0 }}><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4" /></svg>
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" style={{ flexShrink: 0 }} aria-hidden="true"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4" /></svg>
 )
+
 const Lightbulb = ({ accent }) => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12c.5.5 1 1.5 1 2h6c0-.5.5-1.5 1-2a7 7 0 0 0-4-12z" /></svg>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12c.5.5 1 1.5 1 2h6c0-.5.5-1.5 1-2a7 7 0 0 0-4-12z" /></svg>
 )
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 const styles = {
-  screen: {
-    position: 'absolute',
-    inset: 0,
+  viewport: {
+    flex: 1,
+    minHeight: 0,
     display: 'flex',
     flexDirection: 'column',
-    background: GENERAL.backgroundApp,
-    color: GENERAL.softWhite,
-    overflow: 'hidden',
   },
-  header: {
+  titleBlock: {
+    flexShrink: 0,
+    padding: `${SPACING.micro}px 0 ${SPACING.standard}px`,
+  },
+  screenIntro: {
+    ...TYPE.body,
+    color: GENERAL.cinematic.textSecondary,
+    margin: 0,
+    maxWidth: '34ch',
+  },
+  scrollArea: {
+    flex: 1,
+    minHeight: 0,
+    overflowY: 'auto',
+    paddingBottom: `calc(${SPACING.cinematic}px + env(safe-area-inset-bottom, 0px))`,
+  },
+  stageHeader: {
+    padding: `${SPACING.standard}px ${SPACING.standard}px 0`,
+  },
+  equationHero: {
+    padding: `${SPACING.separation}px ${SPACING.standard}px ${SPACING.cinematic}px`,
+    textAlign: 'center',
+  },
+  section: {
+    padding: `0 ${SPACING.standard}px ${SPACING.standard}px`,
+  },
+  sectionWithDivider: {
+    padding: `${SPACING.standard}px`,
+    borderTop: `1px solid ${GENERAL.line.soft}`,
+  },
+  stepLead: {
+    padding: `${SPACING.compact}px ${SPACING.standard}px ${SPACING.standard}px`,
+  },
+  stepTitle: {
+    ...TYPE.displaySection,
+    color: GENERAL.cinematic.textPrimary,
+    margin: 0,
+  },
+  transformStage: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: SPACING.micro,
+    padding: `${SPACING.separation}px ${SPACING.standard}px ${SPACING.cinematic}px`,
+  },
+  operationRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    maxWidth: 230,
+  },
+  choiceList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: SPACING.micro,
+  },
+  actions: {
+    padding: `${SPACING.standard}px`,
+    borderTop: `1px solid ${GENERAL.line.soft}`,
+  },
+  previousButton: {
+    ...TYPE.bodySmall,
+    display: 'block',
+    width: '100%',
+    marginTop: SPACING.compact,
+    padding: SPACING.micro,
+    color: GENERAL.cinematic.textMuted,
+    background: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+  },
+  solutionHero: {
+    padding: `${SPACING.compact}px ${SPACING.standard}px ${SPACING.cinematic}px`,
+    textAlign: 'center',
+  },
+  solutionList: {
+    margin: 0,
+    padding: 0,
+    listStyle: 'none',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: SPACING.standard,
+  },
+  solutionRow: {
+    display: 'flex',
+    gap: SPACING.compact,
+    alignItems: 'flex-start',
+  },
+  solutionMathRow: {
     display: 'flex',
     alignItems: 'center',
     gap: SPACING.micro,
-    padding: `max(${SPACING.compact}px, env(safe-area-inset-top)) ${SPACING.compact}px ${SPACING.compact}px`,
-  },
-  body: {
-    flex: 1,
-    overflowY: 'auto',
-    padding: `0 ${SPACING.compact}px calc(${SPACING.separation}px + env(safe-area-inset-bottom))`,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: SPACING.compact,
+    flexWrap: 'wrap',
+    marginTop: SPACING.micro,
   },
 }
 
-const cardStyle = {
-  background: GENERAL.backgroundSurface,
-  border: `1px solid ${GENERAL.line.soft}`,
-  borderRadius: RADII.medium,
-  padding: SPACING.compact,
+const bodyStyle = {
+  ...TYPE.bodySmall,
+  color: GENERAL.cinematic.textSecondary,
+  margin: 0,
 }
 
-const bodyStyle = { ...TYPE.bodySmall, color: GENERAL.slate, margin: 0 }
-
-const orientationDivider = {
-  marginTop: SPACING.standard,
-  paddingTop: SPACING.compact,
-  borderTop: `1px solid ${GENERAL.line.soft}`,
+function stageFrame(accentRgb) {
+  return {
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: RADII.large,
+    border: `1px solid ${GENERAL.line.medium}`,
+    background: `radial-gradient(circle at 50% 0%, rgba(${accentRgb},0.075), transparent 34%), linear-gradient(180deg, ${GENERAL.backgroundSurface} 0%, ${GENERAL.backgroundSunken} 100%)`,
+    boxShadow: `inset 0 1px 0 ${GENERAL.line.soft}, ${GENERAL.shadow.raised}`,
+  }
 }
 
 const choiceRow = {
   display: 'flex',
   alignItems: 'center',
-  gap: SPACING.micro,
+  gap: SPACING.compact,
+  width: '100%',
+  minHeight: 54,
   border: '1px solid',
-  borderRadius: RADII.small,
-  padding: `${SPACING.micro + 2}px ${SPACING.compact}px`,
-  transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+  borderRadius: RADII.medium,
+  padding: `${SPACING.micro}px ${SPACING.compact}px`,
+  transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}, background ${MOTION.duration.fast} ${MOTION.easing.standard}`,
 }
 
 const choiceBadge = borderColor => ({
   ...TYPE.caption,
   fontWeight: 700,
-  width: 22,
-  height: 22,
+  width: 24,
+  height: 24,
   flexShrink: 0,
   display: 'flex',
   alignItems: 'center',
@@ -709,37 +807,35 @@ const choiceBadge = borderColor => ({
   color: borderColor,
 })
 
-function goalChip(accent) {
-  return {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: SPACING.micro,
-    marginTop: SPACING.compact,
-    padding: `${SPACING.micro}px ${SPACING.compact}px`,
-    borderRadius: RADII.small,
-    background: `${accent}14`,
-    border: `1px solid ${accent}40`,
-  }
-}
-
-function whyGoalRow(accent) {
+function goalLine(accent) {
   return {
     display: 'flex',
     alignItems: 'flex-start',
-    gap: SPACING.micro,
-    marginTop: SPACING.compact,
-    paddingTop: SPACING.compact,
-    borderTop: `1px solid ${accent}24`,
+    gap: SPACING.compact,
+    marginTop: SPACING.standard,
+    paddingTop: SPACING.standard,
+    borderTop: `1px solid ${GENERAL.line.soft}`,
+    color: accent,
+  }
+}
+
+function whyCallout(accent) {
+  return {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: SPACING.compact,
+    marginTop: SPACING.standard,
+    paddingLeft: SPACING.compact,
+    borderLeft: `2px solid ${accent}`,
   }
 }
 
 function decisionFeedback(isCorrect, accent) {
   return {
     marginTop: SPACING.compact,
-    padding: SPACING.compact,
-    borderRadius: RADII.small,
-    border: `1px solid ${isCorrect ? `${accent}40` : GENERAL.feedbackIncorrect}`,
-    background: isCorrect ? `${accent}10` : `rgba(${GENERAL.feedbackIncorrectRgb},0.08)`,
+    padding: `${SPACING.compact}px 0 0 ${SPACING.compact}px`,
+    borderTop: `1px solid ${GENERAL.line.soft}`,
+    borderLeft: `2px solid ${isCorrect ? accent : GENERAL.feedbackIncorrect}`,
   }
 }
 
@@ -749,27 +845,30 @@ function opTag(accent) {
     fontSize: 16,
     fontWeight: 500,
     color: accent,
-    minWidth: 40,
+    minWidth: 42,
     textAlign: 'center',
   }
 }
 
 function inputStyle(status, accent) {
-  const border =
-    status === 'correct' ? accent
-    : status === 'wrong' ? GENERAL.feedbackIncorrect
-    : GENERAL.line.strong
+  const border = status === 'correct'
+    ? accent
+    : status === 'wrong'
+      ? GENERAL.feedbackIncorrect
+      : GENERAL.line.strong
+
   return {
     ...TYPE.body,
-    color: GENERAL.softWhite,
+    color: GENERAL.cinematic.textPrimary,
     fontWeight: 600,
     width: '100%',
-    height: 52,
+    height: 54,
     padding: `0 ${SPACING.compact}px`,
-    borderRadius: RADII.small,
+    borderRadius: RADII.medium,
     border: `1.5px solid ${border}`,
     background: GENERAL.backgroundSunken,
     outline: 'none',
+    boxSizing: 'border-box',
   }
 }
 
@@ -777,7 +876,7 @@ function hintToggle(accent) {
   return {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: 6,
+    gap: SPACING.micro,
     ...TYPE.bodySmall,
     fontWeight: 600,
     color: accent,
@@ -788,14 +887,11 @@ function hintToggle(accent) {
   }
 }
 
-function resultBox(accent) {
+function resultLine(accent) {
   return {
-    display: 'inline-block',
-    margin: `${SPACING.compact}px auto 0`,
-    padding: `${SPACING.compact}px ${SPACING.separation}px`,
-    borderRadius: RADII.medium,
-    background: `${accent}14`,
-    border: `1px solid ${accent}40`,
+    marginTop: SPACING.standard,
+    paddingTop: SPACING.standard,
+    borderTop: `1px solid ${accent}40`,
   }
 }
 
@@ -803,8 +899,8 @@ function stepNumber(accent) {
   return {
     ...TYPE.caption,
     fontWeight: 700,
-    width: 22,
-    height: 22,
+    width: 24,
+    height: 24,
     flexShrink: 0,
     display: 'flex',
     alignItems: 'center',
