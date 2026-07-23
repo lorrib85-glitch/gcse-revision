@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import BackButton from '../core/BackButton.jsx'
 import { ScreenTitle } from '../core/ScreenText.jsx'
 
@@ -76,7 +77,7 @@ export default function WeakSpotRecovery({
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 1000,
-      background: '#080C14',
+      background: GENERAL.backgroundApp,
       overflow: 'hidden',
       display: 'flex', flexDirection: 'column',
       animation: 'wsr-fade-in 360ms ease both',
@@ -234,13 +235,13 @@ export default function WeakSpotRecovery({
             <span style={{
               ...F,
               fontSize: 20, fontWeight: 600,
-              color: '#0D0F14',
+              color: GENERAL.textOnAccent,
             }}>
               {block.cta}
             </span>
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-              style={{ color: '#0D0F14', flexShrink: 0 }}>
+              style={{ color: GENERAL.textOnAccent, flexShrink: 0 }}>
               <line x1="5" y1="12" x2="19" y2="12"/>
               <polyline points="12 5 19 12 12 19"/>
             </svg>
