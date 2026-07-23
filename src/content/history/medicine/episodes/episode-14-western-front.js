@@ -121,14 +121,17 @@ War creates urgent demand for faster, better treatment. The First World War prod
     },
 
     {
-      type: 'collectionExplorer',
+      type: 'interactiveImage',
+      variant: 'reveal',
       tag: 'trench-conditions',
       stage: 'Trench conditions',
       id: 'trench-conditions-explorer',
       label: 'What made treatment so difficult?',
       title: 'What made treatment so difficult?',
-      description: 'The trenches did not just create wounds. They created disease, infection and mental trauma. Tap each to find out more.',
-      backgroundImage: '/figures/history/medicine/western-front/trench-soldiers.png',
+      introText: 'The trenches did not just create wounds. They created disease, infection and mental trauma. Tap each to find out more.',
+      image: '/figures/history/medicine/western-front/trench-soldiers.png',
+      imageAlt: 'Soldiers in a First World War trench',
+      ctaLabel: 'Explore',
       synthesis: {
         heading: 'Three types of problem',
         points: [
@@ -138,11 +141,11 @@ War creates urgent demand for faster, better treatment. The First World War prod
         ],
         examTakeaway: 'The trenches made medicine harder in three ways: more injuries, dirtier wounds, and slower evacuation. Shell shock is the key limitation point for any "how much did medicine improve?" question.',
       },
-      items: [
+      hotspots: [
         {
           id: 'trench-foot',
           x: 18, y: 28,
-          label: 'Trench foot',
+          title: 'Trench foot',
           reveals: [
             { text: 'Standing for days in cold, wet mud could damage soldiers\' feet.' },
             { text: 'Severe cases developed gangrene and sometimes needed amputation.' },
@@ -152,7 +155,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
         {
           id: 'trench-fever',
           x: 60, y: 28,
-          label: 'Trench fever',
+          title: 'Trench fever',
           reveals: [
             { text: 'Body lice spread trench fever. It caused flu-like symptoms and weakened soldiers for weeks.' },
             { text: 'It was not usually fatal, but it kept thousands of men away from fighting.' },
@@ -162,7 +165,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
         {
           id: 'shell-shock',
           x: 18, y: 52,
-          label: 'Shell shock',
+          title: 'Shell shock',
           reveals: [
             { text: 'Constant bombardment, fear and trauma caused symptoms such as anxiety, nightmares, tremors and paralysis.' },
             { text: 'Some soldiers were court-martialled before shell shock was gradually recognised as a medical condition.' },
@@ -172,7 +175,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
         {
           id: 'gas-attacks',
           x: 60, y: 52,
-          label: 'Gas attacks',
+          title: 'Gas attacks',
           reveals: [
             { text: 'Chlorine, phosgene and mustard gas could cause burns, blindness and lung damage.' },
             { text: 'Gas masks were developed as protection — showing how new weapons forced new medical responses.' },
@@ -182,7 +185,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
         {
           id: 'shrapnel',
           x: 18, y: 75,
-          label: 'Shrapnel wounds',
+          title: 'Shrapnel wounds',
           reveals: [
             { text: 'Artillery and high-velocity bullets caused deep, dirty wounds.' },
             { text: 'Mud and bacteria made infection more likely. Tetanus and gas gangrene were serious risks.' },
@@ -192,7 +195,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
         {
           id: 'head-injuries',
           x: 60, y: 75,
-          label: 'Head and facial injuries',
+          title: 'Head and facial injuries',
           reveals: [
             { text: 'Steel helmets were introduced in 1915 and reduced skull deaths, but brain and facial injuries remained common.' },
             { text: 'Specialist units developed to treat head and facial wounds — eventually leading to plastic surgery.' },
