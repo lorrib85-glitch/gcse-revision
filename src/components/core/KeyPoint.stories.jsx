@@ -11,7 +11,7 @@ export default {
 }
 
 // Gold — the takeaway RULE of the Galen teach screen (summarises the rule;
-// it does not walk a case — that is WorkedExample).
+// it does not walk through a case).
 export const Gold = {
   name: 'Gold — the rule takeaway',
   args: {

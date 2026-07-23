@@ -823,11 +823,3 @@ export const keyPoint = {
   emphasis: ['opposite'],
 }
 
-// WorkedExample (History) — inline case → apply → result block.
-// Shape: { chips:[str], scenario, working, result }.
-export const workedExample = {
-  chips: ['Fever', 'Red face', 'Sweating'],
-  scenario: 'A patient arrives with a fever, a red face and heavy sweating.',
-  working: 'Heat and wetness point to one humour in excess: too much blood, which is hot and wet.',
-  result: 'So the cure is to cool and dry the body — the opposite qualities.',
-}

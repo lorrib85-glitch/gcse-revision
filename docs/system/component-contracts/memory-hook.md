@@ -22,7 +22,6 @@ Use the optional image only when it genuinely strengthens recall.
 
 - **To state the screen's rule / takeaway** — that is `KeyPoint`. A memory
   hook is a mnemonic aid, not the conclusion the screen was building toward.
-- **To demonstrate a rule on a case** — that is `WorkedExample`.
 - **To drill an acronym interactively** — that is `AcronymMemorise`.
 - **As a generic emphasis box** for any text that wants a border.
 - **More than once per screen** — a second hook competes for the one thing

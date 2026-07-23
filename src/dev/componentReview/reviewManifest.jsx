@@ -46,7 +46,6 @@ import TieredQuizScreen from '../../components/learning/TieredQuizScreen.jsx'
 import WeakSpotRecovery from '../../components/learning/WeakSpotRecovery.jsx'
 import RecoveryQuizPlayer from '../../components/learning/RecoveryQuizPlayer.jsx'
 import KeyPoint from '../../components/core/KeyPoint.jsx'
-import WorkedExample from '../../components/core/WorkedExample.jsx'
 import ContentShell from '../../components/layout/ContentShell.jsx'
 import TeachScreenShell from '../../components/core/TeachScreenShell.jsx'
 import ButtonsAndProgressPage from './ButtonsAndProgressPage.jsx'
@@ -275,7 +274,7 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'Maths', renderMode: 'inline',
     function: 'Missing-value calculation builder with fixed mathematical notation, compact number pieces and tabular numerals.',
     usage: 'Reusable BuilderBlock layout: equation. Demonstrates the same repair-first interaction without forcing Maths into the science reaction structure.',
-    alternative: 'FillInTheBlanksBlock for typed answers; WorkedExample for explained methods.',
+    alternative: 'FillInTheBlanksBlock for typed answers.',
     render: (fx, { onDone }) => <BuilderBlock block={fx} subject="Maths" onComplete={onDone} />,
     fixture: FIX.builderMaths,
   },
@@ -696,21 +695,8 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'History', renderMode: 'inline',
     function: 'Inline rule takeaway: states the one rule a teach screen leaves the learner with, with optional accented words and icon.',
     usage: 'Routed in ModulePlayer (type: keypoint); used across subjects to fix the screen’s core rule.',
-    alternative: 'WorkedExample (applies the rule to a case); MemoryHook (analogy/mnemonic).',
+    alternative: 'MemoryHook (analogy/mnemonic).',
     render: (fx) => <KeyPoint text={fx.text} emphasis={fx.emphasis} subject="History" />,
     fixture: FIX.keyPoint,
-  },
-  {
-    id: 'worked-example', name: 'WorkedExample', group: 'library',
-    status: 'comparison', subject: 'History', renderMode: 'inline',
-    function: 'Inline case → apply → result block: walks one specific case through a rule, with chips for the given facts and a highlighted result.',
-    usage: 'Used across subjects (History, Maths) to demonstrate applying a rule to a worked case.',
-    alternative: 'KeyPoint (states the rule, no case); GuidedExamResponse (full written scaffold).',
-    render: (fx) => (
-      <WorkedExample
-        subject="History" chips={fx.chips} scenario={fx.scenario} working={fx.working} result={fx.result}
-      />
-    ),
-    fixture: FIX.workedExample,
   },
 ]

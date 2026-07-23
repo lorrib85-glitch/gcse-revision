@@ -78,7 +78,7 @@ runtime; its per-screen findings are in
   problem on that component (per `component-contracts/README.md`).
 - **Verified Storybook stories: 0 of 8** — **story debt** for all eight.
   (Stories exist for the pattern primitives `TeachScreenShell`, `KeyPoint`,
-  `WorkedExample`, `MediaPlaceholder` and for `OrderedRouteTask`,
+  `MediaPlaceholder` and for `OrderedRouteTask`,
   `MedievalDiagnosisScene`, `QuoteAnalyser` — none of the eight priority
   learning components.)
 - **Verified composed gold: 8 of 8 fully verified.** The two former `◑`

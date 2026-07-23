@@ -34,7 +34,6 @@ export const SCREEN_TYPE_FUNCTIONS = {
 
   // Pattern components (docs/system/PATTERN_GOVERNANCE.md)
   keyPoint: { functions: ['teach-mechanism'], interaction: 'passive' },
-  workedExample: { functions: ['teach-mechanism', 'apply'], interaction: 'passive' },
   mediaPlaceholder: { functions: ['teach-mechanism'], interaction: 'passive' },
   // Infographic: TeachScreenShell heading + intro then one governed infographic
   // media slot (a reserved diagram or an auto-building quadrant reveal).

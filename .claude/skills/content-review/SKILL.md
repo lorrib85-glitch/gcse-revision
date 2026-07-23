@@ -150,7 +150,7 @@ For every screen in scope, in this order:
    reveal, points land in `KeyPoint` not as caption text, one emphasis box
    per screen) actually live; don't re-derive them, run what the contract
    lists. Flag any ad-hoc element that should have been a pattern component
-   (`TeachScreenShell` / `KeyPoint` / `WorkedExample` / `MediaPlaceholder`).
+   (`TeachScreenShell` / `KeyPoint` / `MediaPlaceholder`).
 4. **Composition route** — for the in-module screen, identify and record:
    (a) its one primary intent, (b) the approved component serving it,
    (c) the approved learning-composition route (A teaching → `TeachScreenShell`
@@ -279,7 +279,7 @@ observable failure, not a personal style preference.
   execution-contract, meaningful-interaction, feedback/progression, mobile
   behaviour and asset-resolution checks above.
 - Do not merge components that Pattern Governance intentionally keeps separate
-  (for example, `KeyPoint` and `WorkedExample`). If a fix requires a new
+  (for example, `KeyPoint` and `MemoryHook`). If a fix requires a new
   component or visual language, report the issue and escalate instead of
   inventing an ungoverned solution.
 

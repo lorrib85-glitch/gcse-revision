@@ -20,9 +20,8 @@ the rule, principle or conclusion the screen exists to deliver.
 - **For ordinary body copy** — a KeyPoint is the takeaway, not a paragraph.
 - **More than once per screen** — two "key" points means the screen is
   doing two jobs; split it (see the one-primary-intent rule).
-- **To demonstrate a case** — walking a specific example is `WorkedExample`.
-  `KeyPoint` states the rule; `WorkedExample` shows it applied. Never merge
-  the two.
+- **To demonstrate a case** — `KeyPoint` states the rule, it never walks a
+  specific worked example through it.
 - **As a generic callout** for any text that wants emphasis — it is
   reserved for the screen's takeaway.
 
@@ -61,7 +60,7 @@ of `TeachScreenShell.stories.jsx` → Gold.
 - An ALL-CAPS "WORKED EXAMPLE" eyebrow stuck on top (violates the eyebrow
   and uppercase rules).
 - The fever case ("too much blood → cool and dry") placed in a KeyPoint —
-  that is a worked example, not a rule; it belongs in `WorkedExample`.
+  that is a worked example, not a rule; it does not belong in a rule box.
 
 ## 9. Review checks
 

@@ -93,7 +93,6 @@ fails.
 | Screen intent | Approved component |
 |---|---|
 | Land the takeaway / payoff of a screen | `KeyPoint` |
-| Walk a concrete worked example | `WorkedExample` |
 | Compose a teaching screen (rhythm + spacing) | `TeachScreenShell` |
 | Reserve an image/diagram the author will supply | `MediaPlaceholder` |
 | Present a captioned infographic / diagram screen (heading + intro + one media slot) | `Infographic` |
@@ -101,12 +100,6 @@ fails.
 | Introduce a key person | `keyFigureReveal` |
 | Anchor one idea with a memorable analogy/mnemonic | `MemoryHook` |
 | …(existing learning components) | per `component-contracts/` |
-
-**`KeyPoint` and `WorkedExample` are deliberately separate and must never be
-merged.** `KeyPoint` *summarises a rule* (the takeaway the learner must
-hold); `WorkedExample` *demonstrates its application* (the rule run through
-one concrete case). Collapsing them into one moded component blurs that
-distinction and is a governance failure, not a simplification.
 
 ---
 
@@ -395,7 +388,6 @@ Structural rules a composed screen must satisfy; checked in the render pass
   of the same kind must not have different header sizes.
 - **No box-in-a-box.** A content component must not nest an accent/callout
   box inside another content card. One container level per content surface.
-  (This is why `WorkedExample` is flat — no outer card, result as a line.)
 - **One emphasis box per screen.** At most one accent-tinted payoff box
   (the `KeyPoint`'s role). A component must not introduce a second accent
   box that competes with it for "the point."

@@ -80,7 +80,6 @@ const PRE_CLASSIFICATION_CONTRACTS = [
   'media-placeholder.md',
   'quick-recall.md',
   'read-blocks.md',
-  'worked-example.md',
 ]
 
 const classificationRe = /\*\*Composition classification:\*\*\s*`?([a-z-]+)`?/

@@ -7,8 +7,8 @@ import { TYPE } from '../../constants/typography.js'
 // ─── KeyPoint ────────────────────────────────────────────────────────────────
 // Lands the single takeaway of a screen — the one rule the learner must leave
 // holding. An accent-tinted box that reveals gradually and last, so the point
-// arrives as a moment. It SUMMARISES A RULE; it does not demonstrate a case
-// (that is WorkedExample) and it is not a generic callout for any text.
+// arrives as a moment. It SUMMARISES A RULE; it does not walk through a
+// worked case and it is not a generic callout for any text.
 //
 // Governed by docs/system/PATTERN_GOVERNANCE.md and
 // docs/system/component-contracts/key-point.md.
