@@ -44,33 +44,35 @@ export const SUBJECTS = {
   },
 
   English: {
-    // English palette: rich, literary, oxblood and parchment.
-    // Use oxblood with intention for key actions, active states and progress.
-    accent: '#6A343D',
-    accentSecondary: '#8A6A6E',
-    accentTertiary: '#4C242B',
+    // English palette: rich, literary, rosewood, oxblood and parchment.
+    // The primary rosewood is light enough to remain legible on both English
+    // backgrounds; reserve deep oxblood for depth, pressed states and imagery.
+    accent: '#B96F78',
+    accentSecondary: '#D5A7AC',
+    accentTertiary: '#6A343D',
 
     background: '#0D0F10',
     backgroundSecondary: '#1F1C1B',
 
-    glow: 'rgba(106,52,61,0.32)',
-    glowStrong: 'rgba(138,106,110,0.20)',
+    glow: 'rgba(185,111,120,0.26)',
+    glowStrong: 'rgba(213,167,172,0.18)',
 
     overlay: 'rgba(0,0,0,0.58)',
-    progressFill: '#6A343D',
+    progressFill: '#B96F78',
 
-    accentRgb: '106,52,61',
+    accentRgb: '185,111,120',
 
     // Subject-browser-only accent pair (SubjectBrowser in Subjects.jsx). Distinct
     // from `accent`/`accentTertiary` above by design — see A3 audit, do not converge.
-    subjectBrowserAccent: '#6A343D',
-    subjectBrowserAccentDark: '#4F2329',
+    subjectBrowserAccent: '#B96F78',
+    subjectBrowserAccentDark: '#6A343D',
 
     palette: {
+      rosewood: '#B96F78',
       oxblood: '#6A343D',
       mahogany: '#4C242B',
       walnut: '#3B2626',
-      dustyRose: '#8A6A6E',
+      dustyRose: '#D5A7AC',
       parchment: '#E9E1D3',
       ink: '#1F1C1B',
       tealAccent: '#2A9D8F',
