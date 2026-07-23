@@ -4,6 +4,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { TYPE } from '../../constants/typography.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
+import { MOTION } from '../../constants/motion.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import BackButton from '../core/BackButton.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
@@ -147,6 +148,131 @@ function HotspotButton({ hotspot, isSelected, isVisited, accent, accentRgb, onSe
   )
 }
 
+function SynthesisScreen({ synthesis, accent, accentRgb, pageBg, text, muted, onContinue }) {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 80)
+    return () => clearTimeout(t)
+  }, [])
+
+  const pointsLen = synthesis.points?.length || 0
+
+  return (
+    <div style={{
+      position: 'absolute',
+      inset: 0,
+      background: pageBg,
+      zIndex: 40,
+      display: 'flex',
+      flexDirection: 'column',
+      padding: `calc(env(safe-area-inset-top, 0px) + ${SPACING.standard}px) ${SPACING.standard}px`,
+      paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${SPACING.standard}px)`,
+      overflow: 'hidden',
+    }}>
+      <div style={{
+        flex: 1,
+        minHeight: 0,
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        paddingBottom: SPACING.compact,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+      }}>
+        <div style={{
+          ...TYPE.metadata,
+          color: `rgba(${accentRgb}, 0.55)`,
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          marginBottom: SPACING.compact,
+          opacity: visible ? 1 : 0,
+          transition: `opacity 400ms ${MOTION.easing.standard}`,
+        }}>
+          Collection complete
+        </div>
+
+        <h2 style={{
+          ...TYPE.displaySection,
+          color: text,
+          margin: `0 0 ${SPACING.separation}px`,
+          opacity: visible ? 1 : 0,
+          transform: visible ? 'none' : 'translateY(16px)',
+          transition: `opacity 400ms ${MOTION.easing.standard} 80ms, transform 400ms ${MOTION.easing.standard} 80ms`,
+        }}>
+          {synthesis.heading}
+        </h2>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
+          {(synthesis.points || []).map((point, i) => (
+            <div key={i} style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: SPACING.compact,
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'none' : 'translateY(14px)',
+              transition: `opacity 400ms ${MOTION.easing.standard} ${160 + i * 80}ms, transform 400ms ${MOTION.easing.standard} ${160 + i * 80}ms`,
+            }}>
+              <div style={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                flexShrink: 0,
+                marginTop: 8,
+                background: accent,
+                boxShadow: `0 0 8px rgba(${accentRgb}, 0.6)`,
+              }} />
+              <p style={{
+                ...TYPE.bodySmall,
+                color: muted,
+                margin: 0,
+                lineHeight: 1.65,
+              }}>
+                {point}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {synthesis.examTakeaway && (
+          <div style={{
+            marginTop: SPACING.separation,
+            borderLeft: `2px solid rgba(${accentRgb}, 0.35)`,
+            paddingLeft: SPACING.standard,
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'none' : 'translateY(14px)',
+            transition: `opacity 400ms ${MOTION.easing.standard} ${160 + pointsLen * 80 + 80}ms, transform 400ms ${MOTION.easing.standard} ${160 + pointsLen * 80 + 80}ms`,
+          }}>
+            <div style={{
+              ...TYPE.metadata,
+              fontSize: 11,
+              color: accent,
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+              marginBottom: SPACING.micro,
+            }}>
+              Exam takeaway
+            </div>
+            <p style={{
+              ...TYPE.bodySmall,
+              color: text,
+              margin: 0,
+              lineHeight: 1.65,
+              fontWeight: 500,
+            }}>
+              {synthesis.examTakeaway}
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div style={{ flexShrink: 0, paddingTop: SPACING.compact }}>
+        <ContinueCTA onClick={onContinue} accent={accent} />
+      </div>
+    </div>
+  )
+}
+
 export default function InteractiveHotspotImage({
   subject      = 'Biology',
   title        = '',
@@ -155,6 +281,8 @@ export default function InteractiveHotspotImage({
   imageAlt     = '',
   hotspots     = [],
   ctaLabel     = 'Explore',
+  variant      = 'detail',
+  synthesis    = null,
   onBack,
   onEnterExplore,
   onContinue,
@@ -162,10 +290,14 @@ export default function InteractiveHotspotImage({
   const theme = getTheme(subject)
   const { accent, accentRgb, pageBg, imageFilter, selectedImageFilter, labelBg, imageText, imageMuted, cardBg, cardText, cardMuted, cardRule } = theme
 
-  const [viewMode,   setViewMode]   = useState('intro')
-  const [selectedId, setSelectedId] = useState(null)
-  const [visited,    setVisited]    = useState(new Set())
-  const [ctaReady,   setCtaReady]   = useState(false)
+  const isReveal = variant === 'reveal'
+
+  const [viewMode,     setViewMode]     = useState('intro')
+  const [selectedId,   setSelectedId]   = useState(null)
+  const [visited,      setVisited]      = useState(new Set())
+  const [ctaReady,     setCtaReady]     = useState(false)
+  const [revealStep,   setRevealStep]   = useState(0)
+  const [showSynthesis, setShowSynthesis] = useState(false)
 
   const isExplore    = viewMode === 'explore'
   const introVisible = !isExplore
@@ -175,15 +307,40 @@ export default function InteractiveHotspotImage({
   const ctaDelay     = 200 + titleLines.length * 420 + 260 + 460 + 300
   const selectedRows = selected ? getDetailRows(selected) : []
   const selectedSubtitle = selected?.qualities || selected?.subtitle
+  const revealCount  = selected?.reveals?.length || 0
+  const isLastReveal = isReveal && selected && revealStep >= revealCount - 1
+  const showContinue = allDone && isExplore && !selected && !synthesis
 
   useEffect(() => {
     const t = setTimeout(() => setCtaReady(true), ctaDelay)
     return () => clearTimeout(t)
   }, [ctaDelay])
 
+  useEffect(() => {
+    if (synthesis && allDone && !selected && !showSynthesis) {
+      const t = setTimeout(() => setShowSynthesis(true), 500)
+      return () => clearTimeout(t)
+    }
+  }, [synthesis, allDone, selected, showSynthesis])
+
   function handleTap(id) {
     setSelectedId(id)
-    setVisited(prev => { const n = new Set(prev); n.add(id); return n })
+    if (isReveal) {
+      setRevealStep(0)
+    } else {
+      setVisited(prev => { const n = new Set(prev); n.add(id); return n })
+    }
+  }
+
+  function handleRevealNext() {
+    if (!selected) return
+    if (revealStep < revealCount - 1) {
+      setRevealStep(s => s + 1)
+      return
+    }
+    setVisited(prev => { const n = new Set(prev); n.add(selectedId); return n })
+    setSelectedId(null)
+    setRevealStep(0)
   }
 
   function enterExplore() {
@@ -207,9 +364,14 @@ export default function InteractiveHotspotImage({
           from { opacity: 0; transform: translateX(-4px); }
           to   { opacity: 1; transform: translateX(0); }
         }
+        @keyframes ihi-reveal-in {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
         .ihi-cta:hover { background: rgba(${accentRgb},0.22) !important; }
         .ihi-cta:active { opacity: 0.80; }
         .ihi-dot:active > span { transform: scale(0.88) !important; }
+        .ihi-next:active { opacity: 0.80; }
       `}</style>
 
       <div style={{ position: 'absolute', inset: 0, opacity: introVisible ? 1 : 0, transition: 'opacity 500ms cubic-bezier(0.22,1,0.36,1)', pointerEvents: introVisible ? 'auto' : 'none' }}>
@@ -245,10 +407,21 @@ export default function InteractiveHotspotImage({
         <div style={{ height: '120px' }} />
       </div>
 
-      {selected && isExplore && <div onClick={() => setSelectedId(null)} style={{ position: 'absolute', inset: 0, zIndex: 25 }} />}
+      {selected && isExplore && <div onClick={() => { setSelectedId(null); setRevealStep(0) }} style={{ position: 'absolute', inset: 0, zIndex: 25 }} />}
 
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 22px max(18px, env(safe-area-inset-bottom, 0px))', transform: (selected && isExplore) ? 'translateY(0)' : 'translateY(calc(100% + 28px))', transition: 'transform 380ms cubic-bezier(0.22,1,0.36,1)', zIndex: 30, pointerEvents: selected ? 'auto' : 'none' }}>
-        {selected && <article style={{ background: cardBg, color: cardText, border: `1px solid ${cardRule}`, borderRadius: RADII.panel, padding: '22px 22px 20px', boxShadow: `0 22px 70px rgba(0,0,0,0.44), 0 0 0 1px rgba(${accentRgb},0.08)`, maxHeight: '47vh', overflowY: 'auto' }}>
+        {selected && isReveal && <article style={{ background: cardBg, color: cardText, border: `1px solid ${cardRule}`, borderRadius: RADII.panel, padding: '22px 22px 20px', boxShadow: `0 22px 70px rgba(0,0,0,0.44), 0 0 0 1px rgba(${accentRgb},0.08)`, maxHeight: '47vh', overflowY: 'auto' }}>
+          <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: SPACING.compact }}>
+            <h2 style={{ ...TYPE.displaySection, margin: 0, color: cardText, borderLeft: `3px solid rgba(${accentRgb},0.62)`, paddingLeft: SPACING.compact }}>{selected.title}</h2>
+            <div style={{ ...TYPE.metadata, fontSize: 11, color: `rgba(${accentRgb},0.75)`, letterSpacing: '0.12em', flexShrink: 0, marginLeft: SPACING.compact }}>{revealStep + 1} / {revealCount}</div>
+          </header>
+          <div style={{ display: 'flex', gap: 4, marginBottom: SPACING.standard }}>
+            {selected.reveals.map((_, i) => <div key={i} style={{ flex: 1, height: 2, borderRadius: 2, background: i <= revealStep ? accent : `rgba(${accentRgb},0.16)`, transition: `background 300ms ${MOTION.easing.gentle}` }} />)}
+          </div>
+          <p key={revealStep} style={{ ...TYPE.bodySmall, color: cardMuted, margin: `0 0 ${SPACING.standard}px`, lineHeight: 1.72, animation: `ihi-reveal-in 320ms ${MOTION.easing.standard} both` }}>{selected.reveals[revealStep]?.text}</p>
+          <button type="button" className="ihi-next" onClick={e => { e.stopPropagation(); handleRevealNext() }} style={{ width: '100%', height: 52, borderRadius: RADII.medium, background: isLastReveal ? `rgba(${accentRgb},0.20)` : `rgba(${accentRgb},0.10)`, border: `1px solid rgba(${accentRgb},${isLastReveal ? 0.38 : 0.20})`, color: cardText, ...TYPE.bodySmall, fontWeight: 700, cursor: 'pointer', transition: `background 200ms ${MOTION.easing.gentle}, border-color 200ms ${MOTION.easing.gentle}` }}>{isLastReveal ? 'Mark explored →' : 'Next →'}</button>
+        </article>}
+        {selected && !isReveal && <article style={{ background: cardBg, color: cardText, border: `1px solid ${cardRule}`, borderRadius: RADII.panel, padding: '22px 22px 20px', boxShadow: `0 22px 70px rgba(0,0,0,0.44), 0 0 0 1px rgba(${accentRgb},0.08)`, maxHeight: '47vh', overflowY: 'auto' }}>
           <header style={{ borderLeft: `3px solid rgba(${accentRgb},0.62)`, paddingLeft: SPACING.compact, marginBottom: SPACING.compact }}>
             <h2 style={{ ...TYPE.displaySection, margin: 0, color: cardText }}>{selected.title}</h2>
             {selectedSubtitle && <div style={{ ...TYPE.bodyStrong, marginTop: SPACING.micro, color: `rgba(${accentRgb},0.92)` }}>{selectedSubtitle}</div>}
@@ -260,9 +433,11 @@ export default function InteractiveHotspotImage({
           </section>)}
         </article>}
       </div>
-      <div style={{ position: 'absolute', bottom: 'max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px))', left: '24px', right: '24px', zIndex: 22, opacity: (allDone && isExplore && !selected) ? 1 : 0, transform: (allDone && isExplore && !selected) ? 'translateY(0)' : 'translateY(16px)', transition: 'opacity 500ms cubic-bezier(0.22,1,0.36,1), transform 500ms cubic-bezier(0.22,1,0.36,1)', pointerEvents: (allDone && isExplore && !selected) ? 'auto' : 'none' }}>
+      <div style={{ position: 'absolute', bottom: 'max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px))', left: '24px', right: '24px', zIndex: 22, opacity: showContinue ? 1 : 0, transform: showContinue ? 'translateY(0)' : 'translateY(16px)', transition: 'opacity 500ms cubic-bezier(0.22,1,0.36,1), transform 500ms cubic-bezier(0.22,1,0.36,1)', pointerEvents: showContinue ? 'auto' : 'none' }}>
         <ContinueCTA onClick={onContinue} accent={accent} />
       </div>
+
+      {showSynthesis && synthesis && <SynthesisScreen synthesis={synthesis} accent={accent} accentRgb={accentRgb} pageBg={pageBg} text={imageText} muted={imageMuted} onContinue={onContinue} />}
     </CinematicShell>
   )
 }
