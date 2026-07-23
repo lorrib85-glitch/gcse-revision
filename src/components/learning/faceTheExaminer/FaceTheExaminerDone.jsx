@@ -1,3 +1,4 @@
+import { GENERAL } from '../../../constants/generalTheme.js'
 import { SPACING } from '../../../constants/spacing.js'
 import { TYPE } from '../../../constants/typography.js'
 
@@ -18,7 +19,15 @@ export default function FaceTheExaminerDone({ bg, accent, examiner, remarkResult
         }
       `}</style>
       <div
+        role="button"
+        tabIndex={0}
         onClick={onAdvance}
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            onAdvance?.()
+          }
+        }}
         style={{
           position: 'fixed',
           inset: 0,
@@ -31,16 +40,17 @@ export default function FaceTheExaminerDone({ bg, accent, examiner, remarkResult
           padding: '0 32px',
           animation: 'fte-done-in 600ms ease both',
           cursor: 'pointer',
+          outline: 'none',
         }}
       >
-        <div style={{ ...TYPE.metadata, color: 'rgba(255,255,255,0.45)', marginBottom: 20 }}>
+        <div style={{ ...TYPE.metadata, color: GENERAL.cinematic.textMuted, marginBottom: 20 }}>
           {improved ? 'You pushed this answer' : 'You reviewed this answer'}
         </div>
         <div style={{ ...TYPE.displayHero, fontSize: improved ? 52 : 60, color: accent }}>
           {improved ? (
             <>
               {examiner.mark}/{examiner.marks}
-              <span style={{ color: 'rgba(255,255,255,0.25)', margin: '0 12px', fontWeight: 300 }}>→</span>
+              <span style={{ color: GENERAL.cinematic.textSubtle, margin: '0 12px', fontWeight: 300 }}>→</span>
               {finalMark}/{examiner.marks}
             </>
           ) : (
@@ -48,12 +58,12 @@ export default function FaceTheExaminerDone({ bg, accent, examiner, remarkResult
           )}
         </div>
         {remarkResult?.delta === 0 && (
-          <div style={{ ...TYPE.bodySmall, color: 'rgba(255,255,255,0.4)', marginTop: SPACING.compact, textAlign: 'center' }}>
+          <div style={{ ...TYPE.bodySmall, color: GENERAL.cinematic.textMuted, marginTop: SPACING.compact, textAlign: 'center' }}>
             {remarkResult.verdict}
           </div>
         )}
         <div style={{ ...TYPE.metadata, position: 'absolute', bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))', color: accent, animation: 'fte-done-cta 600ms ease 2s both' }}>
-          Continue →
+          Tap to continue
         </div>
       </div>
     </>
