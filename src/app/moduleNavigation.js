@@ -120,7 +120,7 @@ export function buildChapterCompletePayload(completedModule) {
   const chapterIdx    = group ? group.chapterIds.indexOf(completedModule.id) : -1
   const nextChapterId = group ? group.chapterIds[chapterIdx + 1] : null
 
-  let nextMod, nextChapterLabel, nextChapterNum, nextChapterTitle, isFinalChapter
+  let nextMod, nextChapterLabel, nextChapterNum, nextChapterTitle, isFinalChapter, completionType
 
   if (nextChapterId) {
     nextMod          = MODULES.find(m => m.id === nextChapterId)
@@ -128,6 +128,7 @@ export function buildChapterCompletePayload(completedModule) {
     nextChapterNum   = chapterIdx + 2
     nextChapterTitle = nextMod?.title
     isFinalChapter   = false
+    completionType   = 'chapter'
   } else if (group) {
     const groupIdx  = MODULE_GROUPS.indexOf(group)
     const nextGroup = MODULE_GROUPS[groupIdx + 1]
@@ -136,6 +137,7 @@ export function buildChapterCompletePayload(completedModule) {
     nextChapterNum   = null
     nextChapterTitle = nextGroup?.title
     isFinalChapter   = !nextGroup
+    completionType   = nextGroup ? 'module' : 'subject'
   } else {
     const idx        = MODULES.findIndex(m => m.id === completedModule.id)
     nextMod          = idx >= 0 && idx < MODULES.length - 1 ? MODULES[idx + 1] : null
@@ -143,20 +145,29 @@ export function buildChapterCompletePayload(completedModule) {
     nextChapterNum   = nextMod?.number
     nextChapterTitle = nextMod?.title
     isFinalChapter   = !nextMod
+    completionType   = isFinalChapter ? 'subject' : 'chapter'
   }
+
+  const backgroundAsset = completedModule.completionBackground || completedModule.headerImage
+  const backgroundPosition = completedModule.completionBackgroundPosition
+    || (backgroundAsset ? 'center 30%' : undefined)
 
   const pastPaperHint = completedModule.id === 'history-medicine-medieval-beliefs-causes'
     ? { label: 'Practice 2023 exam questions', topicId: 'th1', paper: MEDICINE_2023_PAPER }
     : null
 
   return {
+    subject:           completedModule.subject,
     accent,
+    completionType,
     completedChapter:  completedModule.title,
     nextChapterLabel,
     nextChapterNum,
     nextChapterTitle,
     supportingCopy:    CHAPTER_COPY[Math.floor(Math.random() * CHAPTER_COPY.length)],
     isFinalChapter,
+    backgroundAsset,
+    backgroundPosition,
     moduleName:        group?.title || completedModule.title,
     nextModule:        nextMod,
     pastPaperHint,
