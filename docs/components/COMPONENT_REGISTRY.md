@@ -17,6 +17,19 @@ name: see `docs/system/CONTENT_BUILD_TEMPLATE.md`. When adding a component,
 register its display type there in the same change (the architecture test
 fails otherwise once content uses it).
 
+**Decision block:** selectable learning components carry a `Decision`
+entry — the fast path for choosing between near-neighbour components while
+planning a screen. Five fields, no more:
+
+- **Use when** — the exact learning/content situation.
+- **Do not use when** — the common misuse.
+- **Choose instead** — nearest alternatives and the deciding difference.
+- **Content shape** — what the content must look like to fit.
+- **Rhythm role** — one of: opening, teaching, exploration, practice,
+  retrieval, repair, closing.
+
+Being rolled out incrementally — not every component has one yet.
+
 ---
 
 ## `src/components/core/`
@@ -469,17 +482,12 @@ Portraits are optional. Supply `image`/`imageAlt` per side (and/or a `heroImage`
     takeaway?,
   }
   ```
-- **Use it when:**
-  - two people, approaches or theories differ meaningfully (method, evidence, conclusion, impact)
-  - comparing belief with reality (e.g. Black Death "what people believed → what was actually happening")
-  - comparing two concise conceptual models (e.g. animal vs plant cell, eukaryotic vs prokaryotic)
-  - the comparison itself explains why knowledge changed
-- **Do NOT use it when:**
-  - the learner needs to classify answers → use `colsort` / `matchingTask`
-  - the learner needs to make an assessed judgement → use `factorWeb` / an exam-technique component
-  - the content is a sequence rather than a comparison → use `timelineChain` / `orderedRouteTask`
-  - one side is merely correct and the other a cartoonishly foolish distractor (a person-to-person comparison must keep both sides historically fair)
-  - the comparison requires long paragraphs in both columns (columns take short parallel phrases; longer teaching goes in the full-width `explanation`)
+- **Decision**
+  - **Use when:** two approaches, people or models need developed parallel comparison.
+  - **Do not use when:** isolated words or short examples are simply placed into opposing groups.
+  - **Choose instead:** `OppositeQualitiesReveal` for simple visual contrast; `ColSortBlock` when the learner must categorise the examples themselves.
+  - **Content shape:** two labelled sides, one comparison theme revealed at a time as short parallel phrases, with a full-width `explanation` carrying any developed reasoning, closing on one takeaway; a person-to-person comparison must keep both sides historically fair.
+  - **Rhythm role:** teaching.
 
 **Accessibility expectations:** portraits carry meaningful `imageAlt`; each comparison cell exposes its person's name to screen readers via a visually-hidden prefix so the Galen/Vesalius relationship survives colour- and position-only cues; progression uses the governed `ContinueCTA` (keyboard-operable, visible focus); focus moves to the takeaway when it reveals; motion respects `prefers-reduced-motion`; DOM reading order is prompt → left → right → explanation.
 
@@ -494,8 +502,14 @@ Portraits are optional. Supply `image`/`imageAlt` per side (and/or a `heroImage`
 **File:** `src/components/learning/OppositeQualitiesReveal.jsx`
 **Contract:** `docs/system/component-contracts/opposite-qualities-reveal.md`
 **Purpose:** Passive, guided reveal for two opposing concepts. Items appear centrally, travel toward the configured left or right concept, then remain grouped under the correct final heading.
-**Best used for:** Teaching contrast through visual grouping where the learner watches the relationship form, such as Hot/Cold and Wet/Dry quality symptoms in Medicine Episode 1.
-**Do not use for:** Assessed sorting, quiz choices, drag-and-drop, feedback states, or case diagnosis. Use the relevant interaction/diagnostic component instead.
+
+- **Decision**
+  - **Use when:** several short words, symptoms or qualities clearly belong to one of two opposites.
+  - **Do not use when:** each side needs evidence, explanation or developed reasoning.
+  - **Choose instead:** `TheoryCompare` for a substantial comparison.
+  - **Content shape:** a handful of short items (words, symptoms, qualities) with no explanation attached, each cleanly belonging to one of two opposing concepts — e.g. Hot/Cold and Wet/Dry quality symptoms in Medicine Episode 1.
+  - **Rhythm role:** teaching.
+
 **Accessibility expectations:** Final DOM groups every item under its concept label; movement is decorative and not the only carrier of meaning; reduced motion renders the complete grouped state.
 
 ### TimelineCanvas
