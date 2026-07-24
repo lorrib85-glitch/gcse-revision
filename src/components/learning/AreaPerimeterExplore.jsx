@@ -14,8 +14,7 @@ import { createAreaPerimeterVisualRoles } from './areaPerimeter/areaPerimeterVis
 
 // ─── Motion / focus styles (injected once) ───────────────────────────────────
 // The first handle breathes gently until the learner's first interaction, then
-// stays still — one calm cue toward the draggable dimensions, never a reward
-// animation. Fills settle with the standard fast fade. Glow appears only on
+// stays still. Fills settle with the standard fast fade. Glow appears only on
 // the focused handle.
 let stylesInjected = false
 function ensureStyles() {
@@ -62,11 +61,9 @@ function ensureStyles() {
       outline-offset: 2px;
     }
 
-    .ap-explore--reduced-motion .ap-explore__handle-hint .ap-explore__handle-ring {
-      animation: none;
-    }
-
+    .ap-explore--reduced-motion .ap-explore__handle-hint .ap-explore__handle-ring,
     .ap-explore--reduced-motion .ap-explore__fill {
+      animation: none;
       transition: none;
     }
 
@@ -83,24 +80,67 @@ function ensureStyles() {
   document.head.appendChild(el)
 }
 
+// The rectangle preset predates scene-level presentation metadata. Keep its
+// mathematics untouched while presenting it on a tighter, baseline-anchored
+// stage: changing height grows the shape upward rather than leaving a large
+// empty field below it.
+const RECTANGLE_PRESENTATION = Object.freeze({
+  width: 360,
+  height: 210,
+  sourceTop: 30,
+  unit: 20,
+  baseline: 162,
+})
+
+function resolvePresentation(presetConfig, values) {
+  if (presetConfig.id !== 'rectangle') {
+    return {
+      canvas: presetConfig.canvas,
+      translateY: 0,
+    }
+  }
+
+  const shapeBottom = RECTANGLE_PRESENTATION.sourceTop
+    + values.height * RECTANGLE_PRESENTATION.unit
+
+  return {
+    canvas: {
+      width: RECTANGLE_PRESENTATION.width,
+      height: RECTANGLE_PRESENTATION.height,
+    },
+    translateY: RECTANGLE_PRESENTATION.baseline - shapeBottom,
+  }
+}
+
+function changeWord(delta, positive, negative) {
+  return delta > 0 ? positive : negative
+}
+
+function rectangleCompareExplanation(lastChange, values) {
+  if (!lastChange || !['width', 'height'].includes(lastChange.controlId)) {
+    return 'Perimeter measures the boundary. Area measures the space inside.'
+  }
+
+  const amount = Math.abs(lastChange.delta)
+  const otherDimension = lastChange.controlId === 'width' ? values.height : values.width
+  const areaDifference = amount * otherDimension
+  const perimeterDifference = amount * 2
+  const dimension = lastChange.controlId === 'width' ? 'Width' : 'Height'
+  const direction = changeWord(lastChange.delta, 'increased', 'decreased')
+  const result = changeWord(lastChange.delta, 'gained', 'lost')
+
+  return `${dimension} ${direction} by ${amount} cm — area ${result} ${areaDifference} cm² while perimeter ${result} ${perimeterDifference} cm.`
+}
+
 /**
  * Configuration-driven GCSE area and perimeter diagram — the mensuration
- * sibling of AngleExplore. Shapes render as inline SVG in model space (whole
- * centimetres mapped to pixels, never the reverse); learner-controlled
- * dimensions drive live perimeter traces, square-unit grids, decomposition
- * visuals and a stable result → calculation → explanation status area.
+ * sibling of AngleExplore. Shapes render as inline SVG in model space; learner
+ * controlled dimensions drive live boundary traces, square-unit grids,
+ * decomposition visuals and a stable result → calculation → explanation area.
  *
- * The component owns the diagram, its handles, discrete decomposition choices
- * and triggered "why the formula works" reveals. Prediction questions,
- * marking, hints, scores and weakness tracking belong to the page that
- * composes it.
- *
- * `preset` may be a registered preset name (`rectangle`,
- * `fixedPerimeterRectangle`, `triangleArea`, `parallelogramArea`,
- * `trapeziumArea`, `compositeShape`) or a compatible preset object. `focus`
- * chooses between `perimeter`, `area` and `compare` where the preset supports
- * more than one. `interactive={false}` turns any preset into a static
- * teaching or exam diagram.
+ * The component owns diagram interaction and triggered formula reveals.
+ * Prediction questions, marking, hints, scores and weakness tracking belong to
+ * the page that composes it.
  */
 function AreaPerimeterExplore({
   preset = 'rectangle',
@@ -118,7 +158,6 @@ function AreaPerimeterExplore({
   ensureStyles()
 
   const presetConfig = resolveAreaPerimeterPreset(preset)
-  const canvas = presetConfig.canvas
   const theme = SUBJECTS[subject] || SUBJECTS.Maths
   const roles = useMemo(() => createAreaPerimeterVisualRoles(theme), [theme])
   const prefersReducedMotion = usePrefersReducedMotion()
@@ -130,13 +169,14 @@ function AreaPerimeterExplore({
   const svgRef = useRef(null)
   const [draggingControl, setDraggingControl] = useState(null)
   const [hasInteracted, setHasInteracted] = useState(false)
+  const [lastChange, setLastChange] = useState(null)
   const [method, setMethod] = useState(presetConfig.methods?.[0]?.id ?? null)
   const [revealed, setRevealed] = useState(false)
 
   const presetAllowsInteraction = interactive ?? presetConfig.interactive ?? true
   const canInteract = presetAllowsInteraction && !disabled
-
   const isControlled = value != null && typeof value === 'object'
+
   const [internalValues, setInternalValues] = useState(() =>
     clampPresetValues(presetConfig, defaultValue ?? presetConfig.initialValues),
   )
@@ -146,23 +186,54 @@ function AreaPerimeterExplore({
     setMethod(presetConfig.methods?.[0]?.id ?? null)
     setRevealed(false)
     setHasInteracted(false)
+    setLastChange(null)
   }, [presetConfig, defaultValue])
 
-  const currentValues = clampPresetValues(presetConfig, isControlled ? value : internalValues)
+  const currentValues = clampPresetValues(
+    presetConfig,
+    isControlled ? value : internalValues,
+  )
   const effectiveFocus = resolvePresetFocus(presetConfig, focus)
-  const scene = presetConfig.derive(currentValues, {
+  const derivedScene = presetConfig.derive(currentValues, {
     focus: effectiveFocus,
     method,
     revealed,
   })
+  const scene = presetConfig.id === 'rectangle' && effectiveFocus === 'compare'
+    ? {
+        ...derivedScene,
+        status: {
+          ...derivedScene.status,
+          explanation: rectangleCompareExplanation(lastChange, currentValues),
+        },
+      }
+    : derivedScene
+
+  const presentation = resolvePresentation(presetConfig, currentValues)
+  const canvas = presentation.canvas
+  const geometryTransform = presentation.translateY
+    ? `translate(0 ${presentation.translateY})`
+    : undefined
 
   const controlsById = useMemo(() => (
     Object.fromEntries(presetConfig.controls.map(control => [control.id, control]))
   ), [presetConfig])
 
   const setControlValue = (controlId, next) => {
-    const nextValues = clampPresetValues(presetConfig, { ...currentValues, [controlId]: next })
-    if (nextValues[controlId] === currentValues[controlId]) return
+    const nextValues = clampPresetValues(presetConfig, {
+      ...currentValues,
+      [controlId]: next,
+    })
+    const previousValue = currentValues[controlId]
+    const nextValue = nextValues[controlId]
+    if (nextValue === previousValue) return
+
+    setLastChange({
+      controlId,
+      previousValue,
+      nextValue,
+      delta: nextValue - previousValue,
+    })
     if (!isControlled) setInternalValues(nextValues)
     onChange?.(nextValues)
   }
@@ -172,9 +243,11 @@ function AreaPerimeterExplore({
     if (!svg) return null
     const rect = svg.getBoundingClientRect()
     if (!rect.width || !rect.height) return null
+
     return {
       x: ((event.clientX - rect.left) / rect.width) * canvas.width,
-      y: ((event.clientY - rect.top) / rect.height) * canvas.height,
+      y: ((event.clientY - rect.top) / rect.height) * canvas.height
+        - presentation.translateY,
     }
   }
 
@@ -189,7 +262,10 @@ function AreaPerimeterExplore({
     if (draggingControl !== controlId || !canInteract) return
     const point = svgPointFromEvent(event)
     if (!point) return
-    setControlValue(controlId, controlsById[controlId].valueFromPointer(point, currentValues))
+    setControlValue(
+      controlId,
+      controlsById[controlId].valueFromPointer(point, currentValues),
+    )
   }
 
   const handlePointerEnd = () => setDraggingControl(null)
@@ -199,11 +275,13 @@ function AreaPerimeterExplore({
     const control = controlsById[controlId]
     const current = currentValues[controlId]
     let next = null
+
     if (event.key === 'ArrowRight' || event.key === 'ArrowUp') next = current + control.step
     if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') next = current - control.step
     if (event.key === 'Home') next = control.min
     if (event.key === 'End') next = control.max
     if (next === null) return
+
     event.preventDefault()
     setHasInteracted(true)
     setControlValue(controlId, next)
@@ -214,6 +292,13 @@ function AreaPerimeterExplore({
     && (presetConfig.methods?.length ?? 0) > 0
     && (presetConfig.methodsFocus == null || presetConfig.methodsFocus === effectiveFocus)
   const showReveal = canInteract && presetConfig.reveal != null
+  const showInteractionInstruction = canInteract
+    && scene.handles.length > 0
+    && !hasInteracted
+
+  const interactionInstruction = scene.handles.length === 2
+    ? 'Drag either blue handle.'
+    : 'Drag the blue handle.'
 
   const optionButtonStyle = active => ({
     ...TYPE.button,
@@ -247,6 +332,20 @@ function AreaPerimeterExplore({
         '--ap-explore-focus': roles.interaction,
       }}
     >
+      {showInteractionInstruction && (
+        <div
+          data-ap-interaction-instruction="true"
+          style={{
+            ...TYPE.bodySmall,
+            color: roles.textSecondary,
+            textAlign: 'center',
+            padding: `0 ${SPACING.compact}px ${SPACING.micro}px`,
+          }}
+        >
+          {interactionInstruction}
+        </div>
+      )}
+
       <svg
         ref={svgRef}
         viewBox={`0 0 ${canvas.width} ${canvas.height}`}
@@ -273,91 +372,94 @@ function AreaPerimeterExplore({
           ].join(' ')}
         </desc>
 
-        {scene.shapes.map(shape => (
-          <path
-            key={shape.id}
-            className="ap-explore__fill"
-            data-ap-shape={shape.id}
-            d={shape.path}
-            fill={resolveRole(shape.fillRole) ?? 'none'}
-            stroke={resolveRole(shape.strokeRole) ?? 'none'}
-            strokeWidth={shape.strokeWidth ?? 2}
-            strokeDasharray={shape.dashed ? '6 5' : undefined}
-            strokeLinejoin="round"
-            strokeLinecap="round"
-          />
-        ))}
-
-        <g aria-hidden="true">
-          {scene.labels.map(item => (
-            <text
-              key={item.id}
-              data-ap-label={item.id}
-              data-ap-deduced={item.role === 'deducedLabel' ? 'true' : undefined}
-              x={item.x}
-              y={item.y}
-              textAnchor="middle"
-              dominantBaseline="central"
-              fill={resolveRole(item.role) ?? roles.dimensionLabel}
-              style={{
-                ...(item.size === 'value' ? TYPE.titleMedium : TYPE.label),
-                fontVariantNumeric: 'tabular-nums',
-              }}
-            >
-              {item.text}
-            </text>
+        <g transform={geometryTransform}>
+          {scene.shapes.map(shape => (
+            <path
+              key={shape.id}
+              className="ap-explore__fill"
+              data-ap-shape={shape.id}
+              d={shape.path}
+              fill={resolveRole(shape.fillRole) ?? 'none'}
+              stroke={resolveRole(shape.strokeRole) ?? 'none'}
+              strokeWidth={shape.strokeWidth ?? 2}
+              strokeDasharray={shape.dashed ? '6 5' : undefined}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
           ))}
-        </g>
 
-        {canInteract && scene.handles.map((handle, index) => {
-          const control = controlsById[handle.controlId]
-          if (!control) return null
-          const hint = index === 0 && !hasInteracted && !reduceMotion
-          return (
-            <g
-              key={handle.controlId}
-              className={`ap-explore__handle${hint ? ' ap-explore__handle-hint' : ''}`}
-              data-dragging={draggingControl === handle.controlId || undefined}
-              role="slider"
-              tabIndex={0}
-              aria-label={control.label}
-              aria-valuemin={control.min}
-              aria-valuemax={control.max}
-              aria-valuenow={currentValues[handle.controlId]}
-              aria-valuetext={control.valueText(currentValues)}
-              aria-describedby={showStatus ? statusId : descriptionId}
-              onPointerDown={handlePointerDown(handle.controlId)}
-              onPointerMove={handlePointerMove(handle.controlId)}
-              onPointerUp={handlePointerEnd}
-              onPointerCancel={handlePointerEnd}
-              onKeyDown={handleKeyDown(handle.controlId)}
-            >
-              <circle
-                data-ap-hit-target="true"
-                cx={handle.x}
-                cy={handle.y}
-                r={22}
-                fill="transparent"
-              />
-              <circle
-                className="ap-explore__handle-ring"
-                cx={handle.x}
-                cy={handle.y}
-                r={11}
-                fill="none"
-                stroke={roles.interaction}
-                strokeWidth={1.5}
-                opacity={0.55}
-              />
-              <circle
-                cx={handle.x}
-                cy={handle.y}
-                r={6}
-                fill={roles.interaction}
-              />
-            </g>
-          )
-        })}
+          <g aria-hidden="true">
+            {scene.labels.map(item => (
+              <text
+                key={item.id}
+                data-ap-label={item.id}
+                data-ap-deduced={item.role === 'deducedLabel' ? 'true' : undefined}
+                x={item.x}
+                y={item.y}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fill={resolveRole(item.role) ?? roles.dimensionLabel}
+                style={{
+                  ...(item.size === 'value' ? TYPE.titleMedium : TYPE.label),
+                  fontVariantNumeric: 'tabular-nums',
+                }}
+              >
+                {item.text}
+              </text>
+            ))}
+          </g>
+
+          {canInteract && scene.handles.map((handle, index) => {
+            const control = controlsById[handle.controlId]
+            if (!control) return null
+            const hint = index === 0 && !hasInteracted && !reduceMotion
+
+            return (
+              <g
+                key={handle.controlId}
+                className={`ap-explore__handle${hint ? ' ap-explore__handle-hint' : ''}`}
+                data-dragging={draggingControl === handle.controlId || undefined}
+                role="slider"
+                tabIndex={0}
+                aria-label={control.label}
+                aria-valuemin={control.min}
+                aria-valuemax={control.max}
+                aria-valuenow={currentValues[handle.controlId]}
+                aria-valuetext={control.valueText(currentValues)}
+                aria-describedby={showStatus ? statusId : descriptionId}
+                onPointerDown={handlePointerDown(handle.controlId)}
+                onPointerMove={handlePointerMove(handle.controlId)}
+                onPointerUp={handlePointerEnd}
+                onPointerCancel={handlePointerEnd}
+                onKeyDown={handleKeyDown(handle.controlId)}
+              >
+                <circle
+                  data-ap-hit-target="true"
+                  cx={handle.x}
+                  cy={handle.y}
+                  r={22}
+                  fill="transparent"
+                />
+                <circle
+                  className="ap-explore__handle-ring"
+                  cx={handle.x}
+                  cy={handle.y}
+                  r={11}
+                  fill="none"
+                  stroke={roles.interaction}
+                  strokeWidth={1.5}
+                  opacity={0.55}
+                />
+                <circle
+                  cx={handle.x}
+                  cy={handle.y}
+                  r={6}
+                  fill={roles.interaction}
+                />
+              </g>
+            )
+          })}
+        </g>
       </svg>
 
       {(showMethods || showReveal) && (
@@ -374,7 +476,12 @@ function AreaPerimeterExplore({
             <div
               role="group"
               aria-label="Choose a method"
-              style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: SPACING.micro }}
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                gap: SPACING.micro,
+              }}
             >
               {presetConfig.methods.map(option => (
                 <button
@@ -391,6 +498,7 @@ function AreaPerimeterExplore({
               ))}
             </div>
           )}
+
           {showReveal && (
             <button
               type="button"
@@ -427,6 +535,7 @@ function AreaPerimeterExplore({
           >
             {scene.status.heading}
           </div>
+
           <div style={{ minHeight: 44, marginTop: 4 }}>
             {scene.status.calculation.map(line => (
               <div
@@ -442,6 +551,7 @@ function AreaPerimeterExplore({
               </div>
             ))}
           </div>
+
           <div
             data-ap-status-explanation="true"
             style={{
