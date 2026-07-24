@@ -1,4 +1,5 @@
 name: Apply retrieval registry guidance
+# Triggered after workflow registration
 
 on:
   push:
