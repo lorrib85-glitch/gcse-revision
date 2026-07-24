@@ -4,25 +4,17 @@
 // anticlockwise from the positive x-axis, in a y-down SVG coordinate space —
 // so an increasing angle sweeps visually anticlockwise (east → north → west),
 // matching how GCSE angle diagrams are read.
+//
+// Neutral base helpers (clamp, polarPoint, toRadians) live in
+// geometry/shapeGeometry.js, shared with the areaPerimeter family; they are
+// re-exported here so angle callers keep a single import surface.
 
-export function toRadians(deg) {
-  return (deg * Math.PI) / 180
-}
+import { clamp, polarPoint, toRadians } from '../geometry/shapeGeometry.js'
+
+export { clamp, polarPoint, toRadians }
 
 export function normaliseAngle(deg) {
   return ((deg % 360) + 360) % 360
-}
-
-export function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value))
-}
-
-export function polarPoint(cx, cy, angleDeg, radius) {
-  const rad = toRadians(angleDeg)
-  return {
-    x: cx + radius * Math.cos(rad),
-    y: cy - radius * Math.sin(rad),
-  }
 }
 
 // Angle of the pointer position around (cx, cy), anticlockwise from east.

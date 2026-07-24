@@ -20,6 +20,11 @@ import {
   triangleAngles,
   vectorAngle,
 } from './angleGeometry.js'
+import {
+  polygonPath,
+  regularPolygonPoints,
+  sideTickPath,
+} from '../geometry/shapeGeometry.js'
 
 const angleTypes = {
   id: 'angleTypes',
@@ -719,17 +724,6 @@ function sectorAt(id, point, start, end, value, tone) {
   }
 }
 
-function sideTickPath(from, to, position = 0.52, halfLength = 7) {
-  const dx = to.x - from.x
-  const dy = to.y - from.y
-  const length = Math.hypot(dx, dy) || 1
-  const cx = from.x + dx * position
-  const cy = from.y + dy * position
-  const px = (-dy / length) * halfLength
-  const py = (dx / length) * halfLength
-  return `M ${cx - px} ${cy - py} L ${cx + px} ${cy + py}`
-}
-
 function parallelArrowPath(x, y) {
   return `M ${x - 7} ${y - 6} L ${x} ${y} L ${x - 7} ${y + 6}`
 }
@@ -744,10 +738,6 @@ function pointLabel(id, text, cx, cy, angleDeg, radius) {
   return { id, text, x: at.x, y: at.y }
 }
 
-function polygonPath(points) {
-  return `${points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ')} Z`
-}
-
 function polygonInteriorAngles(points, total) {
   const rounded = points.map((point, index) => Math.round(interiorAngle(
     point,
@@ -757,12 +747,6 @@ function polygonInteriorAngles(points, total) {
   const drift = total - rounded.reduce((sum, value) => sum + value, 0)
   rounded[rounded.indexOf(Math.max(...rounded))] += drift
   return rounded
-}
-
-function regularPolygonPoints(sides, cx, cy, radius) {
-  return Array.from({ length: sides }, (_, index) => (
-    polarPoint(cx, cy, 90 + (360 * index) / sides, radius)
-  ))
 }
 
 function sliderX(index, count) {

@@ -5,6 +5,7 @@
 // without duplicating the full catalogue or bending production component APIs.
 
 import AngleExplore from '../../components/learning/AngleExplore.jsx'
+import AreaPerimeterExplore from '../../components/learning/AreaPerimeterExplore.jsx'
 import {
   REVIEW_ENTRIES as CORE_REVIEW_ENTRIES,
   REVIEW_QUESTIONS,
@@ -77,6 +78,83 @@ function extendAngleExplore(entry) {
   }
 }
 
-export const REVIEW_ENTRIES = CORE_REVIEW_ENTRIES.map(entry => (
-  entry.id === 'angle-explore' ? extendAngleExplore(entry) : entry
+// Unrouted standalone component (no content type to register yet) — manual
+// classification: the learner changes a shape's dimensions and watches the
+// boundary length and the space inside respond, with no marking or scoring.
+const AREA_PERIMETER_EXPLORE_ENTRY = {
+  id: 'area-perimeter-explore',
+  name: 'AreaPerimeterExplore',
+  interaction: 'reveal',
+  status: 'comparison',
+  subject: 'Maths',
+  renderMode: 'inline',
+  function: 'Configuration-driven GCSE area and perimeter diagram — the mensuration sibling of AngleExplore. Learner-controlled dimensions drive a live boundary trace, square-unit grids and decomposition visuals, so perimeter is built by tracing and adding edges while area is built by counting, rearranging or decomposing square units. Page-level prediction, marking and scoring remain outside the component.',
+  usage: 'New component — pending review; not yet routed in ModulePlayer. Review variants cover rectangles and squares, the fixed-perimeter comparison, triangle and parallelogram formula derivation, trapezia, composite rectilinear area and perimeter, and static worked-example use.',
+  alternative: 'AngleExplore (angle facts, not mensuration); CalculationBreakdown (carrying out a method, not seeing why a formula holds); a static figure image for one-off diagrams.',
+  render: () => <AreaPerimeterExplore preset="rectangle" focus="compare" />,
+  fixture: null,
+  variants: [
+    {
+      id: 'rectangle',
+      label: 'Rectangle',
+      description: 'Separates the two measures at their simplest: dragging width and height shows perimeter accumulating along the boundary while area fills as rows of square units. Reaching the square state marks the equal sides and names side² rather than treating it as a different shape.',
+      render: () => <AreaPerimeterExplore preset="rectangle" focus="compare" />,
+    },
+    {
+      id: 'fixed-perimeter',
+      label: 'Fixed perimeter',
+      description: 'Breaks the "bigger perimeter means bigger area" assumption. The boundary is pinned at 24 cm while the width drags the shape from 1 × 11 through to the 6 × 6 square, so the learner sees area rise and fall against an unchanging perimeter.',
+      render: () => <AreaPerimeterExplore preset="fixedPerimeterRectangle" />,
+    },
+    {
+      id: 'triangle-area',
+      label: 'Triangle area',
+      description: 'Targets the sloping-side misconception directly: the apex slides sideways, the sloping sides visibly change, and the area does not — because base and perpendicular height have not. Pairing a rotated copy into a parallelogram earns the ½ before it is stated.',
+      render: () => <AreaPerimeterExplore preset="triangleArea" />,
+    },
+    {
+      id: 'parallelogram',
+      label: 'Parallelogram',
+      description: 'Shows that slant is not height. Sliding the top edge leaves the area untouched, and the triggered cut-and-slide moves the overhanging triangle across to build the equivalent rectangle, so base × perpendicular height is derived rather than asserted.',
+      render: () => <AreaPerimeterExplore preset="parallelogramArea" />,
+    },
+    {
+      id: 'trapezium',
+      label: 'Trapezium',
+      description: 'Makes ½ × (a + b) × h emerge from a transformation: both parallel sides and the height are adjustable, and joining a rotated copy produces a parallelogram of base a + b and twice the area — the halving then has a visible cause.',
+      render: () => <AreaPerimeterExplore preset="trapeziumArea" />,
+    },
+    {
+      id: 'composite-area',
+      label: 'Composite area',
+      description: 'Teaches that decomposition is a choice, not a rule. Two valid splits and a whole-minus-missing-corner method each reach 36 cm², so the learner judges methods by whether they account for the space rather than by matching a remembered picture.',
+      render: () => <AreaPerimeterExplore preset="compositeShape" focus="area" />,
+    },
+    {
+      id: 'composite-perimeter',
+      label: 'Composite perimeter',
+      description: 'Corrects the most common composite-shape error: the split line used for area stays on screen but muted and excluded, with the explicit statement that an internal line is not part of the perimeter. The two unlabelled outer lengths must be deduced from the opposite sides.',
+      render: () => <AreaPerimeterExplore preset="compositeShape" focus="perimeter" />,
+    },
+    {
+      id: 'static',
+      label: 'Static worked example',
+      description: 'The non-interactive job: an accurate, on-theme diagram with fixed dimensions and no controls, for use inside teaching explanations, worked examples and exam questions where the page — not the diagram — owns the question.',
+      render: () => (
+        <AreaPerimeterExplore
+          preset="trapeziumArea"
+          value={{ top: 4, bottom: 8, height: 5 }}
+          interactive={false}
+        />
+      ),
+    },
+  ],
+}
+
+// AreaPerimeterExplore sits beside its AngleExplore sibling rather than at the
+// end of the catalogue, so the two Maths diagram families review together.
+export const REVIEW_ENTRIES = CORE_REVIEW_ENTRIES.flatMap(entry => (
+  entry.id === 'angle-explore'
+    ? [extendAngleExplore(entry), AREA_PERIMETER_EXPLORE_ENTRY]
+    : [entry]
 ))
