@@ -99,14 +99,24 @@ export const Triangle = {
     const canvas = within(canvasElement)
     const handle = canvas.getByRole('slider', { name: 'Position of the top vertex' })
 
-    await expect(canvas.getByText('76° + 52° + 52° = 180°')).toBeVisible()
+    await expect(handle).toHaveAttribute('aria-valuenow', '145')
+    await expect(canvas.getByText('74° + 62° + 44° = 180°')).toBeVisible()
     await expect(canvas.getByText('Angles in a triangle add up to 180°.')).toBeVisible()
+    expect(canvasElement.querySelector('[data-angle-shape="triangle-equal-left"]')).toBeNull()
+    expect(canvasElement.querySelector('[data-angle-shape="triangle-equal-right"]')).toBeNull()
 
     handle.focus()
+    await userEvent.keyboard(
+      '{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}',
+    )
+    await expect(handle).toHaveAttribute('aria-valuenow', '180')
+    await expect(canvas.getByText('76° + 52° + 52° = 180°')).toBeVisible()
+    expect(canvasElement.querySelector('[data-angle-shape="triangle-equal-left"]')).not.toBeNull()
+    expect(canvasElement.querySelector('[data-angle-shape="triangle-equal-right"]')).not.toBeNull()
+
     await userEvent.keyboard('{End}')
     await expect(handle).toHaveAttribute('aria-valuenow', '260')
-    const headings = canvasElement.textContent
-    expect(headings).toContain('= 180°')
+    expect(canvasElement.textContent).toContain('= 180°')
   },
 }
 
