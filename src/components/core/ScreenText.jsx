@@ -73,14 +73,15 @@ export function ScreenBody({ children, style }) {
 // Screen introduction — the one short framing line that sits directly beneath a
 // ScreenTitle. Deliberately larger than ScreenBody (TYPE.bodyLarge) because it
 // introduces the whole screen rather than being ordinary body copy, and it owns
-// the title→intro gap so callers never hand-space it. Like the other primitives
-// here it fixes typography, colour, readable width and spacing centrally; the
-// style prop is for layout/colour only (e.g. centring under a centred title).
+// the title→intro gap so callers never hand-space it. Its contrast remains
+// secondary to the title but strong enough for comfortable reading on mobile.
+// Like the other primitives here it fixes typography, colour, readable width and
+// spacing centrally; the style prop is for layout/colour only.
 export function ScreenIntro({ children, style }) {
   return (
     <p style={{
       ...TYPE.bodyLarge,
-      color: 'rgba(255,255,255,0.62)',
+      color: 'rgba(255,255,255,0.74)',
       maxWidth: '34ch',
       margin: '10px 0 0',
       ...style,
