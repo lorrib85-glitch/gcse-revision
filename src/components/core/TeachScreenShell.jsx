@@ -83,7 +83,7 @@ export default function TeachScreenShell({ heading, eyebrow, intro, children, me
       {intro && (
         <p className="tss-in" style={{
           ...TYPE.body,
-          color: 'rgba(245,245,245,0.60)',
+          color: 'rgba(245,245,245,0.74)',
           margin: `${SPACING.standard}px 0 0`,
           animationDelay: MOTION.duration.instant,
         }}>
