@@ -20,7 +20,7 @@ import { Component, useEffect, useMemo, useState } from 'react'
 import { getActiveScope, setActiveScope } from '../../lib/storage.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
-import { REVIEW_ENTRIES, REVIEW_QUESTIONS, STATUS_LABELS, GROUP_LABELS } from './reviewManifest.jsx'
+import { REVIEW_ENTRIES, REVIEW_QUESTIONS, STATUS_LABELS, INTERACTION_LABELS } from './reviewManifest.jsx'
 
 const DEV_REVIEW_SCOPE = 'devreview'
 
@@ -159,7 +159,7 @@ export default function ComponentReviewLab() {
 
 // ─── Index view ──────────────────────────────────────────────────────────────
 function IndexView({ filtered, filter, onFilter, onOpen }) {
-  const groups = ['group1', 'group2', 'comparison', 'library']
+  const groups = ['passive', 'reveal', 'assessed', 'uncategorised']
   return (
     <div style={{ maxWidth: 420, margin: '0 auto', padding: '20px 16px 64px' }}>
       <header style={{ marginBottom: 18 }}>
@@ -194,12 +194,12 @@ function IndexView({ filtered, filter, onFilter, onOpen }) {
       </div>
 
       {groups.map(group => {
-        const rows = filtered.filter(e => e.group === group)
+        const rows = filtered.filter(e => (e.interaction ?? 'uncategorised') === group)
         if (!rows.length) return null
         return (
           <section key={group} style={{ marginBottom: 24 }}>
             <div style={{ ...mono, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: GENERAL.slate, marginBottom: 10 }}>
-              {GROUP_LABELS[group]}
+              {INTERACTION_LABELS[group]}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {rows.map(entry => (
