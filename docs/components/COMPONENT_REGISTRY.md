@@ -237,6 +237,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Props:** `block`, `subject`, `onContinue`, `onBack`
 **Dependencies:** `SUBJECTS`, `MOTION`
 
+- **Decision**
+  - **Use when:** the learner needs to understand a short reasoning chain in which one idea leads directly to the next, such as belief → action → consequence or cause → mechanism → effect. Choose it when the important learning is the logic connecting the steps, not merely remembering their order.
+  - **Do not use when:** the content is primarily a dated chronology, a series of distinct historical events or a practical process whose stages have their own identities. Do not use it when the learner should place the steps themselves or when the ideas do not form one clear chain.
+  - **Choose instead:** use `TimelineChain` when the learner needs to explore a chronological, causal or procedural sequence made up of distinct events or stages. Use `OrderedRouteTask` when the sequence has already been taught and the learner must place known stages correctly. Use `TheoryCompare` when the relationship is a comparison rather than a chain. Use `ConceptReveal` when only one idea needs introducing rather than several linked steps.
+  - **Content shape:** a single unbroken reasoning chain, usually three to six concise steps. Each step must clearly cause, explain or lead to the next. The chain should answer one central “how?” or “why?” question. Avoid branches, unrelated facts and stages that could be rearranged without changing the meaning.
+  - **Rhythm role:** teaching.
+
 ---
 
 ### FaceTheExaminer
@@ -396,7 +403,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ```
 **Interaction:** jobs are shuffled and presented one at a time; tap a stage row (a real button, keyboard-focusable) to place. First wrong attempt per job logs a weakness; a clean first-attempt placement logs a correct answer. After the final placement the rebuilt chain stays on screen with `completionText`, then the governed `ContinueCTA` reveals — completion is learner-controlled, never automatic.
 **Dependencies:** `TYPE`, `SPACING`, `RADII`, `MOTION`, `SUBJECTS`, `CinematicShell`, `ContinueCTA`, `unifiedWeaknessTracker`
-**Do not use when:** The relationship between items is unordered (use `MatchingTask` instead).
+
+- **Decision**
+  - **Use when:** the learner has already been taught a process or sequence and now needs to recall where each known event, action or stage belongs in the correct order.
+  - **Do not use when:** the sequence is still being introduced, the learner has not yet seen the stages clearly or the relationship between the items is unordered. Do not use it for matching pairs, category grouping or a chronology where several answers could reasonably fit the same position.
+  - **Choose instead:** use `TimelineChain` to teach or explore the sequence first. Use `ExplainReveal` when the learner still needs to understand why one step leads to the next. Use `MatchingTask` when items form one-to-one pairs but order does not matter. Use `ColSortBlock` or `SwipeSort` when items belong within shared categories rather than numbered stages.
+  - **Content shape:** a known sequence with clearly defined stages and one defensible position for every item. Stage headings should provide enough meaning for the learner to reason rather than guess. Items must be concise and should test understanding of the sequence, not reading endurance. Avoid ambiguous placement and stages that overlap substantially.
+  - **Rhythm role:** practice, retrieval.
 
 ---
 
@@ -543,6 +556,13 @@ Portraits are optional. Supply `image`/`imageAlt` per side (and/or a `heroImage`
 **Screen type:** `timelineCanvas` (full-screen, routed directly in `ModulePlayer.jsx` like `TimelineChain`)
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
 
+- **Decision**
+  - **Use when:** a particularly important sequence benefits from a wide spatial journey that the learner actively pans through, and the module needs an occasional change of pace from the standard screen rhythm.
+  - **Do not use when:** a normal `TimelineChain` would communicate the sequence just as clearly. Do not use it for routine sequences, very short chains, dense explanations or simply to make the module feel more visually varied. It should remain an occasional high-impact interaction rather than the default timeline.
+  - **Choose instead:** use `TimelineChain` for most chronological, causal and procedural sequences. Use `ExplainReveal` when the focus is a compact reasoning chain rather than distinct events or stages. Use `OrderedRouteTask` when the learner should demonstrate that they know the correct order.
+  - **Content shape:** a visually distinct sequence, usually four to seven stages, that benefits from being experienced as a journey across a wider canvas. Each stage needs a short label, a concise explanation and a meaningful place in the overall progression. Avoid long paragraphs, minor facts and stages that are not visually or conceptually distinct.
+  - **Rhythm role:** exploration.
+
 ---
 
 ### TimelineChain
@@ -557,6 +577,13 @@ Portraits are optional. Supply `image`/`imageAlt` per side (and/or a `heroImage`
 **Block shape (reveal):** `{ type: 'timelineChain', variant: 'reveal', title?, intro?, source?, steps: [{ id?, icon?, statement, detail? }], takeaway? }` — `statement`/`detail`/`takeaway` accept a plain string or an array of `{ text, highlight? }` segments for inline subject-accent highlighting. `statement` (not `label`) is the primary field so full-sentence copy is not scanned by the sentence-case heading guard.
 **Screen type:** `timelineChain` (full-screen, routed directly in `ModulePlayer.jsx`). Legacy `type: 'visualNarrative'` screens are mapped to the reveal variant at render time via `src/data/visualNarrativeCompat.js`.
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `ContinueCTA`, `timelineChainReveal.js` (pure reveal logic)
+
+- **Decision**
+  - **Use when:** the learner needs to understand or explore a meaningful sequence of distinct events, stages or developments where the order or causal connection matters. Use the interactive variant when each stage is worth exploring individually. Use the reveal variant for a shorter, calmer narrative that unfolds one linked statement at a time.
+  - **Do not use when:** the content is merely a list of related facts, the order can be changed without affecting the meaning or the main learning job is comparison, categorisation or relative importance. Do not use it to test whether the learner knows the order.
+  - **Choose instead:** use `ExplainReveal` when the main learning is the reasoning that connects a short cause → mechanism → consequence chain. Use `OrderedRouteTask` when the sequence has already been taught and should now be assessed. Use `TimelineCanvas` only when an important sequence benefits from a deliberately different, spatial exploration rhythm. Use `TheoryCompare` when two sides need parallel comparison rather than sequential explanation.
+  - **Content shape:** a clear chronological, causal or procedural sequence of distinct stages. Each stage needs a short identifying label or statement and a concise explanation of why it matters. Usually use three to seven stages. Every stage must earn its place in the chain and the sequence should lead towards a clear outcome or takeaway. For the interactive variant, each stage should make sense as an individually explored card. For the reveal variant, each statement should flow naturally into the next and form one calm narrative.
+  - **Rhythm role:** teaching, exploration.
 
 ---
 
