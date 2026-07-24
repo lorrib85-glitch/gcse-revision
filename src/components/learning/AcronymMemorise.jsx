@@ -40,12 +40,14 @@ function sentence(text) {
 
 // ─── AcronymMemorise — mnemonic acronym reveal ────────────────────────────────
 // Inline interaction designed to sit beneath the governed screen heading.
-// It owns the standard opening paragraph, then the acronym reveal mechanic.
+// It can own its standard opening paragraph, or let a parent TeachScreenShell
+// own that slot by setting showIntro: false.
 //
 // Shape: {
-//   intro?, memoryTarget?, instruction?, readyText?, testInstruction?,
-//   testPrompt?, testCompleteText?, testCtaLabel?, learnCtaLabel?,
-//   testRowPrompt?, subject?, items: [{ id?, letter, word, detail }]
+//   intro?, memoryTarget?, instruction?, showIntro?, readyText?,
+//   testInstruction?, testPrompt?, testCompleteText?, testCtaLabel?,
+//   learnCtaLabel?, testRowPrompt?, subject?,
+//   items: [{ id?, letter, word, detail }]
 // }
 export default function AcronymMemorise({ block, subject }) {
   const [mode, setMode] = useState('learn')
@@ -57,6 +59,7 @@ export default function AcronymMemorise({ block, subject }) {
   const theme = SUBJECTS[subject || block.subject] || SUBJECTS.Biology
   const acronym = items.map(item => item.letter).join('') || 'This acronym'
   const isTestMode = mode === 'test'
+  const showIntro = block.showIntro !== false
   const allViewed = items.length > 0 && viewed.size === items.length
   const allChecked = items.length > 0 && checked.size === items.length
   const fallbackTarget = items.length > 0
@@ -113,9 +116,11 @@ export default function AcronymMemorise({ block, subject }) {
       margin: `0 0 ${SPACING.standard}px`,
       paddingBottom: 'env(safe-area-inset-bottom, 0px)',
     }}>
-      <ScreenIntro style={{ marginBottom: SPACING.separation }}>
-        {openingCopy}
-      </ScreenIntro>
+      {showIntro && (
+        <ScreenIntro style={{ marginBottom: SPACING.separation }}>
+          {openingCopy}
+        </ScreenIntro>
+      )}
 
       <div style={{
         background: GENERAL.backgroundSunken,
