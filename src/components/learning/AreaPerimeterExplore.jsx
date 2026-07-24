@@ -11,6 +11,10 @@ import {
   resolvePresetFocus,
 } from './areaPerimeter/areaPerimeterPresets.js'
 import { createAreaPerimeterVisualRoles } from './areaPerimeter/areaPerimeterVisualRoles.js'
+import {
+  createAreaPerimeterGuidance,
+  resolveAreaPerimeterInstruction,
+} from './areaPerimeter/areaPerimeterGuidance.js'
 
 // ─── Motion / focus styles (injected once) ───────────────────────────────────
 // The first handle breathes gently until the learner's first interaction, then
@@ -229,6 +233,14 @@ function AreaPerimeterExplore({
       }
     : derivedScene
 
+  const guidance = createAreaPerimeterGuidance({
+    presetId: presetConfig.id,
+    focus: effectiveFocus,
+    hasInteracted,
+  })
+  const renderedShapes = [...scene.shapes, ...guidance.shapes]
+  const renderedLabels = [...scene.labels, ...guidance.labels]
+
   const presentation = resolvePresentation(presetConfig, currentValues)
   const canvas = presentation.canvas
   const geometryTransform = presentation.translateY
@@ -343,13 +355,17 @@ function AreaPerimeterExplore({
     && (presetConfig.methods?.length ?? 0) > 0
     && (presetConfig.methodsFocus == null || presetConfig.methodsFocus === effectiveFocus)
   const showReveal = canInteract && presetConfig.reveal != null
+  const interactionInstruction = resolveAreaPerimeterInstruction({
+    presetId: presetConfig.id,
+    focus: effectiveFocus,
+    interactive: canInteract,
+    handleCount: scene.handles.length,
+    hasMethods: showMethods,
+    hasReveal: showReveal,
+  })
   const showInteractionInstruction = canInteract
-    && scene.handles.length > 0
     && !hasInteracted
-
-  const interactionInstruction = scene.handles.length === 2
-    ? 'Drag either blue handle.'
-    : 'Drag the blue handle.'
+    && (scene.handles.length > 0 || showMethods || showReveal)
 
   const optionButtonStyle = active => ({
     ...TYPE.button,
@@ -425,16 +441,13 @@ function AreaPerimeterExplore({
       >
         <title id={titleId}>{label ?? presetConfig.accessibilityLabel}</title>
         <desc id={descriptionId}>
-          {[
-            presetConfig.keyFact,
-            canInteract
-              ? 'Use the handles to change the dimensions of the shape.'
-              : 'This diagram is shown as a static illustration.',
-          ].join(' ')}
+          {[presetConfig.keyFact, guidance.description, interactionInstruction]
+            .filter(Boolean)
+            .join(' ')}
         </desc>
 
         <g transform={geometryTransform}>
-          {scene.shapes.map(shape => (
+          {renderedShapes.map(shape => (
             <path
               key={shape.id}
               className="ap-explore__fill"
@@ -450,7 +463,7 @@ function AreaPerimeterExplore({
           ))}
 
           <g aria-hidden="true">
-            {scene.labels.map(item => (
+            {renderedLabels.map(item => (
               <text
                 key={item.id}
                 data-ap-label={item.id}
@@ -461,7 +474,11 @@ function AreaPerimeterExplore({
                 dominantBaseline="central"
                 fill={resolveRole(item.role) ?? roles.dimensionLabel}
                 style={{
-                  ...(item.size === 'value' ? TYPE.titleMedium : TYPE.label),
+                  ...(item.size === 'value'
+                    ? TYPE.titleMedium
+                    : item.size === 'unit'
+                      ? TYPE.caption
+                      : TYPE.label),
                   fontVariantNumeric: 'tabular-nums',
                 }}
               >
@@ -551,7 +568,10 @@ function AreaPerimeterExplore({
                   className="ap-explore__option"
                   data-ap-method-option={option.id}
                   aria-pressed={method === option.id}
-                  onClick={() => setMethod(option.id)}
+                  onClick={() => {
+                    setMethod(option.id)
+                    setHasInteracted(true)
+                  }}
                   style={optionButtonStyle(method === option.id)}
                 >
                   {option.label}
@@ -566,7 +586,10 @@ function AreaPerimeterExplore({
               className="ap-explore__option"
               data-ap-reveal-toggle="true"
               aria-pressed={revealed}
-              onClick={() => setRevealed(current => !current)}
+              onClick={() => {
+                setRevealed(current => !current)
+                setHasInteracted(true)
+              }}
               style={optionButtonStyle(revealed)}
             >
               {revealed ? presetConfig.reveal.hideLabel : presetConfig.reveal.showLabel}
