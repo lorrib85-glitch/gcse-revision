@@ -321,6 +321,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Props:** `block`, `subject`, `onComplete`
 **Dependencies:** `SUBJECTS`, `MOTION`
 
+- **Decision**
+  - **Use when:** the learner needs to place several short statements, examples or concepts into clearly labelled categories and benefit from seeing the completed groups together.
+  - **Do not use when:** the learner has not yet been taught the distinction between the categories. Do not use it for one-to-one pairs, ordered stages, developed comparisons or items that could reasonably belong in more than one category.
+  - **Choose instead:** use `SwipeSort` when the activity should feel faster and each item can be judged independently without needing to study the completed groups together. Use `MatchingTask` for one-to-one pairs. Use `OrderedRouteTask` when sequence matters. Use `TheoryCompare` when two approaches require developed explanation rather than learner classification. Use `OppositeQualitiesReveal` when the contrast is being taught through guided visual grouping rather than tested.
+  - **Content shape:** two or more clearly labelled categories with several concise items. Every item must have one defensible destination. Category labels must represent meaningful conceptual groups, not arbitrary containers. Keep item wording short enough to scan and compare once placed.
+  - **Rhythm role:** practice, retrieval.
+
 ---
 
 ### ExaminerExplainsScreen
@@ -361,6 +368,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Props:** `screen`, `subject`, `onComplete`
 **Screen data shape:** `{ pairs: [{ id, term, answer, weakGroup }], backgroundImage }`
 **Dependencies:** `MOTION`, `unifiedWeaknessTracker`
+
+- **Decision**
+  - **Use when:** the learner needs to connect each item with one corresponding partner, such as a term with its definition, a cause with its consequence, a person with their contribution or a quotation with its interpretation.
+  - **Do not use when:** several items belong under the same category heading, the order between stages matters, an item could reasonably match more than one partner or the relationship requires developed explanation rather than a concise pairing.
+  - **Choose instead:** use `ColSortBlock` when several items must be grouped beneath shared category headings. Use `SwipeSort` for a faster item-by-item classification check. Use `OrderedRouteTask` when the learner must place stages in sequence. Use `TheoryCompare` when two people, theories or approaches require a developed parallel comparison. Use `ExplainReveal` when the relationship forms a cause-and-effect reasoning chain that still needs to be taught.
+  - **Content shape:** a set of clear one-to-one pairs. Each item must have one defensible partner and each partner should normally be used once. Both sides should be concise enough to scan while making meaningful connections rather than matching through superficial wording clues. Avoid oversized sets that turn the task into visual searching rather than retrieval.
+  - **Rhythm role:** retrieval, practice.
 
 ---
 
@@ -449,6 +463,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Props:** `block`, `subject`, `onComplete`
 **Dependencies:** `SUBJECTS`, `MOTION`
 
+- **Decision**
+  - **Use when:** the learner needs a quick, energetic classification check where each short item can be judged independently and moved into one of a small number of clear categories.
+  - **Do not use when:** the learner needs to compare all items at once, inspect the completed groups carefully, read substantial text, build a sequence or consider nuanced overlap between categories. Do not use it merely to add movement to the module.
+  - **Choose instead:** use `ColSortBlock` when seeing the final grouped columns supports understanding or comparison. Use `MatchingTask` for one-to-one pairs. Use `OrderedRouteTask` when order matters. Use `OppositeQualitiesReveal` when the categories are still being taught rather than assessed.
+  - **Content shape:** a stream of short, independently understandable items with two or a small number of unambiguous destinations. Each item should be readable at a glance. Avoid long explanations, compound statements and examples that require evidence elsewhere on the screen.
+  - **Rhythm role:** retrieval, practice.
+
 ---
 
 ### TheoryCompare
@@ -485,7 +506,7 @@ Portraits are optional. Supply `image`/`imageAlt` per side (and/or a `heroImage`
 - **Decision**
   - **Use when:** two approaches, people or models need developed parallel comparison.
   - **Do not use when:** isolated words or short examples are simply placed into opposing groups.
-  - **Choose instead:** `OppositeQualitiesReveal` for simple visual contrast; `ColSortBlock` when the learner must categorise the examples themselves.
+  - **Choose instead:** use `OppositeQualitiesReveal` for short examples being visually organised into two simple opposing groups. Use `ColSortBlock` or `SwipeSort` when the learner must classify items themselves. Use `TimelineChain` when the relationship is sequential or causal. Use `FactorWeb` when several plausible factors must be explored and weighed for relative importance.
   - **Content shape:** two labelled sides, one comparison theme revealed at a time as short parallel phrases, with a full-width `explanation` carrying any developed reasoning, closing on one takeaway; a person-to-person comparison must keep both sides historically fair.
   - **Rhythm role:** teaching.
 
