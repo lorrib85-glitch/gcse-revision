@@ -6,6 +6,7 @@
 
 import AngleExplore from '../../components/learning/AngleExplore.jsx'
 import AreaPerimeterExplore from '../../components/learning/AreaPerimeterExplore.jsx'
+import TeachScreenShell from '../../components/core/TeachScreenShell.jsx'
 import {
   REVIEW_ENTRIES as CORE_REVIEW_ENTRIES,
   REVIEW_QUESTIONS,
@@ -14,6 +15,12 @@ import {
 } from './reviewManifestCore.jsx'
 
 export { REVIEW_QUESTIONS, STATUS_LABELS, INTERACTION_LABELS }
+
+function sentence(text) {
+  const trimmed = String(text || '').trim()
+  if (!trimmed) return ''
+  return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`
+}
 
 function extendAngleExplore(entry) {
   const variants = Object.fromEntries((entry.variants ?? []).map(variant => [variant.id, variant]))
@@ -75,6 +82,38 @@ function extendAngleExplore(entry) {
       },
       variants.static,
     ].filter(Boolean),
+  }
+}
+
+function extendAcronymMemorise(entry) {
+  return {
+    ...entry,
+    render: (fx, context) => {
+      const acronym = (fx.items ?? []).map(item => item.letter).join('') || 'This acronym'
+      const memoryTarget = fx.memoryTarget
+        || fx.rememberTarget
+        || fx.topic
+        || 'the five ways plants use glucose'
+      const headingTarget = memoryTarget.replace(/^the\s+/i, '')
+      const introduction = sentence(
+        fx.intro || `${acronym} is an easy way to remember ${memoryTarget}`,
+      )
+      const instruction = fx.instruction || 'Tap each letter to reveal what it stands for.'
+
+      return (
+        <TeachScreenShell
+          heading={fx.heading || `${acronym}: ${headingTarget}`}
+          intro={`${introduction} ${instruction}`}
+          subject={entry.subject || 'Biology'}
+        >
+          {entry.render({
+            ...fx,
+            memoryTarget,
+            showIntro: false,
+          }, context)}
+        </TeachScreenShell>
+      )
+    },
   }
 }
 
@@ -153,8 +192,14 @@ const AREA_PERIMETER_EXPLORE_ENTRY = {
 
 // AreaPerimeterExplore sits beside its AngleExplore sibling rather than at the
 // end of the catalogue, so the two Maths diagram families review together.
-export const REVIEW_ENTRIES = CORE_REVIEW_ENTRIES.flatMap(entry => (
-  entry.id === 'angle-explore'
-    ? [extendAngleExplore(entry), AREA_PERIMETER_EXPLORE_ENTRY]
-    : [entry]
-))
+export const REVIEW_ENTRIES = CORE_REVIEW_ENTRIES.flatMap(entry => {
+  if (entry.id === 'angle-explore') {
+    return [extendAngleExplore(entry), AREA_PERIMETER_EXPLORE_ENTRY]
+  }
+
+  if (entry.id === 'acronym-memorise') {
+    return [extendAcronymMemorise(entry)]
+  }
+
+  return [entry]
+})
