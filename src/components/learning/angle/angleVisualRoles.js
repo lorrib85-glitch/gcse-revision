@@ -18,6 +18,7 @@ function hexToRgba(hex, alpha) {
  * - interaction: the learner-operated ray and its drag handle
  * - sectorA/B/C: distinct angle sectors within one diagram — equal angles
  *   share a sector role so "these are equal" reads as colour before words
+ * - sectorALabel/BLabel/CLabel: contrast-safe text paired with each sector
  * - structure: fixed rays, shape edges and the baseline
  *
  * Keeping these meanings separate lets a preset recolour one role (for
@@ -30,10 +31,13 @@ export function createAngleVisualRoles(subjectTheme = SUBJECTS.Maths) {
     interactionSoft: hexToRgba(subjectTheme.accent, 0.14),
     sectorA: subjectTheme.accent,
     sectorASoft: hexToRgba(subjectTheme.accent, 0.16),
+    sectorALabel: subjectTheme.accent,
     sectorB: subjectTheme.accentSecondary,
     sectorBSoft: hexToRgba(subjectTheme.accentSecondary, 0.14),
+    sectorBLabel: subjectTheme.accentSecondary,
     sectorC: subjectTheme.accentTertiary,
     sectorCSoft: hexToRgba(subjectTheme.accentTertiary, 0.22),
+    sectorCLabel: GENERAL.cinematic.textPrimary,
     structure: GENERAL.cinematic.textFact,
     structureMuted: GENERAL.cinematic.textMuted,
     surface: subjectTheme.backgroundSecondary,
