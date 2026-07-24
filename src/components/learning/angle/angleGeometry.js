@@ -31,7 +31,8 @@ export function pointerAngle(cx, cy, x, y) {
 }
 
 // Round to whole degrees, magnetising to nearby key values (right angles,
-// straight lines) so learners can land exactly on the values that matter.
+// straight lines and full turns) so learners can land exactly on the values
+// that matter.
 export function snapAngle(deg, targets = [90, 180, 270], tolerance = 3) {
   const rounded = Math.round(deg)
   for (const target of targets) {
@@ -41,7 +42,13 @@ export function snapAngle(deg, targets = [90, 180, 270], tolerance = 3) {
 }
 
 export function classifyAngle(deg) {
-  const a = normaliseAngle(deg)
+  const raw = Number(deg)
+  const a = normaliseAngle(raw)
+  const isFullTurn = raw !== 0 && Math.abs(raw % 360) < 0.0001
+
+  if (isFullTurn) {
+    return { id: 'full-turn', label: 'Full turn', summary: 'Exactly 360° — one complete turn.' }
+  }
   if (a === 0) return { id: 'zero', label: 'Zero angle', summary: 'No turn at all.' }
   if (a < 90) return { id: 'acute', label: 'Acute angle', summary: 'Less than 90°.' }
   if (a === 90) return { id: 'right', label: 'Right angle', summary: 'Exactly 90°.' }
@@ -50,9 +57,26 @@ export function classifyAngle(deg) {
   return { id: 'reflex', label: 'Reflex angle', summary: 'Between 180° and 360°.' }
 }
 
+function isFullTurn(startDeg, endDeg) {
+  const rawSweep = endDeg - startDeg
+  return rawSweep !== 0 && Math.abs(rawSweep % 360) < 0.0001
+}
+
+function fullCirclePath(cx, cy, startDeg, radius) {
+  const start = polarPoint(cx, cy, startDeg, radius)
+  const opposite = polarPoint(cx, cy, startDeg + 180, radius)
+  return [
+    `M ${start.x} ${start.y}`,
+    `A ${radius} ${radius} 0 1 0 ${opposite.x} ${opposite.y}`,
+    `A ${radius} ${radius} 0 1 0 ${start.x} ${start.y}`,
+  ].join(' ')
+}
+
 // Open arc from startDeg to endDeg, sweeping anticlockwise on screen.
 // SVG's sweep-flag 0 is the anticlockwise direction in a y-down space.
 export function arcPath(cx, cy, startDeg, endDeg, radius) {
+  if (isFullTurn(startDeg, endDeg)) return fullCirclePath(cx, cy, startDeg, radius)
+
   const sweep = normaliseAngle(endDeg - startDeg)
   const start = polarPoint(cx, cy, startDeg, radius)
   const end = polarPoint(cx, cy, endDeg, radius)
@@ -62,6 +86,8 @@ export function arcPath(cx, cy, startDeg, endDeg, radius) {
 
 // Closed wedge from the vertex, for the soft sector fill behind the arc.
 export function sectorPath(cx, cy, startDeg, endDeg, radius) {
+  if (isFullTurn(startDeg, endDeg)) return `${fullCirclePath(cx, cy, startDeg, radius)} Z`
+
   const sweep = normaliseAngle(endDeg - startDeg)
   const start = polarPoint(cx, cy, startDeg, radius)
   const end = polarPoint(cx, cy, endDeg, radius)
