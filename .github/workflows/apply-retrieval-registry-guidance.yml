@@ -1,14 +1,13 @@
 name: Apply retrieval registry guidance
-# Triggered after workflow registration
 
 on:
-  push:
+  pull_request:
     branches: [main]
-    paths:
-      - .github/workflows/apply-retrieval-registry-guidance.yml
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
   update-registry:
@@ -17,6 +16,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.head_ref }}
 
       - name: Update component registry
         shell: bash
@@ -128,12 +128,15 @@ Do not use true/false interaction as a generic visual pattern. It must create a 
           path.write_text(text, encoding='utf-8')
           PY
 
-      - name: Commit registry update
+      - name: Commit registry update to PR branch
         shell: bash
         run: |
-          rm .github/workflows/apply-retrieval-registry-guidance.yml
+          if git diff --quiet -- docs/components/COMPONENT_REGISTRY.md; then
+            echo "Registry already up to date"
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/components/COMPONENT_REGISTRY.md .github/workflows/apply-retrieval-registry-guidance.yml
+          git add docs/components/COMPONENT_REGISTRY.md
           git commit -m "Add retrieval component decision guidance"
-          git push origin HEAD:main
+          git push origin HEAD:${{ github.head_ref }}
