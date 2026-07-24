@@ -98,7 +98,7 @@ function arrowheadPath(x2, y2, angleDeg) {
 
 /**
  * Configuration-driven GCSE angle diagram — the Maths sibling of
- * CircuitDiagram. Shapes and angles render as SVG; one value (a draggable ray,
+ * CircuitDiagram. Shapes and angles render as inline SVG; one value (a draggable ray,
  * or a triangle's apex) is learner-controlled, and every sector value, label
  * and the angle-fact status line respond live.
  *
@@ -204,9 +204,7 @@ function AngleExplore({
   }
 
   const resolveTone = tone => roles[tone] ?? tone ?? roles.structure
-  // Sector labels take their sector's edge colour so equal angles read as
-  // colour — except sector C, whose tertiary tone is too dark for text.
-  const sectorLabelFill = tone => (tone === 'C' ? roles.textPrimary : roles[`sector${tone}`])
+  const sectorLabelFill = tone => roles[`sector${tone}Label`] ?? roles.textPrimary
 
   const interactionHint = canInteract && !hasInteracted && !reduceMotion
 
@@ -320,7 +318,7 @@ function AngleExplore({
           </g>
         ))}
 
-        <g fontFamily="Sora, sans-serif" aria-hidden="true">
+        <g aria-hidden="true">
           {scene.sectors.map(sector => (
             <text
               key={`${sector.id}-label`}
@@ -329,10 +327,11 @@ function AngleExplore({
               y={sector.label.y}
               textAnchor="middle"
               dominantBaseline="central"
-              fontSize={15}
-              fontWeight={700}
               fill={sectorLabelFill(sector.tone)}
-              style={{ fontVariantNumeric: 'tabular-nums' }}
+              style={{
+                ...TYPE.titleMedium,
+                fontVariantNumeric: 'tabular-nums',
+              }}
             >
               {sector.label.text}
             </text>
@@ -345,9 +344,11 @@ function AngleExplore({
               y={point.y}
               textAnchor="middle"
               dominantBaseline="central"
-              fontSize={13}
-              fontStyle="italic"
               fill={roles.textSecondary}
+              style={{
+                ...TYPE.caption,
+                fontStyle: 'italic',
+              }}
             >
               {point.text}
             </text>
