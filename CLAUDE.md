@@ -110,6 +110,7 @@ Foundation components used by many others.
 
 ### `src/components/learning/`
 Screen-level learning interaction components.
+- `AngleExplore.jsx` — Configuration-driven GCSE angle diagram (Maths sibling of `CircuitDiagram`): SVG shapes and angles with one draggable value (a ray, or a triangle's apex) driving live sector values, classifications and an angle-fact status line. Presets: `angleTypes`, `straightLine`, `aroundPoint`, `verticallyOpposite`, `triangle`; `interactive={false}` gives a static teaching/exam diagram. Geometry/presets/colour roles live in `src/components/learning/angle/`. Page-level questions and marking stay outside the component.
 - `CinematicCarousel.jsx` — Full-screen "deep dive" carousel: one large image at a time with prev/next glass nav and a sliding name + key-facts panel, for browsing a small related set of things in turn (e.g. organelles, planets).
 - `CinematicRevealMoment.jsx` — Full-screen cinematic video/image reveal moment.
 - `CircuitDiagram.jsx` — GCSE Physics simple series circuit (battery, wire loop, bulb, switch) drawn with inline SVG primitives. A single `closed` prop toggles open/closed: closed shows an animated cyan current overlay and an amber bulb glow; open raises the switch arm, hides the current, and dims the bulb. Respects `prefers-reduced-motion`.

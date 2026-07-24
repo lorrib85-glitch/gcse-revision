@@ -12,6 +12,7 @@ import * as FIX from './fixtures.js'
 import { SUBJECT_ACCENTS } from '../../constants/subjects.js'
 import { getTypeInfo } from '../../data/componentFunctions.js'
 
+import AngleExplore from '../../components/learning/AngleExplore.jsx'
 import CalculationBreakdown from '../../components/learning/CalculationBreakdown.jsx'
 import CinematicCarousel from '../../components/learning/CinematicCarousel.jsx'
 import GraphView from '../../components/learning/GraphView.jsx'
@@ -692,6 +693,57 @@ const RAW_ENTRIES = [
     alternative: 'GuidedExamResponse (written scaffold); GraphView (data, not procedure).',
     render: (fx, { onDone }) => <CalculationBreakdown block={fx} onContinue={onDone} />,
     fixture: FIX.calculationBreakdown,
+  },
+  {
+    // Unrouted standalone component (no content type to register yet) —
+    // manual classification: the learner drags a ray (or a triangle's apex)
+    // and watches values, classifications and angle facts respond, with no
+    // scoring.
+    id: 'angle-explore', name: 'AngleExplore', interaction: 'reveal',
+    status: 'comparison', subject: 'Maths', renderMode: 'inline',
+    function: 'Configuration-driven GCSE angle diagram — the Maths sibling of CircuitDiagram. Shapes and angles render as SVG; one draggable value drives live sector values, classifications and an angle-fact status line. Page-level questions and marking remain outside the component.',
+    usage: 'New component — pending review; not yet routed in ModulePlayer. Review variants cover angle types, straight-line, around-a-point, vertically-opposite, triangle and static jobs.',
+    alternative: 'GraphView (data charts, not angle facts); static figure image for non-interactive diagrams.',
+    render: () => <AngleExplore />,
+    fixture: null,
+    variants: [
+      {
+        id: 'angle-types',
+        label: 'Angle types',
+        description: 'Drag the ray to change the angle: the value and its classification (acute, right, obtuse, straight, reflex) respond live.',
+        render: () => <AngleExplore />,
+      },
+      {
+        id: 'straight-line',
+        label: 'Straight line',
+        description: 'Two angles share a straight line; dragging the dividing ray keeps their live sum at 180°.',
+        render: () => <AngleExplore preset="straightLine" />,
+      },
+      {
+        id: 'around-point',
+        label: 'Around a point',
+        description: 'Three angles meet at a point; dragging one ray keeps the running total at 360°.',
+        render: () => <AngleExplore preset="aroundPoint" />,
+      },
+      {
+        id: 'vertically-opposite',
+        label: 'Vertically opposite',
+        description: 'Two crossing lines make two equal pairs — equal angles share a colour, and rotating one line preserves the equality.',
+        render: () => <AngleExplore preset="verticallyOpposite" />,
+      },
+      {
+        id: 'triangle',
+        label: 'Triangle',
+        description: 'Drag the apex of the triangle: all three interior angles update while their sum stays at 180°.',
+        render: () => <AngleExplore preset="triangle" />,
+      },
+      {
+        id: 'static',
+        label: 'Static diagram',
+        description: 'The same renderer with interaction disabled at a fixed value, for teaching, worked examples and exam questions.',
+        render: () => <AngleExplore value={120} interactive={false} />,
+      },
+    ],
   },
 ]
 
