@@ -1,0 +1,1 @@
+Temporary trigger for the retrieval component registry update.
