@@ -1,5 +1,7 @@
 # QuoteAnalyser contract
 
+**Composition classification:** `cinematic` — owns full-screen composition. Its own scene-setting, interpretation, feedback and word-analysis stages each build their own full-viewport layout (background atmosphere, drift/parallax imagery, open editorial rhythm) rather than rendering inside `TeachScreenShell`; the guided close-reading journey needs continuous cinematic backgrounds and a torn-free editorial layout across every stage that `TeachScreenShell`'s heading + body rhythm cannot support.
+
 ## Purpose
 
 `QuoteAnalyser` is a guided English close-reading journey. It helps a learner move from understanding the moment around a quotation to forming an interpretation, analysing precise word choices and applying the quotation in exam writing.

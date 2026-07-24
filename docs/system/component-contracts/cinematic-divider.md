@@ -1,5 +1,7 @@
 # CinematicDivider contract
 
+**Composition classification:** `content` — a decorative separator rendered inside another screen's layout. It owns no heading, viewport layout, screen-level spacing or progression chrome.
+
 ## Purpose
 
 `CinematicDivider` is a small decorative line–diamond–line separator used to create a calm editorial pause between cinematic content regions.

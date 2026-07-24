@@ -1,5 +1,7 @@
 # WhatExaminersLookFor
 
+**Composition classification:** `cinematic` — owns full-screen composition via `CinematicShell`. The animated word-by-word introduction, tap-to-advance hint and priority reveal sequence need edge-to-edge background imagery and protective overlays that `TeachScreenShell`'s content column cannot provide. `CinematicShell` is used because the background and protective overlays must reach every viewport edge rather than being confined to a content column (see the same justification comment at the `CinematicShell` import site in `WhatExaminersLookFor.jsx`).
+
 ## Purpose
 
 `WhatExaminersLookFor` is a short pre-question briefing. It tells the learner what success looks like before they begin independent exam practice.

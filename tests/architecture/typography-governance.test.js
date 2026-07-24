@@ -136,7 +136,6 @@ const SCREEN_TITLE_OWNED_COMPONENTS = [
   'src/components/learning/CentreImageReveal.jsx',
   'src/components/learning/CinematicCarousel.jsx',
   'src/components/learning/ColSortBlockCore.jsx',
-  'src/components/learning/ExaminerExplainsScreen.jsx',
   'src/components/learning/ExplainReveal.jsx',
   'src/components/learning/GuidedAnswerCoach.jsx',
   'src/components/learning/OrderedRouteTask.jsx',
@@ -145,6 +144,7 @@ const SCREEN_TITLE_OWNED_COMPONENTS = [
   'src/components/learning/TimelineCanvas.jsx',
   'src/components/learning/TimelineChain.jsx',
   'src/components/learning/WeakSpotRecovery.jsx',
+  'src/components/learning/WhatExaminersLookFor.jsx',
 ]
 
 // Documented exceptions to the hardcoded-heading detector below. Each entry
