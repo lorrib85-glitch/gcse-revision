@@ -80,6 +80,22 @@ function ensureStyles() {
   document.head.appendChild(el)
 }
 
+// The widest preset uses a 380-unit viewBox. A 27-unit radius therefore stays
+// above 44 CSS pixels even when the component is rendered at 320px wide.
+const HANDLE_HIT_RADIUS = 27
+
+const SCREEN_READER_ONLY_STYLE = Object.freeze({
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: 'hidden',
+  clip: 'rect(0, 0, 0, 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+})
+
 // The rectangle preset predates scene-level presentation metadata. Keep its
 // mathematics untouched while presenting it on a tighter, baseline-anchored
 // stage: changing height grows the shape upward rather than leaving a large
@@ -167,9 +183,11 @@ function AreaPerimeterExplore({
   const descriptionId = useId()
   const statusId = useId()
   const svgRef = useRef(null)
+  const pointerAnnouncementRef = useRef('')
   const [draggingControl, setDraggingControl] = useState(null)
   const [hasInteracted, setHasInteracted] = useState(false)
   const [lastChange, setLastChange] = useState(null)
+  const [announcement, setAnnouncement] = useState('')
   const [method, setMethod] = useState(presetConfig.methods?.[0]?.id ?? null)
   const [revealed, setRevealed] = useState(false)
 
@@ -187,6 +205,8 @@ function AreaPerimeterExplore({
     setRevealed(false)
     setHasInteracted(false)
     setLastChange(null)
+    setAnnouncement('')
+    pointerAnnouncementRef.current = ''
   }, [presetConfig, defaultValue])
 
   const currentValues = clampPresetValues(
@@ -219,7 +239,13 @@ function AreaPerimeterExplore({
     Object.fromEntries(presetConfig.controls.map(control => [control.id, control]))
   ), [presetConfig])
 
-  const setControlValue = (controlId, next) => {
+  const nextStatusHeading = nextValues => presetConfig.derive(nextValues, {
+    focus: effectiveFocus,
+    method,
+    revealed,
+  }).status.heading
+
+  const setControlValue = (controlId, next, { announce = false } = {}) => {
     const nextValues = clampPresetValues(presetConfig, {
       ...currentValues,
       [controlId]: next,
@@ -234,6 +260,15 @@ function AreaPerimeterExplore({
       nextValue,
       delta: nextValue - previousValue,
     })
+
+    const heading = nextStatusHeading(nextValues)
+    if (announce) {
+      setAnnouncement(heading)
+      pointerAnnouncementRef.current = ''
+    } else {
+      pointerAnnouncementRef.current = heading
+    }
+
     if (!isControlled) setInternalValues(nextValues)
     onChange?.(nextValues)
   }
@@ -254,6 +289,7 @@ function AreaPerimeterExplore({
   const handlePointerDown = controlId => (event) => {
     if (!canInteract) return
     event.currentTarget.setPointerCapture(event.pointerId)
+    pointerAnnouncementRef.current = ''
     setDraggingControl(controlId)
     setHasInteracted(true)
   }
@@ -268,7 +304,13 @@ function AreaPerimeterExplore({
     )
   }
 
-  const handlePointerEnd = () => setDraggingControl(null)
+  const handlePointerEnd = () => {
+    setDraggingControl(null)
+    if (pointerAnnouncementRef.current) {
+      setAnnouncement(pointerAnnouncementRef.current)
+      pointerAnnouncementRef.current = ''
+    }
+  }
 
   const handleKeyDown = controlId => (event) => {
     if (!canInteract) return
@@ -284,10 +326,19 @@ function AreaPerimeterExplore({
 
     event.preventDefault()
     setHasInteracted(true)
-    setControlValue(controlId, next)
+    setControlValue(controlId, next, { announce: true })
   }
 
-  const resolveRole = role => (role ? roles[role] ?? role : undefined)
+  const resolveRole = (role) => {
+    if (!role) return undefined
+    if (Object.prototype.hasOwnProperty.call(roles, role)) return roles[role]
+
+    if (import.meta.env.DEV) {
+      console.warn(`AreaPerimeterExplore received an unknown visual role: ${role}`)
+    }
+    return undefined
+  }
+
   const showMethods = canInteract
     && (presetConfig.methods?.length ?? 0) > 0
     && (presetConfig.methodsFocus == null || presetConfig.methodsFocus === effectiveFocus)
@@ -328,10 +379,20 @@ function AreaPerimeterExplore({
         maxWidth: presetConfig.maxWidth ?? 420,
         minWidth: 0,
         margin: '0 auto',
+        position: 'relative',
         '--ap-explore-glow': roles.focusGlow,
         '--ap-explore-focus': roles.interaction,
       }}
     >
+      <div
+        data-ap-status-announcement="true"
+        aria-live="polite"
+        aria-atomic="true"
+        style={SCREEN_READER_ONLY_STYLE}
+      >
+        {announcement}
+      </div>
+
       {showInteractionInstruction && (
         <div
           data-ap-interaction-instruction="true"
@@ -437,7 +498,7 @@ function AreaPerimeterExplore({
                   data-ap-hit-target="true"
                   cx={handle.x}
                   cy={handle.y}
-                  r={22}
+                  r={HANDLE_HIT_RADIUS}
                   fill="transparent"
                 />
                 <circle
@@ -517,8 +578,6 @@ function AreaPerimeterExplore({
       {showStatus && (
         <div
           id={statusId}
-          aria-live={canInteract ? 'polite' : undefined}
-          aria-atomic="true"
           style={{
             minHeight: 118,
             padding: `${SPACING.micro}px ${SPACING.compact}px 0`,
@@ -555,9 +614,10 @@ function AreaPerimeterExplore({
           <div
             data-ap-status-explanation="true"
             style={{
-              ...TYPE.caption,
-              color: roles.textMuted,
-              marginTop: 4,
+              ...TYPE.bodySmall,
+              color: roles.textSecondary,
+              maxWidth: '34ch',
+              margin: `${SPACING.micro}px auto 0`,
             }}
           >
             {scene.status.explanation}
