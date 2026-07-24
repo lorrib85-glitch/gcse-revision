@@ -37,6 +37,16 @@ export const AngleTypes = {
     expect(canvasElement.querySelector('[data-angle-right-marker]')).not.toBeNull()
 
     await userEvent.keyboard('{End}')
+    await expect(handle).toHaveAttribute('aria-valuenow', '360')
+    await expect(canvas.getByText('Full turn — 360°')).toBeVisible()
+    expect(getSectorLabel(canvasElement, 'sector-main')?.textContent).toBe('360°')
+    const fullTurnFill = canvasElement.querySelector(
+      '[data-angle-sector="sector-main"] .angle-explore__sector-fill',
+    )
+    expect(fullTurnFill).not.toBeNull()
+    expect(fullTurnFill?.getAttribute('d').match(/\bA\b/g) ?? []).toHaveLength(2)
+
+    await userEvent.keyboard('{ArrowLeft}{ArrowLeft}')
     await expect(handle).toHaveAttribute('aria-valuenow', '350')
     await expect(canvas.getByText('Reflex angle — 350°')).toBeVisible()
 
@@ -156,7 +166,7 @@ export const MobileWidth = {
   ],
   play: async ({ canvasElement }) => {
     expectMobileContainment(canvasElement)
-    const svg = canvasElement.querySelector('svg[data-angle-canvas="360x270"]')
+    const svg = canvasElement.querySelector('svg[data-angle-canvas="360x220"]')
     await expect(svg).toHaveAttribute('preserveAspectRatio', 'xMidYMid meet')
 
     const hitTarget = canvasElement.querySelector('[data-angle-hit-target="true"]')
