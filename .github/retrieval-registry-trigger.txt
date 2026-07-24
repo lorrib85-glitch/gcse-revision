@@ -1,1 +1,2 @@
 Temporary trigger for the retrieval component registry update.
+Workflow indexed; synchronize the pull request.
