@@ -26,17 +26,18 @@ function hexToRgba(hex, alpha) {
  * - gridLine: the unit-square grid that makes square units countable
  * - interaction: the learner-operated handles
  *
- * Keeping boundary and interior as separate roles lets perimeter focus and
- * area focus brighten only their own subject matter — never both at once.
+ * Structural lines resolve through GENERAL.diagram rather than borrowing text
+ * colours. Subject identity remains limited to active boundaries, fills and
+ * interaction states.
  */
 export function createAreaPerimeterVisualRoles(subjectTheme = SUBJECTS.Maths) {
   return Object.freeze({
     boundary: subjectTheme.accent,
-    boundaryMuted: GENERAL.cinematic.textFact,
+    boundaryMuted: GENERAL.diagram.edgeSecondary,
     areaFill: hexToRgba(subjectTheme.accent, 0.14),
     areaFillSecondary: hexToRgba(subjectTheme.accentSecondary, 0.16),
-    constructionLine: GENERAL.cinematic.textMuted,
-    dimensionLine: GENERAL.cinematic.textFact,
+    constructionLine: GENERAL.diagram.construction,
+    dimensionLine: GENERAL.diagram.dimension,
     dimensionLabel: GENERAL.cinematic.textPrimary,
     deducedLabel: subjectTheme.accentSecondary,
     gridLine: hexToRgba(subjectTheme.accent, 0.1),
