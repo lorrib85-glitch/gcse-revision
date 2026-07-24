@@ -311,6 +311,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Props:** `subject`, `eyebrow`, `heading`, `intro`, `media` (`{ kind, aspect, caption }`)
 **Dependencies:** `TeachScreenShell`, `MediaPlaceholder`
 
+- **Decision**
+  - **Use when:** the learner needs to understand a complete system, structure, relationship or summary through one coherent visual. Choose it when seeing the whole picture together is more useful than exploring separate items or reading several text screens. It may also be used for a short progressive visual reveal when the individual revealed parts combine into one meaningful whole.
+  - **Do not use when:** the learner needs to inspect particular locations within the image, move through a sequence of separate scenes, compare two developed sides or interpret numerical data. Do not use it as a poster containing large amounts of tiny text or as a decorative image beneath a heading.
+  - **Choose instead:** use `InteractiveHotspotImage` when information belongs to specific locations within one image. Use `VisualLearning` when understanding should build through a sequence of full-screen visual scenes. Use `CinematicCarousel` when several independent items require focused exploration. Use `GraphView` when the visual encodes numerical values, trends, correlation or proportion. Use `TimelineChain` when order or causal progression is the central learning.
+  - **Content shape:** one clear teaching heading, one short framing line and one primary visual asset: a supplied diagram or infographic, a progressive image reveal whose sections combine into one whole, or a short explanatory clip. The asset must perform one clear learning job and remain legible on a mobile screen. Labels, symbols and relationships must be readable without zooming. Avoid dense poster layouts, long explanatory paragraphs inside the image, multiple unrelated diagrams and decorative imagery that adds no understanding.
+  - **Rhythm role:** teaching.
+
 ---
 
 ### InteractiveHotspotImage
@@ -319,6 +326,32 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Purpose:** Full-screen image with tappable hotspots. Two-phase: intro reveal → explore hotspots. Two variants: `detail` (default — one card of labelled rows per hotspot) and `reveal` (pages through multiple pieces of information per hotspot, `reveals[]`). Optional `synthesis` shows a "collection complete" summary once all hotspots are explored.
 **Props:** `subject`, `title`, `introText`, `image`, `imageAlt`, `hotspots`, `ctaLabel`, `variant`, `synthesis`, `onBack`, `onEnterExplore`, `onContinue`
 **Dependencies:** `SUBJECTS`, `MOTION`
+
+- **Decision**
+  - **Use when:** the learner needs to explore several meaningful locations within one shared image, diagram, source or object. Choose it when understanding depends on connecting each piece of information to where it appears physically, such as parts of a cell, features of a building, evidence within a historical source or structures within an organ.
+  - **Do not use when:** the information is not genuinely linked to locations in the image, the learner would understand it better by seeing all labels together or the image is merely decorative. Do not use it for a collection of separate objects, a chronological sequence, numerical data or a scored image-identification question.
+  - **Choose instead:** use `Infographic` when the learner needs to see the complete labelled system or summary together. Use `VisualLearning` when several full-screen visual scenes should build a guided explanation in a fixed order. Use `CinematicCarousel` when several separate items each deserve individual visual focus. Use `GraphView` when the visual information is numerical. Pair the image with an assessed question component when the learner must give a right or wrong answer rather than simply explore.
+  - **Content shape:** one clear, high-quality image with usually three to six meaningful hotspots. Every hotspot must be attached to a defensible physical location and reveal information that is specifically relevant to that location. Each hotspot should have a concise title and either a small set of clearly labelled detail rows or a short progressive series of reveals. Hotspots must not overlap so closely that they are difficult to select on mobile. Avoid arbitrary dot placement, long paragraphs, hidden trivia and information that could be moved to another location without changing its meaning. Use the optional synthesis only when exploring all hotspots leads to a useful overall conclusion.
+  - **Rhythm role:** teaching, exploration.
+
+---
+
+### VisualLearning
+
+**File:** `src/components/learning/VisualLearning.jsx`
+**What it is:** A full-screen, tap-through sequence of image-led scenes. Each scene pairs one purposeful background image with a concise headline and short explanation; the sequence can end with a larger synthesis reveal. The learner advances through the scenes in a fixed order, with governed local progress and no scored answer.
+**Props:** `block`, `subject`, `onComplete`
+**Interaction class:** `reveal`
+**Function tags:** `hook-tension`, `teach-mechanism`
+**Screen type:** `visualLearning`
+**Dependencies:** `SequenceProgress`, `SUBJECTS`, `CinematicShell`, `TYPE`, `GENERAL`, `usePrefersReducedMotion`
+
+- **Decision**
+  - **Use when:** the learner should move through a short, guided sequence of full-screen visual scenes that gradually builds one explanation, narrative or change in understanding. Choose it when each scene adds a new layer and the final scene can synthesise what the learner has just seen. The order should support the intended narrative, but the component is not intended to teach the formal order of named stages.
+  - **Do not use when:** all the information belongs to different locations within one image, the items form a non-sequential collection or the order of the stages is itself the knowledge being taught. Do not use it for one isolated dramatic image, text-heavy teaching, free exploration or assessment.
+  - **Choose instead:** use `InteractiveHotspotImage` when the learner should inspect different locations within one shared image. Use `CinematicCarousel` when several related but independent items can be explored individually and in either direction. Use `TimelineChain` when the identity, order or causal connection of distinct stages is the central learning. Use `CinematicRevealMoment` when only one powerful visual moment is required. Use `ConceptReveal` when one idea needs introducing without a multi-scene visual narrative.
+  - **Content shape:** usually three to six full-screen scenes. Each regular scene needs one purposeful background image, one concise headline and one short explanatory statement. Each scene must advance the same central explanation rather than repeat it in different words. The final reveal should synthesise the scenes into one clear conclusion or changed understanding. Avoid long paragraphs, fact lists, decorative stock images and scenes that could be removed without weakening the narrative. Do not disguise an ordinary slideshow as visual learning: the images must carry meaningful explanatory or emotional work.
+  - **Rhythm role:** opening, teaching.
 
 ---
 
@@ -425,6 +458,13 @@ Do not stack these components simply because they are cinematic. After the openi
 **Block shape:** `{ type: 'graphView', graphType: 'bar'|'line'|'scatter'|'pie', title?, caption?, xLabel?, yLabel?, data?: [{label, value}], points?: [{x, y}], lineOfBestFit?: {from: {x,y}, to: {x,y}}, xMin?, xMax?, yMin?, yMax? }`
 **Screen type:** `graphView` (content block, rendered inside `Screen` in `ModulePlayer.jsx`)
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `TYPE`, `CardContainer`
+
+- **Decision**
+  - **Use when:** the learner needs to see a numerical relationship represented visually, such as quantities across categories, change over time, correlation between variables or proportion of a whole. Choose it when a graph communicates the pattern more clearly than prose or a list of numbers. `GraphView` displays the data; it does not assess the learner by itself.
+  - **Do not use when:** the information is qualitative, the values do not form a meaningful visual relationship or the graph is being added merely to make the screen appear academic. Do not use it for a conceptual system, a process diagram, a before-and-after image comparison or an activity that needs its own answer and scoring logic.
+  - **Choose instead:** use `Infographic` for a conceptual model, labelled system or non-numerical summary. Use `TimelineChain` when stages or causal order matter more than numerical change. Use `BeforeAfterImageSlider` when the learner needs to inspect visual change between two states. Place `GraphView` alongside an appropriate quiz or exam-question component when the learner must interpret the data and submit a scored answer.
+  - **Content shape:** one appropriate graph type: bar chart for comparing categories, line graph for continuous change or trends, scatter graph for relationships or correlation, or pie chart for proportions of a whole. Include a concise title and all labels, units, scales and legends needed to interpret the graph correctly. Keep the number of bars, points and labels manageable on mobile. Axes and intervals must be accurate and must not create a misleading impression. A line of best fit should appear only when it supports the intended scatter-graph learning. Pie-chart values must represent a coherent whole. Any interpretation prompt, calculation or scored response belongs to the surrounding learning or assessment component, not to `GraphView` itself.
+  - **Rhythm role:** teaching.
 
 ---
 
