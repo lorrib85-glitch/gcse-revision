@@ -10,6 +10,7 @@
 
 import * as FIX from './fixtures.js'
 import { SUBJECT_ACCENTS } from '../../constants/subjects.js'
+import { getTypeInfo } from '../../data/componentFunctions.js'
 
 import CalculationBreakdown from '../../components/learning/CalculationBreakdown.jsx'
 import CinematicCarousel from '../../components/learning/CinematicCarousel.jsx'
@@ -38,13 +39,10 @@ import ChapterCompleteScreen from '../../components/layout/ChapterCompleteScreen
 import ChapterHookScreen from '../../components/layout/ChapterHookScreen.jsx'
 import FillInTheBlanksBlock from '../../components/learning/FillInTheBlanksBlock.jsx'
 import SwipeSort from '../../components/learning/SwipeSort.jsx'
-import MedievalDiagnosisScene from '../../components/learning/MedievalDiagnosisScene.jsx'
 import QuickRecallScreen from '../../components/learning/QuickRecallScreen.jsx'
 import WhatExaminersLookFor from '../../components/learning/WhatExaminersLookFor.jsx'
-import UnifiedQuestionScreen from '../../components/learning/UnifiedQuestionScreen.jsx'
 import TieredQuizScreen from '../../components/learning/TieredQuizScreen.jsx'
 import WeakSpotRecovery from '../../components/learning/WeakSpotRecovery.jsx'
-import RecoveryQuizPlayer from '../../components/learning/RecoveryQuizPlayer.jsx'
 import ContentShell from '../../components/layout/ContentShell.jsx'
 import TeachScreenShell from '../../components/core/TeachScreenShell.jsx'
 import ButtonsAndProgressPage from './ButtonsAndProgressPage.jsx'
@@ -59,6 +57,11 @@ import ExplainReveal from '../../components/learning/ExplainReveal.jsx'
 import ColSortBlock from '../../components/learning/ColSortBlock.jsx'
 import QuoteAnalyser from '../../components/learning/QuoteAnalyser.jsx'
 import KeyFigureReveal from '../../components/learning/KeyFigureReveal.jsx'
+// MedievalDiagnosisScene, UnifiedQuestionScreen and RecoveryQuizPlayer are not
+// imported here — they are internal children of CentreImageReveal,
+// QuickRecallScreen/TieredQuizScreen, and WeakSpotRecovery respectively, and
+// are not independently selectable module-building choices (see reviewed-out
+// entries note below).
 import FaceTheExaminerContainer from '../../components/learning/faceTheExaminer/FaceTheExaminerContainer.jsx'
 import GuidedExamResponse from '../../components/learning/GuidedExamResponse.jsx'
 
@@ -82,27 +85,35 @@ export const STATUS_LABELS = {
   'reference':     'Reference',
 }
 
-// Interaction class — sourced from the canonical taxonomy in
-// src/data/componentFunctions.js wherever an entry's routed content `type`
-// is registered there. Entries whose type has no registered mapping (a
-// gap in that canonical file, not a guess on our part) are 'uncategorised'
-// rather than assigned a class — see reviewManifest comments per entry.
+// Interaction class — two sources, never copied by hand:
+//  • Entries that name a registered `contentType` get their interaction
+//    derived below via getTypeInfo() from src/data/componentFunctions.js —
+//    the single canonical source, so the lab can never drift out of sync
+//    with it.
+//  • Entries with no `contentType` (structural module screens outside the
+//    content-type taxonomy, unrouted standalone components, and general
+//    UI/design-system references) carry a manual `interaction` instead.
+// 'uncategorised' is reserved for genuine unresolved cases only — not a
+// holding area for things that belong in General components or should be
+// removed from the lab.
 export const INTERACTION_LABELS = {
   passive:       'Passive — reads or views',
-  reveal:        'Reveal — explores, isn’t marked',
-  assessed:      'Assessed — can be right or wrong',
-  uncategorised: 'Uncategorised — no interaction class registered',
+  reveal:        'Reveal — actively explores but isn’t marked',
+  assessed:      'Assessed — gives an answer that can be right or wrong',
+  uncategorised: 'Uncategorised — genuinely unresolved',
+  general:       'General components',
 }
 
 // Full-bleed components render fixed:inset-0 and manage their own scroll; the
 // shell must NOT wrap them in its scrolling column (renderMode: 'fullbleed').
 // Inline blocks render within a normal content flow (renderMode: 'inline').
 
-export const REVIEW_ENTRIES = [
+// Authored entries. Ones with a `contentType` omit `interaction` here — it's
+// derived canonically below, never copied by hand.
+const RAW_ENTRIES = [
   // ── Unused / orphaned ─────────────────────────────────────────────────────
   {
-    // type: cinematicCarousel — not registered in componentFunctions.js
-    id: 'cinematic-carousel', name: 'CinematicCarousel', interaction: 'uncategorised',
+    id: 'cinematic-carousel', name: 'CinematicCarousel', contentType: 'cinematicCarousel',
     status: 'routed-unused', subject: 'Biology', renderMode: 'fullbleed',
     function: 'Full-screen deep-dive carousel: one large image at a time with a sliding name + key-facts panel, for browsing a small related set.',
     usage: 'Routed in ModulePlayer (type: cinematicCarousel) but no content file uses it.',
@@ -111,8 +122,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.cinematicCarousel,
   },
   {
-    // type: graphView — not registered in componentFunctions.js
-    id: 'graph-view-scatter', name: 'GraphView (scatter)', interaction: 'uncategorised',
+    id: 'graph-view-scatter', name: 'GraphView (scatter)', contentType: 'graphView',
     status: 'routed-unused', subject: 'Maths', renderMode: 'inline',
     function: 'Embeddable SVG chart (bar/line/scatter/pie) for interpreting GCSE data inline within a content screen.',
     usage: 'Routed in ModulePlayer (type: graphView) but no content file uses it.',
@@ -121,8 +131,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.graphViewScatter,
   },
   {
-    // type: graphView — not registered in componentFunctions.js
-    id: 'graph-view-line', name: 'GraphView (line)', interaction: 'uncategorised',
+    id: 'graph-view-line', name: 'GraphView (line)', contentType: 'graphView',
     status: 'routed-unused', subject: 'Biology', renderMode: 'inline',
     function: 'Same component, line-graph mode: enzyme activity vs temperature — tests label readability and interpretation value.',
     usage: 'Routed in ModulePlayer (type: graphView) but no content file uses it.',
@@ -131,7 +140,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.graphViewLine,
   },
   {
-    id: 'timeline-chain', name: 'TimelineChain', interaction: 'reveal',
+    id: 'timeline-chain', name: 'TimelineChain', contentType: 'timelineChain',
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Horizontal scroll-snap chain of flip cards revealing a chapter’s causal sequence step by step.',
     usage: 'Now used in Episode 2 (both plague-progression + aftermath screens, migrated from progressionTimeline).',
@@ -140,8 +149,10 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.timelineChain,
   },
   {
-    // not routed / no content type — not registered in componentFunctions.js
-    id: 'circuit-diagram', name: 'CircuitDiagram', interaction: 'uncategorised',
+    // Unrouted standalone component (no content type to register yet) —
+    // manual classification: default render is the interactive toggle
+    // switch, tapped to explore the open/closed circuit with no scoring.
+    id: 'circuit-diagram', name: 'CircuitDiagram', interaction: 'reveal',
     status: 'unused', subject: 'Physics', renderMode: 'inline',
     function: 'Configuration-driven GCSE circuit diagram. It renders exam-recognisable symbols, responsive layouts and optional physical switch interaction; page-level questions and predictions remain outside the component.',
     usage: 'Not routed in ModulePlayer and not referenced by content yet. Review variants now cover series, parallel, measurement, read-only and shared symbol-reference jobs.',
@@ -190,7 +201,7 @@ export const REVIEW_ENTRIES = [
 
   // ── One-off ───────────────────────────────────────────────────────────────
   {
-    id: 'opposite-qualities-reveal', name: 'OppositeQualitiesReveal', interaction: 'reveal',
+    id: 'opposite-qualities-reveal', name: 'OppositeQualitiesReveal', contentType: 'oppositeQualitiesReveal',
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Cinematic guided reveal that moves each example from a neutral centre into one of two opposing concept groups.',
     usage: 'Used twice in Episode 1 (hot/cold and wet/dry), type: oppositeQualitiesReveal.',
@@ -209,7 +220,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.oppositeQualitiesReveal,
   },
   {
-    id: 'timeline-canvas', name: 'TimelineCanvas', interaction: 'reveal',
+    id: 'timeline-canvas', name: 'TimelineCanvas', contentType: 'timelineCanvas',
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Swipe-to-pan canvas across a wide chain of cards with connectors that draw in as you pan; tap + to reveal why each step mattered.',
     usage: 'Used in Episode 2 (Black Death), type: timelineCanvas.',
@@ -218,7 +229,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.timelineCanvas,
   },
   {
-    id: 'before-after-slider', name: 'BeforeAfterImageSlider', interaction: 'reveal',
+    id: 'before-after-slider', name: 'BeforeAfterImageSlider', contentType: 'beforeAfterSlider',
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Full-screen drag slider comparing two states of the same image.',
     usage: 'Used in Episode 13 (Can we beat cancer?), type: beforeAfterSlider.',
@@ -233,7 +244,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.beforeAfterImageSlider,
   },
   {
-    id: 'ordered-route-task', name: 'OrderedRouteTask', interaction: 'assessed',
+    id: 'ordered-route-task', name: 'OrderedRouteTask', contentType: 'orderedRouteTask',
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Ordered chain: one job card at a time — tap the stage it belongs to. Accent route line + numbered nodes.',
     usage: 'Used in Episode 14 (Western Front), type: orderedRouteTask (renamed from evacuationChainRoute).',
@@ -242,7 +253,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.evacuationChainRoute,
   },
   {
-    id: 'spot-the-error', name: 'SpotTheError', interaction: 'assessed',
+    id: 'spot-the-error', name: 'SpotTheError', contentType: 'spotTheError',
     status: 'routed-unused', subject: 'Biology', renderMode: 'fullbleed',
     function: 'Diagnostic precision check: select the error in a statement, explain why it is wrong, then rewrite it correctly.',
     usage: 'Routed in ModulePlayer (type: spotTheError) but no content file uses it. (Brief lists it under one-off; evidence shows it is unused.)',
@@ -251,7 +262,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.spotTheError,
   },
   {
-    id: 'centre-image-reveal', name: 'CentreImageReveal', interaction: 'assessed',
+    id: 'centre-image-reveal', name: 'CentreImageReveal', contentType: 'centreImageReveal',
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Cause → prescription → reveal flow with a parchment input surface and fuzzy-match validation.',
     usage: 'Used in Episode 1 (medieval beliefs), type: centreImageReveal (renamed from medicalTheoryPrescription).',
@@ -260,7 +271,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.medicalTheoryPrescription,
   },
   {
-    id: 'acronym-memorise', name: 'AcronymMemorise', interaction: 'reveal',
+    id: 'acronym-memorise', name: 'AcronymMemorise', contentType: 'acronymMemorise',
     status: 'one-off', subject: 'Biology', renderMode: 'inline',
     function: 'Tap-to-reveal mnemonic block: each acronym letter expands to show what it stands for and why it matters (e.g. SCARF — five uses of glucose).',
     usage: 'Used in Plant Cells & Photosynthesis (sci_bio_w1), block type: acronymMemorise. Extracted from an inline definition in ModulePlayer into a standalone component.',
@@ -269,7 +280,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.acronymMemorise,
   },
   {
-    id: 'builder-block', name: 'BuilderBlock — reaction', interaction: 'assessed',
+    id: 'builder-block', name: 'BuilderBlock — reaction', contentType: 'builder',
     status: 'comparison', subject: 'Biology', renderMode: 'inline',
     function: 'Reusable select-and-place builder with a reaction layout for grouped inputs and outputs.',
     usage: 'Used in Plant Cells & Photosynthesis (sci_bio_w1), block type: builder. The same engine now supports calculations and quotations through data-driven layouts.',
@@ -278,7 +289,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.builderBlock,
   },
   {
-    id: 'builder-block-maths', name: 'BuilderBlock — Maths', interaction: 'assessed',
+    id: 'builder-block-maths', name: 'BuilderBlock — Maths', contentType: 'builder',
     status: 'comparison', subject: 'Maths', renderMode: 'inline',
     function: 'Missing-value calculation builder with fixed mathematical notation, compact number pieces and tabular numerals.',
     usage: 'Reusable BuilderBlock layout: equation. Demonstrates the same repair-first interaction without forcing Maths into the science reaction structure.',
@@ -287,7 +298,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.builderMaths,
   },
   {
-    id: 'builder-block-quote', name: 'BuilderBlock — quote', interaction: 'assessed',
+    id: 'builder-block-quote', name: 'BuilderBlock — quote', contentType: 'builder',
     status: 'comparison', subject: 'English', renderMode: 'inline',
     function: 'Quotation reconstruction layout with preserved line breaks, inline gaps and literary serif treatment.',
     usage: 'Reusable BuilderBlock layout: quote. Designed for short, high-value quotation recall rather than long paragraph completion.',
@@ -298,7 +309,7 @@ export const REVIEW_ENTRIES = [
 
   // ── Active comparison components (not deletion candidates) ────────────────
   {
-    id: 'matching-task', name: 'MatchingTask', interaction: 'assessed',
+    id: 'matching-task', name: 'MatchingTask', contentType: 'matchingTask',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Term-to-description card-pair matching with SVG connectors — for unordered pairings.',
     usage: 'Widely used across History episodes (1–5), type: matchingTask.',
@@ -307,7 +318,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.matchingTask,
   },
   {
-    id: 'visual-learning', name: 'VisualLearning', interaction: 'reveal',
+    id: 'visual-learning', name: 'VisualLearning', contentType: 'visualLearning',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Click-to-continue cinematic scene sequence with animated headlines.',
     usage: 'Used across History episodes (1, 2, 3, 14), type: visualLearning.',
@@ -316,7 +327,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.visualLearning,
   },
   {
-    id: 'guided-choice-carousel', name: 'GuidedChoiceCarousel', interaction: 'assessed',
+    id: 'guided-choice-carousel', name: 'GuidedChoiceCarousel', contentType: 'guidedChoiceCarousel',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Scrollable single-choice carousel with atmospheric option cards.',
     usage: 'Used in Episodes 1 and 2, type: guidedChoiceCarousel.',
@@ -330,7 +341,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.guidedChoiceCarousel,
   },
   {
-    id: 'theory-compare', name: 'TheoryCompare', interaction: 'reveal',
+    id: 'theory-compare', name: 'TheoryCompare', contentType: 'theoryCompare',
     status: 'comparison', subject: 'History', renderMode: 'inline',
     function: 'Side-by-side comparison of two approaches, people or theories: optional paired hero art, progressive comparison prompts and a final evidence-based takeaway. When no portraits are supplied the two portrait boxes render empty, ready for images in future.',
     usage: 'Used in Episode 3 (Galen and Vesalius), Episode 2 (Black Death beliefs) and Biology cell comparisons, type: theoryCompare.',
@@ -339,7 +350,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.theoryCompare,
   },
   {
-    id: 'misconception-check', name: 'MisconceptionCheck', interaction: 'assessed',
+    id: 'misconception-check', name: 'MisconceptionCheck', contentType: 'misconceptionCheck',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Cinematic true/false misconception trap, one statement at a time, with a calm reveal.',
     usage: 'Used across History episodes (1, 2, 3, 14), type: misconceptionCheck.',
@@ -350,7 +361,7 @@ export const REVIEW_ENTRIES = [
 
   // ── Registered library — self-contained kept components, refine here ──────
   {
-    id: 'factor-web', name: 'FactorWeb', interaction: 'assessed',
+    id: 'factor-web', name: 'FactorWeb', contentType: 'factorWeb',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Radial causes/factors web: explore each factor, then make a relative-importance judgement.',
     usage: 'Used in Episode 3 (Vesalius) and now Episode 1 (migrated from ConnectionMap).',
@@ -359,7 +370,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.factorWeb,
   },
   {
-    id: 'infographic', name: 'Infographic', interaction: 'passive',
+    id: 'infographic', name: 'Infographic', contentType: 'infographic',
     status: 'one-off', subject: 'History', renderMode: 'inline',
     function: 'Canonical screen for type infographic: one teaching heading and framing line (owned by the approved TeachScreenShell) then a single governed infographic media slot (MediaPlaceholder) — either a reserved diagram or a progressive quadrant reveal.',
     usage: 'Routed in ModulePlayer (type: infographic) and used by Episode 1 "Galen treated with opposites" — the first infographic screen. Reusable across subjects for any heading + intro + infographic composition.',
@@ -376,7 +387,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.infographic,
   },
   {
-    id: 'interactive-hotspot-image', name: 'InteractiveHotspotImage', interaction: 'assessed',
+    id: 'interactive-hotspot-image', name: 'InteractiveHotspotImage', contentType: 'interactiveImage',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Full-screen image with a two-phase intro → explore flow: tap glowing hotspots to read a label, description and extra fact for each point on the image.',
     usage: 'Used in Episode 1 (Tap the Four Humours) and Episode 2 (the dock at Melcombe), type: interactiveImage.',
@@ -391,7 +402,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.interactiveHotspotImage,
   },
   {
-    id: 'interactive-hotspot-image-reveal', name: 'InteractiveHotspotImage (reveal)', interaction: 'assessed',
+    id: 'interactive-hotspot-image-reveal', name: 'InteractiveHotspotImage (reveal)', contentType: 'interactiveImage',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Reveal variant: tap a hotspot to page through multiple pieces of information (reveals), then a synthesis "collection complete" screen once all are explored.',
     usage: 'Used in Episode 1 (staying well in 1400) and Episode 14 (trench conditions), type: interactiveImage + variant: reveal.',
@@ -406,7 +417,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.interactiveHotspotReveal,
   },
   {
-    id: 'cinematic-reveal-moment', name: 'CinematicRevealMoment', interaction: 'passive',
+    id: 'cinematic-reveal-moment', name: 'CinematicRevealMoment', contentType: 'cinematic',
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Full-screen cinematic opener: a video plays (with a still-image fallback), then label, headline and body reveal line by line over a darkening frame before the Continue prompt.',
     usage: 'Used in Episode 2 (Black Death opening), type: cinematic.',
@@ -421,7 +432,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.cinematicRevealMoment,
   },
   {
-    id: 'memory-hook', name: 'MemoryHook', interaction: 'passive',
+    id: 'memory-hook', name: 'MemoryHook', contentType: 'memoryHook',
     status: 'routed-unused', subject: 'Biology', renderMode: 'inline',
     function: 'In-page "make it stick" reminder: anchors one hard idea with a memorable analogy/mnemonic. Optional thumbnail; learner can rewrite the hook in their own words (persisted via storage.js).',
     usage: 'Routed in ModulePlayer (type: memoryHook); available for placement within any subject page. No content file uses it yet.',
@@ -430,7 +441,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.memoryHook,
   },
   {
-    id: 'concept-reveal', name: 'ConceptReveal', interaction: 'reveal',
+    id: 'concept-reveal', name: 'ConceptReveal', contentType: 'conceptReveal',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Tap-through atmospheric concept steps (main line + support line over background imagery).',
     usage: 'Used across History episodes for chapter-opening concept framing.',
@@ -439,7 +450,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.conceptReveal,
   },
   {
-    id: 'explain-reveal', name: 'ExplainReveal', interaction: 'reveal',
+    id: 'explain-reveal', name: 'ExplainReveal', contentType: 'explainReveal',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Progressive cause-and-effect reasoning chain, revealed one step at a time.',
     usage: 'Used for building an explanation step by step.',
@@ -448,7 +459,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.explainReveal,
   },
   {
-    id: 'col-sort-block', name: 'ColSortBlock', interaction: 'assessed',
+    id: 'col-sort-block', name: 'ColSortBlock', contentType: 'colsort',
     status: 'comparison', subject: 'History', renderMode: 'inline',
     function: 'Sort items into labelled columns (change/continuity, classify) with per-item feedback.',
     usage: 'Used in History episodes for change/continuity sorting.',
@@ -457,7 +468,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.colSort,
   },
   {
-    id: 'quote-analyser', name: 'QuoteAnalyser', interaction: 'reveal',
+    id: 'quote-analyser', name: 'QuoteAnalyser', contentType: 'quoteAnalyser',
     status: 'comparison', subject: 'English', renderMode: 'fullbleed',
     function: 'Full-screen quote dissection: tap through five analysis lenses on one literary quote.',
     usage: 'English literature quote analysis, type: quoteAnalyser.',
@@ -466,7 +477,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.quoteAnalyser,
   },
   {
-    id: 'key-figure-reveal', name: 'KeyFigureReveal', interaction: 'reveal',
+    id: 'key-figure-reveal', name: 'KeyFigureReveal', contentType: 'keyFigureReveal',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Scrollable portrait-hero screen introducing a key person, with up to four knowledge sections.',
     usage: 'Used across History episodes to introduce figures, type: keyFigureReveal.',
@@ -475,7 +486,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.keyFigureReveal,
   },
   {
-    id: 'face-the-examiner', name: 'FaceTheExaminerContainer', interaction: 'assessed',
+    id: 'face-the-examiner', name: 'FaceTheExaminerContainer', contentType: 'faceExaminer',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Examiner-style marking flow: guess the mark, pick the criteria, reveal the annotated answer with strong/weak/irrelevant tags, then improve the weak points and re-mark.',
     usage: 'Used as the module-level examiner in History episodes (1, 2, 3, 14), via module.examiner, and routable mid-module as type: faceExaminer.',
@@ -491,7 +502,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.faceTheExaminer,
   },
   {
-    id: 'guided-exam-response', name: 'GuidedExamResponse', interaction: 'assessed',
+    id: 'guided-exam-response', name: 'GuidedExamResponse', contentType: 'guidedExamResponse',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Cross-subject written-response scaffold: optional opening beat, governed exam prompt, section-by-section writing support and AI marking against the supplied board-specific mark scheme.',
     usage: 'Used in History episodes and GuidedAnswerCoach. Component Lab variants verify History, English, Biology, Maths and Sociology question structures through the same API.',
@@ -539,8 +550,9 @@ export const REVIEW_ENTRIES = [
     ],
   },
   {
-    // Reference page, not a learning interaction — no content type to register
-    id: 'buttons-and-progress', name: 'Buttons and progress', interaction: 'uncategorised',
+    // Shared UI / design-system reference, not a learning interaction —
+    // General components section, not Passive/Reveal/Assessed.
+    id: 'buttons-and-progress', name: 'Buttons and progress', interaction: 'general',
     status: 'reference', subject: 'History', renderMode: 'inline',
     function: 'Reference page: every governed button style and progression/progress indicator rendered live, each labelled with its name.',
     usage: 'Development reference only. Shows ContinueCTA, CinematicContinueCTA, CheckAnswerCTA, BackButton, ExitButton, ModuleToolbar, the BUTTONS token tiers, cinematic-primary-action, NavArrow, LearningProgressHeader, SequenceProgress, ScoreNumberLine, CircularTimer and the pill progress bar pattern.',
@@ -549,8 +561,9 @@ export const REVIEW_ENTRIES = [
     fixture: null,
   },
   {
-    // Chapter-framing screen, not a block type — not registered in componentFunctions.js
-    id: 'chapter-outcome-screen', name: 'ChapterOutcomeScreen', interaction: 'uncategorised',
+    // Structural module screen outside the content-type taxonomy — genuine
+    // module-building choice, given an explicit local classification.
+    id: 'chapter-outcome-screen', name: 'ChapterOutcomeScreen', interaction: 'passive',
     status: 'comparison', subject: 'Biology', renderMode: 'fullbleed',
     function: 'Full-screen chapter-opening outcomes reveal: chapter title, "what you\'re about to uncover" label, and staggered learning-outcome items over a subject backdrop.',
     usage: 'Routed in ModulePlayer as the chapter outcome screen; used across modules.',
@@ -564,8 +577,9 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.chapterOutcome,
   },
   {
-    // Chapter-framing screen, not a block type — not registered in componentFunctions.js
-    id: 'chapter-complete-screen', name: 'ChapterCompleteScreen', interaction: 'uncategorised',
+    // Structural module screen outside the content-type taxonomy — genuine
+    // module-building choice, given an explicit local classification.
+    id: 'chapter-complete-screen', name: 'ChapterCompleteScreen', interaction: 'passive',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'End-of-chapter completion screen: animated checkmark ring, "Complete" headline, continue-to-next-chapter primary CTA, quick-quiz row, optional past-paper row and Return Home.',
     usage: 'Shown as the chapter-complete overlay in LegacyApp (view: chapter-complete) at the end of every module chapter.',
@@ -585,8 +599,10 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.chapterComplete,
   },
   {
-    // Chapter-framing screen, not a block type — not registered in componentFunctions.js
-    id: 'chapter-hook-screen', name: 'ChapterHookScreen', interaction: 'uncategorised',
+    // Structural module screen outside the content-type taxonomy — genuine
+    // module-building choice, given an explicit local classification (the
+    // learner judges a statement true/false, so it can be right or wrong).
+    id: 'chapter-hook-screen', name: 'ChapterHookScreen', interaction: 'assessed',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Chapter-opening true/false warm-up: a bold statement the learner judges true or false, then a reveal explaining why.',
     usage: 'Routed in ModulePlayer as the chapter hook opener; completes the chapter-framing trio with ChapterOutcomeScreen and ChapterCompleteScreen.',
@@ -601,7 +617,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.chapterHook,
   },
   {
-    id: 'fill-in-the-blanks', name: 'FillInTheBlanksBlock', interaction: 'assessed',
+    id: 'fill-in-the-blanks', name: 'FillInTheBlanksBlock', contentType: 'fillblanks',
     status: 'comparison', subject: 'Biology', renderMode: 'inline',
     function: 'Inline typed-gap recall block: complete each sentence with the exact term, with staged hints on a wrong answer.',
     usage: 'Routed in ModulePlayer (type: fillblanks); used across History and Science episodes.',
@@ -610,7 +626,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.fillInTheBlanks,
   },
   {
-    id: 'swipe-sort', name: 'SwipeSort', interaction: 'assessed',
+    id: 'swipe-sort', name: 'SwipeSort', contentType: 'naturalSupernaturalSwipe',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Swipe-gesture sorting: swipe each card left or right into one of two labelled columns, with a per-item explanation on release.',
     usage: 'Routed in ModulePlayer (type: naturalSupernaturalSwipe); used in Episodes 2, 4 and 5.',
@@ -619,21 +635,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.swipeSort,
   },
   {
-    // Scene component leading into centreImageReveal — not itself registered in componentFunctions.js
-    id: 'medieval-diagnosis-scene', name: 'MedievalDiagnosisScene', interaction: 'uncategorised',
-    status: 'one-off', subject: 'History', renderMode: 'inline',
-    function: 'Cinematic 9:16 SVG scene: Thomas at a candlelit table with the four medieval explanations of illness as tappable zones. Opens the centreImageReveal select phase.',
-    usage: 'Used in Episode 1 (medieval beliefs). Reduced motion renders the static end state.',
-    alternative: 'InteractiveHotspotImage (photographic hotspots); KeyFigureReveal.',
-    render: (fx, { onDone }) => (
-      <MedievalDiagnosisScene
-        theories={fx.theories} completedIds={[]} playIntro={true} onSelectZone={onDone}
-      />
-    ),
-    fixture: FIX.medievalDiagnosisScene,
-  },
-  {
-    id: 'quick-recall-screen', name: 'QuickRecallScreen', interaction: 'assessed',
+    id: 'quick-recall-screen', name: 'QuickRecallScreen', contentType: 'quickRecall',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Rapid-fire retrieval: a short run of full-screen choice questions with immediate feedback, for end-of-chapter recall.',
     usage: 'Routed in ModulePlayer (type: quickRecall); used across History episodes.',
@@ -647,7 +649,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.quickRecall,
   },
   {
-    id: 'examiner-explains-screen', name: 'WhatExaminersLookFor', interaction: 'passive',
+    id: 'examiner-explains-screen', name: 'WhatExaminersLookFor', contentType: 'examinerExplains',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Pre-question examiner briefing: introduces the priorities an examiner rewards before the learner begins a written task.',
     usage: 'Canonical WhatExaminersLookFor component, routed through the legacy ModulePlayer type examinerExplains while content migrates.',
@@ -658,21 +660,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.examinerExplains,
   },
   {
-    id: 'unified-question-screen', name: 'UnifiedQuestionScreen', interaction: 'assessed',
-    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
-    function: 'Single full-screen choice question with a hint, feedback and explanation — the shared question renderer used inside QuickRecall and TieredQuiz.',
-    usage: 'Composed by QuickRecallScreen and TieredQuizScreen; the canonical single-question screen.',
-    alternative: 'ExamQuestionFrame (mark-scheme reveal); MisconceptionCheck.',
-    render: (fx, { onDone }) => (
-      <UnifiedQuestionScreen
-        question={fx.question} type={fx.type} options={fx.options} correct={fx.correct}
-        hint={fx.hint} explanation={fx.explanation} subject="History" onComplete={onDone}
-      />
-    ),
-    fixture: FIX.unifiedQuestion,
-  },
-  {
-    id: 'tiered-quiz-screen', name: 'TieredQuizScreen', interaction: 'assessed',
+    id: 'tiered-quiz-screen', name: 'TieredQuizScreen', contentType: 'tieredquiz',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Learner picks a difficulty tier, then answers that tier’s questions — self-levelled retrieval.',
     usage: 'Routed in ModulePlayer (type: tieredquiz); used across Sociology and other modules.',
@@ -681,8 +669,9 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.tieredQuiz,
   },
   {
-    // Behavioural intervention screen, not a content type — not registered in componentFunctions.js
-    id: 'weak-spot-recovery', name: 'WeakSpotRecovery', interaction: 'uncategorised',
+    // Structural module screen outside the content-type taxonomy — genuine
+    // module-building choice, given an explicit local classification.
+    id: 'weak-spot-recovery', name: 'WeakSpotRecovery', interaction: 'passive',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Behavioural intervention screen shown when the tracker detects a struggling learner: names the gap and offers a targeted recovery quiz or a skip.',
     usage: 'Shown by ModulePlayer when a weak spot is detected mid-module; routes into RecoveryQuizPlayer.',
@@ -696,17 +685,7 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.weakSpotRecovery,
   },
   {
-    // Not a registered content type in componentFunctions.js
-    id: 'recovery-quiz-player', name: 'RecoveryQuizPlayer', interaction: 'uncategorised',
-    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
-    function: 'Lightweight recovery quiz: 3–4 focused questions loaded by id from recoveryQuizzes.js, launched after a detected weak spot.',
-    usage: 'Launched by WeakSpotRecovery via recoveryQuizId; a short targeted retrieval loop.',
-    alternative: 'QuickRecallScreen (chapter recall); TieredQuizScreen.',
-    render: (fx, { onDone }) => <RecoveryQuizPlayer recoveryQuizId={fx} onComplete={onDone} onBack={onDone} />,
-    fixture: FIX.recoveryQuizId,
-  },
-  {
-    id: 'calculation-breakdown', name: 'CalculationBreakdown', interaction: 'assessed',
+    id: 'calculation-breakdown', name: 'CalculationBreakdown', contentType: 'calculationBreakdown',
     status: 'comparison', subject: 'Maths', renderMode: 'fullbleed',
     function: 'Multi-step maths walkthrough: breaks one calculation into stages (understand → worked steps → learner-applied step → full solution) and checks understanding at each stage.',
     usage: 'New component — pending review; not yet routed in ModulePlayer.',
@@ -715,3 +694,9 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.calculationBreakdown,
   },
 ]
+
+export const REVIEW_ENTRIES = RAW_ENTRIES.map(entry => (
+  entry.contentType
+    ? { ...entry, interaction: getTypeInfo(entry.contentType)?.interaction ?? 'uncategorised' }
+    : entry
+))

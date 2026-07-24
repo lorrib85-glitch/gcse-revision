@@ -60,6 +60,10 @@ export const SCREEN_TYPE_FUNCTIONS = {
   flashcards: { functions: ['retrieve'], interaction: 'reveal' },
   // RevealBlock: tap a prompt card to reveal its answer — no scoring
   reveal: { functions: ['teach-mechanism'], interaction: 'reveal' },
+  // CinematicCarousel: browse a small related set one item at a time — no scoring
+  cinematicCarousel: { functions: ['teach-mechanism'], interaction: 'reveal' },
+  // GraphView: embeddable chart for interpreting data inline — display only
+  graphView: { functions: ['teach-mechanism'], interaction: 'passive' },
   // MisconceptionBlock: tap a wrong statement to reveal why it's wrong — no scoring
   misconception: { functions: ['exam-technique'], interaction: 'reveal' },
   // AcronymMemorise: expand/collapse mnemonic items (e.g. SCARF for uses of glucose)
@@ -84,7 +88,9 @@ export const SCREEN_TYPE_FUNCTIONS = {
   centreImageReveal: { functions: ['apply'], interaction: 'assessed' },
   appliedscenario: { functions: ['apply'], interaction: 'assessed' },
   guidedChoiceCarousel: { functions: ['apply'], interaction: 'assessed' },
-  interactiveImage: { functions: ['teach-mechanism', 'apply'], interaction: 'assessed' },
+  // Corrected 2026-07-24: tap-to-explore hotspots, no scored answer (see
+  // docs/content/history/Medicine/02_Review_Log.md's cross-cutting finding).
+  interactiveImage: { functions: ['teach-mechanism', 'apply'], interaction: 'reveal' },
   orderedRouteTask: { functions: ['sequence-process'], interaction: 'assessed' },
   timelinedrag: { functions: ['sequence-process'], interaction: 'assessed' },
   factorWeb: { functions: ['teach-comparison', 'apply'], interaction: 'assessed' },

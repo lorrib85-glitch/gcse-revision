@@ -33,7 +33,11 @@ export const KNOWN_GUARDRAIL_VIOLATIONS = {
     "STAGE_NO_ASSESSMENT:part-3"
   ],
   "bio_building_blocks": [
+    "STAGE_NO_ASSESSMENT:part-2",
     "STAGE_NO_ASSESSMENT:part-3"
+  ],
+  "sci_bio_w1": [
+    "STAGE_NO_ASSESSMENT:part-1"
   ],
   "soc6": [
     "STAGE_NO_ASSESSMENT:part-1"
