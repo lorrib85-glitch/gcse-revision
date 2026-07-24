@@ -1,6 +1,6 @@
 # Component Registry
 
-**Last updated:** 2026-06-06
+**Last updated:** 2026-07-24
 **Scope:** All standalone components in `src/components/`
 
 ---
@@ -200,6 +200,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Screen type:** `cinematicCarousel` (full-screen, routed directly in `ModulePlayer.jsx` like `TimelineCanvas`)
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
 
+- **Decision**
+  - **Use when:** the learner needs to explore a small related collection in which every item deserves its own image, name and focused set of facts. Choose it when viewing each item separately helps the learner notice or understand its individual features.
+  - **Do not use when:** the items form a chronological or causal sequence, require direct side-by-side comparison, belong in assessed categories or could be understood more clearly when displayed together. Do not use it for one concept, one important person, a large catalogue or a general list of facts with decorative images.
+  - **Choose instead:** use `TimelineChain` when order or causal progression matters. Use `TheoryCompare` when two items need developed parallel comparison. Use `KeyFigureReveal` when one important person requires deeper treatment. Use `InteractiveHotspotImage` when the information concerns different parts of one shared image or object. Use `Infographic` when the learner benefits from seeing the complete system or dataset together. Use `ColSortBlock` or `SwipeSort` when the learner must categorise the items themselves.
+  - **Content shape:** usually three to six clearly related and visually distinct items. Every item needs one meaningful image, one concise label and a small number of focused facts. All items should answer the same broad learning question, but each must contribute something different. The order should not carry essential chronological or causal meaning. Avoid long paragraphs, repeated facts and items included only to increase the set size.
+  - **Rhythm role:** teaching, exploration.
+
 ---
 
 ### CinematicRevealMoment
@@ -208,6 +215,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Purpose:** Full-screen cinematic video or image reveal moment. Atmospheric, single-focus, high-emotion screen.
 **Props:** `block`, `subject`, `onContinue`, `onBack`
 **Dependencies:** `SUBJECTS`, `MOTION`
+
+- **Decision**
+  - **Use when:** one powerful image or video can create emotional weight, surprise, tension or a sense of significance that prepares the learner for the teaching that follows. Choose it for a genuine reveal or turning point, not simply because suitable media exists.
+  - **Do not use when:** the learner needs detailed explanation, several facts, a person profile, a visual collection or an interaction that checks understanding. Do not use it as a substitute for teaching, as a generic chapter title screen or merely to make the module feel more cinematic.
+  - **Choose instead:** use `ConceptReveal` when one new idea needs a clear conceptual introduction. Use `KeyFigureReveal` when the learner must understand an important person and their contribution. Use `CinematicCarousel` when several related images or objects need individual exploration. Use `InteractiveHotspotImage` when the learner should inspect meaningful locations within one image. Use a normal teaching component when the media does not materially improve understanding or emotional engagement.
+  - **Content shape:** one exceptional image or video, one concise framing line and, where needed, one short impact statement. Text must remain minimal so the media retains focus. The next screen must explain, explore or apply why the moment matters; the cinematic reveal must not be left as an isolated spectacle.
+  - **Rhythm role:** opening.
 
 ---
 
@@ -226,6 +240,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Purpose:** Concept introduction with atmospheric reveal. Introduces a new idea cinematically before quiz questions.
 **Props:** `block`, `subject`, `onContinue`, `onBack`
 **Dependencies:** `SUBJECTS`, `MOTION`
+
+- **Decision**
+  - **Use when:** the learner needs a clear, memorable introduction to one important new concept before its details, examples or applications are developed. Choose it when the next section depends on the learner first grasping a single central idea.
+  - **Do not use when:** the content concerns a specific person, several related items, a sequence of connected stages or a dramatic image that carries the emotional meaning by itself. Do not use it as a decorative title screen or repeat it every time a new subtopic begins.
+  - **Choose instead:** use `KeyFigureReveal` when one important person and their contribution need to anchor the learning. Use `CinematicRevealMoment` when one image or video should create emotional significance before the teaching begins. Use `CinematicCarousel` when several related items each deserve individual visual focus. Use `ExplainReveal` when the learner needs to understand how several linked ideas lead from one to the next. Use `Read` or another standard teaching screen when the idea does not need a distinct conceptual reveal.
+  - **Content shape:** one central concept expressed through a clear headline, a short framing explanation and one strong takeaway. Supporting visual material should strengthen the concept rather than merely decorate it. Avoid multiple competing ideas, detailed evidence, long paragraphs and lists of loosely related facts.
+  - **Rhythm role:** opening, teaching.
 
 ---
 
@@ -279,6 +300,36 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Purpose:** Full-screen image with tappable hotspots. Two-phase: intro reveal → explore hotspots. Two variants: `detail` (default — one card of labelled rows per hotspot) and `reveal` (pages through multiple pieces of information per hotspot, `reveals[]`). Optional `synthesis` shows a "collection complete" summary once all hotspots are explored.
 **Props:** `subject`, `title`, `introText`, `image`, `imageAlt`, `hotspots`, `ctaLabel`, `variant`, `synthesis`, `onBack`, `onEnterExplore`, `onContinue`
 **Dependencies:** `SUBJECTS`, `MOTION`
+
+---
+
+### KeyFigureReveal
+
+**File:** `src/components/learning/KeyFigureReveal.jsx`
+**What it is:** A full-screen, portrait-led introduction to one important person. The learner meets the figure through their name and role, then swipes through focused sections covering their ideas, evidence, contribution, significance or impact. Sections may include concise explanation, supporting imagery, a quotation and a takeaway.
+**Props:** `block`, `subject`, `onComplete`
+**Interaction class:** `reveal`
+**Function tag:** `introduce-figure`
+**Screen type:** `keyFigureReveal`
+**Dependencies:** `SUBJECTS`, `TYPE`, `SPACING`, `COMPONENT_SIZE`, `RADII`, `GENERAL`, `MOTION`, `CinematicShell`, `ContinueCTA`, `SequenceProgress`
+
+- **Decision**
+  - **Use when:** one person is important enough to organise the learner’s understanding of the topic, and the learner needs to know who they were, what they contributed and why they mattered. Choose it when the figure is a meaningful conceptual anchor rather than simply a name that appears in the specification.
+  - **Do not use when:** the person is a minor factual detail, several people need equal coverage, two people need direct comparison or the main learning is a chronology of events rather than the significance of the individual. Do not use it just because a portrait is available.
+  - **Choose instead:** use `TheoryCompare` when two people need developed parallel comparison. Use `CinematicCarousel` when several people each need a shorter introduction as members of one related set. Use `ConceptReveal` when the central learning is an idea rather than a person. Use `TimelineChain` when the important content is a chronological sequence of the person’s work or changing influence. Use a standard teaching screen when only a brief contribution or name needs mentioning.
+  - **Content shape:** exactly one significant figure with a strong, relevant portrait, a clear role or identity line and usually two to four focused sections. Each section should have one distinct job, such as background, key idea, evidence, contribution or impact. Keep the sections concise and finish with a clear statement of why the person matters to the topic. Quotes and supporting images must add evidence or meaning rather than atmosphere alone.
+  - **Rhythm role:** opening, teaching.
+
+### Opening family rhythm rule
+
+Choose one clear opening treatment according to the learning job:
+
+- one concept → `ConceptReveal`
+- one emotionally significant moment → `CinematicRevealMoment`
+- one important person → `KeyFigureReveal`
+- one related visual collection → `CinematicCarousel`
+
+Do not stack these components simply because they are cinematic. After the opening beat, move promptly into explanation, exploration, practice or retrieval. Do not place `CinematicRevealMoment`, `ConceptReveal`, `KeyFigureReveal` and `CinematicCarousel` consecutively; that creates passive spectacle rather than learning rhythm. `CinematicRevealMoment` should be the rarest of the four because it carries the least teaching content by itself.
 
 ---
 
