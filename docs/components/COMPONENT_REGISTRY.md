@@ -599,6 +599,25 @@ Do not use true/false interaction as a generic visual pattern. It must create a 
 
 ---
 
+
+### NumberLineExplore
+
+**File:** `src/components/learning/NumberLineExplore.jsx`
+**What it is:** Configuration-driven GCSE number line — the shared visual foundation for number topics, and a sibling of `AngleExplore` and `AreaPerimeterExplore`. One line, one interaction model and one status voice cover what would otherwise be six near-identical single-purpose diagrams. The line, its shaded intervals, movement arcs and endpoints render as inline SVG in model space (values are never measured back from pixels); learner-controlled values drive a live status line. Seven registered presets — `orderNumbers` (slide one value between four pinned integers, a decimal and a fraction; the ordering statement re-sorts live, and landing on a pinned value shows the two forms sharing one point), `negativeMovement` (start and move as two independent handles, with an animated arc showing direction; adding a negative visibly lands where subtracting does), `roundingIntervals` (the two multiples a value sits between with the halfway point marked; precision switches between nearest 10, whole number and 1 d.p.), `inequalityRange` (endpoint, direction and open/closed toggles keeping symbol, diagram and interval notation tied together), `boundsInterval` (the error interval of a rounded value — lower bound included, upper excluded), `multiplyPattern` (multiplying by a negative as repeated equal jumps that only change direction), `estimateRange` (estimation as a sensible range rather than a single answer) — plus a compatible-preset-object escape hatch. `interactive={false}` turns any preset into a static teaching or exam diagram at fixed values. Draggable markers are keyboard-operable `role="slider"` elements (arrow keys / Home / End) with ≥44px hit targets; discrete choices (open/closed, direction, precision, jump size) are real buttons, never disguised sliders. Filled markers include an endpoint, open markers exclude it, and a line marker denotes a fixed reference another marker may legitimately sit on. Respects `prefers-reduced-motion` (and a `reducedMotion` prop override) — the arc's draw-in becomes an instantly finished arc.
+**Best used for:** Teaching AQA Foundation number topics where position, direction and size are the point — place value, ordering integers/decimals/fractions, negative numbers, addition and subtraction as movement, multiplication patterns with negatives, rounding, estimation ranges, inequalities, upper and lower bounds, and scale reading. Use it when seeing where a number *lives* is the lesson. Questions, predictions, marking, scoring and weakness tracking stay outside the component (compose it like `AngleExplore`/`AreaPerimeterExplore`).
+**Props:** `preset` (name or preset object, defaults to `orderNumbers`), `value` (controlled values object), `defaultValue`, `options` (initial discrete choices), `onChange`, `interactive`, `disabled`, `subject` (defaults to `Maths`), `reducedMotion`, `label`, `showStatus`
+**Screen type:** none yet — not routed in `ModulePlayer.jsx` (new component pending review)
+**Dependencies:** `SUBJECTS`, `GENERAL` (via `numberLine/numberLineVisualRoles.js` semantic roles), `TYPE`, `SPACING`, `RADII`, `MOTION` (injected animation CSS via `ensureStyles()`, same pattern as `AngleExplore`/`AreaPerimeterExplore`); pure maths in `numberLine/numberLineGeometry.js` (which re-exports the neutral `geometry/shapeGeometry.js` helpers), presets in `numberLine/numberLinePresets.js`
+**Closest alternatives:** `AngleExplore` (angle facts — do not add number-line modes to it); `AreaPerimeterExplore` (mensuration); `GraphView` (interpreting data, not number position); `CalculationBreakdown` (executing a method step by step); a static figure image (when no interaction is needed and the diagram is one-off).
+
+- **Decision**
+  - **Use when:** the learning objective is about where numbers sit relative to each other, or about a movement, interval or bound along the line — and moving a point makes the relationship visible: an ordering re-sorting, a jump landing left of zero, a value crossing a halfway point, an endpoint switching between included and excluded. Also use its static mode for any accurate, on-theme number-line diagram inside teaching or exam content.
+  - **Do not use when:** the learner must be assessed on the answer (compose a question component around a static instance instead); the content is chart or data interpretation (`GraphView`); the task is carrying out a multi-step calculation (`CalculationBreakdown`); or the idea is not positional at all — a number line adds nothing to, say, factorising.
+  - **Content shape:** pick the preset matching the idea; optionally fix `value` and `options` for a specific worked example. One line per screen — the component teaches one relationship at a time, and its option buttons switch between framings of that same relationship rather than adding a second lesson.
+  - **Rhythm role:** teaching, exploration.
+
+---
+
 ### MisconceptionCheck
 
 **File:** `src/components/learning/MisconceptionCheck.jsx`

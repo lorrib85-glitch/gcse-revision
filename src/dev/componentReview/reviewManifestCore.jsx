@@ -13,6 +13,7 @@ import { SUBJECT_ACCENTS } from '../../constants/subjects.js'
 import { getTypeInfo } from '../../data/componentFunctions.js'
 
 import AngleExplore from '../../components/learning/AngleExplore.jsx'
+import NumberLineExplore from '../../components/learning/NumberLineExplore.jsx'
 import CalculationBreakdown from '../../components/learning/CalculationBreakdown.jsx'
 import CinematicCarousel from '../../components/learning/CinematicCarousel.jsx'
 import GraphView from '../../components/learning/GraphView.jsx'
@@ -742,6 +743,71 @@ const RAW_ENTRIES = [
         label: 'Static diagram',
         description: 'The same renderer with interaction disabled at a fixed value, for teaching, worked examples and exam questions.',
         render: () => <AngleExplore value={120} interactive={false} />,
+      },
+    ],
+  },
+  {
+    // Unrouted standalone component (no content type to register yet) —
+    // manual classification: the learner drags a point along a number line and
+    // watches position, movement, intervals and bounds respond, with no
+    // scoring.
+    id: 'number-line-explore', name: 'NumberLineExplore', interaction: 'reveal',
+    status: 'comparison', subject: 'Maths', renderMode: 'inline',
+    function: 'Configuration-driven GCSE number line — the shared visual foundation for number topics, and a sibling of AngleExplore. Ordering, directed movement, rounding intervals, inequalities, bounds, multiplication patterns and estimation ranges all render on one line with one interaction model. Page-level questions and marking remain outside the component.',
+    usage: 'New component — pending review; not yet routed in ModulePlayer. Review variants cover all seven presets plus a static job.',
+    alternative: 'AngleExplore (angle facts); AreaPerimeterExplore (mensuration); GraphView (data charts); a static figure image for non-interactive diagrams.',
+    render: () => <NumberLineExplore />,
+    fixture: null,
+    variants: [
+      {
+        id: 'order-numbers',
+        label: 'Ordering',
+        description: 'Slide one value between four pinned ones — integers, a decimal and a fraction — and watch the ordering statement re-sort. Landing on a pinned value shows the two forms sharing a point.',
+        render: () => <NumberLineExplore preset="orderNumbers" />,
+      },
+      {
+        id: 'negative-movement',
+        label: 'Negative moves',
+        description: 'Addition and subtraction as directed movement: an animated arc shows the jump, and adding a negative visibly lands where subtracting does.',
+        render: () => <NumberLineExplore preset="negativeMovement" />,
+      },
+      {
+        id: 'rounding-intervals',
+        label: 'Rounding',
+        description: 'The two multiples a value sits between, with the halfway point marked. Precision switches between nearest 10, whole number and 1 d.p.',
+        render: () => <NumberLineExplore preset="roundingIntervals" />,
+      },
+      {
+        id: 'inequality-range',
+        label: 'Inequalities',
+        description: 'Open and closed endpoints, direction, symbol and interval notation stay tied together as the endpoint moves.',
+        render: () => <NumberLineExplore preset="inequalityRange" />,
+      },
+      {
+        id: 'bounds-interval',
+        label: 'Bounds',
+        description: 'The error interval of a rounded value — lower bound included, upper bound excluded, shown as a filled and an open endpoint.',
+        render: () => <NumberLineExplore preset="boundsInterval" />,
+      },
+      {
+        id: 'multiply-pattern',
+        label: 'Multiplying',
+        description: 'Multiplying by a negative as repeated jumps in the opposite direction — the jumps stay the same size, only their direction flips.',
+        render: () => <NumberLineExplore preset="multiplyPattern" />,
+      },
+      {
+        id: 'estimate-range',
+        label: 'Estimation',
+        description: 'Estimation as a range rather than a single answer: drag an estimate and see whether it lands inside the sensible band around the exact value.',
+        render: () => <NumberLineExplore preset="estimateRange" />,
+      },
+      {
+        id: 'static',
+        label: 'Static diagram',
+        description: 'The same renderer with interaction disabled at fixed values, for teaching, worked examples and exam questions.',
+        render: () => (
+          <NumberLineExplore preset="inequalityRange" value={{ endpoint: 2 }} interactive={false} />
+        ),
       },
     ],
   },
