@@ -23,23 +23,31 @@ import {
 const angleTypes = {
   id: 'angleTypes',
   accessibilityLabel: 'Interactive angle explorer',
-  keyFact: 'Angles are named by their size: acute, right, obtuse, straight and reflex.',
-  canvas: { width: 360, height: 270 },
+  keyFact: 'Angles are named by their size: acute, right, obtuse, straight, reflex and full turn.',
+  canvas: { width: 360, height: 220 },
   interactive: true,
   initialValue: 65,
   min: 10,
-  max: 350,
+  max: 360,
   step: 5,
-  snapTargets: [90, 180, 270],
+  snapTargets: [90, 180, 270, 360],
   handleLabel: 'Angle size',
   valueText: v => `${v} degrees — ${classifyAngle(v).label}`,
-  valueFromPointer: pt => pointerAngle(150, 135, pt.x, pt.y),
+  valueFromPointer: (pt) => {
+    const angle = pointerAngle(170, 110, pt.x, pt.y)
+    return angle === 0 ? 360 : angle
+  },
   derive(v) {
-    const vx = 150
-    const vy = 135
-    const arm = 118
+    const vx = 170
+    const vy = 110
+    const arm = 92
     const cls = classifyAngle(v)
-    const labelAt = sectorMidpoint(vx, vy, 0, v, v < 40 ? 76 : 68)
+    const isFullTurn = v === 360
+    const labelAt = isFullTurn
+      ? { x: vx, y: vy - 60 }
+      : sectorMidpoint(vx, vy, 0, v, v < 40 ? 66 : 58)
+    const endPoint = polarPoint(vx, vy, v, arm)
+
     return {
       rays: [
         { id: 'arm-base', ...rayFrom(vx, vy, 0, arm), tone: 'structure', arrow: true },
@@ -51,12 +59,18 @@ const angleTypes = {
           label: { text: `${v}°`, x: labelAt.x, y: labelAt.y },
         },
       ],
-      points: [
-        pointLabel('point-a', 'A', vx, vy, v, arm + 15),
-        { id: 'point-b', text: 'B', x: vx - 14, y: vy + 17 },
-        pointLabel('point-c', 'C', vx, vy, 0, arm + 15),
-      ],
-      handle: polarPoint(vx, vy, v, arm),
+      points: isFullTurn
+        ? [
+            { id: 'point-a', text: 'A', x: endPoint.x + 12, y: endPoint.y - 13 },
+            { id: 'point-b', text: 'B', x: vx - 14, y: vy + 17 },
+            { id: 'point-c', text: 'C', x: endPoint.x + 12, y: endPoint.y + 13 },
+          ]
+        : [
+            pointLabel('point-a', 'A', vx, vy, v, arm + 14),
+            { id: 'point-b', text: 'B', x: vx - 14, y: vy + 17 },
+            pointLabel('point-c', 'C', vx, vy, 0, arm + 14),
+          ],
+      handle: endPoint,
       status: {
         heading: `${cls.label} — ${v}°`,
         headingTone: 'interaction',
