@@ -120,6 +120,18 @@ export const GENERAL = {
     medium: 'rgba(255,255,255,0.10)',
     strong: 'rgba(255,255,255,0.14)',
   },
+
+  // Structural drawing tokens for diagrams, graphs and measurement figures.
+  // These are intentionally separate from text colours: a component may use
+  // them for SVG edges and construction marks without borrowing typography
+  // semantics or inventing local white-alpha values.
+  diagram: {
+    edgePrimary:  'rgba(255,255,255,0.86)',
+    edgeSecondary:'rgba(255,255,255,0.44)',
+    construction: 'rgba(255,255,255,0.42)',
+    dimension:    'rgba(255,255,255,0.72)',
+  },
+
   surfaceTint: 'rgba(255,255,255,0.04)',
 
   // Elevation shadows on dark surfaces and imagery — the approved shadow
