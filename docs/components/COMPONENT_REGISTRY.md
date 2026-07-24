@@ -400,27 +400,53 @@ Choose one clear opening treatment according to the learning job:
 - one important person → `KeyFigureReveal`
 - one related visual collection → `CinematicCarousel`
 
-Do not stack these components simply because they are cinematic. After the opening beat, move promptly into explanation, exploration, practice or retrieval. Do not place `CinematicRevealMoment`, `ConceptReveal`, `KeyFigureReveal` and `CinematicCarousel` consecutively; that creates passive spectacle rather than learning rhythm. `CinematicRevealMoment` should be the rarest of the four because it carries the least teaching content by itself.
+Do not stack these components simply because they are cinematic. After the opening beat, move promptly into explanation, exploration, practice or retrieval. Do not place `CinematicRevealMoment`, `ConceptReveal`, `KeyFigureReveal` and `CinematicCarousel` consecutively; that creates passive spectacle rather than learning rhythm. `CinematicRevealMoment` should be the rarest of the four because it carries the least teaching content by itself. `ChapterHookScreen` is also tagged `cinematic`; when used, it fulfils the module's one cinematic-moment requirement.
 
 ---
 
 ### QuickRecallScreen
 
 **File:** `src/components/learning/QuickRecallScreen.jsx`
-**Purpose:** Rapid-fire retrieval screen for choice and connection questions. Fast-paced sequence with immediate feedback.
-**Props:** `block`, `subject`, `onComplete`, `onBack`
-**Dependencies:** `SUBJECTS`, `AnswerInteraction`
+**Purpose:** Rapid-fire retrieval screen for choice, connection and true/false questions. Presents one short question at a time through `UnifiedQuestionScreen`, gives immediate feedback and records supported question outcomes in the weakness tracker.
+**Props:** `subject`, `chapterNum`, `chapterTitle`, `questions`, `onBack`, `onContinue`, `renderHeader`
+**Dependencies:** `UnifiedQuestionScreen`, `unifiedWeaknessTracker`
+
+- **Decision**
+  - **Use when:** the learner needs a fast sequence of short, objectively marked questions that retrieves knowledge already taught. Choose it for low-friction checks of facts, definitions, simple connections, vocabulary or straightforward application.
+  - **Do not use when:** the learner needs to generate knowledge freely, develop an explanation, repair a complex error or demonstrate extended exam reasoning. Do not use it to introduce new content, test a misconception that deserves targeted corrective feedback or turn a long question bank into a formal test.
+  - **Choose instead:** use `PriorKnowledgeRecall` when the learner should retrieve an earlier topic without answer options. Use `MisconceptionCheck` when the incorrect belief itself is the learning target. Use `ChapterHookScreen` when one surprising true/false prediction should open a chapter. Use `ExamQuestionFrame` or another exam-practice component for mark-scheme application and developed responses. Use `SpotTheError` when the learner must diagnose and repair an error.
+  - **Content shape:** usually three to six independent questions, each testing one clear retrieval target with one defensible correct answer, concise plausible options and useful immediate feedback. Questions should vary the recalled knowledge rather than repeatedly rephrase one fact. Avoid obscure trivia, confusing wording, oversized option sets and questions solvable through wording clues.
+  - **Rhythm role:** retrieval, practice.
 
 ---
 
 ### PriorKnowledgeRecall
 
 **File:** `src/components/learning/PriorKnowledgeRecall.jsx`
-**Purpose:** Full-screen chapter-opening recall screen. Student writes free-text recall of the previous chapter. Claude (via `/api/recall`) scores each expected concept 0.0–1.0. Missing concepts (score < 0.3) are logged to the weakness tracker, feeding `WeakSpotRecovery` and future retrieval. Results are shown in three colour-coded groups: recalled (teal), partial (amber), gaps (muted).
-**Props:** `block`, `subject`, `onContinue`, `onBack`
-**Block shape:** `{ type: 'priorKnowledgeRecall', chapterTitle, prompt?, backgroundImage?, concepts: [{ tag, label, keywords[] }] }`
+**Purpose:** Full-screen chapter-opening free-recall screen. The learner writes what they remember from an earlier topic; `/api/recall` evaluates the response against expected concepts and missing concepts feed the weakness tracker and future practice.
+**Props:** `block`, `subject`, `onContinue`, `onBack`, `onExit`
+**Block shape:** `{ type: 'priorKnowledgeRecall', chapterTitle, prompt?, previousTopic?, backgroundImage?, recallPrompts?, concepts: [{ tag, label, keywords[] }], sourceContent? }`
 **Screen type:** `priorKnowledgeRecall`
-**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `weaknessTracker`, `/api/recall`
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `unifiedWeaknessTracker`, `/api/recall`
+
+- **Decision**
+  - **Use when:** the learner is beginning a chapter or connected section and needs to retrieve what they remember from an earlier topic without seeing possible answers. Choose it when that prior knowledge genuinely supports the new learning and the result can identify specific gaps for later practice.
+  - **Do not use when:** the learner has not previously been taught the knowledge, the new chapter does not depend meaningfully on it or the task is being added as a routine opening ritual. Do not use it when answer options are needed, a weakness is already known or the response should be a precise exam answer.
+  - **Choose instead:** use `QuickRecallScreen` for several short prompted questions about taught knowledge. Use `MisconceptionCheck` for a known false belief. Use `ChapterHookScreen` to create curiosity about the new chapter rather than diagnose prior knowledge. Use `WeakSpotRecovery` when the weakness is already known and needs targeted repair.
+  - **Content shape:** one broad free-recall prompt linked to a clearly defined earlier topic, with a bounded set of important expected concepts carrying stable weakness tags. Optional nudges may name broad areas but must not reveal the answers. Avoid insignificant details, trick wording and concepts the system cannot use meaningfully in later practice.
+  - **Rhythm role:** opening, retrieval.
+
+### Retrieval family rule
+
+Choose according to what the learner must do:
+
+- generate earlier knowledge without options → `PriorKnowledgeRecall`
+- answer several short prompted questions → `QuickRecallScreen`
+- recognise and correct a known false belief → `MisconceptionCheck`
+- make one curiosity-building prediction before new teaching → `ChapterHookScreen`
+- present an embedded ordinary retrieval question consistently → `RetrievalFrame`, selected by implementation rather than by the content author
+
+Do not use true/false interaction as a generic visual pattern. It must create a meaningful opening prediction, expose a damaging misconception or perform ordinary retrieval within an appropriate question sequence. Do not place substantial question-led components back-to-back; separate them with teaching, explanation, application or visual exploration.
 
 ---
 
@@ -576,11 +602,17 @@ Do not stack these components simply because they are cinematic. After the openi
 ### MisconceptionCheck
 
 **File:** `src/components/learning/MisconceptionCheck.jsx`
-**What it is:** Cinematic true/false misconception trap checker.
-**Best used for:** Catching common false beliefs (e.g., "Galen was never wrong" — FALSE). Full-screen, one statement at a time. Calm, non-punitive reveals. Logs to weakness tracker.
+**What it is:** Full-screen true/false misconception checker. It presents one conceptual trap at a time, reveals the corrected understanding and can explain the related exam trap. Answers are recorded in the weakness tracker.
 **Props:** `block`, `subject`, `onContinue`
 **Block shape:** `{ type: 'misconceptionCheck', statements: [{ statement, answer: true|false, reveal, examTrap? }] }`
-**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `BUTTONS`, `unifiedWeaknessTracker`
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `BUTTONS`, `ContinueCTA`, `unifiedWeaknessTracker`
+
+- **Decision**
+  - **Use when:** the learner needs to confront a specific, common false belief that is likely to damage later understanding or cost marks in an exam. Choose it when recognising and correcting the misconception is more important than testing an ordinary isolated fact.
+  - **Do not use when:** the statement is simply an ordinary fact written as true or false, the learner has not yet been taught enough to understand the correction or the answer depends on unstated context. Do not use it for minor slips, deceptive wording, debatable interpretations or a generic true/false quiz.
+  - **Choose instead:** use `ChapterHookScreen` when one surprising statement should create curiosity without becoming a tracked weakness. Use `QuickRecallScreen` for ordinary factual retrieval. Use `SpotTheError` when the learner must locate, explain and repair the precise error. Use `ExplainReveal` when the reasoning that makes the belief wrong still needs teaching.
+  - **Content shape:** one conceptual trap at a time, or a very small set of closely related traps. Each needs a concise unambiguous statement, one defensible answer, a clear explanation of what is wrong and what the learner should think instead, plus an optional exam-trap note. Avoid double negatives, technical loopholes and invented tricks.
+  - **Rhythm role:** retrieval, repair.
 
 ---
 
@@ -762,9 +794,17 @@ Module-level orchestration and chapter framing screens.
 ### ChapterHookScreen
 
 **File:** `src/components/layout/ChapterHookScreen.jsx`
-**Purpose:** Chapter intro hook screen with a true/false warm-up statement. Sets the emotional context before the chapter begins.
-**Props:** `subject`, `chapterNum`, `chapterTitle`, `statement`, `isTrue`, `accentWords`, `explanation`, `onBack`, `onContinue`
-**Dependencies:** `SUBJECTS`, `MOTION`, `RADII`
+**Purpose:** Chapter-opening true/false prediction followed by a cinematic explanation or short sequence of reveal beats.
+**Presentation tag:** `cinematic` — this component counts as the module's one cinematic moment. When it is used, do not add another cinematic component merely to satisfy the module-rhythm requirement.
+**Props:** `subject`, `chapterNum`, `chapterTitle`, `statement`, `isTrue`, `accentWords`, `explanation`, `revealBeats`, `backgroundImage`, `onBack`, `onContinue`
+**Dependencies:** `SUBJECTS`, `MOTION`, `RADII`, `GENERAL`, `SPACING`, `CinematicShell`, `BackButton`
+
+- **Decision**
+  - **Use when:** one striking true/false statement can open a chapter by creating curiosity, tension or surprise before revealing the central idea the learner is about to explore. Choose it when making an initial prediction gives the following teaching more meaning.
+  - **Do not use when:** the purpose is to measure retained knowledge, diagnose a weakness or correct a misconception that should be tracked and revisited. Do not use it as a routine opening for every chapter, for a bland or obvious statement or when another component already owns the module's cinematic moment.
+  - **Choose instead:** use `MisconceptionCheck` when recognising the false belief is an assessed retrieval and repair task. Use `PriorKnowledgeRecall` when the learner should retrieve knowledge from an earlier topic. Use `QuickRecallScreen` for several fast checks of taught material. Use `ConceptReveal` when one new idea needs introducing without a prediction. Use `CinematicRevealMoment` when an image or video can create the opening significance more effectively.
+  - **Content shape:** one short, surprising but fair true/false statement connected directly to the chapter's central question, with one defensible answer and either one clear explanation or a short series of reveal beats. It must be understandable before the teaching and remain useful whether the learner predicts correctly or incorrectly. The response must not be logged as a weakness.
+  - **Rhythm role:** opening.
 
 ---
 
@@ -838,8 +878,12 @@ Question feedback and exam practice components.
 ### RetrievalFrame — **LOCKED**
 
 **File:** `src/components/feedback/RetrievalFrame.jsx`
-**What it is:** Cinematic wrapper for spaced-retrieval practice questions.
-**Best used for:** Testing knowledge recall in a low-pressure moment. Wraps any question type with atmospheric framing. No penalty for wrong answers.
-**Props:** `block`, `subject`, `progress`, `onAnswer`, `onContinue`, `onBack`
-**Lock reason:** Visual contract for all retrieval screens. Changing it risks inconsistency across all question presentations.
-**Dependencies:** `AnswerInteraction`, `SUBJECTS`
+**What it is:** Governed presentation infrastructure for an ordinary retrieval interaction embedded within a learning screen. It converts existing retrieval data for `AnswerInteraction` and provides contained, full-bleed or inline treatments; `AnswerInteraction` still owns all answer logic.
+**Use by implementation when:** a normal multiple-choice retrieval question needs to be woven into a teaching screen with consistent interaction and feedback behaviour.
+**Do not treat it as:** a selectable learning activity competing with `QuickRecallScreen`, a free-recall component, misconception repair, a true/false chapter hook, exam practice or a new content schema.
+**Governance boundary:** content authors select the learning job. Implementation uses `RetrievalFrame` only where the surrounding screen contract calls for an embedded ordinary retrieval question. It does not handle `trueFalse`, does not replace `ChapterHookScreen` and does not count as the module's cinematic moment.
+**Content shape:** one existing retrieval object with a concise question, a small answer set, one correct option, a useful explanation, an optional hint and any context required by the surrounding learning beat.
+**Props:** `retrieval`, `variant` (`'contained' | 'fullBleed' | 'inline'`), `subject`, `topic`, `beatId`, `contextImage`, `contextText`, `label`, `mode`, `onInteractionComplete`, `onContinueReady`
+**Lock reason:** Visual and interaction contract for embedded retrieval. Changing it risks inconsistency and duplication across question presentation.
+**Dependencies:** `AnswerInteraction`, `SUBJECTS`, `SPACING`, `TYPE`
+
