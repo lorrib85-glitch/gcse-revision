@@ -232,6 +232,7 @@ const verticallyOpposite = {
 const TRIANGLE_BASE_LEFT = { x: 75, y: 195 }
 const TRIANGLE_BASE_RIGHT = { x: 285, y: 195 }
 const TRIANGLE_APEX_Y = 62
+const TRIANGLE_CENTRE_X = (TRIANGLE_BASE_LEFT.x + TRIANGLE_BASE_RIGHT.x) / 2
 
 const triangle = {
   id: 'triangle',
@@ -239,11 +240,11 @@ const triangle = {
   keyFact: 'The interior angles of a triangle add up to 180°.',
   canvas: { width: 360, height: 240 },
   interactive: true,
-  initialValue: 180,
+  initialValue: 145,
   min: 100,
   max: 260,
   step: 5,
-  snapTargets: [],
+  snapTargets: [TRIANGLE_CENTRE_X],
   handleLabel: 'Position of the top vertex',
   valueText: (v) => {
     const [a, b, c] = triangleApexAngles(v)
@@ -255,6 +256,22 @@ const triangle = {
     const left = TRIANGLE_BASE_LEFT
     const right = TRIANGLE_BASE_RIGHT
     const [a, b, c] = triangleApexAngles(v)
+    const isIsosceles = v === TRIANGLE_CENTRE_X
+    const equalSideMarks = isIsosceles
+      ? [
+          {
+            id: 'triangle-equal-left',
+            path: sideTickPath(apex, left),
+            strokeTone: 'sectorB',
+          },
+          {
+            id: 'triangle-equal-right',
+            path: sideTickPath(apex, right),
+            strokeTone: 'sectorB',
+          },
+        ]
+      : []
+
     return {
       shapes: [
         {
@@ -263,12 +280,13 @@ const triangle = {
           fillTone: 'interactionSoft',
           strokeTone: 'structure',
         },
+        ...equalSideMarks,
       ],
       rays: [],
       sectors: [
         vertexSector('sector-a', apex, left, right, a, 'A'),
         vertexSector('sector-b', left, apex, right, b, 'B'),
-        vertexSector('sector-c', right, apex, left, c, 'B'),
+        vertexSector('sector-c', right, apex, left, c, isIsosceles ? 'B' : 'C'),
       ],
       points: [
         { id: 'point-a', text: 'A', x: apex.x, y: apex.y - 14 },
@@ -278,7 +296,9 @@ const triangle = {
       handle: apex,
       status: {
         heading: `${a}° + ${b}° + ${c}° = 180°`,
-        explanation: 'Angles in a triangle add up to 180°.',
+        explanation: isIsosceles
+          ? 'Angles in a triangle add up to 180°. Matching side marks show the equal sides.'
+          : 'Angles in a triangle add up to 180°.',
       },
     }
   },
@@ -305,6 +325,17 @@ function vertexSector(id, p, q, r, valueDeg, tone) {
     id, cx: p.x, cy: p.y, start, end: start + sweep, radius: 24, tone,
     label: { text: `${valueDeg}°`, x: label.x, y: label.y },
   }
+}
+
+function sideTickPath(from, to, position = 0.52, halfLength = 7) {
+  const dx = to.x - from.x
+  const dy = to.y - from.y
+  const length = Math.hypot(dx, dy) || 1
+  const cx = from.x + dx * position
+  const cy = from.y + dy * position
+  const px = (-dy / length) * halfLength
+  const py = (dx / length) * halfLength
+  return `M ${cx - px} ${cy - py} L ${cx + px} ${cy + py}`
 }
 
 function rayFrom(cx, cy, angleDeg, length) {
