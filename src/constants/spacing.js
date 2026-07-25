@@ -24,7 +24,9 @@ export const COMPONENT_SIZE = {
   focusRing: 2,
   focusOffset: 2,
   accentRail: 3,
-  touchTarget: SPACING.separation,
+  // WCAG-aligned minimum interactive target. Kept separate from the 42px
+  // separation rhythm so controls never need arithmetic at the call site.
+  touchTarget: 44,
   thumbnail: SPACING.cinematic,
   memoryHookImage: SPACING.section,
   typedAnswerHeight: 52,
@@ -32,6 +34,7 @@ export const COMPONENT_SIZE = {
   typedAnswerMaxWidth: 292,
   typedRecallMinHeight: 360,
   answerFeedbackReserve: 58,
+  areaPerimeterStatusReserve: 118,
   // Clears the fixed LearningHeader (safe-area offset + 44px controls) when a
   // component programmatically scrolls newly revealed content into view.
   learningHeaderClearance: SPACING.cinematic,
