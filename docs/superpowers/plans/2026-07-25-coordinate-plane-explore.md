@@ -1446,7 +1446,11 @@ git commit -m "Add shared point label layout with degradation"
   focusModes: string[], defaultFocus,
   defaultActiveId,
   capabilities: {},            // defaults, overridden by difficultyCapabilities
-  controls: [{ id, label, min, max, step, valueText, valueFromPointer, format? }],
+  controls: [{
+    id, label, step, valueText, valueFromPointer, format?,
+    min, max,                          // accepted MODEL range (static/controlled)
+    interactionMin?, interactionMax?,  // range the learner may reach; default min/max
+  }],
   steppers: [{ controlId, label?, group? }],            // rendered −/+ steppers
   options: [{ id, label, choices: [{ id, label }] }],   // discrete buttons
   initialValues: {},
@@ -1474,6 +1478,37 @@ learner should read (`½` rather than `0.5`).
 
 `tests/architecture/coordinate-plane-control-reachability.test.js` fails any
 preset declaring a control that neither a handle nor a stepper reaches.
+
+### Model range versus interaction range
+
+**These are different things and must not share one pair of numbers.**
+
+- `min` / `max` — the **model range**: every value the preset accepts as
+  meaningful. `clampPresetValues` uses this, so it governs `value`,
+  `defaultValue` and `initialValues`.
+- `interactionMin` / `interactionMax` — the **interaction range**: how far a
+  learner may drive the control by dragging, stepping or pressing Home/End.
+  Defaults to `min` / `max` when a preset does not narrow it.
+
+Collapsing the two silently corrupts supplied figures. A rotation preset whose
+centre is capped at ±2 for comfortable phone interaction would clamp a static
+exam figure centred at (3, 2) down to (2, 2) — and the result still *looks*
+like a valid rotation, so nothing signals that the diagram no longer matches
+its mark scheme. Static content must render what it was given.
+
+Consequences for the renderer:
+
+- Steppers, keyboard stepping and Home/End clamp to the **interaction** range,
+  and `aria-valuemin` / `aria-valuemax` report it, because that is what the
+  learner can actually reach.
+- `−` and `+` disable at the **interaction** bounds.
+- A supplied value outside the interaction range but inside the model range is
+  rendered as given, and the steppers still operate from wherever it sits.
+- `clampPresetValues` never applies interaction bounds.
+
+Both ranges must satisfy the visible-bounds contract: the **model** range is
+what `coordinate-plane-visible-bounds.test.js` drives to its extremes, so a
+widened model range that pushes the figure off the plot fails there.
 
 `context` is `{ focus, comparisonRule, activeId, showGuides, capabilities, axes, grid }`.
 
@@ -1874,22 +1909,47 @@ export function resolvePresetFocus(preset, focus) {
   return preset.defaultFocus ?? modes[0] ?? null
 }
 
-function clampControl(control, value) {
+function clampControl(control, value, { min, max }) {
   const stepped = control.step
     ? Math.round(value / control.step) * control.step
     : value
-  return Math.min(Math.max(stepped, control.min), control.max)
+  return Math.min(Math.max(stepped, min), max)
 }
 
+/**
+ * Clamps to the MODEL range only.
+ *
+ * This is what `value`, `defaultValue` and `initialValues` pass through, so it
+ * must never apply interaction bounds — a static exam figure has to render the
+ * centre it was given, not the nearest one a thumb could reach.
+ */
 export function clampPresetValues(preset, values) {
   const controls = preset.controls ?? []
   const clamped = { ...values }
 
   for (const control of controls) {
     if (clamped[control.id] == null) continue
-    clamped[control.id] = clampControl(control, clamped[control.id])
+    clamped[control.id] = clampControl(control, clamped[control.id], {
+      min: control.min,
+      max: control.max,
+    })
   }
   return clamped
+}
+
+export function interactionRange(control) {
+  return {
+    min: control.interactionMin ?? control.min,
+    max: control.interactionMax ?? control.max,
+  }
+}
+
+/**
+ * Clamps a learner-driven change to the interaction range. Used by drag,
+ * steppers and keyboard stepping — never by the controlled-value path.
+ */
+export function clampInteractionValue(control, value) {
+  return clampControl(control, value, interactionRange(control))
 }
 
 export function mergeAxis(presetAxis, override) {
@@ -1972,7 +2032,9 @@ import { createCoordinatePlaneVisualRoles } from './coordinatePlane/coordinatePl
 import { resolveCoordinatePlaneVisualRole } from './coordinatePlane/coordinatePlaneRoleResolver.js'
 import { estimateChipBox, layoutPointLabels } from './coordinatePlane/pointLabelLayout.js'
 import {
+  clampInteractionValue,
   clampPresetValues,
+  interactionRange,
   mergeAxis,
   mergeCapabilities,
   resolveCoordinatePlanePreset,
@@ -2215,9 +2277,18 @@ function CoordinatePlaneExplore({
    * drop x.
    */
   const setControlValues = (patch, { announce = false } = {}) => {
-    const nextValues = clampPresetValues(presetConfig, { ...currentValues, ...patch })
+    // Learner-driven changes are held to the interaction range; the model clamp
+    // then runs as the outer guarantee. A supplied value already outside the
+    // interaction range is left where it is until the learner moves it.
+    const bounded = {}
+    for (const [controlId, next] of Object.entries(patch)) {
+      const control = controlsById[controlId]
+      bounded[controlId] = control ? clampInteractionValue(control, next) : next
+    }
 
-    const changed = Object.keys(patch)
+    const nextValues = clampPresetValues(presetConfig, { ...currentValues, ...bounded })
+
+    const changed = Object.keys(bounded)
       .some(controlId => nextValues[controlId] !== currentValues[controlId])
     if (!changed) return
 
@@ -2284,12 +2355,13 @@ function CoordinatePlaneExplore({
     if (!control) return
 
     const current = currentValues[handle.controlId]
+    const reach = interactionRange(control)
     let next = null
 
     if (event.key === 'ArrowRight' || event.key === 'ArrowUp') next = current + control.step
     if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') next = current - control.step
-    if (event.key === 'Home') next = control.min
-    if (event.key === 'End') next = control.max
+    if (event.key === 'Home') next = reach.min
+    if (event.key === 'End') next = reach.max
     if (next === null) return
 
     event.preventDefault()
@@ -2314,12 +2386,13 @@ function CoordinatePlaneExplore({
   const handleStepperKeyDown = controlId => (event) => {
     const control = controlsById[controlId]
     if (!control) return
+    const reach = interactionRange(control)
     let next = null
 
     if (event.key === 'ArrowRight' || event.key === 'ArrowUp') next = currentValues[controlId] + control.step
     if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') next = currentValues[controlId] - control.step
-    if (event.key === 'Home') next = control.min
-    if (event.key === 'End') next = control.max
+    if (event.key === 'Home') next = reach.min
+    if (event.key === 'End') next = reach.max
     if (next === null) return
 
     event.preventDefault()
@@ -2743,8 +2816,8 @@ function CoordinatePlaneExplore({
               role="slider"
               tabIndex={0}
               aria-label={control.label}
-              aria-valuemin={control.min}
-              aria-valuemax={control.max}
+              aria-valuemin={interactionRange(control).min}
+              aria-valuemax={interactionRange(control).max}
               aria-valuenow={currentValues[handle.controlId]}
               aria-valuetext={control.valueText(currentValues)}
               aria-describedby={showStatus ? statusId : descriptionId}
@@ -2793,6 +2866,7 @@ function CoordinatePlaneExplore({
             const control = controlsById[stepper.controlId]
             if (!control) return null
             const current = currentValues[stepper.controlId]
+            const reach = interactionRange(control)
             const display = control.format ? control.format(current) : String(current).replace('-', '−')
 
             const nudgeStyle = {
@@ -2821,7 +2895,7 @@ function CoordinatePlaneExplore({
                     className="cp-explore__option"
                     data-cp-stepper-decrement={stepper.controlId}
                     aria-label={`Decrease ${control.label}`}
-                    disabled={current <= control.min}
+                    disabled={current <= reach.min}
                     onClick={() => stepControl(stepper.controlId, -1)}
                     style={nudgeStyle}
                   >
@@ -2833,8 +2907,8 @@ function CoordinatePlaneExplore({
                     role="slider"
                     tabIndex={0}
                     aria-label={control.label}
-                    aria-valuemin={control.min}
-                    aria-valuemax={control.max}
+                    aria-valuemin={reach.min}
+                    aria-valuemax={reach.max}
                     aria-valuenow={current}
                     aria-valuetext={control.valueText(currentValues)}
                     onKeyDown={handleStepperKeyDown(stepper.controlId)}
@@ -2854,7 +2928,7 @@ function CoordinatePlaneExplore({
                     className="cp-explore__option"
                     data-cp-stepper-increment={stepper.controlId}
                     aria-label={`Increase ${control.label}`}
-                    disabled={current >= control.max}
+                    disabled={current >= reach.max}
                     onClick={() => stepControl(stepper.controlId, 1)}
                     style={nudgeStyle}
                   >
@@ -4548,15 +4622,21 @@ function signed(value) {
 
 // The object triangle for translate, reflect and rotate.
 //
-// Coordinates and control ranges are chosen together so the IMAGE also stays
-// inside the axes at every reachable value — a figure half off the plot teaches
-// nothing. tests/architecture/coordinate-plane-visible-bounds.test.js enforces
-// this, so changing either the object or a range without rechecking will fail.
+// Coordinates and MODEL ranges are chosen together so the IMAGE also stays
+// inside the axes at every accepted value — a figure half off the plot teaches
+// nothing. tests/architecture/coordinate-plane-visible-bounds.test.js drives
+// the model range to its extremes, so widening either without rechecking fails.
 //
-// Worst cases on the ±8 axes used here:
-//   translate  image = p + d,        |p|∞ ≤ 3, |d|∞ ≤ 4  → ≤ 7
-//   reflect    image = 2a − p,       |a| ≤ 2, |p|∞ ≤ 3   → ≤ 7
-//   rotate     image = c + R(p − c), |c|∞ ≤ 2            → ≤ 7
+// The axes are ±10 rather than ±8 so the model range can sit genuinely wider
+// than the interaction range. At ±8 visibility would bind first and the model
+// limit would collapse back onto the interaction limit — which is the silent
+// clamp the two-range contract exists to prevent.
+//
+// Worst cases on the ±10 axes, using model ranges:
+//   translate  image = p + d,        |p|∞ ≤ 3, d ∈ [−7,10]×[−8,7] → ≤ 10
+//   reflect    image = 2a − p,       |a| ≤ 3, |p|∞ ≤ 3            → ≤ 9
+//   rotate     image = c + R(p − c), |c|∞ ≤ 3                     → ≤ 9
+//   enlarge    image = (1−s)c + s·p, |c|∞ ≤ 2, |p|∞ ≤ 2, |s| ≤ 3  → ≤ 10
 const OBJECT_VERTICES = [
   { id: 'a', letter: 'A', x: -1, y: 3 },
   { id: 'b', letter: 'B', x: -3, y: 0 },
@@ -4573,8 +4653,8 @@ const ENLARGE_OBJECT_VERTICES = [
 ]
 
 // Wide enough for every image above, with unit gridlines but labels every 2 so
-// a 17-unit axis stays legible at 390px.
-const TRANSFORM_AXIS = { min: -8, max: 8, step: 2 }
+// a 21-unit axis stays legible at 390px.
+const TRANSFORM_AXIS = { min: -10, max: 10, step: 2 }
 const TRANSFORM_GRID = { xSubdivisions: 2, ySubdivisions: 2 }
 
 function polygonPath(vertices) {
@@ -4736,8 +4816,10 @@ export const translatePreset = createTransformationPreset({
     {
       id: 'dx',
       label: 'Vector across',
-      min: -4,
-      max: 4,
+      min: -7,
+      max: 10,
+      interactionMin: -4,
+      interactionMax: 4,
       step: 1,
       valueText: values => `across ${values.dx}`,
       valueFromPointer: point => snapToStep(point.modelX, 1),
@@ -4745,8 +4827,10 @@ export const translatePreset = createTransformationPreset({
     {
       id: 'dy',
       label: 'Vector up',
-      min: -4,
-      max: 4,
+      min: -8,
+      max: 7,
+      interactionMin: -4,
+      interactionMax: 4,
       step: 1,
       valueText: values => `up ${values.dy}`,
       valueFromPointer: point => snapToStep(point.modelY, 1),
@@ -4799,8 +4883,10 @@ export const reflectPreset = createTransformationPreset({
     {
       id: 'mirrorValue',
       label: 'Mirror line position',
-      min: -2,
-      max: 2,
+      min: -3,
+      max: 3,
+      interactionMin: -2,
+      interactionMax: 2,
       step: 1,
       valueText: values => `mirror at ${values.mirrorValue}`,
       valueFromPointer: point => snapToStep(point.modelX, 1),
@@ -4858,8 +4944,10 @@ export const rotatePreset = createTransformationPreset({
     {
       id: 'cx',
       label: 'Centre x',
-      min: -2,
-      max: 2,
+      min: -3,
+      max: 3,
+      interactionMin: -2,
+      interactionMax: 2,
       step: 1,
       valueText: values => `centre x ${values.cx}`,
       valueFromPointer: point => snapToStep(point.modelX, 1),
@@ -4867,8 +4955,10 @@ export const rotatePreset = createTransformationPreset({
     {
       id: 'cy',
       label: 'Centre y',
-      min: -2,
-      max: 2,
+      min: -3,
+      max: 3,
+      interactionMin: -2,
+      interactionMax: 2,
       step: 1,
       valueText: values => `centre y ${values.cy}`,
       valueFromPointer: point => snapToStep(point.modelY, 1),
@@ -4950,6 +5040,8 @@ export const enlargePreset = createTransformationPreset({
       label: 'Centre x',
       min: -2,
       max: 2,
+      interactionMin: -1,
+      interactionMax: 1,
       step: 1,
       valueText: values => `centre x ${values.cx}`,
       valueFromPointer: point => snapToStep(point.modelX, 1),
@@ -4959,6 +5051,8 @@ export const enlargePreset = createTransformationPreset({
       label: 'Centre y',
       min: -2,
       max: 2,
+      interactionMin: -1,
+      interactionMax: 1,
       step: 1,
       valueText: values => `centre y ${values.cy}`,
       valueFromPointer: point => snapToStep(point.modelY, 1),
@@ -5142,6 +5236,7 @@ import { describe, expect, it } from 'vitest'
 import {
   COORDINATE_PLANE_PRESETS,
   clampPresetValues,
+  interactionRange,
   mergeCapabilities,
   resolvePresetFocus,
 } from '../../src/components/learning/coordinatePlane/presets/index.js'
@@ -5212,6 +5307,36 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
         expect(typeof control.valueText, `${presetId}.${control.id}.valueText`).toBe('function')
       }
     })
+
+    it('keeps every interaction range inside its model range', () => {
+      for (const control of preset.controls ?? []) {
+        const reach = interactionRange(control)
+
+        expect(reach.min, `${presetId}.${control.id} interactionMin`).toBeGreaterThanOrEqual(control.min)
+        expect(reach.max, `${presetId}.${control.id} interactionMax`).toBeLessThanOrEqual(control.max)
+        expect(reach.max).toBeGreaterThan(reach.min)
+      }
+    })
+
+    // The corruption this contract exists to prevent: a supplied static figure
+    // silently redrawn at whatever value a thumb could have reached.
+    it('never clamps a supplied value down to the interaction range', () => {
+      for (const control of preset.controls ?? []) {
+        const reach = interactionRange(control)
+        if (reach.max >= control.max) continue
+
+        const beyondReach = control.max
+        const clamped = clampPresetValues(preset, {
+          ...preset.initialValues,
+          [control.id]: beyondReach,
+        })
+
+        expect(
+          clamped[control.id],
+          `${presetId}.${control.id}: a supplied value of ${beyondReach} was clamped to ${clamped[control.id]}, so static content would render a figure it did not ask for`,
+        ).toBe(beyondReach)
+      }
+    })
   },
 )
 ```
@@ -5244,8 +5369,12 @@ const CAPABILITY_SETS = [
   { perpendicularGradients: true, showXIntercept: true },
 ]
 
-// Every extreme of every control, plus the initial values — the states a
-// learner can actually drive the diagram into.
+// Every extreme of every control, plus the initial values.
+//
+// Deliberately uses the MODEL range (control.min / control.max), not the
+// interaction range: static and controlled content may supply anything the
+// model accepts, so that is the range which must stay visible. Narrowing this
+// to the interaction range would leave supplied exam figures unchecked.
 function extremeValueSets(preset) {
   const base = clampPresetValues(preset, preset.initialValues)
   const sets = [base]
@@ -6289,27 +6418,35 @@ Confirm by inspection, not by test alone:
 - Stepper rows render, are keyboard-operable, and have 44px targets.
 - The clip path exists and wraps shapes and guides.
 - `labelObstacles` is computed and passed to `layoutPointLabels`.
-Do not dispatch any preset task until all five hold.
+- Controlled and static values are **not** clamped to interaction limits:
+  `clampPresetValues` applies `min`/`max` only, while steppers, keyboard and
+  drag apply `interactionMin`/`interactionMax`. Verify with a static figure
+  supplied a value outside the interaction range — it must render as given.
+Do not dispatch any preset task until all six hold.
 
 **Gate 3 — after Task 7 (the first drag preset).**
-`midpoint` is the first preset with two multi-control handles. Confirm a
-diagonal drag on each endpoint moves both coordinates, and that the visible
-bounds test passes with the corrected `by: 5` example.
+`midpoint` is the first preset with two multi-control handles. Confirm pointer,
+keyboard and `onChange` behaviour: a diagonal drag on each endpoint moves both
+coordinates, keyboard stepping reaches the same values, `onChange` fires once
+per change with the complete value object, and the visible-bounds test passes
+with the corrected `by: 5` example.
 
 **Gate 4 — after Task 8 (the first stepper preset).**
-`straightLine` is the first preset with no handles at all. Confirm it is
-operable end to end through steppers alone, that a steep line is clipped, and
-that `m = 0` under `comparisonRule="perpendicular"` refuses rather than drawing
-a second horizontal line.
+`straightLine` is the first preset with no handles at all. Confirm pointer and
+keyboard parity — every value reachable by clicking `−`/`+` is reachable by
+arrow keys, and Home/End land on the interaction bounds. Also confirm a steep
+line is clipped, and that `m = 0` under `comparisonRule="perpendicular"`
+refuses rather than drawing a second horizontal line.
 
 **Gate 5 — after Task 11 (all transformation presets).**
-Confirm the visible bounds test passes for all four at every control extreme,
-that each declares `supportsShowAllGuides: false`, and that capability-gated
-options are absent rather than disabled.
+Inspect the maximum states directly: every image must remain visible at each
+control's model extreme, annotation density must stay at one active vertex,
+each preset must declare `supportsShowAllGuides: false`, and capability-gated
+options must be absent rather than disabled.
 
 **Gate 6 — after Task 14 (the final render pass).**
-The written render pass at 390px and 320px. Source and tests alone do not pass
-this gate.
+Review all nine presets at 390px and 320px before registry closure in Task 15.
+Source and tests alone do not pass this gate.
 
 ## Verification summary
 
