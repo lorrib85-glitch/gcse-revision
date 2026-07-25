@@ -28,6 +28,7 @@ export const OrderNumbers = {
     const canvas = within(canvasElement)
     const handle = canvas.getByRole('slider', { name: 'Value to place on the line' })
 
+    await expect(canvas.getByText('Put the values in order')).toBeVisible()
     await expect(handle).toHaveAttribute('aria-valuenow', '2')
     await expect(canvas.getByText('−1.5 < 0 < ½ < 0.75 < 2')).toBeVisible()
     await expect(canvas.getByText('2 sits furthest right, so it is the largest of the five.')).toBeVisible()
@@ -52,6 +53,7 @@ export const NegativeMovement = {
     const canvas = within(canvasElement)
     const move = canvas.getByRole('slider', { name: 'Size of the move' })
 
+    await expect(canvas.getByText('Follow the move from the starting number')).toBeVisible()
     await expect(canvas.getByText('3 + (−5) = −2')).toBeVisible()
     await expect(canvas.getByText('Adding a negative moves left: 3 − 5 = −2.')).toBeVisible()
     expect(canvasElement.querySelector('[data-nl-jump="move"]')).not.toBeNull()
@@ -105,6 +107,7 @@ export const InequalityRange = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
+    await expect(canvas.getByText('Represent the inequality')).toBeVisible()
     await expect(canvas.getByText('x ≥ −1')).toBeVisible()
     await expect(
       canvas.getByText('Interval notation [−1, ∞). The filled circle shows −1 is included.'),
@@ -133,7 +136,7 @@ export const BoundsInterval = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
-    await expect(canvas.getByText('2.3 rounded to 1 decimal place')).toBeVisible()
+    await expect(canvas.getByText('Find the possible values that round to 2.3')).toBeVisible()
     await expect(canvas.getByText('2.25 ≤ x < 2.35')).toBeVisible()
     expect(markerStyle(canvasElement, 'lower')).toBe('filled')
     expect(markerStyle(canvasElement, 'upper')).toBe('open')
@@ -145,10 +148,11 @@ export const BoundsInterval = {
     const handle = canvas.getByRole('slider', { name: 'Rounded value' })
     handle.focus()
     await userEvent.keyboard('{ArrowRight}')
+    await expect(canvas.getByText('Find the possible values that round to 2.4')).toBeVisible()
     await expect(canvas.getByText('2.35 ≤ x < 2.45')).toBeVisible()
 
     await userEvent.click(canvas.getByRole('button', { name: 'Whole number' }))
-    await expect(canvas.getByText('7 rounded to the nearest whole number')).toBeVisible()
+    await expect(canvas.getByText('Find the possible values that round to 7')).toBeVisible()
     await expect(canvas.getByText('6.5 ≤ x < 7.5')).toBeVisible()
   },
 }
@@ -158,24 +162,36 @@ export const MultiplyPattern = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
+    await expect(canvas.getByText('Use 3 equal jumps from zero')).toBeVisible()
     await expect(canvas.getByText('3 × (−3) = −9')).toBeVisible()
     await expect(canvas.getByText('3 jumps of 3, left of zero.')).toBeVisible()
     expect(canvasElement.querySelectorAll('[data-nl-jump]')).toHaveLength(3)
+    canvasElement.querySelectorAll('[data-nl-jump-label]').forEach((label) => {
+      expect(label.textContent).toBe('−3')
+    })
 
-    const handle = canvas.getByRole('slider', { name: 'Number of jumps' })
+    const handle = canvas.getByRole('slider', { name: 'Size and direction of each jump' })
     handle.focus()
     await userEvent.keyboard('{ArrowRight>3/}')
     await expect(canvas.getByText('3 × 0 = 0')).toBeVisible()
-    await expect(canvas.getByText('No jumps at all — you never leave zero.')).toBeVisible()
+    await expect(canvas.getByText('3 jumps of 0 still land on zero.')).toBeVisible()
     expect(canvasElement.querySelectorAll('[data-nl-jump]')).toHaveLength(0)
 
     await userEvent.keyboard('{ArrowRight>4/}')
     await expect(canvas.getByText('3 × 4 = 12')).toBeVisible()
-    await expect(canvas.getByText('4 jumps of 3, right of zero.')).toBeVisible()
+    await expect(canvas.getByText('3 jumps of 4, right of zero.')).toBeVisible()
+    expect(canvasElement.querySelectorAll('[data-nl-jump]')).toHaveLength(3)
 
-    await userEvent.click(canvas.getByRole('button', { name: '× 5' }))
-    await expect(canvas.getByText('Jumps of 5 from zero')).toBeVisible()
+    // Changing the first factor changes the number of jumps and resets the
+    // signed jump size. Five times negative three must render five jumps of −3.
+    await userEvent.click(canvas.getByRole('button', { name: '5 jumps' }))
+    await expect(canvas.getByText('Use 5 equal jumps from zero')).toBeVisible()
     await expect(canvas.getByText('5 × (−3) = −15')).toBeVisible()
+    await expect(canvas.getByText('5 jumps of 3, left of zero.')).toBeVisible()
+    expect(canvasElement.querySelectorAll('[data-nl-jump]')).toHaveLength(5)
+    canvasElement.querySelectorAll('[data-nl-jump-label]').forEach((label) => {
+      expect(label.textContent).toBe('−3')
+    })
   },
 }
 
@@ -184,7 +200,9 @@ export const EstimateRange = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
-    await expect(canvas.getByText('29 × 21 — round each to 1 significant figure')).toBeVisible()
+    await expect(
+      canvas.getByText('Estimate 29 × 21 by rounding each number to 1 significant figure'),
+    ).toBeVisible()
     await expect(canvas.getByText('30 × 20 = 600')).toBeVisible()
     await expect(
       canvas.getByText('Your estimate 600 is within 1% of 609 — inside the sensible range.'),
@@ -217,6 +235,7 @@ export const StaticDiagram = {
     await expect(diagram).toHaveAttribute('data-nl-interactive', 'false')
     expect(canvas.queryAllByRole('slider')).toHaveLength(0)
     expect(canvas.queryAllByRole('button')).toHaveLength(0)
+    await expect(canvas.getByText('Represent the inequality')).toBeVisible()
     await expect(canvas.getByText('x ≥ 2')).toBeVisible()
   },
 }
