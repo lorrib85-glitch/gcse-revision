@@ -469,21 +469,54 @@ Do not use true/false interaction as a generic visual pattern. It must create a 
 
 ---
 
-### RecoveryQuizPlayer
+### RecoveryQuizPlayer — **LOCKED**
 
 **File:** `src/components/learning/RecoveryQuizPlayer.jsx`
-**Purpose:** Lightweight recovery quiz player (3–4 focused questions). Launched from WeakSpotRecovery for targeted remediation.
-**Props:** `quizId`, `subject`, `onComplete`, `onBack`
-**Dependencies:** `SUBJECTS`, `AnswerInteraction`, `recoveryQuizzes.js`
+**What it is:** A short, highly focused verification sequence used after targeted reteaching. It checks whether the learner can now apply the repaired understanding across several closely related questions.
+**Best used for:** Testing whether a specific weak concept has improved after the learner has received an explanation, worked example, scaffold or other appropriate repair activity.
+**Props:** `recoveryQuizId`, `onComplete`, `onBack`
+**Data source:** `src/data/recoveryQuizzes.js`
+**Quiz shape:** `{ id, subject, estimatedTime, topic, questions: [{ type, question, options, correct, explanation, hint? }] }`
+**Dependencies:** `AnswerInteraction`, `recoveryQuizzes`, `SUBJECTS`, `SPACING`, `BackButton`, `SequenceProgress`, `TYPE`, `GENERAL`
+
+- **Decision**
+  - **Use when:** the learner has already received targeted reteaching for one evidenced weakness and now needs a short check showing whether the corrected understanding transfers across several examples. Choose it as the verification stage of recovery, not as the whole repair.
+  - **Do not use when:** the weakness has only just been detected, the learner has not yet been shown why their thinking was wrong or the questions simply repeat the original item with different wording. Do not use it as a generic quiz, mix unrelated weak areas together or mark a weak spot as fixed merely because every question was attempted.
+  - **Choose instead:** use `WeakSpotRecovery` to introduce the diagnosed weakness and offer the repair route. Use `ExplainReveal`, `CalculationBreakdown`, a worked example or another teaching component when the concept still needs to be rebuilt. Use `SpotTheError` when the learner must diagnose and correct a precise error. Use `QuickRecallScreen` for ordinary mixed retrieval outside a repair pathway.
+  - **Content shape:** usually three to five tightly focused questions targeting the same underlying weakness through meaningfully different examples or representations. Begin with a simpler check, then test the idea in a changed context so success cannot come from memorising one answer. Every question needs useful corrective feedback. Include a defined success threshold and a fallback route when the learner is still struggling.
+  - **Rhythm role:** repair, retrieval.
+
+**Governance rule:** completion is not evidence of repair. The weakness status should change only when the learner meets the defined success threshold, ideally across more than one representation of the concept. An unsuccessful check should trigger simpler reteaching or a different repair strategy rather than repeating the same quiz unchanged.
+
+**Outcome language:**
+
+- successful evidence → “This is looking stronger”
+- partial evidence → “One part still needs work”
+- weak evidence → “Let's rebuild this another way”
+
+Do not automatically display “Weak spot fixed”.
+
+**Known implementation gap:** the current v1 completion screen still displays “Weak spot fixed” when the question sequence ends and does not yet apply a recovery threshold. Treat this as unresolved implementation work; the documentation does not claim that the behaviour is already compliant.
 
 ---
 
-### WeakSpotRecovery
+### WeakSpotRecovery — **LOCKED**
 
 **File:** `src/components/learning/WeakSpotRecovery.jsx`
-**Purpose:** Full-screen behavioural intervention screen shown when a learner struggles. Presents the weak topic with explanation and a recovery CTA. Calm, non-punitive.
+**What it is:** A calm intervention handoff shown after the weakness tracker has gathered enough behavioural evidence to identify one specific weak concept or recurring error pattern. It explains the diagnosed gap briefly and offers a direct route into an appropriate repair activity.
+**Best used for:** Turning an evidenced weakness into an immediate, manageable next action without making the learner feel punished or overwhelmed.
 **Props:** `block`, `subject`, `progress`, `onBack`, `onFixWeakSpot`, `onSkip`
-**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`
+**Block shape:** `{ type: 'weakSpotRecovery', subject, topicId, title, explanation, meta?, cta?, skipText?, recoveryQuizId? }`
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `GENERAL`, `BackButton`, `ScreenTitle`
+
+- **Decision**
+  - **Use when:** the system has enough evidence to identify one specific weak concept, misconception or recurring error pattern and can offer a suitable next repair activity. Choose it when the learner needs a clear explanation of what is going wrong and one manageable action to address it.
+  - **Do not use when:** the learner has made one isolated mistake, the weakness is still broad or uncertain, or the system cannot explain what the learner is confusing. Do not trigger it from self-reported confidence alone, use it as a generic encouragement screen or claim that a topic is weak without supporting evidence.
+  - **Choose instead:** use `MisconceptionCheck` when a common false belief should be tested but has not yet been identified as this learner's weakness. Use `PriorKnowledgeRecall` when broad missing prior knowledge still needs diagnosing. Use `SpotTheError` when the learner should locate and repair one precise error. Use `QuickRecallScreen` when the goal is ordinary retrieval rather than targeted repair.
+  - **Content shape:** exactly one specific weak spot with a concise, evidence-based diagnosis of what the learner is mixing up, missing or doing incorrectly. Include one realistic repair route, a short indication of what the activity involves and an optional skip route. Avoid vague labels such as “History” or “Algebra”, generic motivational copy and unsupported claims that the learner has mastered or failed a topic.
+  - **Rhythm role:** repair.
+
+**Governance rule:** `WeakSpotRecovery` starts a repair pathway. It does not teach enough content by itself and must not mark the weakness as resolved merely because the learner accepts or completes the suggested activity.
 
 ---
 
@@ -659,11 +692,37 @@ Do not use true/false interaction as a generic visual pattern. It must create a 
 **File:** `src/components/learning/SpotTheError.jsx`
 **Scoring logic:** `src/components/learning/spotTheErrorScoring.js` (pure, unit-tested)
 **Story:** `src/components/learning/SpotTheError.stories.jsx`
-**What it is:** Three-stage diagnostic precision task — locate the wrong word/phrase (contiguous, keyboard-accessible selection), explain why it is wrong, then rewrite it correctly. Full-bleed (owns its own 100dvh scroll + safe-area) so the staged fields and actions stay reachable with the keyboard open.
-**Best used for:** Precision-checking misconceptions or calculation errors. Teaches diagnosis and repair, not just recognition. Evaluates and gives specific feedback on all three stages independently, logging `Error identification`, `Scientific precision` and `Error correction` weaknesses.
+**What it is:** A three-stage diagnostic repair task in which the learner locates one inaccurate word or phrase, explains precisely why it is wrong and rewrites the statement correctly. The three stages are evaluated separately so the system can distinguish recognition, understanding and correction.
+**Best used for:** Developing precision in scientific statements, historical explanations, mathematical working and exam answers where one specific error changes the meaning or loses marks.
 **Props:** `block`, `subject`, `onContinue`
-**Block shape:** `{ type: 'spotTheError', statement, errorTarget, whatWasWrong, correctVersion, examinerNote?, commonTrap?, missHeading?, explanationCriteria?: { anyOf?, allOf?, supportingAnyOf? }, keyTerms? (legacy — treated as explanationCriteria.anyOf), explanationHint?, explanationPraise?, repairKeyTerms?, acceptableRepairs?, repairMustAvoid?, minimumExplanationLength?, minimumRepairLength? }`
+**Block shape:** `{ type: 'spotTheError', statement, errorTarget, whatWasWrong, correctVersion, examinerNote?, commonTrap?, explanationCriteria?, explanationHint?, explanationPraise?, repairKeyTerms?, acceptableRepairs?, repairMustAvoid?, minimumExplanationLength?, minimumRepairLength?, weaknessAreas? }`
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `GENERAL`, `CinematicShell`, `ContinueCTA`, `CheckAnswerCTA`, `unifiedWeaknessTracker`, `spotTheErrorScoring`
+
+- **Decision**
+  - **Use when:** one precise error within an otherwise plausible statement, calculation or exam response provides a valuable opportunity to practise identifying the problem, explaining its effect and repairing it accurately. Choose it when correction requires genuine subject understanding rather than simple recognition.
+  - **Do not use when:** the whole answer is broadly wrong, several independent errors compete for attention or the correction is subjective or debatable. Do not use it for spelling mistakes, trivial slips, an ordinary true-or-false fact or content the learner has not yet been taught well enough to correct.
+  - **Choose instead:** use `MisconceptionCheck` when the learner only needs to recognise and correct a common false belief. Use `ExplainReveal` when the reasoning behind the correct idea still needs teaching. Use `RecoveryQuizPlayer` when a repaired weakness should be verified across several examples. Use `CalculationBreakdown` when the learner needs to understand and execute an entire mathematical procedure. Use an exam-response component when the whole answer needs constructing rather than one error repairing.
+  - **Content shape:** one concise statement, calculation or response containing one defensible target error. Supply an exact target range, clear criteria describing why it is wrong, one accurate corrected version and reasonable accepted alternatives. The explanation stage must require the learner to state the conceptual problem, not merely say that the selected words are incorrect. The repair must change the meaning accurately without introducing a new error.
+  - **Rhythm role:** practice, repair.
+
+**Assessment dimensions:**
+
+- **Error identification:** did the learner locate the meaningful error?
+- **Explanation precision:** did they explain why it is wrong using the relevant subject concept?
+- **Error correction:** did they produce an accurate replacement?
+
+These dimensions must remain separately tagged in the weakness tracker. A learner who spots the error but cannot explain or repair it has not demonstrated secure understanding.
+
+### Weakness repair family rule
+
+Choose according to the stage of repair:
+
+- communicate one evidenced weakness and offer a manageable route → `WeakSpotRecovery`
+- rebuild the missing idea → the appropriate teaching, worked-example or scaffold component
+- practise precise diagnosis and correction → `SpotTheError`
+- verify transfer after reteaching → `RecoveryQuizPlayer`
+
+Detection, reteaching, practice and verification are separate jobs. Do not jump directly from a weakness notification to a few quiz questions and call the weakness fixed. Resolution requires evidence that the learner can apply the corrected understanding, preferably in a changed representation or context.
 
 ---
 
