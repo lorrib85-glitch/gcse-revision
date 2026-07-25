@@ -1761,8 +1761,6 @@ import {
   quadrantSigns,
 } from '../coordinatePlaneMath.js'
 
-const MINUS = '−'
-
 // Quadrant label positions in model space, one per quadrant, kept clear of the
 // axes so they never sit under a plotted point's guide lines.
 const QUADRANT_ANCHORS = [
