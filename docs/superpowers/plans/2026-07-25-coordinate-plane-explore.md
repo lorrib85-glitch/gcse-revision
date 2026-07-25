@@ -290,7 +290,7 @@ git commit -m "Add CoordinatePlaneExplore visual roles and role resolver"
 - Test: `tests/unit/coordinatePlaneGeometry.test.js`
 
 **Interfaces:**
-- Consumes: `clamp`, `roundTo` from `src/components/learning/geometry/shapeGeometry.js`
+- Consumes: `roundTo` from `src/components/learning/geometry/shapeGeometry.js`
 - Produces:
   - `resolveAxisPlacement({ min, max }) → 'crossing' | 'edge'`
   - `axisAnchorValue({ min, max }) → number` — the model value on this axis where the perpendicular axis is drawn
@@ -672,7 +672,7 @@ export function clipSegmentToBounds({ from, to }, xAxis, yAxis) {
 
 Run: `./node_modules/.bin/vitest run --project unit tests/unit/coordinatePlaneGeometry.test.js`
 
-Expected: PASS — 22 tests.
+Expected: PASS — 21 tests.
 
 If the fractional-step assertion fails, the expected array in the test is
 already normalised through the same rounding the module uses; confirm
@@ -996,6 +996,14 @@ export function perpendicularGradientOf(m) {
   return tidy(-1 / m)
 }
 
+// NOTE for presets: `intersectionOf` compares gradients with === and
+// `xInterceptOf` tests `m === 0`. Every current preset reads its gradients
+// straight off a discrete stepper, so those are exact. If a preset ever
+// DERIVES a gradient (from two dragged points, say), a value like 5.5e-17
+// would slip past the zero guard and `xInterceptOf` would return an enormous
+// number instead of null. Route any derived gradient through `tidy` first, or
+// switch those comparisons to a tolerance.
+
 export function translatePoint(point, { dx, dy }) {
   return tidyPoint({ x: point.x + dx, y: point.y + dy })
 }
@@ -1051,7 +1059,7 @@ export function formatCoordinate({ x, y }) {
 
 Run: `./node_modules/.bin/vitest run --project unit tests/unit/coordinatePlaneMath.test.js`
 
-Expected: PASS — 26 tests.
+Expected: PASS — 29 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1341,7 +1349,7 @@ function bestPlacement(point, text, plot, taken) {
     const box = clampIntoPlot(boxAt(point, anchor, size), plot)
     const collision = taken.reduce((total, other) => total + overlapArea(box, other), 0)
 
-    if (collision === 0) return { anchor, box, clear: true }
+    if (collision === 0) return { anchor, box, collision: 0, clear: true }
     if (!fallback || collision < fallback.collision) {
       fallback = { anchor, box, collision, clear: false }
     }
@@ -1376,15 +1384,26 @@ export function layoutPointLabels(labels, { plot, obstacles = [] } = {}) {
       }
 
       const short = label.shortText ?? label.text
-      const degraded = bestPlacement(point, short, plot, taken)
-      const winner = degraded.clear ? degraded : full
-      const text = degraded.clear ? short : label.text
+      const shortened = bestPlacement(point, short, plot, taken)
+
+      // When neither form is clear, take whichever overlaps least — which is
+      // essentially always the short one.
+      //
+      // Preferring the full label here would make degradation non-monotone:
+      // a lightly crowded plot would shorten labels while a heavily crowded
+      // one kept them long, so the figures needing the most help would get the
+      // least. Falling back by overlap keeps "more crowded" and "more
+      // degraded" moving in the same direction.
+      const useShort = shortened.clear
+        || (short !== label.text && shortened.collision < full.collision)
+
+      const winner = useShort ? shortened : full
 
       taken.push(winner.box)
       return {
         id: label.id,
-        text,
-        degraded: degraded.clear,
+        text: useShort ? short : label.text,
+        degraded: useShort,
         anchor: winner.anchor,
         box: winner.box,
       }
@@ -1396,11 +1415,15 @@ export function layoutPointLabels(labels, { plot, obstacles = [] } = {}) {
 
 Run: `./node_modules/.bin/vitest run --project unit tests/unit/pointLabelLayout.test.js`
 
-Expected: PASS — 11 tests.
+Expected: PASS — 14 tests.
 
 If the crowding test reports no degraded labels, `CHAR_WIDTH` or
 `ANCHOR_RADIUS` has been lowered enough for nine chips to fit in a 12px square
 of plot; restore the constants above rather than weakening the test.
+
+The monotonicity test is the one that matters most: crowding a plot harder must
+never produce fewer shortened labels. Do not "simplify" the overlap-based
+fallback back into `shortened.clear ? shortened : full` — that inverts it.
 
 - [ ] **Step 5: Commit**
 
