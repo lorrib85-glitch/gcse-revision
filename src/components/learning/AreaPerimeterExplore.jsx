@@ -2,7 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
-import { SPACING } from '../../constants/spacing.js'
+import { COMPONENT_SIZE, SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion.js'
 import {
@@ -15,6 +15,11 @@ import {
   createAreaPerimeterGuidance,
   resolveAreaPerimeterInstruction,
 } from './areaPerimeter/areaPerimeterGuidance.js'
+import {
+  configureAreaPerimeterPresentation,
+  resolveAreaPerimeterPresentation,
+} from './areaPerimeter/areaPerimeterPresentation.js'
+import { resolveAreaPerimeterVisualRole } from './areaPerimeter/areaPerimeterRoleResolver.js'
 
 // ─── Motion / focus styles (injected once) ───────────────────────────────────
 // The first handle breathes gently until the learner's first interaction, then
@@ -100,38 +105,6 @@ const SCREEN_READER_ONLY_STYLE = Object.freeze({
   border: 0,
 })
 
-// The rectangle preset predates scene-level presentation metadata. Keep its
-// mathematics untouched while presenting it on a tighter, baseline-anchored
-// stage: changing height grows the shape upward rather than leaving a large
-// empty field below it.
-const RECTANGLE_PRESENTATION = Object.freeze({
-  width: 360,
-  height: 210,
-  sourceTop: 30,
-  unit: 20,
-  baseline: 162,
-})
-
-function resolvePresentation(presetConfig, values) {
-  if (presetConfig.id !== 'rectangle') {
-    return {
-      canvas: presetConfig.canvas,
-      translateY: 0,
-    }
-  }
-
-  const shapeBottom = RECTANGLE_PRESENTATION.sourceTop
-    + values.height * RECTANGLE_PRESENTATION.unit
-
-  return {
-    canvas: {
-      width: RECTANGLE_PRESENTATION.width,
-      height: RECTANGLE_PRESENTATION.height,
-    },
-    translateY: RECTANGLE_PRESENTATION.baseline - shapeBottom,
-  }
-}
-
 function changeWord(delta, positive, negative) {
   return delta > 0 ? positive : negative
 }
@@ -177,7 +150,10 @@ function AreaPerimeterExplore({
 }) {
   ensureStyles()
 
-  const presetConfig = resolveAreaPerimeterPreset(preset)
+  const presetConfig = useMemo(
+    () => configureAreaPerimeterPresentation(resolveAreaPerimeterPreset(preset)),
+    [preset],
+  )
   const theme = SUBJECTS[subject] || SUBJECTS.Maths
   const roles = useMemo(() => createAreaPerimeterVisualRoles(theme), [theme])
   const prefersReducedMotion = usePrefersReducedMotion()
@@ -241,7 +217,7 @@ function AreaPerimeterExplore({
   const renderedShapes = [...scene.shapes, ...guidance.shapes]
   const renderedLabels = [...scene.labels, ...guidance.labels]
 
-  const presentation = resolvePresentation(presetConfig, currentValues)
+  const presentation = resolveAreaPerimeterPresentation(presetConfig, currentValues)
   const canvas = presentation.canvas
   const geometryTransform = presentation.translateY
     ? `translate(0 ${presentation.translateY})`
@@ -341,15 +317,9 @@ function AreaPerimeterExplore({
     setControlValue(controlId, next, { announce: true })
   }
 
-  const resolveRole = (role) => {
-    if (!role) return undefined
-    if (Object.prototype.hasOwnProperty.call(roles, role)) return roles[role]
-
-    if (import.meta.env.DEV) {
-      console.warn(`AreaPerimeterExplore received an unknown visual role: ${role}`)
-    }
-    return undefined
-  }
+  const resolveRole = role => resolveAreaPerimeterVisualRole(roles, role, {
+    isDevelopment: import.meta.env.DEV,
+  })
 
   const showMethods = canInteract
     && (presetConfig.methods?.length ?? 0) > 0
@@ -369,7 +339,7 @@ function AreaPerimeterExplore({
 
   const optionButtonStyle = active => ({
     ...TYPE.button,
-    minHeight: SPACING.separation + 2,
+    minHeight: COMPONENT_SIZE.touchTarget,
     padding: `${SPACING.micro}px ${SPACING.compact}px`,
     borderRadius: RADII.small,
     border: `1px solid ${active ? roles.interaction : roles.textMuted}`,
@@ -602,7 +572,7 @@ function AreaPerimeterExplore({
         <div
           id={statusId}
           style={{
-            minHeight: 118,
+            minHeight: COMPONENT_SIZE.areaPerimeterStatusReserve,
             padding: `${SPACING.micro}px ${SPACING.compact}px 0`,
             textAlign: 'center',
           }}
@@ -618,7 +588,7 @@ function AreaPerimeterExplore({
             {scene.status.heading}
           </div>
 
-          <div style={{ minHeight: 44, marginTop: 4 }}>
+          <div style={{ minHeight: COMPONENT_SIZE.touchTarget, marginTop: SPACING.micro }}>
             {scene.status.calculation.map(line => (
               <div
                 key={line}
