@@ -132,7 +132,9 @@ const plotPointPreset = {
       shapes: [],
       points,
       guides,
-      handles: [{ controlId: 'x', x, y }],
+      // One handle drives both controls: dragging the point moves x and y
+      // together, in a single atomic update.
+      handles: [{ controlId: 'x', controlIds: ['x', 'y'], pointId: 'p', x, y }],
       status: {
         heading: formatCoordinate({ x, y }),
         calculation: [horizontalPhrase(x), verticalPhrase(y)],

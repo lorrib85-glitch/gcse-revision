@@ -3140,7 +3140,7 @@ export const PlotPointStatic = {
 
 - [ ] **Step 4: Run the storybook tests**
 
-Run: `./node_modules/.bin/vitest run --project storybook -t CoordinatePlaneExplore`
+Run: `./node_modules/.bin/vitest run --project storybook src/components/learning/CoordinatePlaneExplore.stories.jsx`
 
 Expected: PASS — 2 stories.
 
@@ -5810,6 +5810,23 @@ git commit -m "Enforce the coordinate plane annotation contract across all prese
 - Consumes: the finished component and all nine presets
 - Produces: browser-verified coverage of every preset, both modes, keyboard operation and capability gating
 
+**Two traps, both hit while writing the first stories — do not rediscover them:**
+
+1. **`-t` selects nothing.** The storybook-vitest addon registers story tests in
+   a way `-t` cannot match, so `--project storybook -t CoordinatePlaneExplore`
+   silently skips all 137 tests and reports success. Filter by **filename**.
+2. **`getByText` on a coordinate is ambiguous.** Every coordinate is rendered at
+   least twice — as the SVG point label and as the status heading — and often a
+   third time inside `<desc>`. Axis tick labels collide with bare numbers too.
+   Query `[data-cp-point-label="…"]`, `[data-cp-status-heading]` and
+   `[data-cp-status-explanation]` instead, as `NumberLineExplore`'s stories do.
+
+A third trap applies to any drag story: `onPointerMove` is bound to the handle
+`<g>`, and events do not propagate from an ancestor down to it. Dispatch the
+move **on the handle**, not on the `<svg>` — a real browser routes captured
+moves back to the handle, but `userEvent` sends them wherever it is aimed, and
+aiming at the svg makes the drag silently do nothing.
+
 - [ ] **Step 1: Append the remaining stories**
 
 Append to `src/components/learning/CoordinatePlaneExplore.stories.jsx`:
@@ -6202,7 +6219,7 @@ export const MixedAxisPlacement = {
 
 - [ ] **Step 2: Run the storybook suite**
 
-Run: `./node_modules/.bin/vitest run --project storybook -t CoordinatePlaneExplore`
+Run: `./node_modules/.bin/vitest run --project storybook src/components/learning/CoordinatePlaneExplore.stories.jsx`
 
 Expected: PASS — 28 stories.
 
@@ -6496,7 +6513,7 @@ Source and tests alone do not pass this gate.
 | Control reachability | `./node_modules/.bin/vitest run --project architecture` | Task 12 |
 | Visible bounds | `./node_modules/.bin/vitest run --project architecture` | Task 12 |
 | Annotation contract | `./node_modules/.bin/vitest run --project architecture` | Task 13 |
-| Storybook browser tests | `./node_modules/.bin/vitest run --project storybook` | Tasks 6, 14 |
+| Storybook browser tests | `./node_modules/.bin/vitest run --project storybook src/components/learning/CoordinatePlaneExplore.stories.jsx` | Tasks 6, 14 |
 | Production build | `./node_modules/.bin/vite build` | Task 6, Task 15 |
 | Render pass at 390px and 320px | manual, component review lab | Task 14 |
 | Full suite | `pnpm verify` | Task 15 |
