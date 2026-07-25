@@ -6,7 +6,31 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
+  apply-memory-registry-guidance:
+    name: Apply memory registry guidance
+    if: github.event_name == 'pull_request' && github.head_ref == 'agent/memory-component-guidance'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - run: python .github/scripts/apply_memory_registry_guidance.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/components/COMPONENT_REGISTRY.md
+          if git diff --cached --quiet; then
+            echo "Registry already updated"
+            exit 0
+          fi
+          git commit -m "Add memory component decision guidance"
+          git push origin HEAD:${{ github.head_ref }}
+
   verify:
     name: Lint, tests, build
     runs-on: ubuntu-latest
