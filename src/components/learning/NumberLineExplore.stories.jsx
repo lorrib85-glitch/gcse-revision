@@ -35,7 +35,8 @@ export const OrderNumbers = {
     const handle = canvas.getByRole('slider', { name: 'Value to place on the line' })
 
     expectCanvas(canvasElement, '360x162')
-    await expect(canvas.getByText('Put the values in order')).toBeVisible()
+    await expect(canvas.getByText('Order the values — blue is the movable point')).toBeVisible()
+    await expect(canvas.getByText('Drag the point along the line.')).toBeVisible()
     await expect(handle).toHaveAttribute('aria-valuenow', '2')
     await expect(canvas.getByText('−1.5 < 0 < ½ < 0.75 < 2')).toBeVisible()
     await expect(canvas.getByText('2 sits furthest right, so it is the largest of the five.')).toBeVisible()
@@ -46,6 +47,8 @@ export const OrderNumbers = {
     await expect(handle).toHaveAttribute('aria-valuenow', '0.5')
     await expect(canvas.getByText('−1.5 < 0 < ½ = 0.5 < 0.75')).toBeVisible()
     await expect(canvas.getByText('0.5 lands on the same point as ½ — one value written two ways.')).toBeVisible()
+    // The task caption keeps identifying the active point after the one-off drag hint disappears.
+    await expect(canvas.getByText('Order the values — blue is the movable point')).toBeVisible()
 
     await userEvent.keyboard('{Home}')
     await expect(handle).toHaveAttribute('aria-valuenow', '-5')
@@ -61,7 +64,8 @@ export const NegativeMovement = {
     const move = canvas.getByRole('slider', { name: 'Size of the move' })
 
     expectCanvas(canvasElement, '360x136')
-    await expect(canvas.getByText('Follow the move from the starting number')).toBeVisible()
+    await expect(canvas.getByText('Follow the move — both highlighted points can move')).toBeVisible()
+    await expect(canvas.getByText('Drag either point along the line.')).toBeVisible()
     await expect(canvas.getByText('3 + (−5) = −2')).toBeVisible()
     await expect(canvas.getByText('Adding a negative moves left: 3 − 5 = −2.')).toBeVisible()
     expect(canvasElement.querySelector('[data-nl-jump="move"]')).not.toBeNull()
@@ -92,7 +96,8 @@ export const RoundingIntervals = {
     const canvas = within(canvasElement)
 
     expectCanvas(canvasElement, '360x126')
-    await expect(canvas.getByText('Round to 1 decimal place')).toBeVisible()
+    await expect(canvas.getByText('Round to 1 decimal place — blue is the value')).toBeVisible()
+    await expect(canvas.getByText('Drag the point along the line.')).toBeVisible()
     await expect(canvas.getByText('2.34 rounds to 2.3')).toBeVisible()
     await expect(canvas.getByText('2.34 is below the halfway point 2.35, so it rounds down.')).toBeVisible()
 
@@ -106,7 +111,7 @@ export const RoundingIntervals = {
 
     // Changing precision rescales the axis, so the value restarts in range.
     await userEvent.click(canvas.getByRole('button', { name: 'Whole number' }))
-    await expect(canvas.getByText('Round to the nearest whole number')).toBeVisible()
+    await expect(canvas.getByText('Round to the nearest whole number — blue is the value')).toBeVisible()
     await expect(canvas.getByText('6.4 rounds to 6')).toBeVisible()
   },
 }
@@ -117,7 +122,8 @@ export const InequalityRange = {
     const canvas = within(canvasElement)
 
     expectCanvas(canvasElement, '360x108')
-    await expect(canvas.getByText('Represent the inequality')).toBeVisible()
+    await expect(canvas.getByText('Represent the inequality — blue is the endpoint')).toBeVisible()
+    await expect(canvas.getByText('Drag the point along the line.')).toBeVisible()
     await expect(canvas.getByRole('button', { name: 'Greater than' })).toBeVisible()
     await expect(canvas.getByRole('button', { name: 'Less than' })).toBeVisible()
     await expect(canvas.getByRole('button', { name: 'Include endpoint' })).toBeVisible()
@@ -149,25 +155,32 @@ export const BoundsInterval = {
   args: { preset: 'boundsInterval' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
+    const lowerNote = canvasElement.querySelector('[data-nl-note="note-lower"]')
+    const upperNote = canvasElement.querySelector('[data-nl-note="note-upper"]')
+    const lowerMarker = canvasElement.querySelector('[data-nl-marker="lower"]')
+    const upperMarker = canvasElement.querySelector('[data-nl-marker="upper"]')
 
     expectCanvas(canvasElement, '360x146')
-    await expect(canvas.getByText('Find the possible values that round to 2.3')).toBeVisible()
+    await expect(canvas.getByText('Find the bounds of 2.3 — blue is the rounded value')).toBeVisible()
+    await expect(canvas.getByText('Drag the point along the line.')).toBeVisible()
     await expect(canvas.getByText('2.25 ≤ x < 2.35')).toBeVisible()
     expect(markerStyle(canvasElement, 'lower')).toBe('filled')
     expect(markerStyle(canvasElement, 'upper')).toBe('open')
-    expect(canvasElement.querySelector('[data-nl-note="note-lower"]')?.textContent)
-      .toBe('2.25 included')
-    expect(canvasElement.querySelector('[data-nl-note="note-upper"]')?.textContent)
-      .toBe('2.35 excluded')
+    expect(lowerNote?.textContent).toBe('included')
+    expect(upperNote?.textContent).toBe('excluded')
+    // Both meanings sit on the same close tier and directly below their endpoint.
+    expect(lowerNote?.getAttribute('y')).toBe(upperNote?.getAttribute('y'))
+    expect(Number(lowerNote?.getAttribute('x'))).toBeCloseTo(Number(lowerMarker?.getAttribute('cx')), 5)
+    expect(Number(upperNote?.getAttribute('x'))).toBeCloseTo(Number(upperMarker?.getAttribute('cx')), 5)
 
     const handle = canvas.getByRole('slider', { name: 'Rounded value' })
     handle.focus()
     await userEvent.keyboard('{ArrowRight}')
-    await expect(canvas.getByText('Find the possible values that round to 2.4')).toBeVisible()
+    await expect(canvas.getByText('Find the bounds of 2.4 — blue is the rounded value')).toBeVisible()
     await expect(canvas.getByText('2.35 ≤ x < 2.45')).toBeVisible()
 
     await userEvent.click(canvas.getByRole('button', { name: 'Whole number' }))
-    await expect(canvas.getByText('Find the possible values that round to 7')).toBeVisible()
+    await expect(canvas.getByText('Find the bounds of 7 — blue is the rounded value')).toBeVisible()
     await expect(canvas.getByText('6.5 ≤ x < 7.5')).toBeVisible()
   },
 }
@@ -178,7 +191,8 @@ export const MultiplyPattern = {
     const canvas = within(canvasElement)
 
     expectCanvas(canvasElement, '360x122')
-    await expect(canvas.getByText('Use 3 equal jumps from zero')).toBeVisible()
+    await expect(canvas.getByText('Use 3 equal jumps — blue is the product')).toBeVisible()
+    await expect(canvas.getByText('Drag the point along the line.')).toBeVisible()
     await expect(canvas.getByText('3 × (−3) = −9')).toBeVisible()
     await expect(canvas.getByText('3 jumps of 3, left of zero.')).toBeVisible()
     expect(canvasElement.querySelectorAll('[data-nl-jump]')).toHaveLength(3)
@@ -198,10 +212,9 @@ export const MultiplyPattern = {
     await expect(canvas.getByText('3 jumps of 4, right of zero.')).toBeVisible()
     expect(canvasElement.querySelectorAll('[data-nl-jump]')).toHaveLength(3)
 
-    // Changing the first factor changes the number of jumps and resets the
-    // signed jump size. Five times negative three must render five jumps of −3.
+    // Changing the first factor changes the number of jumps and resets the signed jump size.
     await userEvent.click(canvas.getByRole('button', { name: '5 jumps' }))
-    await expect(canvas.getByText('Use 5 equal jumps from zero')).toBeVisible()
+    await expect(canvas.getByText('Use 5 equal jumps — blue is the product')).toBeVisible()
     await expect(canvas.getByText('5 × (−3) = −15')).toBeVisible()
     await expect(canvas.getByText('5 jumps of 3, left of zero.')).toBeVisible()
     expect(canvasElement.querySelectorAll('[data-nl-jump]')).toHaveLength(5)
@@ -217,9 +230,8 @@ export const EstimateRange = {
     const canvas = within(canvasElement)
 
     expectCanvas(canvasElement, '360x126')
-    await expect(
-      canvas.getByText('Estimate 29 × 21 by rounding each number to 1 significant figure'),
-    ).toBeVisible()
+    await expect(canvas.getByText('Estimate 29 × 21 — blue is your estimate')).toBeVisible()
+    await expect(canvas.getByText('Drag the point along the line.')).toBeVisible()
     await expect(canvas.getByText('30 × 20 = 600')).toBeVisible()
     await expect(
       canvas.getByText('Your estimate 600 is within 1% of 609 — inside the sensible range.'),
@@ -227,7 +239,6 @@ export const EstimateRange = {
 
     const handle = canvas.getByRole('slider', { name: 'Your estimate' })
     handle.focus()
-    // The exact answer is a line, not a dot, so the estimate can sit on it.
     expect(canvasElement.querySelector('[data-nl-marker="exact"]')?.getAttribute('data-nl-marker-style'))
       .toBe('line')
 
@@ -252,7 +263,8 @@ export const StaticDiagram = {
     await expect(diagram).toHaveAttribute('data-nl-interactive', 'false')
     expect(canvas.queryAllByRole('slider')).toHaveLength(0)
     expect(canvas.queryAllByRole('button')).toHaveLength(0)
-    await expect(canvas.getByText('Represent the inequality')).toBeVisible()
+    await expect(canvas.getByText('Represent the inequality — blue is the endpoint')).toBeVisible()
+    expect(canvas.queryByText('Drag the point along the line.')).not.toBeInTheDocument()
     await expect(canvas.getByText('x ≥ 2')).toBeVisible()
   },
 }
