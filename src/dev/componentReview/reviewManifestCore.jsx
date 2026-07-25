@@ -34,6 +34,7 @@ import GuidedChoiceCarousel from '../../components/learning/GuidedChoiceCarousel
 import TheoryCompare from '../../components/learning/TheoryCompare.jsx'
 import MisconceptionCheck from '../../components/learning/MisconceptionCheck.jsx'
 import AcronymMemorise from '../../components/learning/AcronymMemorise.jsx'
+import FlashcardsBlock from '../../components/learning/FlashcardsBlock.jsx'
 import MemoryHook from '../../components/learning/MemoryHook.jsx'
 import BuilderBlock from '../../components/learning/BuilderBlock.jsx'
 import ChapterOutcomeScreen from '../../components/layout/ChapterOutcomeScreen.jsx'
@@ -280,6 +281,15 @@ const RAW_ENTRIES = [
     alternative: 'FlashcardsBlock (recall); FillInTheBlanksBlock.',
     render: (fx) => <AcronymMemorise block={fx} />,
     fixture: FIX.acronymMemorise,
+  },
+  {
+    id: 'flashcards-block', name: 'FlashcardsBlock', contentType: 'flashcards',
+    status: 'comparison', subject: 'History', renderMode: 'inline',
+    function: 'Two-column tap-to-reveal prompt and answer cards for a small set of independent facts. Reveal-only: the component does not score recall or log weakness evidence.',
+    usage: 'Used across Medicine episodes 4, 7, 8 and 13, block type: flashcards. Extracted from ModulePlayer into a standalone component so the live pattern can be reviewed and refined in the Component Lab.',
+    alternative: 'AcronymMemorise for one mnemonic set; QuickRecallScreen for objectively marked retrieval; MatchingTask when the learner must connect paired items.',
+    render: (fx) => <FlashcardsBlock block={fx} />,
+    fixture: FIX.flashcardsBlock,
   },
   {
     id: 'builder-block', name: 'BuilderBlock — reaction', contentType: 'builder',

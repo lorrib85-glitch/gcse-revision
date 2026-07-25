@@ -23,6 +23,7 @@ import GuidedExamResponse from '../learning/GuidedExamResponse.jsx'
 import InteractiveHotspotImage from '../learning/InteractiveHotspotImage.jsx'
 import FillInTheBlanksBlock from '../learning/FillInTheBlanksBlock.jsx'
 import AcronymMemorise from '../learning/AcronymMemorise.jsx'
+import FlashcardsBlock from '../learning/FlashcardsBlock.jsx'
 import MemoryHook from '../learning/MemoryHook.jsx'
 import BuilderBlock from '../learning/BuilderBlock.jsx'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
@@ -250,45 +251,6 @@ function RevealBlock({ block }) {
           }}>{block.answer}</p>
         </div>
       )}
-    </div>
-  )
-}
-
-function FlashcardsBlock({ block }) {
-  const [flipped, setFlipped] = useState(new Set())
-  function toggle(i) {
-    setFlipped(s => { const n = new Set(s); n.has(i) ? n.delete(i) : n.add(i); return n })
-  }
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, margin: '14px 0' }}>
-      {block.cards.map((c, i) => (
-        <button key={i} onClick={() => toggle(i)}
-          style={{
-            background: flipped.has(i)
-              ? `linear-gradient(145deg, ${GENERAL.neutral[1]}, ${GENERAL.neutral[0]})`
-              : '#10182B',
-            border: `1.5px solid ${flipped.has(i) ? `rgba(${GENERAL.tealRgb},.4)` : '#2A3552'}`,
-            borderRadius: 14, padding: '16px 12px', cursor: 'pointer',
-            textAlign: 'center', minHeight: 90, transition: 'all .22s',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: flipped.has(i) ? `0 0 16px rgba(${GENERAL.tealRgb},.12)` : 'none',
-          }}>
-          <div>
-            <div style={{
-              ...TYPE.titleMedium,
-              fontSize: '.88rem',
-              color: flipped.has(i) ? GENERAL.teal : '#E0E6F0',
-              marginBottom: flipped.has(i) ? 6 : 0,
-            }}>{c.front}</div>
-            {flipped.has(i) && (
-              <div className="fade-up" style={{
-                ...TYPE.caption,
-                color: '#9CA8C7',
-              }}>{c.back}</div>
-            )}
-          </div>
-        </button>
-      ))}
     </div>
   )
 }

@@ -388,6 +388,34 @@ export const acronymMemorise = {
   ],
 }
 
+// FlashcardsBlock (History) — independent prompt/answer cards from the surgery topic.
+// The component is deliberately unscored: tapping reveals an answer but does not
+// prove the learner recalled it before opening the card.
+export const flashcardsBlock = {
+  cards: [
+    {
+      id: 'ether',
+      front: 'Ether',
+      back: 'Publicly demonstrated as a surgical anaesthetic in 1846. It worked, but was flammable and often caused nausea.',
+    },
+    {
+      id: 'chloroform',
+      front: 'Chloroform',
+      back: 'Introduced by James Simpson in 1847. It acted quickly, but an uncontrolled dose could be fatal.',
+    },
+    {
+      id: 'john-snow',
+      front: 'John Snow',
+      back: 'Designed an inhaler that controlled the dose of chloroform, making anaesthesia safer and more trusted.',
+    },
+    {
+      id: 'joseph-lister',
+      front: 'Joseph Lister',
+      back: 'Applied germ theory to surgery by using carbolic acid to reduce infection in wounds, tools and theatres.',
+    },
+  ],
+}
+
 // BuilderBlock (Biology) — tap-to-fill equation builder with distractor pieces.
 // Shape: { label?, slots, operators?, pieces, answer, hint, successText }. From
 // Plant Cells & Photosynthesis (sci_bio_w1), block type: builder.
