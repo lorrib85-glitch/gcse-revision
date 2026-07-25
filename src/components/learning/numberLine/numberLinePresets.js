@@ -5,12 +5,9 @@
 // Questions, marking and weakness tracking stay with the page that composes the
 // component.
 //
-// Every interactive preset supplies a short task caption so the learning anatomy
-// remains stable: task prompt, number line, interaction, live maths statement,
-// then the explanation of why it works.
-//
-// Canvas heights are deliberately content-tight. The number line should remain
-// the visual centre without leaving a large empty band above it on mobile.
+// Every interactive preset supplies a short, persistent action caption so the
+// learner never has to infer which point moves. Canvas heights remain deliberately
+// content-tight for mobile.
 //
 // Roles are semantic names resolved through numberLineVisualRoles.js; presets
 // never name a colour directly.
@@ -85,7 +82,7 @@ const orderNumbers = {
 
     return {
       axis,
-      caption: 'Put the values in order',
+      caption: 'Drag the blue point to place the value in order.',
       markers: [
         ...ORDER_REFERENCES.map(item => ({
           id: item.id,
@@ -144,7 +141,6 @@ const negativeMovement = {
       max: 20,
       step: 1,
       snapTargets: [0],
-      // The landing marker is dragged, but the value it edits is the move.
       valueFromAxis: (axisValue, values) => axisValue - values.start,
       valueText: values =>
         `Move ${signedTerm(values.move)}, landing on ${formatNumber(values.start + values.move)}`,
@@ -173,7 +169,7 @@ const negativeMovement = {
 
     return {
       axis,
-      caption: 'Follow the move from the starting number',
+      caption: 'Drag either highlighted point to change the calculation.',
       jumps: values.move === 0
         ? []
         : [
@@ -292,8 +288,7 @@ const roundingIntervals = {
 
     return {
       axis,
-      caption: `Round to ${precision.phrase}`,
-      // One constant colour: crossing the midpoint is not right/wrong feedback.
+      caption: 'Drag the blue point and compare it with halfway.',
       bands: [{ id: 'interval', from: lower, to: upper, role: 'bandAlt' }],
       markers: [
         { id: 'lower', value: lower, role: 'reference', style: 'filled' },
@@ -371,7 +366,7 @@ const inequalityRange = {
 
     return {
       axis,
-      caption: 'Represent the inequality',
+      caption: 'Drag the blue endpoint, then choose its direction and type.',
       bands: [
         {
           id: 'range',
@@ -391,7 +386,6 @@ const inequalityRange = {
         },
       ],
       chips: [
-        // The chip names the point; the status line states the inequality.
         { id: 'chip-endpoint', value: values.endpoint, text: point, role: 'interaction' },
       ],
       status: {
@@ -471,7 +465,7 @@ const boundsInterval = {
 
     return {
       axis,
-      caption: `Find the possible values that round to ${formatNumber(values.value)}`,
+      caption: 'Drag the blue rounded value to reveal its bounds.',
       bands: [{ id: 'error-interval', from: lower, to: upper, role: 'band', openTo: true }],
       markers: [
         { id: 'lower', value: lower, role: 'included', style: 'filled' },
@@ -487,10 +481,11 @@ const boundsInterval = {
       chips: [
         { id: 'chip-value', value: values.value, text: formatNumber(values.value), role: 'interaction' },
       ],
+      // The values already sit on labelled major ticks. Keeping these labels short
+      // lets both sit directly beneath their own endpoints on the same tier.
       notes: [
-        { id: 'note-lower', value: lower, text: `${lowerText} included`, role: 'includedLabel' },
-        // Own tier because the two labels are long and the interval is narrow.
-        { id: 'note-upper', value: upper, text: `${upperText} excluded`, role: 'textMuted', tier: 1 },
+        { id: 'note-lower', value: lower, text: 'included', role: 'includedLabel' },
+        { id: 'note-upper', value: upper, text: 'excluded', role: 'excluded' },
       ],
       status: {
         heading: `${lowerText} ≤ x < ${upperText}`,
@@ -529,8 +524,6 @@ const multiplyPattern = {
   initialOptions: { base: '3' },
   controls: ({ options }) => [
     {
-      // Kept as `multiplier` for compatibility with existing saved props; it now
-      // represents the signed size of each jump, not the jump count.
       id: 'multiplier',
       label: 'Size and direction of each jump',
       min: -4,
@@ -570,7 +563,7 @@ const multiplyPattern = {
 
     return {
       axis,
-      caption: `Use ${jumpCount} equal jumps from zero`,
+      caption: 'Drag the blue product to change each jump.',
       jumps,
       markers: [
         { id: 'origin', value: 0, role: 'reference', style: 'filled' },
@@ -626,10 +619,9 @@ const estimateRange = {
 
     return {
       axis,
-      caption: 'Estimate 29 × 21 by rounding each number to 1 significant figure',
+      caption: 'Drag the blue estimate into the sensible range.',
       bands: [{ id: 'sensible', from: lower, to: upper, role: 'bandAlt' }],
       markers: [
-        // A line, not a dot: an estimate may land very close to the exact value.
         { id: 'exact', value: ESTIMATE_EXACT, role: 'reference', style: 'line' },
         {
           id: 'estimate',
