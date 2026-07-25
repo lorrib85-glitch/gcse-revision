@@ -7,6 +7,12 @@ function markerStyle(canvasElement, markerId) {
     ?.getAttribute('data-nl-marker-style')
 }
 
+function expectCanvas(canvasElement, dimensions) {
+  const svg = canvasElement.querySelector(`svg[data-nl-canvas="${dimensions}"]`)
+  expect(svg).not.toBeNull()
+  return svg
+}
+
 function expectMobileContainment(canvasElement, maximumWidth = 320) {
   const diagram = canvasElement.querySelector('.nl-explore')
   const diagramWidth = diagram?.getBoundingClientRect().width ?? Infinity
@@ -28,6 +34,7 @@ export const OrderNumbers = {
     const canvas = within(canvasElement)
     const handle = canvas.getByRole('slider', { name: 'Value to place on the line' })
 
+    expectCanvas(canvasElement, '360x162')
     await expect(canvas.getByText('Put the values in order')).toBeVisible()
     await expect(handle).toHaveAttribute('aria-valuenow', '2')
     await expect(canvas.getByText('−1.5 < 0 < ½ < 0.75 < 2')).toBeVisible()
@@ -53,6 +60,7 @@ export const NegativeMovement = {
     const canvas = within(canvasElement)
     const move = canvas.getByRole('slider', { name: 'Size of the move' })
 
+    expectCanvas(canvasElement, '360x136')
     await expect(canvas.getByText('Follow the move from the starting number')).toBeVisible()
     await expect(canvas.getByText('3 + (−5) = −2')).toBeVisible()
     await expect(canvas.getByText('Adding a negative moves left: 3 − 5 = −2.')).toBeVisible()
@@ -83,6 +91,7 @@ export const RoundingIntervals = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
+    expectCanvas(canvasElement, '360x126')
     await expect(canvas.getByText('Round to 1 decimal place')).toBeVisible()
     await expect(canvas.getByText('2.34 rounds to 2.3')).toBeVisible()
     await expect(canvas.getByText('2.34 is below the halfway point 2.35, so it rounds down.')).toBeVisible()
@@ -107,21 +116,26 @@ export const InequalityRange = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
+    expectCanvas(canvasElement, '360x108')
     await expect(canvas.getByText('Represent the inequality')).toBeVisible()
+    await expect(canvas.getByRole('button', { name: 'Greater than' })).toBeVisible()
+    await expect(canvas.getByRole('button', { name: 'Less than' })).toBeVisible()
+    await expect(canvas.getByRole('button', { name: 'Include endpoint' })).toBeVisible()
+    await expect(canvas.getByRole('button', { name: 'Exclude endpoint' })).toBeVisible()
     await expect(canvas.getByText('x ≥ −1')).toBeVisible()
     await expect(
       canvas.getByText('Interval notation [−1, ∞). The filled circle shows −1 is included.'),
     ).toBeVisible()
     expect(markerStyle(canvasElement, 'endpoint')).toBe('filled')
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Excluded' }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Exclude endpoint' }))
     await expect(canvas.getByText('x > −1')).toBeVisible()
     await expect(
       canvas.getByText('Interval notation (−1, ∞). The open circle shows −1 is not included.'),
     ).toBeVisible()
     expect(markerStyle(canvasElement, 'endpoint')).toBe('open')
 
-    await userEvent.click(canvas.getByRole('button', { name: 'x smaller' }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Less than' }))
     await expect(canvas.getByText('x < −1')).toBeVisible()
 
     const handle = canvas.getByRole('slider', { name: 'Endpoint of the inequality' })
@@ -136,6 +150,7 @@ export const BoundsInterval = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
+    expectCanvas(canvasElement, '360x146')
     await expect(canvas.getByText('Find the possible values that round to 2.3')).toBeVisible()
     await expect(canvas.getByText('2.25 ≤ x < 2.35')).toBeVisible()
     expect(markerStyle(canvasElement, 'lower')).toBe('filled')
@@ -162,6 +177,7 @@ export const MultiplyPattern = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
+    expectCanvas(canvasElement, '360x122')
     await expect(canvas.getByText('Use 3 equal jumps from zero')).toBeVisible()
     await expect(canvas.getByText('3 × (−3) = −9')).toBeVisible()
     await expect(canvas.getByText('3 jumps of 3, left of zero.')).toBeVisible()
@@ -200,6 +216,7 @@ export const EstimateRange = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
+    expectCanvas(canvasElement, '360x126')
     await expect(
       canvas.getByText('Estimate 29 × 21 by rounding each number to 1 significant figure'),
     ).toBeVisible()
@@ -264,7 +281,7 @@ export const MobileWidth = {
   ],
   play: async ({ canvasElement }) => {
     expectMobileContainment(canvasElement)
-    const svg = canvasElement.querySelector('svg[data-nl-canvas="360x168"]')
+    const svg = expectCanvas(canvasElement, '360x162')
     await expect(svg).toHaveAttribute('preserveAspectRatio', 'xMidYMid meet')
 
     const hitTarget = canvasElement.querySelector('[data-nl-hit-target="true"]')
