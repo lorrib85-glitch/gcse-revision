@@ -24,7 +24,11 @@ Every task's requirements implicitly include this section.
 - **Mobile-first at 390px.** The component must never scroll horizontally.
 - **Respect `prefers-reduced-motion`** via `usePrefersReducedMotion()` plus a `reducedMotion` prop override.
 - **Drag handles are `role="slider"`**, keyboard-operable with arrow keys / Home / End. Discrete choices are real `<button>` elements, never disguised sliders.
+- **Every numeric control a learner may change is reachable.** A control is operated either by a drag handle *or* by a rendered −/+ stepper. A preset that declares a control and offers neither is broken — `tests/architecture/coordinate-plane-control-reachability.test.js` enforces this.
+- **Multi-value updates are atomic.** Dragging a point changes x and y in **one** `setControlValues` call — one clamp, one state update, one `onChange`, one announcement. Never two sequential single-control updates: both would close over the same render-time values and the second would discard the first.
+- **The whole teaching figure stays inside the axis ranges at every reachable control value.** Enforced by `tests/architecture/coordinate-plane-visible-bounds.test.js`. Lines are clipped in model space against the axis rectangle; an SVG clip path is the rendering safety net, not the primary mechanism. Do not rescale axes dynamically while dragging.
 - **Every annotated element declares a `tier`** of `'active' | 'related' | 'context'`. Annotation without a tier is a contract violation.
+- **Label obstacles are reported, not tuned around.** The renderer computes boxes for visible tick labels and axis titles and passes them to `layoutPointLabels`. Adjusting `CHAR_WIDTH` or `ANCHOR_RADIUS` is visual tuning, never a substitute for the obstacle contract.
 - **Do not add a `series` primitive** to the scene contract in this build (spec §4).
 - **Do not add `originPlacement`** or any single combined origin concept; axis placement is resolved per axis (spec §4).
 
@@ -55,6 +59,8 @@ Every task's requirements implicitly include this section.
 | `tests/unit/pointLabelLayout.test.js` | Label layout unit tests |
 | `tests/unit/coordinatePlanePresets.test.js` | Preset `derive()` unit tests |
 | `tests/architecture/coordinate-plane-annotation-contract.test.js` | Annotation state-model contract (spec §2, §11) |
+| `tests/architecture/coordinate-plane-control-reachability.test.js` | Every declared control is operable by a handle or a stepper |
+| `tests/architecture/coordinate-plane-visible-bounds.test.js` | Every reachable state keeps the whole figure inside the axes |
 
 **Modified:**
 
@@ -64,7 +70,7 @@ Every task's requirements implicitly include this section.
 | `CLAUDE.md` | Entry in the `src/components/learning/` list |
 | `src/dev/componentReview/reviewManifestCore.jsx` | Review manifest entry with per-preset variants |
 
-**Dependency order:** Tasks 1–4 are independent pure modules and may run in parallel. Task 5 depends on 1–4. Task 6 (renderer) depends on 5 — after it the component works end to end. Tasks 7–11 each depend on 5 and 6, and are independent of one another except that each edits `presets/index.js`, so they must not run concurrently. Task 12 depends on all nine presets. Task 13 depends on 12. Task 14 depends on 13.
+**Dependency order:** Tasks 1–4 are independent pure modules and may run in parallel. Task 5 depends on 1–4. Task 6 (renderer) depends on 5 — after it the component works end to end, and it is a hard gate: four presets are inoperable until it renders steppers, and every drag preset is wrong until its updates are atomic. Tasks 7–11 each depend on 5 and 6, and are independent of one another except that each edits `presets/index.js`, so they must not run concurrently. Tasks 12 and 13 depend on all nine presets. Task 14 depends on 13. Task 15 depends on 14.
 
 ---
 
@@ -290,8 +296,10 @@ git commit -m "Add CoordinatePlaneExplore visual roles and role resolver"
   - `axisAnchorValue({ min, max }) → number` — the model value on this axis where the perpendicular axis is drawn
   - `createPlaneScale({ xAxis, yAxis, canvas, padding }) → { toX, toY, toModelX, toModelY, plot }`
   - `axisTickValues({ min, max, step }) → number[]`
+  - `gridLineValues(axis, subdivisions) → number[]` — gridlines may be finer than labelled ticks
   - `orderedPointsPath(points, toX, toY) → string`
   - `snapToStep(value, step) → number`
+  - `clipSegmentToBounds({ from, to }, xAxis, yAxis) → { from, to } | null` — Liang–Barsky clip in model space
 
 This task carries spec §4 (per-axis placement). The critical behaviour is that a
 positive-only x range and a signed y range produce `x = 0` at the **left edge**
@@ -307,7 +315,9 @@ import { describe, expect, it } from 'vitest'
 import {
   axisAnchorValue,
   axisTickValues,
+  clipSegmentToBounds,
   createPlaneScale,
+  gridLineValues,
   orderedPointsPath,
   resolveAxisPlacement,
   snapToStep,
@@ -431,6 +441,75 @@ describe('snapping', () => {
     expect(snapToStep(2.4, 0.5)).toBe(2.5)
   })
 })
+
+describe('grid line values', () => {
+  it('matches the tick values when there are no subdivisions', () => {
+    expect(gridLineValues({ min: -2, max: 2, step: 1 }, 1)).toEqual([-2, -1, 0, 1, 2])
+  })
+
+  it('subdivides between labelled ticks', () => {
+    expect(gridLineValues({ min: 0, max: 4, step: 2 }, 2))
+      .toEqual([0, 1, 2, 3, 4])
+  })
+})
+
+// Issue 4: y = 2x + 1 across x = −5…5 reaches y = ±11 on a y-axis of ±5.
+// Without model-space clipping the line is drawn far outside the plot.
+describe('segment clipping', () => {
+  const xAxis = { min: -5, max: 5 }
+  const yAxis = { min: -5, max: 5 }
+
+  it('leaves a fully contained segment untouched', () => {
+    const clipped = clipSegmentToBounds(
+      { from: { x: -2, y: -1 }, to: { x: 2, y: 3 } },
+      xAxis,
+      yAxis,
+    )
+
+    expect(clipped.from).toEqual({ x: -2, y: -1 })
+    expect(clipped.to).toEqual({ x: 2, y: 3 })
+  })
+
+  it('clips a steep line at both y bounds', () => {
+    const clipped = clipSegmentToBounds(
+      { from: { x: -5, y: -9 }, to: { x: 5, y: 11 } },
+      xAxis,
+      yAxis,
+    )
+
+    expect(clipped.from).toEqual({ x: -3, y: -5 })
+    expect(clipped.to).toEqual({ x: 2, y: 5 })
+  })
+
+  it('clips a horizontal line at the x bounds only', () => {
+    const clipped = clipSegmentToBounds(
+      { from: { x: -20, y: 2 }, to: { x: 20, y: 2 } },
+      xAxis,
+      yAxis,
+    )
+
+    expect(clipped.from).toEqual({ x: -5, y: 2 })
+    expect(clipped.to).toEqual({ x: 5, y: 2 })
+  })
+
+  it('returns null for a segment entirely outside the plot', () => {
+    expect(clipSegmentToBounds(
+      { from: { x: -5, y: 20 }, to: { x: 5, y: 30 } },
+      xAxis,
+      yAxis,
+    )).toBeNull()
+  })
+
+  it('handles an asymmetric plot', () => {
+    const clipped = clipSegmentToBounds(
+      { from: { x: 0, y: 0 }, to: { x: 20, y: 200 } },
+      { min: 0, max: 20 },
+      { min: 0, max: 100 },
+    )
+
+    expect(clipped.to).toEqual({ x: 10, y: 100 })
+  })
+})
 ```
 
 - [ ] **Step 2: Run the test to verify it fails**
@@ -529,13 +608,71 @@ export function snapToStep(value, step) {
   if (!step) return value
   return roundTo(Math.round(value / step) * step, TICK_PRECISION)
 }
+
+/**
+ * Gridlines, which may be finer than the labelled ticks. A transformation
+ * preset wants unit gridlines so coordinates sit on intersections, but labels
+ * only every 2 so a wide axis stays legible at 390px.
+ */
+export function gridLineValues(axis, subdivisions = 1) {
+  const divisions = Math.max(1, subdivisions)
+  return axisTickValues({ ...axis, step: axis.step / divisions })
+}
+
+/**
+ * Liang–Barsky clip of a segment against the axis rectangle, in model space.
+ *
+ * A line built from the x-axis endpoints routinely leaves the y-range: y = 2x + 1
+ * across x = −5…5 reaches y = ±11 against a y-axis of ±5. Clipping here — rather
+ * than relying on the SVG clip path — keeps the model and the picture agreeing,
+ * so anything measured from the scene is what the learner actually sees.
+ *
+ * Returns null when the segment misses the rectangle entirely.
+ */
+export function clipSegmentToBounds({ from, to }, xAxis, yAxis) {
+  const dx = to.x - from.x
+  const dy = to.y - from.y
+
+  let tMin = 0
+  let tMax = 1
+
+  const edges = [
+    { p: -dx, q: from.x - xAxis.min },
+    { p: dx, q: xAxis.max - from.x },
+    { p: -dy, q: from.y - yAxis.min },
+    { p: dy, q: yAxis.max - from.y },
+  ]
+
+  for (const { p, q } of edges) {
+    if (p === 0) {
+      // Parallel to this edge — outside it means the whole segment is out.
+      if (q < 0) return null
+      continue
+    }
+    const t = q / p
+    if (p < 0) {
+      if (t > tMax) return null
+      if (t > tMin) tMin = t
+    } else {
+      if (t < tMin) return null
+      if (t < tMax) tMax = t
+    }
+  }
+
+  const at = t => ({
+    x: roundTo(from.x + t * dx, TICK_PRECISION),
+    y: roundTo(from.y + t * dy, TICK_PRECISION),
+  })
+
+  return { from: at(tMin), to: at(tMax) }
+}
 ```
 
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `./node_modules/.bin/vitest run --project unit tests/unit/coordinatePlaneGeometry.test.js`
 
-Expected: PASS — 15 tests.
+Expected: PASS — 22 tests.
 
 If the fractional-step assertion fails, the expected array in the test is
 already normalised through the same rounding the module uses; confirm
@@ -567,7 +704,8 @@ git commit -m "Add CoordinatePlaneExplore geometry with per-axis placement"
   - `midpointOf(a, b) → { x, y }`
   - `lineY({ m, c }, x) → number`
   - `xInterceptOf({ m, c }) → number | null`
-  - `intersectionOf(lineA, lineB) → { x, y } | null`
+  - `intersectionOf(lineA, lineB) → { kind: 'one', point } | { kind: 'none' } | { kind: 'infinite' }` — equal gradients are **not** automatically "no solution": equal gradient *and* equal intercept means coincident lines with infinitely many solutions
+  - `perpendicularGradientOf(m) → number | null` — `null` for `m = 0`, whose perpendicular is vertical and cannot be written as `y = mx + c`
   - `translatePoint(point, { dx, dy }) → { x, y }`
   - `reflectPoint(point, mirror) → { x, y }` where mirror is `{ type: 'vertical' | 'horizontal' | 'yEqualsX' | 'yEqualsNegativeX', value? }`
   - `rotatePoint(point, centre, degrees, direction) → { x, y }` with `direction` of `'clockwise' | 'anticlockwise'`
@@ -586,6 +724,7 @@ import {
   intersectionOf,
   lineY,
   midpointOf,
+  perpendicularGradientOf,
   quadrantOf,
   quadrantRoman,
   quadrantSigns,
@@ -642,11 +781,30 @@ describe('straight lines', () => {
   })
 
   it('finds the intersection of two lines', () => {
-    expect(intersectionOf({ m: 1, c: 3 }, { m: -1, c: 7 })).toEqual({ x: 2, y: 5 })
+    expect(intersectionOf({ m: 1, c: 3 }, { m: -1, c: 7 }))
+      .toEqual({ kind: 'one', point: { x: 2, y: 5 } })
   })
 
-  it('returns null for parallel lines, which never meet', () => {
-    expect(intersectionOf({ m: 2, c: 1 }, { m: 2, c: 5 })).toBeNull()
+  it('reports parallel lines as having no solution', () => {
+    expect(intersectionOf({ m: 2, c: 1 }, { m: 2, c: 5 })).toEqual({ kind: 'none' })
+  })
+
+  // Equal gradient alone is not enough to conclude "no solution".
+  it('reports coincident lines as having infinitely many solutions', () => {
+    expect(intersectionOf({ m: 2, c: 1 }, { m: 2, c: 1 })).toEqual({ kind: 'infinite' })
+  })
+})
+
+describe('perpendicular gradients', () => {
+  it('returns the negative reciprocal', () => {
+    expect(perpendicularGradientOf(2)).toBe(-0.5)
+    expect(perpendicularGradientOf(-0.25)).toBe(4)
+  })
+
+  // A line perpendicular to a horizontal line is vertical, and a vertical line
+  // has no gradient — it cannot be written as y = mx + c at all.
+  it('returns null for a horizontal line', () => {
+    expect(perpendicularGradientOf(0)).toBeNull()
   })
 })
 
@@ -811,11 +969,31 @@ export function xInterceptOf({ m, c }) {
   return tidy(-c / m)
 }
 
+/**
+ * Three outcomes, not two. Equal gradients alone do not mean "no solution":
+ * two lines with the same gradient AND the same intercept are the same line,
+ * and every point on it satisfies both equations.
+ */
 export function intersectionOf(lineA, lineB) {
-  if (lineA.m === lineB.m) return null
+  if (lineA.m === lineB.m) {
+    return lineA.c === lineB.c ? { kind: 'infinite' } : { kind: 'none' }
+  }
 
   const x = (lineB.c - lineA.c) / (lineA.m - lineB.m)
-  return tidyPoint({ x, y: lineA.m * x + lineA.c })
+  return { kind: 'one', point: tidyPoint({ x, y: lineA.m * x + lineA.c }) }
+}
+
+/**
+ * The negative reciprocal, or null when there isn't one.
+ *
+ * A line perpendicular to a horizontal line is vertical. Vertical lines have no
+ * gradient and cannot be expressed as y = mx + c, so callers must handle null
+ * rather than being handed a fabricated value — returning 0 here would draw a
+ * second horizontal line and teach the opposite of the intended fact.
+ */
+export function perpendicularGradientOf(m) {
+  if (m === 0) return null
+  return tidy(-1 / m)
 }
 
 export function translatePoint(point, { dx, dy }) {
@@ -873,7 +1051,7 @@ export function formatCoordinate({ x, y }) {
 
 Run: `./node_modules/.bin/vitest run --project unit tests/unit/coordinatePlaneMath.test.js`
 
-Expected: PASS — 22 tests.
+Expected: PASS — 26 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1268,13 +1446,34 @@ git commit -m "Add shared point label layout with degradation"
   focusModes: string[], defaultFocus,
   defaultActiveId,
   capabilities: {},            // defaults, overridden by difficultyCapabilities
-  controls: [{ id, label, min, max, step, valueText, valueFromPointer }],
+  controls: [{ id, label, min, max, step, valueText, valueFromPointer, format? }],
+  steppers: [{ controlId, label?, group? }],            // rendered −/+ steppers
   options: [{ id, label, choices: [{ id, label }] }],   // discrete buttons
   initialValues: {},
   derive(values, context) → scene,
   describe(values, context) → string,
 }
 ```
+
+**The numeric-control presentation contract.** A declared control is only
+useful if the learner can reach it. Every control must be operated by exactly
+one of:
+
+- a **drag handle** — the preset returns a `handles` entry naming it, or
+- a **stepper** — the preset lists it in `steppers`, and the renderer draws a
+  `−` / value / `+` row.
+
+Presets declare `steppers` explicitly rather than the renderer inferring "every
+control without a handle", so a control that is deliberately fixed at a preset
+value (a comparison line's gradient, say) can exist without silently
+appearing as UI. `group` places related steppers on one row — a translation
+vector's two components belong together.
+
+`format` renders the displayed value where the raw number is not what the
+learner should read (`½` rather than `0.5`).
+
+`tests/architecture/coordinate-plane-control-reachability.test.js` fails any
+preset declaring a control that neither a handle nor a stepper reaches.
 
 `context` is `{ focus, comparisonRule, activeId, showGuides, capabilities, axes, grid }`.
 
@@ -1740,7 +1939,7 @@ git commit -m "Add CoordinatePlaneExplore preset registry and plotPoint preset"
 
 **Files:**
 - Create: `src/components/learning/CoordinatePlaneExplore.jsx`
-- Create: `src/components/learning/CoordinatePlaneExplore.stories.jsx` (first two stories only; the rest arrive in Task 12)
+- Create: `src/components/learning/CoordinatePlaneExplore.stories.jsx` (first two stories only; the rest arrive in Task 14)
 
 **Interfaces:**
 - Consumes: everything from Tasks 1–5
@@ -1766,11 +1965,12 @@ import {
   axisAnchorValue,
   axisTickValues,
   createPlaneScale,
+  gridLineValues,
   resolveAxisPlacement,
 } from './coordinatePlane/coordinatePlaneGeometry.js'
 import { createCoordinatePlaneVisualRoles } from './coordinatePlane/coordinatePlaneVisualRoles.js'
 import { resolveCoordinatePlaneVisualRole } from './coordinatePlane/coordinatePlaneRoleResolver.js'
-import { layoutPointLabels } from './coordinatePlane/pointLabelLayout.js'
+import { estimateChipBox, layoutPointLabels } from './coordinatePlane/pointLabelLayout.js'
 import {
   clampPresetValues,
   mergeAxis,
@@ -1917,6 +2117,7 @@ function CoordinatePlaneExplore({
   const titleId = useId()
   const descriptionId = useId()
   const statusId = useId()
+  const clipId = `cp-clip-${useId().replace(/:/g, '')}`
   const svgRef = useRef(null)
   const pointerAnnouncementRef = useRef('')
 
@@ -2004,12 +2205,21 @@ function CoordinatePlaneExplore({
   const nextStatusHeading = nextValues =>
     presetConfig.derive(nextValues, deriveContext).status.heading
 
-  const setControlValue = (controlId, next, { announce = false } = {}) => {
-    const nextValues = clampPresetValues(presetConfig, {
-      ...currentValues,
-      [controlId]: next,
-    })
-    if (nextValues[controlId] === currentValues[controlId]) return
+  /**
+   * Atomic multi-value update — one clamp, one state write, one onChange, one
+   * announcement.
+   *
+   * This must never be split into per-control calls. Two sequential updates in
+   * one event both spread the same render-time `currentValues`, so the second
+   * discards the first: dragging a point diagonally would move y and silently
+   * drop x.
+   */
+  const setControlValues = (patch, { announce = false } = {}) => {
+    const nextValues = clampPresetValues(presetConfig, { ...currentValues, ...patch })
+
+    const changed = Object.keys(patch)
+      .some(controlId => nextValues[controlId] !== currentValues[controlId])
+    if (!changed) return
 
     const heading = nextStatusHeading(nextValues)
     if (announce) {
@@ -2044,17 +2254,20 @@ function CoordinatePlaneExplore({
   }
 
   // A handle may drive more than one control — dragging a point moves x and y
-  // together — so every control the handle declares is updated from one move.
+  // together. Every control the handle names is collected into ONE patch and
+  // applied atomically; updating them one at a time loses all but the last.
   const handlePointerMove = (handle) => (event) => {
     if (draggingControl !== handle.controlId || !canInteract) return
     const point = svgPointFromEvent(event)
     if (!point) return
 
+    const patch = {}
     for (const controlId of handle.controlIds ?? [handle.controlId]) {
       const control = controlsById[controlId]
       if (!control) continue
-      setControlValue(controlId, control.valueFromPointer(point, currentValues))
+      patch[controlId] = control.valueFromPointer(point, currentValues)
     }
+    setControlValues(patch)
   }
 
   const handlePointerEnd = () => {
@@ -2082,8 +2295,49 @@ function CoordinatePlaneExplore({
     event.preventDefault()
     setHasInteracted(true)
     if (handle.pointId) setActiveId(handle.pointId)
-    setControlValue(handle.controlId, next, { announce: true })
+    setControlValues({ [handle.controlId]: next }, { announce: true })
   }
+
+  // ─── Steppers ──────────────────────────────────────────────────────────────
+  // Every declared control is reachable: by a drag handle, or by one of these.
+
+  const stepControl = (controlId, direction) => {
+    const control = controlsById[controlId]
+    if (!control) return
+    setHasInteracted(true)
+    setControlValues(
+      { [controlId]: currentValues[controlId] + direction * control.step },
+      { announce: true },
+    )
+  }
+
+  const handleStepperKeyDown = controlId => (event) => {
+    const control = controlsById[controlId]
+    if (!control) return
+    let next = null
+
+    if (event.key === 'ArrowRight' || event.key === 'ArrowUp') next = currentValues[controlId] + control.step
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') next = currentValues[controlId] - control.step
+    if (event.key === 'Home') next = control.min
+    if (event.key === 'End') next = control.max
+    if (next === null) return
+
+    event.preventDefault()
+    setHasInteracted(true)
+    setControlValues({ [controlId]: next }, { announce: true })
+  }
+
+  // Grouped steppers share a row; ungrouped ones each get their own.
+  const stepperRows = useMemo(() => {
+    const rows = []
+    for (const stepper of presetConfig.steppers ?? []) {
+      const key = stepper.group ?? stepper.controlId
+      const existing = rows.find(row => row.key === key)
+      if (existing) existing.items.push(stepper)
+      else rows.push({ key, items: [stepper] })
+    }
+    return rows
+  }, [presetConfig])
 
   // ─── Projection and labels ─────────────────────────────────────────────────
 
@@ -2105,6 +2359,58 @@ function CoordinatePlaneExplore({
     py: scale.toY(point.y),
   }))
 
+  // Tick labels and axis titles are real obstacles. Reporting them is the
+  // contract; tuning chip constants is not a substitute, because a constant
+  // cannot know where a tick label happens to sit.
+  const labelObstacles = useMemo(() => {
+    const boxes = []
+
+    for (const tick of xTicks) {
+      if (tick === xAnchor) continue
+      const { width, height } = estimateChipBox(String(tick))
+      boxes.push({
+        x: scale.toX(tick) - width / 2,
+        y: scale.toY(yAnchor) + 16 - height / 2,
+        width,
+        height,
+      })
+    }
+
+    for (const tick of yTicks) {
+      if (tick === yAnchor) continue
+      const { width, height } = estimateChipBox(String(tick))
+      boxes.push({
+        x: scale.toX(xAnchor) - 12 - width,
+        y: scale.toY(tick) - height / 2,
+        width,
+        height,
+      })
+    }
+
+    if (axisTitleText(axes.x)) {
+      const { width, height } = estimateChipBox(axisTitleText(axes.x))
+      boxes.push({
+        x: scale.plot.x + scale.plot.width / 2 - width / 2,
+        y: canvas.height - 6 - height,
+        width,
+        height,
+      })
+    }
+
+    if (axisTitleText(axes.y)) {
+      const { width, height } = estimateChipBox(axisTitleText(axes.y))
+      // Rotated: the text runs vertically, so width and height swap.
+      boxes.push({
+        x: 12 - height / 2,
+        y: scale.plot.y + scale.plot.height / 2 - width / 2,
+        width: height,
+        height: width,
+      })
+    }
+
+    return boxes
+  }, [xTicks, yTicks, xAnchor, yAnchor, scale, axes, canvas])
+
   const placedLabels = useMemo(() => layoutPointLabels(
     projectedPoints.map((point, index) => ({
       id: point.id,
@@ -2116,8 +2422,8 @@ function CoordinatePlaneExplore({
       // most keeps its full label when the plane gets crowded.
       priority: (point.tier === 'active' ? 0 : point.tier === 'related' ? 100 : 200) + index,
     })),
-    { plot: scale.plot },
-  ), [scene.points, scale])
+    { plot: scale.plot, obstacles: labelObstacles },
+  ), [scene.points, scale, labelObstacles])
 
   const labelById = useMemo(
     () => Object.fromEntries(placedLabels.map(item => [item.id, item])),
@@ -2210,26 +2516,40 @@ function CoordinatePlaneExplore({
         <title id={titleId}>{label ?? presetConfig.accessibilityLabel}</title>
         <desc id={descriptionId}>{description}</desc>
 
-        {/* Grid */}
+        {/* Clip path — the rendering safety net. Model-space clipping in the
+            presets is the primary mechanism; this catches anything that slips
+            past, so nothing is ever drawn outside the plot. */}
+        <defs>
+          <clipPath id={clipId}>
+            <rect
+              x={scale.plot.x}
+              y={scale.plot.y}
+              width={scale.plot.width}
+              height={scale.plot.height}
+            />
+          </clipPath>
+        </defs>
+
+        {/* Grid — gridlines may be finer than the labelled ticks */}
         <g aria-hidden="true" data-cp-grid="true">
-          {xTicks.map(tick => (
+          {gridLineValues(axes.x, resolvedGrid.xSubdivisions).map(value => (
             <line
-              key={`grid-x-${tick}`}
-              x1={scale.toX(tick)}
+              key={`grid-x-${value}`}
+              x1={scale.toX(value)}
               y1={scale.plot.y}
-              x2={scale.toX(tick)}
+              x2={scale.toX(value)}
               y2={scale.plot.y + scale.plot.height}
               stroke={roles.gridLine}
               strokeWidth={1}
             />
           ))}
-          {yTicks.map(tick => (
+          {gridLineValues(axes.y, resolvedGrid.ySubdivisions).map(value => (
             <line
-              key={`grid-y-${tick}`}
+              key={`grid-y-${value}`}
               x1={scale.plot.x}
-              y1={scale.toY(tick)}
+              y1={scale.toY(value)}
               x2={scale.plot.x + scale.plot.width}
-              y2={scale.toY(tick)}
+              y2={scale.toY(value)}
               stroke={roles.gridLine}
               strokeWidth={1}
             />
@@ -2317,7 +2637,8 @@ function CoordinatePlaneExplore({
           )}
         </g>
 
-        {/* Shapes and lines */}
+        {/* Shapes and lines — clipped to the plot */}
+        <g clipPath={`url(#${clipId})`}>
         {(scene.shapes ?? []).map(shape => (
           <path
             key={shape.id}
@@ -2333,8 +2654,10 @@ function CoordinatePlaneExplore({
           />
         ))}
 
-        {/* Guides — active element only (spec section 2) */}
-        <g data-cp-guides="true">
+        </g>
+
+        {/* Guides — active element only (spec section 2), also clipped */}
+        <g data-cp-guides="true" clipPath={`url(#${clipId})`}>
           {(scene.guides ?? []).map(guide => (
             <line
               key={guide.id}
@@ -2452,6 +2775,97 @@ function CoordinatePlaneExplore({
           )
         })}
       </svg>
+
+      {/* Numeric steppers — how a control without a drag handle is reached */}
+      {canInteract && stepperRows.map(row => (
+        <div
+          key={row.key}
+          data-cp-stepper-row={row.key}
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: SPACING.compact,
+            padding: `${SPACING.micro}px ${SPACING.compact}px 0`,
+          }}
+        >
+          {row.items.map((stepper) => {
+            const control = controlsById[stepper.controlId]
+            if (!control) return null
+            const current = currentValues[stepper.controlId]
+            const display = control.format ? control.format(current) : String(current).replace('-', '−')
+
+            const nudgeStyle = {
+              ...TYPE.button,
+              minWidth: COMPONENT_SIZE.touchTarget,
+              minHeight: COMPONENT_SIZE.touchTarget,
+              borderRadius: RADII.small,
+              border: `1px solid ${roles.textMuted}`,
+              color: roles.textSecondary,
+              background: 'transparent',
+              cursor: 'pointer',
+            }
+
+            return (
+              <div
+                key={stepper.controlId}
+                data-cp-stepper={stepper.controlId}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+              >
+                <span style={{ ...TYPE.label, color: roles.textSecondary }}>
+                  {stepper.label ?? control.label}
+                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
+                  <button
+                    type="button"
+                    className="cp-explore__option"
+                    data-cp-stepper-decrement={stepper.controlId}
+                    aria-label={`Decrease ${control.label}`}
+                    disabled={current <= control.min}
+                    onClick={() => stepControl(stepper.controlId, -1)}
+                    style={nudgeStyle}
+                  >
+                    −
+                  </button>
+                  <span
+                    className="cp-explore__option"
+                    data-cp-stepper-value={stepper.controlId}
+                    role="slider"
+                    tabIndex={0}
+                    aria-label={control.label}
+                    aria-valuemin={control.min}
+                    aria-valuemax={control.max}
+                    aria-valuenow={current}
+                    aria-valuetext={control.valueText(currentValues)}
+                    onKeyDown={handleStepperKeyDown(stepper.controlId)}
+                    style={{
+                      ...TYPE.titleMedium,
+                      color: roles.textPrimary,
+                      minWidth: COMPONENT_SIZE.touchTarget,
+                      textAlign: 'center',
+                      fontVariantNumeric: 'tabular-nums',
+                      outline: 'none',
+                    }}
+                  >
+                    {display}
+                  </span>
+                  <button
+                    type="button"
+                    className="cp-explore__option"
+                    data-cp-stepper-increment={stepper.controlId}
+                    aria-label={`Increase ${control.label}`}
+                    disabled={current >= control.max}
+                    onClick={() => stepControl(stepper.controlId, 1)}
+                    style={nudgeStyle}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      ))}
 
       {/* Discrete choices — real buttons, never disguised sliders */}
       {canInteract && (presetConfig.options ?? []).map(group => (
@@ -2657,27 +3071,27 @@ Append to `tests/unit/coordinatePlanePresets.test.js`:
 ```js
 describe('midpoint preset', () => {
   it('averages each coordinate and reports the midpoint', () => {
-    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 7 })
+    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 5 })
 
-    expect(scene.status.heading).toBe('(1, 4)')
+    expect(scene.status.heading).toBe('(1, 3)')
   })
 
   it('pairs the x-values and the y-values separately in the calculation', () => {
-    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 7 })
+    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 5 })
 
     expect(scene.status.calculation[0]).toBe('x: (−3 + 5) ÷ 2 = 1')
-    expect(scene.status.calculation[1]).toBe('y: (1 + 7) ÷ 2 = 4')
+    expect(scene.status.calculation[1]).toBe('y: (1 + 5) ÷ 2 = 3')
   })
 
   it('draws one bracket per pairing, not one per point', () => {
-    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 7 })
+    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 5 })
     const brackets = scene.shapes.filter(shape => shape.id.startsWith('bracket-'))
 
     expect(brackets.map(shape => shape.id).sort()).toEqual(['bracket-x', 'bracket-y'])
   })
 
   it('marks both endpoints and the midpoint, with only one active', () => {
-    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 7 }, { activeId: 'a' })
+    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 5 }, { activeId: 'a' })
     const active = scene.points.filter(point => point.tier === 'active')
 
     expect(scene.points.map(point => point.id).sort()).toEqual(['a', 'b', 'm'])
@@ -2758,7 +3172,7 @@ const midpointPreset = {
   defaultActiveId: 'a',
   capabilities: {},
 
-  initialValues: { ax: -3, ay: 1, bx: 5, by: 7 },
+  initialValues: { ax: -3, ay: 1, bx: 5, by: 5 },
   controls: [
     endpointControl('ax', 'Point A x'),
     endpointControl('ay', 'Point A y'),
@@ -3058,6 +3472,43 @@ describe('straightLine comparison', () => {
     const scene = compare({ m: 2, c: 1, m2: 5, c2: -3 }, 'free')
     expect(scene.status.heading).toContain('y = 5x')
   })
+
+  // A horizontal line's perpendicular is vertical, which y = mx + c cannot
+  // express. Drawing a second horizontal line here would teach the opposite.
+  it('refuses to fake a perpendicular for a horizontal line', () => {
+    const scene = compare({ m: 0, c: 2, m2: 9, c2: 0 }, 'perpendicular', {
+      perpendicularGradients: true,
+    })
+
+    expect(scene.shapes.find(shape => shape.id === 'line-2')).toBeUndefined()
+    expect(scene.status.explanation).toContain('vertical')
+    expect(scene.status.explanation).toContain('cannot be written as y = mx + c')
+  })
+})
+
+describe('straightLine stays inside the plot', () => {
+  it('clips a steep line at the y bounds rather than drawing past them', () => {
+    // y = 2x + 1 across x = −5…5 reaches y = ±11 on a y-axis of ±5.
+    const scene = sceneFor('straightLine', { m: 2, c: 1 })
+    const line = scene.shapes.find(shape => shape.id === 'line-1')
+    const coordinates = line.path.match(/-?[\d.]+/g).map(Number)
+
+    for (let index = 1; index < coordinates.length; index += 2) {
+      expect(Math.abs(coordinates[index])).toBeLessThanOrEqual(5)
+    }
+  })
+
+  it('drops a line that misses the plot entirely', () => {
+    const preset = resolveCoordinatePlanePreset('straightLine')
+    const scene = preset.derive({ m: 0, c: 40 }, {
+      focus: 'gradient',
+      showGuides: 'active',
+      capabilities: preset.capabilities,
+      axes: { x: preset.xAxis, y: preset.yAxis },
+    })
+
+    expect(scene.shapes.find(shape => shape.id === 'line-1')).toBeUndefined()
+  })
 })
 ```
 
@@ -3085,7 +3536,13 @@ Create `src/components/learning/coordinatePlane/presets/straightLine.js`:
 // stay independent in both, so nobody infers that parallel lines must have
 // mirrored intercepts.
 
-import { formatCoordinate, lineY, xInterceptOf } from '../coordinatePlaneMath.js'
+import {
+  formatCoordinate,
+  lineY,
+  perpendicularGradientOf,
+  xInterceptOf,
+} from '../coordinatePlaneMath.js'
+import { clipSegmentToBounds } from '../coordinatePlaneGeometry.js'
 
 const MINUS = '−'
 
@@ -3111,26 +3568,52 @@ function riseRunShape(id, { m, c }, atX) {
   }
 }
 
-function lineShape(id, line, axis, role) {
+// Built from the x-axis endpoints, then clipped against BOTH ranges: y = 2x + 1
+// across x = −5…5 reaches y = ±11 on a y-axis of ±5, and an unclipped path
+// would be drawn far outside the plot.
+function lineShape(id, line, axes, role) {
+  const clipped = clipSegmentToBounds(
+    {
+      from: { x: axes.x.min, y: lineY(line, axes.x.min) },
+      to: { x: axes.x.max, y: lineY(line, axes.x.max) },
+    },
+    axes.x,
+    axes.y,
+  )
+  if (!clipped) return null
+
   return {
     id,
-    path: `M ${axis.min} ${lineY(line, axis.min)} L ${axis.max} ${lineY(line, axis.max)}`,
+    path: `M ${clipped.from.x} ${clipped.from.y} L ${clipped.to.x} ${clipped.to.y}`,
     strokeRole: role,
     modelPath: true,
   }
 }
 
+/**
+ * The second line, or null when the requested comparison is impossible.
+ *
+ * A horizontal line's perpendicular is vertical, and a vertical line has no
+ * gradient — it cannot be written as y = mx + c at all. Returning a gradient of
+ * 0 there (the earlier design) drew a second horizontal line and taught the
+ * exact opposite of the fact being demonstrated, so this returns
+ * `{ rule: 'perpendicular', impossible: true }` and the status explains why.
+ */
 function resolveSecondLine(values, comparisonRule, capabilities) {
   const primary = { m: values.m, c: values.c }
 
   if (comparisonRule === 'perpendicular' && capabilities.perpendicularGradients) {
-    return { m: primary.m === 0 ? 0 : -1 / primary.m, c: values.c2, rule: 'perpendicular' }
+    const gradient = perpendicularGradientOf(primary.m)
+    if (gradient === null) {
+      return { rule: 'perpendicular', impossible: true }
+    }
+    return { m: gradient, c: values.c2, rule: 'perpendicular', impossible: false }
   }
   if (comparisonRule === 'free') {
-    return { m: values.m2, c: values.c2, rule: 'free' }
+    return { m: values.m2, c: values.c2, rule: 'free', impossible: false }
   }
-  // Default and the perpendicular fallback when the tier does not allow it.
-  return { m: primary.m, c: values.c2, rule: 'parallel' }
+  // Default, and the perpendicular fallback when the tier does not allow it.
+  return { m: primary.m, c: values.c2, rule: 'parallel', impossible: false }
 }
 
 const straightLinePreset = {
@@ -3175,15 +3658,12 @@ const straightLinePreset = {
       valueFromPointer: (_point, values) => values.c,
     },
   ],
-  options: [
-    {
-      id: 'stepper',
-      label: 'Choose what to change',
-      choices: [
-        { id: 'm', label: 'Gradient (m)' },
-        { id: 'c', label: 'Y-intercept (c)' },
-      ],
-    },
+  // Both live numbers get a real stepper. The earlier design offered buttons
+  // that only *selected* which value to change, with nothing to change it
+  // with — the preset was inoperable.
+  steppers: [
+    { controlId: 'm', label: 'Gradient (m)', group: 'equation' },
+    { controlId: 'c', label: 'Y-intercept (c)', group: 'equation' },
   ],
 
   derive(values, { focus, comparisonRule, capabilities, axes }) {
@@ -3193,7 +3673,7 @@ const straightLinePreset = {
       ? resolveSecondLine(values, comparisonRule, capabilities)
       : null
 
-    const shapes = [lineShape('line-1', line, axes.x, 'object')]
+    const shapes = [lineShape('line-1', line, axes, 'object')].filter(Boolean)
     const points = [{
       id: 'y-intercept',
       x: 0,
@@ -3209,8 +3689,9 @@ const straightLinePreset = {
       shapes.push(riseRunShape('rise-run', line, 0))
     }
 
-    if (comparing) {
-      shapes.push(lineShape('line-2', second, axes.x, 'image'))
+    if (comparing && !second.impossible) {
+      const secondShape = lineShape('line-2', second, axes, 'image')
+      if (secondShape) shapes.push(secondShape)
       // Under 'parallel' both lines get a triangle, so equal steepness is
       // something you see rather than something you are told.
       if (second.rule === 'parallel') {
@@ -3251,7 +3732,10 @@ const straightLinePreset = {
     let explanation = 'The gradient sets the steepness; the y-intercept sets where the line starts.'
     let heading = equationText(line)
 
-    if (comparing) {
+    if (comparing && second.impossible) {
+      heading = equationText(line)
+      explanation = 'A line perpendicular to a horizontal line is vertical, and a vertical line has no gradient — it cannot be written as y = mx + c. Change the gradient to see a perpendicular pair.'
+    } else if (comparing) {
       heading = `${equationText(line)}   and   ${equationText(second)}`
       if (second.rule === 'parallel') {
         explanation = 'Both lines have the same gradient, so they are parallel. Their intercepts are set separately and need not match.'
@@ -3476,6 +3960,9 @@ const tableOfValuesPreset = {
       valueFromPointer: (_point, values) => values.step,
     },
   ],
+  // The only control, and there is no handle for it — without this stepper the
+  // preset cannot be operated at all.
+  steppers: [{ controlId: 'step', label: 'Table row' }],
 
   derive(values) {
     const line = { m: values.m, c: values.c }
@@ -3656,6 +4143,16 @@ describe('intersection preset', () => {
     expect(scene.status.explanation).toContain('never meet')
     expect(scene.points.find(point => point.id === 'solution')).toBeUndefined()
   })
+
+  // Equal gradients alone are not "no solution" — same gradient AND same
+  // intercept is one line, and every point on it satisfies both equations.
+  it('reports coincident lines as having infinitely many solutions', () => {
+    const scene = sceneFor('intersection', { m1: 2, c1: 1, m2: 2, c2: 1 })
+
+    expect(scene.status.heading).toBe('Infinitely many solutions')
+    expect(scene.status.explanation).toContain('same line')
+    expect(scene.points.find(point => point.id === 'solution')).toBeUndefined()
+  })
 })
 ```
 
@@ -3677,6 +4174,7 @@ Create `src/components/learning/coordinatePlane/presets/intersection.js`:
 // both checks rather than only the coordinate.
 
 import { formatCoordinate, intersectionOf, lineY } from '../coordinatePlaneMath.js'
+import { clipSegmentToBounds } from '../coordinatePlaneGeometry.js'
 
 const MINUS = '−'
 
@@ -3702,10 +4200,20 @@ function substitutionCheck(line, solution) {
   return `${equationText(line)}  →  ${signed(solution.y)} = ${productText}${cTerm} ✓`
 }
 
-function lineShape(id, line, axis, role) {
+function lineShape(id, line, axes, role) {
+  const clipped = clipSegmentToBounds(
+    {
+      from: { x: axes.x.min, y: lineY(line, axes.x.min) },
+      to: { x: axes.x.max, y: lineY(line, axes.x.max) },
+    },
+    axes.x,
+    axes.y,
+  )
+  if (!clipped) return null
+
   return {
     id,
-    path: `M ${axis.min} ${lineY(line, axis.min)} L ${axis.max} ${lineY(line, axis.max)}`,
+    path: `M ${clipped.from.x} ${clipped.from.y} L ${clipped.to.x} ${clipped.to.y}`,
     strokeRole: role,
     modelPath: true,
   }
@@ -3751,30 +4259,41 @@ const intersectionPreset = {
       valueFromPointer: (_point, values) => values.c2,
     },
   ],
+  steppers: [
+    { controlId: 'c1', label: 'First line (c)', group: 'intercepts' },
+    { controlId: 'c2', label: 'Second line (c)', group: 'intercepts' },
+  ],
 
   derive(values, { axes }) {
     const lineA = { m: values.m1, c: values.c1 }
     const lineB = { m: values.m2, c: values.c2 }
-    const solution = intersectionOf(lineA, lineB)
+    const result = intersectionOf(lineA, lineB)
 
     const shapes = [
-      lineShape('line-a', lineA, axes.x, 'object'),
-      lineShape('line-b', lineB, axes.x, 'image'),
-    ]
+      lineShape('line-a', lineA, axes, 'object'),
+      lineShape('line-b', lineB, axes, 'image'),
+    ].filter(Boolean)
 
-    if (!solution) {
+    // Three outcomes, not two. Coincident lines are the case a two-way check
+    // gets silently wrong: it calls one line "parallel with no solution".
+    if (result.kind !== 'one') {
+      const infinite = result.kind === 'infinite'
       return {
         shapes,
         points: [],
         guides: [],
         handles: [],
         status: {
-          heading: 'No solution',
+          heading: infinite ? 'Infinitely many solutions' : 'No solution',
           calculation: [equationText(lineA), equationText(lineB)],
-          explanation: 'Equal gradients mean the lines are parallel, so they never meet and no pair satisfies both.',
+          explanation: infinite
+            ? 'Same gradient and same intercept, so these are the same line — every point on it satisfies both equations.'
+            : 'Equal gradients with different intercepts mean the lines are parallel, so they never meet and no pair satisfies both.',
         },
       }
     }
+
+    const solution = result.point
 
     return {
       shapes,
@@ -3806,12 +4325,15 @@ const intersectionPreset = {
   describe(values) {
     const lineA = { m: values.m1, c: values.c1 }
     const lineB = { m: values.m2, c: values.c2 }
-    const solution = intersectionOf(lineA, lineB)
+    const result = intersectionOf(lineA, lineB)
 
-    if (!solution) {
+    if (result.kind === 'infinite') {
+      return `The graph of ${equationText(lineA)}, drawn twice — both equations describe the same line.`
+    }
+    if (result.kind === 'none') {
       return `The graphs of ${equationText(lineA)} and ${equationText(lineB)}, which are parallel and never meet.`
     }
-    return `The graphs of ${equationText(lineA)} and ${equationText(lineB)}, meeting at ${formatCoordinate(solution)}.`
+    return `The graphs of ${equationText(lineA)} and ${equationText(lineB)}, meeting at ${formatCoordinate(result.point)}.`
   },
 }
 
@@ -3873,6 +4395,7 @@ contract exists to prevent.
 
 ```js
 describe('transformation family', () => {
+  // A is (-1, 3); the enlargement object's A is (-1, 2).
   it('translates with positive, negative and zero components', () => {
     const positive = sceneFor('translate', { dx: 3, dy: 2 })
     const negative = sceneFor('translate', { dx: -3, dy: -2 })
@@ -3888,7 +4411,7 @@ describe('transformation family', () => {
     const imageA = scene.points.find(point => point.id === 'image-a')
 
     expect(imageA.x).toBe(5)
-    expect(imageA.y).toBe(4)
+    expect(imageA.y).toBe(3)
   })
 
   it('offers diagonal mirror lines only when the tier allows them', () => {
@@ -3912,8 +4435,8 @@ describe('transformation family', () => {
       choices: { angle: '90', direction: 'anticlockwise' },
     })
 
-    expect(clockwise.points.find(p => p.id === 'image-a')).toMatchObject({ x: 4, y: 1 })
-    expect(anticlockwise.points.find(p => p.id === 'image-a')).toMatchObject({ x: -4, y: -1 })
+    expect(clockwise.points.find(p => p.id === 'image-a')).toMatchObject({ x: 3, y: 1 })
+    expect(anticlockwise.points.find(p => p.id === 'image-a')).toMatchObject({ x: -3, y: -1 })
   })
 
   it('rotates about a centre away from the origin when the tier allows it', () => {
@@ -3922,7 +4445,7 @@ describe('transformation family', () => {
       capabilities: { nonOriginCentre: true },
     })
 
-    expect(scene.points.find(p => p.id === 'image-a')).toMatchObject({ x: 3, y: -2 })
+    expect(scene.points.find(p => p.id === 'image-a')).toMatchObject({ x: 3, y: -1 })
   })
 
   it('pins the centre to the origin when the tier forbids moving it', () => {
@@ -3954,7 +4477,7 @@ describe('transformation family', () => {
 
   it('enlarges from a centre by the chosen scale factor', () => {
     const scene = sceneFor('enlarge', { cx: 0, cy: 0 }, { choices: { scaleFactor: '2' } })
-    expect(scene.points.find(p => p.id === 'image-a')).toMatchObject({ x: -2, y: 8 })
+    expect(scene.points.find(p => p.id === 'image-a')).toMatchObject({ x: -2, y: 4 })
   })
 
   it('labels image vertices with a prime', () => {
@@ -4023,12 +4546,36 @@ function signed(value) {
   return String(value).replace('-', MINUS)
 }
 
-// The object triangle, shared by all four transformations.
+// The object triangle for translate, reflect and rotate.
+//
+// Coordinates and control ranges are chosen together so the IMAGE also stays
+// inside the axes at every reachable value — a figure half off the plot teaches
+// nothing. tests/architecture/coordinate-plane-visible-bounds.test.js enforces
+// this, so changing either the object or a range without rechecking will fail.
+//
+// Worst cases on the ±8 axes used here:
+//   translate  image = p + d,        |p|∞ ≤ 3, |d|∞ ≤ 4  → ≤ 7
+//   reflect    image = 2a − p,       |a| ≤ 2, |p|∞ ≤ 3   → ≤ 7
+//   rotate     image = c + R(p − c), |c|∞ ≤ 2            → ≤ 7
 const OBJECT_VERTICES = [
-  { id: 'a', letter: 'A', x: -1, y: 4 },
-  { id: 'b', letter: 'B', x: -3, y: 1 },
+  { id: 'a', letter: 'A', x: -1, y: 3 },
+  { id: 'b', letter: 'B', x: -3, y: 0 },
   { id: 'c', letter: 'C', x: 0, y: -2 },
 ]
+
+// Enlargement multiplies distance from the centre, so it needs a smaller object
+// to stay on the same axes: image = (1 − s)c + s·p, and with |s| ≤ 3, |c|∞ ≤ 1
+// and |p|∞ ≤ 2 the worst case is |−2c + 3p| ≤ 2 + 6 = 8.
+const ENLARGE_OBJECT_VERTICES = [
+  { id: 'a', letter: 'A', x: -1, y: 2 },
+  { id: 'b', letter: 'B', x: -2, y: 0 },
+  { id: 'c', letter: 'C', x: 0, y: -1 },
+]
+
+// Wide enough for every image above, with unit gridlines but labels every 2 so
+// a 17-unit axis stays legible at 390px.
+const TRANSFORM_AXIS = { min: -8, max: 8, step: 2 }
+const TRANSFORM_GRID = { xSubdivisions: 2, ySubdivisions: 2 }
 
 function polygonPath(vertices) {
   return `${vertices.map((v, i) => `${i === 0 ? 'M' : 'L'} ${v.x} ${v.y}`).join(' ')} Z`
@@ -4042,6 +4589,8 @@ function createTransformationPreset({
   capabilities,
   initialValues,
   controls = [],
+  steppers = [],
+  vertices = OBJECT_VERTICES,
   optionGroups = () => [],
   transform,
   ruleShapes = () => [],
@@ -4060,9 +4609,9 @@ function createTransformationPreset({
 
     canvas: { width: 360, height: 340 },
     padding: { top: 24, right: 28, bottom: 40, left: 40 },
-    xAxis: { min: -6, max: 6, step: 1 },
-    yAxis: { min: -6, max: 6, step: 1 },
-    grid: { xSubdivisions: 1, ySubdivisions: 1 },
+    xAxis: { ...TRANSFORM_AXIS },
+    yAxis: { ...TRANSFORM_AXIS },
+    grid: { ...TRANSFORM_GRID },
 
     focusModes: [],
     defaultFocus: null,
@@ -4070,6 +4619,7 @@ function createTransformationPreset({
     capabilities,
     initialValues,
     controls,
+    steppers,
 
     resolveOptions(resolvedCapabilities) {
       return optionGroups(resolvedCapabilities ?? {})
@@ -4077,7 +4627,7 @@ function createTransformationPreset({
 
     derive(values, context) {
       const { activeId, showGuides, capabilities: caps = {}, choices = {} } = context
-      const image = OBJECT_VERTICES.map(vertex => ({
+      const image = vertices.map(vertex => ({
         ...vertex,
         ...transform(vertex, values, choices, caps),
       }))
@@ -4085,7 +4635,7 @@ function createTransformationPreset({
       const shapes = [
         {
           id: 'object',
-          path: polygonPath(OBJECT_VERTICES),
+          path: polygonPath(vertices),
           fillRole: 'objectFill',
           strokeRole: 'object',
           modelPath: true,
@@ -4097,7 +4647,7 @@ function createTransformationPreset({
           strokeRole: 'image',
           modelPath: true,
         },
-        ...ruleShapes(values, choices, caps, { object: OBJECT_VERTICES, image }),
+        ...ruleShapes(values, choices, caps, { object: vertices, image }),
       ]
 
       // Exactly one vertex is Active; every other labelled point is Related.
@@ -4107,7 +4657,7 @@ function createTransformationPreset({
       }
 
       const points = [
-        ...OBJECT_VERTICES.map(vertex => ({
+        ...vertices.map(vertex => ({
           id: vertex.id,
           x: vertex.x,
           y: vertex.y,
@@ -4130,7 +4680,7 @@ function createTransformationPreset({
         ...rulePoints(values, choices, caps),
       ]
 
-      const activeVertex = OBJECT_VERTICES.find(vertex => vertex.id === activeId)
+      const activeVertex = vertices.find(vertex => vertex.id === activeId)
       const activeImage = image.find(vertex => vertex.id === activeId)
       const guides = activeVertex && showGuides !== 'none'
         ? [{
@@ -4146,16 +4696,16 @@ function createTransformationPreset({
         points,
         guides,
         handles: [],
-        status: statusFor(values, choices, caps, { object: OBJECT_VERTICES, image, activeId }),
+        status: statusFor(values, choices, caps, { object: vertices, image, activeId }),
       }
     },
 
     describe(values, context = {}) {
-      const image = OBJECT_VERTICES.map(vertex => ({
+      const image = vertices.map(vertex => ({
         ...vertex,
         ...transform(vertex, values, context.choices ?? {}, context.capabilities ?? {}),
       }))
-      const objectText = OBJECT_VERTICES
+      const objectText = vertices
         .map(vertex => `${vertex.letter} ${formatCoordinate(vertex)}`)
         .join(', ')
       const imageText = image
@@ -4186,8 +4736,8 @@ export const translatePreset = createTransformationPreset({
     {
       id: 'dx',
       label: 'Vector across',
-      min: -6,
-      max: 6,
+      min: -4,
+      max: 4,
       step: 1,
       valueText: values => `across ${values.dx}`,
       valueFromPointer: point => snapToStep(point.modelX, 1),
@@ -4195,12 +4745,17 @@ export const translatePreset = createTransformationPreset({
     {
       id: 'dy',
       label: 'Vector up',
-      min: -6,
-      max: 6,
+      min: -4,
+      max: 4,
       step: 1,
       valueText: values => `up ${values.dy}`,
       valueFromPointer: point => snapToStep(point.modelY, 1),
     },
+  ],
+  // The two components belong together, so they share one stepper row.
+  steppers: [
+    { controlId: 'dx', label: 'Across', group: 'vector' },
+    { controlId: 'dy', label: 'Up', group: 'vector' },
   ],
   transform: (vertex, values) => translatePoint(vertex, { dx: values.dx, dy: values.dy }),
   statusFor: (values, _choices, _caps, { object, image, activeId }) => ({
@@ -4244,13 +4799,14 @@ export const reflectPreset = createTransformationPreset({
     {
       id: 'mirrorValue',
       label: 'Mirror line position',
-      min: -5,
-      max: 5,
+      min: -2,
+      max: 2,
       step: 1,
       valueText: values => `mirror at ${values.mirrorValue}`,
       valueFromPointer: point => snapToStep(point.modelX, 1),
     },
   ],
+  steppers: [{ controlId: 'mirrorValue', label: 'Mirror position' }],
   optionGroups: capabilities => [{
     id: 'mirror',
     label: 'Choose a mirror line',
@@ -4302,8 +4858,8 @@ export const rotatePreset = createTransformationPreset({
     {
       id: 'cx',
       label: 'Centre x',
-      min: -5,
-      max: 5,
+      min: -2,
+      max: 2,
       step: 1,
       valueText: values => `centre x ${values.cx}`,
       valueFromPointer: point => snapToStep(point.modelX, 1),
@@ -4311,12 +4867,16 @@ export const rotatePreset = createTransformationPreset({
     {
       id: 'cy',
       label: 'Centre y',
-      min: -5,
-      max: 5,
+      min: -2,
+      max: 2,
       step: 1,
       valueText: values => `centre y ${values.cy}`,
       valueFromPointer: point => snapToStep(point.modelY, 1),
     },
+  ],
+  steppers: [
+    { controlId: 'cx', label: 'Centre x', group: 'centre' },
+    { controlId: 'cy', label: 'Centre y', group: 'centre' },
   ],
   optionGroups: () => [
     {
@@ -4388,8 +4948,8 @@ export const enlargePreset = createTransformationPreset({
     {
       id: 'cx',
       label: 'Centre x',
-      min: -5,
-      max: 5,
+      min: -2,
+      max: 2,
       step: 1,
       valueText: values => `centre x ${values.cx}`,
       valueFromPointer: point => snapToStep(point.modelX, 1),
@@ -4397,13 +4957,18 @@ export const enlargePreset = createTransformationPreset({
     {
       id: 'cy',
       label: 'Centre y',
-      min: -5,
-      max: 5,
+      min: -2,
+      max: 2,
       step: 1,
       valueText: values => `centre y ${values.cy}`,
       valueFromPointer: point => snapToStep(point.modelY, 1),
     },
   ],
+  steppers: [
+    { controlId: 'cx', label: 'Centre x', group: 'centre' },
+    { controlId: 'cy', label: 'Centre y', group: 'centre' },
+  ],
+  vertices: ENLARGE_OBJECT_VERTICES,
   optionGroups: capabilities => [{
     id: 'scaleFactor',
     label: 'Choose a scale factor',
@@ -4552,7 +5117,247 @@ git commit -m "Add translate, reflect, rotate and enlarge presets with tier capa
 
 ---
 
-## Task 12: The annotation contract architecture test
+## Task 12: Control reachability and visible bounds
+
+**Files:**
+- Create: `tests/architecture/coordinate-plane-control-reachability.test.js`
+- Create: `tests/architecture/coordinate-plane-visible-bounds.test.js`
+
+**Interfaces:**
+- Consumes: the whole preset registry
+- Produces: no runtime export — enforcement of two contracts that are easy to
+  break silently
+
+These two contracts guard the failure modes that do not announce themselves. A
+preset with an unreachable control still renders; a figure drawn outside the
+axes still passes every arithmetic test. Both look fine in a unit suite and are
+useless to a learner.
+
+- [ ] **Step 1: Write the control reachability test**
+
+Create `tests/architecture/coordinate-plane-control-reachability.test.js`:
+
+```js
+import { describe, expect, it } from 'vitest'
+import {
+  COORDINATE_PLANE_PRESETS,
+  clampPresetValues,
+  mergeCapabilities,
+  resolvePresetFocus,
+} from '../../src/components/learning/coordinatePlane/presets/index.js'
+
+function handleControlIds(preset) {
+  const ids = new Set()
+  const focusModes = preset.focusModes?.length ? preset.focusModes : [undefined]
+  const values = clampPresetValues(preset, preset.initialValues)
+
+  for (const focus of focusModes) {
+    const capabilities = mergeCapabilities(preset, {})
+    const choices = Object.fromEntries(
+      (preset.resolveOptions?.(capabilities) ?? preset.options ?? [])
+        .map(group => [group.id, group.choices[0].id]),
+    )
+    const scene = preset.derive(values, {
+      focus: resolvePresetFocus(preset, focus),
+      activeId: preset.defaultActiveId,
+      showGuides: 'active',
+      capabilities,
+      choices,
+      axes: { x: preset.xAxis, y: preset.yAxis },
+      grid: preset.grid,
+    })
+
+    for (const handle of scene.handles ?? []) {
+      for (const id of handle.controlIds ?? [handle.controlId]) ids.add(id)
+    }
+  }
+  return ids
+}
+
+describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
+  'control reachability: %s',
+  (presetId, preset) => {
+    it('offers a way to change every declared control', () => {
+      const viaHandle = handleControlIds(preset)
+      const viaStepper = new Set((preset.steppers ?? []).map(item => item.controlId))
+
+      for (const control of preset.controls ?? []) {
+        const reachable = viaHandle.has(control.id) || viaStepper.has(control.id)
+        expect(
+          reachable,
+          `${presetId} declares control "${control.id}" but neither a drag handle nor a stepper reaches it`,
+        ).toBe(true)
+      }
+    })
+
+    it('does not declare a stepper for a control that does not exist', () => {
+      const controlIds = new Set((preset.controls ?? []).map(control => control.id))
+
+      for (const stepper of preset.steppers ?? []) {
+        expect(
+          controlIds.has(stepper.controlId),
+          `${presetId} declares a stepper for unknown control "${stepper.controlId}"`,
+        ).toBe(true)
+      }
+    })
+
+    it('gives every control the fields the renderer needs', () => {
+      for (const control of preset.controls ?? []) {
+        expect(typeof control.label, `${presetId}.${control.id}.label`).toBe('string')
+        expect(typeof control.step, `${presetId}.${control.id}.step`).toBe('number')
+        expect(control.step, `${presetId}.${control.id}.step`).toBeGreaterThan(0)
+        expect(typeof control.min, `${presetId}.${control.id}.min`).toBe('number')
+        expect(typeof control.max, `${presetId}.${control.id}.max`).toBe('number')
+        expect(control.max).toBeGreaterThan(control.min)
+        expect(typeof control.valueText, `${presetId}.${control.id}.valueText`).toBe('function')
+      }
+    })
+  },
+)
+```
+
+- [ ] **Step 2: Run it and confirm it passes**
+
+Run: `./node_modules/.bin/vitest run --project architecture tests/architecture/coordinate-plane-control-reachability.test.js`
+
+Expected: PASS. If `straightLine`, `tableOfValues`, `intersection` or any
+transformation fails, its `steppers` declaration is missing — add it rather
+than removing the control.
+
+- [ ] **Step 3: Write the visible bounds test**
+
+Create `tests/architecture/coordinate-plane-visible-bounds.test.js`:
+
+```js
+import { describe, expect, it } from 'vitest'
+import {
+  COORDINATE_PLANE_PRESETS,
+  clampPresetValues,
+  mergeCapabilities,
+  resolvePresetFocus,
+} from '../../src/components/learning/coordinatePlane/presets/index.js'
+
+const CAPABILITY_SETS = [
+  {},
+  { diagonalMirrorLines: true, nonOriginCentre: true },
+  { fractionalScaleFactor: true, negativeScaleFactor: true },
+  { perpendicularGradients: true, showXIntercept: true },
+]
+
+// Every extreme of every control, plus the initial values — the states a
+// learner can actually drive the diagram into.
+function extremeValueSets(preset) {
+  const base = clampPresetValues(preset, preset.initialValues)
+  const sets = [base]
+
+  for (const control of preset.controls ?? []) {
+    sets.push(clampPresetValues(preset, { ...base, [control.id]: control.min }))
+    sets.push(clampPresetValues(preset, { ...base, [control.id]: control.max }))
+  }
+
+  // All controls at once, both ways — the true worst case for transformations.
+  const allMin = { ...base }
+  const allMax = { ...base }
+  for (const control of preset.controls ?? []) {
+    allMin[control.id] = control.min
+    allMax[control.id] = control.max
+  }
+  sets.push(clampPresetValues(preset, allMin))
+  sets.push(clampPresetValues(preset, allMax))
+
+  return sets
+}
+
+function pathCoordinates(path) {
+  const numbers = path.match(/-?[\d.]+/g)?.map(Number) ?? []
+  const points = []
+  for (let index = 0; index + 1 < numbers.length; index += 2) {
+    points.push({ x: numbers[index], y: numbers[index + 1] })
+  }
+  return points
+}
+
+describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
+  'visible bounds: %s',
+  (presetId, preset) => {
+    it('keeps the whole figure inside the axes at every reachable value', () => {
+      const focusModes = preset.focusModes?.length ? preset.focusModes : [undefined]
+
+      for (const focus of focusModes) {
+        for (const caps of CAPABILITY_SETS) {
+          for (const values of extremeValueSets(preset)) {
+            const capabilities = mergeCapabilities(preset, caps)
+            const choices = Object.fromEntries(
+              (preset.resolveOptions?.(capabilities) ?? preset.options ?? [])
+                .map(group => [group.id, group.choices.at(-1).id]),
+            )
+            const axes = { x: preset.xAxis, y: preset.yAxis }
+            const scene = preset.derive(values, {
+              focus: resolvePresetFocus(preset, focus),
+              activeId: preset.defaultActiveId,
+              showGuides: 'active',
+              capabilities,
+              choices,
+              axes,
+              grid: preset.grid,
+            })
+
+            const label = `${presetId} focus=${focus} values=${JSON.stringify(values)}`
+
+            for (const point of scene.points) {
+              expect(point.x, `${label} point ${point.id}.x`).toBeGreaterThanOrEqual(axes.x.min)
+              expect(point.x, `${label} point ${point.id}.x`).toBeLessThanOrEqual(axes.x.max)
+              expect(point.y, `${label} point ${point.id}.y`).toBeGreaterThanOrEqual(axes.y.min)
+              expect(point.y, `${label} point ${point.id}.y`).toBeLessThanOrEqual(axes.y.max)
+            }
+
+            // Model-space paths must already be clipped; the SVG clip path is
+            // a safety net, not the mechanism.
+            for (const shape of scene.shapes.filter(item => item.modelPath)) {
+              for (const point of pathCoordinates(shape.path)) {
+                expect(point.x, `${label} shape ${shape.id}.x`).toBeGreaterThanOrEqual(axes.x.min)
+                expect(point.x, `${label} shape ${shape.id}.x`).toBeLessThanOrEqual(axes.x.max)
+                expect(point.y, `${label} shape ${shape.id}.y`).toBeGreaterThanOrEqual(axes.y.min)
+                expect(point.y, `${label} shape ${shape.id}.y`).toBeLessThanOrEqual(axes.y.max)
+              }
+            }
+
+            for (const guide of scene.guides ?? []) {
+              for (const point of [guide.from, guide.to]) {
+                expect(point.x, `${label} guide ${guide.id}.x`).toBeGreaterThanOrEqual(axes.x.min)
+                expect(point.x, `${label} guide ${guide.id}.x`).toBeLessThanOrEqual(axes.x.max)
+                expect(point.y, `${label} guide ${guide.id}.y`).toBeGreaterThanOrEqual(axes.y.min)
+                expect(point.y, `${label} guide ${guide.id}.y`).toBeLessThanOrEqual(axes.y.max)
+              }
+            }
+          }
+        }
+      }
+    })
+  },
+)
+```
+
+- [ ] **Step 4: Run it and fix any preset that escapes its axes**
+
+Run: `./node_modules/.bin/vitest run --project architecture tests/architecture/coordinate-plane-visible-bounds.test.js`
+
+Expected: PASS. A failure names the preset, focus and exact values. Fix it by
+tightening the control range or widening the preset's axes — **never** by
+loosening the test, and never by rescaling axes dynamically during a drag,
+which makes the grid move under the learner's finger.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add tests/architecture/coordinate-plane-control-reachability.test.js \
+        tests/architecture/coordinate-plane-visible-bounds.test.js
+git commit -m "Enforce coordinate plane control reachability and visible bounds"
+```
+
+---
+
+## Task 13: The annotation contract architecture test
 
 **Files:**
 - Create: `tests/architecture/coordinate-plane-annotation-contract.test.js`
@@ -4827,7 +5632,7 @@ git commit -m "Enforce the coordinate plane annotation contract across all prese
 
 ---
 
-## Task 13: Stories for every preset
+## Task 14: Stories for every preset
 
 **Files:**
 - Modify: `src/components/learning/CoordinatePlaneExplore.stories.jsx`
@@ -4857,9 +5662,9 @@ export const Midpoint = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
-    await expect(canvas.getByText('(1, 4)')).toBeVisible()
+    await expect(canvas.getByText('(1, 3)')).toBeVisible()
     await expect(canvas.getByText('x: (−3 + 5) ÷ 2 = 1')).toBeVisible()
-    await expect(canvas.getByText('y: (1 + 7) ÷ 2 = 4')).toBeVisible()
+    await expect(canvas.getByText('y: (1 + 5) ÷ 2 = 3')).toBeVisible()
   },
 }
 
@@ -4902,20 +5707,22 @@ export const TableOfValues = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const step = canvas.getByRole('slider', { name: 'Table row' })
+    const next = canvas.getByRole('button', { name: 'Increase Table row' })
 
     // One point: no line at all.
     await expect(canvas.getByText(/One point is not enough/)).toBeVisible()
     expect(canvasElement.querySelector('[data-cp-shape="line"]')).toBeNull()
 
-    // Two points: a provisional dashed line.
-    step.focus()
-    await userEvent.keyboard('{ArrowRight}')
+    // Two points: a provisional dashed line. Driven through the real stepper
+    // button, because that is how a learner reaches this control.
+    await userEvent.click(next)
+    await expect(step).toHaveAttribute('aria-valuenow', '1')
     await expect(canvas.getByText(/Two points define a straight line/)).toBeVisible()
     expect(canvasElement.querySelector('[data-cp-shape="line"]')
       ?.getAttribute('stroke-dasharray')).toBe('6 5')
 
     // Three points: the rule is confirmed and the line goes solid.
-    await userEvent.keyboard('{ArrowRight}')
+    await userEvent.click(next)
     await expect(canvas.getByText(/confirms/)).toBeVisible()
     expect(canvasElement.querySelector('[data-cp-shape="line"]')
       ?.getAttribute('stroke-dasharray')).toBeNull()
@@ -5011,6 +5818,173 @@ export const ReflectAnnotationDensity = {
   },
 }
 
+
+// ─── Coverage the six blocking defects demanded ──────────────────────────────
+
+// Issue 2: two sequential single-control updates would drop x and keep only y.
+export const AtomicDiagonalDrag = {
+  args: { preset: 'plotPoint', defaultValue: { x: 1, y: 1 } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const handle = canvas.getByRole('slider', { name: 'x coordinate' })
+    const svg = canvasElement.querySelector('svg')
+    const box = svg.getBoundingClientRect()
+
+    // Drag diagonally: both coordinates must move together.
+    await userEvent.pointer([
+      { target: handle, keys: '[MouseLeft>]' },
+      { target: svg, coords: { x: box.left + box.width * 0.75, y: box.top + box.height * 0.25 } },
+      { keys: '[/MouseLeft]' },
+    ])
+
+    const heading = canvasElement.querySelector('[data-cp-status-heading]').textContent
+    const [x, y] = heading.replace(/[()]/g, '').split(',').map(part => Number(part.trim().replace('−', '-')))
+
+    expect(x, 'x must change during a diagonal drag').not.toBe(1)
+    expect(y, 'y must change during a diagonal drag').not.toBe(1)
+  },
+}
+
+// Issue 1: every non-drag numeric control must be operable.
+export const StraightLineSteppers = {
+  args: { preset: 'straightLine' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    await expect(canvas.getByText('y = 2x + 1')).toBeVisible()
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Gradient' }))
+    await expect(canvas.getByText('y = 3x + 1')).toBeVisible()
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Y-intercept' }))
+    await expect(canvas.getByText('y = 3x')).toBeVisible()
+
+    // Keyboard reaches the same control.
+    const gradient = canvas.getByRole('slider', { name: 'Gradient' })
+    gradient.focus()
+    await userEvent.keyboard('{ArrowLeft}')
+    await expect(canvas.getByText('y = 2x')).toBeVisible()
+  },
+}
+
+export const IntersectionSteppers = {
+  args: { preset: 'intersection' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    await expect(canvas.getByText('(2, 5)')).toBeVisible()
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase First line y-intercept' }))
+    await expect(canvas.getByText('(1.5, 5.5)')).toBeVisible()
+  },
+}
+
+// Issue 5: coincident lines are not "no solution".
+export const CoincidentLines = {
+  args: { preset: 'intersection', interactive: false, defaultValue: { m1: 1, c1: 3, m2: 1, c2: 3 } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    await expect(canvas.getByText('Infinitely many solutions')).toBeVisible()
+    await expect(canvas.getByText(/same line/)).toBeVisible()
+  },
+}
+
+export const ParallelNoSolution = {
+  args: { preset: 'intersection', interactive: false, defaultValue: { m1: 2, c1: 1, m2: 2, c2: 5 } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText('No solution')).toBeVisible()
+  },
+}
+
+// Issue 5: a horizontal line has no representable perpendicular.
+export const HorizontalPerpendicular = {
+  args: {
+    preset: 'straightLine',
+    focus: 'compare',
+    comparisonRule: 'perpendicular',
+    difficultyCapabilities: { perpendicularGradients: true },
+    defaultValue: { m: 0, c: 2, m2: 1, c2: 0 },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    await expect(canvas.getByText(/vertical/)).toBeVisible()
+    expect(canvasElement.querySelector('[data-cp-shape="line-2"]')).toBeNull()
+  },
+}
+
+// Issue 4: a steep line must be clipped, not drawn past both y bounds.
+export const SteepLineStaysInPlot = {
+  args: { preset: 'straightLine', interactive: false, defaultValue: { m: 5, c: 0 } },
+  play: async ({ canvasElement }) => {
+    const line = canvasElement.querySelector('[data-cp-shape="line-1"]')
+    const plot = canvasElement.querySelector('[data-cp-grid] line').getBoundingClientRect()
+    const box = line.getBoundingClientRect()
+
+    expect(box.top).toBeGreaterThanOrEqual(plot.top - 1)
+    expect(box.bottom).toBeLessThanOrEqual(
+      canvasElement.querySelector('svg').getBoundingClientRect().bottom + 1,
+    )
+  },
+}
+
+// Issue 4: the extreme transformation states.
+export const MaximumTranslation = {
+  args: { preset: 'translate', interactive: false, defaultValue: { dx: 4, dy: 4 } },
+  play: async ({ canvasElement }) => {
+    await expect(within(canvasElement).getByText('Vector (4, 4)')).toBeVisible()
+    expectMobileContainment(canvasElement)
+  },
+}
+
+export const MaximumEnlargement = {
+  args: {
+    preset: 'enlarge',
+    interactive: false,
+    difficultyCapabilities: { nonOriginCentre: true, negativeScaleFactor: true },
+    defaultValue: { cx: -1, cy: -1 },
+  },
+  play: async ({ canvasElement }) => {
+    expectMobileContainment(canvasElement)
+  },
+}
+
+// Issue 6: coordinate chips must clear the axis numbers, not merely be nudged.
+export const LabelsClearAxisNumbers = {
+  args: { preset: 'reflect' },
+  play: async ({ canvasElement }) => {
+    const chips = [...canvasElement.querySelectorAll('[data-cp-point-label]')]
+    const ticks = [...canvasElement.querySelectorAll('[data-cp-ticks] text')]
+
+    for (const chip of chips) {
+      const a = chip.getBoundingClientRect()
+      for (const tick of ticks) {
+        const b = tick.getBoundingClientRect()
+        const overlaps = a.left < b.right && b.left < a.right
+          && a.top < b.bottom && b.top < a.bottom
+        expect(overlaps, `chip "${chip.textContent}" overlaps tick "${tick.textContent}"`).toBe(false)
+      }
+    }
+  },
+}
+
+// The narrowest supported viewport.
+export const NarrowViewport = {
+  args: { preset: 'reflect' },
+  globals: { viewport: { value: 'mobile1', isRotated: false } },
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  play: async ({ canvasElement }) => {
+    expectMobileContainment(canvasElement, 320)
+
+    // Touch targets survive the narrowest width.
+    for (const target of canvasElement.querySelectorAll('button')) {
+      const box = target.getBoundingClientRect()
+      expect(box.height).toBeGreaterThanOrEqual(43.5)
+    }
+  },
+}
+
 // Subject theming plus axis semantics — the combination that makes this
 // genuinely reusable outside Maths rather than merely recoloured.
 export const PhysicsDistanceTime = {
@@ -5061,23 +6035,35 @@ export const MixedAxisPlacement = {
 
 Run: `./node_modules/.bin/vitest run --project storybook -t CoordinatePlaneExplore`
 
-Expected: PASS — 17 stories.
+Expected: PASS — 28 stories.
 
-- [ ] **Step 3: Render pass at 390px**
+- [ ] **Step 3: Render pass at 390px and 320px**
 
 Run the dev server (`./node_modules/.bin/vite`), open the component review lab,
-and screenshot each of the nine presets at 390px width. Check against
-`docs/system/GOLD_SCREEN_REGISTER.md` and answer in writing:
+and screenshot each of the nine presets at **both** 390px and 320px. Check
+against `docs/system/GOLD_SCREEN_REGISTER.md` and answer in writing:
 
 1. Does any preset show more than one point with full guide geometry?
 2. Does any coordinate label overlap another, or an axis tick label?
 3. Does any label degrade to its short form when it did not need to?
-4. Does the status area change height as values change?
-5. Does the figure stay within 390px with no horizontal scroll?
+4. Does any line, shape or guide leave the plot area?
+5. Is every stepper and option button still a 44px target at 320px?
+6. Does the status area change height as values change?
+7. Does the figure stay within the viewport with no horizontal scroll?
 
-A failure on 1 is a contract violation — fix the preset. A failure on 2 or 3 is
-a `pointLabelLayout.js` tuning problem — adjust `CHAR_WIDTH` or `ANCHOR_RADIUS`
-and re-run Task 4's tests.
+How to act on a failure:
+
+- **1 or 4** — a contract violation. Fix the preset, and add the reproducing
+  state to the annotation or visible-bounds test. Never fix it in the renderer.
+- **2** — an **obstacle reporting** failure, not a tuning failure. A chip
+  overlapping a tick label means that tick's box was not passed to
+  `layoutPointLabels`, or was computed at the wrong position. Fix
+  `labelObstacles`. Reaching for `CHAR_WIDTH` or `ANCHOR_RADIUS` here hides the
+  bug: constants cannot know where an unreported obstacle sits, so the collision
+  will return with different data.
+- **3** — genuine visual tuning. Adjust the `pointLabelLayout.js` constants and
+  re-run Task 4's tests.
+- **5, 6 or 7** — a layout regression in the renderer.
 
 - [ ] **Step 4: Commit**
 
@@ -5088,7 +6074,7 @@ git commit -m "Add CoordinatePlaneExplore stories for every preset and both mode
 
 ---
 
-## Task 14: Registry, documentation and final verification
+## Task 15: Registry, documentation and final verification
 
 **Files:**
 - Modify: `docs/components/COMPONENT_REGISTRY.md`
@@ -5280,16 +6266,63 @@ git push -u origin main
 
 ---
 
+## Execution: subagent-driven with mandatory review gates
+
+Tasks 1–4 suit isolated agents well — they are pure modules with no shared
+state. Everything after depends on the renderer being correct, so **do not
+begin preset batching until the renderer supports both atomic multi-value
+dragging and visible numeric steppers.** Four presets are inoperable without
+steppers, and a diagonal drag silently loses a coordinate without atomic
+updates; batching on top of either would multiply the defect across nine
+presets.
+
+**Gate 1 — after Tasks 1–4 (the pure layer).**
+Confirm: `clipSegmentToBounds` handles both-bounds, parallel-edge and
+entirely-outside cases; `intersectionOf` returns all three kinds;
+`perpendicularGradientOf(0)` is `null`; `layoutPointLabels` honours obstacles.
+Tasks 1–4 may run as parallel agents; the gate is a single review of all four.
+
+**Gate 2 — after Task 6 (renderer plus numeric-control architecture).** ⛔ Hard stop.
+Confirm by inspection, not by test alone:
+- `setControlValues` takes a patch and is called **once** per pointer move.
+- No `setControlValue` singular remains anywhere.
+- Stepper rows render, are keyboard-operable, and have 44px targets.
+- The clip path exists and wraps shapes and guides.
+- `labelObstacles` is computed and passed to `layoutPointLabels`.
+Do not dispatch any preset task until all five hold.
+
+**Gate 3 — after Task 7 (the first drag preset).**
+`midpoint` is the first preset with two multi-control handles. Confirm a
+diagonal drag on each endpoint moves both coordinates, and that the visible
+bounds test passes with the corrected `by: 5` example.
+
+**Gate 4 — after Task 8 (the first stepper preset).**
+`straightLine` is the first preset with no handles at all. Confirm it is
+operable end to end through steppers alone, that a steep line is clipped, and
+that `m = 0` under `comparisonRule="perpendicular"` refuses rather than drawing
+a second horizontal line.
+
+**Gate 5 — after Task 11 (all transformation presets).**
+Confirm the visible bounds test passes for all four at every control extreme,
+that each declares `supportsShowAllGuides: false`, and that capability-gated
+options are absent rather than disabled.
+
+**Gate 6 — after Task 14 (the final render pass).**
+The written render pass at 390px and 320px. Source and tests alone do not pass
+this gate.
+
 ## Verification summary
 
 | Gate | Command | When |
 |---|---|---|
 | Unit tests | `./node_modules/.bin/vitest run --project unit` | Tasks 1–5, 7–11 |
-| Architecture tests | `./node_modules/.bin/vitest run --project architecture` | Task 12 |
-| Storybook browser tests | `./node_modules/.bin/vitest run --project storybook` | Tasks 6, 13 |
-| Production build | `./node_modules/.bin/vite build` | Task 6, Task 14 |
-| Render pass at 390px | manual, component review lab | Task 13 |
-| Full suite | `pnpm verify` | Task 14 |
+| Control reachability | `./node_modules/.bin/vitest run --project architecture` | Task 12 |
+| Visible bounds | `./node_modules/.bin/vitest run --project architecture` | Task 12 |
+| Annotation contract | `./node_modules/.bin/vitest run --project architecture` | Task 13 |
+| Storybook browser tests | `./node_modules/.bin/vitest run --project storybook` | Tasks 6, 14 |
+| Production build | `./node_modules/.bin/vite build` | Task 6, Task 15 |
+| Render pass at 390px and 320px | manual, component review lab | Task 14 |
+| Full suite | `pnpm verify` | Task 15 |
 
 ## Out of scope
 
