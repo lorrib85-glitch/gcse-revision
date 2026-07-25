@@ -5,9 +5,9 @@
 // Questions, marking and weakness tracking stay with the page that composes the
 // component.
 //
-// Every interactive preset supplies a short, persistent action caption so the
-// learner never has to infer which point moves. Canvas heights remain deliberately
-// content-tight for mobile.
+// Every preset identifies the active point in its task caption. Interactive use
+// then adds the component's drag instruction below the line, while static diagrams
+// keep accurate, non-interactive wording. Canvas heights remain content-tight.
 //
 // Roles are semantic names resolved through numberLineVisualRoles.js; presets
 // never name a colour directly.
@@ -82,7 +82,7 @@ const orderNumbers = {
 
     return {
       axis,
-      caption: 'Drag the blue point to place the value in order.',
+      caption: 'Order the values — blue is the movable point',
       markers: [
         ...ORDER_REFERENCES.map(item => ({
           id: item.id,
@@ -169,7 +169,7 @@ const negativeMovement = {
 
     return {
       axis,
-      caption: 'Drag either highlighted point to change the calculation.',
+      caption: 'Follow the move — both highlighted points can move',
       jumps: values.move === 0
         ? []
         : [
@@ -288,7 +288,7 @@ const roundingIntervals = {
 
     return {
       axis,
-      caption: 'Drag the blue point and compare it with halfway.',
+      caption: `Round to ${precision.phrase} — blue is the value`,
       bands: [{ id: 'interval', from: lower, to: upper, role: 'bandAlt' }],
       markers: [
         { id: 'lower', value: lower, role: 'reference', style: 'filled' },
@@ -366,7 +366,7 @@ const inequalityRange = {
 
     return {
       axis,
-      caption: 'Drag the blue endpoint, then choose its direction and type.',
+      caption: 'Represent the inequality — blue is the endpoint',
       bands: [
         {
           id: 'range',
@@ -465,7 +465,7 @@ const boundsInterval = {
 
     return {
       axis,
-      caption: 'Drag the blue rounded value to reveal its bounds.',
+      caption: `Find the bounds of ${formatNumber(values.value)} — blue is the rounded value`,
       bands: [{ id: 'error-interval', from: lower, to: upper, role: 'band', openTo: true }],
       markers: [
         { id: 'lower', value: lower, role: 'included', style: 'filled' },
@@ -563,7 +563,7 @@ const multiplyPattern = {
 
     return {
       axis,
-      caption: 'Drag the blue product to change each jump.',
+      caption: `Use ${jumpCount} equal jumps — blue is the product`,
       jumps,
       markers: [
         { id: 'origin', value: 0, role: 'reference', style: 'filled' },
@@ -619,7 +619,7 @@ const estimateRange = {
 
     return {
       axis,
-      caption: 'Drag the blue estimate into the sensible range.',
+      caption: 'Estimate 29 × 21 — blue is your estimate',
       bands: [{ id: 'sensible', from: lower, to: upper, role: 'bandAlt' }],
       markers: [
         { id: 'exact', value: ESTIMATE_EXACT, role: 'reference', style: 'line' },
