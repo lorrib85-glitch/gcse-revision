@@ -6,6 +6,10 @@
 // questions, predictions, marking and weakness tracking belong to the page that
 // composes it.
 //
+// Every interactive preset supplies a short task caption so the component keeps
+// the same learning anatomy: task prompt, number line, interaction, live maths
+// statement, then the explanation of why it works.
+//
 // Roles are semantic names resolved by NumberLineExplore through
 // numberLineVisualRoles.js — presets never name a colour directly.
 //
@@ -91,6 +95,7 @@ const orderNumbers = {
 
     return {
       axis,
+      caption: 'Put the values in order',
       markers: [
         ...ORDER_REFERENCES.map(item => ({
           id: item.id, value: item.value, role: 'reference', style: 'filled',
@@ -170,6 +175,7 @@ const negativeMovement = {
 
     return {
       axis,
+      caption: 'Follow the move from the starting number',
       jumps: values.move === 0 ? [] : [
         {
           id: 'move',
@@ -359,6 +365,7 @@ const inequalityRange = {
 
     return {
       axis,
+      caption: 'Represent the inequality',
       bands: [
         {
           id: 'range',
@@ -451,7 +458,7 @@ const boundsInterval = {
 
     return {
       axis,
-      caption: `${formatNumber(values.value)} rounded to ${precision.phrase}`,
+      caption: `Find the possible values that round to ${formatNumber(values.value)}`,
       bands: [
         { id: 'error-interval', from: lower, to: upper, role: 'band', openTo: true },
       ],
@@ -481,10 +488,11 @@ const boundsInterval = {
 // ─── 6. multiplyPattern ──────────────────────────────────────────────────────
 //
 // Multiplying by a negative as repeated movement in the opposite direction.
-// The jumps stay the same size throughout; only their direction flips, which
-// is the pattern the sign rule is shorthand for.
+// The first factor is the number of equal jumps; the second factor is the size
+// and direction of every jump. The equation, option, arcs and labels therefore
+// describe exactly the same grouping.
 
-const MULTIPLY_BASES = {
+const MULTIPLY_COUNTS = {
   2: { majorStep: 2, minorStep: 1 },
   3: { majorStep: 3, minorStep: 1 },
   5: { majorStep: 5, minorStep: 1 },
@@ -493,63 +501,66 @@ const MULTIPLY_BASES = {
 const multiplyPattern = {
   id: 'multiplyPattern',
   accessibilityLabel: 'Multiplication with negative numbers as repeated jumps',
-  keyFact: 'Multiplying by a positive repeats jumps to the right. Multiplying by a negative repeats the same jumps to the left.',
+  keyFact: 'The first factor tells you how many equal jumps to make. A negative second factor makes every jump move left.',
   canvas: { width: 360, height: 172 },
   interactive: true,
   options: [
     {
       id: 'base',
-      label: 'Jump size',
+      label: 'Number of jumps',
       choices: [
-        { id: '2', label: '× 2' },
-        { id: '3', label: '× 3' },
-        { id: '5', label: '× 5' },
+        { id: '2', label: '2 jumps' },
+        { id: '3', label: '3 jumps' },
+        { id: '5', label: '5 jumps' },
       ],
     },
   ],
   initialOptions: { base: '3' },
   controls: ({ options }) => [
     {
+      // Kept as `multiplier` for compatibility with any existing saved props;
+      // it now represents the signed size of each jump, not the jump count.
       id: 'multiplier',
-      label: 'Number of jumps',
+      label: 'Size and direction of each jump',
       min: -4,
       max: 4,
       step: 1,
       snapTargets: [0],
-      // The product marker is dragged, but the value it edits is the multiplier.
+      // The product marker is dragged, but the value it edits is one jump's size.
       valueFromAxis: axisValue => Math.round(axisValue / Number(options.base)),
       valueText: values => formatNumber(values.multiplier),
     },
   ],
   initialValues: () => ({ multiplier: -3 }),
   derive(values, { options }) {
-    const base = Number(options.base)
-    const scale = MULTIPLY_BASES[options.base]
-    const reach = base * 4
+    const jumpCount = Number(options.base)
+    const scale = MULTIPLY_COUNTS[options.base]
+    const reach = jumpCount * 4
     const axis = createAxis({ min: -reach, max: reach, ...scale, y: 128 })
-    const product = base * values.multiplier
-    const count = Math.abs(values.multiplier)
-    const direction = values.multiplier < 0 ? -1 : 1
+    const jumpSize = values.multiplier
+    const product = jumpCount * jumpSize
+    const stepSize = Math.abs(jumpSize)
+    const direction = jumpSize < 0 ? -1 : 1
 
-    const jumps = Array.from({ length: count }, (_, index) => ({
+    const jumps = jumpSize === 0 ? [] : Array.from({ length: jumpCount }, (_, index) => ({
       id: `jump-${index}`,
-      from: direction * base * index,
-      to: direction * base * (index + 1),
-      text: `${direction < 0 ? MINUS : '+'}${base}`,
+      from: direction * stepSize * index,
+      to: direction * stepSize * (index + 1),
+      text: formatNumber(jumpSize),
       role: 'jump',
     }))
 
     let explanation
-    if (count === 0) {
-      explanation = 'No jumps at all — you never leave zero.'
+    if (jumpSize === 0) {
+      explanation = `${jumpCount} jumps of 0 still land on zero.`
     } else {
-      const word = count === 1 ? 'jump' : 'jumps'
-      explanation = `${count} ${word} of ${base}, ${direction < 0 ? 'left' : 'right'} of zero.`
+      const word = jumpCount === 1 ? 'jump' : 'jumps'
+      explanation = `${jumpCount} ${word} of ${stepSize}, ${direction < 0 ? 'left' : 'right'} of zero.`
     }
 
     return {
       axis,
-      caption: `Jumps of ${base} from zero`,
+      caption: `Use ${jumpCount} equal jumps from zero`,
       jumps,
       markers: [
         { id: 'origin', value: 0, role: 'reference', style: 'filled' },
@@ -559,7 +570,7 @@ const multiplyPattern = {
         { id: 'chip-product', value: product, text: formatNumber(product), role: 'interaction' },
       ],
       status: {
-        heading: `${base} × ${signedTerm(values.multiplier)} = ${formatNumber(product)}`,
+        heading: `${jumpCount} × ${signedTerm(jumpSize)} = ${formatNumber(product)}`,
         headingRole: 'interaction',
         explanation,
       },
@@ -603,7 +614,7 @@ const estimateRange = {
 
     return {
       axis,
-      caption: '29 × 21 — round each to 1 significant figure',
+      caption: 'Estimate 29 × 21 by rounding each number to 1 significant figure',
       bands: [
         { id: 'sensible', from: lower, to: upper, role: 'bandAlt' },
       ],
