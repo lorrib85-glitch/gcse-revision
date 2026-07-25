@@ -1448,7 +1448,10 @@ git commit -m "Add shared point label layout with degradation"
   - `COORDINATE_PLANE_PRESETS` — the registry object
   - `resolveCoordinatePlanePreset(preset) → presetConfig` (accepts a name or a compatible object)
   - `resolvePresetFocus(preset, focus) → string`
-  - `clampPresetValues(preset, values) → values`
+  - `clampPresetValues(preset, values) → values` — clamps to the **model** range
+  - `clampInteractiveValues(preset, values) → values` — clamps to the **interaction** range
+  - `clampInteractiveValue(control, value) → number` — single-control form
+  - `interactionRange(control) → { min, max }`
   - `mergeAxis(presetAxis, override) → axis` — shallow merge, override wins per key
   - `mergeCapabilities(preset, overrides) → capabilities`
   - `resolveShowGuides(preset, showGuides, { isDevelopment, warn }) → 'active' | 'all' | 'none'`
@@ -1968,10 +1971,26 @@ export function interactionRange(control) {
 }
 
 /**
- * Clamps a learner-driven change to the interaction range. Used by drag,
- * steppers and keyboard stepping — never by the controlled-value path.
+ * Clamps a learner-driven change to the INTERACTION range.
+ *
+ * Deliberately the same shape as clampPresetValues so the two sit side by side
+ * and the choice between them is a visible decision rather than an accident.
+ * Use this for drag, steppers and keyboard stepping. Never for `value`,
+ * `defaultValue` or `initialValues` — those are model-range data.
  */
-export function clampInteractionValue(control, value) {
+export function clampInteractiveValues(preset, values) {
+  const controls = preset.controls ?? []
+  const clamped = { ...values }
+
+  for (const control of controls) {
+    if (clamped[control.id] == null) continue
+    clamped[control.id] = clampControl(control, clamped[control.id], interactionRange(control))
+  }
+  return clamped
+}
+
+/** Single-control form of the same rule, for one-at-a-time updates. */
+export function clampInteractiveValue(control, value) {
   return clampControl(control, value, interactionRange(control))
 }
 
@@ -2055,7 +2074,7 @@ import { createCoordinatePlaneVisualRoles } from './coordinatePlane/coordinatePl
 import { resolveCoordinatePlaneVisualRole } from './coordinatePlane/coordinatePlaneRoleResolver.js'
 import { estimateChipBox, layoutPointLabels } from './coordinatePlane/pointLabelLayout.js'
 import {
-  clampInteractionValue,
+  clampInteractiveValue,
   clampPresetValues,
   interactionRange,
   mergeAxis,
@@ -2306,7 +2325,7 @@ function CoordinatePlaneExplore({
     const bounded = {}
     for (const [controlId, next] of Object.entries(patch)) {
       const control = controlsById[controlId]
-      bounded[controlId] = control ? clampInteractionValue(control, next) : next
+      bounded[controlId] = control ? clampInteractiveValue(control, next) : next
     }
 
     const nextValues = clampPresetValues(presetConfig, { ...currentValues, ...bounded })
