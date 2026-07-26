@@ -1,0 +1,31 @@
+name: Temporary guided choice registry update
+
+on:
+  push:
+    branches:
+      - agent/guided-choice-boundaries
+
+permissions:
+  contents: write
+
+jobs:
+  update-registry:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/guided-choice-boundaries
+      - name: Update component registry
+        run: python scripts/tmp_update_guided_choice_registry.py
+      - name: Remove temporary updater
+        run: |
+          rm scripts/tmp_update_guided_choice_registry.py
+          rm .github/workflows/tmp-guided-choice-registry.yml
+      - name: Commit registry update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Document guided choice component boundaries"
+          git push
