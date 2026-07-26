@@ -61,7 +61,22 @@ function ensureStyles() {
       animation: cp-explore-handle-hint 2400ms ${MOTION.easing.gentle} infinite;
     }
 
-    .cp-explore__handle:focus-visible {
+    .cp-explore__handle-target {
+      outline: none;
+    }
+
+    /* Two focus targets share one ring, so the ring lights when either has
+       keyboard focus.
+
+       The animation reset is load bearing. The attention hint runs until first
+       interaction, and its keyframes set opacity — animated values sit in a
+       higher cascade origin than normal declarations, so without cancelling
+       the animation the focus indicator is silently overridden and a keyboard
+       user tabbing to an untouched handle sees nothing at all. */
+    .cp-explore__handle:focus-within .cp-explore__handle-ring {
+      animation: none;
+      stroke-width: 2.5;
+      opacity: 1;
       filter: drop-shadow(0 0 4px var(--cp-explore-glow));
     }
 
@@ -83,6 +98,15 @@ function ensureStyles() {
       outline-offset: 2px;
     }
 
+    /* The stepper value is a focusable slider, so it needs its own visible
+       focus ring. It previously carried an inline outline: none, which beat
+       the rule above and left keyboard focus completely invisible. */
+    .cp-explore__stepper-value:focus-visible {
+      outline: 2px solid var(--cp-explore-focus);
+      outline-offset: 3px;
+      border-radius: ${RADII.small}px;
+    }
+
     .cp-explore--reduced-motion .cp-explore__handle-hint .cp-explore__handle-ring,
     .cp-explore--reduced-motion .cp-explore__mark {
       animation: none;
@@ -100,6 +124,33 @@ function ensureStyles() {
 // The widest preset uses a 360-unit viewBox, so a 24-unit radius stays above
 // 44 CSS pixels when rendered at 320px wide.
 const HANDLE_HIT_RADIUS = 24
+
+/**
+ * The interaction range widened to admit a value already sitting outside it.
+ *
+ * A static figure may legitimately supply a value the interaction range does
+ * not cover — that is the whole point of the two-range contract. But once the
+ * component is interactive, advertising `aria-valuenow="6"` alongside
+ * `aria-valuemax="2"` is invalid ARIA, and stepping down would jump four units
+ * in one press.
+ *
+ * So the reachable range temporarily stretches to include wherever the value
+ * actually is, and contracts back as the learner walks it in: at 6 the maximum
+ * is 6 and increase is disabled; decrease goes 6 → 5 → 4 → 3 → 2; on reaching
+ * 2 the maximum returns to the configured interaction bound.
+ *
+ * `interactionRange()` in the registry stays the canonical configured range —
+ * this is a transitional view of it, and never widens what a preset declared.
+ */
+function effectiveInteractionRange(control, currentValue) {
+  const configured = interactionRange(control)
+  if (typeof currentValue !== 'number') return configured
+
+  return {
+    min: Math.min(configured.min, currentValue),
+    max: Math.max(configured.max, currentValue),
+  }
+}
 
 const SCREEN_READER_ONLY_STYLE = Object.freeze({
   position: 'absolute',
@@ -261,14 +312,27 @@ function CoordinatePlaneExplore({
    * discards the first: dragging a point diagonally would move y and silently
    * drop x.
    */
-  const setControlValues = (patch, { announce = false } = {}) => {
+  const setControlValues = (patch, { announce = false, bounds = 'effective' } = {}) => {
     // Learner-driven changes are held to the interaction range; the model clamp
     // then runs as the outer guarantee. A supplied value already outside the
     // interaction range is left where it is until the learner moves it.
+    // A drag is direct positioning — it lands inside the configured range, so
+    // dragging a preserved out-of-range value pulls it straight back in. A step
+    // is a relative nudge, so it walks through the effective range one unit at
+    // a time rather than jumping.
     const bounded = {}
     for (const [controlId, next] of Object.entries(patch)) {
       const control = controlsById[controlId]
-      bounded[controlId] = control ? clampInteractiveValue(control, next) : next
+      if (!control) {
+        bounded[controlId] = next
+        continue
+      }
+      if (bounds === 'configured') {
+        bounded[controlId] = clampInteractiveValue(control, next)
+        continue
+      }
+      const reach = effectiveInteractionRange(control, currentValues[controlId])
+      bounded[controlId] = Math.min(Math.max(next, reach.min), reach.max)
     }
 
     const nextValues = clampPresetValues(presetConfig, { ...currentValues, ...bounded })
@@ -323,7 +387,7 @@ function CoordinatePlaneExplore({
       if (!control) continue
       patch[controlId] = control.valueFromPointer(point, currentValues)
     }
-    setControlValues(patch)
+    setControlValues(patch, { bounds: 'configured' })
   }
 
   const handlePointerEnd = () => {
@@ -334,17 +398,28 @@ function CoordinatePlaneExplore({
     }
   }
 
-  const handleKeyDown = handle => (event) => {
+  // One handle may drive several controls, and each needs its own semantic
+  // slider — otherwise a keyboard user can reach only the primary one. A point
+  // handle therefore exposes an x slider and a y slider over one visual ring:
+  // Left/Right drives x, Up/Down drives y, and Home/End drive whichever slider
+  // has focus. Pointer interaction on either target still drags both together.
+  const AXIS_KEYS = {
+    horizontal: { increase: 'ArrowRight', decrease: 'ArrowLeft' },
+    vertical: { increase: 'ArrowUp', decrease: 'ArrowDown' },
+  }
+
+  const handleKeyDown = (handle, controlId, axis) => (event) => {
     if (!canInteract) return
-    const control = controlsById[handle.controlId]
+    const control = controlsById[controlId]
     if (!control) return
 
-    const current = currentValues[handle.controlId]
-    const reach = interactionRange(control)
+    const keys = AXIS_KEYS[axis] ?? AXIS_KEYS.horizontal
+    const current = currentValues[controlId]
+    const reach = effectiveInteractionRange(control, current)
     let next = null
 
-    if (event.key === 'ArrowRight' || event.key === 'ArrowUp') next = current + control.step
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') next = current - control.step
+    if (event.key === keys.increase) next = current + control.step
+    if (event.key === keys.decrease) next = current - control.step
     if (event.key === 'Home') next = reach.min
     if (event.key === 'End') next = reach.max
     if (next === null) return
@@ -352,7 +427,7 @@ function CoordinatePlaneExplore({
     event.preventDefault()
     setHasInteracted(true)
     if (handle.pointId) setActiveId(handle.pointId)
-    setControlValues({ [handle.controlId]: next }, { announce: true })
+    setControlValues({ [controlId]: next }, { announce: true })
   }
 
   // ─── Steppers ──────────────────────────────────────────────────────────────
@@ -371,7 +446,7 @@ function CoordinatePlaneExplore({
   const handleStepperKeyDown = controlId => (event) => {
     const control = controlsById[controlId]
     if (!control) return
-    const reach = interactionRange(control)
+    const reach = effectiveInteractionRange(control, currentValues[controlId])
     let next = null
 
     if (event.key === 'ArrowRight' || event.key === 'ArrowUp') next = currentValues[controlId] + control.step
@@ -786,10 +861,17 @@ function CoordinatePlaneExplore({
           )
         })}
 
-        {/* Drag handles */}
+        {/* Drag handles.
+            One visual ring per handle, but one semantic slider per control it
+            drives — otherwise a keyboard user can reach only the primary
+            control and a point can never move vertically. The ring is drawn
+            once and lit by :focus-within, so two focus targets still read as
+            one object. Pointer interaction on either target drags both
+            controls atomically. */}
         {canInteract && (scene.handles ?? []).map((handle, index) => {
-          const control = controlsById[handle.controlId]
-          if (!control) return null
+          const controlIds = (handle.controlIds ?? [handle.controlId])
+            .filter(controlId => controlsById[controlId])
+          if (controlIds.length === 0) return null
           const hint = index === 0 && !hasInteracted && !reduceMotion
 
           return (
@@ -798,27 +880,7 @@ function CoordinatePlaneExplore({
               className={`cp-explore__handle${hint ? ' cp-explore__handle-hint' : ''}`}
               data-cp-handle={handle.controlId}
               data-dragging={draggingControl === handle.controlId || undefined}
-              role="slider"
-              tabIndex={0}
-              aria-label={control.label}
-              aria-valuemin={interactionRange(control).min}
-              aria-valuemax={interactionRange(control).max}
-              aria-valuenow={currentValues[handle.controlId]}
-              aria-valuetext={control.valueText(currentValues)}
-              aria-describedby={showStatus ? statusId : descriptionId}
-              onPointerDown={handlePointerDown(handle)}
-              onPointerMove={handlePointerMove(handle)}
-              onPointerUp={handlePointerEnd}
-              onPointerCancel={handlePointerEnd}
-              onKeyDown={handleKeyDown(handle)}
             >
-              <circle
-                data-cp-hit-target="true"
-                cx={scale.toX(handle.x)}
-                cy={scale.toY(handle.y)}
-                r={HANDLE_HIT_RADIUS}
-                fill="transparent"
-              />
               <circle
                 className="cp-explore__handle-ring"
                 cx={scale.toX(handle.x)}
@@ -829,6 +891,40 @@ function CoordinatePlaneExplore({
                 strokeWidth={1.5}
                 opacity={0.55}
               />
+
+              {controlIds.map((controlId, axisIndex) => {
+                const control = controlsById[controlId]
+                const reach = effectiveInteractionRange(control, currentValues[controlId])
+                // First control runs horizontally, second vertically — the
+                // order presets declare in controlIds.
+                const axis = axisIndex === 0 ? 'horizontal' : 'vertical'
+
+                return (
+                  <circle
+                    key={controlId}
+                    className="cp-explore__handle-target"
+                    data-cp-hit-target={controlId}
+                    data-cp-handle-axis={axis}
+                    role="slider"
+                    tabIndex={0}
+                    aria-label={control.label}
+                    aria-valuemin={reach.min}
+                    aria-valuemax={reach.max}
+                    aria-valuenow={currentValues[controlId]}
+                    aria-valuetext={control.valueText(currentValues)}
+                    aria-describedby={showStatus ? statusId : descriptionId}
+                    cx={scale.toX(handle.x)}
+                    cy={scale.toY(handle.y)}
+                    r={HANDLE_HIT_RADIUS}
+                    fill="transparent"
+                    onPointerDown={handlePointerDown(handle)}
+                    onPointerMove={handlePointerMove(handle)}
+                    onPointerUp={handlePointerEnd}
+                    onPointerCancel={handlePointerEnd}
+                    onKeyDown={handleKeyDown(handle, controlId, axis)}
+                  />
+                )
+              })}
             </g>
           )
         })}
@@ -851,7 +947,7 @@ function CoordinatePlaneExplore({
             const control = controlsById[stepper.controlId]
             if (!control) return null
             const current = currentValues[stepper.controlId]
-            const reach = interactionRange(control)
+            const reach = effectiveInteractionRange(control, current)
             const display = control.format ? control.format(current) : String(current).replace('-', '−')
 
             const nudgeStyle = {
@@ -887,7 +983,7 @@ function CoordinatePlaneExplore({
                     −
                   </button>
                   <span
-                    className="cp-explore__option"
+                    className="cp-explore__option cp-explore__stepper-value"
                     data-cp-stepper-value={stepper.controlId}
                     role="slider"
                     tabIndex={0}
@@ -903,7 +999,6 @@ function CoordinatePlaneExplore({
                       minWidth: COMPONENT_SIZE.touchTarget,
                       textAlign: 'center',
                       fontVariantNumeric: 'tabular-nums',
-                      outline: 'none',
                     }}
                   >
                     {display}

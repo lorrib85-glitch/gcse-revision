@@ -5821,7 +5821,29 @@ git commit -m "Enforce the coordinate plane annotation contract across all prese
    Query `[data-cp-point-label="…"]`, `[data-cp-status-heading]` and
    `[data-cp-status-explanation]` instead, as `NumberLineExplore`'s stories do.
 
-A third trap applies to any drag story: `onPointerMove` is bound to the handle
+Three renderer contracts were added at Gate 2 and are pinned by
+`CoordinatePlaneExplore.contract.stories.jsx`. Keep that file permanently — it
+uses a fixture preset through the compatible-preset-object escape hatch, so it
+keeps testing the two-range edge case even as real presets change:
+
+1. **One semantic slider per control, one visual ring per handle.** A handle
+   driving `['x', 'y']` renders two `role="slider"` targets over a single ring
+   lit by `:focus-within`. Left/Right drives the first control, Up/Down the
+   second, Home/End the focused one. Exposing only the primary control leaves
+   the y-coordinate unreachable by keyboard entirely.
+2. **An effective interaction range.** When a supplied value sits outside the
+   configured interaction range, the advertised range stretches to include it
+   and contracts as the learner steps back in — otherwise `aria-valuenow="6"`
+   ships alongside `aria-valuemax="2"`, which is invalid, and one press jumps
+   four units. Steps use the effective range; a drag uses the configured one,
+   because a drag is direct positioning rather than a nudge.
+3. **Visible keyboard focus on the stepper value**, and `animation: none` in the
+   handle's focus rule. The attention hint's keyframes set `opacity`, and
+   animated values outrank normal declarations in the cascade — without
+   cancelling the animation the focus indicator is silently overridden on any
+   handle the learner has not yet touched.
+
+A fourth trap applies to any drag story: `onPointerMove` is bound to the handle
 `<g>`, and events do not propagate from an ancestor down to it. Dispatch the
 move **on the handle**, not on the `<svg>` — a real browser routes captured
 moves back to the handle, but `userEvent` sends them wherever it is aimed, and
@@ -6513,10 +6535,22 @@ Source and tests alone do not pass this gate.
 | Control reachability | `./node_modules/.bin/vitest run --project architecture` | Task 12 |
 | Visible bounds | `./node_modules/.bin/vitest run --project architecture` | Task 12 |
 | Annotation contract | `./node_modules/.bin/vitest run --project architecture` | Task 13 |
-| Storybook browser tests | `./node_modules/.bin/vitest run --project storybook src/components/learning/CoordinatePlaneExplore.stories.jsx` | Tasks 6, 14 |
+| Storybook browser tests | `vitest run --project storybook src/components/learning/CoordinatePlaneExplore.stories.jsx src/components/learning/CoordinatePlaneExplore.contract.stories.jsx` | Tasks 6, 14 |
 | Production build | `./node_modules/.bin/vite build` | Task 6, Task 15 |
 | Render pass at 390px and 320px | manual, component review lab | Task 14 |
 | Full suite | `pnpm verify` | Task 15 |
+
+## Known baseline failures — not caused by this build
+
+`src/components/learning/AreaPerimeterExplore.stories.jsx` fails 8 of its 19
+stories on a clean tree, verified by stashing this work and re-running. The
+whole-project Storybook run therefore reports failures that have nothing to do
+with `CoordinatePlaneExplore`.
+
+Do not describe the global Storybook suite as green, and do not use it as this
+build's gate. Verify with the targeted two-file command above, which must be
+100% green. The `AreaPerimeterExplore` baseline needs its own fix, tracked
+separately from this plan.
 
 ## Out of scope
 
