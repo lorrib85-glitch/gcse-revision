@@ -22,6 +22,7 @@ import {
   mergeAxis,
   mergeCapabilities,
   resolveCoordinatePlanePreset,
+  resolveOptionValues,
   resolvePresetFocus,
   resolveShowGuides,
 } from './coordinatePlane/presets/index.js'
@@ -232,9 +233,6 @@ function CoordinatePlaneExplore({
   const [hasInteracted, setHasInteracted] = useState(false)
   const [announcement, setAnnouncement] = useState('')
   const [activeId, setActiveId] = useState(presetConfig.defaultActiveId ?? null)
-  const [choices, setChoices] = useState(() => (
-    Object.fromEntries((presetConfig.options ?? []).map(group => [group.id, group.choices[0].id]))
-  ))
 
   const presetAllowsInteraction = interactive ?? presetConfig.interactive ?? true
   const canInteract = presetAllowsInteraction && !disabled
@@ -247,9 +245,6 @@ function CoordinatePlaneExplore({
   useEffect(() => {
     setInternalValues(clampPresetValues(presetConfig, defaultValue ?? presetConfig.initialValues))
     setActiveId(presetConfig.defaultActiveId ?? null)
-    setChoices(Object.fromEntries(
-      (presetConfig.options ?? []).map(group => [group.id, group.choices[0].id]),
-    ))
     setHasInteracted(false)
     setAnnouncement('')
     pointerAnnouncementRef.current = ''
@@ -273,6 +268,20 @@ function CoordinatePlaneExplore({
   const capabilities = useMemo(
     () => mergeCapabilities(presetConfig, difficultyCapabilities),
     [presetConfig, difficultyCapabilities],
+  )
+
+  const resolvedOptions = useMemo(
+    () => presetConfig.resolveOptions?.(capabilities) ?? presetConfig.options ?? [],
+    [presetConfig, capabilities],
+  )
+
+  // Option ids live in `values`, so value / defaultValue / onChange carry the
+  // complete state and a static figure can select any option. A stored id that
+  // a capability change has removed falls back to the first still-offered
+  // choice, so the scene and the buttons can never disagree.
+  const optionValues = useMemo(
+    () => resolveOptionValues(presetConfig, currentValues, capabilities),
+    [presetConfig, currentValues, capabilities],
   )
 
   const effectiveShowGuides = resolveShowGuides(presetConfig, showGuides, {
@@ -299,7 +308,7 @@ function CoordinatePlaneExplore({
     capabilities,
     axes,
     grid: resolvedGrid,
-    choices,
+    choices: optionValues,
   }
   const scene = presetConfig.derive(currentValues, deriveContext)
 
@@ -309,8 +318,14 @@ function CoordinatePlaneExplore({
 
   // ─── Interaction ───────────────────────────────────────────────────────────
 
-  const nextStatusHeading = nextValues =>
-    presetConfig.derive(nextValues, deriveContext).status.heading
+  // The heading the NEXT state will show. Options live in `values` now, so the
+  // choices have to be resolved from `nextValues` too — reusing the render-time
+  // `optionValues` would announce the previous selection every time an option
+  // button was tapped, always one tap behind.
+  const nextStatusHeading = nextValues => presetConfig.derive(nextValues, {
+    ...deriveContext,
+    choices: resolveOptionValues(presetConfig, nextValues, capabilities),
+  }).status.heading
 
   /**
    * Atomic multi-value update — one clamp, one state write, one onChange, one
@@ -469,17 +484,27 @@ function CoordinatePlaneExplore({
     setControlValues({ [controlId]: next }, { announce: true })
   }
 
+  // A stepper that changes a number the current state ignores teaches the
+  // learner that their input has no reliable effect, so presets resolve their
+  // steppers per state rather than declaring one fixed list.
+  const activeSteppers = useMemo(
+    () => presetConfig.resolveSteppers?.(currentValues, capabilities)
+      ?? presetConfig.steppers
+      ?? [],
+    [presetConfig, currentValues, capabilities],
+  )
+
   // Grouped steppers share a row; ungrouped ones each get their own.
   const stepperRows = useMemo(() => {
     const rows = []
-    for (const stepper of presetConfig.steppers ?? []) {
+    for (const stepper of activeSteppers) {
       const key = stepper.group ?? stepper.controlId
       const existing = rows.find(row => row.key === key)
       if (existing) existing.items.push(stepper)
       else rows.push({ key, items: [stepper] })
     }
     return rows
-  }, [presetConfig])
+  }, [activeSteppers])
 
   // ─── Projection and labels ─────────────────────────────────────────────────
 
@@ -592,6 +617,7 @@ function CoordinatePlaneExplore({
 
   const optionButtonStyle = active => ({
     ...TYPE.button,
+    minWidth: COMPONENT_SIZE.touchTarget,
     minHeight: COMPONENT_SIZE.touchTarget,
     padding: `${SPACING.micro}px ${SPACING.compact}px`,
     borderRadius: RADII.small,
@@ -1073,7 +1099,7 @@ function CoordinatePlaneExplore({
       ))}
 
       {/* Discrete choices — real buttons, never disguised sliders */}
-      {canInteract && (presetConfig.options ?? []).map(group => (
+      {canInteract && resolvedOptions.map(group => (
         <div
           key={group.id}
           role="group"
@@ -1092,12 +1118,14 @@ function CoordinatePlaneExplore({
               type="button"
               className="cp-explore__option"
               data-cp-option={`${group.id}:${choice.id}`}
-              aria-pressed={choices[group.id] === choice.id}
+              aria-pressed={optionValues[group.id] === choice.id}
+              // The same atomic setter as everything else: one tap, one
+              // complete onChange, one announcement.
               onClick={() => {
-                setChoices(current => ({ ...current, [group.id]: choice.id }))
                 setHasInteracted(true)
+                setControlValues({ [group.id]: choice.id }, { announce: true })
               }}
-              style={optionButtonStyle(choices[group.id] === choice.id)}
+              style={optionButtonStyle(optionValues[group.id] === choice.id)}
             >
               {choice.label}
             </button>

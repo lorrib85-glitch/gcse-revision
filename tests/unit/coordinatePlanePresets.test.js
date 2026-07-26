@@ -8,6 +8,7 @@ import {
   mergeAxis,
   mergeCapabilities,
   resolveCoordinatePlanePreset,
+  resolveOptionValues,
   resolvePresetFocus,
   resolveShowGuides,
 } from '../../src/components/learning/coordinatePlane/presets/index.js'
@@ -720,5 +721,194 @@ describe('intersection preset', () => {
     expect(scene.status.heading).toBe('Infinitely many solutions')
     expect(scene.status.explanation).toContain('same line')
     expect(scene.points.find(point => point.id === 'solution')).toBeUndefined()
+  })
+})
+
+describe('transformation option state', () => {
+  it('reads option selections from values, so static figures can set them', () => {
+    const scene = sceneFor('reflect', { mirrorValue: 2, mirror: 'yEqualsX' })
+    const imageA = scene.points.find(point => point.id === 'image-a')
+
+    // A(−1, 3) reflected in y = x is (3, −1).
+    expect(imageA).toMatchObject({ x: 3, y: -1 })
+    expect(scene.status.heading).toContain('y = x')
+  })
+
+  it('selects a non-default rotation entirely from values', () => {
+    const scene = sceneFor('rotate', { cx: 0, cy: 0, angle: '180', direction: 'anticlockwise' })
+    expect(scene.points.find(point => point.id === 'image-a')).toMatchObject({ x: 1, y: -3 })
+    expect(scene.status.heading).toContain('180°')
+  })
+
+  it('keeps the default enlargement at 2 when negatives are enabled', () => {
+    const preset = resolveCoordinatePlanePreset('enlarge')
+    const capabilities = mergeCapabilities(preset, { negativeScaleFactor: true })
+
+    expect(resolveOptionValues(preset, preset.initialValues, capabilities).scaleFactor)
+      .toBe('2')
+  })
+
+  it('falls back to a valid option when a capability removes the stored one', () => {
+    const preset = resolveCoordinatePlanePreset('reflect')
+    const values = { mirrorValue: 0, mirror: 'yEqualsX' }
+    const capabilities = mergeCapabilities(preset, { diagonalMirrorLines: false })
+
+    expect(resolveOptionValues(preset, values, capabilities).mirror).toBe('vertical')
+  })
+})
+
+describe('transformation stepper relevance', () => {
+  it('hides the mirror position for diagonal mirror lines', () => {
+    const preset = resolveCoordinatePlanePreset('reflect')
+    const ids = (mirror) => preset
+      .resolveSteppers({ mirrorValue: 0, mirror }, mergeCapabilities(preset, {}))
+      .map(item => item.controlId)
+
+    expect(ids('vertical')).toEqual(['mirrorValue'])
+    expect(ids('horizontal')).toEqual(['mirrorValue'])
+    expect(ids('yEqualsX')).toEqual([])
+    expect(ids('yEqualsNegativeX')).toEqual([])
+  })
+
+  it('hides centre steppers when the centre cannot leave the origin', () => {
+    for (const id of ['rotate', 'enlarge']) {
+      const preset = resolveCoordinatePlanePreset(id)
+      const off = preset.resolveSteppers(preset.initialValues,
+        mergeCapabilities(preset, { nonOriginCentre: false }))
+      const on = preset.resolveSteppers(preset.initialValues,
+        mergeCapabilities(preset, { nonOriginCentre: true }))
+
+      expect(off, `${id} with a fixed centre`).toEqual([])
+      expect(on.map(item => item.controlId)).toEqual(['cx', 'cy'])
+    }
+  })
+})
+
+describe('transformation vertex pairing', () => {
+  it('resolves an image vertex to its own pair, not to A', () => {
+    const object = sceneFor('translate', { dx: 3, dy: 2, }, { activeId: 'b' })
+    const image = sceneFor('translate', { dx: 3, dy: 2 }, { activeId: 'image-b' })
+
+    expect(object.status.calculation[0]).toContain('B')
+    expect(image.status.calculation[0]).toContain('B')
+    expect(image.status.calculation[0]).toBe(object.status.calculation[0])
+  })
+
+  it('emits an active guide when an image vertex is selected', () => {
+    const scene = sceneFor('translate', { dx: 3, dy: 2 }, { activeId: 'image-c' })
+
+    expect(scene.guides.length).toBeGreaterThan(0)
+    expect(scene.points.filter(point => point.tier === 'active')).toHaveLength(1)
+    expect(scene.points.find(point => point.tier === 'active').id).toBe('image-c')
+  })
+})
+
+describe('transformation rule geometry', () => {
+  it('draws rotation guides from the centre, not vertex to image', () => {
+    const scene = sceneFor('rotate',
+      { cx: 1, cy: 1, angle: '90', direction: 'clockwise' },
+      { activeId: 'a', capabilities: { nonOriginCentre: true } })
+
+    // Two radii about the centre, not one chord.
+    expect(scene.guides).toHaveLength(2)
+    for (const guide of scene.guides) {
+      expect(guide.from).toEqual({ x: 1, y: 1 })
+    }
+  })
+
+  it('points the enlargement ray at whichever end is further from the centre', () => {
+    const grow = sceneFor('enlarge', { cx: 0, cy: 0, scaleFactor: '3' },
+      { capabilities: { fractionalScaleFactor: true, negativeScaleFactor: true } })
+    const shrink = sceneFor('enlarge', { cx: 0, cy: 0, scaleFactor: '0.25' },
+      { capabilities: { fractionalScaleFactor: true, negativeScaleFactor: true } })
+    const flip = sceneFor('enlarge', { cx: 0, cy: 0, scaleFactor: '-2' },
+      { capabilities: { fractionalScaleFactor: true, negativeScaleFactor: true } })
+
+    const rayFor = scene => scene.shapes.find(shape => shape.id === 'ray-a')
+
+    // Growing: centre out to the image.
+    expect(rayFor(grow).path).toBe('M 0 0 L -3 6')
+    // Shrinking: centre out to the original, which is now the far end.
+    expect(rayFor(shrink).path).toBe('M 0 0 L -1 2')
+    // Negative: original through the centre to the image.
+    expect(rayFor(flip).path).toBe('M -1 2 L 2 -4')
+  })
+
+  it('offers a quarter scale factor when fractional factors are enabled', () => {
+    const preset = resolveCoordinatePlanePreset('enlarge')
+    const ids = capabilities => preset
+      .resolveOptions(mergeCapabilities(preset, capabilities))
+      .find(group => group.id === 'scaleFactor')
+      .choices.map(choice => choice.id)
+
+    expect(ids({})).toEqual(['2', '3'])
+    expect(ids({ fractionalScaleFactor: true })).toEqual(['0.25', '0.5', '2', '3'])
+    expect(ids({ fractionalScaleFactor: true, negativeScaleFactor: true }))
+      .toEqual(['-2', '-1', '0.25', '0.5', '2', '3'])
+  })
+
+  it('names the centre in rotation and enlargement descriptions', () => {
+    const rotate = resolveCoordinatePlanePreset('rotate')
+      .describe({ cx: 1, cy: -1, angle: '90', direction: 'clockwise' },
+        { capabilities: { nonOriginCentre: true }, choices: { angle: '90', direction: 'clockwise' } })
+    const enlarge = resolveCoordinatePlanePreset('enlarge')
+      .describe({ cx: 1, cy: 1, scaleFactor: '2' },
+        { capabilities: { nonOriginCentre: true }, choices: { scaleFactor: '2' } })
+
+    expect(rotate).toContain('(1, −1)')
+    expect(enlarge).toContain('(1, 1)')
+  })
+})
+
+describe('transformation coverage', () => {
+  it('translates with positive, negative and zero components', () => {
+    expect(sceneFor('translate', { dx: 3, dy: 2 })
+      .points.find(p => p.id === 'image-a')).toMatchObject({ x: 2, y: 5 })
+    expect(sceneFor('translate', { dx: -3, dy: -2 })
+      .points.find(p => p.id === 'image-a')).toMatchObject({ x: -4, y: 1 })
+    expect(sceneFor('translate', { dx: 0, dy: 0 })
+      .points.find(p => p.id === 'image-a')).toMatchObject({ x: -1, y: 3 })
+  })
+
+  it('reflects in all four mirror lines', () => {
+    const at = mirror => sceneFor('reflect', { mirrorValue: 2, mirror })
+      .points.find(p => p.id === 'image-a')
+
+    expect(at('vertical')).toMatchObject({ x: 5, y: 3 })
+    expect(at('horizontal')).toMatchObject({ x: -1, y: 1 })
+    expect(at('yEqualsX')).toMatchObject({ x: 3, y: -1 })
+    expect(at('yEqualsNegativeX')).toMatchObject({ x: -3, y: 1 })
+  })
+
+  it('rotates through every angle in both directions', () => {
+    const at = (angle, direction) => sceneFor('rotate',
+      { cx: 0, cy: 0, angle, direction }).points.find(p => p.id === 'image-a')
+
+    expect(at('90', 'clockwise')).toMatchObject({ x: 3, y: 1 })
+    expect(at('90', 'anticlockwise')).toMatchObject({ x: -3, y: -1 })
+    expect(at('180', 'clockwise')).toMatchObject({ x: 1, y: -3 })
+    expect(at('180', 'anticlockwise')).toMatchObject({ x: 1, y: -3 })
+    expect(at('270', 'clockwise')).toMatchObject({ x: -3, y: -1 })
+    expect(at('270', 'anticlockwise')).toMatchObject({ x: 3, y: 1 })
+  })
+
+  it('enlarges by every offered scale factor', () => {
+    const caps = { fractionalScaleFactor: true, negativeScaleFactor: true }
+    const at = scaleFactor => sceneFor('enlarge',
+      { cx: 0, cy: 0, scaleFactor }, { capabilities: caps })
+      .points.find(p => p.id === 'image-a')
+
+    expect(at('0.25')).toMatchObject({ x: -0.25, y: 0.5 })
+    expect(at('0.5')).toMatchObject({ x: -0.5, y: 1 })
+    expect(at('2')).toMatchObject({ x: -2, y: 4 })
+    expect(at('3')).toMatchObject({ x: -3, y: 6 })
+    expect(at('-1')).toMatchObject({ x: 1, y: -2 })
+    expect(at('-2')).toMatchObject({ x: 2, y: -4 })
+  })
+
+  it('refuses the broader annotation policy across the family', () => {
+    for (const id of ['translate', 'reflect', 'rotate', 'enlarge']) {
+      expect(resolveCoordinatePlanePreset(id).supportsShowAllGuides).toBe(false)
+    }
   })
 })

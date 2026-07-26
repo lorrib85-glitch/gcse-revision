@@ -4623,8 +4623,13 @@ sized to the ±8 grid rather than the grid being widened to the ranges:
 | `rotate` | `cx`, `cy` | −2…2 | −2…2 |
 | `enlarge` | `cx`, `cy` | −1…1 | −1…1 |
 
-Worst reachable magnitudes, verified by enumeration: translate 8, reflect 7,
-rotate 7, enlarge 8. Nothing exceeds the grid.
+Worst reachable magnitudes, verified by enumeration **including shapes**:
+translate 8, reflect 8, rotate 7, enlarge 8. Nothing exceeds the grid.
+
+Count shapes, not just points. `reflect` peaks at 7 on its vertices but 8 on
+its mirror line, which spans the full axis by construction — and the
+visible-bounds test measures shapes too, so a points-only figure understates
+what it will check.
 
 ### Option selections live in the value model
 
@@ -4749,6 +4754,20 @@ Replace the `resolvedOptions` memo and derive context with:
 
 Pass `choices: optionValues` in `deriveContext` (presets keep reading
 `choices`, so preset code is unchanged by this move).
+
+`nextStatusHeading` must **re-resolve** the choices from the values it is
+given, or every option tap announces the previous selection:
+
+```jsx
+  const nextStatusHeading = nextValues => presetConfig.derive(nextValues, {
+    ...deriveContext,
+    choices: resolveOptionValues(presetConfig, nextValues, capabilities),
+  }).status.heading
+```
+
+Option buttons also need `minWidth: COMPONENT_SIZE.touchTarget` in
+`optionButtonStyle` — a single-character label such as `2` renders about 42px
+wide, under the 44px floor.
 
 Option buttons go through the atomic setter:
 

@@ -10,6 +10,12 @@ import midpointPreset from './midpoint.js'
 import plotPointPreset from './plotPoint.js'
 import straightLinePreset from './straightLine.js'
 import tableOfValuesPreset from './tableOfValues.js'
+import {
+  enlargePreset,
+  reflectPreset,
+  rotatePreset,
+  translatePreset,
+} from './transformations.js'
 
 export const COORDINATE_PLANE_PRESETS = {
   plotPoint: plotPointPreset,
@@ -17,6 +23,10 @@ export const COORDINATE_PLANE_PRESETS = {
   straightLine: straightLinePreset,
   tableOfValues: tableOfValuesPreset,
   intersection: intersectionPreset,
+  translate: translatePreset,
+  reflect: reflectPreset,
+  rotate: rotatePreset,
+  enlarge: enlargePreset,
 }
 
 const FALLBACK_PRESET = 'plotPoint'
@@ -94,6 +104,24 @@ export function clampInteractiveValue(control, value) {
 export function mergeAxis(presetAxis, override) {
   if (!override) return { ...presetAxis }
   return { ...presetAxis, ...override }
+}
+
+/**
+ * The option id in force for each group.
+ *
+ * Reads from `values`, so option state is part of the public value model and a
+ * static figure can select any option. Falls back to the first still-offered
+ * choice when a capability change has removed the stored one — without this a
+ * disabled capability would leave the scene pointing at an option the learner
+ * can no longer see.
+ */
+export function resolveOptionValues(preset, values, capabilities) {
+  const groups = preset.resolveOptions?.(capabilities) ?? preset.options ?? []
+  return Object.fromEntries(groups.map((group) => {
+    const stored = values?.[group.id]
+    const offered = group.choices.some(choice => choice.id === stored)
+    return [group.id, offered ? stored : group.choices[0].id]
+  }))
 }
 
 export function mergeCapabilities(preset, overrides) {

@@ -12,6 +12,14 @@
 
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import CoordinatePlaneExplore from './CoordinatePlaneExplore.jsx'
+// The transformation bounds sweep below drives every preset over its whole
+// reachable state space, which no set of rendered stories can cover.
+import {
+  COORDINATE_PLANE_PRESETS,
+  clampPresetValues,
+  mergeCapabilities,
+  resolvePresetFocus,
+} from './coordinatePlane/presets/index.js'
 
 export default {
   title: 'Learning/CoordinatePlaneExplore/Contract',
@@ -2056,4 +2064,856 @@ export const IntersectionStaticInfiniteSolutions = {
     expect(description).not.toContain('never meet')
     expect(description).not.toContain('meeting at')
   },
+}
+
+// ─── The transformation family: translate, reflect, rotate, enlarge ──────────
+//
+// Option state (mirror, angle, direction, scale factor) lives in `values`, not
+// in renderer state. Everything below exists because that move is only worth
+// making if it holds all the way to the DOM: a static figure must be able to
+// select any option, one tap must produce one complete change and one
+// announcement, a removed capability must never leave the scene pointing at an
+// option the learner cannot see, and a control that does nothing in the current
+// state must be absent rather than present-and-inert.
+
+const TRANSFORM_ALL_SCALES = { fractionalScaleFactor: true, negativeScaleFactor: true }
+
+const polygonPoints = (canvasElement, id) => {
+  const numbers = pathCoords(canvasElement, id)
+  const points = []
+  for (let index = 0; index + 1 < numbers.length; index += 2) {
+    points.push({ x: numbers[index], y: numbers[index + 1] })
+  }
+  return points
+}
+
+const markOf = (canvasElement, id) => {
+  // The mark is the first circle in the point group; the second, when present,
+  // is its transparent selection target at the same centre.
+  const circle = canvasElement.querySelector(`[data-cp-point="${id}"] circle`)
+  return { x: Number(circle.getAttribute('cx')), y: Number(circle.getAttribute('cy')) }
+}
+
+const guideEnds = (canvasElement, id) => {
+  const line = canvasElement.querySelector(`[data-cp-guide="${id}"]`)
+  return {
+    from: { x: Number(line.getAttribute('x1')), y: Number(line.getAttribute('y1')) },
+    to: { x: Number(line.getAttribute('x2')), y: Number(line.getAttribute('y2')) },
+  }
+}
+
+const sideLengths = points => points.map((point, index) => {
+  const next = points[(index + 1) % points.length]
+  return Math.hypot(next.x - point.x, next.y - point.y)
+})
+
+// Signed, so a mirrored image is not mistaken for a congruent one.
+const signedArea = points => points.reduce((total, point, index) => {
+  const next = points[(index + 1) % points.length]
+  return total + (point.x * next.y - next.x * point.y)
+}, 0) / 2
+
+const distance = (from, to) => Math.hypot(to.x - from.x, to.y - from.y)
+
+const expectSamePoint = (actual, expected, message) => {
+  expect(actual.x, `${message} x`).toBeCloseTo(expected.x, 1)
+  expect(actual.y, `${message} y`).toBeCloseTo(expected.y, 1)
+}
+
+const optionButton = (canvasElement, id) =>
+  canvasElement.querySelector(`[data-cp-option="${id}"]`)
+
+const activeTierIds = canvasElement =>
+  [...canvasElement.querySelectorAll('[data-cp-tier="active"]')]
+    .map(node => node.getAttribute('data-cp-point'))
+
+// 1a. A static figure selects a mirror line that is not the default. With
+//     option state held privately by the renderer this figure could not be
+//     authored at all.
+export const TransformStaticReflectionInYEqualsX = {
+  args: {
+    preset: 'reflect',
+    interactive: false,
+    defaultValue: { mirrorValue: 2, mirror: 'yEqualsX' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Reflection in y = x')
+    expect(calculationLines(canvasElement)[0]).toBe('A (−1, 3) → A′ (3, −1)')
+    expect(canvasElement.querySelector('[data-cp-shape="mirror-line"]')).not.toBeNull()
+
+    expect(canvasElement.querySelector('svg desc').textContent).toBe(
+      'A triangle ABC and its image A′B′C′ after a reflection in y = x.'
+      + ' This diagram is shown as a static illustration.',
+    )
+
+    // A diagram, not a disabled toy.
+    expect(canvasElement.querySelectorAll('[data-cp-stepper]')).toHaveLength(0)
+    expect(canvasElement.querySelectorAll('[data-cp-option]')).toHaveLength(0)
+    expect(canvasElement.querySelector('[data-cp-status-announcement]')).toBeNull()
+    expect(canvas.queryAllByRole('button')).toHaveLength(0)
+  },
+}
+
+// 1b. A static 180° anticlockwise rotation.
+export const TransformStaticRotation180Anticlockwise = {
+  args: {
+    preset: 'rotate',
+    interactive: false,
+    defaultValue: { cx: 0, cy: 0, angle: '180', direction: 'anticlockwise' },
+  },
+  play: async ({ canvasElement }) => {
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Rotation 180° about (0, 0)')
+    expect(calculationLines(canvasElement)[0]).toBe('A (−1, 3) → A′ (1, −3)')
+    expect(canvasElement.querySelector('svg desc').textContent)
+      .toContain('a rotation of 180° about the centre (0, 0)')
+  },
+}
+
+// 1b′. A half turn lands in the same place whichever way it is turned, so the
+//      direction option is proved on a quarter turn: 90° anticlockwise is a
+//      different figure from the default 90° clockwise.
+export const TransformStaticRotation90Anticlockwise = {
+  args: {
+    preset: 'rotate',
+    interactive: false,
+    defaultValue: { cx: 0, cy: 0, angle: '90', direction: 'anticlockwise' },
+  },
+  play: async ({ canvasElement }) => {
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Rotation 90° anticlockwise about (0, 0)')
+    // Clockwise would be (3, 1) — the stored direction is genuinely read.
+    expect(calculationLines(canvasElement)[0]).toBe('A (−1, 3) → A′ (−3, −1)')
+  },
+}
+
+// 1c. A static enlargement by −1: a negative factor, only offered when the
+//     capability is on, and selected entirely from defaultValue.
+export const TransformStaticEnlargementByMinusOne = {
+  args: {
+    preset: 'enlarge',
+    interactive: false,
+    difficultyCapabilities: { negativeScaleFactor: true },
+    defaultValue: { cx: 0, cy: 0, scaleFactor: '-1' },
+  },
+  play: async ({ canvasElement }) => {
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Enlargement scale factor −1, centre (0, 0)')
+    expect(calculationLines(canvasElement)[0]).toBe('A (−1, 2) → A′ (1, −2)')
+    expect(canvasElement.querySelector('svg desc').textContent)
+      .toContain('scale factor −1 about the centre (0, 0)')
+  },
+}
+
+// 2. One option tap: one complete onChange, and one live announcement carrying
+//    the state the tap produced — not the state before it.
+export const TransformOptionTapEmitsOneCompleteChange = {
+  args: {
+    preset: 'rotate',
+    difficultyCapabilities: { nonOriginCentre: true },
+    defaultValue: { cx: 1, cy: 0, angle: '90', direction: 'clockwise' },
+    onChange: fn(),
+  },
+  play: async ({ args, canvasElement }) => {
+    const live = canvasElement.querySelector('[data-cp-status-announcement]')
+    const announcements = []
+    const observer = new MutationObserver(() => {
+      const text = live.textContent.trim()
+      if (text && announcements[announcements.length - 1] !== text) announcements.push(text)
+    })
+    observer.observe(live, { childList: true, characterData: true, subtree: true })
+
+    await userEvent.click(optionButton(canvasElement, 'angle:180'))
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+        .toBe('Rotation 180° about (1, 0)')
+    })
+    observer.disconnect()
+
+    // Exactly one change, carrying the COMPLETE transformation state.
+    expect(args.onChange).toHaveBeenCalledTimes(1)
+    expect(args.onChange.mock.calls[0][0])
+      .toEqual({ cx: 1, cy: 0, angle: '180', direction: 'clockwise' })
+
+    // Exactly one announcement, and it describes the new state.
+    expect(announcements).toEqual(['Rotation 180° about (1, 0)'])
+
+    expect(optionButton(canvasElement, 'angle:180')).toHaveAttribute('aria-pressed', 'true')
+    expect(optionButton(canvasElement, 'angle:90')).toHaveAttribute('aria-pressed', 'false')
+
+    // Tapping the option already in force changes nothing at all.
+    await userEvent.click(optionButton(canvasElement, 'angle:180'))
+    expect(args.onChange).toHaveBeenCalledTimes(1)
+  },
+}
+
+// 3. A capability that removes the stored option falls back to a valid one —
+//    and the scene, the heading and the buttons all agree about which.
+export const TransformCapabilityRemovalFallsBackToAValidOption = {
+  args: {
+    preset: 'reflect',
+    difficultyCapabilities: { diagonalMirrorLines: false },
+    defaultValue: { mirrorValue: 2, mirror: 'yEqualsX' },
+  },
+  play: async ({ canvasElement }) => {
+    // The stored option is not offered...
+    expect(optionButton(canvasElement, 'mirror:yEqualsX')).toBeNull()
+    expect(optionButton(canvasElement, 'mirror:yEqualsNegativeX')).toBeNull()
+
+    // ...so the first still-offered choice is in force, everywhere at once.
+    expect(optionButton(canvasElement, 'mirror:vertical'))
+      .toHaveAttribute('aria-pressed', 'true')
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Reflection in x = 2')
+    expect(calculationLines(canvasElement)[0]).toBe('A (−1, 3) → A′ (5, 3)')
+
+    // And the mirror position stepper is back, because a vertical mirror has a
+    // position to set.
+    expect(stepperIds(canvasElement)).toEqual(['mirrorValue'])
+  },
+}
+
+// 4a. The mirror position stepper disappears for y = x and y = −x rather than
+//     sitting there changing a number the diagram ignores.
+export const TransformMirrorPositionStepperOnlyWhenItActs = {
+  args: { preset: 'reflect', defaultValue: { mirrorValue: 2, mirror: 'vertical' } },
+  play: async ({ canvasElement }) => {
+    expect(stepperIds(canvasElement)).toEqual(['mirrorValue'])
+
+    await userEvent.click(optionButton(canvasElement, 'mirror:yEqualsX'))
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+        .toBe('Reflection in y = x')
+    })
+
+    // Absent, not disabled-and-visible: no stepper, no row, no orphan buttons.
+    expect(stepperIds(canvasElement)).toEqual([])
+    expect(canvasElement.querySelectorAll('[data-cp-stepper-row]')).toHaveLength(0)
+    expect(canvasElement.querySelector('[data-cp-stepper-decrement="mirrorValue"]')).toBeNull()
+    expect(canvasElement.querySelector('[data-cp-stepper-increment="mirrorValue"]')).toBeNull()
+
+    await userEvent.click(optionButton(canvasElement, 'mirror:yEqualsNegativeX'))
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+        .toBe('Reflection in y = −x')
+    })
+    expect(stepperIds(canvasElement)).toEqual([])
+
+    // A horizontal mirror has a position again, so the stepper comes back.
+    await userEvent.click(optionButton(canvasElement, 'mirror:horizontal'))
+    await waitFor(() => {
+      expect(stepperIds(canvasElement)).toEqual(['mirrorValue'])
+    })
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Reflection in y = 2')
+  },
+}
+
+// 4b. A centre that cannot leave the origin has nothing to step.
+export const TransformCentreSteppersHiddenAtTheOrigin = {
+  args: { preset: 'rotate', difficultyCapabilities: { nonOriginCentre: false } },
+  play: async ({ canvasElement }) => {
+    expect(stepperIds(canvasElement)).toEqual([])
+    expect(canvasElement.querySelectorAll('[data-cp-stepper-row]')).toHaveLength(0)
+    expect(canvasElement.querySelector('[data-cp-stepper-value="cx"]')).toBeNull()
+
+    // The option buttons are still there — the preset is operable, just not
+    // through a centre that cannot move.
+    expect(optionButton(canvasElement, 'angle:180')).not.toBeNull()
+    expect(canvasElement.querySelector('[data-cp-point="centre"]')).not.toBeNull()
+  },
+}
+
+// 4c. And they appear, in declaration order, when it can.
+export const TransformCentreSteppersAppearWhenTheCentreCanMove = {
+  args: { preset: 'enlarge', difficultyCapabilities: { nonOriginCentre: true } },
+  play: async ({ canvasElement }) => {
+    expect(stepperIds(canvasElement)).toEqual(['cx', 'cy'])
+
+    await userEvent.click(canvasElement.querySelector('[data-cp-stepper-increment="cx"]'))
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+        .toBe('Enlargement scale factor 2, centre (1, 0)')
+    })
+  },
+}
+
+// 5. `b` and `image-b` are two views of one pair, so both must resolve the same
+//    coordinate pair. Looking up the raw active id would silently fall back to
+//    A for every image vertex.
+export const TransformImageVertexResolvesItsOwnPair = {
+  args: { preset: 'translate', defaultValue: { dx: 3, dy: 2 } },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(canvasElement.querySelector('[data-cp-point-target="b"]'))
+    await waitFor(() => {
+      expect(calculationLines(canvasElement)[0]).toBe('B (−3, 0) → B′ (0, 2)')
+    })
+    const fromObject = calculationLines(canvasElement)[0]
+
+    await userEvent.click(canvasElement.querySelector('[data-cp-point-target="image-b"]'))
+    await waitFor(() => {
+      expect(activeTierIds(canvasElement)).toEqual(['image-b'])
+    })
+
+    // The same pair, not A's.
+    expect(calculationLines(canvasElement)[0]).toBe(fromObject)
+    expect(calculationLines(canvasElement)[0]).not.toContain('A')
+  },
+}
+
+// 6a. Translation by a positive vector: same size, same orientation, and every
+//     vertex moved by the same offset.
+export const TransformTranslationPositiveVector = {
+  args: { preset: 'translate', defaultValue: { dx: 3, dy: 2 } },
+  play: async ({ canvasElement }) => {
+    const object = polygonPoints(canvasElement, 'object')
+    const image = polygonPoints(canvasElement, 'image')
+
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Translation by (3, 2)')
+    expect(calculationLines(canvasElement)[0]).toBe('A (−1, 3) → A′ (2, 5)')
+
+    sideLengths(image).forEach((side, index) => {
+      expect(side).toBeCloseTo(sideLengths(object)[index], 1)
+    })
+    expect(signedArea(image)).toBeCloseTo(signedArea(object), 1)
+
+    const offsets = image.map((point, index) => ({
+      x: point.x - object[index].x,
+      y: point.y - object[index].y,
+    }))
+    for (const offset of offsets) expectSamePoint(offset, offsets[0], 'offset')
+    expect(offsets[0].x).toBeGreaterThan(0)
+    expect(offsets[0].y).toBeLessThan(0) // up the plane is down the screen
+  },
+}
+
+// 6b. And by a negative vector.
+export const TransformTranslationNegativeVector = {
+  args: { preset: 'translate', defaultValue: { dx: -4, dy: -3 } },
+  play: async ({ canvasElement }) => {
+    const object = polygonPoints(canvasElement, 'object')
+    const image = polygonPoints(canvasElement, 'image')
+
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Translation by (−4, −3)')
+    expect(calculationLines(canvasElement)[0]).toBe('A (−1, 3) → A′ (−5, 0)')
+    expect(calculationLines(canvasElement)[1])
+      .toBe('x: −1 − 4 = −5    y: 3 − 3 = 0')
+
+    sideLengths(image).forEach((side, index) => {
+      expect(side).toBeCloseTo(sideLengths(object)[index], 1)
+    })
+    expect(signedArea(image)).toBeCloseTo(signedArea(object), 1)
+
+    const offsets = image.map((point, index) => ({
+      x: point.x - object[index].x,
+      y: point.y - object[index].y,
+    }))
+    for (const offset of offsets) expectSamePoint(offset, offsets[0], 'offset')
+    expect(offsets[0].x).toBeLessThan(0)
+    expect(offsets[0].y).toBeGreaterThan(0)
+  },
+}
+
+// 6c. The zero vector is a translation too: the image sits on the object, and
+//     no zero-length guide is drawn where the vector would have been.
+export const TransformTranslationZeroVector = {
+  args: { preset: 'translate', defaultValue: { dx: 0, dy: 0 } },
+  play: async ({ canvasElement }) => {
+    const object = polygonPoints(canvasElement, 'object')
+    const image = polygonPoints(canvasElement, 'image')
+
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Translation by (0, 0)')
+    expect(calculationLines(canvasElement)[0]).toBe('A (−1, 3) → A′ (−1, 3)')
+
+    image.forEach((point, index) => expectSamePoint(point, object[index], 'vertex'))
+    expect(signedArea(image)).toBeCloseTo(signedArea(object), 1)
+    expect(canvasElement.querySelectorAll('[data-cp-guide]')).toHaveLength(0)
+  },
+}
+
+// 7. Every mirror line, driven the way a learner drives it.
+export const TransformReflectionInEveryMirrorLine = {
+  args: { preset: 'reflect', defaultValue: { mirrorValue: 2, mirror: 'vertical' } },
+  play: async ({ canvasElement }) => {
+    const heading = () => canvasElement.querySelector('[data-cp-status-heading]').textContent
+
+    const cases = [
+      ['mirror:vertical', 'Reflection in x = 2', 'A (−1, 3) → A′ (5, 3)'],
+      ['mirror:horizontal', 'Reflection in y = 2', 'A (−1, 3) → A′ (−1, 1)'],
+      ['mirror:yEqualsX', 'Reflection in y = x', 'A (−1, 3) → A′ (3, −1)'],
+      ['mirror:yEqualsNegativeX', 'Reflection in y = −x', 'A (−1, 3) → A′ (−3, 1)'],
+    ]
+
+    for (const [option, expectedHeading, expectedPair] of cases) {
+      await userEvent.click(optionButton(canvasElement, option))
+      await waitFor(() => { expect(heading()).toBe(expectedHeading) })
+
+      expect(calculationLines(canvasElement)[0], expectedHeading).toBe(expectedPair)
+      // The mirror is always drawn, and always inside the plot.
+      const mirror = canvasElement.querySelector('[data-cp-shape="mirror-line"]')
+      expect(mirror, expectedHeading).not.toBeNull()
+
+      const plot = plotRect(canvasElement)
+      const coordinates = polygonPoints(canvasElement, 'mirror-line')
+      for (const point of coordinates) {
+        expect(point.x).toBeGreaterThanOrEqual(plot.left - 0.5)
+        expect(point.x).toBeLessThanOrEqual(plot.right + 0.5)
+        expect(point.y).toBeGreaterThanOrEqual(plot.top - 0.5)
+        expect(point.y).toBeLessThanOrEqual(plot.bottom + 0.5)
+      }
+    }
+  },
+}
+
+// 8. Every angle, both directions, and a centre that is not the origin.
+export const TransformRotationCoversEveryAngleAndDirection = {
+  args: {
+    preset: 'rotate',
+    difficultyCapabilities: { nonOriginCentre: true },
+    defaultValue: { cx: 0, cy: 0, angle: '90', direction: 'clockwise' },
+  },
+  play: async ({ canvasElement }) => {
+    const heading = () => canvasElement.querySelector('[data-cp-status-heading]').textContent
+
+    const turn = async (angle, direction) => {
+      await userEvent.click(optionButton(canvasElement, `angle:${angle}`))
+      await userEvent.click(optionButton(canvasElement, `direction:${direction}`))
+    }
+
+    const cases = [
+      ['90', 'clockwise', 'Rotation 90° clockwise about (0, 0)', 'A (−1, 3) → A′ (3, 1)'],
+      ['90', 'anticlockwise', 'Rotation 90° anticlockwise about (0, 0)', 'A (−1, 3) → A′ (−3, −1)'],
+      ['180', 'clockwise', 'Rotation 180° about (0, 0)', 'A (−1, 3) → A′ (1, −3)'],
+      ['180', 'anticlockwise', 'Rotation 180° about (0, 0)', 'A (−1, 3) → A′ (1, −3)'],
+      ['270', 'clockwise', 'Rotation 270° clockwise about (0, 0)', 'A (−1, 3) → A′ (−3, −1)'],
+      ['270', 'anticlockwise', 'Rotation 270° anticlockwise about (0, 0)', 'A (−1, 3) → A′ (3, 1)'],
+    ]
+
+    for (const [angle, direction, expectedHeading, expectedPair] of cases) {
+      await turn(angle, direction)
+      await waitFor(() => { expect(heading()).toBe(expectedHeading) })
+      expect(calculationLines(canvasElement)[0], expectedHeading).toBe(expectedPair)
+    }
+
+    // Now move the centre off the origin and turn again.
+    await userEvent.click(canvasElement.querySelector('[data-cp-stepper-increment="cx"]'))
+    await userEvent.click(canvasElement.querySelector('[data-cp-stepper-decrement="cy"]'))
+    await waitFor(() => {
+      expect(heading()).toBe('Rotation 270° anticlockwise about (1, −1)')
+    })
+    expect(calculationLines(canvasElement)[0]).toBe('A (−1, 3) → A′ (5, 1)')
+  },
+}
+
+// 9. Every offered scale factor, including the quarter.
+export const TransformEnlargementCoversEveryScaleFactor = {
+  args: {
+    preset: 'enlarge',
+    difficultyCapabilities: TRANSFORM_ALL_SCALES,
+    defaultValue: { cx: 0, cy: 0, scaleFactor: '2' },
+  },
+  play: async ({ canvasElement }) => {
+    const heading = () => canvasElement.querySelector('[data-cp-status-heading]').textContent
+
+    const cases = [
+      ['0.25', 'Enlargement scale factor ¼, centre (0, 0)', 'A (−1, 2) → A′ (−0.25, 0.5)'],
+      ['0.5', 'Enlargement scale factor ½, centre (0, 0)', 'A (−1, 2) → A′ (−0.5, 1)'],
+      ['2', 'Enlargement scale factor 2, centre (0, 0)', 'A (−1, 2) → A′ (−2, 4)'],
+      ['3', 'Enlargement scale factor 3, centre (0, 0)', 'A (−1, 2) → A′ (−3, 6)'],
+      ['-1', 'Enlargement scale factor −1, centre (0, 0)', 'A (−1, 2) → A′ (1, −2)'],
+      ['-2', 'Enlargement scale factor −2, centre (0, 0)', 'A (−1, 2) → A′ (2, −4)'],
+    ]
+
+    for (const [factor, expectedHeading, expectedPair] of cases) {
+      await userEvent.click(optionButton(canvasElement, `scaleFactor:${factor}`))
+      await waitFor(() => { expect(heading()).toBe(expectedHeading) })
+      expect(calculationLines(canvasElement)[0], expectedHeading).toBe(expectedPair)
+    }
+  },
+}
+
+// 10a. A rotation without a named centre is not a described rotation — the same
+//      answer would lose the mark in an exam.
+export const TransformRotationDescriptionNamesTheCentre = {
+  args: {
+    preset: 'rotate',
+    interactive: false,
+    difficultyCapabilities: { nonOriginCentre: true },
+    defaultValue: { cx: 1, cy: -1, angle: '90', direction: 'clockwise' },
+  },
+  play: async ({ canvasElement }) => {
+    const description = canvasElement.querySelector('svg desc').textContent
+
+    expect(description).toContain('centre (1, −1)')
+    expect(description).toContain('90° clockwise')
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Rotation 90° clockwise about (1, −1)')
+  },
+}
+
+// 10b. Likewise an enlargement.
+export const TransformEnlargementDescriptionNamesTheCentre = {
+  args: {
+    preset: 'enlarge',
+    interactive: false,
+    difficultyCapabilities: { nonOriginCentre: true },
+    defaultValue: { cx: 1, cy: 1, scaleFactor: '2' },
+  },
+  play: async ({ canvasElement }) => {
+    const description = canvasElement.querySelector('svg desc').textContent
+
+    expect(description).toContain('centre (1, 1)')
+    expect(description).toContain('scale factor 2')
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Enlargement scale factor 2, centre (1, 1)')
+  },
+}
+
+// 11a. Rotation guides are two radii about the centre, never an A → A′ chord: a
+//      chord implies the point travelled in a straight line, which is the
+//      opposite of what a rotation does. Equal radii are the fact worth seeing.
+export const TransformRotationGuidesRunFromTheCentre = {
+  args: {
+    preset: 'rotate',
+    difficultyCapabilities: { nonOriginCentre: true },
+    defaultValue: { cx: 1, cy: 1, angle: '90', direction: 'clockwise' },
+  },
+  play: async ({ canvasElement }) => {
+    const checkRadii = () => {
+      const centre = markOf(canvasElement, 'centre')
+      const object = markOf(canvasElement, 'a')
+      const image = markOf(canvasElement, 'image-a')
+
+      const guides = canvasElement.querySelectorAll('[data-cp-guide]')
+      expect(guides).toHaveLength(2)
+
+      const toObject = guideEnds(canvasElement, 'guide-centre-object')
+      const toImage = guideEnds(canvasElement, 'guide-centre-image')
+
+      expectSamePoint(toObject.from, centre, 'object guide start')
+      expectSamePoint(toImage.from, centre, 'image guide start')
+      expectSamePoint(toObject.to, object, 'object guide end')
+      expectSamePoint(toImage.to, image, 'image guide end')
+
+      // Equal radii, and no chord anywhere.
+      expect(distance(centre, object)).toBeCloseTo(distance(centre, image), 1)
+      for (const guide of guides) {
+        const ends = guideEnds(canvasElement, guide.getAttribute('data-cp-guide'))
+        const isChord = distance(ends.from, object) < 1 && distance(ends.to, image) < 1
+        expect(isChord, 'a rotation must not draw a vertex-to-image chord').toBe(false)
+      }
+    }
+
+    checkRadii()
+
+    // Exactly one active vertex; the centre is rule geometry, never the active
+    // annotation.
+    expect(activeTierIds(canvasElement)).toEqual(['a'])
+    expect(canvasElement.querySelector('[data-cp-point="centre"]')
+      .getAttribute('data-cp-tier')).toBe('related')
+
+    for (const angle of ['180', '270']) {
+      await userEvent.click(optionButton(canvasElement, `angle:${angle}`))
+      await waitFor(() => {
+        expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+          .toContain(`${angle}°`)
+      })
+      checkRadii()
+    }
+
+    // Including from an image vertex, where the radii swap ends but still start
+    // at the centre.
+    await userEvent.click(canvasElement.querySelector('[data-cp-point-target="image-c"]'))
+    await waitFor(() => {
+      expect(activeTierIds(canvasElement)).toEqual(['image-c'])
+    })
+    const centre = markOf(canvasElement, 'centre')
+    expect(canvasElement.querySelectorAll('[data-cp-guide]')).toHaveLength(2)
+    expectSamePoint(guideEnds(canvasElement, 'guide-centre-object').from, centre, 'start')
+    expectSamePoint(guideEnds(canvasElement, 'guide-centre-image').from, centre, 'start')
+  },
+}
+
+// 11b. The enlargement ray points at whichever end is further from the centre,
+//      because a ray that always ran centre → image would stop showing the
+//      relationship the moment the factor shrank or reversed.
+export const TransformEnlargementRayFollowsTheScaleFactor = {
+  args: {
+    preset: 'enlarge',
+    difficultyCapabilities: TRANSFORM_ALL_SCALES,
+    defaultValue: { cx: 0, cy: 0, scaleFactor: '3' },
+  },
+  play: async ({ canvasElement }) => {
+    const rayEnds = () => {
+      const [x1, y1, x2, y2] = pathCoords(canvasElement, 'ray-a')
+      return { from: { x: x1, y: y1 }, to: { x: x2, y: y2 } }
+    }
+    const heading = () => canvasElement.querySelector('[data-cp-status-heading]').textContent
+
+    // Growing: centre out to the image, which is the far end.
+    let ray = rayEnds()
+    expectSamePoint(ray.from, markOf(canvasElement, 'centre'), 'grow ray start')
+    expectSamePoint(ray.to, markOf(canvasElement, 'image-a'), 'grow ray end')
+
+    // Shrinking: centre out to the original, which is now the far end.
+    await userEvent.click(optionButton(canvasElement, 'scaleFactor:0.25'))
+    await waitFor(() => { expect(heading()).toContain('¼') })
+    ray = rayEnds()
+    expectSamePoint(ray.from, markOf(canvasElement, 'centre'), 'shrink ray start')
+    expectSamePoint(ray.to, markOf(canvasElement, 'a'), 'shrink ray end')
+
+    await userEvent.click(optionButton(canvasElement, 'scaleFactor:0.5'))
+    await waitFor(() => { expect(heading()).toContain('½') })
+    expectSamePoint(rayEnds().to, markOf(canvasElement, 'a'), 'half ray end')
+
+    // Negative: original through the centre to the image — the crossing at the
+    // centre is the whole point.
+    await userEvent.click(optionButton(canvasElement, 'scaleFactor:-2'))
+    await waitFor(() => { expect(heading()).toContain('−2') })
+    ray = rayEnds()
+    const centre = markOf(canvasElement, 'centre')
+    expectSamePoint(ray.from, markOf(canvasElement, 'a'), 'flip ray start')
+    expectSamePoint(ray.to, markOf(canvasElement, 'image-a'), 'flip ray end')
+
+    // The centre lies on the ray, between its ends.
+    expect(distance(ray.from, centre) + distance(centre, ray.to))
+      .toBeCloseTo(distance(ray.from, ray.to), 1)
+
+    // The ray follows the active pair rather than being stuck on A.
+    await userEvent.click(canvasElement.querySelector('[data-cp-point-target="b"]'))
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-cp-shape="ray-b"]')).not.toBeNull()
+    })
+    expect(canvasElement.querySelector('[data-cp-shape="ray-a"]')).toBeNull()
+  },
+}
+
+// 12. Nothing the family can draw escapes the ±8 grid — checked over the whole
+//     reachable state space, not the handful of states a story renders.
+//
+//     Model ranges, not interaction ranges: static and controlled content may
+//     supply anything the model accepts, so that is what must stay visible.
+export const TransformFigureStaysInsideTheAxes = {
+  args: {
+    preset: 'rotate',
+    difficultyCapabilities: { nonOriginCentre: true },
+    defaultValue: { cx: -2, cy: 2, angle: '270', direction: 'anticlockwise' },
+  },
+  play: async ({ canvasElement }) => {
+    // 1. The rendered figure, in pixels, inside the plot rectangle.
+    const plot = plotRect(canvasElement)
+    for (const circle of canvasElement.querySelectorAll('[data-cp-point] circle')) {
+      const x = Number(circle.getAttribute('cx'))
+      const y = Number(circle.getAttribute('cy'))
+      expect(x).toBeGreaterThanOrEqual(plot.left - 0.5)
+      expect(x).toBeLessThanOrEqual(plot.right + 0.5)
+      expect(y).toBeGreaterThanOrEqual(plot.top - 0.5)
+      expect(y).toBeLessThanOrEqual(plot.bottom + 0.5)
+    }
+
+    // 2. The exhaustive model-space sweep: every combination of every control
+    //    boundary against every combination of every offered option, for each
+    //    of the four presets, with every vertex in turn as the active one.
+    const capabilitySets = [
+      {},
+      { diagonalMirrorLines: true, nonOriginCentre: true },
+      { fractionalScaleFactor: true, negativeScaleFactor: true },
+      {
+        diagonalMirrorLines: true,
+        nonOriginCentre: true,
+        fractionalScaleFactor: true,
+        negativeScaleFactor: true,
+      },
+    ]
+
+    const controlValueSets = (preset) => {
+      const base = clampPresetValues(preset, preset.initialValues)
+      let sets = [base]
+      for (const control of preset.controls ?? []) {
+        const corners = [control.min, control.max, base[control.id]]
+        sets = sets.flatMap(values => corners.map(corner => ({
+          ...values,
+          [control.id]: corner,
+        })))
+      }
+      return sets.map(values => clampPresetValues(preset, values))
+    }
+
+    const optionValueSets = (preset, capabilities) => {
+      let sets = [{}]
+      for (const group of preset.resolveOptions(capabilities)) {
+        sets = sets.flatMap(choices => group.choices.map(choice => ({
+          ...choices,
+          [group.id]: choice.id,
+        })))
+      }
+      return sets
+    }
+
+    const coordinatesOf = (path) => {
+      const numbers = path.match(/-?[\d.]+/g)?.map(Number) ?? []
+      const points = []
+      for (let index = 0; index + 1 < numbers.length; index += 2) {
+        points.push({ x: numbers[index], y: numbers[index + 1] })
+      }
+      return points
+    }
+
+    // Violations are collected and asserted once at the end. Thousands of
+    // states times a dozen assertions each is over a hundred thousand `expect`
+    // calls, which takes minutes in a browser — the sweep would have to be
+    // thinned to stay under the timeout, and thinning it is exactly what makes
+    // this contract stop catching anything.
+    const violations = []
+    let states = 0
+
+    for (const id of ['translate', 'reflect', 'rotate', 'enlarge']) {
+      const preset = COORDINATE_PLANE_PRESETS[id]
+      const axes = { x: preset.xAxis, y: preset.yAxis }
+      expect(axes.x, `${id} x axis`).toMatchObject({ min: -8, max: 8, step: 2 })
+      expect(axes.y, `${id} y axis`).toMatchObject({ min: -8, max: 8, step: 2 })
+
+      for (const capabilitySet of capabilitySets) {
+        const capabilities = mergeCapabilities(preset, capabilitySet)
+        for (const values of controlValueSets(preset)) {
+          for (const choices of optionValueSets(preset, capabilities)) {
+            for (const activeId of ['a', 'b', 'c', 'image-a', 'image-b', 'image-c']) {
+              states += 1
+              const scene = preset.derive(values, {
+                focus: resolvePresetFocus(preset, undefined),
+                activeId,
+                showGuides: 'active',
+                capabilities,
+                choices,
+                axes,
+                grid: preset.grid,
+              })
+
+              const label = `${id} ${JSON.stringify(values)} ${JSON.stringify(choices)} active=${activeId}`
+              const inside = (point, what) => {
+                if (point.x < axes.x.min || point.x > axes.x.max
+                  || point.y < axes.y.min || point.y > axes.y.max) {
+                  violations.push(`${label} ${what} at (${point.x}, ${point.y})`)
+                }
+              }
+
+              for (const point of scene.points) inside(point, `point ${point.id}`)
+              for (const shape of scene.shapes.filter(item => item.modelPath)) {
+                for (const point of coordinatesOf(shape.path)) inside(point, `shape ${shape.id}`)
+              }
+              for (const guide of scene.guides ?? []) {
+                inside(guide.from, `guide ${guide.id} from`)
+                inside(guide.to, `guide ${guide.id} to`)
+              }
+
+              // 13, over the same exhaustive set: exactly one active vertex,
+              // whichever end of the pair is selected.
+              const active = scene.points.filter(point => point.tier === 'active')
+              if (active.length !== 1 || active[0].id !== activeId) {
+                violations.push(`${label} active tier is [${active.map(point => point.id)}]`)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    expect(violations).toEqual([])
+    // The sweep is real, not an empty loop that passes by doing nothing.
+    expect(states).toBeGreaterThan(2000)
+  },
+}
+
+// 13. One active vertex at a time, including when the selected vertex is an
+//     image vertex — the case where a raw active-id lookup silently annotates A
+//     instead and leaves the selected point unmarked.
+export const TransformExactlyOneActiveVertex = {
+  args: { preset: 'translate', defaultValue: { dx: 3, dy: 2 } },
+  play: async ({ canvasElement }) => {
+    expect(activeTierIds(canvasElement)).toEqual(['a'])
+
+    await userEvent.click(canvasElement.querySelector('[data-cp-point-target="image-c"]'))
+    await waitFor(() => {
+      expect(activeTierIds(canvasElement)).toEqual(['image-c'])
+    })
+
+    // The guide follows the selection rather than staying on A.
+    expect(canvasElement.querySelectorAll('[data-cp-guide]')).toHaveLength(1)
+    const guide = guideEnds(canvasElement, 'guide-vector')
+    expectSamePoint(guide.from, markOf(canvasElement, 'c'), 'guide start')
+    expectSamePoint(guide.to, markOf(canvasElement, 'image-c'), 'guide end')
+    expect(calculationLines(canvasElement)[0]).toBe('C (0, −2) → C′ (3, 0)')
+
+    await userEvent.click(canvasElement.querySelector('[data-cp-point-target="a"]'))
+    await waitFor(() => {
+      expect(activeTierIds(canvasElement)).toEqual(['a'])
+    })
+  },
+}
+
+// 14. The narrowest supported width, for all four presets: no horizontal
+//     scroll anywhere, and every control still a real touch target.
+const narrowViewportPlay = expectedButtonCount => async ({ canvasElement }) => {
+  const diagram = canvasElement.querySelector('.cp-explore')
+
+  expect(diagram.getBoundingClientRect().width).toBeLessThanOrEqual(320.5)
+  expect(diagram.scrollWidth).toBeLessThanOrEqual(diagram.clientWidth)
+
+  const rows = [
+    ...canvasElement.querySelectorAll('[data-cp-stepper-row]'),
+    ...canvasElement.querySelectorAll('div[role="group"]'),
+  ]
+  for (const row of rows) {
+    expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth)
+  }
+
+  const buttons = canvasElement.querySelectorAll('button')
+  expect(buttons).toHaveLength(expectedButtonCount)
+  for (const button of buttons) {
+    const rect = button.getBoundingClientRect()
+    const name = button.getAttribute('aria-label') ?? button.textContent
+    expect(rect.height, `${name} height`).toBeGreaterThanOrEqual(43.5)
+    expect(rect.width, `${name} width`).toBeGreaterThanOrEqual(43.5)
+  }
+}
+
+export const TransformTranslateNarrowViewport = {
+  args: { preset: 'translate' },
+  globals: { viewport: { value: 'mobile1', isRotated: false } },
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  // Two steppers, four nudge buttons, no options.
+  play: narrowViewportPlay(4),
+}
+
+export const TransformReflectNarrowViewport = {
+  args: { preset: 'reflect' },
+  globals: { viewport: { value: 'mobile1', isRotated: false } },
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  // One stepper plus four mirror lines.
+  play: narrowViewportPlay(6),
+}
+
+export const TransformRotateNarrowViewport = {
+  args: { preset: 'rotate', difficultyCapabilities: { nonOriginCentre: true } },
+  globals: { viewport: { value: 'mobile1', isRotated: false } },
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  // Two centre steppers, three angles, two directions.
+  play: narrowViewportPlay(9),
+}
+
+export const TransformEnlargeNarrowViewport = {
+  args: {
+    preset: 'enlarge',
+    difficultyCapabilities: { ...TRANSFORM_ALL_SCALES, nonOriginCentre: true },
+  },
+  globals: { viewport: { value: 'mobile1', isRotated: false } },
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  // Two centre steppers and six scale factors.
+  play: narrowViewportPlay(10),
 }
