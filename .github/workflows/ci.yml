@@ -6,37 +6,7 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: write
-
 jobs:
-  registry-guidance-update:
-    if: github.event_name == 'pull_request' && github.head_ref == 'agent/update-guided-construction-descriptions' && github.actor != 'github-actions[bot]'
-    name: Apply registry guidance update
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
-
-      - name: Apply approved component descriptions
-        run: python scripts/update_component_registry_guidance.py
-
-      - name: Commit registry update to PR branch
-        shell: bash
-        run: |
-          git diff --check
-          if git diff --quiet -- docs/components/COMPONENT_REGISTRY.md; then
-            echo 'No registry change required.'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/components/COMPONENT_REGISTRY.md
-          git commit -m 'Add guided construction component decision guidance'
-          git push origin HEAD:${{ github.head_ref }}
-
   verify:
     name: Lint, tests, build
     runs-on: ubuntu-latest
