@@ -134,3 +134,27 @@ function formatNumber(value) {
 export function formatCoordinate({ x, y }) {
   return `(${formatNumber(x)}, ${formatNumber(y)})`
 }
+
+/**
+ * A straight-line equation written the way GCSE writes it.
+ *
+ * The single source of truth for this string. Every place that names a line —
+ * status headings, accessible descriptions, comparison text — must use it, so
+ * a learner never meets two different spellings of the same equation, and so a
+ * fix lands everywhere at once. Local copies previously drifted into
+ * "y = 0x + 2" and "y = −3x + −4".
+ *
+ *   m = 0            → y = 2          (a horizontal line has no x term)
+ *   m = 1  / m = −1  → y = x − 4      (the coefficient 1 is never written)
+ *   c = 0            → y = 2x         (no trailing zero term)
+ *   c < 0            → y = 2x − 3     (subtraction, never "+ −3")
+ */
+export function formatLinearEquation({ m, c }) {
+  if (m === 0) return `y = ${formatNumber(c)}`
+
+  const gradient = m === 1 ? 'x' : m === -1 ? `${MINUS}x` : `${formatNumber(m)}x`
+  if (c === 0) return `y = ${gradient}`
+  return c > 0
+    ? `y = ${gradient} + ${c}`
+    : `y = ${gradient} ${MINUS} ${Math.abs(c)}`
+}

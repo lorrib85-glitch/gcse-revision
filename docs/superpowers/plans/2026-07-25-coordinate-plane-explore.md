@@ -3668,6 +3668,7 @@ Create `src/components/learning/coordinatePlane/presets/straightLine.js`:
 
 import {
   formatCoordinate,
+  formatLinearEquation,
   lineY,
   perpendicularGradientOf,
   xInterceptOf,
@@ -3678,18 +3679,6 @@ const MINUS = '−'
 
 function signed(value) {
   return String(value).replace('-', MINUS)
-}
-
-function equationText({ m, c }) {
-  // A horizontal line is written y = 2, never y = 0x + 2. This is the exact
-  // case the perpendicular refusal teaches, so the heading a learner reads
-  // while being told "a line perpendicular to a horizontal line is vertical"
-  // must itself be written the way GCSE writes it.
-  if (m === 0) return `y = ${signed(c)}`
-
-  const gradient = m === 1 ? 'x' : m === -1 ? `${MINUS}x` : `${signed(m)}x`
-  if (c === 0) return `y = ${gradient}`
-  return c > 0 ? `y = ${gradient} + ${c}` : `y = ${gradient} ${MINUS} ${Math.abs(c)}`
 }
 
 /**
@@ -3902,13 +3891,13 @@ const straightLinePreset = {
       `y-intercept: the line crosses the y-axis at ${signed(line.c)}.`,
     ]
     let explanation = 'The gradient sets the steepness; the y-intercept sets where the line starts.'
-    let heading = equationText(line)
+    let heading = formatLinearEquation(line)
 
     if (comparing && second.impossible) {
-      heading = equationText(line)
+      heading = formatLinearEquation(line)
       explanation = 'A line perpendicular to a horizontal line is vertical, and a vertical line has no gradient — it cannot be written as y = mx + c. Change the gradient to see a perpendicular pair.'
     } else if (comparing) {
-      heading = `${equationText(line)}   and   ${equationText(second)}`
+      heading = `${formatLinearEquation(line)}   and   ${formatLinearEquation(second)}`
       if (second.rule === 'parallel') {
         explanation = 'Both lines have the same gradient, so they are parallel. Their intercepts are set separately and need not match.'
       } else if (second.rule === 'perpendicular') {
@@ -3931,16 +3920,16 @@ const straightLinePreset = {
   describe(values, { focus, comparisonRule, capabilities } = {}) {
     const line = { m: values.m, c: values.c }
     if (focus !== 'compare') {
-      return `The graph of ${equationText(line)}, crossing the y-axis at ${signed(line.c)} with gradient ${signed(line.m)}.`
+      return `The graph of ${formatLinearEquation(line)}, crossing the y-axis at ${signed(line.c)} with gradient ${signed(line.m)}.`
     }
     const second = resolveSecondLine(values, comparisonRule, capabilities ?? {})
     // The impossible branch carries no m or c. Formatting it anyway put
     // "y = undefinedx − NaN" straight into the SVG <desc>, which is what a
     // screen reader announces.
     if (second.impossible) {
-      return `The graph of ${equationText(line)} alone: a line perpendicular to a horizontal line is vertical, and a vertical line cannot be written as y = mx + c.`
+      return `The graph of ${formatLinearEquation(line)} alone: a line perpendicular to a horizontal line is vertical, and a vertical line cannot be written as y = mx + c.`
     }
-    return `The graphs of ${equationText(line)} and ${equationText(second)}, shown together for comparison.`
+    return `The graphs of ${formatLinearEquation(line)} and ${formatLinearEquation(second)}, shown together for comparison.`
   },
 }
 
@@ -4095,7 +4084,7 @@ Create `src/components/learning/coordinatePlane/presets/tableOfValues.js`:
 // Completed pairs persist as a trail. Without it this preset is ordinary point
 // plotting with extra arithmetic.
 
-import { formatCoordinate, lineY } from '../coordinatePlaneMath.js'
+import { formatCoordinate, formatLinearEquation, lineY } from '../coordinatePlaneMath.js'
 
 const MINUS = '−'
 const FIRST_X = -2
@@ -4222,7 +4211,7 @@ const tableOfValuesPreset = {
       return formatCoordinate({ x, y: lineY(line, x) })
     }).join(', ')
 
-    return `A table of values for y = ${signed(line.m)}x + ${signed(line.c)} with ${count} point${count === 1 ? '' : 's'} plotted: ${pairs}.`
+    return `A table of values for ${formatLinearEquation(line)} with ${count} point${count === 1 ? '' : 's'} plotted: ${pairs}.`
   },
 }
 
@@ -4325,6 +4314,36 @@ describe('intersection preset', () => {
       .toBe('x = 2 and y = 5 is the only pair that satisfies both equations.')
   })
 
+  // Enumerate EVERY reachable pair, not the four corners. The interior is not
+  // safe just because the corners are: the solution moves diagonally as the
+  // two intercepts change, so corner-only checking misses whole regions.
+  it('keeps every reachable one-solution point inside both axes', () => {
+    const preset = resolveCoordinatePlanePreset('intersection')
+    const c1Control = preset.controls.find(control => control.id === 'c1')
+    const c2Control = preset.controls.find(control => control.id === 'c2')
+    const axes = { x: preset.xAxis, y: preset.yAxis }
+    let checked = 0
+
+    for (let c1 = c1Control.min; c1 <= c1Control.max; c1 += c1Control.step) {
+      for (let c2 = c2Control.min; c2 <= c2Control.max; c2 += c2Control.step) {
+        const scene = preset.derive(
+          { m1: 1, c1, m2: -1, c2 },
+          { showGuides: 'active', capabilities: {}, axes, grid: preset.grid },
+        )
+        const solution = scene.points.find(point => point.id === 'solution')
+        if (!solution) continue
+
+        checked += 1
+        expect(solution.x, `c1=${c1} c2=${c2} solution x`).toBeGreaterThanOrEqual(axes.x.min)
+        expect(solution.x, `c1=${c1} c2=${c2} solution x`).toBeLessThanOrEqual(axes.x.max)
+        expect(solution.y, `c1=${c1} c2=${c2} solution y`).toBeGreaterThanOrEqual(axes.y.min)
+        expect(solution.y, `c1=${c1} c2=${c2} solution y`).toBeLessThanOrEqual(axes.y.max)
+      }
+    }
+
+    expect(checked).toBe(88)
+  })
+
   it('marks the solution point as active', () => {
     const scene = sceneFor('intersection', { m1: 1, c1: 3, m2: -1, c2: 7 })
     const solution = scene.points.find(point => point.id === 'solution')
@@ -4370,25 +4389,18 @@ Create `src/components/learning/coordinatePlane/presets/intersection.js`:
 // into both equations is what makes it a solution, so the status always shows
 // both checks rather than only the coordinate.
 
-import { formatCoordinate, intersectionOf, lineY } from '../coordinatePlaneMath.js'
+import {
+  formatCoordinate,
+  formatLinearEquation,
+  intersectionOf,
+  lineY,
+} from '../coordinatePlaneMath.js'
 import { clipSegmentToBounds } from '../coordinatePlaneGeometry.js'
 
 const MINUS = '−'
 
 function signed(value) {
   return String(value).replace('-', MINUS)
-}
-
-function equationText({ m, c }) {
-  // A horizontal line is written y = 2, never y = 0x + 2. This is the exact
-  // case the perpendicular refusal teaches, so the heading a learner reads
-  // while being told "a line perpendicular to a horizontal line is vertical"
-  // must itself be written the way GCSE writes it.
-  if (m === 0) return `y = ${signed(c)}`
-
-  const gradient = m === 1 ? 'x' : m === -1 ? `${MINUS}x` : `${signed(m)}x`
-  if (c === 0) return `y = ${gradient}`
-  return c > 0 ? `y = ${gradient} + ${c}` : `y = ${gradient} ${MINUS} ${Math.abs(c)}`
 }
 
 function substitutionCheck(line, solution) {
@@ -4400,7 +4412,7 @@ function substitutionCheck(line, solution) {
       : `${signed(line.m)}(${signed(solution.x)})`
   const cTerm = line.c === 0 ? '' : line.c > 0 ? ` + ${line.c}` : ` ${MINUS} ${Math.abs(line.c)}`
 
-  return `${equationText(line)}  →  ${signed(solution.y)} = ${productText}${cTerm} ✓`
+  return `${formatLinearEquation(line)}  →  ${signed(solution.y)} = ${productText}${cTerm} ✓`
 }
 
 function lineShape(id, line, axes, role) {
@@ -4441,13 +4453,19 @@ const intersectionPreset = {
   defaultActiveId: 'solution',
   capabilities: {},
 
+  // The solution of y = x + c1 and y = −x + c2 is
+  // ((c2 − c1)/2, (c1 + c2)/2), so the intercept ranges decide whether it is
+  // visible. The originally planned ranges (c1 −4…8, c2 −4…9) put it outside
+  // the axes for 20 of their 182 pairs — c1 = 8, c2 = −4 lands at (−6, 2).
+  // These ranges keep all 88 pairs inside x −4…7 and y −2…9, and still reach
+  // half-integer solutions such as (−3.5, −1), which is worth showing.
   initialValues: { m1: 1, c1: 3, m2: -1, c2: 7 },
   controls: [
     {
       id: 'c1',
       label: 'First line y-intercept',
-      min: -4,
-      max: 8,
+      min: -1,
+      max: 6,
       step: 1,
       valueText: values => `first line intercept ${values.c1}`,
       valueFromPointer: (_point, values) => values.c1,
@@ -4455,7 +4473,7 @@ const intersectionPreset = {
     {
       id: 'c2',
       label: 'Second line y-intercept',
-      min: -4,
+      min: -1,
       max: 9,
       step: 1,
       valueText: values => `second line intercept ${values.c2}`,
@@ -4488,7 +4506,7 @@ const intersectionPreset = {
         handles: [],
         status: {
           heading: infinite ? 'Infinitely many solutions' : 'No solution',
-          calculation: [equationText(lineA), equationText(lineB)],
+          calculation: [formatLinearEquation(lineA), formatLinearEquation(lineB)],
           explanation: infinite
             ? 'Same gradient and same intercept, so these are the same line — every point on it satisfies both equations.'
             : 'Equal gradients with different intercepts mean the lines are parallel, so they never meet and no pair satisfies both.',
@@ -4531,12 +4549,12 @@ const intersectionPreset = {
     const result = intersectionOf(lineA, lineB)
 
     if (result.kind === 'infinite') {
-      return `The graph of ${equationText(lineA)}, drawn twice — both equations describe the same line.`
+      return `The graph of ${formatLinearEquation(lineA)}, drawn twice — both equations describe the same line.`
     }
     if (result.kind === 'none') {
-      return `The graphs of ${equationText(lineA)} and ${equationText(lineB)}, which are parallel and never meet.`
+      return `The graphs of ${formatLinearEquation(lineA)} and ${formatLinearEquation(lineB)}, which are parallel and never meet.`
     }
-    return `The graphs of ${equationText(lineA)} and ${equationText(lineB)}, meeting at ${formatCoordinate(result.point)}.`
+    return `The graphs of ${formatLinearEquation(lineA)} and ${formatLinearEquation(lineB)}, meeting at ${formatCoordinate(result.point)}.`
   },
 }
 

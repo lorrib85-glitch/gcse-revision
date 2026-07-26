@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   enlargePoint,
   formatCoordinate,
+  formatLinearEquation,
   intersectionOf,
   lineY,
   midpointOf,
@@ -164,6 +165,38 @@ describe('enlargement', () => {
 
   it('enlarges by a negative scale factor, landing the other side of the centre', () => {
     expect(enlargePoint({ x: 3, y: 2 }, { x: 1, y: 1 }, -1)).toEqual({ x: -1, y: 0 })
+  })
+})
+
+// One formatter for every place a line is named — status headings, accessible
+// descriptions, comparison text. Local copies previously drifted into
+// "y = 0x + 2" and "y = −3x + −4", both of which reached screen readers.
+describe('linear equation formatting', () => {
+  it('writes a horizontal line with no x term', () => {
+    expect(formatLinearEquation({ m: 0, c: 2 })).toBe('y = 2')
+    expect(formatLinearEquation({ m: 0, c: -3 })).toBe('y = −3')
+    expect(formatLinearEquation({ m: 0, c: 0 })).toBe('y = 0')
+  })
+
+  it('never writes a coefficient of 1', () => {
+    expect(formatLinearEquation({ m: 1, c: -4 })).toBe('y = x − 4')
+    expect(formatLinearEquation({ m: -1, c: 0 })).toBe('y = −x')
+    expect(formatLinearEquation({ m: 1, c: 3 })).toBe('y = x + 3')
+  })
+
+  it('subtracts a negative intercept rather than adding it', () => {
+    expect(formatLinearEquation({ m: 2, c: -3 })).toBe('y = 2x − 3')
+    expect(formatLinearEquation({ m: -3, c: -4 })).toBe('y = −3x − 4')
+  })
+
+  it('drops a zero intercept', () => {
+    expect(formatLinearEquation({ m: 2, c: 0 })).toBe('y = 2x')
+    expect(formatLinearEquation({ m: -5, c: 0 })).toBe('y = −5x')
+  })
+
+  it('handles ordinary positive coefficients', () => {
+    expect(formatLinearEquation({ m: 2, c: 1 })).toBe('y = 2x + 1')
+    expect(formatLinearEquation({ m: 5, c: 7 })).toBe('y = 5x + 7')
   })
 })
 

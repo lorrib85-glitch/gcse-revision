@@ -13,6 +13,7 @@
 
 import {
   formatCoordinate,
+  formatLinearEquation,
   lineY,
   perpendicularGradientOf,
   xInterceptOf,
@@ -23,18 +24,6 @@ const MINUS = '−'
 
 function signed(value) {
   return String(value).replace('-', MINUS)
-}
-
-function equationText({ m, c }) {
-  // A horizontal line is written y = 2, never y = 0x + 2. This is the exact
-  // case the perpendicular refusal teaches, so the heading a learner reads
-  // while being told "a line perpendicular to a horizontal line is vertical"
-  // must itself be written the way GCSE writes it.
-  if (m === 0) return `y = ${signed(c)}`
-
-  const gradient = m === 1 ? 'x' : m === -1 ? `${MINUS}x` : `${signed(m)}x`
-  if (c === 0) return `y = ${gradient}`
-  return c > 0 ? `y = ${gradient} + ${c}` : `y = ${gradient} ${MINUS} ${Math.abs(c)}`
 }
 
 /**
@@ -247,13 +236,13 @@ const straightLinePreset = {
       `y-intercept: the line crosses the y-axis at ${signed(line.c)}.`,
     ]
     let explanation = 'The gradient sets the steepness; the y-intercept sets where the line starts.'
-    let heading = equationText(line)
+    let heading = formatLinearEquation(line)
 
     if (comparing && second.impossible) {
-      heading = equationText(line)
+      heading = formatLinearEquation(line)
       explanation = 'A line perpendicular to a horizontal line is vertical, and a vertical line has no gradient — it cannot be written as y = mx + c. Change the gradient to see a perpendicular pair.'
     } else if (comparing) {
-      heading = `${equationText(line)}   and   ${equationText(second)}`
+      heading = `${formatLinearEquation(line)}   and   ${formatLinearEquation(second)}`
       if (second.rule === 'parallel') {
         explanation = 'Both lines have the same gradient, so they are parallel. Their intercepts are set separately and need not match.'
       } else if (second.rule === 'perpendicular') {
@@ -276,16 +265,16 @@ const straightLinePreset = {
   describe(values, { focus, comparisonRule, capabilities } = {}) {
     const line = { m: values.m, c: values.c }
     if (focus !== 'compare') {
-      return `The graph of ${equationText(line)}, crossing the y-axis at ${signed(line.c)} with gradient ${signed(line.m)}.`
+      return `The graph of ${formatLinearEquation(line)}, crossing the y-axis at ${signed(line.c)} with gradient ${signed(line.m)}.`
     }
     const second = resolveSecondLine(values, comparisonRule, capabilities ?? {})
     // An impossible comparison has no second equation to name. Formatting it
     // anyway reads "y = undefinedx − NaN" to a screen reader, so say the true
     // thing instead — the same refusal the status area gives.
     if (second.impossible) {
-      return `The graph of ${equationText(line)} alone: a line perpendicular to a horizontal line is vertical, and a vertical line cannot be written as y = mx + c.`
+      return `The graph of ${formatLinearEquation(line)} alone: a line perpendicular to a horizontal line is vertical, and a vertical line cannot be written as y = mx + c.`
     }
-    return `The graphs of ${equationText(line)} and ${equationText(second)}, shown together for comparison.`
+    return `The graphs of ${formatLinearEquation(line)} and ${formatLinearEquation(second)}, shown together for comparison.`
   },
 }
 

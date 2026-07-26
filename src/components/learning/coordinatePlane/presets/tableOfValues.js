@@ -9,7 +9,7 @@
 // Completed pairs persist as a trail. Without it this preset is ordinary point
 // plotting with extra arithmetic.
 
-import { formatCoordinate, lineY } from '../coordinatePlaneMath.js'
+import { formatCoordinate, formatLinearEquation, lineY } from '../coordinatePlaneMath.js'
 
 const MINUS = '−'
 const FIRST_X = -2
@@ -139,7 +139,7 @@ const tableOfValuesPreset = {
       return formatCoordinate({ x, y: lineY(line, x) })
     }).join(', ')
 
-    return `A table of values for y = ${signed(line.m)}x + ${signed(line.c)} with ${count} point${count === 1 ? '' : 's'} plotted: ${pairs}.`
+    return `A table of values for ${formatLinearEquation(line)} with ${count} point${count === 1 ? '' : 's'} plotted: ${pairs}.`
   },
 }
 
