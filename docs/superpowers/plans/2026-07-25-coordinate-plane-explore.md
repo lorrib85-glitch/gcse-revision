@@ -4589,715 +4589,147 @@ git commit -m "Add intersection preset connecting the solution to both equations
 ```
 
 ---
-
 ## Task 11: The transformation family
 
 **Files:**
 - Create: `src/components/learning/coordinatePlane/presets/transformations.js`
 - Modify: `src/components/learning/coordinatePlane/presets/index.js`
+- Modify: `src/components/learning/CoordinatePlaneExplore.jsx` (option state moves into the value model)
 - Modify: `tests/unit/coordinatePlanePresets.test.js`
 
 **Interfaces:**
-- Consumes: `translatePoint`, `reflectPoint`, `rotatePoint`, `enlargePoint`, `formatCoordinate` from `coordinatePlaneMath.js`
-- Produces: named exports `translatePreset`, `reflectPreset`, `rotatePreset`, `enlargePreset`, registered as `translate`, `reflect`, `rotate`, `enlarge`
+- Consumes: `translatePoint`, `reflectPoint`, `rotatePoint`, `enlargePoint`, `formatCoordinate` from `coordinatePlaneMath.js`; `snapToStep` from `coordinatePlaneGeometry.js`
+- Produces: named exports `translatePreset`, `reflectPreset`, `rotatePreset`, `enlargePreset`, registered as `translate`, `reflect`, `rotate`, `enlarge`; plus `resolveOptionValues(preset, values, capabilities)` from the registry
 
 All four share one factory for the object polygon, vertex labelling (`A` → `A′`)
 and coordinate-pair status. They stay separate presets because each has
-genuinely different rule geometry and controls.
+genuinely different rule geometry, controls and **active-guide geometry**.
 
 **All four set `supportsShowAllGuides: false`** — eight labelled points with
 eight sets of guide lines is exactly the unreadable figure the annotation
 contract exists to prevent.
 
-**Tier capability is data-driven** (spec §5). Capabilities constrain the
-*options offered*; unavailable options are **absent, never disabled-and-visible**:
+### The axes are ±8, not ±10
 
-| Capability | Gates |
+Labels every 2, gridlines every 1. A 21-unit grid is denser on a phone and
+throws away the legibility that labelling every 2 buys back, so the ranges are
+sized to the ±8 grid rather than the grid being widened to the ranges:
+
+| Preset | Control | Model range | Interaction range |
+|---|---|---|---|
+| `translate` | `dx` | −5…8 | −4…4 |
+| `translate` | `dy` | −6…5 | −4…4 |
+| `reflect` | `mirrorValue` | −2…2 | −2…2 |
+| `rotate` | `cx`, `cy` | −2…2 | −2…2 |
+| `enlarge` | `cx`, `cy` | −1…1 | −1…1 |
+
+Worst reachable magnitudes, verified by enumeration: translate 8, reflect 7,
+rotate 7, enlarge 8. Nothing exceeds the grid.
+
+### Option selections live in the value model
+
+**This is the load-bearing change.** Option IDs are ordinary entries in
+`values`, not private renderer state:
+
+```js
+rotate.initialValues = { cx: 0, cy: 0, angle: '90', direction: 'clockwise' }
+reflect.initialValues = { mirrorValue: 2, mirror: 'vertical' }
+enlarge.initialValues = { cx: 0, cy: 0, scaleFactor: '2' }
+```
+
+Consequences, all of which are the point:
+
+- `value`, `defaultValue` and `onChange` carry the **complete** transformation
+  state, so a static exam figure can specify a reflection in `y = x`, a 180°
+  anticlockwise rotation or an enlargement by −1. With options held in renderer
+  state none of those figures could be authored at all.
+- Option buttons update through the **same atomic setter** as everything else,
+  so one tap emits one complete `onChange` and one announcement.
+- Enabling `negativeScaleFactor` no longer silently changes the default
+  enlargement to −2 just because it becomes the first entry in the list.
+
+`clampPresetValues` iterates declared `controls`, so string option values pass
+through untouched; `setControlValues` already forwards keys with no matching
+control unchanged.
+
+**Capability fallback.** A stored option may become unavailable when a
+capability is switched off. `resolveOptionValues(preset, values, capabilities)`
+returns the stored id when it is still offered and the group's first available
+choice otherwise. Both `derive` and the renderer's button state use it, so the
+scene and the UI can never disagree about which option is active.
+
+### Steppers appear only when they do something
+
+A visible control that changes a stored number the diagram ignores is worse
+than no control: it teaches the learner that their input has no reliable
+effect. Steppers are therefore resolved per state, not declared statically:
+
+- `reflect` shows the mirror-position stepper **only** for `vertical` and
+  `horizontal` mirrors. `y = x` and `y = −x` have no position to set.
+- `rotate` and `enlarge` show centre steppers **only** when `nonOriginCentre`
+  is enabled.
+
+Presets expose `resolveSteppers(values, capabilities)`; the renderer prefers it
+over the static `steppers` array.
+
+### Active-guide geometry is per preset
+
+The generic "straight line from vertex to image" guide is correct for
+translation and reflection and **mathematically wrong for rotation** — a direct
+A → A′ chord implies straight-line movement and explains nothing about turning
+about a centre. Each preset supplies its own:
+
+| Preset | Active guide |
 |---|---|
-| `diagonalMirrorLines` | `y = x` and `y = −x` mirror choices |
-| `nonOriginCentre` | whether the rotation/enlargement centre may leave the origin |
-| `fractionalScaleFactor` | scale factors of ½ and ¼ |
-| `negativeScaleFactor` | scale factors of −1 and −2 |
+| `translate` | vertex → image (the vector, drawn where it acts) |
+| `reflect` | vertex → image, perpendicular to the mirror |
+| `rotate` | centre → vertex **and** centre → image (equal radii about the centre) |
+| `enlarge` | a ray whose direction depends on the factor (below) |
 
-- [ ] **Step 1: Append the failing test**
+**Enlargement rays depend on the scale factor**, because a ray that always runs
+centre → image stops showing the relationship for factors that shrink or
+reverse:
 
-```js
-describe('transformation family', () => {
-  // A is (-1, 3); the enlargement object's A is (-1, 2).
-  it('translates with positive, negative and zero components', () => {
-    const positive = sceneFor('translate', { dx: 3, dy: 2 })
-    const negative = sceneFor('translate', { dx: -3, dy: -2 })
-    const zero = sceneFor('translate', { dx: 0, dy: 0 })
+| Factor | Ray | Why |
+|---|---|---|
+| `> 1` | centre → image | the image is the far end |
+| `0 < s < 1` | centre → original | the original is the far end |
+| `< 0` | original → image, through the centre | the crossing at the centre is the whole point |
 
-    expect(positive.points.find(p => p.id === 'image-a').x).toBe(2)
-    expect(negative.points.find(p => p.id === 'image-a').x).toBe(-4)
-    expect(zero.points.find(p => p.id === 'image-a').x).toBe(-1)
-  })
+### Image vertices resolve to their own pair
 
-  it('reflects in a vertical mirror line', () => {
-    const scene = sceneFor('reflect', { mirrorValue: 2 }, { choices: { mirror: 'vertical' } })
-    const imageA = scene.points.find(point => point.id === 'image-a')
-
-    expect(imageA.x).toBe(5)
-    expect(imageA.y).toBe(3)
-  })
-
-  it('offers diagonal mirror lines only when the tier allows them', () => {
-    const preset = resolveCoordinatePlanePreset('reflect')
-    const mirrorGroup = group => group.find(item => item.id === 'mirror')
-
-    const foundation = mirrorGroup(preset.resolveOptions({ diagonalMirrorLines: false }))
-    const higher = mirrorGroup(preset.resolveOptions({ diagonalMirrorLines: true }))
-
-    expect(foundation.choices.map(choice => choice.id))
-      .toEqual(['vertical', 'horizontal'])
-    expect(higher.choices.map(choice => choice.id))
-      .toEqual(['vertical', 'horizontal', 'yEqualsX', 'yEqualsNegativeX'])
-  })
-
-  it('rotates clockwise and anticlockwise through all three angles', () => {
-    const clockwise = sceneFor('rotate', { cx: 0, cy: 0 }, {
-      choices: { angle: '90', direction: 'clockwise' },
-    })
-    const anticlockwise = sceneFor('rotate', { cx: 0, cy: 0 }, {
-      choices: { angle: '90', direction: 'anticlockwise' },
-    })
-
-    expect(clockwise.points.find(p => p.id === 'image-a')).toMatchObject({ x: 3, y: 1 })
-    expect(anticlockwise.points.find(p => p.id === 'image-a')).toMatchObject({ x: -3, y: -1 })
-  })
-
-  it('rotates about a centre away from the origin when the tier allows it', () => {
-    const scene = sceneFor('rotate', { cx: 1, cy: 1 }, {
-      choices: { angle: '180', direction: 'clockwise' },
-      capabilities: { nonOriginCentre: true },
-    })
-
-    expect(scene.points.find(p => p.id === 'image-a')).toMatchObject({ x: 3, y: -1 })
-  })
-
-  it('pins the centre to the origin when the tier forbids moving it', () => {
-    const preset = resolveCoordinatePlanePreset('rotate')
-    const values = clampPresetValues(preset, { cx: 3, cy: 2 })
-    const scene = preset.derive(values, {
-      activeId: 'a',
-      showGuides: 'active',
-      capabilities: { nonOriginCentre: false },
-      choices: { angle: '180', direction: 'clockwise' },
-      axes: { x: preset.xAxis, y: preset.yAxis },
-    })
-
-    expect(scene.points.find(point => point.id === 'centre')).toMatchObject({ x: 0, y: 0 })
-  })
-
-  it('offers fractional and negative scale factors only when the tier allows', () => {
-    const preset = resolveCoordinatePlanePreset('enlarge')
-    const ids = capabilities => preset
-      .resolveOptions(capabilities)
-      .find(group => group.id === 'scaleFactor')
-      .choices.map(choice => choice.id)
-
-    expect(ids({})).toEqual(['2', '3'])
-    expect(ids({ fractionalScaleFactor: true })).toEqual(['0.5', '2', '3'])
-    expect(ids({ fractionalScaleFactor: true, negativeScaleFactor: true }))
-      .toEqual(['-2', '-1', '0.5', '2', '3'])
-  })
-
-  it('enlarges from a centre by the chosen scale factor', () => {
-    const scene = sceneFor('enlarge', { cx: 0, cy: 0 }, { choices: { scaleFactor: '2' } })
-    expect(scene.points.find(p => p.id === 'image-a')).toMatchObject({ x: -2, y: 4 })
-  })
-
-  it('labels image vertices with a prime', () => {
-    const scene = sceneFor('translate', { dx: 3, dy: 2 })
-    const imageA = scene.points.find(point => point.id === 'image-a')
-
-    expect(imageA.shortText).toBe("A'")
-    expect(imageA.text).toContain("A'")
-  })
-
-  it('refuses showGuides="all" so eight points never carry eight guide sets', () => {
-    for (const id of ['translate', 'reflect', 'rotate', 'enlarge']) {
-      expect(resolveCoordinatePlanePreset(id).supportsShowAllGuides).toBe(false)
-    }
-  })
-
-  it('keeps exactly one vertex active across the whole family', () => {
-    for (const id of ['translate', 'reflect', 'rotate', 'enlarge']) {
-      const scene = sceneFor(id, undefined, { activeId: 'b' })
-      const active = scene.points.filter(point => point.tier === 'active')
-
-      expect(active).toHaveLength(1)
-      expect(active[0].id).toBe('b')
-    }
-  })
-})
-```
-
-- [ ] **Step 2: Run the test to verify it fails**
-
-Run: `./node_modules/.bin/vitest run --project unit tests/unit/coordinatePlanePresets.test.js -t transformation`
-
-Expected: FAIL — presets not registered.
-
-- [ ] **Step 3: Write the transformation module**
-
-Create `src/components/learning/coordinatePlane/presets/transformations.js`:
+Image points carry ids like `image-b`, while the object and image vertex arrays
+are keyed `a`, `b`, `c`. Looking up the raw `activeId` therefore fails for any
+image vertex — the status silently falls back to A and no active guide is
+drawn. Normalise before lookup:
 
 ```js
-// ─── Presets: translate, reflect, rotate, enlarge ────────────────────────────
-//
-// One factory supplies the object polygon, the A → A' vertex labelling and the
-// coordinate-pair status. Each preset then contributes only its own rule
-// geometry and controls, which is where the four genuinely differ.
-//
-// Every preset here sets supportsShowAllGuides: false. Eight labelled points
-// each carrying guide lines is precisely the unreadable figure the annotation
-// contract exists to prevent.
-//
-// Tier capability is data-driven: resolveOptions(capabilities) returns only the
-// choices this tier may use. Unavailable options are absent, never
-// disabled-and-visible.
-
-import {
-  enlargePoint,
-  formatCoordinate,
-  reflectPoint,
-  rotatePoint,
-  translatePoint,
-} from '../coordinatePlaneMath.js'
-import { snapToStep } from '../coordinatePlaneGeometry.js'
-
-const MINUS = '−'
-
-function signed(value) {
-  return String(value).replace('-', MINUS)
-}
-
-// The object triangle for translate, reflect and rotate.
-//
-// Coordinates and MODEL ranges are chosen together so the IMAGE also stays
-// inside the axes at every accepted value — a figure half off the plot teaches
-// nothing. tests/architecture/coordinate-plane-visible-bounds.test.js drives
-// the model range to its extremes, so widening either without rechecking fails.
-//
-// The axes are ±10 rather than ±8 so the model range can sit genuinely wider
-// than the interaction range. At ±8 visibility would bind first and the model
-// limit would collapse back onto the interaction limit — which is the silent
-// clamp the two-range contract exists to prevent.
-//
-// Worst cases on the ±10 axes, using model ranges:
-//   translate  image = p + d,        |p|∞ ≤ 3, d ∈ [−7,10]×[−8,7] → ≤ 10
-//   reflect    image = 2a − p,       |a| ≤ 3, |p|∞ ≤ 3            → ≤ 9
-//   rotate     image = c + R(p − c), |c|∞ ≤ 3                     → ≤ 9
-//   enlarge    image = (1−s)c + s·p, |c|∞ ≤ 2, |p|∞ ≤ 2, |s| ≤ 3  → ≤ 10
-const OBJECT_VERTICES = [
-  { id: 'a', letter: 'A', x: -1, y: 3 },
-  { id: 'b', letter: 'B', x: -3, y: 0 },
-  { id: 'c', letter: 'C', x: 0, y: -2 },
-]
-
-// Enlargement multiplies distance from the centre, so it needs a smaller object
-// to stay on the same axes: image = (1 − s)c + s·p, and with |s| ≤ 3, |c|∞ ≤ 1
-// and |p|∞ ≤ 2 the worst case is |−2c + 3p| ≤ 2 + 6 = 8.
-const ENLARGE_OBJECT_VERTICES = [
-  { id: 'a', letter: 'A', x: -1, y: 2 },
-  { id: 'b', letter: 'B', x: -2, y: 0 },
-  { id: 'c', letter: 'C', x: 0, y: -1 },
-]
-
-// Wide enough for every image above, with unit gridlines but labels every 2 so
-// a 21-unit axis stays legible at 390px.
-const TRANSFORM_AXIS = { min: -10, max: 10, step: 2 }
-const TRANSFORM_GRID = { xSubdivisions: 2, ySubdivisions: 2 }
-
-function polygonPath(vertices) {
-  return `${vertices.map((v, i) => `${i === 0 ? 'M' : 'L'} ${v.x} ${v.y}`).join(' ')} Z`
-}
-
-function createTransformationPreset({
-  id,
-  accessibilityLabel,
-  keyFact,
-  instruction,
-  capabilities,
-  initialValues,
-  controls = [],
-  steppers = [],
-  vertices = OBJECT_VERTICES,
-  optionGroups = () => [],
-  transform,
-  ruleShapes = () => [],
-  rulePoints = () => [],
-  statusFor,
-  describeFor,
-}) {
-  return {
-    id,
-    accessibilityLabel,
-    keyFact,
-    instruction,
-    interactive: true,
-    // Eight labelled points — 'all' would be unreadable, so it is refused.
-    supportsShowAllGuides: false,
-
-    canvas: { width: 360, height: 340 },
-    padding: { top: 24, right: 28, bottom: 40, left: 40 },
-    xAxis: { ...TRANSFORM_AXIS },
-    yAxis: { ...TRANSFORM_AXIS },
-    grid: { ...TRANSFORM_GRID },
-
-    focusModes: [],
-    defaultFocus: null,
-    defaultActiveId: 'a',
-    capabilities,
-    initialValues,
-    controls,
-    steppers,
-
-    resolveOptions(resolvedCapabilities) {
-      return optionGroups(resolvedCapabilities ?? {})
-    },
-
-    derive(values, context) {
-      const { activeId, showGuides, capabilities: caps = {}, choices = {} } = context
-      const image = vertices.map(vertex => ({
-        ...vertex,
-        ...transform(vertex, values, choices, caps),
-      }))
-
-      const shapes = [
-        {
-          id: 'object',
-          path: polygonPath(vertices),
-          fillRole: 'objectFill',
-          strokeRole: 'object',
-          modelPath: true,
-        },
-        {
-          id: 'image',
-          path: polygonPath(image),
-          fillRole: 'imageFill',
-          strokeRole: 'image',
-          modelPath: true,
-        },
-        ...ruleShapes(values, choices, caps, { object: vertices, image }),
-      ]
-
-      // Exactly one vertex is Active; every other labelled point is Related.
-      const tierFor = vertexId => {
-        if (showGuides === 'none') return 'related'
-        return activeId === vertexId ? 'active' : 'related'
-      }
-
-      const points = [
-        ...vertices.map(vertex => ({
-          id: vertex.id,
-          x: vertex.x,
-          y: vertex.y,
-          text: `${vertex.letter} ${formatCoordinate(vertex)}`,
-          shortText: vertex.letter,
-          role: 'object',
-          tier: tierFor(vertex.id),
-          focusable: true,
-        })),
-        ...image.map(vertex => ({
-          id: `image-${vertex.id}`,
-          x: vertex.x,
-          y: vertex.y,
-          text: `${vertex.letter}' ${formatCoordinate(vertex)}`,
-          shortText: `${vertex.letter}'`,
-          role: 'image',
-          tier: tierFor(`image-${vertex.id}`),
-          focusable: true,
-        })),
-        ...rulePoints(values, choices, caps),
-      ]
-
-      const activeVertex = vertices.find(vertex => vertex.id === activeId)
-      const activeImage = image.find(vertex => vertex.id === activeId)
-      const guides = activeVertex && showGuides !== 'none'
-        ? [{
-            id: 'movement',
-            from: { x: activeVertex.x, y: activeVertex.y },
-            to: { x: activeImage.x, y: activeImage.y },
-            role: 'ruleLine',
-          }]
-        : []
-
-      return {
-        shapes,
-        points,
-        guides,
-        handles: [],
-        status: statusFor(values, choices, caps, { object: vertices, image, activeId }),
-      }
-    },
-
-    describe(values, context = {}) {
-      const image = vertices.map(vertex => ({
-        ...vertex,
-        ...transform(vertex, values, context.choices ?? {}, context.capabilities ?? {}),
-      }))
-      const objectText = vertices
-        .map(vertex => `${vertex.letter} ${formatCoordinate(vertex)}`)
-        .join(', ')
-      const imageText = image
-        .map(vertex => `${vertex.letter}' ${formatCoordinate(vertex)}`)
-        .join(', ')
-
-      return `Triangle ABC with vertices at ${objectText}, ${describeFor(values, context.choices ?? {})} to give ${imageText}.`
-    },
-  }
-}
-
-function vertexPairLines(object, image, activeId) {
-  const vertex = object.find(item => item.id === activeId) ?? object[0]
-  const paired = image.find(item => item.id === vertex.id)
-  return [`${vertex.letter} ${formatCoordinate(vertex)} → ${vertex.letter}' ${formatCoordinate(paired)}`]
-}
-
-// ─── translate ───────────────────────────────────────────────────────────────
-
-export const translatePreset = createTransformationPreset({
-  id: 'translate',
-  accessibilityLabel: 'Coordinate plane showing a translation by a column vector',
-  keyFact: 'A translation slides every point by the same vector.',
-  instruction: 'Change the vector and watch every vertex slide by the same amount.',
-  capabilities: {},
-  initialValues: { dx: 3, dy: 2 },
-  controls: [
-    {
-      id: 'dx',
-      label: 'Vector across',
-      min: -7,
-      max: 10,
-      interactionMin: -4,
-      interactionMax: 4,
-      step: 1,
-      valueText: values => `across ${values.dx}`,
-      valueFromPointer: point => snapToStep(point.modelX, 1),
-    },
-    {
-      id: 'dy',
-      label: 'Vector up',
-      min: -8,
-      max: 7,
-      interactionMin: -4,
-      interactionMax: 4,
-      step: 1,
-      valueText: values => `up ${values.dy}`,
-      valueFromPointer: point => snapToStep(point.modelY, 1),
-    },
-  ],
-  // The two components belong together, so they share one stepper row.
-  steppers: [
-    { controlId: 'dx', label: 'Across', group: 'vector' },
-    { controlId: 'dy', label: 'Up', group: 'vector' },
-  ],
-  transform: (vertex, values) => translatePoint(vertex, { dx: values.dx, dy: values.dy }),
-  statusFor: (values, _choices, _caps, { object, image, activeId }) => ({
-    heading: `Vector (${signed(values.dx)}, ${signed(values.dy)})`,
-    calculation: vertexPairLines(object, image, activeId),
-    explanation: values.dx === 0 && values.dy === 0
-      ? 'A zero vector leaves the shape exactly where it was.'
-      : 'Every vertex moves by the same vector, so the shape keeps its size and orientation.',
-  }),
-  describeFor: values => `translated by the vector (${signed(values.dx)}, ${signed(values.dy)})`,
-})
-
-// ─── reflect ─────────────────────────────────────────────────────────────────
-
-const MIRROR_CHOICES = {
-  vertical: { id: 'vertical', label: 'x = a' },
-  horizontal: { id: 'horizontal', label: 'y = b' },
-  yEqualsX: { id: 'yEqualsX', label: 'y = x' },
-  yEqualsNegativeX: { id: 'yEqualsNegativeX', label: 'y = −x' },
-}
-
-function mirrorFrom(choices, values) {
-  const type = choices.mirror ?? 'vertical'
-  return { type, value: values.mirrorValue }
-}
-
-function mirrorLabel(mirror) {
-  if (mirror.type === 'vertical') return `x = ${signed(mirror.value)}`
-  if (mirror.type === 'horizontal') return `y = ${signed(mirror.value)}`
-  return mirror.type === 'yEqualsX' ? 'y = x' : `y = ${MINUS}x`
-}
-
-export const reflectPreset = createTransformationPreset({
-  id: 'reflect',
-  accessibilityLabel: 'Coordinate plane showing a reflection in a mirror line',
-  keyFact: 'Each point and its image sit the same distance from the mirror line.',
-  instruction: 'Choose a mirror line and watch each vertex flip across it.',
-  capabilities: { diagonalMirrorLines: true },
-  initialValues: { mirrorValue: 2 },
-  controls: [
-    {
-      id: 'mirrorValue',
-      label: 'Mirror line position',
-      min: -3,
-      max: 3,
-      interactionMin: -2,
-      interactionMax: 2,
-      step: 1,
-      valueText: values => `mirror at ${values.mirrorValue}`,
-      valueFromPointer: point => snapToStep(point.modelX, 1),
-    },
-  ],
-  steppers: [{ controlId: 'mirrorValue', label: 'Mirror position' }],
-  optionGroups: capabilities => [{
-    id: 'mirror',
-    label: 'Choose a mirror line',
-    choices: [
-      MIRROR_CHOICES.vertical,
-      MIRROR_CHOICES.horizontal,
-      ...(capabilities.diagonalMirrorLines
-        ? [MIRROR_CHOICES.yEqualsX, MIRROR_CHOICES.yEqualsNegativeX]
-        : []),
-    ],
-  }],
-  transform: (vertex, values, choices) => reflectPoint(vertex, mirrorFrom(choices, values)),
-  ruleShapes: (values, choices, _caps, _scene) => {
-    const mirror = mirrorFrom(choices, values)
-    const path = mirror.type === 'vertical'
-      ? `M ${mirror.value} -6 L ${mirror.value} 6`
-      : mirror.type === 'horizontal'
-        ? `M -6 ${mirror.value} L 6 ${mirror.value}`
-        : mirror.type === 'yEqualsX'
-          ? 'M -6 -6 L 6 6'
-          : 'M -6 6 L 6 -6'
-
-    return [{ id: 'mirror-line', path, strokeRole: 'ruleLine', dashed: true, modelPath: true }]
-  },
-  statusFor: (values, choices, _caps, { object, image, activeId }) => ({
-    heading: `Reflection in ${mirrorLabel(mirrorFrom(choices, values))}`,
-    calculation: vertexPairLines(object, image, activeId),
-    explanation: 'Each point keeps its perpendicular distance from the mirror line, but lands on the other side.',
-  }),
-  describeFor: (values, choices) => `reflected in the line ${mirrorLabel(mirrorFrom(choices, values))}`,
-})
-
-// ─── rotate ──────────────────────────────────────────────────────────────────
-
-function centreFrom(values, capabilities) {
-  return capabilities.nonOriginCentre
-    ? { x: values.cx, y: values.cy }
-    : { x: 0, y: 0 }
-}
-
-export const rotatePreset = createTransformationPreset({
-  id: 'rotate',
-  accessibilityLabel: 'Coordinate plane showing a rotation about a centre',
-  keyFact: 'A rotation turns every point about a centre through the same angle.',
-  instruction: 'Choose an angle and direction, then watch the shape turn.',
-  capabilities: { nonOriginCentre: true },
-  initialValues: { cx: 0, cy: 0 },
-  controls: [
-    {
-      id: 'cx',
-      label: 'Centre x',
-      min: -3,
-      max: 3,
-      interactionMin: -2,
-      interactionMax: 2,
-      step: 1,
-      valueText: values => `centre x ${values.cx}`,
-      valueFromPointer: point => snapToStep(point.modelX, 1),
-    },
-    {
-      id: 'cy',
-      label: 'Centre y',
-      min: -3,
-      max: 3,
-      interactionMin: -2,
-      interactionMax: 2,
-      step: 1,
-      valueText: values => `centre y ${values.cy}`,
-      valueFromPointer: point => snapToStep(point.modelY, 1),
-    },
-  ],
-  steppers: [
-    { controlId: 'cx', label: 'Centre x', group: 'centre' },
-    { controlId: 'cy', label: 'Centre y', group: 'centre' },
-  ],
-  optionGroups: () => [
-    {
-      id: 'angle',
-      label: 'Choose an angle',
-      choices: [
-        { id: '90', label: '90°' },
-        { id: '180', label: '180°' },
-        { id: '270', label: '270°' },
-      ],
-    },
-    {
-      id: 'direction',
-      label: 'Choose a direction',
-      choices: [
-        { id: 'clockwise', label: 'Clockwise' },
-        { id: 'anticlockwise', label: 'Anticlockwise' },
-      ],
-    },
-  ],
-  transform: (vertex, values, choices, capabilities) => rotatePoint(
-    vertex,
-    centreFrom(values, capabilities),
-    Number(choices.angle ?? 90),
-    choices.direction ?? 'clockwise',
-  ),
-  rulePoints: (values, _choices, capabilities) => {
-    const centre = centreFrom(values, capabilities)
-    return [{
-      id: 'centre',
-      ...centre,
-      text: `Centre ${formatCoordinate(centre)}`,
-      shortText: 'O',
-      role: 'ruleLine',
-      tier: 'context',
-      focusable: false,
-    }]
-  },
-  statusFor: (values, choices, capabilities, { object, image, activeId }) => {
-    const centre = centreFrom(values, capabilities)
-    const direction = choices.direction ?? 'clockwise'
-    return {
-      heading: `${choices.angle ?? 90}° ${direction} about ${formatCoordinate(centre)}`,
-      calculation: vertexPairLines(object, image, activeId),
-      explanation: 'Every point turns through the same angle about the centre, so distances from the centre are unchanged.',
-    }
-  },
-  describeFor: (values, choices) => `rotated ${choices.angle ?? 90} degrees ${choices.direction ?? 'clockwise'}`,
-})
-
-// ─── enlarge ─────────────────────────────────────────────────────────────────
-
-const SCALE_CHOICES = {
-  '-2': { id: '-2', label: `${MINUS}2` },
-  '-1': { id: '-1', label: `${MINUS}1` },
-  '0.5': { id: '0.5', label: '½' },
-  2: { id: '2', label: '2' },
-  3: { id: '3', label: '3' },
-}
-
-export const enlargePreset = createTransformationPreset({
-  id: 'enlarge',
-  accessibilityLabel: 'Coordinate plane showing an enlargement from a centre',
-  keyFact: 'An enlargement multiplies every distance from the centre by the scale factor.',
-  instruction: 'Choose a scale factor and follow the rays out from the centre.',
-  capabilities: { nonOriginCentre: true, fractionalScaleFactor: false, negativeScaleFactor: false },
-  initialValues: { cx: 0, cy: 0 },
-  controls: [
-    {
-      id: 'cx',
-      label: 'Centre x',
-      min: -2,
-      max: 2,
-      interactionMin: -1,
-      interactionMax: 1,
-      step: 1,
-      valueText: values => `centre x ${values.cx}`,
-      valueFromPointer: point => snapToStep(point.modelX, 1),
-    },
-    {
-      id: 'cy',
-      label: 'Centre y',
-      min: -2,
-      max: 2,
-      interactionMin: -1,
-      interactionMax: 1,
-      step: 1,
-      valueText: values => `centre y ${values.cy}`,
-      valueFromPointer: point => snapToStep(point.modelY, 1),
-    },
-  ],
-  steppers: [
-    { controlId: 'cx', label: 'Centre x', group: 'centre' },
-    { controlId: 'cy', label: 'Centre y', group: 'centre' },
-  ],
-  vertices: ENLARGE_OBJECT_VERTICES,
-  optionGroups: capabilities => [{
-    id: 'scaleFactor',
-    label: 'Choose a scale factor',
-    choices: [
-      ...(capabilities.negativeScaleFactor ? [SCALE_CHOICES['-2'], SCALE_CHOICES['-1']] : []),
-      ...(capabilities.fractionalScaleFactor ? [SCALE_CHOICES['0.5']] : []),
-      SCALE_CHOICES[2],
-      SCALE_CHOICES[3],
-    ],
-  }],
-  transform: (vertex, values, choices, capabilities) => enlargePoint(
-    vertex,
-    centreFrom(values, capabilities),
-    Number(choices.scaleFactor ?? 2),
-  ),
-  ruleShapes: (values, _choices, capabilities, { object, image }) => {
-    const centre = centreFrom(values, capabilities)
-    return object.map((vertex, index) => ({
-      id: `ray-${vertex.id}`,
-      path: `M ${centre.x} ${centre.y} L ${image[index].x} ${image[index].y}`,
-      strokeRole: 'ruleLine',
-      dashed: true,
-      strokeWidth: 1,
-      modelPath: true,
-    }))
-  },
-  rulePoints: (values, _choices, capabilities) => {
-    const centre = centreFrom(values, capabilities)
-    return [{
-      id: 'centre',
-      ...centre,
-      text: `Centre ${formatCoordinate(centre)}`,
-      shortText: 'O',
-      role: 'ruleLine',
-      tier: 'context',
-      focusable: false,
-    }]
-  },
-  statusFor: (values, choices, capabilities, { object, image, activeId }) => {
-    const factor = Number(choices.scaleFactor ?? 2)
-    const centre = centreFrom(values, capabilities)
-    const explanation = factor < 0
-      ? 'A negative scale factor sends every point through the centre to the opposite side.'
-      : factor < 1
-        ? 'A scale factor below 1 still counts as an enlargement — the image is simply smaller.'
-        : 'Every distance from the centre is multiplied by the scale factor.'
-
-    return {
-      heading: `Scale factor ${signed(factor)} from ${formatCoordinate(centre)}`,
-      calculation: vertexPairLines(object, image, activeId),
-      explanation,
-    }
-  },
-  describeFor: (values, choices) => `enlarged by scale factor ${signed(Number(choices.scaleFactor ?? 2))}`,
-})
+const pairId = activeId?.replace(/^image-/, '')
 ```
 
-- [ ] **Step 4: Wire capability-filtered options into the renderer**
+`b` and `image-b` must both resolve the B → B′ pair.
 
-Presets in this family compute their options from capabilities, so the
-renderer can no longer read `presetConfig.options` directly.
+### Tier capability is data-driven
 
-**Ordering matters here.** The `choices` state is declared near the top of the
-component, before the `capabilities` memo exists, so it cannot be seeded from
-the resolved options. Seed it empty instead and resolve each group's default at
-read time.
-
-First, in `src/components/learning/CoordinatePlaneExplore.jsx`, replace the
-`choices` state declaration:
-
-```jsx
-  const [choices, setChoices] = useState({})
+```js
+difficultyCapabilities={{
+  fractionalScaleFactor: true,   // adds ¼ and ½
+  negativeScaleFactor: false,    // adds −1 and −2
+  nonOriginCentre: true,         // centre may leave the origin
+  diagonalMirrorLines: true,     // adds y = x and y = −x
+}}
 ```
 
-Then replace the two `setChoices(...)` lines in the reset effect with:
+Capabilities constrain the *options offered*. Unavailable options are absent,
+never disabled-and-visible. The fractional set is **¼ and ½**, matching the
+capability contract.
 
-```jsx
-    setChoices({})
-```
+- [ ] **Step 1: Move option state into the value model (renderer)**
 
-Next, add this immediately after the `capabilities` memo:
+In `src/components/learning/CoordinatePlaneExplore.jsx`:
+
+Delete the `choices` state and its reset, and the `chosen(group)` helper.
+Replace the `resolvedOptions` memo and derive context with:
 
 ```jsx
   const resolvedOptions = useMemo(
@@ -5305,62 +4737,313 @@ Next, add this immediately after the `capabilities` memo:
     [presetConfig, capabilities],
   )
 
-  // A group falls back to its first choice until the learner picks one, so a
-  // capability change that removes the selected option cannot strand the
-  // diagram on a choice this tier no longer offers.
-  const chosen = (group) => {
-    const selected = choices[group.id]
-    return group.choices.some(choice => choice.id === selected)
-      ? selected
-      : group.choices[0].id
-  }
+  // Option ids live in `values`, so value / defaultValue / onChange carry the
+  // complete state and a static figure can select any option. A stored id that
+  // a capability change has removed falls back to the first still-offered
+  // choice, so the scene and the buttons can never disagree.
+  const optionValues = useMemo(
+    () => resolveOptionValues(presetConfig, currentValues, capabilities),
+    [presetConfig, currentValues, capabilities],
+  )
 ```
 
-Pass the resolved choices into `derive` by replacing the `choices` entry in
-`deriveContext`:
+Pass `choices: optionValues` in `deriveContext` (presets keep reading
+`choices`, so preset code is unchanged by this move).
+
+Option buttons go through the atomic setter:
 
 ```jsx
-    choices: Object.fromEntries(resolvedOptions.map(group => [group.id, chosen(group)])),
+              onClick={() => setControlValues(
+                { [group.id]: choice.id },
+                { announce: true },
+              )}
+              aria-pressed={optionValues[group.id] === choice.id}
 ```
 
-Finally, in the discrete-choices block, map over `resolvedOptions` instead of
-`presetConfig.options ?? []`, and replace both `choices[group.id] === choice.id`
-comparisons with `chosen(group) === choice.id`.
+Steppers resolve per state:
 
-- [ ] **Step 5: Register all four presets**
+```jsx
+  const activeSteppers = useMemo(
+    () => presetConfig.resolveSteppers?.(currentValues, capabilities)
+      ?? presetConfig.steppers
+      ?? [],
+    [presetConfig, currentValues, capabilities],
+  )
+```
+
+and `stepperRows` is built from `activeSteppers` rather than
+`presetConfig.steppers`.
+
+- [ ] **Step 2: Add `resolveOptionValues` to the registry**
 
 In `presets/index.js`:
 
 ```js
-import {
-  enlargePreset,
-  reflectPreset,
-  rotatePreset,
-  translatePreset,
-} from './transformations.js'
+/**
+ * The option id in force for each group.
+ *
+ * Reads from `values`, so option state is part of the public value model and a
+ * static figure can select any option. Falls back to the first still-offered
+ * choice when a capability change has removed the stored one — without this a
+ * disabled capability would leave the scene pointing at an option the learner
+ * can no longer see.
+ */
+export function resolveOptionValues(preset, values, capabilities) {
+  const groups = preset.resolveOptions?.(capabilities) ?? preset.options ?? []
+  return Object.fromEntries(groups.map((group) => {
+    const stored = values?.[group.id]
+    const offered = group.choices.some(choice => choice.id === stored)
+    return [group.id, offered ? stored : group.choices[0].id]
+  }))
+}
 ```
+
+- [ ] **Step 3: Write the failing tests**
+
+Append to `tests/unit/coordinatePlanePresets.test.js`:
 
 ```js
-  translate: translatePreset,
-  reflect: reflectPreset,
-  rotate: rotatePreset,
-  enlarge: enlargePreset,
+describe('transformation option state', () => {
+  it('reads option selections from values, so static figures can set them', () => {
+    const scene = sceneFor('reflect', { mirrorValue: 2, mirror: 'yEqualsX' })
+    const imageA = scene.points.find(point => point.id === 'image-a')
+
+    // A(−1, 3) reflected in y = x is (3, −1).
+    expect(imageA).toMatchObject({ x: 3, y: -1 })
+    expect(scene.status.heading).toContain('y = x')
+  })
+
+  it('selects a non-default rotation entirely from values', () => {
+    const scene = sceneFor('rotate', { cx: 0, cy: 0, angle: '180', direction: 'anticlockwise' })
+    expect(scene.points.find(point => point.id === 'image-a')).toMatchObject({ x: 1, y: -3 })
+    expect(scene.status.heading).toContain('180°')
+  })
+
+  it('keeps the default enlargement at 2 when negatives are enabled', () => {
+    const preset = resolveCoordinatePlanePreset('enlarge')
+    const capabilities = mergeCapabilities(preset, { negativeScaleFactor: true })
+
+    expect(resolveOptionValues(preset, preset.initialValues, capabilities).scaleFactor)
+      .toBe('2')
+  })
+
+  it('falls back to a valid option when a capability removes the stored one', () => {
+    const preset = resolveCoordinatePlanePreset('reflect')
+    const values = { mirrorValue: 0, mirror: 'yEqualsX' }
+    const capabilities = mergeCapabilities(preset, { diagonalMirrorLines: false })
+
+    expect(resolveOptionValues(preset, values, capabilities).mirror).toBe('vertical')
+  })
+})
+
+describe('transformation stepper relevance', () => {
+  it('hides the mirror position for diagonal mirror lines', () => {
+    const preset = resolveCoordinatePlanePreset('reflect')
+    const ids = (mirror) => preset
+      .resolveSteppers({ mirrorValue: 0, mirror }, mergeCapabilities(preset, {}))
+      .map(item => item.controlId)
+
+    expect(ids('vertical')).toEqual(['mirrorValue'])
+    expect(ids('horizontal')).toEqual(['mirrorValue'])
+    expect(ids('yEqualsX')).toEqual([])
+    expect(ids('yEqualsNegativeX')).toEqual([])
+  })
+
+  it('hides centre steppers when the centre cannot leave the origin', () => {
+    for (const id of ['rotate', 'enlarge']) {
+      const preset = resolveCoordinatePlanePreset(id)
+      const off = preset.resolveSteppers(preset.initialValues,
+        mergeCapabilities(preset, { nonOriginCentre: false }))
+      const on = preset.resolveSteppers(preset.initialValues,
+        mergeCapabilities(preset, { nonOriginCentre: true }))
+
+      expect(off, `${id} with a fixed centre`).toEqual([])
+      expect(on.map(item => item.controlId)).toEqual(['cx', 'cy'])
+    }
+  })
+})
+
+describe('transformation vertex pairing', () => {
+  it('resolves an image vertex to its own pair, not to A', () => {
+    const object = sceneFor('translate', { dx: 3, dy: 2, }, { activeId: 'b' })
+    const image = sceneFor('translate', { dx: 3, dy: 2 }, { activeId: 'image-b' })
+
+    expect(object.status.calculation[0]).toContain('B')
+    expect(image.status.calculation[0]).toContain('B')
+    expect(image.status.calculation[0]).toBe(object.status.calculation[0])
+  })
+
+  it('emits an active guide when an image vertex is selected', () => {
+    const scene = sceneFor('translate', { dx: 3, dy: 2 }, { activeId: 'image-c' })
+
+    expect(scene.guides.length).toBeGreaterThan(0)
+    expect(scene.points.filter(point => point.tier === 'active')).toHaveLength(1)
+    expect(scene.points.find(point => point.tier === 'active').id).toBe('image-c')
+  })
+})
+
+describe('transformation rule geometry', () => {
+  it('draws rotation guides from the centre, not vertex to image', () => {
+    const scene = sceneFor('rotate',
+      { cx: 1, cy: 1, angle: '90', direction: 'clockwise' },
+      { activeId: 'a', capabilities: { nonOriginCentre: true } })
+
+    // Two radii about the centre, not one chord.
+    expect(scene.guides).toHaveLength(2)
+    for (const guide of scene.guides) {
+      expect(guide.from).toEqual({ x: 1, y: 1 })
+    }
+  })
+
+  it('points the enlargement ray at whichever end is further from the centre', () => {
+    const grow = sceneFor('enlarge', { cx: 0, cy: 0, scaleFactor: '3' },
+      { capabilities: { fractionalScaleFactor: true, negativeScaleFactor: true } })
+    const shrink = sceneFor('enlarge', { cx: 0, cy: 0, scaleFactor: '0.25' },
+      { capabilities: { fractionalScaleFactor: true, negativeScaleFactor: true } })
+    const flip = sceneFor('enlarge', { cx: 0, cy: 0, scaleFactor: '-2' },
+      { capabilities: { fractionalScaleFactor: true, negativeScaleFactor: true } })
+
+    const rayFor = scene => scene.shapes.find(shape => shape.id === 'ray-a')
+
+    // Growing: centre out to the image.
+    expect(rayFor(grow).path).toBe('M 0 0 L -3 6')
+    // Shrinking: centre out to the original, which is now the far end.
+    expect(rayFor(shrink).path).toBe('M 0 0 L -1 2')
+    // Negative: original through the centre to the image.
+    expect(rayFor(flip).path).toBe('M -1 2 L 2 -4')
+  })
+
+  it('offers a quarter scale factor when fractional factors are enabled', () => {
+    const preset = resolveCoordinatePlanePreset('enlarge')
+    const ids = capabilities => preset
+      .resolveOptions(mergeCapabilities(preset, capabilities))
+      .find(group => group.id === 'scaleFactor')
+      .choices.map(choice => choice.id)
+
+    expect(ids({})).toEqual(['2', '3'])
+    expect(ids({ fractionalScaleFactor: true })).toEqual(['0.25', '0.5', '2', '3'])
+    expect(ids({ fractionalScaleFactor: true, negativeScaleFactor: true }))
+      .toEqual(['-2', '-1', '0.25', '0.5', '2', '3'])
+  })
+
+  it('names the centre in rotation and enlargement descriptions', () => {
+    const rotate = resolveCoordinatePlanePreset('rotate')
+      .describe({ cx: 1, cy: -1, angle: '90', direction: 'clockwise' },
+        { capabilities: { nonOriginCentre: true }, choices: { angle: '90', direction: 'clockwise' } })
+    const enlarge = resolveCoordinatePlanePreset('enlarge')
+      .describe({ cx: 1, cy: 1, scaleFactor: '2' },
+        { capabilities: { nonOriginCentre: true }, choices: { scaleFactor: '2' } })
+
+    expect(rotate).toContain('(1, −1)')
+    expect(enlarge).toContain('(1, 1)')
+  })
+})
+
+describe('transformation coverage', () => {
+  it('translates with positive, negative and zero components', () => {
+    expect(sceneFor('translate', { dx: 3, dy: 2 })
+      .points.find(p => p.id === 'image-a')).toMatchObject({ x: 2, y: 5 })
+    expect(sceneFor('translate', { dx: -3, dy: -2 })
+      .points.find(p => p.id === 'image-a')).toMatchObject({ x: -4, y: 1 })
+    expect(sceneFor('translate', { dx: 0, dy: 0 })
+      .points.find(p => p.id === 'image-a')).toMatchObject({ x: -1, y: 3 })
+  })
+
+  it('reflects in all four mirror lines', () => {
+    const at = mirror => sceneFor('reflect', { mirrorValue: 2, mirror })
+      .points.find(p => p.id === 'image-a')
+
+    expect(at('vertical')).toMatchObject({ x: 5, y: 3 })
+    expect(at('horizontal')).toMatchObject({ x: -1, y: 1 })
+    expect(at('yEqualsX')).toMatchObject({ x: 3, y: -1 })
+    expect(at('yEqualsNegativeX')).toMatchObject({ x: -3, y: 1 })
+  })
+
+  it('rotates through every angle in both directions', () => {
+    const at = (angle, direction) => sceneFor('rotate',
+      { cx: 0, cy: 0, angle, direction }).points.find(p => p.id === 'image-a')
+
+    expect(at('90', 'clockwise')).toMatchObject({ x: 3, y: 1 })
+    expect(at('90', 'anticlockwise')).toMatchObject({ x: -3, y: -1 })
+    expect(at('180', 'clockwise')).toMatchObject({ x: 1, y: -3 })
+    expect(at('180', 'anticlockwise')).toMatchObject({ x: 1, y: -3 })
+    expect(at('270', 'clockwise')).toMatchObject({ x: -3, y: -1 })
+    expect(at('270', 'anticlockwise')).toMatchObject({ x: 3, y: 1 })
+  })
+
+  it('enlarges by every offered scale factor', () => {
+    const caps = { fractionalScaleFactor: true, negativeScaleFactor: true }
+    const at = scaleFactor => sceneFor('enlarge',
+      { cx: 0, cy: 0, scaleFactor }, { capabilities: caps })
+      .points.find(p => p.id === 'image-a')
+
+    expect(at('0.25')).toMatchObject({ x: -0.25, y: 0.5 })
+    expect(at('0.5')).toMatchObject({ x: -0.5, y: 1 })
+    expect(at('2')).toMatchObject({ x: -2, y: 4 })
+    expect(at('3')).toMatchObject({ x: -3, y: 6 })
+    expect(at('-1')).toMatchObject({ x: 1, y: -2 })
+    expect(at('-2')).toMatchObject({ x: 2, y: -4 })
+  })
+
+  it('refuses the broader annotation policy across the family', () => {
+    for (const id of ['translate', 'reflect', 'rotate', 'enlarge']) {
+      expect(resolveCoordinatePlanePreset(id).supportsShowAllGuides).toBe(false)
+    }
+  })
+})
 ```
 
-- [ ] **Step 6: Run the tests**
+- [ ] **Step 4: Run the tests to verify they fail**
 
 Run: `./node_modules/.bin/vitest run --project unit tests/unit/coordinatePlanePresets.test.js`
 
-Expected: PASS — 66 tests.
+Expected: FAIL — the presets are not registered yet.
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 5: Write the transformation module**
+
+Create `src/components/learning/coordinatePlane/presets/transformations.js`.
+
+The factory takes `vertices`, `steppers` (or `resolveSteppers`), `activeGuides`
+and the usual scene builders. Each preset supplies its own rule geometry and
+active-guide geometry; nothing generic is assumed about how a transformation
+moves a point.
+
+Key structural requirements, each pinned by a test above:
+
+1. `OBJECT_VERTICES` is `A(−1, 3)`, `B(−3, 0)`, `C(0, −2)`;
+   `ENLARGE_OBJECT_VERTICES` is `A(−1, 2)`, `B(−2, 0)`, `C(0, −1)`.
+   `TRANSFORM_AXIS` is `{ min: -8, max: 8, step: 2 }` with
+   `{ xSubdivisions: 2, ySubdivisions: 2 }`.
+2. Option ids live in `initialValues`; presets read them from `choices`, which
+   the renderer resolves from `values`.
+3. `resolveSteppers(values, capabilities)` returns only steppers that do
+   something in the current state.
+4. `activeGuides(values, choices, capabilities, { object, image, pairId })`
+   returns that preset's own guide geometry.
+5. Active-vertex lookup normalises `image-` prefixes:
+   `const pairId = activeId?.replace(/^image-/, '')`.
+6. Scale factor choices, in order: `−2`, `−1` (negatives), `¼`, `½`
+   (fractional), then `2`, `3`.
+
+- [ ] **Step 6: Register all four presets**
+
+In `presets/index.js`, import and register `translate`, `reflect`, `rotate`,
+`enlarge`.
+
+- [ ] **Step 7: Run the tests**
+
+Run: `./node_modules/.bin/vitest run --project unit tests/unit/coordinatePlanePresets.test.js`
+
+Expected: PASS.
+
+- [ ] **Step 8: Commit**
 
 ```bash
 git add src/components/learning/coordinatePlane/presets/transformations.js \
         src/components/learning/coordinatePlane/presets/index.js \
         src/components/learning/CoordinatePlaneExplore.jsx \
         tests/unit/coordinatePlanePresets.test.js
-git commit -m "Add translate, reflect, rotate and enlarge presets with tier capabilities"
+git commit -m "Add translate, reflect, rotate and enlarge presets"
 ```
 
 ---
@@ -5523,31 +5206,44 @@ const CAPABILITY_SETS = [
   { perpendicularGradients: true, showXIntercept: true },
 ]
 
-// Every extreme of every control, plus the initial values.
+// The Cartesian product of every control boundary and the initial value.
+//
+// One-control-at-a-time plus all-min and all-max is not enough. A rotation
+// about (−2, 2) is not covered by either all-min or all-max, and mixed centre
+// coordinates are exactly where transformations reach furthest. Combining the
+// boundaries properly is the only way to see those states.
 //
 // Deliberately uses the MODEL range (control.min / control.max), not the
 // interaction range: static and controlled content may supply anything the
 // model accepts, so that is the range which must stay visible. Narrowing this
 // to the interaction range would leave supplied exam figures unchecked.
-function extremeValueSets(preset) {
+function controlValueSets(preset) {
   const base = clampPresetValues(preset, preset.initialValues)
-  const sets = [base]
+  let sets = [base]
 
   for (const control of preset.controls ?? []) {
-    sets.push(clampPresetValues(preset, { ...base, [control.id]: control.min }))
-    sets.push(clampPresetValues(preset, { ...base, [control.id]: control.max }))
+    const corners = [control.min, control.max, base[control.id]]
+    sets = sets.flatMap(values => corners.map(corner => ({
+      ...values,
+      [control.id]: corner,
+    })))
   }
+  return sets.map(values => clampPresetValues(preset, values))
+}
 
-  // All controls at once, both ways — the true worst case for transformations.
-  const allMin = { ...base }
-  const allMax = { ...base }
-  for (const control of preset.controls ?? []) {
-    allMin[control.id] = control.min
-    allMax[control.id] = control.max
+// Every combination of every option group's available choices — not just the
+// last one. Reflections must cover vertical, horizontal and both diagonals;
+// rotations every angle against both directions; enlargements every factor.
+function optionValueSets(preset, capabilities) {
+  const groups = preset.resolveOptions?.(capabilities) ?? preset.options ?? []
+  let sets = [{}]
+
+  for (const group of groups) {
+    sets = sets.flatMap(choices => group.choices.map(choice => ({
+      ...choices,
+      [group.id]: choice.id,
+    })))
   }
-  sets.push(clampPresetValues(preset, allMin))
-  sets.push(clampPresetValues(preset, allMax))
-
   return sets
 }
 
@@ -5568,12 +5264,10 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
 
       for (const focus of focusModes) {
         for (const caps of CAPABILITY_SETS) {
-          for (const values of extremeValueSets(preset)) {
-            const capabilities = mergeCapabilities(preset, caps)
-            const choices = Object.fromEntries(
-              (preset.resolveOptions?.(capabilities) ?? preset.options ?? [])
-                .map(group => [group.id, group.choices.at(-1).id]),
-            )
+          const capabilities = mergeCapabilities(preset, caps)
+
+          for (const values of controlValueSets(preset)) {
+            for (const choices of optionValueSets(preset, capabilities)) {
             const axes = { x: preset.xAxis, y: preset.yAxis }
             const scene = preset.derive(values, {
               focus: resolvePresetFocus(preset, focus),
@@ -5585,7 +5279,7 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
               grid: preset.grid,
             })
 
-            const label = `${presetId} focus=${focus} values=${JSON.stringify(values)}`
+            const label = `${presetId} focus=${focus} values=${JSON.stringify(values)} choices=${JSON.stringify(choices)}`
 
             for (const point of scene.points) {
               expect(point.x, `${label} point ${point.id}.x`).toBeGreaterThanOrEqual(axes.x.min)
@@ -5612,6 +5306,7 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
                 expect(point.y, `${label} guide ${guide.id}.y`).toBeGreaterThanOrEqual(axes.y.min)
                 expect(point.y, `${label} guide ${guide.id}.y`).toBeLessThanOrEqual(axes.y.max)
               }
+            }
             }
           }
         }
@@ -6650,10 +6345,23 @@ line is clipped, and that `m = 0` under `comparisonRule="perpendicular"`
 refuses rather than drawing a second horizontal line.
 
 **Gate 5 — after Task 11 (all transformation presets).**
-Inspect the maximum states directly: every image must remain visible at each
-control's model extreme, annotation density must stay at one active vertex,
-each preset must declare `supportsShowAllGuides: false`, and capability-gated
-options must be absent rather than disabled.
+The largest single gate. Confirm:
+- `value` / `defaultValue` can select **every** non-default option — a
+  reflection in `y = x`, a 180° anticlockwise rotation, an enlargement by −1.
+  Option state lives in the value model, not in renderer state.
+- One option tap emits one complete `onChange` and one announcement.
+- Removing a capability falls back to a still-offered option.
+- Irrelevant steppers disappear rather than becoming no-op controls: no mirror
+  position for `y = x`, no centre steppers when the centre is pinned.
+- `b` and `image-b` resolve the same B → B′ pair, and selecting an image vertex
+  still emits an active guide.
+- Rotation guides run centre → vertex and centre → image, never a chord.
+- Enlargement rays point at whichever end is further from the centre, and cross
+  the centre for negative factors.
+- Every point, polygon, ray, mirror line and guide stays inside ±8 across the
+  exhaustive control × option × capability product.
+- Exactly one vertex is active, including when an image vertex is selected.
+- All four presets fit at 320px.
 
 **Gate 6 — after Task 14 (the final render pass).**
 Review all nine presets at 390px and 320px before registry closure in Task 15.
