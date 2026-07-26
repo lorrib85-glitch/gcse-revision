@@ -22,6 +22,7 @@ import {
   mergeAxis,
   mergeCapabilities,
   resolveCoordinatePlanePreset,
+  resolveEffectiveValues,
   resolveOptionValues,
   resolvePresetFocus,
   resolveShowGuides,
@@ -270,18 +271,33 @@ function CoordinatePlaneExplore({
     [presetConfig, difficultyCapabilities],
   )
 
-  const resolvedOptions = useMemo(
-    () => presetConfig.resolveOptions?.(capabilities) ?? presetConfig.options ?? [],
-    [presetConfig, capabilities],
+  /**
+   * One effective state — capability-pinned numbers plus resolved option ids.
+   *
+   * Everything downstream reads this: the option groups, the steppers, the
+   * scene, the status, the description, and crucially the base of the next
+   * update. Deriving from an effective view while emitting the raw one lets
+   * `onChange` describe a diagram that is not on screen — a stored `yEqualsX`
+   * mirror survives in the payload long after the capability was removed and
+   * the figure fell back to `vertical`.
+   *
+   * Declared before everything that consumes it.
+   */
+  const effectiveValues = useMemo(
+    () => resolveEffectiveValues(presetConfig, currentValues, capabilities),
+    [presetConfig, currentValues, capabilities],
   )
 
-  // Option ids live in `values`, so value / defaultValue / onChange carry the
-  // complete state and a static figure can select any option. A stored id that
-  // a capability change has removed falls back to the first still-offered
-  // choice, so the scene and the buttons can never disagree.
+  // Groups may resolve from the state as well as from capabilities, so a group
+  // that would do nothing can disappear — a rotation's direction at 180°.
+  const resolvedOptions = useMemo(
+    () => presetConfig.resolveOptions?.(capabilities, effectiveValues) ?? presetConfig.options ?? [],
+    [presetConfig, capabilities, effectiveValues],
+  )
+
   const optionValues = useMemo(
-    () => resolveOptionValues(presetConfig, currentValues, capabilities),
-    [presetConfig, currentValues, capabilities],
+    () => resolveOptionValues(presetConfig, effectiveValues, capabilities),
+    [presetConfig, effectiveValues, capabilities],
   )
 
   const effectiveShowGuides = resolveShowGuides(presetConfig, showGuides, {
@@ -310,7 +326,7 @@ function CoordinatePlaneExplore({
     grid: resolvedGrid,
     choices: optionValues,
   }
-  const scene = presetConfig.derive(currentValues, deriveContext)
+  const scene = presetConfig.derive(effectiveValues, deriveContext)
 
   const controlsById = useMemo(() => (
     Object.fromEntries((presetConfig.controls ?? []).map(control => [control.id, control]))
@@ -359,10 +375,10 @@ function CoordinatePlaneExplore({
       bounded[controlId] = Math.min(Math.max(next, reach.min), reach.max)
     }
 
-    const nextValues = clampPresetValues(presetConfig, { ...currentValues, ...bounded })
+    const nextValues = clampPresetValues(presetConfig, { ...effectiveValues, ...bounded })
 
     const changed = Object.keys(bounded)
-      .some(controlId => nextValues[controlId] !== currentValues[controlId])
+      .some(controlId => nextValues[controlId] !== effectiveValues[controlId])
     if (!changed) return
 
     const heading = nextStatusHeading(nextValues)
@@ -488,10 +504,10 @@ function CoordinatePlaneExplore({
   // learner that their input has no reliable effect, so presets resolve their
   // steppers per state rather than declaring one fixed list.
   const activeSteppers = useMemo(
-    () => presetConfig.resolveSteppers?.(currentValues, capabilities)
+    () => presetConfig.resolveSteppers?.(effectiveValues, capabilities)
       ?? presetConfig.steppers
       ?? [],
-    [presetConfig, currentValues, capabilities],
+    [presetConfig, effectiveValues, capabilities],
   )
 
   // Grouped steppers share a row; ungrouped ones each get their own.
@@ -611,7 +627,7 @@ function CoordinatePlaneExplore({
     : null
 
   const description = [
-    presetConfig.describe?.(currentValues, deriveContext) ?? presetConfig.keyFact,
+    presetConfig.describe?.(effectiveValues, deriveContext) ?? presetConfig.keyFact,
     canInteract ? null : 'This diagram is shown as a static illustration.',
   ].filter(Boolean).join(' ')
 

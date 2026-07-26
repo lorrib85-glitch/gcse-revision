@@ -10,6 +10,7 @@
 // escape hatch, so these tests need no preset to exist. Keep this file out of
 // the learner-facing review manifest; it is engineering scaffolding.
 
+import { useState } from 'react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import CoordinatePlaneExplore from './CoordinatePlaneExplore.jsx'
 // The transformation bounds sweep below drives every preset over its whole
@@ -2916,4 +2917,177 @@ export const TransformEnlargeNarrowViewport = {
   parameters: { viewport: { defaultViewport: 'mobile1' } },
   // Two centre steppers and six scale factors.
   play: narrowViewportPlay(10),
+}
+
+// ─── Capabilities constrain, they do not merely hide ─────────────────────────
+// A capability that only removes controls suppresses the evidence while the
+// diagram carries on using the supplied value.
+export const TransformPinnedCentreIsGenuinelyPinned = {
+  args: {
+    preset: 'rotate',
+    interactive: false,
+    defaultValue: { cx: 2, cy: 2, angle: '90', direction: 'clockwise' },
+    difficultyCapabilities: { nonOriginCentre: false },
+  },
+  play: async ({ canvasElement }) => {
+    const heading = canvasElement.querySelector('[data-cp-status-heading]').textContent
+    const centre = canvasElement.querySelector('[data-cp-point="centre"]')
+
+    // Supplied (2, 2), but the tier pins the lesson to the origin.
+    expect(heading).toContain('(0, 0)')
+    expect(heading).not.toContain('(2, 2)')
+    expect(centre).not.toBeNull()
+
+    // The description agrees with the figure, not with the supplied value.
+    expect(canvasElement.querySelector('desc').textContent).toContain('(0, 0)')
+  },
+}
+
+export const TransformEnlargementCentreIsGenuinelyPinned = {
+  args: {
+    preset: 'enlarge',
+    interactive: false,
+    defaultValue: { cx: 1, cy: 1, scaleFactor: '2' },
+    difficultyCapabilities: { nonOriginCentre: false },
+  },
+  play: async ({ canvasElement }) => {
+    const heading = canvasElement.querySelector('[data-cp-status-heading]').textContent
+    expect(heading).toContain('(0, 0)')
+    expect(heading).not.toContain('(1, 1)')
+  },
+}
+
+// Removing the capability from a live non-origin state must move the figure,
+// not just strip its controls.
+function CapabilityToggleHarness(args) {
+  const [pinned, setPinned] = useState(false)
+
+  return (
+    <div>
+      <button type="button" data-testid="pin" onClick={() => setPinned(true)}>
+        Pin to origin
+      </button>
+      <CoordinatePlaneExplore
+        {...args}
+        difficultyCapabilities={{ nonOriginCentre: !pinned }}
+      />
+    </div>
+  )
+}
+
+export const TransformRemovingTheCapabilityMovesTheFigure = {
+  render: args => <CapabilityToggleHarness {...args} />,
+  args: {
+    preset: 'rotate',
+    defaultValue: { cx: 2, cy: 2, angle: '90', direction: 'clockwise' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const heading = () => canvasElement.querySelector('[data-cp-status-heading]').textContent
+
+    expect(heading()).toContain('(2, 2)')
+    expect(canvasElement.querySelector('[data-cp-stepper="cx"]')).not.toBeNull()
+
+    await userEvent.click(canvas.getByTestId('pin'))
+
+    await waitFor(() => expect(heading()).toContain('(0, 0)'))
+    expect(canvasElement.querySelector('[data-cp-stepper="cx"]')).toBeNull()
+  },
+}
+
+// ─── The emitted payload describes the diagram on screen ─────────────────────
+export const TransformOnChangeCarriesTheEffectiveCentre = {
+  args: {
+    preset: 'rotate',
+    defaultValue: { cx: 2, cy: 2, angle: '90', direction: 'clockwise' },
+    difficultyCapabilities: { nonOriginCentre: false },
+    onChange: fn(),
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // No centre steppers exist, so drive the change through an option.
+    await userEvent.click(canvas.getByRole('button', { name: '180°' }))
+
+    expect(args.onChange).toHaveBeenCalledTimes(1)
+    // The payload must carry the pinned centre, not the supplied one.
+    expect(args.onChange.mock.calls[0][0]).toMatchObject({ cx: 0, cy: 0, angle: '180' })
+  },
+}
+
+// A fallback option must be normalised into the payload too: the diagram shows
+// `vertical`, so the next onChange must say `vertical`.
+export const TransformOnChangeNormalisesAFallbackOption = {
+  args: {
+    preset: 'reflect',
+    defaultValue: { mirrorValue: 1, mirror: 'yEqualsX' },
+    difficultyCapabilities: { diagonalMirrorLines: false },
+    onChange: fn(),
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // The stored diagonal is unavailable, so the figure falls back.
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toContain('x = 1')
+
+    // Operating a NUMERIC control must not resurrect the stale option.
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Mirror position' }))
+
+    expect(args.onChange).toHaveBeenCalledTimes(1)
+    const payload = args.onChange.mock.calls[0][0]
+    expect(payload.mirrorValue).toBe(2)
+    expect(payload.mirror).toBe('vertical')
+  },
+}
+
+// ─── No control that cannot change anything ──────────────────────────────────
+export const TransformDirectionHiddenAtHalfTurn = {
+  args: { preset: 'rotate' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // At 90° both groups are offered.
+    expect(canvas.queryByRole('button', { name: 'Clockwise' })).not.toBeNull()
+
+    await userEvent.click(canvas.getByRole('button', { name: '180°' }))
+
+    // A half-turn reaches the same image either way, so direction disappears
+    // rather than becoming a control that changes nothing.
+    await waitFor(() => {
+      expect(canvas.queryByRole('button', { name: 'Clockwise' })).toBeNull()
+    })
+    expect(canvas.queryByRole('button', { name: 'Anticlockwise' })).toBeNull()
+
+    await userEvent.click(canvas.getByRole('button', { name: '270°' }))
+    await waitFor(() => {
+      expect(canvas.queryByRole('button', { name: 'Clockwise' })).not.toBeNull()
+    })
+  },
+}
+
+// ─── The instruction never promises a control that is not there ──────────────
+export const TransformInstructionsMatchTheControlsOnScreen = {
+  args: { preset: 'reflect', defaultValue: { mirrorValue: 0, mirror: 'yEqualsX' } },
+  play: async ({ canvasElement }) => {
+    const instruction = canvasElement
+      .querySelector('[data-cp-interaction-instruction]')?.textContent ?? ''
+
+    // y = x has no position to set, so no stepper is rendered — the copy must
+    // not tell the learner to move one.
+    expect(canvasElement.querySelector('[data-cp-stepper="mirrorValue"]')).toBeNull()
+    expect(instruction).not.toMatch(/stepper/i)
+    expect(instruction).not.toMatch(/move it/i)
+  },
+}
+
+export const TransformCentreInstructionsMatchTheControls = {
+  args: { preset: 'rotate', difficultyCapabilities: { nonOriginCentre: false } },
+  play: async ({ canvasElement }) => {
+    const instruction = canvasElement
+      .querySelector('[data-cp-interaction-instruction]')?.textContent ?? ''
+
+    expect(canvasElement.querySelector('[data-cp-stepper="cx"]')).toBeNull()
+    expect(instruction).not.toMatch(/move the centre/i)
+  },
 }

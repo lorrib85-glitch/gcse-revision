@@ -4663,6 +4663,59 @@ returns the stored id when it is still offered and the group's first available
 choice otherwise. Both `derive` and the renderer's button state use it, so the
 scene and the UI can never disagree about which option is active.
 
+### Capabilities constrain state, they do not merely hide controls
+
+`resolveSteppers` removing a control is not enough. Without a matching value
+resolver the diagram still rotates about a supplied `(2, 2)` while offering the
+learner nothing that reaches it — the capability suppresses the evidence rather
+than pinning the lesson. Presets expose:
+
+```js
+resolveValues(values, capabilities) {
+  return capabilities.nonOriginCentre ? values : { ...values, cx: 0, cy: 0 }
+}
+```
+
+The resolved values drive **everything**: transformed points, the centre
+marker, guides and rays, heading and working, the accessible description, and
+the next `onChange` payload.
+
+### One effective state, used to derive AND to update
+
+`resolveEffectiveValues(preset, values, capabilities)` returns the
+capability-pinned numbers merged with the resolved option ids. It is both what
+`derive()` receives and the base that `setControlValues` spreads.
+
+Deriving from an effective view while emitting the raw one lets `onChange`
+describe a diagram that is not on screen: a stored `yEqualsX` mirror survives
+in the payload long after the capability was removed and the figure visibly
+fell back to `vertical`. Same class of bug as a capability that only hides.
+
+**These resolvers live in `presets/optionState.js`, not in the registry.** A
+registry ↔ preset import cycle throws a temporal-dead-zone error the moment
+anyone imports a preset module directly rather than through `index.js`.
+
+### Option groups resolve from state as well as capabilities
+
+`resolveOptions(capabilities, values)`. A rotation shows its direction group at
+90° and 270° and **hides it at 180°**, where a half-turn reaches the same image
+either way — pressing it would change stored state while changing no geometry,
+no heading and no meaning. That is the same no-op control the steppers already
+avoid.
+
+### Instructions never promise a control that may be absent
+
+Copy is fixed text, so it must be true in every state a preset can reach:
+
+| Preset | Instruction |
+|---|---|
+| `reflect` | Choose a mirror line and watch every vertex flip. |
+| `rotate` | Choose an angle and watch every vertex turn about the centre. |
+| `enlarge` | Choose a scale factor and follow the centre–object–image relationship. |
+
+"Then move it with the stepper" and "then move the centre" are wrong whenever
+the stepper is legitimately absent.
+
 ### Steppers appear only when they do something
 
 A visible control that changes a stored number the diagram ignores is worse

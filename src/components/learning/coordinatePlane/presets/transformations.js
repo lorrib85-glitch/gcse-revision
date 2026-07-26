@@ -27,7 +27,7 @@ import {
 // modules have finished evaluating. Sharing it is the point — the fallback rule
 // for an option a capability has removed must be identical in the scene and in
 // the buttons, or the two disagree about what is selected.
-import { resolveOptionValues } from './index.js'
+import { resolveOptionValues } from './optionState.js'
 
 const MINUS = '−'
 const PRIME = '′'
@@ -176,8 +176,18 @@ function createTransformationPreset(config) {
         : config.steppers
     },
 
-    resolveOptions(capabilities = {}) {
-      return config.resolveOptions(capabilities)
+    resolveOptions(capabilities = {}, values) {
+      return config.resolveOptions(capabilities, values ?? config.initialValues)
+    },
+
+    // Capabilities must CONSTRAIN, not merely hide. Without this a supplied
+    // centre of (2, 2) still drives the whole figure while the learner is
+    // given no control that reaches it — the capability suppresses the
+    // evidence instead of pinning the lesson to the origin.
+    resolveValues(values, capabilities = {}) {
+      return config.resolveValues
+        ? config.resolveValues(values, capabilities)
+        : values
     },
 
     derive(values, context = {}) {
@@ -397,7 +407,7 @@ export const reflectPreset = createTransformationPreset({
   id: 'reflect',
   accessibilityLabel: 'Coordinate plane showing a triangle reflected in a mirror line',
   keyFact: 'A reflection lands the same distance the other side of the mirror line.',
-  instruction: 'Choose a mirror line, then move it with the stepper.',
+  instruction: 'Choose a mirror line and watch every vertex flip.',
   vertices: OBJECT_VERTICES,
   capabilities: { diagonalMirrorLines: true },
 
@@ -489,6 +499,19 @@ const CENTRE_STEPPERS = [
 ]
 
 // A centre that cannot leave the origin has nothing to step.
+/**
+ * Pins the centre to the origin when the tier does not allow it to move.
+ *
+ * Hiding the centre steppers is not enough. Without this the diagram happily
+ * rotates about a supplied (2, 2) while offering the learner no control that
+ * reaches it — the capability suppresses the evidence instead of constraining
+ * the lesson. Pinning here makes the points, centre marker, guides, rays,
+ * heading, working, description and the next onChange payload all agree.
+ */
+function pinCentreToOrigin(values, capabilities) {
+  return capabilities.nonOriginCentre ? values : { ...values, cx: 0, cy: 0 }
+}
+
 function resolveCentreSteppers(values, capabilities, steppers) {
   return capabilities.nonOriginCentre ? steppers : []
 }
@@ -503,7 +526,7 @@ export const rotatePreset = createTransformationPreset({
   id: 'rotate',
   accessibilityLabel: 'Coordinate plane showing a triangle rotated about a centre',
   keyFact: 'A rotation turns every point about a centre; distances from the centre never change.',
-  instruction: 'Choose an angle and a direction, then move the centre.',
+  instruction: 'Choose an angle and watch every vertex turn about the centre.',
   vertices: OBJECT_VERTICES,
   capabilities: { nonOriginCentre: false },
 
@@ -514,9 +537,15 @@ export const rotatePreset = createTransformationPreset({
   ],
   steppers: CENTRE_STEPPERS,
   resolveSteppers: resolveCentreSteppers,
+  resolveValues: pinCentreToOrigin,
 
-  resolveOptions: () => [
-    {
+  // A half-turn reaches the same image either way, so at 180° the direction
+  // group is not merely redundant: pressing it would change stored state while
+  // changing no geometry, no heading and no mathematical meaning. That is the
+  // same no-op control the mirror-position and centre steppers already avoid.
+  // Returning to 90° or 270° restores it.
+  resolveOptions: (_capabilities, values) => {
+    const angle = {
       id: 'angle',
       label: 'Angle',
       choices: [
@@ -524,16 +553,17 @@ export const rotatePreset = createTransformationPreset({
         { id: '180', label: '180°' },
         { id: '270', label: '270°' },
       ],
-    },
-    {
+    }
+    const direction = {
       id: 'direction',
       label: 'Direction',
       choices: [
         { id: 'clockwise', label: 'Clockwise' },
         { id: 'anticlockwise', label: 'Anticlockwise' },
       ],
-    },
-  ],
+    }
+    return values?.angle === '180' ? [angle] : [angle, direction]
+  },
 
   transform: (point, values, choices) =>
     rotatePoint(point, centreOf(values), Number(choices.angle), choices.direction),
@@ -611,7 +641,7 @@ export const enlargePreset = createTransformationPreset({
   id: 'enlarge',
   accessibilityLabel: 'Coordinate plane showing a triangle enlarged from a centre',
   keyFact: 'An enlargement multiplies every distance from the centre by the scale factor.',
-  instruction: 'Choose a scale factor, then move the centre.',
+  instruction: 'Choose a scale factor and follow the centre–object–image relationship.',
   vertices: ENLARGE_OBJECT_VERTICES,
   capabilities: {
     fractionalScaleFactor: false,
@@ -626,6 +656,7 @@ export const enlargePreset = createTransformationPreset({
   ],
   steppers: CENTRE_STEPPERS,
   resolveSteppers: resolveCentreSteppers,
+  resolveValues: pinCentreToOrigin,
 
   // Ordered smallest-effect-outward from the base pair, so enabling a
   // capability adds options in front rather than reshuffling them. The stored

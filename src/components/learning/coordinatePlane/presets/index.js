@@ -7,6 +7,12 @@
 
 import intersectionPreset from './intersection.js'
 import midpointPreset from './midpoint.js'
+export {
+  resolveEffectiveValues,
+  resolveOptionValues,
+  resolvePresetValues,
+} from './optionState.js'
+
 import plotPointPreset from './plotPoint.js'
 import straightLinePreset from './straightLine.js'
 import tableOfValuesPreset from './tableOfValues.js'
@@ -104,24 +110,6 @@ export function clampInteractiveValue(control, value) {
 export function mergeAxis(presetAxis, override) {
   if (!override) return { ...presetAxis }
   return { ...presetAxis, ...override }
-}
-
-/**
- * The option id in force for each group.
- *
- * Reads from `values`, so option state is part of the public value model and a
- * static figure can select any option. Falls back to the first still-offered
- * choice when a capability change has removed the stored one — without this a
- * disabled capability would leave the scene pointing at an option the learner
- * can no longer see.
- */
-export function resolveOptionValues(preset, values, capabilities) {
-  const groups = preset.resolveOptions?.(capabilities) ?? preset.options ?? []
-  return Object.fromEntries(groups.map((group) => {
-    const stored = values?.[group.id]
-    const offered = group.choices.some(choice => choice.id === stored)
-    return [group.id, offered ? stored : group.choices[0].id]
-  }))
 }
 
 export function mergeCapabilities(preset, overrides) {
