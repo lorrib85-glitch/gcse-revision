@@ -5,10 +5,12 @@
 // so props are never required — a Physics caller can override label and unit
 // without restating min, max and step.
 
+import midpointPreset from './midpoint.js'
 import plotPointPreset from './plotPoint.js'
 
 export const COORDINATE_PLANE_PRESETS = {
   plotPoint: plotPointPreset,
+  midpoint: midpointPreset,
 }
 
 const FALLBACK_PRESET = 'plotPoint'

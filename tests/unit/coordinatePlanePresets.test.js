@@ -305,3 +305,40 @@ describe('two-range clamping contract', () => {
     expect(clampInteractiveValue(wideControl, -1.3)).toBe(-1.5)
   })
 })
+
+describe('midpoint preset', () => {
+  it('averages each coordinate and reports the midpoint', () => {
+    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 5 })
+
+    expect(scene.status.heading).toBe('(1, 3)')
+  })
+
+  it('pairs the x-values and the y-values separately in the calculation', () => {
+    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 5 })
+
+    expect(scene.status.calculation[0]).toBe('x: (−3 + 5) ÷ 2 = 1')
+    expect(scene.status.calculation[1]).toBe('y: (1 + 5) ÷ 2 = 3')
+  })
+
+  it('draws one bracket per pairing, not one per point', () => {
+    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 5 })
+    const brackets = scene.shapes.filter(shape => shape.id.startsWith('bracket-'))
+
+    expect(brackets.map(shape => shape.id).sort()).toEqual(['bracket-x', 'bracket-y'])
+  })
+
+  it('marks both endpoints and the midpoint, with only one active', () => {
+    const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 5 }, { activeId: 'a' })
+    const active = scene.points.filter(point => point.tier === 'active')
+
+    expect(scene.points.map(point => point.id).sort()).toEqual(['a', 'b', 'm'])
+    expect(active).toHaveLength(1)
+    expect(active[0].id).toBe('a')
+  })
+
+  it('handles a half-value midpoint', () => {
+    const scene = sceneFor('midpoint', { ax: 0, ay: 0, bx: 3, by: 5 })
+
+    expect(scene.status.heading).toBe('(1.5, 2.5)')
+  })
+})

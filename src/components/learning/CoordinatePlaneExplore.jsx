@@ -169,6 +169,15 @@ function axisTitleText(axis) {
   return axis.unit ? `${axis.label} (${axis.unit})` : axis.label
 }
 
+// Presets author shape paths in model space so the maths stays readable.
+// Commands are single letters followed by coordinate pairs.
+function projectModelPath(path, scale) {
+  return path.replace(
+    /([ML])\s+(-?[\d.]+)\s+(-?[\d.]+)/g,
+    (_, command, x, y) => `${command} ${scale.toX(Number(x))} ${scale.toY(Number(y))}`,
+  )
+}
+
 /**
  * Configuration-driven GCSE coordinate plane — the coordinate-geometry sibling
  * of AngleExplore, AreaPerimeterExplore, FractionRatioExplore and
@@ -492,6 +501,14 @@ function CoordinatePlaneExplore({
     py: scale.toY(point.y),
   }))
 
+  // A point already driven by a handle activates itself through that handle's
+  // sliders, so it must not also render a "Select …" button: two endpoints
+  // would otherwise cost six tab stops instead of four. Points with no handle
+  // keep their button — it is their only activation affordance.
+  const handleDrivenPointIds = new Set(
+    (scene.handles ?? []).map(handle => handle.pointId).filter(Boolean),
+  )
+
   // Tick labels and axis titles are real obstacles. Reporting them is the
   // contract; tuning chip constants is not a substitute, because a constant
   // cannot know where a tick label happens to sit.
@@ -778,7 +795,7 @@ function CoordinatePlaneExplore({
               key={shape.id}
               className="cp-explore__mark"
               data-cp-shape={shape.id}
-              d={shape.path}
+              d={shape.modelPath ? projectModelPath(shape.path, scale) : shape.path}
               fill={resolveRole(shape.fillRole) ?? 'none'}
               stroke={resolveRole(shape.strokeRole) ?? 'none'}
               strokeWidth={shape.strokeWidth ?? 2}
@@ -839,7 +856,7 @@ function CoordinatePlaneExplore({
                   {placed.text}
                 </text>
               )}
-              {canInteract && point.focusable && (
+              {canInteract && point.focusable && !handleDrivenPointIds.has(point.id) && (
                 <circle
                   className="cp-explore__point"
                   data-cp-point-target={point.id}
@@ -917,6 +934,10 @@ function CoordinatePlaneExplore({
                     cy={scale.toY(handle.y)}
                     r={HANDLE_HIT_RADIUS}
                     fill="transparent"
+                    // Tabbing between handles is a change of attention, so the
+                    // annotation follows focus — otherwise moving from one
+                    // endpoint to the next leaves the guides on the old point.
+                    onFocus={() => { if (handle.pointId) setActiveId(handle.pointId) }}
                     onPointerDown={handlePointerDown(handle)}
                     onPointerMove={handlePointerMove(handle)}
                     onPointerUp={handlePointerEnd}

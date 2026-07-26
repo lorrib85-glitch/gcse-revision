@@ -3451,7 +3451,7 @@ export const COORDINATE_PLANE_PRESETS = {
 
 Run: `./node_modules/.bin/vitest run --project unit tests/unit/coordinatePlanePresets.test.js`
 
-Expected: PASS — 29 tests.
+Expected: PASS — 38 tests (the file already carries Task 5's two-range block).
 
 - [ ] **Step 7: Commit**
 
@@ -5843,6 +5843,17 @@ keeps testing the two-range edge case even as real presets change:
    cancelling the animation the focus indicator is silently overridden on any
    handle the learner has not yet touched.
 
+Two further renderer contracts were added at Gate 3, when `midpoint` became the
+first preset with two handles:
+
+4. **Focus alone moves the active annotation.** Handle sliders carry `onFocus`
+   setting `activeId`. Without it the annotation only followed a key press or a
+   drag, so tabbing between two endpoints left the wrong one annotated.
+5. **A point driven by a handle does not also render its own select button.**
+   Otherwise each endpoint costs three tab stops — button, x slider, y slider.
+   The handle's sliders already carry activation. Points with no handle
+   (transformation vertices) keep their button.
+
 A fourth trap applies to any drag story: `onPointerMove` is bound to the handle
 `<g>`, and events do not propagate from an ancestor down to it. Dispatch the
 move **on the handle**, not on the `<svg>` — a real browser routes captured
@@ -5870,7 +5881,9 @@ export const Midpoint = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
-    await expect(canvas.getByText('(1, 3)')).toBeVisible()
+    // Query by data attribute — "(1, 3)" also renders as the M point label.
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('(1, 3)')
     await expect(canvas.getByText('x: (−3 + 5) ÷ 2 = 1')).toBeVisible()
     await expect(canvas.getByText('y: (1 + 5) ÷ 2 = 3')).toBeVisible()
   },

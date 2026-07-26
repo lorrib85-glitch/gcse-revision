@@ -10,7 +10,7 @@
 // escape hatch, so these tests need no preset to exist. Keep this file out of
 // the learner-facing review manifest; it is engineering scaffolding.
 
-import { expect, fn, userEvent, within } from 'storybook/test'
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import CoordinatePlaneExplore from './CoordinatePlaneExplore.jsx'
 
 export default {
@@ -443,5 +443,231 @@ export const HandleRingLightsOnFocusWithin = {
 
     const focused = getComputedStyle(ring).opacity
     expect(parseFloat(focused)).toBeGreaterThan(parseFloat(resting))
+  },
+}
+
+// ─── Two handles on one plane ────────────────────────────────────────────────
+//
+// `midpoint` is the first preset with two draggable points, which is where the
+// per-handle contracts stop being theoretical: each endpoint needs its own pair
+// of semantic sliders, mapped to the right axis, updating atomically, and each
+// must be able to take over the annotation from the other.
+
+const MIDPOINT_START = { ax: -3, ay: 1, bx: 5, by: 5 }
+
+// A drag on endpoint A must move ax and ay in ONE patch. Two sequential
+// single-control updates would both close over the same render-time values, so
+// the second would silently discard the first.
+export const MidpointEndpointDragIsAtomic = {
+  args: { preset: 'midpoint', onChange: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+    const handle = canvas.getByRole('slider', { name: 'Point A x' })
+    const svg = canvasElement.querySelector('svg')
+    const box = svg.getBoundingClientRect()
+
+    // Dispatched ON the handle: onPointerMove is bound to the handle, and
+    // events do not propagate from an ancestor down to it.
+    await userEvent.pointer([
+      { target: handle, keys: '[MouseLeft>]' },
+      {
+        target: handle,
+        coords: { x: box.left + box.width * 0.78, y: box.top + box.height * 0.22 },
+      },
+      { target: handle, keys: '[/MouseLeft]' },
+    ])
+
+    expect(args.onChange).toHaveBeenCalled()
+
+    // Every emitted object carries the complete four-value state, and at least
+    // one differs from the start in BOTH of A's coordinates.
+    const calls = args.onChange.mock.calls.map(([values]) => values)
+    for (const values of calls) {
+      expect(Object.keys(values)).toEqual(
+        expect.arrayContaining(['ax', 'ay', 'bx', 'by']),
+      )
+    }
+    const moved = calls.some(values => (
+      values.ax !== MIDPOINT_START.ax && values.ay !== MIDPOINT_START.ay
+    ))
+    expect(moved, 'a diagonal drag must change ax and ay together').toBe(true)
+  },
+}
+
+// Each endpoint exposes an independent x and y slider, and neither endpoint's
+// keys reach the other one.
+export const MidpointEndpointsStepIndependently = {
+  args: { preset: 'midpoint' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const ax = canvas.getByRole('slider', { name: 'Point A x' })
+    const ay = canvas.getByRole('slider', { name: 'Point A y' })
+    const bx = canvas.getByRole('slider', { name: 'Point B x' })
+    const by = canvas.getByRole('slider', { name: 'Point B y' })
+
+    await expect(ax).toHaveAttribute('aria-valuenow', '-3')
+    await expect(ay).toHaveAttribute('aria-valuenow', '1')
+    await expect(bx).toHaveAttribute('aria-valuenow', '5')
+    await expect(by).toHaveAttribute('aria-valuenow', '5')
+
+    ax.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    await expect(ax).toHaveAttribute('aria-valuenow', '-2')
+    await expect(ay).toHaveAttribute('aria-valuenow', '1')
+    await expect(bx).toHaveAttribute('aria-valuenow', '5')
+    await expect(by).toHaveAttribute('aria-valuenow', '5')
+
+    ay.focus()
+    await userEvent.keyboard('{ArrowUp}')
+    await expect(ay).toHaveAttribute('aria-valuenow', '2')
+    await expect(ax).toHaveAttribute('aria-valuenow', '-2')
+
+    bx.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    await expect(bx).toHaveAttribute('aria-valuenow', '6')
+    await expect(by).toHaveAttribute('aria-valuenow', '5')
+    await expect(ax).toHaveAttribute('aria-valuenow', '-2')
+
+    by.focus()
+    await userEvent.keyboard('{ArrowUp}')
+    await expect(by).toHaveAttribute('aria-valuenow', '6')
+    await expect(bx).toHaveAttribute('aria-valuenow', '6')
+    await expect(ay).toHaveAttribute('aria-valuenow', '2')
+  },
+}
+
+// One visual ring per endpoint, two semantic sliders per endpoint. A shared
+// ring is what keeps two focus targets reading as one object.
+export const MidpointHasOneRingAndTwoSlidersPerEndpoint = {
+  args: { preset: 'midpoint' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    expect(canvasElement.querySelectorAll('.cp-explore__handle-ring')).toHaveLength(2)
+    expect(canvasElement.querySelectorAll('[data-cp-handle]')).toHaveLength(2)
+
+    for (const name of ['Point A x', 'Point A y', 'Point B x', 'Point B y']) {
+      const slider = canvas.getByRole('slider', { name })
+      expect(slider.getAttribute('tabindex')).toBe('0')
+    }
+
+    // Four sliders and no more: a handle-driven point does not also render a
+    // separate "Select …" button, so each endpoint costs exactly two tab stops.
+    expect(canvas.getAllByRole('slider')).toHaveLength(4)
+    expect(canvas.queryByRole('button', { name: /Select A/ })).toBeNull()
+    expect(canvas.queryByRole('button', { name: /Select B/ })).toBeNull()
+
+    // The midpoint has no handle, so it keeps its own activation button.
+    expect(canvas.getByRole('button', { name: /Select M/ })).toBeInTheDocument()
+  },
+}
+
+// The controlIds order is what maps a handle's controls onto the axes. Getting
+// it backwards swaps x and y silently, so assert the mapping both ways.
+export const MidpointHandleAxisMappingIsCorrect = {
+  args: { preset: 'midpoint' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const ax = canvas.getByRole('slider', { name: 'Point A x' })
+    const ay = canvas.getByRole('slider', { name: 'Point A y' })
+
+    // First controlId runs horizontally, second vertically.
+    expect(ax.getAttribute('data-cp-handle-axis')).toBe('horizontal')
+    expect(ay.getAttribute('data-cp-handle-axis')).toBe('vertical')
+
+    ax.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    await expect(ax).toHaveAttribute('aria-valuenow', '-2')
+    await expect(ay).toHaveAttribute('aria-valuenow', '1')
+
+    await userEvent.keyboard('{ArrowLeft}{ArrowLeft}')
+    await expect(ax).toHaveAttribute('aria-valuenow', '-4')
+    await expect(ay).toHaveAttribute('aria-valuenow', '1')
+
+    ay.focus()
+    await userEvent.keyboard('{ArrowUp}')
+    await expect(ay).toHaveAttribute('aria-valuenow', '2')
+    await expect(ax).toHaveAttribute('aria-valuenow', '-4')
+
+    await userEvent.keyboard('{ArrowDown}{ArrowDown}')
+    await expect(ay).toHaveAttribute('aria-valuenow', '0')
+    await expect(ax).toHaveAttribute('aria-valuenow', '-4')
+  },
+}
+
+// One keyboard action, one onChange, carrying the whole state — not a patch of
+// the single control that moved.
+export const MidpointKeyboardEmitsOneCompleteChange = {
+  args: { preset: 'midpoint', onChange: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+    const ay = canvas.getByRole('slider', { name: 'Point A y' })
+
+    ay.focus()
+    await userEvent.keyboard('{ArrowUp}')
+
+    expect(args.onChange).toHaveBeenCalledTimes(1)
+    expect(args.onChange.mock.calls[0][0]).toEqual({
+      ...MIDPOINT_START,
+      ay: MIDPOINT_START.ay + 1,
+    })
+  },
+}
+
+// Attention follows focus. Without onFocus on the slider targets, tabbing from
+// endpoint A to endpoint B left the guides and the active annotation on A.
+export const MidpointFocusMovesTheActiveAnnotation = {
+  args: { preset: 'midpoint' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const pointA = () => canvasElement.querySelector('[data-cp-point="a"]')
+    const pointB = () => canvasElement.querySelector('[data-cp-point="b"]')
+    const activeCount = () => canvasElement.querySelectorAll('[data-cp-tier="active"]').length
+
+    // Exactly one active element, and it starts on A.
+    expect(activeCount()).toBe(1)
+    expect(pointA().getAttribute('data-cp-tier')).toBe('active')
+    expect(pointB().getAttribute('data-cp-tier')).toBe('related')
+
+    canvas.getByRole('slider', { name: 'Point B x' }).focus()
+
+    // Still exactly one — the annotation moved rather than accumulating.
+    await waitFor(() => {
+      expect(pointB().getAttribute('data-cp-tier')).toBe('active')
+    })
+    expect(activeCount()).toBe(1)
+    expect(pointA().getAttribute('data-cp-tier')).toBe('related')
+
+    // And back again, from B's y slider to A's.
+    canvas.getByRole('slider', { name: 'Point A y' }).focus()
+    await waitFor(() => {
+      expect(pointA().getAttribute('data-cp-tier')).toBe('active')
+    })
+    expect(activeCount()).toBe(1)
+    expect(pointB().getAttribute('data-cp-tier')).toBe('related')
+  },
+}
+
+// Presets author shape paths in model space; the renderer projects them. Left
+// unprojected, "M −3 1 L 5 5" would draw a few pixels wide in the corner of the
+// viewBox and be clipped away — wrong, but wrong invisibly.
+export const ModelSpaceShapePathsAreProjected = {
+  args: { preset: 'midpoint' },
+  play: async ({ canvasElement }) => {
+    const segment = canvasElement.querySelector('[data-cp-shape="segment"]')
+    const markOf = id => canvasElement.querySelector(`[data-cp-point="${id}"] circle`)
+
+    // Not the model-space string the preset wrote.
+    expect(segment.getAttribute('d')).not.toContain('M -3 1')
+
+    // The drawn segment spans exactly the two endpoint marks.
+    const box = segment.getBBox()
+    const xs = ['a', 'b'].map(id => Number(markOf(id).getAttribute('cx')))
+    const ys = ['a', 'b'].map(id => Number(markOf(id).getAttribute('cy')))
+
+    expect(box.x).toBeCloseTo(Math.min(...xs), 1)
+    expect(box.x + box.width).toBeCloseTo(Math.max(...xs), 1)
+    expect(box.y).toBeCloseTo(Math.min(...ys), 1)
+    expect(box.y + box.height).toBeCloseTo(Math.max(...ys), 1)
   },
 }
