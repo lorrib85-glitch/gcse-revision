@@ -1,6 +1,6 @@
 # Component Registry
 
-**Last updated:** 2026-07-25
+**Last updated:** 2026-07-26
 **Scope:** All standalone components in `src/components/`
 
 ---
@@ -254,16 +254,41 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ---
 
 
+### BuilderBlock
+
+**File:** `src/components/learning/BuilderBlock.jsx`
+**What it is:** An assessed select-and-place reconstruction task. The learner chooses supplied pieces and places them into exact gaps to rebuild a known equation, reaction, quotation or short piece of text. After an incorrect check, correctly placed pieces remain locked while only the incorrect pieces return for repair.
+**Best used for:** Supported reconstruction where understanding the structure and relationships matters, but fully independent recall would create unnecessary cognitive load.
+**Props:** `block`, `subject`, `onComplete`
+**Block shape:** `{ type: 'builder', label?, instruction?, layout?: 'reaction'|'expression'|'equation'|'calculation'|'text'|'cloze'|'sentence'|'quote', template?, slots?, pieces: Array<string|number|{ id?, label?, text? }>, answer: Array<string|number|{ label?, text? }>, operators?, groupLabels?, contextImage?, completionNoun? }`
+**Block type:** `builder` — rendered inside a normal content screen in `ModulePlayer.jsx`.
+**Dependencies:** `SUBJECTS`, `GENERAL`, `BUTTONS`, `COMPONENT_SIZE`, `SPACING`, `RADII`, `TYPE`, `ContinueCTA`, `ScreenBody`, `ScreenTitle`
+
+- **Decision**
+  - **Use when:** the learner benefits from rebuilding a known structure while choosing from a finite bank of supplied pieces. Choose it for concise chemical reactions, equations, missing mathematical terms, high-value quotations, definitions or process statements where each piece has one defensible position.
+  - **Do not use when:** the learner should generate the answer independently, pieces belong in broad categories rather than exact positions, several arrangements are equally valid or the response is too long to reconstruct comfortably on mobile.
+  - **Choose instead:** use `FillInTheBlanksBlock` when the learner should type one missing answer without supplied choices. Use `MatchingTask` for independent one-to-one pairs. Use `ColSortBlock` for category grouping. Use `OrderedRouteTask` when ordered stages are the knowledge being tested. Use `CalculationBreakdown` when the learner needs to understand and execute a complete connected method.
+  - **Content shape:** one concise structure with a finite bank of plausible pieces and one defensible arrangement. Every piece must contribute meaningful subject knowledge rather than acting as obvious filler. Keep the number of gaps manageable on mobile. Correctly placed pieces should remain locked after an unsuccessful check so the learner repairs only the unresolved gaps.
+  - **Rhythm role:** practice, retrieval, repair.
+
+---
+
 ### CalculationBreakdown
 
 **File:** `src/components/learning/CalculationBreakdown.jsx`
-**What it is:** Full-screen, multi-phase maths walkthrough. It breaks one calculation into stages — understand the question, one or more worked steps (the transformation shown with a "do the same to both sides" grammar plus a "check this step"), a learner-applied step (typed answer with a hint), then a full solution with a "why this works" summary. A progress rail tracks the stages; understanding is checked before each advance.
-**Best used for:** Any procedural GCSE Maths problem where the method matters as much as the answer — solving equations, rearranging formulae, multi-step arithmetic. Content lives entirely in the `block` prop so the mechanic is reusable across every Maths topic.
-**Props:** `block`, `accent` (defaults to `GENERAL.teal`), `onContinue`
-**Block shape:** `{ goalPrompt?, problem, understand: { whatsHappening?, goal?, check? }, steps: [{ mode: 'worked' | 'yourTurn', title, why?, transform: { from, leftOp?, rightOp?, to }, whyStep?, check?, answer?, resultExpr?, hint?, cta? }], solution: { celebrateTitle?, celebrateSubtitle?, result, rows?, why? } }` — a `check` is `{ question, options: string[], correct: index }`.
-**Screen type:** `calculationBreakdown` (full-screen; not yet routed in `ModulePlayer.jsx` — new component pending review)
-**Dependencies:** `GENERAL`, `TYPE`, `SPACING`, `RADII`, `MOTION`, `ContinueCTA`
-**Closest alternatives:** `GuidedExamResponse` (written-answer scaffold, not a numeric procedure); `GraphView` (interpreting data, not carrying out a method).
+**What it is:** A staged teaching-and-application component that helps the learner interpret one procedural calculation, choose a useful first move, follow worked transformations, complete part of the method themselves and see why the full solution works. It lives inside the standard interaction frame and owns only the local calculation sequence.
+**Best used for:** Multi-step GCSE Maths or Science calculations where understanding the method matters as much as obtaining the final answer — including equations, rearranging formulae, fractions, percentages, substitution, geometry and scientific equations.
+**Props:** `block`, `subject` (defaults to `Maths`), `accent`, `onContinue`
+**Block shape:** `{ title?, goalPrompt?, problem, understand: { heading?, intro?, whatsHappening?, goal?, whyGoal?, decision?, check? }, steps: [{ mode: 'worked'|'yourTurn', title, why?, transform: { from, leftOp?, rightOp?, to }, whyStep?, check?, answer?, resultExpr?, hint?, cta? }], solution: { celebrateTitle?, celebrateSubtitle?, result, rows?, why? }, backgroundImage?, backgroundOpacity? }`
+**Screen type:** `calculationBreakdown` — full-screen component currently available in the Component Lab but not yet routed in `ModulePlayer.jsx`.
+**Dependencies:** `GENERAL`, `SUBJECTS`, `TYPE`, `SPACING`, `RADII`, `MOTION`, `ContinueCTA`, `InteractionShell`, `ScreenTitle`
+
+- **Decision**
+  - **Use when:** a calculation contains several connected operations and the learner needs to understand both what to do and why each move is valid or useful. Choose it when the method should be explicitly modelled before the learner applies part of it.
+  - **Do not use when:** only one simple operation is required, a visual model should establish the concept first, the learner is ready for independent exam practice, the content is primarily written analysis or the method varies so widely that one fixed sequence would be misleading.
+  - **Choose instead:** use `FractionRatioExplore`, `AreaPerimeterExplore` or another visual exploration component when the learner first needs to see why the mathematics works. Use `BuilderBlock` when the learner should reconstruct a short equation from supplied pieces. Use `FillInTheBlanksBlock` for one missing value or term. Use `ExamQuestionFrame` when the learner should attempt the full calculation independently. Use `GuidedExamResponse` for an extended written response rather than a numerical method.
+  - **Content shape:** one problem with a clear interpretation, a defined goal, a small number of purposeful steps, an explanation of why each move helps, at least one learner-completed step and a complete final solution with a check or explanation. Avoid breaking obvious arithmetic into patronising micro-steps. Scaffolding should become lighter when stronger learner evidence makes the full support unnecessary.
+  - **Rhythm role:** teaching, practice, repair.
 
 ---
 
@@ -357,9 +382,29 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### FillInTheBlanksBlock
 
 **File:** `src/components/learning/FillInTheBlanksBlock.jsx`
-**Purpose:** Inline fill-in-the-blanks interaction. Learner taps word slots and fills gaps from a word bank.
-**Props:** `block`, `subject`, `onComplete`, `onBack`
-**Dependencies:** `SUBJECTS`, `MOTION`, `RADII`
+**What it is:** A short typed-recall activity. The learner supplies one missing word, phrase or numerical value inside meaningful context, receives a hint after the first incorrect attempt and sees the correct answer after a second unsuccessful attempt.
+**Best used for:** Generative retrieval where the surrounding sentence provides a useful cue but the learner must still produce the missing answer rather than recognise it from options.
+**Props:** `block`, `subject`, `onContinue`
+**Block shape:** `{ type: 'fillblanks', sentences: [{ before?, after?, answer, acceptedAnswers?, matchMode?, hint?, hints?, feedback?, placeholder?, ariaLabel?, inputMode? }], wrongMsg?, correctMsg?, placeholder?, backgroundImage?, backgroundPosition?, backgroundOpacity?, backgroundFilter? }`
+**Block type:** `fillblanks` — assessed retrieval rendered inside a normal content screen.
+**Dependencies:** `SequenceProgress`, `CheckAnswerCTA`, `ContinueCTA`, `SUBJECTS`, subject backdrops, `GENERAL`, `COMPONENT_SIZE`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `fillInTheBlanksMatching`
+
+- **Decision**
+  - **Use when:** the surrounding sentence gives a useful retrieval cue, but the learner should independently generate and type one missing word, phrase or numerical value. Choose it for precise scientific terminology, a missing historical fact, a quotation fragment, a formula value or one essential word that changes a definition's meaning.
+  - **Do not use when:** several supplied pieces must be arranged, multiple gaps form one larger structure, several answers could reasonably fit, grammar reveals the answer without subject knowledge or the learner needs an extended explanation.
+  - **Choose instead:** use `BuilderBlock` when choices should be supplied and positioned. Use `QuickRecallScreen` for short objectively marked questions with answer options. Use `SpotTheError` when the learner must diagnose and repair incorrect wording. Use `GuidedExamResponse` when the response needs developed writing rather than one precise missing answer.
+  - **Content shape:** usually three to six short independent sentences, each containing one meaningful gap and one defensible answer. The surrounding wording must test subject knowledge rather than provide an accidental grammatical clue. Use accepted alternatives only where they are genuinely equivalent, and provide a hint that narrows the concept without simply revealing the answer.
+  - **Rhythm role:** retrieval, practice, repair.
+
+### Guided construction family rule
+
+Choose according to what the learner must produce:
+
+- Select supplied pieces and rebuild an exact structure → `BuilderBlock`
+- Generate and type one missing answer from context → `FillInTheBlanksBlock`
+- Understand and execute a connected procedural method → `CalculationBreakdown`
+
+These components form a graduated support pathway, but they are not interchangeable. Do not supply choices when independent recall is the learning goal, and do not reduce a multi-step method to disconnected missing-value questions.
 
 ---
 
