@@ -507,6 +507,57 @@ describe('straightLine stays inside the plot', () => {
     }
   })
 
+  // The triangle is relocated rather than clipped: a partial rise/run triangle
+  // misrepresents the ratio it exists to demonstrate.
+  it('keeps the whole rise/run triangle inside both axis ranges at every extreme', () => {
+    const preset = resolveCoordinatePlanePreset('straightLine')
+    const axes = { x: preset.xAxis, y: preset.yAxis }
+
+    for (const m of [-5, -3, -1, 0, 1, 3, 5]) {
+      for (const c of [-5, -3, 0, 3, 5]) {
+        const scene = sceneFor('straightLine', { m, c }, { focus: 'gradient' })
+        const triangle = scene.shapes.find(shape => shape.id === 'rise-run')
+
+        expect(triangle, `m=${m} c=${c} has no rise/run triangle`).toBeDefined()
+
+        const numbers = triangle.path.match(/-?[\d.]+/g).map(Number)
+        for (let index = 0; index < numbers.length; index += 2) {
+          const [x, y] = [numbers[index], numbers[index + 1]]
+          expect(x, `m=${m} c=${c} triangle x`).toBeGreaterThanOrEqual(axes.x.min)
+          expect(x, `m=${m} c=${c} triangle x`).toBeLessThanOrEqual(axes.x.max)
+          expect(y, `m=${m} c=${c} triangle y`).toBeGreaterThanOrEqual(axes.y.min)
+          expect(y, `m=${m} c=${c} triangle y`).toBeLessThanOrEqual(axes.y.max)
+        }
+      }
+    }
+  })
+
+  it('anchors the triangle as close to the y-axis as it can fit', () => {
+    // y = 5x + 5 leaves the plot above x = -1, so the triangle cannot sit at 0.
+    const steep = sceneFor('straightLine', { m: 5, c: 5 }, { focus: 'gradient' })
+    expect(steep.shapes.find(shape => shape.id === 'rise-run').path)
+      .toBe('M -1 0 L 0 0 L 0 5')
+
+    // A gentle line fits at the y-axis itself.
+    const gentle = sceneFor('straightLine', { m: 1, c: 0 }, { focus: 'gradient' })
+    expect(gentle.shapes.find(shape => shape.id === 'rise-run').path)
+      .toBe('M 0 0 L 1 0 L 1 1')
+  })
+
+  it('anchors each compared line independently', () => {
+    const scene = sceneFor('straightLine', { m: 5, c: 5, m2: 5, c2: -5 }, {
+      focus: 'compare',
+      comparisonRule: 'parallel',
+    })
+    const first = scene.shapes.find(shape => shape.id === 'rise-run')
+    const second = scene.shapes.find(shape => shape.id === 'rise-run-2')
+
+    expect(first).toBeDefined()
+    expect(second).toBeDefined()
+    // Same gradient, so equal triangles — at whichever position each line fits.
+    expect(first.path).not.toBe(second.path)
+  })
+
   it('drops a line that misses the plot entirely', () => {
     const preset = resolveCoordinatePlanePreset('straightLine')
     const scene = preset.derive({ m: 0, c: 40 }, {

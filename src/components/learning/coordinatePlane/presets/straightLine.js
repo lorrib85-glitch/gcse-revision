@@ -37,9 +37,43 @@ function equationText({ m, c }) {
   return c > 0 ? `y = ${gradient} + ${c}` : `y = ${gradient} ${MINUS} ${Math.abs(c)}`
 }
 
-function riseRunShape(id, { m, c }, atX) {
-  const fromY = lineY({ m, c }, atX)
-  const toY = lineY({ m, c }, atX + 1)
+/**
+ * Where a whole unit-interval rise/run triangle fits inside the plot.
+ *
+ * The triangle is never clipped. A partial triangle misrepresents the ratio it
+ * exists to demonstrate — a learner reading a rise cut off by the plot edge
+ * reads the wrong gradient. So instead of drawing it at a fixed x and letting
+ * the clip path eat it, the triangle moves to a unit interval where BOTH ends
+ * sit inside both axis ranges.
+ *
+ * The valid position closest to the y-axis wins, so the triangle stays near
+ * the intercept where the reasoning starts. Ties go rightwards, which reads
+ * more naturally as "along one, up m".
+ *
+ * Returns null when no whole unit interval fits, in which case no triangle is
+ * drawn at all rather than a misleading fragment.
+ */
+function riseRunAnchorX(line, axes) {
+  const inRange = y => y >= axes.y.min && y <= axes.y.max
+  let best = null
+
+  for (let x = Math.ceil(axes.x.min); x + 1 <= axes.x.max; x += 1) {
+    if (!inRange(lineY(line, x)) || !inRange(lineY(line, x + 1))) continue
+    if (best === null
+      || Math.abs(x) < Math.abs(best)
+      || (Math.abs(x) === Math.abs(best) && x > best)) {
+      best = x
+    }
+  }
+  return best
+}
+
+function riseRunShape(id, line, axes) {
+  const atX = riseRunAnchorX(line, axes)
+  if (atX === null) return null
+
+  const fromY = lineY(line, atX)
+  const toY = lineY(line, atX + 1)
   return {
     id,
     path: `M ${atX} ${fromY} L ${atX + 1} ${fromY} L ${atX + 1} ${toY}`,
@@ -167,7 +201,8 @@ const straightLinePreset = {
     }]
 
     if (focus === 'gradient' || comparing) {
-      shapes.push(riseRunShape('rise-run', line, 0))
+      const riseRun = riseRunShape('rise-run', line, axes)
+      if (riseRun) shapes.push(riseRun)
     }
 
     if (comparing && !second.impossible) {
@@ -176,7 +211,8 @@ const straightLinePreset = {
       // Under 'parallel' both lines get a triangle, so equal steepness is
       // something you see rather than something you are told.
       if (second.rule === 'parallel') {
-        shapes.push(riseRunShape('rise-run-2', second, 1))
+        const secondRiseRun = riseRunShape('rise-run-2', second, axes)
+        if (secondRiseRun) shapes.push(secondRiseRun)
       }
       points.push({
         id: 'y-intercept-2',
