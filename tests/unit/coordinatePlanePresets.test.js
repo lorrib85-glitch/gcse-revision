@@ -645,3 +645,80 @@ describe('tableOfValues preset', () => {
     expect(plotted.at(-1).tier).toBe('active')
   })
 })
+
+describe('intersection preset', () => {
+  it('reports the meeting point as the heading', () => {
+    const scene = sceneFor('intersection', { m1: 1, c1: 3, m2: -1, c2: 7 })
+    expect(scene.status.heading).toBe('(2, 5)')
+  })
+
+  it('substitutes the solution into both equations', () => {
+    const scene = sceneFor('intersection', { m1: 1, c1: 3, m2: -1, c2: 7 })
+
+    expect(scene.status.calculation[0]).toBe('y = x + 3  →  5 = 2 + 3 ✓')
+    expect(scene.status.calculation[1]).toBe('y = −x + 7  →  5 = −2 + 7 ✓')
+  })
+
+  it('names the coordinate as the pair satisfying both equations', () => {
+    const scene = sceneFor('intersection', { m1: 1, c1: 3, m2: -1, c2: 7 })
+
+    expect(scene.status.explanation)
+      .toBe('x = 2 and y = 5 is the only pair that satisfies both equations.')
+  })
+
+  // Enumerate EVERY reachable pair, not the four corners. The interior is not
+  // safe just because the corners are: the solution moves diagonally as the
+  // two intercepts change, so corner-only checking misses whole regions.
+  it('keeps every reachable one-solution point inside both axes', () => {
+    const preset = resolveCoordinatePlanePreset('intersection')
+    const c1Control = preset.controls.find(control => control.id === 'c1')
+    const c2Control = preset.controls.find(control => control.id === 'c2')
+    const axes = { x: preset.xAxis, y: preset.yAxis }
+    let checked = 0
+
+    for (let c1 = c1Control.min; c1 <= c1Control.max; c1 += c1Control.step) {
+      for (let c2 = c2Control.min; c2 <= c2Control.max; c2 += c2Control.step) {
+        const scene = preset.derive(
+          { m1: 1, c1, m2: -1, c2 },
+          { showGuides: 'active', capabilities: {}, axes, grid: preset.grid },
+        )
+        const solution = scene.points.find(point => point.id === 'solution')
+        if (!solution) continue
+
+        checked += 1
+        expect(solution.x, `c1=${c1} c2=${c2} solution x`).toBeGreaterThanOrEqual(axes.x.min)
+        expect(solution.x, `c1=${c1} c2=${c2} solution x`).toBeLessThanOrEqual(axes.x.max)
+        expect(solution.y, `c1=${c1} c2=${c2} solution y`).toBeGreaterThanOrEqual(axes.y.min)
+        expect(solution.y, `c1=${c1} c2=${c2} solution y`).toBeLessThanOrEqual(axes.y.max)
+      }
+    }
+
+    expect(checked).toBe(88)
+  })
+
+  it('marks the solution point as active', () => {
+    const scene = sceneFor('intersection', { m1: 1, c1: 3, m2: -1, c2: 7 })
+    const solution = scene.points.find(point => point.id === 'solution')
+
+    expect(solution.tier).toBe('active')
+    expect(solution.role).toBe('solution')
+  })
+
+  it('reports parallel lines as having no solution', () => {
+    const scene = sceneFor('intersection', { m1: 2, c1: 1, m2: 2, c2: 5 })
+
+    expect(scene.status.heading).toBe('No solution')
+    expect(scene.status.explanation).toContain('never meet')
+    expect(scene.points.find(point => point.id === 'solution')).toBeUndefined()
+  })
+
+  // Equal gradients alone are not "no solution" — same gradient AND same
+  // intercept is one line, and every point on it satisfies both equations.
+  it('reports coincident lines as having infinitely many solutions', () => {
+    const scene = sceneFor('intersection', { m1: 2, c1: 1, m2: 2, c2: 1 })
+
+    expect(scene.status.heading).toBe('Infinitely many solutions')
+    expect(scene.status.explanation).toContain('same line')
+    expect(scene.points.find(point => point.id === 'solution')).toBeUndefined()
+  })
+})

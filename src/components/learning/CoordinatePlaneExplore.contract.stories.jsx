@@ -1456,3 +1456,604 @@ export const TableOfValuesStaticShowsTheAccumulatedState = {
     expect(description).toContain('static illustration')
   },
 }
+
+// ─── intersection: the crossing point that has to earn the word "solution" ───
+//
+// A highlighted crossing point is a picture. What makes it a SOLUTION is that
+// the coordinate satisfies both equations, so the substitution back into each
+// line is the contract here — heading, both checks, and the sentence naming the
+// pair. Getting a sign or a bracket wrong in those checks produces arithmetic
+// that is simply false, which is why negatives and half-integers are pinned
+// exactly rather than by substring.
+//
+// It is also the second stepper-only preset, and the first with two lines: c1
+// and c2 are the only declared controls, while m1 and m2 are configuration
+// carried in initialValues and must surface no learner UI at all.
+
+const INTERSECTION_START = { m1: 1, c1: 3, m2: -1, c2: 7 }
+
+const calculationLines = canvasElement =>
+  [...canvasElement.querySelectorAll('[data-cp-status-calculation]')]
+    .map(node => node.textContent)
+
+const lineD = (canvasElement, id) =>
+  canvasElement.querySelector(`[data-cp-shape="${id}"]`)?.getAttribute('d') ?? null
+
+const plotRect = (canvasElement) => {
+  const clip = canvasElement.querySelector('clipPath rect')
+  const x = Number(clip.getAttribute('x'))
+  const y = Number(clip.getAttribute('y'))
+  return {
+    left: x,
+    top: y,
+    right: x + Number(clip.getAttribute('width')),
+    bottom: y + Number(clip.getAttribute('height')),
+  }
+}
+
+// [x, y, x, y, …] from a projected two-point path.
+const pathCoords = (canvasElement, id) =>
+  lineD(canvasElement, id).match(/-?[\d.]+/g).map(Number)
+
+// 1. Both intercepts are reachable, and both steppers actually work.
+export const IntersectionBothInterceptsAreReachable = {
+  args: { preset: 'intersection' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // No handles on this preset — the story cannot pass by accidentally
+    // driving a drag handle instead of a stepper.
+    expect(canvasElement.querySelectorAll('[data-cp-handle]')).toHaveLength(0)
+    expect(stepperIds(canvasElement)).toEqual(['c1', 'c2'])
+
+    const first = canvas.getByRole('slider', { name: 'First line y-intercept' })
+    const second = canvas.getByRole('slider', { name: 'Second line y-intercept' })
+
+    await expect(first).toHaveAttribute('aria-valuenow', '3')
+    await expect(second).toHaveAttribute('aria-valuenow', '7')
+
+    for (const name of [
+      'Increase First line y-intercept', 'Decrease First line y-intercept',
+      'Increase Second line y-intercept', 'Decrease Second line y-intercept',
+    ]) {
+      await expect(canvas.getByRole('button', { name })).toBeVisible()
+    }
+
+    // Each pair moves its own value in both directions, and the meeting point
+    // follows: c1 = 4 with c2 = 7 meets at (1.5, 5.5).
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase First line y-intercept' }))
+    await expect(first).toHaveAttribute('aria-valuenow', '4')
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('(1.5, 5.5)')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease First line y-intercept' }))
+    await expect(first).toHaveAttribute('aria-valuenow', '3')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Second line y-intercept' }))
+    await expect(second).toHaveAttribute('aria-valuenow', '8')
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('(2.5, 5.5)')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Second line y-intercept' }))
+    await expect(second).toHaveAttribute('aria-valuenow', '7')
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('(2, 5)')
+  },
+}
+
+// 2. c1 and c2 are the ONLY controls. m1 and m2 change the picture but the
+//    preset never agreed to expose them, so no stepper, slider or button may
+//    exist for either.
+export const IntersectionExposesOnlyTheTwoIntercepts = {
+  args: { preset: 'intersection' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    expect(stepperIds(canvasElement)).toEqual(['c1', 'c2'])
+
+    // Two sliders and two −/+ pairs, all belonging to the two intercepts.
+    const sliders = canvas.getAllByRole('slider')
+    expect(sliders).toHaveLength(2)
+    expect(sliders.map(slider => slider.getAttribute('aria-label')))
+      .toEqual(['First line y-intercept', 'Second line y-intercept'])
+
+    // Named exhaustively rather than by a loose pattern — a RegExp name would
+    // match "Increase …" and "Decrease …" alike.
+    expect(canvas.getAllByRole('button').map(button => button.getAttribute('aria-label')))
+      .toEqual([
+        'Decrease First line y-intercept', 'Increase First line y-intercept',
+        'Decrease Second line y-intercept', 'Increase Second line y-intercept',
+      ])
+
+    for (const undeclared of ['m1', 'm2']) {
+      expect(canvasElement.querySelector(`[data-cp-stepper="${undeclared}"]`)).toBeNull()
+      expect(canvasElement.querySelector(`[data-cp-stepper-value="${undeclared}"]`)).toBeNull()
+      expect(canvasElement.querySelector(`[data-cp-stepper-increment="${undeclared}"]`)).toBeNull()
+      expect(canvasElement.querySelector(`[data-cp-stepper-decrement="${undeclared}"]`)).toBeNull()
+    }
+
+    for (const name of ['Gradient', 'First line gradient', 'Second line gradient', 'm1', 'm2']) {
+      expect(canvas.queryByRole('slider', { name })).toBeNull()
+      expect(canvas.queryByRole('button', { name: `Increase ${name}` })).toBeNull()
+      expect(canvas.queryByRole('button', { name: `Decrease ${name}` })).toBeNull()
+    }
+  },
+}
+
+// 3. Pointer and keyboard are one control, not two parallel ones — for BOTH
+//    lines, in BOTH directions, identical in everything the learner perceives.
+export const IntersectionPointerKeyboardParity = {
+  args: { preset: 'intersection' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const first = canvas.getByRole('slider', { name: 'First line y-intercept' })
+    const second = canvas.getByRole('slider', { name: 'Second line y-intercept' })
+
+    const rendered = slider => ({
+      valueNow: slider.getAttribute('aria-valuenow'),
+      valueText: slider.getAttribute('aria-valuetext'),
+      display: slider.textContent,
+      heading: canvasElement.querySelector('[data-cp-status-heading]').textContent,
+      calculation: calculationLines(canvasElement),
+    })
+
+    // First line, increase.
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase First line y-intercept' }))
+    const firstAfterPlusClick = rendered(first)
+    expect(firstAfterPlusClick.valueNow).toBe('4')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease First line y-intercept' }))
+    await expect(first).toHaveAttribute('aria-valuenow', '3')
+
+    first.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    expect(rendered(first)).toEqual(firstAfterPlusClick)
+
+    // First line, decrease.
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease First line y-intercept' }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease First line y-intercept' }))
+    const firstAfterMinusClick = rendered(first)
+    expect(firstAfterMinusClick.valueNow).toBe('2')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase First line y-intercept' }))
+    first.focus()
+    await userEvent.keyboard('{ArrowLeft}')
+    expect(rendered(first)).toEqual(firstAfterMinusClick)
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase First line y-intercept' }))
+    await expect(first).toHaveAttribute('aria-valuenow', '3')
+
+    // Second line, increase.
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Second line y-intercept' }))
+    const secondAfterPlusClick = rendered(second)
+    expect(secondAfterPlusClick.valueNow).toBe('8')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Second line y-intercept' }))
+    await expect(second).toHaveAttribute('aria-valuenow', '7')
+
+    second.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    expect(rendered(second)).toEqual(secondAfterPlusClick)
+
+    // Second line, decrease.
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Second line y-intercept' }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Second line y-intercept' }))
+    const secondAfterMinusClick = rendered(second)
+    expect(secondAfterMinusClick.valueNow).toBe('6')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Second line y-intercept' }))
+    second.focus()
+    await userEvent.keyboard('{ArrowLeft}')
+    expect(rendered(second)).toEqual(secondAfterMinusClick)
+  },
+}
+
+// 4. One action, one onChange, carrying the complete value state — including
+//    m1 and m2, which no control declares and which a partial patch would drop.
+export const IntersectionStepperEmitsOneCompleteChange = {
+  args: { preset: 'intersection', onChange: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase First line y-intercept' }))
+
+    expect(args.onChange).toHaveBeenCalledTimes(1)
+
+    const payload = args.onChange.mock.calls[0][0]
+    expect(Object.keys(payload).sort()).toEqual(['c1', 'c2', 'm1', 'm2'])
+    expect(payload).toEqual({ ...INTERSECTION_START, c1: 4 })
+  },
+}
+
+// 5. The two intercepts are independent: each moves its own line and leaves the
+//    other exactly where it was, pixel for pixel.
+export const IntersectionEachInterceptMovesOnlyItsOwnLine = {
+  args: { preset: 'intersection' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    const lineABefore = lineD(canvasElement, 'line-a')
+    const lineBBefore = lineD(canvasElement, 'line-b')
+    expect(lineABefore).not.toBeNull()
+    expect(lineBBefore).not.toBeNull()
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase First line y-intercept' }))
+    expect(lineD(canvasElement, 'line-a')).not.toBe(lineABefore)
+    expect(lineD(canvasElement, 'line-b')).toBe(lineBBefore)
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease First line y-intercept' }))
+    expect(lineD(canvasElement, 'line-a')).toBe(lineABefore)
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Second line y-intercept' }))
+    expect(lineD(canvasElement, 'line-b')).not.toBe(lineBBefore)
+    expect(lineD(canvasElement, 'line-a')).toBe(lineABefore)
+  },
+}
+
+// 6. The default meeting point, labelled and substituted back into BOTH
+//    equations. The substitution is what earns the word "solution"; without it
+//    this is a highlighted crossing and nothing more.
+export const IntersectionSubstitutesIntoBothEquations = {
+  args: { preset: 'intersection' },
+  play: async ({ canvasElement }) => {
+    // Queried by data attribute — "(2, 5)" also renders as the point label and
+    // again inside <desc>, so getByText would resolve ambiguously.
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('(2, 5)')
+    expect(canvasElement.querySelector('[data-cp-point-label="solution"]').textContent)
+      .toBe('(2, 5)')
+
+    expect(calculationLines(canvasElement)).toEqual([
+      'y = x + 3  →  5 = 2 + 3 ✓',
+      'y = −x + 7  →  5 = −2 + 7 ✓',
+    ])
+
+    expect(canvasElement.querySelector('[data-cp-status-explanation]').textContent)
+      .toBe('x = 2 and y = 5 is the only pair that satisfies both equations.')
+  },
+}
+
+// 7a. A negative solution, then a negative half-integer one. Both checks are
+//     pinned exactly: "−0.5 = 0.5 − 1" is true arithmetic, and every plausible
+//     sign slip ("−0.5 = −0.5 − 1", "−0.5 = 0.5 + −1") is false arithmetic that
+//     a learner would copy down.
+export const IntersectionNegativeSolutionSubstitutions = {
+  args: { preset: 'intersection', defaultValue: { m1: 1, c1: -1, m2: -1, c2: -1 } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('(0, −1)')
+    expect(calculationLines(canvasElement)).toEqual([
+      'y = x − 1  →  −1 = 0 − 1 ✓',
+      'y = −x − 1  →  −1 = 0 − 1 ✓',
+    ])
+    expect(canvasElement.querySelector('[data-cp-status-explanation]').textContent)
+      .toBe('x = 0 and y = −1 is the only pair that satisfies both equations.')
+
+    // c1 = 0 and c2 = −1 differ in parity, so the solution lands on a half
+    // integer — and c = 0 drops the constant term from the first equation
+    // entirely, which is the other thing a hand-rolled formatter gets wrong.
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase First line y-intercept' }))
+
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('(−0.5, −0.5)')
+    expect(calculationLines(canvasElement)).toEqual([
+      'y = x  →  −0.5 = −0.5 ✓',
+      'y = −x − 1  →  −0.5 = 0.5 − 1 ✓',
+    ])
+    expect(canvasElement.querySelector('[data-cp-status-explanation]').textContent)
+      .toBe('x = −0.5 and y = −0.5 is the only pair that satisfies both equations.')
+
+    // Every minus is a real minus sign (U+2212), never an ASCII hyphen.
+    expect(calculationLines(canvasElement).join(' ')).not.toContain('-')
+  },
+}
+
+// 7b. The same at the far corner of the reachable set, where the solution is a
+//     negative half integer in x and a positive half integer in y — so one
+//     check subtracts a negative x and the other adds its negation.
+export const IntersectionFractionalSolutionSubstitutions = {
+  args: { preset: 'intersection', defaultValue: { m1: 1, c1: 6, m2: -1, c2: -1 } },
+  play: async ({ canvasElement }) => {
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('(−3.5, 2.5)')
+
+    // −3.5 + 6 = 2.5, and −(−3.5) − 1 = 2.5. Both are true as written.
+    expect(calculationLines(canvasElement)).toEqual([
+      'y = x + 6  →  2.5 = −3.5 + 6 ✓',
+      'y = −x − 1  →  2.5 = 3.5 − 1 ✓',
+    ])
+    expect(canvasElement.querySelector('[data-cp-status-explanation]').textContent)
+      .toBe('x = −3.5 and y = 2.5 is the only pair that satisfies both equations.')
+    expect(calculationLines(canvasElement).join(' ')).not.toContain('-')
+
+    // The point label carries the same coordinate as the heading.
+    expect(canvasElement.querySelector('[data-cp-point-label="solution"]').textContent)
+      .toBe('(−3.5, 2.5)')
+  },
+}
+
+// 8. Parallel lines: no solution, and nothing on the plane pretending otherwise
+//    — no solution point, no label, no guides.
+export const IntersectionParallelLinesHaveNoSolution = {
+  args: { preset: 'intersection', defaultValue: { m1: 2, c1: 1, m2: 2, c2: 5 } },
+  play: async ({ canvasElement }) => {
+    // Both lines are genuinely drawn; it is the meeting point that is absent.
+    expect(canvasElement.querySelector('[data-cp-shape="line-a"]')).not.toBeNull()
+    expect(canvasElement.querySelector('[data-cp-shape="line-b"]')).not.toBeNull()
+
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('No solution')
+    expect(canvasElement.querySelector('[data-cp-status-explanation]').textContent)
+      .toContain('never meet')
+
+    // Nothing fabricated: no point, no label, no guides.
+    expect(canvasElement.querySelector('[data-cp-point="solution"]')).toBeNull()
+    expect(canvasElement.querySelector('[data-cp-point-label="solution"]')).toBeNull()
+    expect(canvasElement.querySelectorAll('[data-cp-guide]')).toHaveLength(0)
+    expect(canvasElement.querySelectorAll('[data-cp-tier="active"]')).toHaveLength(0)
+  },
+}
+
+// 9. Coincident lines are NOT "no solution". Same gradient and same intercept
+//    is one line, and every point on it satisfies both equations — so the
+//    status says infinitely many, and still fabricates no single point.
+export const IntersectionCoincidentLinesHaveInfinitelyManySolutions = {
+  args: { preset: 'intersection', defaultValue: { m1: 2, c1: 1, m2: 2, c2: 1 } },
+  play: async ({ canvasElement }) => {
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Infinitely many solutions')
+
+    const explanation = canvasElement.querySelector('[data-cp-status-explanation]').textContent
+    expect(explanation).toContain('same line')
+    expect(explanation).not.toContain('never meet')
+
+    // No single point is invented for a case that has no single answer.
+    expect(canvasElement.querySelector('[data-cp-point="solution"]')).toBeNull()
+    expect(canvasElement.querySelector('[data-cp-point-label="solution"]')).toBeNull()
+    expect(canvasElement.querySelectorAll('[data-cp-guide]')).toHaveLength(0)
+
+    // Both equations are still listed, and they are the same equation — which
+    // is precisely the point being made. (This is the one state in which a
+    // preset legitimately emits two identical calculation lines; the renderer
+    // keys that list by its text, so React logs a duplicate-key warning here.
+    // Both lines do render, and fixing the key belongs to the renderer, not to
+    // this preset.)
+    expect(calculationLines(canvasElement)).toEqual(['y = 2x + 1', 'y = 2x + 1'])
+
+    // The two lines coincide exactly, which is the fact on display.
+    expect(lineD(canvasElement, 'line-a')).toBe(lineD(canvasElement, 'line-b'))
+
+    // Three distinct outcomes, three distinct headings — the parallel wording
+    // must not leak into this one.
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .not.toBe('No solution')
+  },
+}
+
+// 10. The visible-bounds guarantee, seen rather than enumerated: the unit test
+//     walks all 88 reachable intercept pairs, and this drives the four corners
+//     of that set through the real controls and checks the mark is on the plot.
+export const IntersectionSolutionStaysInsideThePlot = {
+  args: { preset: 'intersection' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const first = canvas.getByRole('slider', { name: 'First line y-intercept' })
+    const second = canvas.getByRole('slider', { name: 'Second line y-intercept' })
+
+    const expectSolutionInsidePlot = (where) => {
+      const plot = plotRect(canvasElement)
+      const mark = canvasElement.querySelector('[data-cp-point="solution"] circle')
+      expect(mark, `${where}: solution mark`).not.toBeNull()
+
+      const cx = Number(mark.getAttribute('cx'))
+      const cy = Number(mark.getAttribute('cy'))
+      expect(cx, `${where} cx`).toBeGreaterThanOrEqual(plot.left)
+      expect(cx, `${where} cx`).toBeLessThanOrEqual(plot.right)
+      expect(cy, `${where} cy`).toBeGreaterThanOrEqual(plot.top)
+      expect(cy, `${where} cy`).toBeLessThanOrEqual(plot.bottom)
+    }
+
+    // The default.
+    expectSolutionInsidePlot('c1 = 3, c2 = 7')
+
+    // Home/End clamp to the interaction range, so this reaches the true
+    // extremes of what a learner can drive.
+    first.focus()
+    await userEvent.keyboard('{End}')
+    await expect(first).toHaveAttribute('aria-valuenow', '6')
+    second.focus()
+    await userEvent.keyboard('{End}')
+    await expect(second).toHaveAttribute('aria-valuenow', '9')
+    expectSolutionInsidePlot('c1 = 6, c2 = 9')
+
+    await userEvent.keyboard('{Home}')
+    await expect(second).toHaveAttribute('aria-valuenow', '-1')
+    expectSolutionInsidePlot('c1 = 6, c2 = −1')
+
+    first.focus()
+    await userEvent.keyboard('{Home}')
+    await expect(first).toHaveAttribute('aria-valuenow', '-1')
+    expectSolutionInsidePlot('c1 = −1, c2 = −1')
+
+    second.focus()
+    await userEvent.keyboard('{End}')
+    await expect(second).toHaveAttribute('aria-valuenow', '9')
+    expectSolutionInsidePlot('c1 = −1, c2 = 9')
+  },
+}
+
+// 11. Both lines are clipped in MODEL space, not merely hidden by the SVG clip
+//     path. y = x + 3 reaches y = 10 at the right edge of an axis that stops at
+//     9, and y = −x + 7 reaches y = 11 at the left edge — so each line's own
+//     coordinates must already stop at the boundary.
+export const IntersectionBothLinesAreClippedInModelSpace = {
+  args: { preset: 'intersection', interactive: false },
+  play: async ({ canvasElement }) => {
+    const plot = plotRect(canvasElement)
+
+    for (const id of ['line-a', 'line-b']) {
+      const node = canvasElement.querySelector(`[data-cp-shape="${id}"]`)
+      expect(node, `${id} exists`).not.toBeNull()
+
+      // Projected, not the model-space string the preset authored.
+      expect(node.getAttribute('d'), `${id} projected`).not.toContain('M -')
+
+      const coords = pathCoords(canvasElement, id)
+      const xs = coords.filter((_, index) => index % 2 === 0)
+      const ys = coords.filter((_, index) => index % 2 === 1)
+
+      for (const x of xs) {
+        expect(x, `${id} x inside plot`).toBeGreaterThanOrEqual(plot.left - 0.5)
+        expect(x, `${id} x inside plot`).toBeLessThanOrEqual(plot.right + 0.5)
+      }
+      for (const y of ys) {
+        expect(y, `${id} y inside plot`).toBeGreaterThanOrEqual(plot.top - 0.5)
+        expect(y, `${id} y inside plot`).toBeLessThanOrEqual(plot.bottom + 0.5)
+      }
+
+      // Each line runs off the top of the plot unclipped, so each must stop
+      // exactly at the top edge — which is what makes this a clip rather than a
+      // line that happened to be short.
+      expect(Math.min(...ys), `${id} reaches the top edge`).toBeCloseTo(plot.top, 0)
+
+      // And the rendered box agrees with the path coordinates.
+      const box = node.getBBox()
+      expect(box.y, `${id} bbox top`).toBeGreaterThanOrEqual(plot.top - 0.5)
+      expect(box.y + box.height, `${id} bbox bottom`).toBeLessThanOrEqual(plot.bottom + 0.5)
+    }
+  },
+}
+
+// 12. One solution, one active annotation. The two lines and the guides are
+//     context around it, not competing focal points.
+export const IntersectionSolutionIsTheOnlyActiveAnnotation = {
+  args: { preset: 'intersection' },
+  play: async ({ canvasElement }) => {
+    const active = canvasElement.querySelectorAll('[data-cp-tier="active"]')
+
+    expect(active).toHaveLength(1)
+    expect(active[0].getAttribute('data-cp-point')).toBe('solution')
+
+    // Guides belong to the active point and to nothing else.
+    expect(canvasElement.querySelectorAll('[data-cp-guide]')).toHaveLength(2)
+  },
+}
+
+// 13. The narrowest supported width. Two steppers share one row, so this is
+//     where that row would overflow if it were going to.
+export const IntersectionNarrowViewport = {
+  args: { preset: 'intersection' },
+  globals: { viewport: { value: 'mobile1', isRotated: false } },
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  play: async ({ canvasElement }) => {
+    const diagram = canvasElement.querySelector('.cp-explore')
+
+    expect(diagram.getBoundingClientRect().width).toBeLessThanOrEqual(320.5)
+    expect(diagram.scrollWidth).toBeLessThanOrEqual(diagram.clientWidth)
+
+    const rows = canvasElement.querySelectorAll('[data-cp-stepper-row]')
+    expect(rows).toHaveLength(1)
+    for (const row of rows) {
+      expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth)
+    }
+
+    const buttons = canvasElement.querySelectorAll('button')
+    expect(buttons).toHaveLength(4)
+    for (const button of buttons) {
+      const rect = button.getBoundingClientRect()
+      const name = button.getAttribute('aria-label')
+      expect(rect.height, `${name} height`).toBeGreaterThanOrEqual(43.5)
+      expect(rect.width, `${name} width`).toBeGreaterThanOrEqual(43.5)
+    }
+  },
+}
+
+// 14a. Static mode, one solution: a finished diagram, with no controls and no
+//      live region, and a description that names both equations and the point.
+export const IntersectionStaticOneSolution = {
+  args: { preset: 'intersection', interactive: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    expect(canvasElement.querySelector('[data-cp-shape="line-a"]')).not.toBeNull()
+    expect(canvasElement.querySelector('[data-cp-shape="line-b"]')).not.toBeNull()
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent).toBe('(2, 5)')
+    expect(calculationLines(canvasElement)).toEqual([
+      'y = x + 3  →  5 = 2 + 3 ✓',
+      'y = −x + 7  →  5 = −2 + 7 ✓',
+    ])
+
+    expect(canvasElement.querySelectorAll('[data-cp-stepper]')).toHaveLength(0)
+    expect(canvasElement.querySelectorAll('[data-cp-stepper-row]')).toHaveLength(0)
+    expect(canvasElement.querySelector('[data-cp-status-announcement]')).toBeNull()
+    expect(canvas.queryByRole('slider')).toBeNull()
+    expect(canvas.queryAllByRole('button')).toHaveLength(0)
+
+    const description = canvasElement.querySelector('svg desc').textContent
+    expect(description).toBe(
+      'The graphs of y = x + 3 and y = −x + 7, meeting at (2, 5).'
+      + ' This diagram is shown as a static illustration.',
+    )
+  },
+}
+
+// 14b. Static mode, no solution: the description says parallel and never meet,
+//      and names no meeting point.
+export const IntersectionStaticNoSolution = {
+  args: {
+    preset: 'intersection',
+    interactive: false,
+    defaultValue: { m1: 2, c1: 1, m2: 2, c2: 5 },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('No solution')
+    expect(canvasElement.querySelector('[data-cp-point="solution"]')).toBeNull()
+
+    expect(canvasElement.querySelectorAll('[data-cp-stepper]')).toHaveLength(0)
+    expect(canvasElement.querySelector('[data-cp-status-announcement]')).toBeNull()
+    expect(canvas.queryByRole('slider')).toBeNull()
+    expect(canvas.queryAllByRole('button')).toHaveLength(0)
+
+    const description = canvasElement.querySelector('svg desc').textContent
+    expect(description).toBe(
+      'The graphs of y = 2x + 1 and y = 2x + 5, which are parallel and never meet.'
+      + ' This diagram is shown as a static illustration.',
+    )
+    expect(description).not.toContain('meeting at')
+  },
+}
+
+// 14c. Static mode, infinitely many solutions: the description says one line
+//      drawn twice, rather than reporting a second, different equation.
+export const IntersectionStaticInfiniteSolutions = {
+  args: {
+    preset: 'intersection',
+    interactive: false,
+    defaultValue: { m1: 2, c1: 1, m2: 2, c2: 1 },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Infinitely many solutions')
+    expect(canvasElement.querySelector('[data-cp-point="solution"]')).toBeNull()
+
+    expect(canvasElement.querySelectorAll('[data-cp-stepper]')).toHaveLength(0)
+    expect(canvasElement.querySelector('[data-cp-status-announcement]')).toBeNull()
+    expect(canvas.queryByRole('slider')).toBeNull()
+    expect(canvas.queryAllByRole('button')).toHaveLength(0)
+
+    const description = canvasElement.querySelector('svg desc').textContent
+    expect(description).toBe(
+      'The graph of y = 2x + 1, drawn twice — both equations describe the same line.'
+      + ' This diagram is shown as a static illustration.',
+    )
+    expect(description).not.toContain('never meet')
+    expect(description).not.toContain('meeting at')
+  },
+}

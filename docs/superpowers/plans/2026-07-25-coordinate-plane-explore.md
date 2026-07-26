@@ -3039,9 +3039,13 @@ function CoordinatePlaneExplore({
           </div>
 
           <div style={{ minHeight: COMPONENT_SIZE.touchTarget, marginTop: SPACING.micro }}>
-            {scene.status.calculation.map(line => (
+            {/* Keyed by index, not by text. Calculation lines are legitimately
+                identical in some states — coincident lines print the same
+                equation twice — and keying by content collapses them into a
+                React duplicate-key warning. */}
+            {scene.status.calculation.map((line, index) => (
               <div
-                key={line}
+                key={`${index}-${line}`}
                 data-cp-status-calculation="true"
                 style={{
                   ...TYPE.bodySmall,
@@ -4458,7 +4462,10 @@ const intersectionPreset = {
   // visible. The originally planned ranges (c1 −4…8, c2 −4…9) put it outside
   // the axes for 20 of their 182 pairs — c1 = 8, c2 = −4 lands at (−6, 2).
   // These ranges keep all 88 pairs inside x −4…7 and y −2…9, and still reach
-  // half-integer solutions such as (−3.5, −1), which is worth showing.
+  // 44 half-integer solutions such as (−3.5, 2.5).
+  //
+  // Note x and y always share a fractional part: (c2 − c1) and (c1 + c2) have
+  // the same parity, so a solution like (−3.5, −1) is not reachable at all.
   initialValues: { m1: 1, c1: 3, m2: -1, c2: 7 },
   controls: [
     {
@@ -4570,7 +4577,7 @@ and the entry `intersection: intersectionPreset,`.
 
 Run: `./node_modules/.bin/vitest run --project unit tests/unit/coordinatePlanePresets.test.js`
 
-Expected: PASS — 55 tests.
+Expected: PASS — 77 tests (the file accumulates across tasks).
 
 - [ ] **Step 6: Commit**
 

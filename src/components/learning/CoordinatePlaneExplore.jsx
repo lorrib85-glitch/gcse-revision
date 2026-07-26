@@ -1126,9 +1126,13 @@ function CoordinatePlaneExplore({
           </div>
 
           <div style={{ minHeight: COMPONENT_SIZE.touchTarget, marginTop: SPACING.micro }}>
-            {scene.status.calculation.map(line => (
+            {/* Keyed by index, not by text. Calculation lines are legitimately
+                identical in some states — coincident lines print the same
+                equation twice — and keying by content collapses them into a
+                React duplicate-key warning. */}
+            {scene.status.calculation.map((line, index) => (
               <div
-                key={line}
+                key={`${index}-${line}`}
                 data-cp-status-calculation="true"
                 style={{
                   ...TYPE.bodySmall,
