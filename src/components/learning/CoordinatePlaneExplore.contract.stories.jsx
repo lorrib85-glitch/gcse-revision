@@ -671,3 +671,377 @@ export const ModelSpaceShapePathsAreProjected = {
     expect(box.y + box.height).toBeCloseTo(Math.max(...ys), 1)
   },
 }
+
+// ─── straightLine: the first preset operated entirely through steppers ───────
+//
+// It declares no handles at all, so the stepper row is the ONLY way m and c can
+// be reached. That makes it the sharpest test of the control-reachability rule:
+// if the steppers stop rendering, the preset is not merely awkward, it is dead.
+//
+// It also declares m2 and c2 in initialValues WITHOUT declaring them as
+// controls — they belong to the comparison line, which the caller configures.
+// A control the preset never declared must surface no UI whatsoever.
+
+const STRAIGHT_LINE_START = { m: 2, c: 1, m2: 1, c2: -3 }
+
+const stepperIds = canvasElement => [...canvasElement.querySelectorAll('[data-cp-stepper]')]
+  .map(node => node.getAttribute('data-cp-stepper'))
+
+const calculationText = canvasElement =>
+  [...canvasElement.querySelectorAll('[data-cp-status-calculation]')]
+    .map(node => node.textContent)
+    .join(' ')
+
+const interceptMarkY = canvasElement => Number(
+  canvasElement.querySelector('[data-cp-point="y-intercept"] circle').getAttribute('cy'),
+)
+
+// 1. Both defining numbers are reachable, and both steppers actually work.
+export const StraightLineBothControlsAreReachable = {
+  args: { preset: 'straightLine' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // No handles exist on this preset — assert that, so the story cannot pass
+    // by accidentally driving a drag handle instead of a stepper.
+    expect(canvasElement.querySelectorAll('[data-cp-handle]')).toHaveLength(0)
+
+    expect(stepperIds(canvasElement)).toEqual(['m', 'c'])
+
+    const gradient = canvas.getByRole('slider', { name: 'Gradient' })
+    const intercept = canvas.getByRole('slider', { name: 'Y-intercept' })
+
+    await expect(gradient).toHaveAttribute('aria-valuenow', '2')
+    await expect(intercept).toHaveAttribute('aria-valuenow', '1')
+
+    // Both −/+ pairs are present.
+    for (const name of [
+      'Increase Gradient', 'Decrease Gradient',
+      'Increase Y-intercept', 'Decrease Y-intercept',
+    ]) {
+      await expect(canvas.getByRole('button', { name })).toBeVisible()
+    }
+
+    // And both pairs move their own value in both directions.
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Gradient' }))
+    await expect(gradient).toHaveAttribute('aria-valuenow', '3')
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Gradient' }))
+    await expect(gradient).toHaveAttribute('aria-valuenow', '2')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Y-intercept' }))
+    await expect(intercept).toHaveAttribute('aria-valuenow', '2')
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Y-intercept' }))
+    await expect(intercept).toHaveAttribute('aria-valuenow', '1')
+
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('y = 2x + 1')
+  },
+}
+
+// 2. Pointer and keyboard are the same control, not two parallel ones — for
+//    BOTH controls, in BOTH directions.
+export const StraightLinePointerKeyboardParity = {
+  args: { preset: 'straightLine' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const gradient = canvas.getByRole('slider', { name: 'Gradient' })
+    const intercept = canvas.getByRole('slider', { name: 'Y-intercept' })
+    const heading = () => canvasElement.querySelector('[data-cp-status-heading]').textContent
+
+    // Gradient: click + then read the whole rendered result.
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Gradient' }))
+    const gradientAfterPointer = {
+      valueNow: gradient.getAttribute('aria-valuenow'),
+      valueText: gradient.getAttribute('aria-valuetext'),
+      display: gradient.textContent,
+      heading: heading(),
+    }
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Gradient' }))
+    await expect(gradient).toHaveAttribute('aria-valuenow', '2')
+
+    gradient.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    expect({
+      valueNow: gradient.getAttribute('aria-valuenow'),
+      valueText: gradient.getAttribute('aria-valuetext'),
+      display: gradient.textContent,
+      heading: heading(),
+    }).toEqual(gradientAfterPointer)
+
+    // Decrease parity: click − and ArrowLeft must also agree.
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Gradient' }))
+    const gradientAfterMinusClick = heading()
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Gradient' }))
+    gradient.focus()
+    await userEvent.keyboard('{ArrowLeft}')
+    expect(heading()).toBe(gradientAfterMinusClick)
+    await expect(gradient).toHaveAttribute('aria-valuenow', '2')
+
+    // Y-intercept: the same two routes, again in both directions.
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Y-intercept' }))
+    const interceptAfterPointer = {
+      valueNow: intercept.getAttribute('aria-valuenow'),
+      valueText: intercept.getAttribute('aria-valuetext'),
+      display: intercept.textContent,
+      heading: heading(),
+    }
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Y-intercept' }))
+    await expect(intercept).toHaveAttribute('aria-valuenow', '1')
+
+    intercept.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    expect({
+      valueNow: intercept.getAttribute('aria-valuenow'),
+      valueText: intercept.getAttribute('aria-valuetext'),
+      display: intercept.textContent,
+      heading: heading(),
+    }).toEqual(interceptAfterPointer)
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Y-intercept' }))
+    const interceptAfterMinusClick = heading()
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Y-intercept' }))
+    intercept.focus()
+    await userEvent.keyboard('{ArrowLeft}')
+    expect(heading()).toBe(interceptAfterMinusClick)
+    await expect(intercept).toHaveAttribute('aria-valuenow', '1')
+  },
+}
+
+// 3. One action, one complete payload. A stepper touches one control, but the
+//    emitted object must still carry the whole value state — including m2 and
+//    c2, which no control declares and which a partial patch would drop.
+export const StraightLineStepperEmitsOneCompleteChange = {
+  args: { preset: 'straightLine', onChange: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Gradient' }))
+
+    expect(args.onChange).toHaveBeenCalledTimes(1)
+
+    const payload = args.onChange.mock.calls[0][0]
+    expect(Object.keys(payload).sort()).toEqual(['c', 'c2', 'm', 'm2'])
+    expect(payload).toEqual({ ...STRAIGHT_LINE_START, m: 3 })
+  },
+}
+
+// 4. m and c are independent: changing the gradient rotates the line about its
+//    y-intercept, and leaves the intercept exactly where it was.
+export const StraightLineGradientDoesNotMoveTheIntercept = {
+  args: { preset: 'straightLine' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const line = () => canvasElement.querySelector('[data-cp-shape="line-1"]').getAttribute('d')
+
+    const interceptBefore = interceptMarkY(canvasElement)
+    const lineBefore = line()
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Gradient' }))
+
+    // The intercept point has not moved a pixel.
+    expect(interceptMarkY(canvasElement)).toBe(interceptBefore)
+    await expect(canvas.getByRole('slider', { name: 'Y-intercept' }))
+      .toHaveAttribute('aria-valuenow', '1')
+
+    // The line itself is a different line.
+    expect(line()).not.toBe(lineBefore)
+    expect(calculationText(canvasElement)).toContain('rise ÷ run = 3 ÷ 1 = 3')
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('y = 3x + 1')
+  },
+}
+
+// 5. The mirror image: changing c slides the line up, and the gradient is
+//    untouched.
+export const StraightLineInterceptDoesNotChangeTheGradient = {
+  args: { preset: 'straightLine' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    const interceptBefore = interceptMarkY(canvasElement)
+    expect(calculationText(canvasElement)).toContain('rise ÷ run = 2 ÷ 1 = 2')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Y-intercept' }))
+
+    // Up the y-axis is a smaller SVG y, so the mark genuinely moved upward.
+    expect(interceptMarkY(canvasElement)).toBeLessThan(interceptBefore)
+
+    // The gradient is unchanged, in the control and in the stated maths.
+    await expect(canvas.getByRole('slider', { name: 'Gradient' }))
+      .toHaveAttribute('aria-valuenow', '2')
+    expect(calculationText(canvasElement)).toContain('rise ÷ run = 2 ÷ 1 = 2')
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('y = 2x + 2')
+  },
+}
+
+// 6. m2 and c2 are real values that change the picture, and are NOT declared
+//    controls. An undeclared control must surface no UI at all — no stepper, no
+//    slider, no buttons — or the learner would be handed a control the preset
+//    never agreed to expose.
+export const StraightLineHidesUndeclaredComparisonControls = {
+  args: {
+    preset: 'straightLine',
+    focus: 'compare',
+    comparisonRule: 'free',
+    defaultValue: { m: 2, c: 1, m2: -1, c2: -3 },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // The comparison line is genuinely on screen, driven by m2 and c2.
+    expect(canvasElement.querySelector('[data-cp-shape="line-2"]')).not.toBeNull()
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toContain('y = −x')
+
+    // Exactly two steppers, for exactly the two declared controls.
+    expect(stepperIds(canvasElement)).toEqual(['m', 'c'])
+
+    // No slider, and no button, belongs to the comparison line.
+    expect(canvas.getAllByRole('slider')).toHaveLength(2)
+    expect(canvas.getAllByRole('button')).toHaveLength(4)
+
+    for (const undeclared of ['m2', 'c2']) {
+      expect(canvasElement.querySelector(`[data-cp-stepper="${undeclared}"]`)).toBeNull()
+      expect(canvasElement.querySelector(`[data-cp-stepper-value="${undeclared}"]`)).toBeNull()
+      expect(canvasElement.querySelector(`[data-cp-stepper-increment="${undeclared}"]`)).toBeNull()
+      expect(canvasElement.querySelector(`[data-cp-stepper-decrement="${undeclared}"]`)).toBeNull()
+    }
+  },
+}
+
+// 7. A horizontal line's perpendicular is vertical, and a vertical line cannot
+//    be written as y = mx + c. Drawing a second horizontal line here would
+//    teach the exact opposite of the fact on display, so the preset refuses and
+//    says why.
+export const StraightLineRefusesImpossiblePerpendicular = {
+  args: {
+    preset: 'straightLine',
+    focus: 'compare',
+    comparisonRule: 'perpendicular',
+    difficultyCapabilities: { perpendicularGradients: true },
+    defaultValue: { m: 0, c: 2, m2: 1, c2: 0 },
+  },
+  play: async ({ canvasElement }) => {
+    // No second line at all — not a faked one, not a hidden one.
+    expect(canvasElement.querySelector('[data-cp-shape="line-2"]')).toBeNull()
+    expect(canvasElement.querySelector('[data-cp-point="y-intercept-2"]')).toBeNull()
+
+    // The first line is still drawn; the refusal is about the partner only.
+    expect(canvasElement.querySelector('[data-cp-shape="line-1"]')).not.toBeNull()
+
+    const explanation = canvasElement.querySelector('[data-cp-status-explanation]').textContent
+    expect(explanation).toContain('vertical')
+    expect(explanation).toContain('cannot be written as y = mx + c')
+
+    // The screen-reader description tells the same story — no fabricated
+    // second equation, and no formatting wreckage from one.
+    const description = canvasElement.querySelector('svg desc').textContent
+    expect(description).toContain('vertical')
+    expect(description).not.toContain('undefined')
+    expect(description).not.toContain('NaN')
+  },
+}
+
+// 8. y = 5x reaches y = ±25 across an x-axis of ±5 on a y-axis of ±5. The line
+//    is clipped in model space at BOTH y bounds, so what is measured from the
+//    scene is what the learner sees.
+export const StraightLineSteepLineIsClippedAtBothYBounds = {
+  args: {
+    preset: 'straightLine',
+    interactive: false,
+    defaultValue: { m: 5, c: 0 },
+  },
+  play: async ({ canvasElement }) => {
+    const line = canvasElement.querySelector('[data-cp-shape="line-1"]')
+    const clip = canvasElement.querySelector('clipPath rect')
+
+    const plotTop = Number(clip.getAttribute('y'))
+    const plotBottom = plotTop + Number(clip.getAttribute('height'))
+    const box = line.getBBox()
+
+    // Inside the plot at both ends...
+    expect(box.y).toBeGreaterThanOrEqual(plotTop - 0.5)
+    expect(box.y + box.height).toBeLessThanOrEqual(plotBottom + 0.5)
+
+    // ...and reaching both of them, which is what makes this a clip rather than
+    // a line that happened to be short.
+    expect(box.y).toBeCloseTo(plotTop, 0)
+    expect(box.y + box.height).toBeCloseTo(plotBottom, 0)
+
+    // The clip happened in model space, not merely by the SVG clip path: the
+    // path's own coordinates already stop at the boundary.
+    const ys = line.getAttribute('d').match(/-?[\d.]+/g).map(Number)
+      .filter((_, index) => index % 2 === 1)
+    for (const y of ys) {
+      expect(y).toBeGreaterThanOrEqual(plotTop - 0.5)
+      expect(y).toBeLessThanOrEqual(plotBottom + 0.5)
+    }
+  },
+}
+
+// 9. The narrowest supported width. Two steppers share one row, so this is
+//    where a stepper row would overflow if it were going to.
+export const StraightLineNarrowViewport = {
+  args: { preset: 'straightLine' },
+  globals: { viewport: { value: 'mobile1', isRotated: false } },
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  play: async ({ canvasElement }) => {
+    const diagram = canvasElement.querySelector('.cp-explore')
+
+    expect(diagram.getBoundingClientRect().width).toBeLessThanOrEqual(320.5)
+    expect(diagram.scrollWidth).toBeLessThanOrEqual(diagram.clientWidth)
+
+    const rows = canvasElement.querySelectorAll('[data-cp-stepper-row]')
+    expect(rows).toHaveLength(1)
+    for (const row of rows) {
+      expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth)
+    }
+
+    // Four stepper buttons, every one a real touch target at 320px.
+    const buttons = canvasElement.querySelectorAll('button')
+    expect(buttons).toHaveLength(4)
+    for (const button of buttons) {
+      const rect = button.getBoundingClientRect()
+      const name = button.getAttribute('aria-label')
+      expect(rect.height, `${name} height`).toBeGreaterThanOrEqual(43.5)
+      expect(rect.width, `${name} width`).toBeGreaterThanOrEqual(43.5)
+    }
+  },
+}
+
+// 10. Static mode is a diagram, not a disabled toy: the graph and the
+//     explanation stay, every control disappears, and the live region — which
+//     announces changes that can no longer happen — goes with them.
+export const StraightLineStaticHasNoControls = {
+  args: {
+    preset: 'straightLine',
+    interactive: false,
+    defaultValue: { m: 2, c: 1 },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // The teaching figure is fully rendered.
+    expect(canvasElement.querySelector('[data-cp-shape="line-1"]')).not.toBeNull()
+    expect(canvasElement.querySelector('[data-cp-point="y-intercept"]')).not.toBeNull()
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('y = 2x + 1')
+    expect(canvasElement.querySelector('[data-cp-status-explanation]').textContent.length)
+      .toBeGreaterThan(0)
+    expect(calculationText(canvasElement)).toContain('rise ÷ run = 2 ÷ 1 = 2')
+
+    // Nothing to operate, and nothing announcing.
+    expect(canvasElement.querySelectorAll('[data-cp-stepper]')).toHaveLength(0)
+    expect(canvasElement.querySelectorAll('[data-cp-stepper-row]')).toHaveLength(0)
+    expect(canvasElement.querySelector('[data-cp-status-announcement]')).toBeNull()
+    expect(canvas.queryByRole('slider')).toBeNull()
+    expect(canvas.queryAllByRole('button')).toHaveLength(0)
+
+    // And the description says so.
+    expect(canvasElement.querySelector('svg desc').textContent)
+      .toContain('static illustration')
+  },
+}

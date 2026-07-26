@@ -7,10 +7,12 @@
 
 import midpointPreset from './midpoint.js'
 import plotPointPreset from './plotPoint.js'
+import straightLinePreset from './straightLine.js'
 
 export const COORDINATE_PLANE_PRESETS = {
   plotPoint: plotPointPreset,
   midpoint: midpointPreset,
+  straightLine: straightLinePreset,
 }
 
 const FALLBACK_PRESET = 'plotPoint'

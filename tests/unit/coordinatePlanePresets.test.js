@@ -20,10 +20,15 @@ function sceneFor(presetId, values, context = {}) {
       focus: resolvePresetFocus(preset, context.focus),
       activeId: context.activeId ?? preset.defaultActiveId,
       showGuides: context.showGuides ?? 'active',
-      capabilities: mergeCapabilities(preset, context.capabilities),
       axes: { x: preset.xAxis, y: preset.yAxis },
       grid: preset.grid,
       ...context,
+      // After the spread: a caller passing `capabilities` explicitly as
+      // undefined (a helper with an optional third argument) would otherwise
+      // clobber the merged preset defaults with undefined, and the preset would
+      // read a capability off nothing. The renderer always merges, so the
+      // helper must too.
+      capabilities: mergeCapabilities(preset, context.capabilities),
     },
   )
 }
@@ -371,5 +376,146 @@ describe('midpoint preset', () => {
     const scene = sceneFor('midpoint', { ax: 0, ay: 0, bx: 3, by: 5 })
 
     expect(scene.status.heading).toBe('(1.5, 2.5)')
+  })
+})
+
+describe('straightLine preset', () => {
+  it('states the equation as the heading', () => {
+    const scene = sceneFor('straightLine', { m: 2, c: 1 })
+    expect(scene.status.heading).toBe('y = 2x + 1')
+  })
+
+  it('writes a negative intercept as subtraction', () => {
+    const scene = sceneFor('straightLine', { m: 3, c: -4 })
+    expect(scene.status.heading).toBe('y = 3x − 4')
+  })
+
+  it('omits the intercept term when c is zero', () => {
+    const scene = sceneFor('straightLine', { m: 2, c: 0 })
+    expect(scene.status.heading).toBe('y = 2x')
+  })
+
+  // GCSE writes a horizontal line as y = 2, never y = 0x + 2 — and this is the
+  // exact case the perpendicular refusal builds its lesson on.
+  it('writes a horizontal line without an x term', () => {
+    expect(sceneFor('straightLine', { m: 0, c: 2 }).status.heading).toBe('y = 2')
+    expect(sceneFor('straightLine', { m: 0, c: -3 }).status.heading).toBe('y = −3')
+    expect(sceneFor('straightLine', { m: 0, c: 0 }).status.heading).toBe('y = 0')
+  })
+
+  it('explains the gradient as rise over run', () => {
+    const scene = sceneFor('straightLine', { m: 2, c: 1 })
+    expect(scene.status.calculation.join(' ')).toContain('rise ÷ run = 2 ÷ 1 = 2')
+  })
+
+  it('marks the y-intercept as a point', () => {
+    const scene = sceneFor('straightLine', { m: 2, c: 1 })
+    const intercept = scene.points.find(point => point.id === 'y-intercept')
+
+    expect(intercept).toBeDefined()
+    expect(intercept.x).toBe(0)
+    expect(intercept.y).toBe(1)
+  })
+
+  it('hides the x-intercept unless it is explicitly asked for', () => {
+    const withoutFlag = sceneFor('straightLine', { m: 2, c: 4 })
+    const withFlag = sceneFor('straightLine', { m: 2, c: 4 }, {
+      capabilities: { showXIntercept: true },
+    })
+
+    expect(withoutFlag.points.find(p => p.id === 'x-intercept')).toBeUndefined()
+    expect(withFlag.points.find(p => p.id === 'x-intercept').x).toBe(-2)
+  })
+
+  it('draws a rise/run triangle for the gradient focus', () => {
+    const scene = sceneFor('straightLine', { m: 2, c: 1 }, { focus: 'gradient' })
+    expect(scene.shapes.find(shape => shape.id === 'rise-run')).toBeDefined()
+  })
+})
+
+describe('straightLine comparison', () => {
+  const compare = (values, comparisonRule, capabilities) =>
+    sceneFor('straightLine', values, { focus: 'compare', comparisonRule, capabilities })
+
+  it('draws a second line in the compare focus', () => {
+    const scene = compare({ m: 2, c: 1, m2: 2, c2: -3 }, 'parallel')
+    expect(scene.shapes.find(shape => shape.id === 'line-2')).toBeDefined()
+  })
+
+  it('forces equal gradients and equal rise/run triangles for parallel', () => {
+    const scene = compare({ m: 2, c: 1, m2: 5, c2: -3 }, 'parallel')
+
+    expect(scene.status.explanation).toContain('same gradient')
+    expect(scene.shapes.filter(shape => shape.id.startsWith('rise-run'))).toHaveLength(2)
+  })
+
+  it('keeps parallel intercepts independent rather than mirrored', () => {
+    const scene = compare({ m: 2, c: 1, m2: 2, c2: -3 }, 'parallel')
+    const intercepts = scene.points
+      .filter(point => point.id.startsWith('y-intercept'))
+      .map(point => point.y)
+
+    expect(intercepts).toEqual([1, -3])
+  })
+
+  it('sets the second gradient to the negative reciprocal for perpendicular', () => {
+    const scene = compare(
+      { m: 2, c: 1, m2: 9, c2: 0 },
+      'perpendicular',
+      { perpendicularGradients: true },
+    )
+
+    expect(scene.status.calculation.join(' ')).toContain('−1 ÷ 2')
+    expect(scene.status.explanation).toContain('negative reciprocal')
+  })
+
+  it('falls back to parallel when perpendicular is not available at this tier', () => {
+    const scene = compare({ m: 2, c: 1, m2: 9, c2: 0 }, 'perpendicular', {
+      perpendicularGradients: false,
+    })
+
+    expect(scene.status.explanation).toContain('same gradient')
+  })
+
+  it('leaves both lines free in the free comparison rule', () => {
+    const scene = compare({ m: 2, c: 1, m2: 5, c2: -3 }, 'free')
+    expect(scene.status.heading).toContain('y = 5x')
+  })
+
+  // A horizontal line's perpendicular is vertical, which y = mx + c cannot
+  // express. Drawing a second horizontal line here would teach the opposite.
+  it('refuses to fake a perpendicular for a horizontal line', () => {
+    const scene = compare({ m: 0, c: 2, m2: 9, c2: 0 }, 'perpendicular', {
+      perpendicularGradients: true,
+    })
+
+    expect(scene.shapes.find(shape => shape.id === 'line-2')).toBeUndefined()
+    expect(scene.status.explanation).toContain('vertical')
+    expect(scene.status.explanation).toContain('cannot be written as y = mx + c')
+  })
+})
+
+describe('straightLine stays inside the plot', () => {
+  it('clips a steep line at the y bounds rather than drawing past them', () => {
+    // y = 2x + 1 across x = −5…5 reaches y = ±11 on a y-axis of ±5.
+    const scene = sceneFor('straightLine', { m: 2, c: 1 })
+    const line = scene.shapes.find(shape => shape.id === 'line-1')
+    const coordinates = line.path.match(/-?[\d.]+/g).map(Number)
+
+    for (let index = 1; index < coordinates.length; index += 2) {
+      expect(Math.abs(coordinates[index])).toBeLessThanOrEqual(5)
+    }
+  })
+
+  it('drops a line that misses the plot entirely', () => {
+    const preset = resolveCoordinatePlanePreset('straightLine')
+    const scene = preset.derive({ m: 0, c: 40 }, {
+      focus: 'gradient',
+      showGuides: 'active',
+      capabilities: preset.capabilities,
+      axes: { x: preset.xAxis, y: preset.yAxis },
+    })
+
+    expect(scene.shapes.find(shape => shape.id === 'line-1')).toBeUndefined()
   })
 })

@@ -1562,10 +1562,14 @@ function sceneFor(presetId, values, context = {}) {
       focus: resolvePresetFocus(preset, context.focus),
       activeId: context.activeId ?? preset.defaultActiveId,
       showGuides: context.showGuides ?? 'active',
-      capabilities: mergeCapabilities(preset, context.capabilities),
       axes: { x: preset.xAxis, y: preset.yAxis },
       grid: preset.grid,
       ...context,
+      // AFTER the spread. A caller passing `capabilities: undefined` (any
+      // helper with an optional third argument does) would otherwise overwrite
+      // the merged object with undefined, and every preset reading a
+      // capability flag would throw.
+      capabilities: mergeCapabilities(preset, context.capabilities),
     },
   )
 }
@@ -3677,6 +3681,12 @@ function signed(value) {
 }
 
 function equationText({ m, c }) {
+  // A horizontal line is written y = 2, never y = 0x + 2. This is the exact
+  // case the perpendicular refusal teaches, so the heading a learner reads
+  // while being told "a line perpendicular to a horizontal line is vertical"
+  // must itself be written the way GCSE writes it.
+  if (m === 0) return `y = ${signed(c)}`
+
   const gradient = m === 1 ? 'x' : m === -1 ? `${MINUS}x` : `${signed(m)}x`
   if (c === 0) return `y = ${gradient}`
   return c > 0 ? `y = ${gradient} + ${c}` : `y = ${gradient} ${MINUS} ${Math.abs(c)}`
@@ -3888,6 +3898,12 @@ const straightLinePreset = {
       return `The graph of ${equationText(line)}, crossing the y-axis at ${signed(line.c)} with gradient ${signed(line.m)}.`
     }
     const second = resolveSecondLine(values, comparisonRule, capabilities ?? {})
+    // The impossible branch carries no m or c. Formatting it anyway put
+    // "y = undefinedx − NaN" straight into the SVG <desc>, which is what a
+    // screen reader announces.
+    if (second.impossible) {
+      return `The graph of ${equationText(line)} alone: a line perpendicular to a horizontal line is vertical, and a vertical line cannot be written as y = mx + c.`
+    }
     return `The graphs of ${equationText(line)} and ${equationText(second)}, shown together for comparison.`
   },
 }
@@ -3904,7 +3920,7 @@ and the entry `straightLine: straightLinePreset,`.
 
 Run: `./node_modules/.bin/vitest run --project unit tests/unit/coordinatePlanePresets.test.js`
 
-Expected: PASS — 42 tests.
+Expected: PASS — 58 tests (the file accumulates across tasks).
 
 - [ ] **Step 6: Commit**
 
@@ -4309,6 +4325,12 @@ function signed(value) {
 }
 
 function equationText({ m, c }) {
+  // A horizontal line is written y = 2, never y = 0x + 2. This is the exact
+  // case the perpendicular refusal teaches, so the heading a learner reads
+  // while being told "a line perpendicular to a horizontal line is vertical"
+  // must itself be written the way GCSE writes it.
+  if (m === 0) return `y = ${signed(c)}`
+
   const gradient = m === 1 ? 'x' : m === -1 ? `${MINUS}x` : `${signed(m)}x`
   if (c === 0) return `y = ${gradient}`
   return c > 0 ? `y = ${gradient} + ${c}` : `y = ${gradient} ${MINUS} ${Math.abs(c)}`
