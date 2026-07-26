@@ -78,22 +78,34 @@ const midpointPreset = {
         strokeRole: 'object',
         modelPath: true,
       },
-      // One bracket per pairing — x-values together, y-values together.
-      {
+    ]
+
+    // One bracket per pairing — x-values together, y-values together.
+    //
+    // Each is filtered independently. When the paired values are equal the
+    // bracket would collapse to a zero-length dashed path, which renders as a
+    // stray dot on the axis rather than as meaning. The calculation line still
+    // shows the average of the two equal values, so nothing is lost by
+    // omitting it.
+    if (a.x !== b.x) {
+      shapes.push({
         id: 'bracket-x',
         path: `M ${a.x} 0 L ${b.x} 0`,
         strokeRole: 'ruleLine',
         dashed: true,
         modelPath: true,
-      },
-      {
+      })
+    }
+
+    if (a.y !== b.y) {
+      shapes.push({
         id: 'bracket-y',
         path: `M 0 ${a.y} L 0 ${b.y}`,
         strokeRole: 'ruleLine',
         dashed: true,
         modelPath: true,
-      },
-    ]
+      })
+    }
 
     const points = [
       {

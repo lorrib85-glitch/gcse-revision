@@ -320,6 +320,37 @@ describe('midpoint preset', () => {
     expect(scene.status.calculation[1]).toBe('y: (1 + 5) ÷ 2 = 3')
   })
 
+  // A zero-length dashed path renders as a stray dot on the axis rather than
+  // as meaning, so each bracket is filtered independently.
+  it('omits only bracket-y when the two y-values are equal', () => {
+    const scene = sceneFor('midpoint', { ax: -3, ay: 4, bx: 5, by: 4 })
+    const brackets = scene.shapes.filter(shape => shape.id.startsWith('bracket-'))
+
+    expect(brackets.map(shape => shape.id)).toEqual(['bracket-x'])
+    // The average of the two equal values is still stated.
+    expect(scene.status.calculation[1]).toBe('y: (4 + 4) ÷ 2 = 4')
+    expect(scene.status.heading).toBe('(1, 4)')
+  })
+
+  it('omits only bracket-x when the two x-values are equal', () => {
+    const scene = sceneFor('midpoint', { ax: 2, ay: -3, bx: 2, by: 5 })
+    const brackets = scene.shapes.filter(shape => shape.id.startsWith('bracket-'))
+
+    expect(brackets.map(shape => shape.id)).toEqual(['bracket-y'])
+    expect(scene.status.calculation[0]).toBe('x: (2 + 2) ÷ 2 = 2')
+    expect(scene.status.heading).toBe('(2, 1)')
+  })
+
+  it('omits both brackets when the endpoints coincide, keeping the averages', () => {
+    const scene = sceneFor('midpoint', { ax: 2, ay: 4, bx: 2, by: 4 })
+
+    expect(scene.shapes.filter(shape => shape.id.startsWith('bracket-'))).toHaveLength(0)
+    expect(scene.status.calculation).toEqual([
+      'x: (2 + 2) ÷ 2 = 2',
+      'y: (4 + 4) ÷ 2 = 4',
+    ])
+  })
+
   it('draws one bracket per pairing, not one per point', () => {
     const scene = sceneFor('midpoint', { ax: -3, ay: 1, bx: 5, by: 5 })
     const brackets = scene.shapes.filter(shape => shape.id.startsWith('bracket-'))
