@@ -951,6 +951,36 @@ function CoordinatePlaneExplore({
         })}
       </svg>
 
+      {/* Accumulated results — every value the learner has already worked out,
+          kept subdued so the newest one still owns the status area. Presets
+          that build something up over several steps supply scene.trail. */}
+      {(scene.trail ?? []).length > 0 && (
+        <div
+          data-cp-trail="true"
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: SPACING.micro,
+            padding: `${SPACING.micro}px ${SPACING.compact}px 0`,
+          }}
+        >
+          {scene.trail.map(item => (
+            <span
+              key={item.id}
+              data-cp-trail-item={item.id}
+              style={{
+                ...TYPE.caption,
+                color: roles.textMuted,
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
+              {item.text}
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Numeric steppers — how a control without a drag handle is reached */}
       {canInteract && stepperRows.map(row => (
         <div

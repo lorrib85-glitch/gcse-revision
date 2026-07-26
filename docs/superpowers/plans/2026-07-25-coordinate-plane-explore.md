@@ -4000,9 +4000,23 @@ Append to `tests/unit/coordinatePlanePresets.test.js`:
 describe('tableOfValues preset', () => {
   const at = step => sceneFor('tableOfValues', { m: 2, c: 1, step }, {})
 
-  it('shows the substitution for the current x value', () => {
-    const scene = at(0)
-    expect(scene.status.calculation[0]).toBe('x = −2 → y = 2(−2) + 1 = −3')
+  // Check EVERY row, not just the first. The original version of this test
+  // checked only x = −2, which was the one value the bracketing bug did not
+  // corrupt — rows 2 to 5 read "y = 20 + 1 = 1", "y = 21 + 1 = 3" and so on.
+  it('shows a correct substitution for every row', () => {
+    expect(at(0).status.calculation[0]).toBe('x = −2 → y = 2(−2) + 1 = −3')
+    expect(at(1).status.calculation[0]).toBe('x = −1 → y = 2(−1) + 1 = −1')
+    expect(at(2).status.calculation[0]).toBe('x = 0 → y = 2(0) + 1 = 1')
+    expect(at(3).status.calculation[0]).toBe('x = 1 → y = 2(1) + 1 = 3')
+    expect(at(4).status.calculation[0]).toBe('x = 2 → y = 2(2) + 1 = 5')
+    expect(at(5).status.calculation[0]).toBe('x = 3 → y = 2(3) + 1 = 7')
+  })
+
+  it('writes negative coefficients and intercepts correctly', () => {
+    const preset = resolveCoordinatePlanePreset('tableOfValues')
+    const line = preset.derive({ m: -3, c: -4, step: 0 }, { showGuides: 'active' })
+
+    expect(line.status.calculation[0]).toBe('x = −2 → y = −3(−2) − 4 = 2')
   })
 
   it('plots no line from a single point', () => {
@@ -4090,13 +4104,18 @@ function signed(value) {
   return String(value).replace('-', MINUS)
 }
 
+// ALWAYS bracket, including non-negative x.
+//
+// Bracketing only negatives looks tidier and is badly wrong: the coefficient
+// and an unbracketed x concatenate, so m = 2 at x = 3 renders "y = 23 + 1 = 7".
+// Four of the six rows of the default figure stated arithmetic that does not
+// add up. Bracketing every substitution is also how GCSE writes it.
 function bracketed(value) {
-  return value < 0 ? `(${signed(value)})` : String(value)
+  return `(${signed(value)})`
 }
 
 function substitutionText({ m, c }, x) {
-  const product = m * x
-  const total = product + c
+  const total = m * x + c
   const cTerm = c < 0 ? `${MINUS} ${Math.abs(c)}` : `+ ${c}`
   return `x = ${signed(x)} → y = ${signed(m)}${bracketed(x)} ${cTerm} = ${signed(total)}`
 }
@@ -4254,7 +4273,7 @@ and the entry `tableOfValues: tableOfValuesPreset,`.
 
 Run: `./node_modules/.bin/vitest run --project unit tests/unit/coordinatePlanePresets.test.js`
 
-Expected: PASS — 50 tests.
+Expected: PASS — 69 tests (the file accumulates across tasks).
 
 - [ ] **Step 7: Commit**
 
@@ -5923,6 +5942,11 @@ first preset with two handles:
    Otherwise each endpoint costs three tab stops — button, x slider, y slider.
    The handle's sliders already carry activation. Points with no handle
    (transformation vertices) keep their button.
+
+A further query trap: a substring or `RegExp` role name matches more than you
+expect. `getByRole('button', { name: /c/ })` matches both `Increase Table row`
+and `Decrease Table row`, because the letter appears in "Increase" and
+"Decrease". Assert exact accessible names.
 
 A fourth trap applies to any drag story: `onPointerMove` is bound to the handle
 `<g>`, and events do not propagate from an ancestor down to it. Dispatch the

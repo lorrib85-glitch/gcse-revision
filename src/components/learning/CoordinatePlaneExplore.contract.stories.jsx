@@ -1045,3 +1045,414 @@ export const StraightLineStaticHasNoControls = {
       .toContain('static illustration')
   },
 }
+
+// ─── tableOfValues: the staged line, and the trail that makes it worth ───────
+//     stepping through
+//
+// The three line states are the lesson, not a styling choice: one point draws
+// nothing, two points draw a PROVISIONAL dashed line, and the third coordinate
+// confirms the rule so the line goes solid. A preset that drew a line from the
+// first point would teach that any point implies a line; one that never
+// dashed would teach that two points are as good as three.
+//
+// It is also the first preset whose declared control is a pure index — `step`
+// is the only control, while m and c are configuration carried in
+// initialValues. An undeclared value must surface no learner UI at all.
+
+const TABLE_START = { m: 2, c: 1, step: 0 }
+const TABLE_LAST_ROW = 5
+
+const lineNode = canvasElement => canvasElement.querySelector('[data-cp-shape="line"]')
+
+const plottedPointCount = canvasElement =>
+  canvasElement.querySelectorAll('[data-cp-point^="plotted-"]').length
+
+const trailTexts = canvasElement =>
+  [...canvasElement.querySelectorAll('[data-cp-trail-item]')].map(node => node.textContent)
+
+// 1. One point: no line at all.
+export const TableOfValuesOnePointDrawsNoLine = {
+  args: { preset: 'tableOfValues' },
+  play: async ({ canvasElement }) => {
+    expect(plottedPointCount(canvasElement)).toBe(1)
+    expect(lineNode(canvasElement)).toBeNull()
+
+    expect(canvasElement.querySelector('[data-cp-status-explanation]').textContent)
+      .toContain('One point is not enough')
+  },
+}
+
+// 2. Two points: a line appears, and it is dashed — provisional, not proven.
+export const TableOfValuesTwoPointsDrawADashedLine = {
+  args: { preset: 'tableOfValues', defaultValue: { ...TABLE_START, step: 1 } },
+  play: async ({ canvasElement }) => {
+    const line = lineNode(canvasElement)
+
+    expect(plottedPointCount(canvasElement)).toBe(2)
+    expect(line).not.toBeNull()
+    expect(line.getAttribute('stroke-dasharray')).toBe('6 5')
+
+    expect(canvasElement.querySelector('[data-cp-status-explanation]').textContent)
+      .toContain('Two points define a straight line')
+  },
+}
+
+// 3. Three points: the third coordinate confirms the rule, so the line is
+//    solid. The dash attribute must be absent, not merely a different dash.
+export const TableOfValuesThreePointsDrawASolidLine = {
+  args: { preset: 'tableOfValues', defaultValue: { ...TABLE_START, step: 2 } },
+  play: async ({ canvasElement }) => {
+    const line = lineNode(canvasElement)
+
+    expect(plottedPointCount(canvasElement)).toBe(3)
+    expect(line).not.toBeNull()
+    expect(line.getAttribute('stroke-dasharray')).toBeNull()
+
+    expect(canvasElement.querySelector('[data-cp-status-explanation]').textContent)
+      .toContain('confirms')
+  },
+}
+
+// 4. The whole sequence, walked through the real stepper button to the last
+//    row: dashed at exactly two points and solid at every step after it. A
+//    threshold that drifted by one would show up here rather than in a single
+//    sampled step.
+export const TableOfValuesLineStaysSolidToTheLastRow = {
+  args: { preset: 'tableOfValues' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const value = canvas.getByRole('slider', { name: 'Table row' })
+    const next = canvas.getByRole('button', { name: 'Increase Table row' })
+
+    expect(lineNode(canvasElement)).toBeNull()
+
+    await userEvent.click(next)
+    await expect(value).toHaveAttribute('aria-valuenow', '1')
+    expect(lineNode(canvasElement).getAttribute('stroke-dasharray')).toBe('6 5')
+
+    for (let row = 2; row <= TABLE_LAST_ROW; row += 1) {
+      await userEvent.click(next)
+      await expect(value).toHaveAttribute('aria-valuenow', String(row))
+      expect(plottedPointCount(canvasElement), `row ${row} point count`).toBe(row + 1)
+      expect(
+        lineNode(canvasElement).getAttribute('stroke-dasharray'),
+        `row ${row} must be solid`,
+      ).toBeNull()
+    }
+
+    // The last row is genuinely the last one.
+    await expect(next).toBeDisabled()
+  },
+}
+
+// 5. Pointer and keyboard are one control, not two parallel ones — in both
+//    directions, and identical in everything the learner can perceive.
+export const TableOfValuesPointerKeyboardParity = {
+  args: { preset: 'tableOfValues' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const value = canvas.getByRole('slider', { name: 'Table row' })
+    const increase = canvas.getByRole('button', { name: 'Increase Table row' })
+    const decrease = canvas.getByRole('button', { name: 'Decrease Table row' })
+
+    const rendered = () => ({
+      valueNow: value.getAttribute('aria-valuenow'),
+      valueText: value.getAttribute('aria-valuetext'),
+      display: value.textContent,
+      heading: canvasElement.querySelector('[data-cp-status-heading]').textContent,
+      calculation: calculationText(canvasElement),
+      trail: trailTexts(canvasElement),
+      dash: lineNode(canvasElement)?.getAttribute('stroke-dasharray') ?? null,
+    })
+
+    // Increase: click + then read the whole rendered result.
+    await userEvent.click(increase)
+    const afterPlusClick = rendered()
+    expect(afterPlusClick.valueNow).toBe('1')
+
+    await userEvent.click(decrease)
+    await expect(value).toHaveAttribute('aria-valuenow', '0')
+
+    value.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    expect(rendered()).toEqual(afterPlusClick)
+
+    // Decrease: click − and ArrowLeft must also agree.
+    await userEvent.click(increase)
+    await expect(value).toHaveAttribute('aria-valuenow', '2')
+    await userEvent.click(decrease)
+    const afterMinusClick = rendered()
+    expect(afterMinusClick.valueNow).toBe('1')
+
+    await userEvent.click(increase)
+    await expect(value).toHaveAttribute('aria-valuenow', '2')
+    value.focus()
+    await userEvent.keyboard('{ArrowLeft}')
+    expect(rendered()).toEqual(afterMinusClick)
+  },
+}
+
+// 6. One action, one onChange, carrying the complete value state — including
+//    m and c, which no control declares and which a partial patch would drop.
+export const TableOfValuesStepperEmitsOneCompleteChange = {
+  args: { preset: 'tableOfValues', onChange: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Increase Table row' }))
+
+    expect(args.onChange).toHaveBeenCalledTimes(1)
+
+    const payload = args.onChange.mock.calls[0][0]
+    expect(Object.keys(payload).sort()).toEqual(['c', 'm', 'step'])
+    expect(payload).toEqual({ ...TABLE_START, step: 1 })
+  },
+}
+
+// 7. `step` is the ONLY learner control. m and c are configuration: they change
+//    the picture, but the preset never agreed to expose them, so no stepper,
+//    slider or button may exist for either.
+export const TableOfValuesExposesOnlyTheRowControl = {
+  args: { preset: 'tableOfValues' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    expect(stepperIds(canvasElement)).toEqual(['step'])
+
+    // Exactly one slider and one −/+ pair, all belonging to the row control.
+    const sliders = canvas.getAllByRole('slider')
+    expect(sliders).toHaveLength(1)
+    expect(sliders[0].getAttribute('aria-label')).toBe('Table row')
+    expect(canvas.getAllByRole('button')).toHaveLength(2)
+
+    // No handle either — the stepper is the only way in.
+    expect(canvasElement.querySelectorAll('[data-cp-handle]')).toHaveLength(0)
+
+    for (const undeclared of ['m', 'c']) {
+      expect(canvasElement.querySelector(`[data-cp-stepper="${undeclared}"]`)).toBeNull()
+      expect(canvasElement.querySelector(`[data-cp-stepper-value="${undeclared}"]`)).toBeNull()
+      expect(canvasElement.querySelector(`[data-cp-stepper-increment="${undeclared}"]`)).toBeNull()
+      expect(canvasElement.querySelector(`[data-cp-stepper-decrement="${undeclared}"]`)).toBeNull()
+    }
+    // Named exhaustively rather than by a loose pattern: the only two buttons
+    // on screen both belong to the row control.
+    expect(canvas.getAllByRole('button').map(button => button.getAttribute('aria-label')))
+      .toEqual(['Decrease Table row', 'Increase Table row'])
+
+    for (const name of ['Gradient', 'Y-intercept', 'm', 'c']) {
+      expect(canvas.queryByRole('slider', { name })).toBeNull()
+      expect(canvas.queryByRole('button', { name: `Increase ${name}` })).toBeNull()
+      expect(canvas.queryByRole('button', { name: `Decrease ${name}` })).toBeNull()
+    }
+  },
+}
+
+// 8. Earlier results persist. Without the trail this preset is ordinary point
+//    plotting with extra arithmetic, so the accumulation is the feature.
+export const TableOfValuesAccumulatesATrail = {
+  args: { preset: 'tableOfValues' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const next = canvas.getByRole('button', { name: 'Increase Table row' })
+
+    expect(trailTexts(canvasElement)).toEqual(['(−2, −3)'])
+
+    await userEvent.click(next)
+    expect(trailTexts(canvasElement)).toEqual(['(−2, −3)', '(−1, −1)'])
+
+    await userEvent.click(next)
+    await userEvent.click(next)
+    expect(trailTexts(canvasElement)).toEqual([
+      '(−2, −3)', '(−1, −1)', '(0, 1)', '(1, 3)',
+    ])
+
+    // Stepping back does not rewrite history it has not reached yet — the
+    // trail shows exactly the rows worked out, no more and no fewer.
+    await userEvent.click(canvas.getByRole('button', { name: 'Decrease Table row' }))
+    expect(trailTexts(canvasElement)).toEqual(['(−2, −3)', '(−1, −1)', '(0, 1)'])
+  },
+}
+
+// 9. Attention sits on the newest coordinate only. Every earlier point stays
+//    visible but subdued, which is what lets the newest one still read as the
+//    thing that just happened.
+export const TableOfValuesMarksOnlyTheNewestPointActive = {
+  args: { preset: 'tableOfValues', defaultValue: { ...TABLE_START, step: 2 } },
+  play: async ({ canvasElement }) => {
+    const active = canvasElement.querySelectorAll('[data-cp-tier="active"]')
+
+    expect(plottedPointCount(canvasElement)).toBe(3)
+    expect(active).toHaveLength(1)
+    expect(active[0].getAttribute('data-cp-point')).toBe('plotted-2')
+    expect(canvasElement.querySelector('[data-cp-point-label="plotted-2"]').textContent)
+      .toBe('(0, 1)')
+
+    for (const id of ['plotted-0', 'plotted-1']) {
+      expect(
+        canvasElement.querySelector(`[data-cp-point="${id}"]`).getAttribute('data-cp-tier'),
+        `${id} tier`,
+      ).toBe('related')
+    }
+  },
+}
+
+// 10a. The substitution line is the arithmetic a learner is copying, so every
+//      sign and bracket in it is load bearing. Bracketing only the negative x
+//      values silently concatenates the two numbers everywhere else — m = 2 at
+//      x = 1 would render "y = 21 + 1 = 3", which is a different sum, not a
+//      cosmetic slip. Every row is checked.
+export const TableOfValuesSubstitutionSigns = {
+  args: { preset: 'tableOfValues' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const next = canvas.getByRole('button', { name: 'Increase Table row' })
+
+    const expected = [
+      'x = −2 → y = 2(−2) + 1 = −3',
+      'x = −1 → y = 2(−1) + 1 = −1',
+      'x = 0 → y = 2(0) + 1 = 1',
+      'x = 1 → y = 2(1) + 1 = 3',
+      'x = 2 → y = 2(2) + 1 = 5',
+      'x = 3 → y = 2(3) + 1 = 7',
+    ]
+
+    for (const [row, text] of expected.entries()) {
+      if (row > 0) await userEvent.click(next)
+      expect(calculationText(canvasElement), `row ${row}`).toBe(text)
+      // Every minus is a real minus sign (U+2212), never an ASCII hyphen.
+      expect(calculationText(canvasElement), `row ${row} hyphen`).not.toContain('-')
+    }
+  },
+}
+
+// 10b. Negative coefficients: a negative gradient multiplying a negative x, and
+//      a negative intercept subtracted rather than added.
+export const TableOfValuesNegativeCoefficients = {
+  args: { preset: 'tableOfValues', defaultValue: { m: -3, c: -4, step: 0 } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const next = canvas.getByRole('button', { name: 'Increase Table row' })
+
+    // −3 × −2 = 6, then − 4 = 2. The negative x is bracketed so the two
+    // adjacent signs cannot be misread as one.
+    expect(calculationText(canvasElement)).toBe('x = −2 → y = −3(−2) − 4 = 2')
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('(−2, 2)')
+
+    await userEvent.click(next)
+    expect(calculationText(canvasElement)).toBe('x = −1 → y = −3(−1) − 4 = −1')
+    expect(calculationText(canvasElement)).not.toContain('-')
+    expect(trailTexts(canvasElement)).toEqual(['(−2, 2)', '(−1, −1)'])
+
+    await userEvent.click(next)
+    expect(calculationText(canvasElement)).toBe('x = 0 → y = −3(0) − 4 = −4')
+  },
+}
+
+// 11. The row index is an index into a real table: it cannot run off either
+//     end, by arrow keys or by Home/End.
+export const TableOfValuesRowRangeIsRespected = {
+  args: { preset: 'tableOfValues' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const value = canvas.getByRole('slider', { name: 'Table row' })
+    const increase = canvas.getByRole('button', { name: 'Increase Table row' })
+    const decrease = canvas.getByRole('button', { name: 'Decrease Table row' })
+
+    await expect(value).toHaveAttribute('aria-valuemin', '0')
+    await expect(value).toHaveAttribute('aria-valuemax', String(TABLE_LAST_ROW))
+    await expect(decrease).toBeDisabled()
+
+    value.focus()
+    await userEvent.keyboard('{End}')
+    await expect(value).toHaveAttribute('aria-valuenow', String(TABLE_LAST_ROW))
+    await expect(value).toHaveAttribute('aria-valuetext', 'row 6 of 6')
+    await expect(increase).toBeDisabled()
+
+    // Repeated presses past the end change nothing.
+    await userEvent.keyboard('{ArrowRight>4/}')
+    await expect(value).toHaveAttribute('aria-valuenow', String(TABLE_LAST_ROW))
+    expect(trailTexts(canvasElement)).toHaveLength(TABLE_LAST_ROW + 1)
+
+    await userEvent.keyboard('{Home}')
+    await expect(value).toHaveAttribute('aria-valuenow', '0')
+    await expect(value).toHaveAttribute('aria-valuetext', 'row 1 of 6')
+
+    await userEvent.keyboard('{ArrowLeft>4/}')
+    await expect(value).toHaveAttribute('aria-valuenow', '0')
+    expect(trailTexts(canvasElement)).toHaveLength(1)
+    await expect(decrease).toBeDisabled()
+  },
+}
+
+// 12. The narrowest supported width, at the fullest state: six coordinate chips
+//     plus a stepper row. This is where the trail would overflow if it were
+//     going to.
+export const TableOfValuesNarrowViewport = {
+  args: { preset: 'tableOfValues', defaultValue: { ...TABLE_START, step: TABLE_LAST_ROW } },
+  globals: { viewport: { value: 'mobile1', isRotated: false } },
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  play: async ({ canvasElement }) => {
+    const diagram = canvasElement.querySelector('.cp-explore')
+
+    expect(diagram.getBoundingClientRect().width).toBeLessThanOrEqual(320.5)
+    expect(diagram.scrollWidth).toBeLessThanOrEqual(diagram.clientWidth)
+
+    const trail = canvasElement.querySelector('[data-cp-trail]')
+    expect(trailTexts(canvasElement)).toHaveLength(TABLE_LAST_ROW + 1)
+    expect(trail.scrollWidth).toBeLessThanOrEqual(trail.clientWidth)
+
+    const rows = canvasElement.querySelectorAll('[data-cp-stepper-row]')
+    expect(rows).toHaveLength(1)
+    for (const row of rows) {
+      expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth)
+    }
+
+    const buttons = canvasElement.querySelectorAll('button')
+    expect(buttons).toHaveLength(2)
+    for (const button of buttons) {
+      const rect = button.getBoundingClientRect()
+      const name = button.getAttribute('aria-label')
+      expect(rect.height, `${name} height`).toBeGreaterThanOrEqual(43.5)
+      expect(rect.width, `${name} width`).toBeGreaterThanOrEqual(43.5)
+    }
+  },
+}
+
+// 13. Static mode is a finished diagram, not a disabled toy: the accumulated
+//     state it was given is fully rendered, every control disappears, and the
+//     live region — which announces changes that can no longer happen — goes
+//     with them.
+export const TableOfValuesStaticShowsTheAccumulatedState = {
+  args: {
+    preset: 'tableOfValues',
+    interactive: false,
+    defaultValue: { ...TABLE_START, step: 3 },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // The selected state, in full.
+    expect(plottedPointCount(canvasElement)).toBe(4)
+    expect(lineNode(canvasElement)).not.toBeNull()
+    expect(lineNode(canvasElement).getAttribute('stroke-dasharray')).toBeNull()
+    expect(trailTexts(canvasElement)).toEqual([
+      '(−2, −3)', '(−1, −1)', '(0, 1)', '(1, 3)',
+    ])
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('(1, 3)')
+    expect(calculationText(canvasElement)).toBe('x = 1 → y = 2(1) + 1 = 3')
+
+    // Nothing to operate, and nothing announcing.
+    expect(canvasElement.querySelectorAll('[data-cp-stepper]')).toHaveLength(0)
+    expect(canvasElement.querySelectorAll('[data-cp-stepper-row]')).toHaveLength(0)
+    expect(canvasElement.querySelector('[data-cp-status-announcement]')).toBeNull()
+    expect(canvas.queryByRole('slider')).toBeNull()
+    expect(canvas.queryAllByRole('button')).toHaveLength(0)
+
+    // And the description says so.
+    const description = canvasElement.querySelector('svg desc').textContent
+    expect(description).toContain('(−2, −3), (−1, −1), (0, 1), (1, 3)')
+    expect(description).toContain('static illustration')
+  },
+}

@@ -570,3 +570,78 @@ describe('straightLine stays inside the plot', () => {
     expect(scene.shapes.find(shape => shape.id === 'line-1')).toBeUndefined()
   })
 })
+
+describe('tableOfValues preset', () => {
+  const at = step => sceneFor('tableOfValues', { m: 2, c: 1, step }, {})
+
+  // Check EVERY row, not just the first. The original version of this test
+  // checked only x = −2, which was the one value the bracketing bug did not
+  // corrupt — rows 2 to 5 read "y = 20 + 1 = 1", "y = 21 + 1 = 3" and so on.
+  it('shows a correct substitution for every row', () => {
+    expect(at(0).status.calculation[0]).toBe('x = −2 → y = 2(−2) + 1 = −3')
+    expect(at(1).status.calculation[0]).toBe('x = −1 → y = 2(−1) + 1 = −1')
+    expect(at(2).status.calculation[0]).toBe('x = 0 → y = 2(0) + 1 = 1')
+    expect(at(3).status.calculation[0]).toBe('x = 1 → y = 2(1) + 1 = 3')
+    expect(at(4).status.calculation[0]).toBe('x = 2 → y = 2(2) + 1 = 5')
+    expect(at(5).status.calculation[0]).toBe('x = 3 → y = 2(3) + 1 = 7')
+  })
+
+  it('writes negative coefficients and intercepts correctly', () => {
+    const preset = resolveCoordinatePlanePreset('tableOfValues')
+    const line = preset.derive({ m: -3, c: -4, step: 0 }, { showGuides: 'active' })
+
+    expect(line.status.calculation[0]).toBe('x = −2 → y = −3(−2) − 4 = 2')
+  })
+
+  it('plots no line from a single point', () => {
+    const scene = at(0)
+
+    expect(scene.points.filter(point => point.id.startsWith('plotted-'))).toHaveLength(1)
+    expect(scene.shapes.find(shape => shape.id === 'line')).toBeUndefined()
+  })
+
+  it('draws a provisional dashed line once two points exist', () => {
+    const scene = at(1)
+    const line = scene.shapes.find(shape => shape.id === 'line')
+
+    expect(scene.points.filter(point => point.id.startsWith('plotted-'))).toHaveLength(2)
+    expect(line).toBeDefined()
+    expect(line.dashed).toBe(true)
+  })
+
+  it('makes the line solid once a third point confirms the rule', () => {
+    const scene = at(2)
+    const line = scene.shapes.find(shape => shape.id === 'line')
+
+    expect(scene.points.filter(point => point.id.startsWith('plotted-'))).toHaveLength(3)
+    expect(line.dashed).toBe(false)
+  })
+
+  it('keeps the line solid for every later step', () => {
+    expect(at(4).shapes.find(shape => shape.id === 'line').dashed).toBe(false)
+  })
+
+  it('names each transition so the change reads as confirmation', () => {
+    expect(at(0).status.explanation).toContain('One point')
+    expect(at(1).status.explanation).toContain('Two points')
+    expect(at(2).status.explanation).toContain('confirms')
+  })
+
+  it('accumulates completed pairs as a trail', () => {
+    const scene = at(3)
+    expect(scene.trail.map(item => item.text)).toEqual([
+      '(−2, −3)',
+      '(−1, −1)',
+      '(0, 1)',
+      '(1, 3)',
+    ])
+  })
+
+  it('marks only the newest point active and the rest related', () => {
+    const scene = at(2)
+    const plotted = scene.points.filter(point => point.id.startsWith('plotted-'))
+
+    expect(plotted.filter(point => point.tier === 'active')).toHaveLength(1)
+    expect(plotted.at(-1).tier).toBe('active')
+  })
+})
