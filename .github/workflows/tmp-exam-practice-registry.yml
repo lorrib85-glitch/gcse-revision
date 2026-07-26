@@ -1,0 +1,31 @@
+name: Temporary exam practice registry update
+
+on:
+  push:
+    branches:
+      - agent/exam-practice-guidance
+
+permissions:
+  contents: write
+
+jobs:
+  update-registry:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/exam-practice-guidance
+      - name: Update component registry
+        run: python scripts/tmp_update_exam_practice_registry.py
+      - name: Remove temporary updater
+        run: |
+          rm scripts/tmp_update_exam_practice_registry.py
+          rm .github/workflows/tmp-exam-practice-registry.yml
+      - name: Commit registry update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/components/COMPONENT_REGISTRY.md scripts/tmp_update_exam_practice_registry.py .github/workflows/tmp-exam-practice-registry.yml
+          git commit -m "Add exam practice component decision guidance"
+          git push
