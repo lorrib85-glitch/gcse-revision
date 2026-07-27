@@ -8,7 +8,7 @@ on:
 
 jobs:
   verify:
-    name: Lint, tests, build
+    name: Architecture, lint, tests, build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,10 +29,11 @@ jobs:
       # drives, so install it (with its OS deps) before test:storybook.
       - run: pnpm exec playwright install --with-deps chromium
 
-      # Mirrors `pnpm verify`, as separate steps so a failure's gate is
-      # visible directly in the Actions UI instead of buried mid-log.
-      - run: pnpm lint
+      # Architecture contracts run first so structural regressions are still
+      # visible when unrelated lint debt prevents the later checks from running.
+      # No gate is removed: this is the same verification set in safer order.
       - run: pnpm test:architecture
+      - run: pnpm lint
       - run: pnpm test:unit
       - run: pnpm test:storybook
       - run: pnpm build
