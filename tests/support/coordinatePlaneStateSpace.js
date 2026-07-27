@@ -31,25 +31,58 @@ export const CAPABILITY_PROFILES = Object.freeze([
   { perpendicularGradients: true, showXIntercept: true },
 ])
 
+// Above this many total combinations, sweep control corners instead of every
+// value. Chosen so the presets whose STAGES carry meaning are enumerated in
+// full while the wide ones stay affordable:
+//
+//   tableOfValues  6 states  — every table row, and each row annotates a
+//                              different point, so corners would visit only
+//                              the first and last
+//   reflect        5 states  — every mirror position
+//   enlarge        9 states  — unchanged, corners already covered it
+//   rotate        25 states  — stays on corners; its tiers do not vary with
+//                              the centre, and 25 would inflate its ~19k
+//                              derived scenes for nothing
+const FULL_ENUMERATION_LIMIT = 16
+
+function controlValues(control) {
+  const count = Math.round((control.max - control.min) / control.step) + 1
+  return Array.from({ length: count }, (_, index) => control.min + index * control.step)
+}
+
+function fullProductSize(preset) {
+  return (preset.controls ?? []).reduce(
+    (total, control) => total * controlValues(control).length,
+    1,
+  )
+}
+
 /**
- * The Cartesian product of every control's boundaries and its initial value.
+ * The value sets to sweep for a preset.
  *
- * One control at a time, plus all-min and all-max, is not enough: a rotation
- * about (−2, 2) appears in neither, and mixed coordinates are where
- * transformations reach furthest.
+ * Small presets are enumerated exhaustively; wide ones fall back to the
+ * Cartesian product of each control's boundaries and its initial value.
+ *
+ * One control at a time, plus all-min and all-max, is not enough for the wide
+ * ones either: a rotation about (−2, 2) appears in neither, and mixed
+ * coordinates are where transformations reach furthest.
  *
  * Uses the MODEL range, not the interaction range — static content may supply
  * anything the model accepts, so that is what must stay visible.
  */
 export function controlValueSets(preset) {
   const base = clampPresetValues(preset, preset.initialValues)
+  const exhaustive = fullProductSize(preset) <= FULL_ENUMERATION_LIMIT
   let sets = [base]
 
   for (const control of preset.controls ?? []) {
-    const corners = [control.min, control.max, base[control.id]]
-    sets = sets.flatMap(values => corners.map(corner => ({
+    const candidates = exhaustive
+      ? controlValues(control)
+      : [control.min, control.max, base[control.id]]
+
+    sets = sets.flatMap(values => candidates.map(candidate => ({
       ...values,
-      [control.id]: corner,
+      [control.id]: candidate,
     })))
   }
   return sets.map(values => clampPresetValues(preset, values))

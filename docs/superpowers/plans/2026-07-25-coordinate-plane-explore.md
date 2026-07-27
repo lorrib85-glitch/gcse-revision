@@ -5200,11 +5200,15 @@ This is spec §2 and §11. The test validates the **annotation state model
 returned by `derive()`** — never SVG element counts, rendered positions or
 visual geometry, which would break on ordinary rendering changes.
 
-Expect this test to **fail on three presets** when first run. `straightLine`,
-`tableOfValues` and `intersection` each hardcode an `active` tier without
-consulting `showGuides`, so they still mark a point active under
-`showGuides="none"`. That is exactly the drift the contract exists to catch,
-and Step 3 fixes it.
+Expect this test to **fail four times across three presets** when first run.
+`straightLine`, `tableOfValues` and `intersection` each hardcode an `active`
+tier without consulting `showGuides`, so they still mark a point active under
+`showGuides="none"` — and `intersection` fails a second assertion, because it
+emits its guides unconditionally too. That is exactly the drift the contract
+exists to catch, and Step 3 fixes all four.
+
+If fewer than three presets fail, the state enumeration is not reaching
+`showGuides="none"` — fix the test, not the presets.
 
 - [ ] **Step 1: Write the contract test**
 

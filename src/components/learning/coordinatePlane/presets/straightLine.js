@@ -170,12 +170,17 @@ const straightLinePreset = {
     { controlId: 'c', label: 'Y-intercept (c)', group: 'equation' },
   ],
 
-  derive(values, { focus, comparisonRule, capabilities, axes }) {
+  derive(values, { focus, comparisonRule, capabilities, axes, showGuides }) {
     const line = { m: values.m, c: values.c }
     const comparing = focus === 'compare'
     const second = comparing
       ? resolveSecondLine(values, comparisonRule, capabilities)
       : null
+
+    // The y-intercept is the one thing this preset annotates, so it is what
+    // showGuides="none" has to switch off — an "off" that still leaves an
+    // active annotation is not off.
+    const interceptTier = showGuides === 'none' ? 'related' : 'active'
 
     const shapes = [lineShape('line-1', line, axes, 'object')].filter(Boolean)
     const points = [{
@@ -185,7 +190,7 @@ const straightLinePreset = {
       text: `y-intercept ${formatCoordinate({ x: 0, y: line.c })}`,
       shortText: `(0, ${signed(line.c)})`,
       role: 'object',
-      tier: 'active',
+      tier: interceptTier,
       focusable: false,
     }]
 

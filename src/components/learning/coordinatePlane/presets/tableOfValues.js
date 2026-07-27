@@ -78,7 +78,7 @@ const tableOfValuesPreset = {
   // preset cannot be operated at all.
   steppers: [{ controlId: 'step', label: 'Table row' }],
 
-  derive(values) {
+  derive(values, { showGuides }) {
     const line = { m: values.m, c: values.c }
     const count = values.step + 1
 
@@ -93,7 +93,10 @@ const tableOfValuesPreset = {
       text: formatCoordinate(point),
       shortText: formatCoordinate(point),
       role: index === count - 1 ? 'object' : 'textMuted',
-      tier: index === count - 1 ? 'active' : 'related',
+      // The newest pair is the one thing this preset annotates, so
+      // showGuides="none" has to switch it off — the whole trail then reads as
+      // one flat set of plotted points, which is what "no annotation" means.
+      tier: index === count - 1 && showGuides !== 'none' ? 'active' : 'related',
       focusable: false,
     }))
 

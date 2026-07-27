@@ -114,7 +114,7 @@ const intersectionPreset = {
     { controlId: 'c2', label: 'Second line (c)', group: 'intercepts' },
   ],
 
-  derive(values, { axes }) {
+  derive(values, { axes, showGuides }) {
     const lineA = { m: values.m1, c: values.c1 }
     const lineB = { m: values.m2, c: values.c2 }
     const result = intersectionOf(lineA, lineB)
@@ -153,10 +153,13 @@ const intersectionPreset = {
         text: formatCoordinate(solution),
         shortText: formatCoordinate(solution),
         role: 'solution',
-        tier: 'active',
+        // The solution point and its two guides are the whole annotation here,
+        // so showGuides="none" drops both together. Leaving the guides while
+        // demoting the point would draw lines to nothing in particular.
+        tier: showGuides === 'none' ? 'related' : 'active',
         focusable: false,
       }],
-      guides: [
+      guides: showGuides === 'none' ? [] : [
         { id: 'guide-x', from: { x: solution.x, y: 0 }, to: solution, role: 'guideLine' },
         { id: 'guide-y', from: { x: 0, y: solution.y }, to: solution, role: 'guideLine' },
       ],
