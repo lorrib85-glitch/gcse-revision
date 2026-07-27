@@ -5373,6 +5373,19 @@ import {
 } from '../../src/components/learning/coordinatePlane/presets/transformations.js'
 
 describe('transformations module imported directly', () => {
+  // NOTE: checking only the four bindings above proves nothing.
+  //
+  // Under Vite's SSR transform each export is a getter wrapped in a swallowing
+  // try/catch, so a temporal-dead-zone ReferenceError is discarded and the
+  // getter returns undefined rather than throwing. The bindings here are
+  // populated by the time a test body runs either way — the cycle was restored
+  // as a mutation and this file stayed green at 3/3 while native Node threw a
+  // hard ReferenceError on the same code.
+  //
+  // The damage lands one module over: entering through transformations.js with
+  // a cycle in place leaves the REGISTRY holding undefined for exactly the
+  // presets involved. A broken app, and green tests. The last test below is
+  // the one that bites; do not remove it.
   it('evaluates without the registry having been loaded first', () => {
     for (const preset of [translatePreset, reflectPreset, rotatePreset, enlargePreset]) {
       expect(preset).toBeDefined()
@@ -5399,6 +5412,21 @@ describe('transformations module imported directly', () => {
     )
 
     expect(scene.points.find(point => point.id === 'image-a')).toBeDefined()
+  })
+
+  // The assertion that actually catches a cycle.
+  it('leaves the registry fully populated when it is loaded second', async () => {
+    const { COORDINATE_PLANE_PRESETS } = await import(
+      '../../src/components/learning/coordinatePlane/presets/index.js'
+    )
+
+    for (const [id, preset] of Object.entries(COORDINATE_PLANE_PRESETS)) {
+      expect(preset, `registry entry "${id}" is undefined — a preset import cycle`)
+        .toBeDefined()
+      expect(typeof preset.derive, `registry entry "${id}"`).toBe('function')
+    }
+
+    expect(Object.keys(COORDINATE_PLANE_PRESETS)).toHaveLength(9)
   })
 })
 ```
