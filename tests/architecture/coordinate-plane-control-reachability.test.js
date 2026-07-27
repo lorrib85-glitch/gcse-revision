@@ -7,32 +7,47 @@ import {
 } from '../../src/components/learning/coordinatePlane/presets/index.js'
 import { effectiveStates } from '../support/coordinatePlaneStateSpace.js'
 
+// Every control a derived handle reaches, across the same effective-state
+// sweep everything else uses.
+//
+// Deriving from raw initial values with first-choice options would miss a
+// handle that only appears under a non-default capability or option. No preset
+// emits handles that way today, so this is currently equivalent — but the
+// helper should not be the one place in the file testing a state the component
+// cannot be in.
 function handleControlIds(preset) {
   const ids = new Set()
   const focusModes = preset.focusModes?.length ? preset.focusModes : [undefined]
 
-  for (const state of effectiveStates(preset)) {
-    const { capabilities, effectiveValues, choices } = state
-    {
-      {
+  for (const { capabilities, effectiveValues, choices } of effectiveStates(preset)) {
+    for (const focus of focusModes) {
+      const scene = preset.derive(effectiveValues, {
+        focus: resolvePresetFocus(preset, focus),
+        activeId: preset.defaultActiveId,
+        showGuides: 'active',
+        capabilities,
+        choices,
+        axes: { x: preset.xAxis, y: preset.yAxis },
+        grid: preset.grid,
+      })
 
-        for (const focus of focusModes) {
-          const scene = preset.derive(effectiveValues, {
-            focus: resolvePresetFocus(preset, focus),
-            activeId: preset.defaultActiveId,
-            showGuides: 'active',
-            capabilities,
-            choices,
-            axes: { x: preset.xAxis, y: preset.yAxis },
-            grid: preset.grid,
-          })
-
-          for (const handle of scene.handles ?? []) {
-            for (const id of handle.controlIds ?? [handle.controlId]) ids.add(id)
-          }
-        }
+      for (const handle of scene.handles ?? []) {
+        for (const id of handle.controlIds ?? [handle.controlId]) ids.add(id)
       }
     }
+  }
+  return ids
+}
+
+// Every stepper resolved anywhere in the reachable state space.
+function resolvedStepperControlIds(preset) {
+  const ids = new Set()
+
+  for (const { capabilities, effectiveValues } of effectiveStates(preset)) {
+    const steppers = preset.resolveSteppers?.(effectiveValues, capabilities)
+      ?? preset.steppers
+      ?? []
+    for (const stepper of steppers) ids.add(stepper.controlId)
   }
   return ids
 }
@@ -46,19 +61,7 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
     // the "control that does nothing" failure inverted.
     it('offers a way to change every declared control in some reachable state', () => {
       const viaHandle = handleControlIds(preset)
-      const viaStepper = new Set()
-
-      for (const state of effectiveStates(preset)) {
-        const { capabilities, effectiveValues } = state
-        {
-          {
-            const steppers = preset.resolveSteppers?.(effectiveValues, capabilities)
-              ?? preset.steppers
-              ?? []
-            for (const stepper of steppers) viaStepper.add(stepper.controlId)
-          }
-        }
-      }
+      const viaStepper = resolvedStepperControlIds(preset)
 
       for (const control of preset.controls ?? []) {
         expect(
@@ -71,21 +74,11 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
     it('never resolves a stepper for a control that does not exist', () => {
       const controlIds = new Set((preset.controls ?? []).map(control => control.id))
 
-      for (const state of effectiveStates(preset)) {
-        const { capabilities, effectiveValues } = state
-        {
-          {
-            const steppers = preset.resolveSteppers?.(effectiveValues, capabilities)
-              ?? preset.steppers
-              ?? []
-            for (const stepper of steppers) {
-              expect(
-                controlIds.has(stepper.controlId),
-                `${presetId} resolved a stepper for unknown control "${stepper.controlId}"`,
-              ).toBe(true)
-            }
-          }
-        }
+      for (const controlId of resolvedStepperControlIds(preset)) {
+        expect(
+          controlIds.has(controlId),
+          `${presetId} resolved a stepper for unknown control "${controlId}"`,
+        ).toBe(true)
       }
 
       // The static declaration must also be honest — Task 13 reads it.

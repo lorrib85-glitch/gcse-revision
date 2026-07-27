@@ -5122,498 +5122,65 @@ git commit -m "Add translate, reflect, rotate and enlarge presets"
 
 ## Task 12: Control reachability and visible bounds
 
-**Files:**
-- Create: `tests/architecture/coordinate-plane-control-reachability.test.js`
-- Create: `tests/architecture/coordinate-plane-visible-bounds.test.js`
-
-**Interfaces:**
-- Consumes: the whole preset registry
-- Produces: no runtime export — enforcement of two contracts that are easy to
-  break silently
-
-These two contracts guard the failure modes that do not announce themselves. A
-preset with an unreachable control still renders; a figure drawn outside the
-axes still passes every arithmetic test. Both look fine in a unit suite and are
-useless to a learner.
-
-- [ ] **Step 1: Write the control reachability test**
-
-Create `tests/architecture/coordinate-plane-control-reachability.test.js`:
-
-```js
-import { describe, expect, it } from 'vitest'
-import {
-  COORDINATE_PLANE_PRESETS,
-  clampPresetValues,
-  interactionRange,
-  mergeCapabilities,
-  resolveEffectiveValues,
-  resolveOptionValues,
-  resolvePresetFocus,
-} from '../../src/components/learning/coordinatePlane/presets/index.js'
-
-// Shared with the visible-bounds test: the same enumeration is needed here, so
-// both files build states the same way.
-// Capability profiles, the control-corner product and the breadth-first option
-// walk all live in `tests/support/coordinatePlaneStateSpace.js`, shared by the
-// reachability, visible-bounds and annotation contracts. A third copy of the
-// walker would drift from the other two.
-//
-// The combined profile is load bearing:
-//   { fractionalScaleFactor: true, negativeScaleFactor: true, nonOriginCentre: true }
-// Enlargement's reach is (1 − s)c + s·p, so the centre and the scale factor
-// interact. Proving a movable centre is safe at factor 2, and proving factor
-// −2 is safe about the origin, says nothing about factor −2 about (1, −1).
-
-function controlValueSets(preset) {
-  const base = clampPresetValues(preset, preset.initialValues)
-  let sets = [base]
-
-  for (const control of preset.controls ?? []) {
-    const corners = [control.min, control.max, base[control.id]]
-    sets = sets.flatMap(values => corners.map(corner => ({
-      ...values,
-      [control.id]: corner,
-    })))
-  }
-  return sets.map(values => clampPresetValues(preset, values))
-}
-
-function reachableOptionStates(preset, baseValues, capabilities) {
-  const seen = new Map()
-  const queue = [baseValues]
-
-  while (queue.length > 0) {
-    const values = queue.shift()
-    const choices = resolveOptionValues(preset, values, capabilities)
-    const key = JSON.stringify(choices)
-    if (seen.has(key)) continue
-    seen.set(key, choices)
-
-    const groups = preset.resolveOptions?.(capabilities, values) ?? preset.options ?? []
-    for (const group of groups) {
-      for (const choice of group.choices) {
-        queue.push({ ...values, ...choices, [group.id]: choice.id })
-      }
-    }
-  }
-  return [...seen.values()]
-}
-
-function handleControlIds(preset) {
-  const ids = new Set()
-  const focusModes = preset.focusModes?.length ? preset.focusModes : [undefined]
-  const values = clampPresetValues(preset, preset.initialValues)
-
-  for (const focus of focusModes) {
-    const capabilities = mergeCapabilities(preset, {})
-    const choices = Object.fromEntries(
-      (preset.resolveOptions?.(capabilities) ?? preset.options ?? [])
-        .map(group => [group.id, group.choices[0].id]),
-    )
-    const scene = preset.derive(values, {
-      focus: resolvePresetFocus(preset, focus),
-      activeId: preset.defaultActiveId,
-      showGuides: 'active',
-      capabilities,
-      choices,
-      axes: { x: preset.xAxis, y: preset.yAxis },
-      grid: preset.grid,
-    })
-
-    for (const handle of scene.handles ?? []) {
-      for (const id of handle.controlIds ?? [handle.controlId]) ids.add(id)
-    }
-  }
-  return ids
-}
-
-describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
-  'control reachability: %s',
-  (presetId, preset) => {
-    // Reachability must be proved against RESOLVED steppers, not the static
-    // declaration. The static list would pass even if resolveSteppers() hid a
-    // control in every state a learner can actually reach — which is precisely
-    // the "control that does nothing" failure inverted.
-    it('offers a way to change every declared control in some reachable state', () => {
-      const viaHandle = handleControlIds(preset)
-      const viaStepper = new Set()
-
-      for (const caps of CAPABILITY_SETS) {
-        const capabilities = mergeCapabilities(preset, caps)
-        for (const numericValues of controlValueSets(preset)) {
-          for (const optionValues of reachableOptionStates(preset, numericValues, capabilities)) {
-            const effectiveValues = resolveEffectiveValues(
-              preset,
-              { ...numericValues, ...optionValues },
-              capabilities,
-            )
-            const steppers = preset.resolveSteppers?.(effectiveValues, capabilities)
-              ?? preset.steppers
-              ?? []
-            for (const stepper of steppers) viaStepper.add(stepper.controlId)
-          }
-        }
-      }
-
-      for (const control of preset.controls ?? []) {
-        expect(
-          viaHandle.has(control.id) || viaStepper.has(control.id),
-          `${presetId} declares control "${control.id}" but no reachable state offers a handle or a stepper for it`,
-        ).toBe(true)
-      }
-    })
-
-    it('never resolves a stepper for a control that does not exist', () => {
-      const controlIds = new Set((preset.controls ?? []).map(control => control.id))
-
-      for (const caps of CAPABILITY_SETS) {
-        const capabilities = mergeCapabilities(preset, caps)
-        for (const numericValues of controlValueSets(preset)) {
-          for (const optionValues of reachableOptionStates(preset, numericValues, capabilities)) {
-            const effectiveValues = resolveEffectiveValues(
-              preset,
-              { ...numericValues, ...optionValues },
-              capabilities,
-            )
-            const steppers = preset.resolveSteppers?.(effectiveValues, capabilities)
-              ?? preset.steppers
-              ?? []
-            for (const stepper of steppers) {
-              expect(
-                controlIds.has(stepper.controlId),
-                `${presetId} resolved a stepper for unknown control "${stepper.controlId}"`,
-              ).toBe(true)
-            }
-          }
-        }
-      }
-
-      // The static declaration must also be honest — Task 13 reads it.
-      for (const stepper of preset.steppers ?? []) {
-        expect(
-          controlIds.has(stepper.controlId),
-          `${presetId} declares a stepper for unknown control "${stepper.controlId}"`,
-        ).toBe(true)
-      }
-    })
-
-    it('gives every control the fields the renderer needs', () => {
-      for (const control of preset.controls ?? []) {
-        expect(typeof control.label, `${presetId}.${control.id}.label`).toBe('string')
-        expect(typeof control.step, `${presetId}.${control.id}.step`).toBe('number')
-        expect(control.step, `${presetId}.${control.id}.step`).toBeGreaterThan(0)
-        expect(typeof control.min, `${presetId}.${control.id}.min`).toBe('number')
-        expect(typeof control.max, `${presetId}.${control.id}.max`).toBe('number')
-        expect(control.max).toBeGreaterThan(control.min)
-        expect(typeof control.valueText, `${presetId}.${control.id}.valueText`).toBe('function')
-      }
-    })
-
-    it('keeps every interaction range inside its model range', () => {
-      for (const control of preset.controls ?? []) {
-        const reach = interactionRange(control)
-
-        expect(reach.min, `${presetId}.${control.id} interactionMin`).toBeGreaterThanOrEqual(control.min)
-        expect(reach.max, `${presetId}.${control.id} interactionMax`).toBeLessThanOrEqual(control.max)
-        expect(reach.max).toBeGreaterThan(reach.min)
-      }
-    })
-
-    // The corruption this contract exists to prevent: a supplied static figure
-    // silently redrawn at whatever value a thumb could have reached.
-    it('never clamps a supplied value down to the interaction range', () => {
-      for (const control of preset.controls ?? []) {
-        const reach = interactionRange(control)
-        if (reach.max >= control.max) continue
-
-        const beyondReach = control.max
-        const clamped = clampPresetValues(preset, {
-          ...preset.initialValues,
-          [control.id]: beyondReach,
-        })
-
-        expect(
-          clamped[control.id],
-          `${presetId}.${control.id}: a supplied value of ${beyondReach} was clamped to ${clamped[control.id]}, so static content would render a figure it did not ask for`,
-        ).toBe(beyondReach)
-      }
-    })
-  },
-)
-```
-
-- [ ] **Step 2: Run it and confirm it passes**
-
-Run: `./node_modules/.bin/vitest run --project architecture tests/architecture/coordinate-plane-control-reachability.test.js`
-
-Expected: PASS. If `straightLine`, `tableOfValues`, `intersection` or any
-transformation fails, its `steppers` declaration is missing — add it rather
-than removing the control.
-
-- [ ] **Step 2b: Write the direct-import regression test**
-
-The registry ↔ preset cycle was found by hand and is trivially easy to
-reintroduce, because it only fails when a preset module is imported *first* —
-every existing test happens to reach it through the registry.
-
-Create `tests/unit/transformationsDirectImport.test.js`:
-
-```js
-import { describe, expect, it } from 'vitest'
-
-// Deliberately the ONLY import in this file, and deliberately not the registry.
-//
-// transformations.js once imported resolveOptionValues from index.js, which
-// made a cycle: importing the preset module first hit a temporal-dead-zone
-// error on the registry's own preset table. Every other test reaches these
-// presets through the registry, so nothing caught it. This file exists purely
-// to enter through the other door.
-import {
-  enlargePreset,
-  reflectPreset,
-  rotatePreset,
-  translatePreset,
-} from '../../src/components/learning/coordinatePlane/presets/transformations.js'
-
-describe('transformations module imported directly', () => {
-  // NOTE: checking only the four bindings above proves nothing.
-  //
-  // Under Vite's SSR transform each export is a getter wrapped in a swallowing
-  // try/catch, so a temporal-dead-zone ReferenceError is discarded and the
-  // getter returns undefined rather than throwing. The bindings here are
-  // populated by the time a test body runs either way — the cycle was restored
-  // as a mutation and this file stayed green at 3/3 while native Node threw a
-  // hard ReferenceError on the same code.
-  //
-  // The damage lands one module over: entering through transformations.js with
-  // a cycle in place leaves the REGISTRY holding undefined for exactly the
-  // presets involved. A broken app, and green tests. The last test below is
-  // the one that bites; do not remove it.
-  it('evaluates without the registry having been loaded first', () => {
-    for (const preset of [translatePreset, reflectPreset, rotatePreset, enlargePreset]) {
-      expect(preset).toBeDefined()
-      expect(typeof preset.derive).toBe('function')
-    }
-  })
-
-  it('exposes the four presets with their expected ids', () => {
-    expect([translatePreset, reflectPreset, rotatePreset, enlargePreset]
-      .map(preset => preset.id))
-      .toEqual(['translate', 'reflect', 'rotate', 'enlarge'])
-  })
-
-  it('can derive a scene without the registry', () => {
-    const scene = rotatePreset.derive(
-      { cx: 0, cy: 0, angle: '90', direction: 'clockwise' },
-      {
-        activeId: 'a',
-        showGuides: 'active',
-        capabilities: rotatePreset.capabilities,
-        choices: { angle: '90', direction: 'clockwise' },
-        axes: { x: rotatePreset.xAxis, y: rotatePreset.yAxis },
-      },
-    )
-
-    expect(scene.points.find(point => point.id === 'image-a')).toBeDefined()
-  })
-
-  // The assertion that actually catches a cycle.
-  it('leaves the registry fully populated when it is loaded second', async () => {
-    const { COORDINATE_PLANE_PRESETS } = await import(
-      '../../src/components/learning/coordinatePlane/presets/index.js'
-    )
-
-    for (const [id, preset] of Object.entries(COORDINATE_PLANE_PRESETS)) {
-      expect(preset, `registry entry "${id}" is undefined — a preset import cycle`)
-        .toBeDefined()
-      expect(typeof preset.derive, `registry entry "${id}"`).toBe('function')
-    }
-
-    expect(Object.keys(COORDINATE_PLANE_PRESETS)).toHaveLength(9)
-  })
-})
-```
-
-Run it **on its own**, so the registry is genuinely not loaded first:
-
-`./node_modules/.bin/vitest run --project unit tests/unit/transformationsDirectImport.test.js`
-
-- [ ] **Step 3: Write the visible bounds test**
-
-Create `tests/architecture/coordinate-plane-visible-bounds.test.js`:
-
-```js
-import { describe, expect, it } from 'vitest'
-import {
-  COORDINATE_PLANE_PRESETS,
-  clampPresetValues,
-  mergeCapabilities,
-  resolveEffectiveValues,
-  resolveOptionValues,
-  resolvePresetFocus,
-} from '../../src/components/learning/coordinatePlane/presets/index.js'
-
-const CAPABILITY_SETS = [
-  {},
-  { diagonalMirrorLines: true, nonOriginCentre: true },
-  { fractionalScaleFactor: true, negativeScaleFactor: true },
-  { perpendicularGradients: true, showXIntercept: true },
-]
-
-// The Cartesian product of every control boundary and the initial value.
-//
-// One-control-at-a-time plus all-min and all-max is not enough. A rotation
-// about (−2, 2) is not covered by either all-min or all-max, and mixed centre
-// coordinates are exactly where transformations reach furthest. Combining the
-// boundaries properly is the only way to see those states.
-//
-// Deliberately uses the MODEL range (control.min / control.max), not the
-// interaction range: static and controlled content may supply anything the
-// model accepts, so that is the range which must stay visible. Narrowing this
-// to the interaction range would leave supplied exam figures unchecked.
-function controlValueSets(preset) {
-  const base = clampPresetValues(preset, preset.initialValues)
-  let sets = [base]
-
-  for (const control of preset.controls ?? []) {
-    const corners = [control.min, control.max, base[control.id]]
-    sets = sets.flatMap(values => corners.map(corner => ({
-      ...values,
-      [control.id]: corner,
-    })))
-  }
-  return sets.map(values => clampPresetValues(preset, values))
-}
-
-// Every reachable combination of option choices, found by walking outward from
-// the base state.
-//
-// A single `resolveOptions(capabilities)` call cannot describe this any more.
-// Groups now resolve from the values too: rotation offers `direction` at 90°
-// and 270° and withdraws it at 180°, so the set of groups changes as you move
-// through the set of choices. Enumerating once against the initial values would
-// miss every state behind a group that only appears later — and would invent
-// states behind a group that has since disappeared.
-//
-// So: breadth-first from the base values, re-asking the preset which groups
-// exist at each state, until nothing new turns up.
-function reachableOptionStates(preset, baseValues, capabilities) {
-  const seen = new Map()
-  const queue = [baseValues]
-
-  while (queue.length > 0) {
-    const values = queue.shift()
-    const choices = resolveOptionValues(preset, values, capabilities)
-    const key = JSON.stringify(choices)
-    if (seen.has(key)) continue
-    seen.set(key, choices)
-
-    const groups = preset.resolveOptions?.(capabilities, values) ?? preset.options ?? []
-    for (const group of groups) {
-      for (const choice of group.choices) {
-        queue.push({ ...values, ...choices, [group.id]: choice.id })
-      }
-    }
-  }
-  return [...seen.values()]
-}
-
-function pathCoordinates(path) {
-  const numbers = path.match(/-?[\d.]+/g)?.map(Number) ?? []
-  const points = []
-  for (let index = 0; index + 1 < numbers.length; index += 2) {
-    points.push({ x: numbers[index], y: numbers[index + 1] })
-  }
-  return points
-}
-
-describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
-  'visible bounds: %s',
-  (presetId, preset) => {
-    it('keeps the whole figure inside the axes at every reachable value', () => {
-      const focusModes = preset.focusModes?.length ? preset.focusModes : [undefined]
-
-      for (const focus of focusModes) {
-        for (const caps of CAPABILITY_SETS) {
-          const capabilities = mergeCapabilities(preset, caps)
-
-          for (const numericValues of controlValueSets(preset)) {
-            for (const optionValues of reachableOptionStates(preset, numericValues, capabilities)) {
-            const axes = { x: preset.xAxis, y: preset.yAxis }
-
-            // Derive from EFFECTIVE state, exactly as the renderer does.
-            // Passing raw values with separately generated choices tests a
-            // combination the component can never actually be in — and would
-            // miss a capability that pins a value, since the pinned figure is
-            // the only one a learner ever sees.
-            const supplied = { ...numericValues, ...optionValues }
-            const effectiveValues = resolveEffectiveValues(preset, supplied, capabilities)
-            const choices = resolveOptionValues(preset, effectiveValues, capabilities)
-
-            const scene = preset.derive(effectiveValues, {
-              focus: resolvePresetFocus(preset, focus),
-              activeId: preset.defaultActiveId,
-              showGuides: 'active',
-              capabilities,
-              choices,
-              axes,
-              grid: preset.grid,
-            })
-
-            const label = `${presetId} focus=${focus} values=${JSON.stringify(effectiveValues)} choices=${JSON.stringify(choices)}`
-
-            for (const point of scene.points) {
-              expect(point.x, `${label} point ${point.id}.x`).toBeGreaterThanOrEqual(axes.x.min)
-              expect(point.x, `${label} point ${point.id}.x`).toBeLessThanOrEqual(axes.x.max)
-              expect(point.y, `${label} point ${point.id}.y`).toBeGreaterThanOrEqual(axes.y.min)
-              expect(point.y, `${label} point ${point.id}.y`).toBeLessThanOrEqual(axes.y.max)
-            }
-
-            // Model-space paths must already be clipped; the SVG clip path is
-            // a safety net, not the mechanism.
-            for (const shape of scene.shapes.filter(item => item.modelPath)) {
-              for (const point of pathCoordinates(shape.path)) {
-                expect(point.x, `${label} shape ${shape.id}.x`).toBeGreaterThanOrEqual(axes.x.min)
-                expect(point.x, `${label} shape ${shape.id}.x`).toBeLessThanOrEqual(axes.x.max)
-                expect(point.y, `${label} shape ${shape.id}.y`).toBeGreaterThanOrEqual(axes.y.min)
-                expect(point.y, `${label} shape ${shape.id}.y`).toBeLessThanOrEqual(axes.y.max)
-              }
-            }
-
-            for (const guide of scene.guides ?? []) {
-              for (const point of [guide.from, guide.to]) {
-                expect(point.x, `${label} guide ${guide.id}.x`).toBeGreaterThanOrEqual(axes.x.min)
-                expect(point.x, `${label} guide ${guide.id}.x`).toBeLessThanOrEqual(axes.x.max)
-                expect(point.y, `${label} guide ${guide.id}.y`).toBeGreaterThanOrEqual(axes.y.min)
-                expect(point.y, `${label} guide ${guide.id}.y`).toBeLessThanOrEqual(axes.y.max)
-              }
-            }
-            }
-          }
-        }
-      }
-    })
-  },
-)
-```
-
-- [ ] **Step 4: Run it and fix any preset that escapes its axes**
-
-Run: `./node_modules/.bin/vitest run --project architecture tests/architecture/coordinate-plane-visible-bounds.test.js`
-
-Expected: PASS. A failure names the preset, focus and exact values. Fix it by
-tightening the control range or widening the preset's axes — **never** by
-loosening the test, and never by rescaling axes dynamically during a drag,
-which makes the grid move under the learner's finger.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add tests/architecture/coordinate-plane-control-reachability.test.js \
-        tests/architecture/coordinate-plane-visible-bounds.test.js
-git commit -m "Enforce coordinate plane control reachability and visible bounds"
-```
+**Status: implemented.** The shipped files are the reference, not this section —
+they diverged from the original code block when the state space became shared:
+
+- `tests/support/coordinatePlaneStateSpace.js` — capability profiles, the
+  control-corner product, the breadth-first option walk, and the model-path
+  parser. Shared by all three architecture contracts.
+- `tests/architecture/coordinate-plane-control-reachability.test.js`
+- `tests/architecture/coordinate-plane-visible-bounds.test.js`
+- `tests/unit/transformationsDirectImport.test.js`
+
+**What these contracts guard, and why each is worded as it is:**
+
+**Derive from effective state.** Both sweeps resolve capability-pinned values
+merged with resolved option ids, exactly as the renderer does. Passing raw
+values alongside separately generated choices tests combinations the component
+can never be in, and misses any capability that pins a value — the pinned
+figure being the only one a learner sees.
+
+**Option enumeration is a breadth-first walk.** Groups resolve from the values,
+so rotation offers `direction` at 90° and 270° and withdraws it at 180°. The
+set of groups changes as you move through the set of choices, so the preset is
+re-asked at every state. Rotation reaches 180 choice-states this way against 36
+for a fixed two-group product.
+
+**Reachability is proved against resolved steppers.** The static
+`preset.steppers` list would pass even if `resolveSteppers()` hid a control in
+every reachable state — the "control that does nothing" failure inverted.
+
+**The combined capability profile is load bearing.** Enlargement's reach is
+`(1 − s)c + s·p`, so the centre and the scale factor interact: proving a
+movable centre is safe at factor 2, and proving factor −2 is safe about the
+origin, says nothing about factor −2 about (1, −1). An earlier version enabled
+fractional and negative factors only with the centre pinned.
+
+**Model paths are validated, not scraped.** A bare numeric scrape silently
+drops anything unparseable, so `M NaN NaN L 2 3` contributed only its valid
+pair and passed as "inside". Paths are rejected for sentinel values, odd or
+empty coordinate lists and non-finite numbers.
+
+**The direct-import test must load the registry second.** Checking only the
+bindings it imported proves nothing: under Vite's SSR transform every export is
+a getter wrapped in a swallowing `try/catch`, so a temporal-dead-zone
+`ReferenceError` is discarded and the getter returns `undefined`. Restoring the
+cycle left that test green at 3/3 while native Node threw. The damage lands one
+module over — the registry holds `undefined` for the affected presets — so the
+test loads the registry from inside the test body and checks every entry.
+
+**Mutation checks, all confirmed failing:**
+
+| Mutation | Fails |
+|---|---|
+| `resolveCentreSteppers` returns `[]` | reachability, for rotate and enlarge |
+| `TRANSFORM_AXIS` shrunk to ±4 | visible bounds, all four transformations |
+| enlargement escapes only when centre + negative factors combine | visible bounds |
+| a malformed model path is emitted | visible bounds, with the path quoted |
+| the `index.js` import cycle restored | direct import |
+
+**Always confirm a mutation actually landed before reading its result.** A
+mutation that fails to apply looks exactly like a contract that does not hold.
 
 ---
 
@@ -5651,15 +5218,6 @@ import { effectiveStates } from '../support/coordinatePlaneStateSpace.js'
 
 const TIERS = ['active', 'related', 'context']
 const SHOW_GUIDES = ['active', 'all', 'none']
-
-// Capability combinations that widen the reachable state space. Presets ignore
-// keys they do not use, so one list covers the whole registry.
-const CAPABILITY_SETS = [
-  {},
-  { diagonalMirrorLines: true, nonOriginCentre: true },
-  { fractionalScaleFactor: true, negativeScaleFactor: true },
-  { perpendicularGradients: true, showXIntercept: true },
-]
 
 const COMPARISON_RULES = [undefined, 'parallel', 'perpendicular', 'free']
 
@@ -5744,14 +5302,24 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
 
       for (const { scene, context } of defaults) {
         const active = scene.points.filter(point => point.tier === 'active')
-        const activatable = scene.points.some(point => point.focusable)
 
-        // A preset with no focusable point may legitimately have none active.
-        const allowed = activatable ? [1] : [0, 1]
+        // Key off ANNOTATABLE points, not focusable ones.
+        //
+        // Focusability is a keyboard affordance, not a claim about teaching
+        // content. Three presets — straightLine, tableOfValues and intersection
+        // — annotate a point that is deliberately not focusable, so keying off
+        // focusability would allow zero active elements for exactly the presets
+        // this contract most needs to guard: a mutation stripping every active
+        // tier from tableOfValues would sail through.
+        //
+        // Genuine no-point states stay legal: parallel and coincident
+        // intersections have no solution point at all, so nothing to annotate.
+        const hasAnnotatablePoint = scene.points.some(point => point.tier !== 'context')
+
         expect(
-          allowed,
+          active,
           `${presetId} has ${active.length} active elements with activeId="${context.activeId}"`,
-        ).toContain(active.length)
+        ).toHaveLength(hasAnnotatablePoint ? 1 : 0)
       }
     })
 
