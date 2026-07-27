@@ -31,7 +31,15 @@ Governs Home, the Subjects/Modules browser, Progress, Exam landing/navigation, o
 
 ---
 
-### 1c. Subject Module Architecture (History & Science)
+### 1c. Content Hierarchy
+
+`docs/system/CONTENT_HIERARCHY.md`
+
+The canonical structural contract for `Subject → Module → Chapter → Screen → Component`. Defines what each level owns, the chapter-authoring boundary, relationship rules, stable progress identity, and the migration away from the current inverted `MODULES` / `MODULE_GROUPS` / `ModulePlayer` terminology. Read before changing content metadata, chapter runtime, navigation, discovery, progress or component routing.
+
+---
+
+### 1d. Subject Module Architecture (History & Science)
 
 `docs/system/HISTORY_MODULE_ARCHITECTURE.md`
 `docs/system/SCIENCE_MODULE_BLUEPRINT.md`
@@ -40,15 +48,15 @@ Locked chapter/module structure rules for History and Science (Biology, Chemistr
 
 ---
 
-### 1d. Content Build Template
+### 1e. Content Build Template
 
 `docs/system/CONTENT_BUILD_TEMPLATE.md`
 
-Story-unit rhythm and machine-checked quality floor for all module content. Layers inside the locked module architectures in 1c — those docs own section structure; this doc owns the rhythm and quality floor inside the sections.
+Story-unit rhythm and machine-checked quality floor for all module content. Layers inside the locked module architectures in 1d — those docs own section structure; this doc owns the rhythm and quality floor inside the sections.
 
 ---
 
-### 1e. Pattern Governance
+### 1f. Pattern Governance
 
 `docs/system/PATTERN_GOVERNANCE.md`
 
@@ -56,7 +64,7 @@ Governs how every element is placed on a learning screen: the taxonomy chain (le
 
 ---
 
-### 1f. Gold Screen Register
+### 1g. Gold Screen Register
 
 `docs/system/GOLD_SCREEN_REGISTER.md`
 
@@ -118,9 +126,10 @@ doc, the active doc wins. Do not treat archive content as current guidance.
 Before making any UI change, confirm:
 
 1. **Philosophy** — does this respect the product identity in `PRODUCT_UI_CONSTITUTION.md`?
-2. **Rules** — does this follow all authoring rules in `COMPONENT_AUTHORING_RULES.md`?
-3. **Tokens** — am I using tokens from the relevant Foundation System doc?
-4. **Existing components** — does something in `COMPONENT_REGISTRY.md` already cover this?
-5. **Locked components** — if touching a locked component, see `LOCKED_COMPONENTS.md` first.
+2. **Hierarchy** — does this preserve `Subject → Module → Chapter → Screen → Component` as defined in `CONTENT_HIERARCHY.md`?
+3. **Rules** — does this follow all authoring rules in `COMPONENT_AUTHORING_RULES.md`?
+4. **Tokens** — am I using tokens from the relevant Foundation System doc?
+5. **Existing components** — does something in `COMPONENT_REGISTRY.md` already cover this?
+6. **Locked components** — if touching a locked component, see `LOCKED_COMPONENTS.md` first.
 
 **When in doubt: go simpler, darker, calmer, and less decorated.**
