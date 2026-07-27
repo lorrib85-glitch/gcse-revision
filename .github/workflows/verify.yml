@@ -39,5 +39,5 @@ jobs:
       - name: Install Chromium for Storybook tests
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Run lint, architecture, unit, Storybook and build checks
+      - name: Run architecture, lint, unit, Storybook and build checks
         run: pnpm verify
