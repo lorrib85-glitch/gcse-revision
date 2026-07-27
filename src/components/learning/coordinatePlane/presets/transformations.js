@@ -22,11 +22,13 @@ import {
   rotatePoint,
   translatePoint,
 } from '../coordinatePlaneMath.js'
-// Registry ↔ preset cycle, and a safe one: `resolveOptionValues` is a hoisted
-// function declaration and is only ever called at derive time, long after both
-// modules have finished evaluating. Sharing it is the point — the fallback rule
-// for an option a capability has removed must be identical in the scene and in
-// the buttons, or the two disagree about what is selected.
+// Imported from optionState.js, NOT from the registry. Sharing the rule is the
+// point — the fallback for an option a capability has removed must be identical
+// in the scene and in the buttons, or the two disagree about what is selected —
+// but importing it from index.js made a registry ↔ preset cycle that threw a
+// temporal-dead-zone error the moment anyone imported this module directly
+// rather than through the registry. tests/unit/transformationsDirectImport.test.js
+// guards against reintroducing it.
 import { resolveOptionValues } from './optionState.js'
 
 const MINUS = '−'

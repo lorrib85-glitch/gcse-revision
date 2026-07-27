@@ -5147,8 +5147,54 @@ import {
   clampPresetValues,
   interactionRange,
   mergeCapabilities,
+  resolveEffectiveValues,
+  resolveOptionValues,
   resolvePresetFocus,
 } from '../../src/components/learning/coordinatePlane/presets/index.js'
+
+// Shared with the visible-bounds test: the same enumeration is needed here, so
+// both files build states the same way.
+const CAPABILITY_SETS = [
+  {},
+  { diagonalMirrorLines: true, nonOriginCentre: true },
+  { fractionalScaleFactor: true, negativeScaleFactor: true, nonOriginCentre: true },
+  { perpendicularGradients: true, showXIntercept: true },
+]
+
+function controlValueSets(preset) {
+  const base = clampPresetValues(preset, preset.initialValues)
+  let sets = [base]
+
+  for (const control of preset.controls ?? []) {
+    const corners = [control.min, control.max, base[control.id]]
+    sets = sets.flatMap(values => corners.map(corner => ({
+      ...values,
+      [control.id]: corner,
+    })))
+  }
+  return sets.map(values => clampPresetValues(preset, values))
+}
+
+function reachableOptionStates(preset, baseValues, capabilities) {
+  const seen = new Map()
+  const queue = [baseValues]
+
+  while (queue.length > 0) {
+    const values = queue.shift()
+    const choices = resolveOptionValues(preset, values, capabilities)
+    const key = JSON.stringify(choices)
+    if (seen.has(key)) continue
+    seen.set(key, choices)
+
+    const groups = preset.resolveOptions?.(capabilities, values) ?? preset.options ?? []
+    for (const group of groups) {
+      for (const choice of group.choices) {
+        queue.push({ ...values, ...choices, [group.id]: choice.id })
+      }
+    }
+  }
+  return [...seen.values()]
+}
 
 function handleControlIds(preset) {
   const ids = new Set()
@@ -5181,22 +5227,65 @@ function handleControlIds(preset) {
 describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
   'control reachability: %s',
   (presetId, preset) => {
-    it('offers a way to change every declared control', () => {
+    // Reachability must be proved against RESOLVED steppers, not the static
+    // declaration. The static list would pass even if resolveSteppers() hid a
+    // control in every state a learner can actually reach — which is precisely
+    // the "control that does nothing" failure inverted.
+    it('offers a way to change every declared control in some reachable state', () => {
       const viaHandle = handleControlIds(preset)
-      const viaStepper = new Set((preset.steppers ?? []).map(item => item.controlId))
+      const viaStepper = new Set()
+
+      for (const caps of CAPABILITY_SETS) {
+        const capabilities = mergeCapabilities(preset, caps)
+        for (const numericValues of controlValueSets(preset)) {
+          for (const optionValues of reachableOptionStates(preset, numericValues, capabilities)) {
+            const effectiveValues = resolveEffectiveValues(
+              preset,
+              { ...numericValues, ...optionValues },
+              capabilities,
+            )
+            const steppers = preset.resolveSteppers?.(effectiveValues, capabilities)
+              ?? preset.steppers
+              ?? []
+            for (const stepper of steppers) viaStepper.add(stepper.controlId)
+          }
+        }
+      }
 
       for (const control of preset.controls ?? []) {
-        const reachable = viaHandle.has(control.id) || viaStepper.has(control.id)
         expect(
-          reachable,
-          `${presetId} declares control "${control.id}" but neither a drag handle nor a stepper reaches it`,
+          viaHandle.has(control.id) || viaStepper.has(control.id),
+          `${presetId} declares control "${control.id}" but no reachable state offers a handle or a stepper for it`,
         ).toBe(true)
       }
     })
 
-    it('does not declare a stepper for a control that does not exist', () => {
+    it('never resolves a stepper for a control that does not exist', () => {
       const controlIds = new Set((preset.controls ?? []).map(control => control.id))
 
+      for (const caps of CAPABILITY_SETS) {
+        const capabilities = mergeCapabilities(preset, caps)
+        for (const numericValues of controlValueSets(preset)) {
+          for (const optionValues of reachableOptionStates(preset, numericValues, capabilities)) {
+            const effectiveValues = resolveEffectiveValues(
+              preset,
+              { ...numericValues, ...optionValues },
+              capabilities,
+            )
+            const steppers = preset.resolveSteppers?.(effectiveValues, capabilities)
+              ?? preset.steppers
+              ?? []
+            for (const stepper of steppers) {
+              expect(
+                controlIds.has(stepper.controlId),
+                `${presetId} resolved a stepper for unknown control "${stepper.controlId}"`,
+              ).toBe(true)
+            }
+          }
+        }
+      }
+
+      // The static declaration must also be honest — Task 13 reads it.
       for (const stepper of preset.steppers ?? []) {
         expect(
           controlIds.has(stepper.controlId),
@@ -5258,6 +5347,66 @@ Expected: PASS. If `straightLine`, `tableOfValues`, `intersection` or any
 transformation fails, its `steppers` declaration is missing — add it rather
 than removing the control.
 
+- [ ] **Step 2b: Write the direct-import regression test**
+
+The registry ↔ preset cycle was found by hand and is trivially easy to
+reintroduce, because it only fails when a preset module is imported *first* —
+every existing test happens to reach it through the registry.
+
+Create `tests/unit/transformationsDirectImport.test.js`:
+
+```js
+import { describe, expect, it } from 'vitest'
+
+// Deliberately the ONLY import in this file, and deliberately not the registry.
+//
+// transformations.js once imported resolveOptionValues from index.js, which
+// made a cycle: importing the preset module first hit a temporal-dead-zone
+// error on the registry's own preset table. Every other test reaches these
+// presets through the registry, so nothing caught it. This file exists purely
+// to enter through the other door.
+import {
+  enlargePreset,
+  reflectPreset,
+  rotatePreset,
+  translatePreset,
+} from '../../src/components/learning/coordinatePlane/presets/transformations.js'
+
+describe('transformations module imported directly', () => {
+  it('evaluates without the registry having been loaded first', () => {
+    for (const preset of [translatePreset, reflectPreset, rotatePreset, enlargePreset]) {
+      expect(preset).toBeDefined()
+      expect(typeof preset.derive).toBe('function')
+    }
+  })
+
+  it('exposes the four presets with their expected ids', () => {
+    expect([translatePreset, reflectPreset, rotatePreset, enlargePreset]
+      .map(preset => preset.id))
+      .toEqual(['translate', 'reflect', 'rotate', 'enlarge'])
+  })
+
+  it('can derive a scene without the registry', () => {
+    const scene = rotatePreset.derive(
+      { cx: 0, cy: 0, angle: '90', direction: 'clockwise' },
+      {
+        activeId: 'a',
+        showGuides: 'active',
+        capabilities: rotatePreset.capabilities,
+        choices: { angle: '90', direction: 'clockwise' },
+        axes: { x: rotatePreset.xAxis, y: rotatePreset.yAxis },
+      },
+    )
+
+    expect(scene.points.find(point => point.id === 'image-a')).toBeDefined()
+  })
+})
+```
+
+Run it **on its own**, so the registry is genuinely not loaded first:
+
+`./node_modules/.bin/vitest run --project unit tests/unit/transformationsDirectImport.test.js`
+
 - [ ] **Step 3: Write the visible bounds test**
 
 Create `tests/architecture/coordinate-plane-visible-bounds.test.js`:
@@ -5268,6 +5417,8 @@ import {
   COORDINATE_PLANE_PRESETS,
   clampPresetValues,
   mergeCapabilities,
+  resolveEffectiveValues,
+  resolveOptionValues,
   resolvePresetFocus,
 } from '../../src/components/learning/coordinatePlane/presets/index.js'
 
@@ -5303,20 +5454,37 @@ function controlValueSets(preset) {
   return sets.map(values => clampPresetValues(preset, values))
 }
 
-// Every combination of every option group's available choices — not just the
-// last one. Reflections must cover vertical, horizontal and both diagonals;
-// rotations every angle against both directions; enlargements every factor.
-function optionValueSets(preset, capabilities) {
-  const groups = preset.resolveOptions?.(capabilities) ?? preset.options ?? []
-  let sets = [{}]
+// Every reachable combination of option choices, found by walking outward from
+// the base state.
+//
+// A single `resolveOptions(capabilities)` call cannot describe this any more.
+// Groups now resolve from the values too: rotation offers `direction` at 90°
+// and 270° and withdraws it at 180°, so the set of groups changes as you move
+// through the set of choices. Enumerating once against the initial values would
+// miss every state behind a group that only appears later — and would invent
+// states behind a group that has since disappeared.
+//
+// So: breadth-first from the base values, re-asking the preset which groups
+// exist at each state, until nothing new turns up.
+function reachableOptionStates(preset, baseValues, capabilities) {
+  const seen = new Map()
+  const queue = [baseValues]
 
-  for (const group of groups) {
-    sets = sets.flatMap(choices => group.choices.map(choice => ({
-      ...choices,
-      [group.id]: choice.id,
-    })))
+  while (queue.length > 0) {
+    const values = queue.shift()
+    const choices = resolveOptionValues(preset, values, capabilities)
+    const key = JSON.stringify(choices)
+    if (seen.has(key)) continue
+    seen.set(key, choices)
+
+    const groups = preset.resolveOptions?.(capabilities, values) ?? preset.options ?? []
+    for (const group of groups) {
+      for (const choice of group.choices) {
+        queue.push({ ...values, ...choices, [group.id]: choice.id })
+      }
+    }
   }
-  return sets
+  return [...seen.values()]
 }
 
 function pathCoordinates(path) {
@@ -5338,10 +5506,20 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
         for (const caps of CAPABILITY_SETS) {
           const capabilities = mergeCapabilities(preset, caps)
 
-          for (const values of controlValueSets(preset)) {
-            for (const choices of optionValueSets(preset, capabilities)) {
+          for (const numericValues of controlValueSets(preset)) {
+            for (const optionValues of reachableOptionStates(preset, numericValues, capabilities)) {
             const axes = { x: preset.xAxis, y: preset.yAxis }
-            const scene = preset.derive(values, {
+
+            // Derive from EFFECTIVE state, exactly as the renderer does.
+            // Passing raw values with separately generated choices tests a
+            // combination the component can never actually be in — and would
+            // miss a capability that pins a value, since the pinned figure is
+            // the only one a learner ever sees.
+            const supplied = { ...numericValues, ...optionValues }
+            const effectiveValues = resolveEffectiveValues(preset, supplied, capabilities)
+            const choices = resolveOptionValues(preset, effectiveValues, capabilities)
+
+            const scene = preset.derive(effectiveValues, {
               focus: resolvePresetFocus(preset, focus),
               activeId: preset.defaultActiveId,
               showGuides: 'active',
@@ -5351,7 +5529,7 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
               grid: preset.grid,
             })
 
-            const label = `${presetId} focus=${focus} values=${JSON.stringify(values)} choices=${JSON.stringify(choices)}`
+            const label = `${presetId} focus=${focus} values=${JSON.stringify(effectiveValues)} choices=${JSON.stringify(choices)}`
 
             for (const point of scene.points) {
               expect(point.x, `${label} point ${point.id}.x`).toBeGreaterThanOrEqual(axes.x.min)
@@ -5439,6 +5617,8 @@ import {
   COORDINATE_PLANE_PRESETS,
   clampPresetValues,
   mergeCapabilities,
+  resolveEffectiveValues,
+  resolveOptionValues,
   resolvePresetFocus,
   resolveShowGuides,
 } from '../../src/components/learning/coordinatePlane/presets/index.js'
@@ -5473,29 +5653,29 @@ function reachableStates(preset) {
         for (const comparisonRule of COMPARISON_RULES) {
           const capabilities = mergeCapabilities(preset, caps)
           const showGuides = resolveShowGuides(preset, requested)
-          const choices = Object.fromEntries(
-            (preset.resolveOptions?.(capabilities) ?? preset.options ?? [])
-              .map(group => [group.id, group.choices[0].id]),
-          )
 
+          // Effective state, exactly as the renderer derives it. Deriving from
+          // raw values here would test a combination the component cannot be
+          // in, and would miss any capability that pins a value.
+          const effectiveValues = resolveEffectiveValues(preset, values, capabilities)
           const context = {
             focus: resolvePresetFocus(preset, focus),
             comparisonRule,
             activeId: preset.defaultActiveId,
             showGuides,
             capabilities,
-            choices,
+            choices: resolveOptionValues(preset, effectiveValues, capabilities),
             axes: { x: preset.xAxis, y: preset.yAxis },
             grid: preset.grid,
           }
 
-          states.push({ context, scene: preset.derive(values, context), requested })
+          states.push({ context, scene: preset.derive(effectiveValues, context), requested })
 
           // Also exercise activation of each focusable point in turn.
-          const base = preset.derive(values, context)
+          const base = preset.derive(effectiveValues, context)
           for (const point of base.points.filter(item => item.focusable)) {
             const moved = { ...context, activeId: point.id }
-            states.push({ context: moved, scene: preset.derive(values, moved), requested })
+            states.push({ context: moved, scene: preset.derive(effectiveValues, moved), requested })
           }
         }
       }
