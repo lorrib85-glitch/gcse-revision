@@ -3,80 +3,18 @@ import {
   COORDINATE_PLANE_PRESETS,
   clampPresetValues,
   interactionRange,
-  mergeCapabilities,
-  resolveEffectiveValues,
-  resolveOptionValues,
   resolvePresetFocus,
 } from '../../src/components/learning/coordinatePlane/presets/index.js'
+import { effectiveStates } from '../support/coordinatePlaneStateSpace.js'
 
-// This file's capability sets. Deliberately NOT identical to the visible-bounds
-// file's: reachability wants nonOriginCentre enabled so the centre steppers can
-// be reached at all, while visible-bounds wants the pinned-to-origin figure in
-// its sweep. Keep them separate and keep this comment honest — an earlier
-// version claimed they were shared when they were not.
-const CAPABILITY_SETS = [
-  {},
-  { diagonalMirrorLines: true, nonOriginCentre: true },
-  { fractionalScaleFactor: true, negativeScaleFactor: true, nonOriginCentre: true },
-  { perpendicularGradients: true, showXIntercept: true },
-]
-
-function controlValueSets(preset) {
-  const base = clampPresetValues(preset, preset.initialValues)
-  let sets = [base]
-
-  for (const control of preset.controls ?? []) {
-    const corners = [control.min, control.max, base[control.id]]
-    sets = sets.flatMap(values => corners.map(corner => ({
-      ...values,
-      [control.id]: corner,
-    })))
-  }
-  return sets.map(values => clampPresetValues(preset, values))
-}
-
-function reachableOptionStates(preset, baseValues, capabilities) {
-  const seen = new Map()
-  const queue = [baseValues]
-
-  while (queue.length > 0) {
-    const values = queue.shift()
-    const choices = resolveOptionValues(preset, values, capabilities)
-    const key = JSON.stringify(choices)
-    if (seen.has(key)) continue
-    seen.set(key, choices)
-
-    const groups = preset.resolveOptions?.(capabilities, values) ?? preset.options ?? []
-    for (const group of groups) {
-      for (const choice of group.choices) {
-        queue.push({ ...values, ...choices, [group.id]: choice.id })
-      }
-    }
-  }
-  return [...seen.values()]
-}
-
-// Handles across the same effective-state sweep everything else uses.
-//
-// Deriving from raw initial values with first-choice options would miss a
-// handle that only appears under a non-default capability or option. No preset
-// emits handles that way today, so this is currently equivalent — but the
-// helper should not be the one place in the file that tests a state the
-// component cannot be in.
 function handleControlIds(preset) {
   const ids = new Set()
   const focusModes = preset.focusModes?.length ? preset.focusModes : [undefined]
 
-  for (const caps of CAPABILITY_SETS) {
-    const capabilities = mergeCapabilities(preset, caps)
-    for (const numericValues of controlValueSets(preset)) {
-      for (const optionValues of reachableOptionStates(preset, numericValues, capabilities)) {
-        const effectiveValues = resolveEffectiveValues(
-          preset,
-          { ...numericValues, ...optionValues },
-          capabilities,
-        )
-        const choices = resolveOptionValues(preset, effectiveValues, capabilities)
+  for (const state of effectiveStates(preset)) {
+    const { capabilities, effectiveValues, choices } = state
+    {
+      {
 
         for (const focus of focusModes) {
           const scene = preset.derive(effectiveValues, {
@@ -110,15 +48,10 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
       const viaHandle = handleControlIds(preset)
       const viaStepper = new Set()
 
-      for (const caps of CAPABILITY_SETS) {
-        const capabilities = mergeCapabilities(preset, caps)
-        for (const numericValues of controlValueSets(preset)) {
-          for (const optionValues of reachableOptionStates(preset, numericValues, capabilities)) {
-            const effectiveValues = resolveEffectiveValues(
-              preset,
-              { ...numericValues, ...optionValues },
-              capabilities,
-            )
+      for (const state of effectiveStates(preset)) {
+        const { capabilities, effectiveValues } = state
+        {
+          {
             const steppers = preset.resolveSteppers?.(effectiveValues, capabilities)
               ?? preset.steppers
               ?? []
@@ -138,15 +71,10 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
     it('never resolves a stepper for a control that does not exist', () => {
       const controlIds = new Set((preset.controls ?? []).map(control => control.id))
 
-      for (const caps of CAPABILITY_SETS) {
-        const capabilities = mergeCapabilities(preset, caps)
-        for (const numericValues of controlValueSets(preset)) {
-          for (const optionValues of reachableOptionStates(preset, numericValues, capabilities)) {
-            const effectiveValues = resolveEffectiveValues(
-              preset,
-              { ...numericValues, ...optionValues },
-              capabilities,
-            )
+      for (const state of effectiveStates(preset)) {
+        const { capabilities, effectiveValues } = state
+        {
+          {
             const steppers = preset.resolveSteppers?.(effectiveValues, capabilities)
               ?? preset.steppers
               ?? []

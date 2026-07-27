@@ -5154,12 +5154,16 @@ import {
 
 // Shared with the visible-bounds test: the same enumeration is needed here, so
 // both files build states the same way.
-const CAPABILITY_SETS = [
-  {},
-  { diagonalMirrorLines: true, nonOriginCentre: true },
-  { fractionalScaleFactor: true, negativeScaleFactor: true, nonOriginCentre: true },
-  { perpendicularGradients: true, showXIntercept: true },
-]
+// Capability profiles, the control-corner product and the breadth-first option
+// walk all live in `tests/support/coordinatePlaneStateSpace.js`, shared by the
+// reachability, visible-bounds and annotation contracts. A third copy of the
+// walker would drift from the other two.
+//
+// The combined profile is load bearing:
+//   { fractionalScaleFactor: true, negativeScaleFactor: true, nonOriginCentre: true }
+// Enlargement's reach is (1 − s)c + s·p, so the centre and the scale factor
+// interact. Proving a movable centre is safe at factor 2, and proving factor
+// −2 is safe about the origin, says nothing about factor −2 about (1, −1).
 
 function controlValueSets(preset) {
   const base = clampPresetValues(preset, preset.initialValues)
@@ -5641,15 +5645,9 @@ Create `tests/architecture/coordinate-plane-annotation-contract.test.js`:
 
 ```js
 import { describe, expect, it } from 'vitest'
-import {
-  COORDINATE_PLANE_PRESETS,
-  clampPresetValues,
-  mergeCapabilities,
-  resolveEffectiveValues,
-  resolveOptionValues,
-  resolvePresetFocus,
-  resolveShowGuides,
-} from '../../src/components/learning/coordinatePlane/presets/index.js'
+import { COORDINATE_PLANE_PRESETS, resolvePresetFocus, resolveShowGuides }
+  from '../../src/components/learning/coordinatePlane/presets/index.js'
+import { effectiveStates } from '../support/coordinatePlaneStateSpace.js'
 
 const TIERS = ['active', 'related', 'context']
 const SHOW_GUIDES = ['active', 'all', 'none']
@@ -5666,44 +5664,45 @@ const CAPABILITY_SETS = [
 const COMPARISON_RULES = [undefined, 'parallel', 'perpendicular', 'free']
 
 /**
- * Every state a learner can actually reach: each focus mode, each showGuides
- * value, each capability set, each comparison rule, and each point offered as
- * the active one.
+ * Every state a learner can actually reach.
+ *
+ * Uses the SHARED state space, not just `initialValues`. The annotation
+ * contract has to see numeric corners and dynamic option states too: different
+ * `tableOfValues` stages annotate different points, transformation annotations
+ * depend on the selected option, and any future preset whose tiers vary at a
+ * control boundary would otherwise go unchecked.
  */
 function reachableStates(preset) {
   const focusModes = preset.focusModes?.length ? preset.focusModes : [undefined]
-  const values = clampPresetValues(preset, preset.initialValues)
   const states = []
 
-  for (const focus of focusModes) {
-    for (const requested of SHOW_GUIDES) {
-      for (const caps of CAPABILITY_SETS) {
-        for (const comparisonRule of COMPARISON_RULES) {
-          const capabilities = mergeCapabilities(preset, caps)
+  for (const state of effectiveStates(preset)) {
+    for (const focus of focusModes) {
+      for (const comparisonRule of COMPARISON_RULES) {
+        for (const requested of SHOW_GUIDES) {
           const showGuides = resolveShowGuides(preset, requested)
-
-          // Effective state, exactly as the renderer derives it. Deriving from
-          // raw values here would test a combination the component cannot be
-          // in, and would miss any capability that pins a value.
-          const effectiveValues = resolveEffectiveValues(preset, values, capabilities)
           const context = {
             focus: resolvePresetFocus(preset, focus),
             comparisonRule,
             activeId: preset.defaultActiveId,
             showGuides,
-            capabilities,
-            choices: resolveOptionValues(preset, effectiveValues, capabilities),
+            capabilities: state.capabilities,
+            choices: state.choices,
             axes: { x: preset.xAxis, y: preset.yAxis },
             grid: preset.grid,
           }
 
-          states.push({ context, scene: preset.derive(effectiveValues, context), requested })
+          const scene = preset.derive(state.effectiveValues, context)
+          states.push({ context, scene, requested })
 
-          // Also exercise activation of each focusable point in turn.
-          const base = preset.derive(effectiveValues, context)
-          for (const point of base.points.filter(item => item.focusable)) {
+          // And each focusable point selected in turn.
+          for (const point of scene.points.filter(item => item.focusable)) {
             const moved = { ...context, activeId: point.id }
-            states.push({ context: moved, scene: preset.derive(effectiveValues, moved), requested })
+            states.push({
+              context: moved,
+              scene: preset.derive(state.effectiveValues, moved),
+              requested,
+            })
           }
         }
       }
