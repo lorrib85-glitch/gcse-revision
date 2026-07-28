@@ -28,7 +28,22 @@ jobs:
           cache: pnpm
 
       - name: Apply fail-fast runtime migration
-        run: node .github/phase4-migrate.mjs
+        id: apply
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node .github/phase4-migrate.mjs 2>&1 | tee /tmp/phase4-migration.txt
+
+      - name: Upload migration assertion failure
+        if: steps.apply.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-migration-failure
+          path: /tmp/phase4-migration.txt
+
+      - name: Stop after migration assertion failure
+        if: steps.apply.outcome == 'failure'
+        run: exit 1
 
       - run: pnpm install --frozen-lockfile
 
