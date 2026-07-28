@@ -24,11 +24,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # The storybook project runs under the Vitest Playwright browser
-      # provider; the runner image doesn't ship the Chromium build Playwright
-      # drives, so install it (with its OS deps) before test:storybook.
-      - run: pnpm exec playwright install --with-deps chromium
-
       # Temporary Phase 2 diagnostics. Keep these as separate steps until the
       # failing migration contract is identified, then remove before merge.
       - name: Phase 2 — hierarchy and alias identity
@@ -43,6 +38,11 @@ jobs:
         run: pnpm exec vitest run --project architecture tests/architecture/content-loading-boundary.test.js
       - name: Phase 2 — recovery routing
         run: pnpm exec vitest run --project architecture tests/architecture/recovery-routing-integrity.test.js
+
+      # The storybook project runs under the Vitest Playwright browser
+      # provider; the runner image doesn't ship the Chromium build Playwright
+      # drives, so install it (with its OS deps) before test:storybook.
+      - run: pnpm exec playwright install --with-deps chromium
 
       # Architecture contracts run first so structural regressions are still
       # visible when unrelated lint debt prevents the later checks from running.
