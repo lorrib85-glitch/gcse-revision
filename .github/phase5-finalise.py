@@ -48,8 +48,12 @@ renderer = renderer.replace('current + 1 < block.scenarios.length', 'current + 1
 renderer = renderer.replace('score}/{block.scenarios.length}', 'score}/{scenarios.length}')
 renderer = renderer.replace("score === block.scenarios.length", "score === scenarios.length")
 renderer = renderer.replace('{current + 1}/{block.scenarios.length}', '{current + 1}/{scenarios.length}')
-if 'block.scenarios' in renderer[renderer.index('function ScenarioBlock'):renderer.index('// ─── Single screen renderer')]:
-    raise SystemExit('ScenarioBlock still contains an unnormalised block.scenarios reference')
+scenario_segment = renderer[renderer.index('function ScenarioBlock'):renderer.index('// ─── Single screen renderer')]
+scenario_reference_count = scenario_segment.count('block.scenarios')
+if scenario_reference_count != 2:
+    raise SystemExit(
+        f'ScenarioBlock: expected only the two normalisation references, found {scenario_reference_count}'
+    )
 
 renderer = replace_once(
     renderer,
