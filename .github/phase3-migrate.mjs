@@ -659,7 +659,7 @@ replaceAllChecked(
   1,
 )
 
-write('tests/unit/progress/chapterProgress.test.js', `import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+write('tests/unit/progressSync/chapterProgressPersistence.test.js', `import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   getChapterPct,
   getChapterState,
