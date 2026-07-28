@@ -10,9 +10,9 @@ export function isFullScreenVideoScreen(screen) {
 }
 
 export function getStageNavigation(chapter, total) {
-  const fromModule = Array.isArray(chapter.stageNavigation) ? chapter.stageNavigation : []
-  if (fromModule.length === 6) {
-    return fromModule.map((stage, index) => ({
+  const fromChapter = Array.isArray(chapter.stageNavigation) ? chapter.stageNavigation : []
+  if (fromChapter.length === 6) {
+    return fromChapter.map((stage, index) => ({
       id: stage.id || `part-${index + 1}`,
       title: stage.title || `Part ${index + 1}`,
       description: stage.description || '',
@@ -36,20 +36,20 @@ export function getCurrentStageFromNavigation(stageNavigation, screen) {
 }
 
 // Pure: clamp a requested screen index into the valid [0, total-1] range.
-// Used by ModulePlayer's go(delta) and goTo(idx) — both compute a candidate
+// Used by ChapterPlayer's go(delta) and goTo(idx) — both compute a candidate
 // index and pass it through this same clamp before setScreen().
 export function clampScreenIndex(index, total) {
   return Math.max(0, Math.min(total - 1, index))
 }
 
-// Pure: derive ModulePlayer's initial in-memory lifecycle state from a chapter's
-// definition and its persisted state object (see getModuleState/saveModuleState
-// in ModulePlayer.jsx — `saved` is always an object, `{}` on first-ever open or
+// Pure: derive ChapterPlayer's initial in-memory lifecycle state from a chapter's
+// definition and its persisted state object (see getChapterState/saveChapterState
+// in ChapterPlayer.jsx — `saved` is always an object, `{}` on first-ever open or
 // on JSON-parse failure, never null/undefined, so no extra guarding is needed
 // here to match current behaviour).
 //
 // introDone always starts `true` regardless of `saved.introDone` — this mirrors
-// existing ModulePlayer behaviour exactly (IntroScreen gating never actually
+// existing ChapterPlayer behaviour exactly (IntroScreen gating never actually
 // triggers on mount today; preserved as-is, not a bug fix).
 export function computeInitialChapterState(chapter, saved) {
   const rawScreen = saved.screen || 0
@@ -68,11 +68,11 @@ export function computeInitialChapterState(chapter, saved) {
 }
 
 // Pure: decide what handleFinish should do when the user continues from the
-// final content screen. Mirrors the priority order in ModulePlayer.jsx's
+// final content screen. Mirrors the priority order in ChapterPlayer.jsx's
 // handleFinish exactly: examinerExplains gate first (shown once), then the
 // examiner gate, then completion. All side effects (setShowExaminerExplains,
 // setShowExaminer, detectWeakSpot/completeChapter, scrollToTop) stay in
-// ModulePlayer.jsx — this only returns the decision.
+// ChapterPlayer.jsx — this only returns the decision.
 export function resolveFinishAction(chapter, { showExaminerExplains } = {}) {
   if (chapter.examinerExplains && !showExaminerExplains) {
     return { type: 'showExaminerExplains' }
@@ -83,13 +83,13 @@ export function resolveFinishAction(chapter, { showExaminerExplains } = {}) {
   return { type: 'completeChapter' }
 }
 
-// Pure: decide which universal-opener gate (hook/outcomes/recall) ModulePlayer
+// Pure: decide which universal-opener gate (hook/outcomes/recall) ChapterPlayer
 // should render before its main content, or none. Mirrors the priority order
-// of ModulePlayer.jsx's three gate render blocks exactly: hook first
+// of ChapterPlayer.jsx's three gate render blocks exactly: hook first
 // (including the navTo='hook' override), then outcomes, then recall
 // (including the navTo='recall' override). All side effects (setHookDone,
 // setWylDone, setRecallDone, setNavTo, scrollToTop, onBack handlers) and the
-// gate screens' own JSX stay in ModulePlayer.jsx — this only returns the
+// gate screens' own JSX stay in ChapterPlayer.jsx — this only returns the
 // decision.
 export function getChapterGate(chapter, { hookDone, wylDone, recallDone, navTo } = {}) {
   if ((!hookDone && chapter.hook?.statement) || navTo === 'hook') {
@@ -116,9 +116,9 @@ const CHAPTER_COPY = [
 export function buildChapterCompletePayload(completedChapter) {
   const accent = SUBJECTS[completedChapter.subject]?.accent || completedChapter.color || SUBJECTS.History.accent
 
-  const group         = MODULES.find(chapter => chapter.chapterIds.includes(completedChapter.id))
-  const chapterIdx    = group ? group.chapterIds.indexOf(completedChapter.id) : -1
-  const nextChapterId = group ? group.chapterIds[chapterIdx + 1] : null
+  const parentModule  = MODULES.find(module => module.chapterIds.includes(completedChapter.id))
+  const chapterIdx    = parentModule ? parentModule.chapterIds.indexOf(completedChapter.id) : -1
+  const nextChapterId = parentModule ? parentModule.chapterIds[chapterIdx + 1] : null
 
   let nextChapter, nextChapterLabel, nextChapterNum, nextChapterTitle, isFinalChapter, completionType
 
@@ -129,15 +129,15 @@ export function buildChapterCompletePayload(completedChapter) {
     nextChapterTitle = nextChapter?.title
     isFinalChapter   = false
     completionType   = 'chapter'
-  } else if (group) {
-    const groupIdx  = MODULES.indexOf(group)
-    const nextGroup = MODULES[groupIdx + 1]
-    nextChapter          = nextGroup ? CHAPTERS.find(chapter => chapter.id === nextGroup.chapterIds[0]) : null
+  } else if (parentModule) {
+    const moduleIdx = MODULES.indexOf(parentModule)
+    const nextModule = MODULES[moduleIdx + 1]
+    nextChapter      = nextModule ? CHAPTERS.find(chapter => chapter.id === nextModule.chapterIds[0]) : null
     nextChapterLabel = 'Next Module'
     nextChapterNum   = null
-    nextChapterTitle = nextGroup?.title
-    isFinalChapter   = !nextGroup
-    completionType   = nextGroup ? 'chapter' : 'subject'
+    nextChapterTitle = nextModule?.title
+    isFinalChapter   = !nextModule
+    completionType   = nextModule ? 'chapter' : 'subject'
   } else {
     const idx        = CHAPTERS.findIndex(chapter => chapter.id === completedChapter.id)
     nextChapter          = idx >= 0 && idx < CHAPTERS.length - 1 ? CHAPTERS[idx + 1] : null
@@ -168,7 +168,7 @@ export function buildChapterCompletePayload(completedChapter) {
     isFinalChapter,
     backgroundAsset,
     backgroundPosition,
-    moduleName:        group?.title || completedChapter.title,
+    moduleName:        parentModule?.title || completedChapter.title,
     nextChapter,
     nextModule:        nextChapter, // temporary compatibility field
     pastPaperHint,

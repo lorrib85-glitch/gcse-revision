@@ -63,7 +63,7 @@ function SplashScreen() {
   )
 }
 
-// ─── Module loading screen ─────────────────────────────────────────────────────
+// ─── Chapter loading screen ─────────────────────────────────────────────────────
 // Shown both while ChapterPlayer's chunk downloads (Suspense fallback, first open
 // only) and while a chapter's full lesson content is being fetched (see
 // loadChapterContent below).
@@ -80,9 +80,9 @@ function ChapterLoadingScreen() {
   )
 }
 
-// ─── Module content loading ────────────────────────────────────────────────────
+// ─── Chapter content loading ────────────────────────────────────────────────────
 // All subjects now use per-chapter files via CHAPTER_CONTENT_LOADERS.
-// New modules: run /chapter-creation <id> to add a content file + registry entry.
+// New chapters: run /chapter-creation <id> to add a content file + registry entry.
 
 const _chapterContentCache = {}
 
@@ -444,7 +444,7 @@ export default function App() {
     setActiveChapter(null)
     setView('chapter')
     loadChapterContent(chapter)
-      .then(fullMod => setActiveChapter(fullMod || chapter))
+      .then(fullChapter => setActiveChapter(fullChapter || chapter))
       .catch(() => setView(null))
   }
 

@@ -76,8 +76,8 @@ function scrollToTop() {
   } catch {}
 }
 
-// Module resume state persists via getChapterState / saveChapterState from
-// ../../progress.js (imported above) — same gcse_module_<id> key and shape.
+// Chapter resume state persists via getChapterState / saveChapterState from
+// ../../progress.js (imported above) under the canonical gcse_chapter_<id> key.
 
 function ReadBlock({ block }) {
   return (
