@@ -14,6 +14,7 @@ import { getTypeInfo } from '../../data/componentFunctions.js'
 
 import AngleExplore from '../../components/learning/AngleExplore.jsx'
 import NumberLineExplore from '../../components/learning/NumberLineExplore.jsx'
+import CoordinatePlaneExplore from '../../components/learning/CoordinatePlaneExplore.jsx'
 import CalculationBreakdown from '../../components/learning/CalculationBreakdown.jsx'
 import CinematicCarousel from '../../components/learning/CinematicCarousel.jsx'
 import GraphView from '../../components/learning/GraphView.jsx'
@@ -753,6 +754,126 @@ const RAW_ENTRIES = [
         label: 'Static diagram',
         description: 'The same renderer with interaction disabled at a fixed value, for teaching, worked examples and exam questions.',
         render: () => <AngleExplore value={120} interactive={false} />,
+      },
+    ],
+  },
+  {
+    // Unrouted standalone component (no content type to register yet) —
+    // manual classification: the learner moves points, lines and shapes on a
+    // coordinate plane and watches the rule respond, with no scoring.
+    id: 'coordinate-plane-explore', name: 'CoordinatePlaneExplore', interaction: 'reveal',
+    status: 'comparison', subject: 'Maths', renderMode: 'inline',
+    function: 'Configuration-driven GCSE coordinate plane — position, quadrants, midpoints, straight-line graphs, tables of values, intersections and the four transformations on one plane with one interaction model. A three-tier annotation contract keeps only one point fully annotated. Page-level questions and marking remain outside the component.',
+    usage: 'New component — pending review; not yet routed in ModulePlayer. Review variants cover all nine presets, a static exam figure and a cross-subject science framing.',
+    alternative: 'NumberLineExplore (one dimension); GraphView (data charts); AngleExplore (angle facts); AreaPerimeterExplore (mensuration).',
+    render: () => <CoordinatePlaneExplore />,
+    fixture: null,
+    variants: [
+      {
+        id: 'plot-point',
+        label: 'Plot a point',
+        description: 'Drag a point and read its coordinate. Guide lines belong to the active point alone.',
+        render: () => <CoordinatePlaneExplore preset="plotPoint" />,
+      },
+      {
+        id: 'quadrants',
+        label: 'Quadrants',
+        description: 'The four quadrants labelled with their sign pairs, named live as the point moves.',
+        render: () => <CoordinatePlaneExplore preset="plotPoint" focus="quadrants" />,
+      },
+      {
+        id: 'midpoint',
+        label: 'Midpoint',
+        description: 'The x-values and y-values bracketed and averaged separately, so the formula is read off the picture.',
+        render: () => <CoordinatePlaneExplore preset="midpoint" />,
+      },
+      {
+        id: 'straight-line',
+        label: 'Straight line',
+        description: 'y = mx + c with the rise/run triangle and the y-intercept marked.',
+        render: () => <CoordinatePlaneExplore preset="straightLine" />,
+      },
+      {
+        id: 'parallel',
+        label: 'Parallel lines',
+        description: 'Equal rise/run triangles on both lines, with intercepts set independently.',
+        render: () => (
+          <CoordinatePlaneExplore preset="straightLine" focus="compare" comparisonRule="parallel" />
+        ),
+      },
+      {
+        id: 'table-of-values',
+        label: 'Table of values',
+        description: 'One point, no line; two points, a provisional dashed line; three, solid — the third coordinate confirms the rule.',
+        render: () => <CoordinatePlaneExplore preset="tableOfValues" defaultValue={{ m: 2, c: 1, step: 2 }} />,
+      },
+      {
+        id: 'intersection',
+        label: 'Intersection',
+        description: 'The meeting point substituted back into both equations, which is what makes it a solution.',
+        render: () => <CoordinatePlaneExplore preset="intersection" />,
+      },
+      {
+        id: 'translate',
+        label: 'Translate',
+        description: 'A column vector sliding every vertex by the same amount, at the model extreme.',
+        render: () => <CoordinatePlaneExplore preset="translate" defaultValue={{ dx: 8, dy: 5 }} />,
+      },
+      {
+        id: 'reflect',
+        label: 'Reflect',
+        description: 'A diagonal mirror line with all six original and image vertices on one plane.',
+        render: () => (
+          <CoordinatePlaneExplore
+            preset="reflect"
+            defaultValue={{ mirrorValue: 0, mirror: 'yEqualsX' }}
+          />
+        ),
+      },
+      {
+        id: 'rotate',
+        label: 'Rotate',
+        description: 'A quarter turn about a non-origin centre, with the direction control on screen.',
+        render: () => (
+          <CoordinatePlaneExplore
+            preset="rotate"
+            difficultyCapabilities={{ nonOriginCentre: true }}
+            defaultValue={{ cx: 1, cy: -1, angle: '270', direction: 'anticlockwise' }}
+          />
+        ),
+      },
+      {
+        id: 'enlarge',
+        label: 'Enlarge',
+        description: 'Scale factor 3 about a non-origin centre, with the full ray from centre to image.',
+        render: () => (
+          <CoordinatePlaneExplore
+            preset="enlarge"
+            difficultyCapabilities={{ nonOriginCentre: true, fractionalScaleFactor: true, negativeScaleFactor: true }}
+            defaultValue={{ cx: -1, cy: -1, scaleFactor: '3' }}
+          />
+        ),
+      },
+      {
+        id: 'static-exam',
+        label: 'Static exam figure',
+        description: 'interactive={false} — no handles, no live region, but a full descriptive summary for screen readers.',
+        render: () => <CoordinatePlaneExplore preset="reflect" interactive={false} />,
+      },
+      {
+        id: 'physics-distance-time',
+        label: 'Physics distance–time',
+        description: 'Cross-subject: axis labels, units and independent scales make a usable science graph, not a recoloured Maths diagram.',
+        render: () => (
+          <CoordinatePlaneExplore
+            preset="straightLine"
+            subject="Physics"
+            interactive={false}
+            xAxis={{ label: 'Time', unit: 's', min: 0, max: 20, step: 5 }}
+            yAxis={{ label: 'Distance', unit: 'm', min: 0, max: 100, step: 20 }}
+            defaultValue={{ m: 4, c: 0 }}
+          />
+        ),
       },
     ],
   },
