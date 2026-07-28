@@ -1,8 +1,8 @@
 name: Finalise Phase 5 governed renderer
 
 on:
-  push:
-    branches: [agent/content-hierarchy-phase-5]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: write
