@@ -37,7 +37,7 @@ export default {
       "stage": "The mystery",
       "label": "BIOLOGY · CHAPTER 1",
       "videoSrc": "/videos/building-blocks-intro.mp4",
-      "fallbackImage": "/figures/biology/building-blocks/plant-cell-bg.png",
+      "fallbackImage": "/images/biology/cell-biology/plant-cell-bg.png",
       "paragraphs": [
         {
           "text": "A leaf."
@@ -132,7 +132,7 @@ export default {
       "label": "Plant cell explorer",
       "title": "Inside a\nPlant Cell",
       "introText": "Plant cells contain specialised structures called organelles. Each one has a specific job that keeps the cell alive.",
-      "image": "/figures/plant-cell.webp",
+      "image": "/images/biology/cell-biology/plant-cell.webp",
       "imageAlt": "Illustration of a plant cell showing major organelles",
       "ctaLabel": "Explore cell",
       "hotspots": [
@@ -223,7 +223,7 @@ export default {
       "label": "Animal cell explorer",
       "title": "Inside an\nAnimal Cell",
       "introText": "Animal cells share most of their structures with plant cells. Explore this one closely — and notice what's familiar, and what's missing.",
-      "image": "/figures/biology/building-blocks/animal-cell-clean.png",
+      "image": "/images/biology/cell-biology/animal-cell-clean.png",
       "imageAlt": "Illustration of an animal cell showing its main organelles",
       "ctaLabel": "Explore cell",
       "hotspots": [

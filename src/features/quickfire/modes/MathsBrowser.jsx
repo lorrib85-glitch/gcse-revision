@@ -7,13 +7,13 @@ import { FormulaSheet } from '../components/FormulaSheet.jsx'
 
 function mathsTopicImg(id) {
   const n = id || ''
-  if (['number','negatives','fractions','percentages','decimals','indices','surds','primes','bidmas','powers'].some(k => n.includes(k))) return '/headers/maths-numbers.webp'
-  if (['algebra','equations','inequalities','sequences','quadratic','expression','formula'].some(k => n.includes(k))) return '/headers/maths-algebra.webp'
-  if (['graph','gradient','coordinate','straight','linear_graph'].some(k => n.includes(k))) return '/headers/maths-algebra.webp'
-  if (['angles','area','volume','similarity','transforms','pythagoras','trig','geometry','polygon','shape','circle','perimeter'].some(k => n.includes(k))) return '/headers/maths-geometry.webp'
-  if (['statistics','probability','data','averages','mean','sampling','charts'].some(k => n.includes(k))) return '/headers/maths-data.webp'
-  if (['ratio','proportion','speed','density','money','finance','units'].some(k => n.includes(k))) return '/headers/maths-realworld.webp'
-  return '/headers/maths-main.webp'
+  if (['number','negatives','fractions','percentages','decimals','indices','surds','primes','bidmas','powers'].some(k => n.includes(k))) return '/images/maths/_shared/numbers.webp'
+  if (['algebra','equations','inequalities','sequences','quadratic','expression','formula'].some(k => n.includes(k))) return '/images/maths/_shared/algebra.webp'
+  if (['graph','gradient','coordinate','straight','linear_graph'].some(k => n.includes(k))) return '/images/maths/_shared/algebra.webp'
+  if (['angles','area','volume','similarity','transforms','pythagoras','trig','geometry','polygon','shape','circle','perimeter'].some(k => n.includes(k))) return '/images/maths/_shared/geometry.webp'
+  if (['statistics','probability','data','averages','mean','sampling','charts'].some(k => n.includes(k))) return '/images/maths/_shared/data.webp'
+  if (['ratio','proportion','speed','density','money','finance','units'].some(k => n.includes(k))) return '/images/maths/_shared/realworld.webp'
+  return '/images/maths/_shared/main.webp'
 }
 
 export function MathsBrowser({ onBack }) {
@@ -36,7 +36,7 @@ export function MathsBrowser({ onBack }) {
       <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
         <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
           <BackButton onClick={onBack} />
-          <img src="/headers/maths-main.webp" alt="Maths" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
+          <img src="/images/maths/_shared/main.webp" alt="Maths" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
           <div style={{ flex:1 }}>
             <div style={{ ...TYPE.titleLarge, color:'#F5F7FB' }}>AQA Maths — Topics</div>
             <div style={{ ...TYPE.metadata, color:'#5A6480' }}>{MATHS_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked</div>

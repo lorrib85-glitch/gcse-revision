@@ -13,18 +13,18 @@ export const matchingTask = {
   ...baseMatchingTask,
   leftLabel: 'Belief',
   rightLabel: 'Response',
-  backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+  backgroundImage: '/images/history/medicine/plague-background.png',
 }
 
 export const builderBlock = {
   ...baseBuilderBlock,
-  backgroundImage: '/headers/bio-energyforlife.webp',
+  backgroundImage: '/images/biology/_shared/energyforlife.webp',
   backgroundOpacity: 0.72,
 }
 
 export const builderMaths = {
   ...baseBuilderMaths,
-  backgroundImage: '/headers/maths-numbers.webp',
+  backgroundImage: '/images/maths/_shared/numbers.webp',
   backgroundOpacity: 0.7,
   numeric: true,
   workspaceLabel: 'Missing-value expression',
@@ -41,7 +41,7 @@ export const builderQuote = {
   completionNoun: 'quotation',
   completedInstruction: 'You restored the quotation.',
   successHeading: 'Quotation restored',
-  backgroundImage: '/English/Macbeth/heroes/macbeth-generic-banner.svg',
+  backgroundImage: '/images/english/macbeth/macbeth-generic-banner.svg',
   backgroundOpacity: 0.82,
 }
 
@@ -62,7 +62,7 @@ export const builderConcept = {
   completionNoun: 'concept',
   completedInstruction: 'You rebuilt the concept.',
   successHeading: 'Concept complete',
-  backgroundImage: '/headers/sociology-family.webp',
+  backgroundImage: '/images/sociology/_shared/family.webp',
   backgroundOpacity: 0.72,
 }
 
@@ -71,7 +71,7 @@ export const quoteAnalyser = {
   workTitle: 'Macbeth',
   speaker: 'Macbeth',
   sceneLabel: 'Act 1, Scene 4',
-  backgroundImage: '/English/Macbeth/heroes/macbeth-generic-banner.svg',
+  backgroundImage: '/images/english/macbeth/macbeth-generic-banner.svg',
   context: {
     beats: [
       'King Duncan names Malcolm as the next heir to the throne.',
@@ -147,20 +147,20 @@ export const quoteAnalyser = {
 export const theoryCompare = {
   type: 'theoryCompare',
   title: 'Galen and Vesalius',
-  heroImage: '/figures/history/medicine/renaissance/galen-vesalius-hero.webp',
+  heroImage: '/images/history/medicine/galen-vesalius-hero.webp',
   heroImageAlt: 'Galen in Roman dress before classical ruins and animal anatomy sketches, standing back to back with Vesalius in Renaissance dress beside an anatomical book and a human skeleton',
   heroObjectPosition: 'center 24%',
   emphasisSide: 'right',
   leftPerson: {
     name: 'Galen',
     subtitle: 'Ancient Roman doctor',
-    image: '/figures/history/medicine/medieval/galen-portrait.png',
+    image: '/images/history/medicine/portraits/galen-portrait.png',
     imageAlt: 'Portrait of the ancient Roman doctor Galen',
   },
   rightPerson: {
     name: 'Vesalius',
     subtitle: 'Renaissance anatomist',
-    image: '/images/vesalius-1543.png',
+    image: '/images/history/medicine/portraits/vesalius-1543.png',
     imageAlt: 'Portrait of the Renaissance anatomist Andreas Vesalius',
   },
   comparisons: [

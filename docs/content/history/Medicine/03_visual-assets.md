@@ -25,14 +25,14 @@ a deviation in `03_Review_Log.md`.
 
 | Screen | Field | Asset | Fit |
 |---|---|---|---|
-| 0 | backgroundImage | `/headers/history-medicine-through-time.png` | Medieval authority atmosphere for the recall. |
-| 1 | step backgrounds | `/headers/history-medicine-renaissance.png`, `/headers/history-medicine-through-time.png`, `/headers/history-medicine-medieval-scripture.png` | Renaissance / learning / Church backdrops, one condition per reveal. |
-| 3 | portrait | `/images/vesalius-1543.png` | Established Vesalius portrait. |
-| 4 | heroImage | `/figures/history/medicine/renaissance/galen-vesalius-hero.webp` | Galen ↔ Vesalius back-to-back comparison hero. |
-| 4 | leftPerson.image | `/figures/history/medicine/medieval/galen-portrait.png` | Canonical Galen portrait already used in the Medicine series. |
-| 4 | rightPerson.image | `/images/vesalius-1543.png` | Vesalius portrait (reused as compact header). |
-| 6 | beat 0 image | `/headers/history-medicine-renaissance.png` | "The body" — Renaissance observation atmosphere. |
-| 6 | beat 1 image (beats 1–4) | `/headers/history-medicine-medieval-scripture.png` | Written record → book/printing motif for the spread beats. |
+| 0 | backgroundImage | `/images/history/_shared/medicine-through-time.png` | Medieval authority atmosphere for the recall. |
+| 1 | step backgrounds | `/images/history/medicine/headers/renaissance.png`, `/images/history/_shared/medicine-through-time.png`, `/images/history/medicine/headers/medieval-scripture.png` | Renaissance / learning / Church backdrops, one condition per reveal. |
+| 3 | portrait | `/images/history/medicine/portraits/vesalius-1543.png` | Established Vesalius portrait. |
+| 4 | heroImage | `/images/history/medicine/galen-vesalius-hero.webp` | Galen ↔ Vesalius back-to-back comparison hero. |
+| 4 | leftPerson.image | `/images/history/medicine/portraits/galen-portrait.png` | Canonical Galen portrait already used in the Medicine series. |
+| 4 | rightPerson.image | `/images/history/medicine/portraits/vesalius-1543.png` | Vesalius portrait (reused as compact header). |
+| 6 | beat 0 image | `/images/history/medicine/headers/renaissance.png` | "The body" — Renaissance observation atmosphere. |
+| 6 | beat 1 image (beats 1–4) | `/images/history/medicine/headers/medieval-scripture.png` | Written record → book/printing motif for the spread beats. |
 
 ## Recommended dedicated assets (future improvement, not blocking)
 

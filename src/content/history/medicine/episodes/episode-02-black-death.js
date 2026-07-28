@@ -23,7 +23,7 @@ export default {
     statement: 'Medieval doctors had no useful treatment for the Black Death.',
     isTrue: true,
     accentWords: ['no useful treatment'],
-    backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+    backgroundImage: '/images/history/medicine/plague-background.png',
     explanation: 'True. Medieval doctors tried everything they knew — bloodletting, purging, prayer, burning herbs. None of it worked. The actual cause would not be discovered for another 500 years.',
     revealBeats: [
       'True.',
@@ -60,7 +60,7 @@ export default {
       type: 'priorKnowledgeRecall',
       chapterTitle: 'Medieval medicine: beliefs and causes of disease',
       recallPrompts: ['People', 'Theories', 'Causes', 'Treatments', 'Church'],
-      backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+      backgroundImage: '/images/history/medicine/plague-background.png',
       sourceContent: `GCSE History: Medieval Medicine — Beliefs and Causes of Disease (c.1250–c.1500)
 
 Key figures:
@@ -111,7 +111,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       stage: 'The arrival',
       label: 'ENGLAND, 1348',
       videoSrc: '/videos/black-death-intro.mp4',
-      fallbackImage: '/figures/history/medicine/black-death/plague-background.png',
+      fallbackImage: '/images/history/medicine/plague-background.png',
       year: '1348',
       headline: 'Something is coming.',
       body: 'In June 1348, ships docked at Melcombe in Dorset.\n\nWithin weeks, people began to die.\n\nThe disease moved fast — through towns, villages, and monasteries.\n\nNo one knew what it was. No one knew how to stop it.',
@@ -126,7 +126,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'The dock at Melcombe, 1348',
       title: 'The dock at Melcombe',
       introText: 'A trading ship has just arrived from the continent. Tap each glowing point to explore what was here — and what no one yet understood.',
-      image: '/figures/history/medicine/black-death/plague-dock.png',
+      image: '/images/history/medicine/plague-dock.png',
       imageAlt: 'A medieval harbour with a trading ship, barrels, sacks of goods, and rats on the dock',
       ctaLabel: 'Explore the dock',
       hotspots: [
@@ -182,28 +182,28 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       steps: [
         {
           id: 'central-asia',
-          image: '/figures/history/medicine/black-death/trade-routes-map.png',
+          image: '/images/history/medicine/trade-routes-map.png',
           label: 'It began in central Asia',
           detail: 'The Black Death began in central Asia, probably in the late 1330s. It spread west along trade routes that also carried spices, silk and grain.',
           stats: ['c.1338', 'Central Asia'],
         },
         {
           id: 'ship',
-          image: '/figures/history/medicine/black-death/plague-dock.png',
+          image: '/images/history/medicine/plague-dock.png',
           label: 'Trade ships carried it to England',
           detail: 'By 1347, the plague had devastated cities around the Mediterranean. Ships from infected ports sailed north with infected animals aboard. The Black Death reached England at Melcombe in June 1348.',
           stats: ['June 1348', 'Melcombe, Dorset'],
         },
         {
           id: 'spread-inland',
-          image: '/figures/history/medicine/black-death/medieval-town.png',
+          image: '/images/history/medicine/medieval-town.png',
           label: 'From the ports it followed the trade roads',
           detail: 'The plague moved inland along the same roads used for trade. It reached Bristol and London within months. Towns, monasteries and villages on these routes suffered most.',
           stats: ['Late 1348', 'Bristol and London'],
         },
         {
           id: 'england',
-          image: '/figures/history/medicine/black-death/trade-routes-map.png',
+          image: '/images/history/medicine/trade-routes-map.png',
           label: 'By 1350 it had reached Scotland',
           detail: 'From Melcombe, the plague swept across England and into Scotland. Historians estimate it killed one-third to one-half of England\'s population by 1350 — the worst disaster in English history.',
           stats: ['By 1350', '~30–50% mortality'],
@@ -319,22 +319,22 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Why did medieval people get it wrong?',
       scenes: [
         {
-          image: '/figures/history/medicine/black-death/plague-background.png',
+          image: '/images/history/medicine/plague-background.png',
           headline: 'Why did people blame the wrong things?',
           body: 'Medieval explanations were not random. They fitted the ideas people already trusted.',
         },
         {
-          image: '/headers/history-medicine-medieval-scripture.png',
+          image: '/images/history/medicine/headers/medieval-scripture.png',
           headline: 'Religion gave meaning to disaster.',
           body: 'The Church taught that God could punish sin. So when the plague killed thousands, many believed God was angry. If illness was God\'s punishment, prayer, confession and repentance made sense.',
         },
         {
-          image: '/figures/history/medicine/black-death/miasma.png',
+          image: '/images/history/medicine/miasma.png',
           headline: 'Bad smells seemed dangerous.',
           body: 'Plague towns smelled of rotting bodies, waste and smoke. Miasma theory said poisonous air caused illness. So burning herbs or carrying sweet-smelling flowers seemed logical.',
         },
         {
-          image: '/headers/history-medicine-germ-bridge.png',
+          image: '/images/history/medicine/headers/germ-bridge.png',
           headline: 'Astrology looked scientific.',
           body: 'Physicians believed the planets influenced the body. The Paris Medical Faculty blamed the plague on a rare alignment of Saturn, Jupiter and Mars in 1345. To educated people, this sounded like real medical science.',
         },
@@ -355,8 +355,8 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       gameTitle: 'Sort the causes',
       gamePrompt: 'Was this a medieval belief, or the actual cause?',
       columns: [
-        { label: 'MEDIEVAL\nBELIEF',  color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)', image: '/figures/history/medicine/black-death/miasma.png' },
-        { label: 'ACTUAL\nCAUSE',     color: '#8C3A2A', colorRgb: '140,58,42',   bg: 'rgba(140,58,42,.07)',   image: '/figures/history/medicine/black-death/symptom-case-file.png' },
+        { label: 'MEDIEVAL\nBELIEF',  color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)', image: '/images/history/medicine/miasma.png' },
+        { label: 'ACTUAL\nCAUSE',     color: '#8C3A2A', colorRgb: '140,58,42',   bg: 'rgba(140,58,42,.07)',   image: '/images/history/medicine/symptom-case-file.png' },
       ],
       items: [
         { label: 'God punishing sin',           col: 0, explanation: 'A medieval belief — not based on evidence, but on religious conviction.' },
@@ -377,11 +377,11 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       headline: 'A family in 1349 has lost two children to the plague.',
       question: 'They want to know why it happened — and what they should do next. Which explanation do you think they would reach for?',
       helperText: 'Swipe to explore the explanations.',
-      promptVisual: { src: '/figures/history/medicine/black-death/medieval-town.png', alt: 'A grieving medieval family' },
+      promptVisual: { src: '/images/history/medicine/medieval-town.png', alt: 'A grieving medieval family' },
       options: [
         {
           title: 'God and sin',
-          image: '/headers/history-medicine-medieval-scripture.png',
+          image: '/images/history/medicine/headers/medieval-scripture.png',
           sections: [
             { heading: 'Cause',    items: ['God is punishing the community for sin.'] },
             { heading: 'Response', items: ['Confess, pray, fast, go on pilgrimage.'] },
@@ -396,7 +396,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         },
         {
           title: 'Miasma',
-          image: '/figures/history/medicine/black-death/miasma.png',
+          image: '/images/history/medicine/miasma.png',
           sections: [
             { heading: 'Cause',    items: ['Poisonous air is spreading disease.'] },
             { heading: 'Response', items: ['Burn herbs, clean streets, carry sweet-smelling herbs.'] },
@@ -411,7 +411,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         },
         {
           title: 'Astrology',
-          image: '/headers/history-medicine-germ-bridge.png',
+          image: '/images/history/medicine/headers/germ-bridge.png',
           sections: [
             { heading: 'Cause',    items: ['The planets are creating dangerous conditions in the body.'] },
             { heading: 'Response', items: ['Avoid treatment on unlucky days, consult astrology charts.'] },
@@ -426,7 +426,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         },
         {
           title: 'Four humours',
-          image: '/figures/history/medicine/black-death/bloodletting.png',
+          image: '/images/history/medicine/headers/bloodletting.png',
           sections: [
             { heading: 'Cause',    items: ['The body\'s humours are badly out of balance.'] },
             { heading: 'Response', items: ['Bloodletting, purging, diet changes.'] },
@@ -486,7 +486,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       title: 'Match belief to response',
       instruction: 'Match each belief to the response it made seem logical.',
       weakAreaCategory: 'Black Death Treatments',
-      backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+      backgroundImage: '/images/history/medicine/plague-background.png',
       pairs: [
         { id: 'god-response',       term: 'God sent the plague',        answer: 'Prayer, confession and repentance.' },
         { id: 'miasma-response',    term: 'Bad air caused disease',     answer: 'Burn herbs and clean streets.' },
@@ -501,27 +501,27 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Why treatments failed',
       scenes: [
         {
-          image: '/figures/history/medicine/black-death/flagellants.png',
+          image: '/images/history/medicine/flagellants.png',
           headline: 'Prayer and flagellation targeted sin.',
           body: 'If the plague was God’s punishment, the solution was repentance. Some flagellants whipped themselves publicly to show sorrow and earn God’s mercy.',
         },
         {
-          image: '/figures/history/medicine/black-death/miasma.png',
+          image: '/images/history/medicine/miasma.png',
           headline: 'Burning herbs targeted bad air.',
           body: 'If disease travelled through miasma, overpowering foul smells seemed sensible. People burned herbs, carried flowers, or cleaned streets.',
         },
         {
-          image: '/figures/history/medicine/black-death/plague-background.png',
+          image: '/images/history/medicine/plague-background.png',
           headline: 'Bloodletting targeted the humours.',
           body: 'If disease came from humour imbalance, removing blood seemed logical. But it weakened patients further.',
         },
         {
-          image: '/figures/history/medicine/black-death/rich-vs-poor.png',
+          image: '/images/history/medicine/rich-vs-poor.png',
           headline: 'Quarantine had the right idea — and no way to enforce it.',
           body: 'Local officials ordered the sick to be isolated. But medieval government was small and local, with no police force. Rich people ignored the orders and left infected towns. The Church carried on running as normal. Without enforcement, quarantine could not work.',
         },
         {
-          image: '/figures/history/medicine/black-death/not-much-changed.png',
+          image: '/images/history/medicine/not-much-changed.png',
           headline: 'None stopped the real cause.',
           body: 'The real cause was bacteria carried by fleas on rats. Prayer, herbs and bloodletting missed it completely — and even quarantine, the one idea aimed at the right target, collapsed for lack of enforcement.',
         },
@@ -568,7 +568,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         {
           mainText: 'Change ≠ progress',
           supportText: 'The Black Death changed society — but it did not lead to a breakthrough in medical understanding. A huge event can change life, work and power without changing medical knowledge. Doctors still blamed God, miasma, astrology and humours.',
-          backgroundImage: '/figures/history/medicine/black-death/not-much-changed.png',
+          backgroundImage: '/images/history/medicine/not-much-changed.png',
         },
       ],
     },
@@ -582,8 +582,8 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       gameTitle: 'Changed or stayed the same?',
       gamePrompt: 'Did this change by 1350, or stay the same?',
       columns: [
-        { label: 'CHANGED\nBy 1350',         color: '#4CAF7D', colorRgb: '76,175,125', bg: 'rgba(76,175,125,.07)', image: '/figures/history/medicine/black-death/aftermath-changed.png' },
-        { label: 'STAYED THE SAME\nBy 1350', color: '#8C3A2A', colorRgb: '140,58,42',  bg: 'rgba(140,58,42,.07)',  image: '/figures/history/medicine/black-death/aftermath-unchanged.png' },
+        { label: 'CHANGED\nBy 1350',         color: '#4CAF7D', colorRgb: '76,175,125', bg: 'rgba(76,175,125,.07)', image: '/images/history/medicine/aftermath-changed.png' },
+        { label: 'STAYED THE SAME\nBy 1350', color: '#8C3A2A', colorRgb: '140,58,42',  bg: 'rgba(140,58,42,.07)',  image: '/images/history/medicine/aftermath-unchanged.png' },
       ],
       items: [
         { label: 'Labour shortages gave peasants more bargaining power', col: 0, explanation: 'Changed — the labour shortage gave survivors real bargaining power for the first time.' },
@@ -620,27 +620,27 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'The story so far',
       scenes: [
         {
-          image: '/figures/history/medicine/black-death/plague-background.png',
+          image: '/images/history/medicine/plague-background.png',
           headline: 'The Black Death reached England in 1348.',
           body: 'People did not know what caused it.',
         },
         {
-          image: '/figures/history/medicine/black-death/miasma.png',
+          image: '/images/history/medicine/miasma.png',
           headline: 'Medieval people blamed three things.',
           body: 'God — as punishment for sin. Miasma — poisonous air. Astrology — planetary alignment.',
         },
         {
-          image: '/figures/history/medicine/black-death/labour-shortage.png',
+          image: '/images/history/medicine/labour-shortage.png',
           headline: 'Their treatments reflected those beliefs.',
           body: 'Prayer, flagellation, burning herbs, bloodletting. None of it worked.',
         },
         {
-          image: '/figures/history/medicine/black-death/not-much-changed.png',
+          image: '/images/history/medicine/not-much-changed.png',
           headline: 'The Black Death changed society dramatically.',
           body: 'Labour shortage, higher wages, weaker Church authority. But medicine changed very little.',
         },
         {
-          image: '/figures/history/medicine/black-death/examiner-marked-answer.png',
+          image: '/images/history/medicine/examiner-marked-answer.png',
           headline: 'Now let\'s make sure you can explain this — not just describe it.',
           body: 'The examiner rewards explanation. Not description.',
         },

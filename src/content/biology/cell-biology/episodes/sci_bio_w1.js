@@ -115,7 +115,7 @@ export default {
       "label": "Plant cell explorer",
       "title": "Inside a\nPlant Cell",
       "introText": "Plant cells contain specialised structures called organelles. Each one has a specific job that keeps the cell alive.",
-      "image": "/figures/plant-cell.webp",
+      "image": "/images/biology/cell-biology/plant-cell.webp",
       "imageAlt": "Illustration of a plant cell showing major organelles",
       "ctaLabel": "Explore cell",
       "hotspots": [

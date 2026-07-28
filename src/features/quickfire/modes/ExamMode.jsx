@@ -209,13 +209,13 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
   }
 
   const EXAM_SUBJECTS = [
-    { logo: '/headers/sociology-main.webp', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: () => startExamRound('Sociology') },
-    { logo: '/headers/history-main.webp',   label: 'History',   color: SUBJECTS.History.subjectBrowserAccent, completed: 6,  total: 12, action: () => startExamRound('History') },
-    { logo: '/headers/bio-main.webp',       label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: () => startExamRound('Biology') },
-    { logo: '/headers/chem-logo.webp',      label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: () => startExamRound('Chemistry') },
-    { logo: '/headers/maths-main.webp',     label: 'Maths',     color: '#2DD4BF', completed: 0,  total: 20, action: () => startExamRound('Maths') },
-    { logo: '/headers/english-main.webp',   label: 'English',   color: '#B66DFF', completed: 0,  total: 15, action: () => startExamRound('English') },
-    { logo: '/headers/physics-main.webp',   label: 'Physics',   color: '#3B82F6', completed: 0,  total: 15, action: () => startExamRound('Physics') },
+    { logo: '/images/sociology/_shared/main.webp', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: () => startExamRound('Sociology') },
+    { logo: '/images/history/_shared/main.webp',   label: 'History',   color: SUBJECTS.History.subjectBrowserAccent, completed: 6,  total: 12, action: () => startExamRound('History') },
+    { logo: '/images/biology/_shared/main.webp',       label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: () => startExamRound('Biology') },
+    { logo: '/images/chemistry/_shared/logo.webp',      label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: () => startExamRound('Chemistry') },
+    { logo: '/images/maths/_shared/main.webp',     label: 'Maths',     color: '#2DD4BF', completed: 0,  total: 20, action: () => startExamRound('Maths') },
+    { logo: '/images/english/_shared/main.webp',   label: 'English',   color: '#B66DFF', completed: 0,  total: 15, action: () => startExamRound('English') },
+    { logo: '/images/physics/_shared/main.webp',   label: 'Physics',   color: '#3B82F6', completed: 0,  total: 15, action: () => startExamRound('Physics') },
   ]
 
   // ── Full exam paper runner ──────────────────────────────────────────────────
@@ -600,7 +600,7 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
   return (
     <div style={{ minHeight: '100vh', background: GENERAL.neutral[0], paddingBottom: 110, overflowX: 'hidden' }}>
       <div style={{ position: 'relative', width: '100%', height: '34vh', minHeight: 260, maxHeight: 340, overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/headers/exam-summit.png)', backgroundSize: 'cover', backgroundPosition: 'center 30%', filter: 'saturate(0.9)' }} />
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/images/app/exam-summit.png)', backgroundSize: 'cover', backgroundPosition: 'center 30%', filter: 'saturate(0.9)' }} />
         <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, rgba(13,15,16,0.5) 0%, rgba(13,15,16,0.1) 28%, rgba(13,15,16,0.25) 58%, ${GENERAL.neutral[0]} 100%)` }} />
         <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 14px)', right: SPACING.compact, zIndex: 2 }}>
           <StreakChip />

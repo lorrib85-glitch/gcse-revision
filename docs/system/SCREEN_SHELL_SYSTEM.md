@@ -80,7 +80,7 @@ import ContentShell from '../layout/ContentShell.jsx'
 
 <ContentShell
   subject="History"
-  backgroundImage="/headers/history-medicine-through-time.png"
+  backgroundImage="/images/history/_shared/medicine-through-time.png"
   backgroundOpacity={0.11}
   backgroundPosition="left center"
 >
@@ -120,7 +120,7 @@ Same as ContentShell — `subject`, `backgroundImage`, `backgroundOpacity` (defa
 ```jsx
 import InteractionShell from '../layout/InteractionShell.jsx'
 
-<InteractionShell subject="Biology" backgroundImage="/headers/bio-diseasewars.png">
+<InteractionShell subject="Biology" backgroundImage="/images/biology/_shared/diseasewars.png">
   <MatchingTask
     pairs={pairs}
     onComplete={handleComplete}

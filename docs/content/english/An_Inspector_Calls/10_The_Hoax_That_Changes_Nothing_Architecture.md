@@ -5,7 +5,7 @@
 - **Episode number:** 10
 - **Title:** The hoax that changes nothing
 - **Build status:** Not yet built — full build from spec
-- **Header image:** `/English/An Inspector/aic-04-theme-based-questions-header.png`
+- **Header image:** `/images/english/an-inspector-calls/aic-04-theme-based-questions-header.png`
 - **Content pointer:** see `10_The_Hoax_That_Changes_Nothing_Content.md` in this directory.
 
 ---

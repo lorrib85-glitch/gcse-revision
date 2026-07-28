@@ -30,7 +30,7 @@ export function TestDataProvider({ children }) {
 
   if (!data) return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 100, background: '#08090D', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <img src="/logo.png" alt="" style={{ width: 64, height: 64, objectFit: 'contain', opacity: 0.5 }} />
+      <img src="/images/app/logo.png" alt="" style={{ width: 64, height: 64, objectFit: 'contain', opacity: 0.5 }} />
     </div>
   )
   return <TestDataContext.Provider value={data}>{children}</TestDataContext.Provider>

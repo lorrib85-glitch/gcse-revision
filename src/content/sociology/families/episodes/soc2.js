@@ -239,7 +239,7 @@ export default {
       "label": "Karl Marx",
       "kicker": "Theorist",
       "heading": "Karl Marx (1818–1883)",
-      "headerImage": "/figures/karl-marx.png",
+      "headerImage": "/images/sociology/families/portraits/karl-marx.png",
       "sub": "The most influential and controversial thinker in sociology. You need to know his ideas precisely.",
       "blocks": [
         {
@@ -480,7 +480,7 @@ export default {
       "label": "Émile Durkheim",
       "kicker": "Theorist",
       "heading": "Émile Durkheim (1858–1917)",
-      "headerImage": "/figures/emile-durkheim.png",
+      "headerImage": "/images/sociology/families/portraits/emile-durkheim.png",
       "sub": "The founder of Functionalism. He saw society as a system — and studied it scientifically.",
       "blocks": [
         {

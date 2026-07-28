@@ -6,7 +6,7 @@ import episode from './episode-01-medieval-beliefs-causes.js'
 // splits the Theory of Opposites diagram and worked example into focused screens.
 const REMOVED_DUPLICATE_SCREEN_LABEL = 'The Four Humours'
 const THEORY_OF_OPPOSITES_HEADING = 'Every illness had an opposite'
-const HOT_COLD_REVEAL_BACKGROUND = '/figures/history/medicine/medieval/opposite-qualities-background.svg'
+const HOT_COLD_REVEAL_BACKGROUND = '/images/history/medicine/opposite-qualities-background.svg'
 
 const removedScreenIndex = episode.screens.findIndex(
   screen => screen.label === REMOVED_DUPLICATE_SCREEN_LABEL && screen.type === 'conceptReveal'
@@ -24,7 +24,7 @@ const galenCinematicIntro = {
     {
       mainText: 'His name\nwas Galen.',
       supportText: "He turned Hippocrates' ideas into a system that would dominate medicine for over 1,000 years.",
-      backgroundImage: '/figures/history/medicine/medieval/galen-portrait.png',
+      backgroundImage: '/images/history/medicine/portraits/galen-portrait.png',
       backgroundPosition: 'center 8%',
       overlay: 'linear-gradient(to bottom, rgba(0,0,0,.12) 0%, rgba(0,0,0,.24) 40%, rgba(0,0,0,.74) 72%, rgba(0,0,0,.97) 100%)',
       slowReveal: true,
@@ -36,10 +36,10 @@ const galenCinematicIntro = {
 const fourHumoursRevealConfig = {
   interval: 1500,
   images: {
-    topLeft: '/figures/history/medicine/medieval/four-humours-blood.webp',
-    topRight: '/figures/history/medicine/medieval/four-humours-yellow-bile.webp',
-    bottomLeft: '/figures/history/medicine/medieval/four-humours-phlegm.webp',
-    bottomRight: '/figures/history/medicine/medieval/four-humours-black-bile.webp',
+    topLeft: '/images/history/medicine/four-humours-blood.webp',
+    topRight: '/images/history/medicine/four-humours-yellow-bile.webp',
+    bottomLeft: '/images/history/medicine/four-humours-phlegm.webp',
+    bottomRight: '/images/history/medicine/four-humours-black-bile.webp',
   },
   alt: 'The four humours revealed one quadrant at a time: blood (hot and wet), yellow bile (hot and dry), phlegm (cold and wet) and black bile (cold and dry), with arrows crossing the centre to link each humour to its opposite',
   parts: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'],

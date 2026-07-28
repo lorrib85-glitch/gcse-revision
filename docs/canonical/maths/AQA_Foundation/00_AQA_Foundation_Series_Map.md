@@ -10,7 +10,7 @@
 - **Course structure:** 4 modules × 10 chapters = **40 chapters** (canonical student-facing structure)
 - **App subject key:** `Maths`
 - **App accent colour:** `#2DD4BF` (teal-green family)
-- **Header images:** `/headers/maths-numbers.webp`, `/headers/maths-algebra.webp`, `/headers/maths-geometry.webp`, `/headers/maths-data.webp`
+- **Header images:** `/images/maths/_shared/numbers.webp`, `/images/maths/_shared/algebra.webp`, `/images/maths/_shared/geometry.webp`, `/images/maths/_shared/data.webp`
 - **Existing data files:** `src/data/mathsTopics.js`, `src/data/mathsGroups.js`, `src/data/mathsQuestions.js`
 
 ## Series throughline

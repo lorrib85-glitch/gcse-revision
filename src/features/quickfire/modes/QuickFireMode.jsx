@@ -55,13 +55,13 @@ const QUICK_FIRE_QUESTIONS = [
 // ─── Subject metadata ─────────────────────────────────────────────────────────
 
 const QUICK_FIRE_SUBJECT_META = {
-  History:      { icon: '🏛️', logo: '/headers/history-main.webp',   color: SUBJECTS.History.subjectBrowserAccent, moduleId: 'history-medicine-medieval-beliefs-causes' },
-  Maths:        { icon: '✖️', logo: '/headers/maths-main.webp',     color: '#2DD4BF', moduleId: null },
-  Sociology:    { icon: '👥', logo: '/headers/sociology-main.webp', color: '#FF5C7A', moduleId: null },
-  Chemistry:    { icon: '⚗️', logo: '/headers/chem-logo.webp',      color: '#9B59E8', moduleId: null },
-  Biology:      { icon: '🌿', logo: '/headers/bio-main.webp',        color: '#4F8A5B', moduleId: 'sci_bio_w1' },
-  English:      { icon: '📘', logo: '/headers/english-main.webp',   color: '#B66DFF', moduleId: null },
-  Physics:      { icon: '⚡', logo: '/headers/physics-main.webp',   color: '#3B82F6', moduleId: null },
+  History:      { icon: '🏛️', logo: '/images/history/_shared/main.webp',   color: SUBJECTS.History.subjectBrowserAccent, moduleId: 'history-medicine-medieval-beliefs-causes' },
+  Maths:        { icon: '✖️', logo: '/images/maths/_shared/main.webp',     color: '#2DD4BF', moduleId: null },
+  Sociology:    { icon: '👥', logo: '/images/sociology/_shared/main.webp', color: '#FF5C7A', moduleId: null },
+  Chemistry:    { icon: '⚗️', logo: '/images/chemistry/_shared/logo.webp',      color: '#9B59E8', moduleId: null },
+  Biology:      { icon: '🌿', logo: '/images/biology/_shared/main.webp',        color: '#4F8A5B', moduleId: 'sci_bio_w1' },
+  English:      { icon: '📘', logo: '/images/english/_shared/main.webp',   color: '#B66DFF', moduleId: null },
+  Physics:      { icon: '⚡', logo: '/images/physics/_shared/main.webp',   color: '#3B82F6', moduleId: null },
   'Quick Fire': { icon: '⚡', logo: null,                            color: GENERAL.teal, moduleId: null },
 }
 

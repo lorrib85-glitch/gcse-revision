@@ -185,7 +185,7 @@ Per `GENERAL_APP_UI_CONSTITUTION.md`:
   only (matching `PulseTab`'s existing `sprint` mode treatment).
 - Optional faint imagery per card (module header image / subject colour
   wash) at very low opacity (~0.06–0.10), same restraint level as the
-  existing `/focus-atmosphere.png` treatment at 0.08 opacity — imagery adds
+  existing `/images/backgrounds/focus-atmosphere.png` treatment at 0.08 opacity — imagery adds
   atmosphere, not a "tile".
 - No per-card numeric badges beyond the small duration tag — avoid
   "oversized statistics" / "badges everywhere".

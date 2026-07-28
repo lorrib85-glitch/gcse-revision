@@ -56,7 +56,7 @@ function SplashScreen() {
         @keyframes risePulse { 0%,100% { filter: drop-shadow(0 0 22px rgba(101,230,198,0.45)) } 50% { filter: drop-shadow(0 0 38px rgba(101,230,198,0.75)) } }
       `}</style>
       <img
-        src="/logo.png" alt="RISE"
+        src="/images/app/logo.png" alt="RISE"
         style={{ width: 96, height: 96, objectFit: 'contain', animation: 'risePulse 1.8s ease-in-out infinite' }}
       />
     </div>
@@ -75,7 +75,7 @@ function ModuleLoadingScreen() {
       background: GENERAL.backgroundApp,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
-      <img src="/logo.png" alt="" style={{ width: 64, height: 64, objectFit: 'contain', opacity: 0.5 }} />
+      <img src="/images/app/logo.png" alt="" style={{ width: 64, height: 64, objectFit: 'contain', opacity: 0.5 }} />
     </div>
   )
 }
@@ -120,7 +120,7 @@ function LoginScreen() {
       {/* Logo — 28% from top */}
       <div style={{ flex: '0 0 auto', marginTop: 'max(72px, 28vh)' }}>
         <img
-          src="/logo.png" alt="RISE"
+          src="/images/app/logo.png" alt="RISE"
           style={{ width: 80, height: 80, objectFit: 'contain', display: 'block',
             filter: 'drop-shadow(0 0 22px rgba(101,230,198,0.5))' }}
         />

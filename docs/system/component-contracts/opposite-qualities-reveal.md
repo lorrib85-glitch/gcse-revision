@@ -44,7 +44,7 @@ Example:
   title: 'Hot or cold?',
   copy: 'Doctors used symptoms to decide which quality was strongest.',
   visualPair: 'warmCool',
-  backgroundImage: '/figures/history/medicine/medieval/opposite-qualities-background.svg',
+  backgroundImage: '/images/history/medicine/opposite-qualities-background.svg',
   backgroundMode: 'screen',
   leftConcept: { label: 'Hot', icon: 'heat', items: ['Fever'] },
   rightConcept: { label: 'Cold', icon: 'cold', items: ['Chills'] },

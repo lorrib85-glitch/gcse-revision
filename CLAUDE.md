@@ -264,17 +264,29 @@ docs/system/TEACHING_VOICE_GUIDE.md
 
 ## Public Assets
 
-- `/public/logo.png` — RISE logo (teal glow, dark background) — used in ModulesTab header and as favicon
-- `/public/headers/` — cinematic header images for subject/module hero cards
-  - History series cards (shared across a series' episodes by default): `history-medicine-through-time.png`, `history-elizabethan.png`, `history-usa-conflict.png`, `history-spain-new-world.png`
-  - History per-module card images (override the series card for one specific module's `headerImage`, filename = module id): `history-medicine-medieval-beliefs-causes.png` (Episode 1, "Trust me, I'm following Jupiter")
-  - History in-module screens: `history-medicine-medieval-scripture.png`, `history-medicine-bloodletting.png`, `history-medicine-germ-bridge.png`
-  - Biology overview: `bio-main.png`
-  - Biology topic groups: `bio-buildinglife.png`, `bio-humanmachine.png`, `bio-diseasewars.png`, `bio-energyforlife.png`, `bio-controlsystems.png`, `bio-genetics.png`, `bio-ecosystems.png`
-- `/public/mystery-cube.png` — used on locked/mystery module cards
-- `/public/figures/` — biology/chemistry diagram images used in question content
+All images live under `/public/images/`, organised **subject → module**, mirroring
+the `src/content/<subject>/<series>/` source tree. The folder segment for a module
+is its `series` value from `src/modules.js` (e.g. `series: "medicine"` →
+`/images/history/medicine/`). Videos stay in `/public/videos/`.
 
-Both `.png` and `.webp` are approved image formats and are used throughout the codebase (often as matching pairs in `/public`). `.webp` is preferred for new image assets where practical (smaller file size); `.png` remains acceptable. Never `.svg` for photos.
+```
+/public/images/
+  app/                      app chrome + cross-subject UI art
+  backgrounds/              generic reusable backdrops, callable from anywhere
+  <subject>/
+    _shared/                subject-wide art: subject card, series cards, topic groups
+      icons/                subject icon set
+    exam-papers/            past-paper diagrams and source scans
+    <series>/               one folder per module — images shared across all its chapters
+      headers/              per-chapter/episode hero cards
+      portraits/            people (figures, theorists, characters)
+```
+
+Names are lowercase kebab-case throughout. A module folder is flat by design — only `headers/` and `portraits/` subdivide it, because images are reused across chapters. Full placement rules live in `docs/system/VISUAL_ASSET_SYSTEM.md`.
+
+Key paths: `/images/app/logo.png` (RISE logo, also the favicon), `/images/app/mystery-cube.png` (locked module cards).
+
+Both `.png` and `.webp` are approved image formats and are used throughout the codebase (often as matching pairs). `.webp` is preferred for new image assets where practical (smaller file size); `.png` remains acceptable. Never `.svg` for photos.
 
 ## Fonts
 

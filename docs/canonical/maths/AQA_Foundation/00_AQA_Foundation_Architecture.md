@@ -57,13 +57,13 @@ MATHS_GROUPS IDs are used in weakness tags and question bank references *inside*
 
 ### Confirmed MATHS_GROUPS IDs (in `src/data/mathsGroups.js`)
 
-**Group 1 — Numbers & Foundations** (`accent: '#2DD4BF'`, `headerImage: '/headers/maths-numbers.webp'`):
+**Group 1 — Numbers & Foundations** (`accent: '#2DD4BF'`, `headerImage: '/images/maths/_shared/numbers.webp'`):
 `maths_bidmas`, `maths_fractions`, `maths_indices`, `maths_primes`, `maths_percentages`
 
-**Group 2 — Algebra & Graphs** (`accent: '#34D399'`, `headerImage: '/headers/maths-algebra.webp'`):
+**Group 2 — Algebra & Graphs** (`accent: '#34D399'`, `headerImage: '/images/maths/_shared/algebra.webp'`):
 `maths_expressions`, `maths_equations`, `maths_inequalities`, `maths_graphs`, `maths_quadratics`
 
-**Group 3 — Geometry & Measure** (`accent: '#4ADE80'`, `headerImage: '/headers/maths-geometry.webp'`):
+**Group 3 — Geometry & Measure** (`accent: '#4ADE80'`, `headerImage: '/images/maths/_shared/geometry.webp'`):
 `maths_angles`, `maths_area`, `maths_volume`, `maths_pythagoras`, `maths_transforms`
 
 **Group 4 — Data, Probability & Statistics** (confirm accent and headerImage in `mathsGroups.js`):
@@ -236,7 +236,7 @@ Examples:
   icon: "🔢",                        // or appropriate icon
   color: "#2DD4BF",
   colorLight: "rgba(45,212,191,.12)",
-  headerImage: "/headers/maths-numbers.webp",  // pick appropriate header
+  headerImage: "/images/maths/_shared/numbers.webp",  // pick appropriate header
   screenCount: <screens.length>,
   screenTags: <screens.map(s => s.tag ?? null)>,
 },

@@ -144,7 +144,7 @@ const episode = {
       label: 'Birth of the NHS',
       kicker: '5 July 1948',
       heading: 'A new idea changes Britain.',
-      headerImage: '/images/nhs-1948.png',
+      headerImage: '/images/history/medicine/nhs-1948.png',
       blocks: [
         {
           type: 'read',
@@ -296,8 +296,8 @@ const episode = {
       stage: 'Modern Medicine',
       label: 'Smoking & Lung Cancer',
       heading: 'What does smoking do to your lungs?',
-      beforeSrc: '/figures/history/medicine/modern/lungs-healthy.png',
-      afterSrc: '/figures/history/medicine/modern/lungs-cancer.png',
+      beforeSrc: '/images/history/medicine/lungs-healthy.png',
+      afterSrc: '/images/history/medicine/lungs-cancer.png',
       beforeLabel: 'Healthy lungs',
       afterLabel: 'Damaged lungs',
       revealText: 'Smoking is the biggest cause of lung cancer in the UK.',

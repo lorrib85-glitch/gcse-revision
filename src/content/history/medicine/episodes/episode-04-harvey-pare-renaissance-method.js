@@ -53,7 +53,7 @@ export const episode = {
       type: 'priorKnowledgeRecall',
       chapterTitle: 'Vesalius and Galen',
       recallPrompts: ['Galen', 'Vesalius', 'Observation', 'Authority'],
-      backgroundImage: '/headers/history-medicine-renaissance.png',
+      backgroundImage: '/images/history/medicine/headers/renaissance.png',
       sourceContent: 'Vesalius had shown that Galen could be wrong about anatomy. He used human dissection and observation to challenge old authority. Harvey continued that Renaissance method by testing Galen’s ideas about blood.',
       concepts: [
         { tag: 'galen', label: 'Galen' },
@@ -70,17 +70,17 @@ export const episode = {
         {
           mainText: 'Galen taught that the liver made new blood, which the body then used up.',
           supportText: 'If blood was constantly made and used, bloodletting seemed logical.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
         },
         {
           mainText: 'He also believed blood crossed through invisible pores in the heart septum.',
           supportText: 'This fitted his system, but it was not based on accurate human evidence.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
         },
         {
           mainText: 'Harvey tested the model instead of just repeating it.',
           supportText: 'That is why this episode is about evidence, not just a famous name.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
         },
       ],
     },
@@ -110,7 +110,7 @@ export const episode = {
       stage: 'Harvey',
       tag: 'harvey',
       label: 'William Harvey',
-      portrait: '/headers/history-medicine-germ-bridge.png',
+      portrait: '/images/history/medicine/headers/germ-bridge.png',
       name: 'William Harvey',
       role: 'Physician and anatomist',
       sections: [
@@ -156,17 +156,17 @@ export const episode = {
         {
           mainText: 'The heart worked like a pump.',
           supportText: 'Harvey watched, dissected and tested rather than accepting the old model.',
-          backgroundImage: '/headers/history-medicine-man-proved-wrong.png',
+          backgroundImage: '/images/history/medicine/headers/man-proved-wrong.png',
         },
         {
           mainText: 'Valves showed blood flowed one way.',
           supportText: 'One-way valves made more sense if blood circulated around the body.',
-          backgroundImage: '/headers/history-medicine-man-proved-wrong.png',
+          backgroundImage: '/images/history/medicine/headers/man-proved-wrong.png',
         },
         {
           mainText: 'The amount of blood made Galen’s model impossible.',
           supportText: 'Too much blood moved through the body for the liver to keep making it from scratch.',
-          backgroundImage: '/headers/history-medicine-man-proved-wrong.png',
+          backgroundImage: '/images/history/medicine/headers/man-proved-wrong.png',
         },
       ],
     },
@@ -178,7 +178,7 @@ export const episode = {
       title: 'Match Harvey’s evidence',
       instruction: 'Connect each piece of evidence to the conclusion it supported.',
       weakAreaCategory: 'Harvey circulation evidence',
-      backgroundImage: '/headers/history-medicine-man-proved-wrong.png',
+      backgroundImage: '/images/history/medicine/headers/man-proved-wrong.png',
       pairs: [
         { id: 'heart-pump', term: 'Heart contracts strongly', answer: 'The heart pushes blood like a pump.', weakGroup: 'Harvey' },
         { id: 'vein-valves', term: 'Valves point one way', answer: 'Blood flows in one direction.', weakGroup: 'Harvey' },
@@ -195,17 +195,17 @@ export const episode = {
         {
           mainText: 'Ambroise Paré treated soldiers with gunshot wounds.',
           supportText: 'The traditional treatment was boiling oil, because surgeons believed gunpowder poisoned the wound.',
-          backgroundImage: '/headers/history-medicine-renaissance.png',
+          backgroundImage: '/images/history/medicine/headers/renaissance.png',
         },
         {
           mainText: 'When Paré ran out of oil, he used a soothing mixture instead.',
           supportText: 'The next morning those patients were in less pain and recovering better.',
-          backgroundImage: '/headers/history-medicine-renaissance.png',
+          backgroundImage: '/images/history/medicine/headers/renaissance.png',
         },
         {
           mainText: 'Paré also tied blood vessels with ligatures instead of burning them shut.',
           supportText: 'He did not make surgery modern, but he showed observation could improve practice.',
-          backgroundImage: '/headers/history-medicine-renaissance.png',
+          backgroundImage: '/images/history/medicine/headers/renaissance.png',
         },
       ],
     },
@@ -217,7 +217,7 @@ export const episode = {
       title: 'Harvey and Paré: what links them?',
       instruction: 'Match each person to the evidence-led method they used.',
       weakAreaCategory: 'Renaissance method',
-      backgroundImage: '/headers/history-medicine-renaissance.png',
+      backgroundImage: '/images/history/medicine/headers/renaissance.png',
       pairs: [
         { id: 'harvey-calculation', term: 'Harvey calculated blood volume', answer: 'He used measurement to test Galen’s model.', weakGroup: 'Harvey' },
         { id: 'harvey-valves', term: 'Harvey studied valves', answer: 'He used anatomy to show one-way blood flow.', weakGroup: 'Harvey' },

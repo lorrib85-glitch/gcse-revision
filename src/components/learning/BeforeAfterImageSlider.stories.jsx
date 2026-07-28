@@ -9,8 +9,8 @@ export default {
 
 export const Default = {
   args: {
-    beforeSrc: '/figures/history/medicine/modern/lungs-healthy.png',
-    afterSrc: '/figures/history/medicine/modern/lungs-cancer.png',
+    beforeSrc: '/images/history/medicine/lungs-healthy.png',
+    afterSrc: '/images/history/medicine/lungs-cancer.png',
     beforeAlt: 'Healthy lungs',
     afterAlt: 'Lungs damaged by smoking',
     beforeLabel: 'Healthy lungs',

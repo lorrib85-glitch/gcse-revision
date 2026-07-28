@@ -12,7 +12,7 @@ const ITEM_A = {
   id: 'item-a',
   label: 'Item A',
   type: 'image',
-  src: '/exam-papers/sociology/aqa/8192-1/2024/jun-item-a.png',
+  src: '/images/sociology/exam-papers/aqa/8192-1/2024/jun-item-a.png',
   alt: 'Bar chart showing the average age at first marriage in England and Wales for men and women at selected years between 1971 and 2019, showing a steady increase for both. Men\'s average age rose from about 25 in 1971 to about 33 in 2019. Women\'s average age rose from about 23 in 1971 to about 31 in 2019.',
   caption: 'Average age at first marriage in England and Wales, 1971–2019 (Office for National Statistics)',
 }

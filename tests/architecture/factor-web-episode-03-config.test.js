@@ -8,7 +8,7 @@ describe('Episode 3 FactorWeb configuration', () => {
     expect(factorWeb).toBeDefined()
     expect(factorWeb.title).toBe('Why could Vesalius challenge Galen?')
     expect(factorWeb.centreLabel).toBe('Vesalius')
-    expect(factorWeb.centreImage).toBe('/images/vesalius-factorweb-portrait.webp')
+    expect(factorWeb.centreImage).toBe('/images/history/medicine/portraits/vesalius-factorweb-portrait.webp')
     expect(factorWeb.centreImageAlt).toBe('Portrait of the Renaissance anatomist Andreas Vesalius')
   })
 

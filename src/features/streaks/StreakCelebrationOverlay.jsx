@@ -286,7 +286,7 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
             }}
           />
           <img
-            src="/streak-flame-512.webp"
+            src="/images/app/streak-flame-512.webp"
             alt=""
             width={148}
             height={148}

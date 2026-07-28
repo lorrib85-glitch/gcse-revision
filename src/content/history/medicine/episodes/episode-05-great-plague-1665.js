@@ -53,7 +53,7 @@ export const episode = {
       type: 'priorKnowledgeRecall',
       chapterTitle: 'The Black Death and Renaissance medicine',
       recallPrompts: ['Black Death', 'Miasma', 'God and sin', 'Renaissance change'],
-      backgroundImage: '/headers/history-medicine-black-death.png',
+      backgroundImage: '/images/history/medicine/headers/black-death.png',
       sourceContent: 'In 1348 people explained plague through miasma, God’s punishment and astrology. Treatments and prevention included prayer, cleaning bad smells, carrying herbs and avoiding infected places. Renaissance medicine improved anatomy and some methods, but it had not discovered germ theory.',
       concepts: [
         { tag: 'black-death', label: 'Black Death' },
@@ -110,17 +110,17 @@ export const episode = {
         {
           mainText: 'Death bills counted deaths each week.',
           supportText: 'They made the scale of plague visible and helped officials track the crisis.',
-          backgroundImage: '/headers/history-medicine-london-terror.png',
+          backgroundImage: '/images/history/medicine/headers/london-terror.png',
         },
         {
           mainText: 'Crowded streets helped disease spread quickly.',
           supportText: 'People did not know about bacteria or fleas, so they could not target the real cause.',
-          backgroundImage: '/headers/history-medicine-london-terror.png',
+          backgroundImage: '/images/history/medicine/headers/london-terror.png',
         },
         {
           mainText: 'Fear made old explanations feel convincing.',
           supportText: 'Bad smells, sin and astrology still seemed logical without germ theory.',
-          backgroundImage: '/headers/history-medicine-london-terror.png',
+          backgroundImage: '/images/history/medicine/headers/london-terror.png',
         },
       ],
     },
@@ -133,7 +133,7 @@ export const episode = {
       title: 'Match the belief to the response',
       instruction: 'Connect each explanation to what people did because of it.',
       weakAreaCategory: 'Great Plague explanations',
-      backgroundImage: '/headers/history-medicine-london-terror.png',
+      backgroundImage: '/images/history/medicine/headers/london-terror.png',
       pairs: [
         { id: 'miasma', term: 'Miasma', answer: 'Clean streets, light fires or carry herbs to fight bad air.', weakGroup: 'Causes' },
         { id: 'god', term: 'God’s punishment', answer: 'Pray, repent or ask for mercy.', weakGroup: 'Causes' },
@@ -170,17 +170,17 @@ export const episode = {
         {
           mainText: 'Infected houses were shut up and marked.',
           supportText: 'Watchmen guarded doors so people inside could not leave and spread disease.',
-          backgroundImage: '/headers/history-medicine-london-terror.png',
+          backgroundImage: '/images/history/medicine/headers/london-terror.png',
         },
         {
           mainText: 'Searchers inspected bodies and officials recorded deaths.',
           supportText: 'This was more organised than medieval responses, even though it could be harsh and inaccurate.',
-          backgroundImage: '/headers/history-medicine-london-terror.png',
+          backgroundImage: '/images/history/medicine/headers/london-terror.png',
         },
         {
           mainText: 'People cleaned streets, lit fires and killed cats and dogs.',
           supportText: 'Some actions aimed at bad air. Killing animals was a mistake because rats and fleas spread plague.',
-          backgroundImage: '/headers/history-medicine-london-terror.png',
+          backgroundImage: '/images/history/medicine/headers/london-terror.png',
         },
       ],
     },
@@ -192,7 +192,7 @@ export const episode = {
       title: 'Which response shows organisation?',
       instruction: 'Match each public-health action to what it was meant to do.',
       weakAreaCategory: 'Great Plague public health',
-      backgroundImage: '/headers/history-medicine-london-terror.png',
+      backgroundImage: '/images/history/medicine/headers/london-terror.png',
       pairs: [
         { id: 'shut-houses', term: 'Shut up houses', answer: 'Stop infected households mixing with others.', weakGroup: 'Government' },
         { id: 'watchmen', term: 'Watchmen', answer: 'Guard doors and enforce quarantine.', weakGroup: 'Government' },

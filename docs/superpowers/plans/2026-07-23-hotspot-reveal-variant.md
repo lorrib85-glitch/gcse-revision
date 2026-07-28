@@ -507,7 +507,7 @@ In that block, apply exactly these key changes, leaving every `reveals`, `x`, `y
 - add a new line directly under `type`: `variant: 'reveal',`
 - keep `stage`, `id`, `label`, `title` as-is
 - `description: 'Tap each object to find out how people tried to stay healthy — before anyone knew about germs.'` → rename the key to `introText:` (same value)
-- `backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp'` → rename the key to `image:` (same value)
+- `backgroundImage: '/images/history/medicine/medieval-street.webp'` → rename the key to `image:` (same value)
 - add directly under `image`: `imageAlt: 'A medieval street scene in 1400',` and `ctaLabel: 'Explore',`
 - `items: [` → `hotspots: [`
 
@@ -561,7 +561,7 @@ Apply exactly, leaving `reveals`, `x`, `y`, item `id`, `tag`, `stage`, `synthesi
 - add under `type`: `variant: 'reveal',`
 - keep `tag`, `stage`, `id`, `title`, `label`
 - `description: 'The trenches did not just create wounds. They created disease, infection and mental trauma. Tap each to find out more.'` → rename key to `introText:` (same value)
-- `backgroundImage: '/figures/history/medicine/western-front/trench-soldiers.png'` → rename key to `image:` (same value)
+- `backgroundImage: '/images/history/medicine/trench-soldiers.png'` → rename key to `image:` (same value)
 - add under `image`: `imageAlt: 'Soldiers in a First World War trench',` and `ctaLabel: 'Explore',`
 - `items: [` → `hotspots: [`
 
@@ -692,7 +692,7 @@ In `fixtures.base.js`, replace the `collectionExplorer` fixture (the comment blo
 export const interactiveHotspotReveal = {
   title: 'Staying well in 1400',
   introText: 'Tap each object to find out how people tried to stay healthy — before anyone knew about germs.',
-  image: '/figures/history/medicine/medieval/medieval-street.webp',
+  image: '/images/history/medicine/medieval-street.webp',
   imageAlt: 'A medieval street scene in 1400',
   hotspots: [
     {

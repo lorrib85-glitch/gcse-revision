@@ -73,7 +73,7 @@ const episode01SentenceCaseStageTitles = [
 const hippocratesReveal = {
   mainText: 'His name\nwas Hippocrates.',
   supportText: 'One Greek doctor would shape medicine for the next 2,000 years.',
-  backgroundImage: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
+  backgroundImage: '/images/history/medicine/portraits/hippocrates-portrait.webp',
   backgroundPosition: 'center 18%',
   overlay: 'linear-gradient(to bottom, rgba(0,0,0,.28) 0%, rgba(0,0,0,.38) 36%, rgba(0,0,0,.74) 68%, rgba(0,0,0,.96) 100%)',
   slowReveal: true,

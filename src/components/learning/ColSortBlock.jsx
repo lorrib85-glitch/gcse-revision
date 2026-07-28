@@ -451,7 +451,7 @@ export default function ColSortBlock({ block, onComplete, ...props }) {
         ? 'Sort each piece of evidence into change or continuity.'
         : 'Sort each statement into the right group.'),
     backgroundImage: block.backgroundImage
-      || (vesaliusContext ? '/headers/history-medicine-renaissance.png' : undefined),
+      || (vesaliusContext ? '/images/history/medicine/headers/renaissance.png' : undefined),
     backgroundOpacity: block.backgroundOpacity ?? (vesaliusContext ? 0.1 : undefined),
     thinkingPrompt: block.thinkingPrompt
       || (vesaliusContext

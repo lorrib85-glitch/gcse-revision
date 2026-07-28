@@ -204,16 +204,16 @@ function ClockIcon({ size = 13, color }) {
 // Cinematic fallback imagery for hero items that carry no image of their own
 // (practice cards). Existing /public/headers assets only — no new assets.
 const SUBJECT_HERO_FALLBACKS = {
-  History: '/headers/history-main.png',
-  Maths: '/headers/maths-main.png',
-  English: '/headers/english-main.png',
-  Sociology: '/headers/sociology-main.png',
-  Biology: '/headers/bio-main.png',
+  History: '/images/history/_shared/main.png',
+  Maths: '/images/maths/_shared/main.png',
+  English: '/images/english/_shared/main.png',
+  Sociology: '/images/sociology/_shared/main.png',
+  Biology: '/images/biology/_shared/main.png',
 }
 
 function heroImageFor(task, subject) {
   if (task?.image) return task.image
-  if (task?.type === 'practice' || task?.type === 'paper') return '/headers/home-exam-paper.png'
+  if (task?.type === 'practice' || task?.type === 'paper') return '/images/app/home-exam-paper.png'
   return SUBJECT_HERO_FALLBACKS[subject] ?? null
 }
 

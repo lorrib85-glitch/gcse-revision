@@ -161,9 +161,9 @@ describe('TimelineCanvas architecture', () => {
       expect(source).toContain("id: 'ship'")
       expect(source).toContain("id: 'spread-inland'")
       expect(source).toContain("id: 'england'")
-      expect(source).toContain('/figures/history/medicine/black-death/trade-routes-map.png')
-      expect(source).toContain('/figures/history/medicine/black-death/plague-dock.png')
-      expect(source).toContain('/figures/history/medicine/black-death/medieval-town.png')
+      expect(source).toContain('/images/history/medicine/trade-routes-map.png')
+      expect(source).toContain('/images/history/medicine/plague-dock.png')
+      expect(source).toContain('/images/history/medicine/medieval-town.png')
       expect(source).not.toContain("label: 'Fleas lived on the rats'")
     }
   })

@@ -68,8 +68,8 @@ describe('FactorWeb governance', () => {
     expect(source).toContain('function FocalPlaceholderGlyph')
     expect(source).toContain('<FocalPlaceholderGlyph')
     expect(source).toContain('Image placeholder for ${centreLabel}')
-    expect(source).not.toContain('/images/vesalius-1543.png')
-    expect(source).not.toContain('/images/pasteur-1861.png')
+    expect(source).not.toContain('/images/history/medicine/portraits/vesalius-1543.png')
+    expect(source).not.toContain('/images/history/medicine/portraits/pasteur-1861.png')
   })
 
   it('keeps the full question outside the centre focal point and positions the label independently beneath the media', () => {
@@ -176,7 +176,7 @@ describe('FactorWeb governance', () => {
     expect(story).toContain('PlaceholderFocal')
     expect(story).toContain('LongFactorLabels')
     expect(story).toContain("centreLabel: 'Vesalius'")
-    expect(story).toContain("centreImage: '/images/vesalius-factorweb-portrait.webp'")
+    expect(story).toContain("centreImage: '/images/history/medicine/portraits/vesalius-factorweb-portrait.webp'")
 
     expect(contract).toContain('Composition classification:')
     expect(contract).toContain('interaction-owned')

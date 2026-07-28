@@ -370,7 +370,7 @@ export default {
       "kicker": "Ann Oakley · Feminism",
       "heading": "\"Equal? Not exactly.\"",
       "sub": "Oakley looked at the same evidence and drew very different conclusions.",
-      "headerImage": "/figures/ann-oakley.png",
+      "headerImage": "/images/sociology/families/portraits/ann-oakley.png",
       "blocks": [
         {
           "type": "read",

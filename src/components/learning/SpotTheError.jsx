@@ -140,7 +140,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
   const statement = block.statement || ''
   const screenTitle = block.title || block.heading || 'Spot the error'
   const screenIntro = block.intro || block.introText || 'One inaccurate word can cost a mark. Find the mistake, explain it, then repair the answer.'
-  const backgroundImage = block.backgroundImage || (subject === 'Biology' ? '/headers/bio-energyforlife.webp' : null)
+  const backgroundImage = block.backgroundImage || (subject === 'Biology' ? '/images/biology/_shared/energyforlife.webp' : null)
   const tokens = useMemo(() => tokenise(statement), [statement])
   const target = useMemo(
     () => resolveTargetRange(tokens, statement, block.errorTarget),

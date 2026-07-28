@@ -12,14 +12,14 @@ import CinematicShell from './CinematicShell.jsx'
 import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
 
 const IMAGES = {
-  History:   '/history-truefalse.webp',
-  Biology:   '/biology-truefalse.webp',
-  Maths:     '/maths-truefalse.webp',
-  Sociology: '/sociology-truefalse.webp',
-  Chemistry: '/chemistry-truefalse.webp',
-  Physics:   '/physics-truefalse.webp',
-  English:   '/english-truefalse.webp',
-  Music:     '/music-truefalse.webp',
+  History:   '/images/backgrounds/history-truefalse.webp',
+  Biology:   '/images/backgrounds/biology-truefalse.webp',
+  Maths:     '/images/backgrounds/maths-truefalse.webp',
+  Sociology: '/images/backgrounds/sociology-truefalse.webp',
+  Chemistry: '/images/backgrounds/chemistry-truefalse.webp',
+  Physics:   '/images/backgrounds/physics-truefalse.webp',
+  English:   '/images/backgrounds/english-truefalse.webp',
+  Music:     '/images/backgrounds/music-truefalse.webp',
 }
 
 function buildAccentSet(words, accentWords) {

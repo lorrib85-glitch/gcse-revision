@@ -19,7 +19,7 @@ const SCREEN = {
   prompt: 'Where did this happen?',
   weakGroup: 'Evacuation chain',
   completionText: 'Five stages, each one further from the fighting. Q1 often asks for two features of one stage — precise details like these win the marks.',
-  backgroundImage: '/headers/history-medicine-trenches.png',
+  backgroundImage: '/images/history/medicine/headers/trenches.png',
   stages: [
     { id: 's-bearers', icon: 'helmet', title: 'Stretcher bearers',                 clue: 'From the front line',   answerId: 'a-bearers' },
     { id: 's-rap',     icon: 'cross',  title: 'Regimental Aid Post',               clue: 'Close to the front',    answerId: 'a-rap'     },

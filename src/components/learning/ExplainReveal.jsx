@@ -39,7 +39,7 @@ function ensureStyles() {
 //     ...
 //   ],
 //   reflectionPrompt: 'Can you explain why these treatments failed?', // optional
-//   atmosphereImage: '/headers/history-medicine-through-time.webp',    // optional
+//   atmosphereImage: '/images/history/_shared/medicine-through-time.webp',    // optional
 // }
 
 export default function ExplainReveal({ block, subject, onComplete }) {

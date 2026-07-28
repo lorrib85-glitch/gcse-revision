@@ -12,7 +12,7 @@ const ITEM_A = {
   id: 'item-a',
   label: 'Item A',
   type: 'image',
-  src: '/exam-papers/sociology/aqa/8192-1/2021/nov-item-a.png',
+  src: '/images/sociology/exam-papers/aqa/8192-1/2021/nov-item-a.png',
   alt: 'Bar chart showing the number of divorces in England and Wales at selected years from 1971 to 2018, showing an upward trend from approximately 74,000 in 1971 to a peak, then some variation. The chart illustrates ONS divorce statistics data.',
   caption: 'Number of divorces in England and Wales at selected years, 1971–2018 (Office for National Statistics)',
 }

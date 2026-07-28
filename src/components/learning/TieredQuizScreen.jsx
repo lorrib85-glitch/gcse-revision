@@ -9,14 +9,14 @@ import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 
 const IMAGES = {
-  History:   '/headers/history-quiz-bg.png',
-  Biology:   '/biologybacker.webp',
-  Maths:     '/mathsbacker.webp',
-  Sociology: '/sociologybacker.webp',
-  Chemistry: '/chemsistrybacker.webp',
-  Physics:   '/physicsbacker.webp',
-  English:   '/Englishbacker.webp',
-  Music:     '/historybacker.webp',
+  History:   '/images/backgrounds/history-quiz-bg.png',
+  Biology:   '/images/backgrounds/biology-backdrop.webp',
+  Maths:     '/images/backgrounds/maths-backdrop.webp',
+  Sociology: '/images/backgrounds/sociology-backdrop.webp',
+  Chemistry: '/images/backgrounds/chemistry-backdrop.webp',
+  Physics:   '/images/backgrounds/physics-backdrop.webp',
+  English:   '/images/backgrounds/english-backdrop.webp',
+  Music:     '/images/backgrounds/history-backdrop.webp',
 }
 
 const BG_STYLE = {

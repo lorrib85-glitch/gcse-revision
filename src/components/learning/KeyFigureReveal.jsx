@@ -9,7 +9,7 @@ import CinematicShell from '../layout/CinematicShell.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 
-const DEFAULT_PARCHMENT = '/figures/history/medicine/medieval/galen-parchment.png'
+const DEFAULT_PARCHMENT = '/images/history/medicine/galen-parchment.png'
 const MEDALLION_SIZE = 48
 const MEDALLION_ICON_SIZE = 26
 const EVIDENCE_IMAGE_HEIGHT = 180
@@ -51,7 +51,7 @@ function FigureIcon({ icon, size = MEDALLION_ICON_SIZE }) {
 
   return (
     <img
-      src={`/icons/history/${icon}.png`}
+      src={`/images/history/_shared/icons/${icon}.png`}
       alt=""
       style={{
         width: size,

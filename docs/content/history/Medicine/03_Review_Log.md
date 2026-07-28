@@ -74,7 +74,7 @@
 
 #### Image quality — below bar
 
-- Existing image paths are mostly real `.webp`/header assets, and `/images/vesalius-1543.png` was confirmed present under `public/images/`; however, visual quality and composition still need the blocked render pass.
+- Existing image paths are mostly real `.webp`/header assets, and `/images/history/medicine/portraits/vesalius-1543.png` was confirmed present under `public/images/`; however, visual quality and composition still need the blocked render pass.
 - Several screens reuse generic bridge/header images rather than visuals specific to Renaissance anatomy, printing, Vesalius or the Royal Society.
 - No `MediaPlaceholder` entries are present, so no visual-assets manifest reconciliation was needed for placeholders.
 

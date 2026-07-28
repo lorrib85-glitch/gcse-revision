@@ -79,7 +79,7 @@ block (lines 2839–3045) with the following two module objects:
       punchline: 'Jenner proved vaccination worked decades before anyone understood why — and his "observe, test, repeat" approach became the model for the medical breakthroughs that followed.',
     },
     screens: [
-      { tag: 'vaccination', label: 'Jenner', kicker: '1796', heading: 'Jenner develops the smallpox vaccine.', headerImage: '/images/jenner-1796.png', sub: 'The first vaccine — discovered by observation, not by understanding germs.', blocks: [
+      { tag: 'vaccination', label: 'Jenner', kicker: '1796', heading: 'Jenner develops the smallpox vaccine.', headerImage: '/images/history/medicine/portraits/jenner-1796.png', sub: 'The first vaccine — discovered by observation, not by understanding germs.', blocks: [
         { type: 'read', label: '💉 What Happened', text: '<strong>Edward Jenner</strong> noticed that milkmaids who caught <strong>cowpox</strong> rarely got <strong>smallpox</strong>. In 1796 he deliberately infected James Phipps — a boy — with cowpox, then exposed him to smallpox. The boy did not get ill. The <strong>smallpox vaccine</strong> was born.' },
         { type: 'keypoint', text: '<strong>Critical exam point:</strong> Jenner did not know about germs or the immune system. He worked by observation and experiment — not by understanding why it worked. Pasteur later explained the mechanism. This shows how <strong>chance observation + scientific method</strong> can lead to breakthroughs.' },
         { type: 'funfact', label: '😨 Controversy', text: 'Many people were horrified. Cartoons showed patients growing cow heads after vaccination. The Church opposed it. Parliament eventually made smallpox vaccination compulsory in 1853 — the first compulsory vaccination law in England.' },
@@ -152,7 +152,7 @@ block (lines 2839–3045) with the following two module objects:
           { text: 'Germs came from bad surgery', correct: false },
         ], explanation: 'Spontaneous generation said germs appeared from decay — they were a symptom of illness, not its cause. Pasteur proved the opposite.' },
       ]},
-      { tag: 'pasteur', label: 'Pasteur', kicker: '1861', heading: 'Louis Pasteur: the wine detective', headerImage: '/images/pasteur-1861.png', sub: 'Global breakthrough begins with someone\'s drink being ruined.', blocks: [
+      { tag: 'pasteur', label: 'Pasteur', kicker: '1861', heading: 'Louis Pasteur: the wine detective', headerImage: '/images/history/medicine/portraits/pasteur-1861.png', sub: 'Global breakthrough begins with someone\'s drink being ruined.', blocks: [
         { type: 'read', label: '📖 Core Knowledge', text: '<strong>Louis Pasteur</strong> was a French chemist. In the 1850s, he investigated why wine went bad. Using a microscope, he saw bacteria in the wine and believed they were causing it to spoil. He heated the wine to kill the bacteria — a process later called <strong>pasteurisation</strong>.' },
         { type: 'read', label: '🧪 Swan-Neck Flask (1861)', text: 'Pasteur boiled broth in swan-neck flasks to kill existing microbes. The sealed flask stayed fresh. The flask exposed to air went bad. This showed microbes came from the air and caused decay — they did not appear through spontaneous generation. He published his findings in <strong>1861</strong>.' },
         { type: 'keypoint', text: 'In <strong>1861</strong>, Pasteur published his work on <strong>germ theory</strong>. This changed understanding of disease and opened the door to vaccines, antiseptic surgery and later antibiotics.' },
@@ -401,25 +401,25 @@ Find:
 
 ```js
 const MODULE_HEADER_IMAGES = {
-  'history-medicine-medieval-beliefs-causes': '/headers/history-medicine-through-time.webp',
-  'history-medicine-black-death': '/figures/history/medicine/black-death/plague-background.png',
-  'mod2': '/headers/history-medicine-bloodletting.png',
-  'mod3': '/headers/history-medicine-germ-bridge.png',
-  'mod4': '/headers/history-medicine-medieval-scripture.png',
-  'mod5': '/headers/history-medicine-through-time.webp',
+  'history-medicine-medieval-beliefs-causes': '/images/history/_shared/medicine-through-time.webp',
+  'history-medicine-black-death': '/images/history/medicine/plague-background.png',
+  'mod2': '/images/history/medicine/headers/bloodletting.png',
+  'mod3': '/images/history/medicine/headers/germ-bridge.png',
+  'mod4': '/images/history/medicine/headers/medieval-scripture.png',
+  'mod5': '/images/history/_shared/medicine-through-time.webp',
 ```
 
 Replace with:
 
 ```js
 const MODULE_HEADER_IMAGES = {
-  'history-medicine-medieval-beliefs-causes': '/headers/history-medicine-through-time.webp',
-  'history-medicine-black-death': '/figures/history/medicine/black-death/plague-background.png',
-  'mod2': '/headers/history-medicine-bloodletting.png',
-  'mod3': '/headers/history-medicine-germ-bridge.png',
-  'history-medicine-jenner-vaccination': '/headers/history-medicine-medieval-scripture.png',
-  'history-medicine-germ-theory': '/headers/history-medicine-germ-bridge.png',
-  'mod5': '/headers/history-medicine-through-time.webp',
+  'history-medicine-medieval-beliefs-causes': '/images/history/_shared/medicine-through-time.webp',
+  'history-medicine-black-death': '/images/history/medicine/plague-background.png',
+  'mod2': '/images/history/medicine/headers/bloodletting.png',
+  'mod3': '/images/history/medicine/headers/germ-bridge.png',
+  'history-medicine-jenner-vaccination': '/images/history/medicine/headers/medieval-scripture.png',
+  'history-medicine-germ-theory': '/images/history/medicine/headers/germ-bridge.png',
+  'mod5': '/images/history/_shared/medicine-through-time.webp',
 ```
 
 - [ ] **Step 2: Verify**

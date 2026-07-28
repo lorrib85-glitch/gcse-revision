@@ -182,7 +182,7 @@ export const episode = {
       label: 'Fleming\'s Discovery',
       kicker: '1928',
       heading: 'The mould nobody cleaned up.',
-      headerImage: '/images/fleming-1928.png',
+      headerImage: '/images/history/medicine/portraits/fleming-1928.png',
       sub: 'The most important contaminated experiment in history.',
       blocks: [
         {
@@ -253,7 +253,7 @@ export const episode = {
       label: 'Florey & Chain',
       kicker: '1940–1941',
       heading: 'The team that actually saved millions.',
-      headerImage: '/images/florey-chain-1941.png',
+      headerImage: '/images/history/medicine/portraits/florey-chain-1941.png',
       sub: 'In Oxford, two scientists picked up where Fleming left off — and changed everything.',
       blocks: [
         {
@@ -369,7 +369,7 @@ export const episode = {
       label: 'The NHS',
       kicker: '1948',
       heading: 'Free healthcare for everyone.',
-      headerImage: '/images/nhs-1948.png',
+      headerImage: '/images/history/medicine/nhs-1948.png',
       sub: 'The National Health Service opened on 5 July 1948. It was built on the same belief as penicillin: that medicine should reach everyone.',
       blocks: [
         {

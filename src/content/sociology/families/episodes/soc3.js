@@ -435,7 +435,7 @@ export default {
       "label": "Max Weber",
       "kicker": "Theorist",
       "heading": "Max Weber (1864–1920)",
-      "headerImage": "/figures/max-weber.png",
+      "headerImage": "/images/sociology/families/portraits/max-weber.png",
       "sub": "Power is more than money. Status and authority matter too.",
       "blocks": [
         {

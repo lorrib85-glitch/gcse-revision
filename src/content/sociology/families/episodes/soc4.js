@@ -461,7 +461,7 @@ export default {
       "kicker": "Sociological Perspectives",
       "heading": "The New Right: family breakdown and the welfare state.",
       "sub": "Charles Murray argued welfare dependency was creating a damaging underclass. A controversial but exam-essential perspective.",
-      "headerImage": "/figures/charles-murray.png",
+      "headerImage": "/images/sociology/families/portraits/charles-murray.png",
       "blocks": [
         {
           "type": "read",

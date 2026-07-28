@@ -218,7 +218,7 @@ export const episode = {
       label: 'Lister',
       kicker: '1867',
       heading: 'Joseph Lister changes surgery forever.',
-      headerImage: '/images/lister-1865.png',
+      headerImage: '/images/history/medicine/portraits/lister-1865.png',
       sub: 'Lister applied Pasteur\'s germ theory directly to surgery. The results were dramatic.',
       blocks: [
         {

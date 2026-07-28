@@ -9,13 +9,13 @@
 // The chemistry filename spelling matches the real asset on disk.
 
 export const SUBJECT_BACKDROPS = {
-  History:   '/historybacker.webp',
-  Biology:   '/biologybacker.webp',
-  Maths:     '/mathsbacker.webp',
-  Sociology: '/sociologybacker.webp',
-  Chemistry: '/chemsistrybacker.webp',
-  Physics:   '/physicsbacker.webp',
-  English:   '/Englishbacker.webp',
+  History:   '/images/backgrounds/history-backdrop.webp',
+  Biology:   '/images/backgrounds/biology-backdrop.webp',
+  Maths:     '/images/backgrounds/maths-backdrop.webp',
+  Sociology: '/images/backgrounds/sociology-backdrop.webp',
+  Chemistry: '/images/backgrounds/chemistry-backdrop.webp',
+  Physics:   '/images/backgrounds/physics-backdrop.webp',
+  English:   '/images/backgrounds/english-backdrop.webp',
   Drama:     null, // subject-token atmosphere is used until a dedicated asset exists
   Music:     null, // subject-token atmosphere is used until a dedicated asset exists
 }

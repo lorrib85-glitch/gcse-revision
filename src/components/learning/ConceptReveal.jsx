@@ -39,7 +39,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
     ? {
         ...rawStep,
         mainText: 'His name\nwas Hippocrates.',
-        backgroundImage: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
+        backgroundImage: '/images/history/medicine/portraits/hippocrates-portrait.webp',
         backgroundFit: 'width',
         backgroundPosition: 'center top',
         overlay: 'linear-gradient(to bottom, rgba(0,0,0,.18) 0%, rgba(0,0,0,.30) 42%, rgba(0,0,0,.78) 74%, rgba(0,0,0,.98) 100%)',

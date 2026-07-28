@@ -33,7 +33,7 @@ export default {
     statement: 'Edward Jenner invented vaccination by studying how the immune system fights disease.',
     isTrue: false,
     accentWords: ['the immune system'],
-    backgroundImage: '/images/jenner-1796.png',
+    backgroundImage: '/images/history/medicine/portraits/jenner-1796.png',
     explanation: "Jenner had never heard of the immune system — that idea didn't exist for almost another century. He worked from a simple farmyard observation, decades before anyone understood why it worked.",
     revealBeats: [
       'Jenner had no idea what a virus was, or what the immune system did.',
@@ -58,7 +58,7 @@ export default {
       label: 'Jenner',
       kicker: '1796',
       heading: 'Jenner develops the smallpox vaccine.',
-      headerImage: '/images/jenner-1796.png',
+      headerImage: '/images/history/medicine/portraits/jenner-1796.png',
       sub: 'The first vaccine — discovered by observation, not by understanding germs.',
       blocks: [
         { type: 'read', label: '💉 What Happened', text: '<strong>Edward Jenner</strong> noticed that milkmaids who caught <strong>cowpox</strong> rarely got <strong>smallpox</strong>. In 1796 he deliberately infected James Phipps — a boy — with cowpox, then exposed him to smallpox. The boy did not get ill. The <strong>smallpox vaccine</strong> was born.' },

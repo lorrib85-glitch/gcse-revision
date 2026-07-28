@@ -16,7 +16,7 @@ const MACBETH_BLOCK = {
   sceneLabel: 'Act 1, Scene 4',
   quote: '"Stars, hide your fires; let not light see my black and deep desires."',
   location: 'Act 1, Scene 4 — Macbeth',
-  backgroundImage: '/English/Macbeth/heroes/macbeth-generic-banner.svg',
+  backgroundImage: '/images/english/macbeth/macbeth-generic-banner.svg',
   context: {
     beats: [
       'King Duncan names Malcolm as the next heir to the throne.',

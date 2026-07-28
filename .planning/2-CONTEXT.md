@@ -57,9 +57,9 @@ No other files need to change. No new components. No new assets.
 
 | Episode | Image path |
 |---------|-----------|
-| 5 | `/headers/history-medicine-london-terror.png` |
-| 6 | `/headers/history-medicine-jenner.png` (already in modules.js) |
-| 10 | `/headers/history-medicine-lady-lamp.png` (already in modules.js) |
+| 5 | `/images/history/medicine/headers/london-terror.png` |
+| 6 | `/images/history/medicine/headers/jenner.png` (already in modules.js) |
+| 10 | `/images/history/medicine/headers/lady-lamp.png` (already in modules.js) |
 
 ---
 

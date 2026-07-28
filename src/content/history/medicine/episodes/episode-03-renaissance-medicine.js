@@ -102,7 +102,7 @@ export const episode = {
       type: 'priorKnowledgeRecall',
       chapterTitle: 'Medieval medicine: beliefs and causes of disease',
       recallPrompts: ['People', 'Theories', 'Causes', 'Treatments', 'Church'],
-      backgroundImage: '/headers/history-medicine-through-time.png',
+      backgroundImage: '/images/history/_shared/medicine-through-time.png',
       sourceContent: `GCSE History: Medieval Medicine — Beliefs and Causes of Disease (c.1250–c.1500)
 
 Key figures:
@@ -164,19 +164,19 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Echoes of medieval medicine',
       scenes: [
         {
-          image: '/figures/history/medicine/medieval/vl-monks-books.webp',
+          image: '/images/history/medicine/vl-monks-books.webp',
           imagePosition: 'center top',
           headline: 'Medieval medicine\ndidn\'t disappear.',
           body: 'The Renaissance didn\'t end centuries of medical thinking overnight.',
         },
         {
-          image: '/figures/history/medicine/medieval/vl-monks-books.webp',
+          image: '/images/history/medicine/vl-monks-books.webp',
           imagePosition: 'center 30%',
           headline: 'Language survived.',
           body: '"Melancholy", "phlegmatic", "sanguine", "bilious" — all come from the Four Humours. These words still carry their medieval meaning.',
         },
         {
-          image: '/figures/history/medicine/medieval/vl-monks-books.webp',
+          image: '/images/history/medicine/vl-monks-books.webp',
           imagePosition: 'center 60%',
           headline: 'Remedies survived.',
           body: 'Many herbal treatments used in the medieval period are still in use today. Some have since been proven effective by modern research.',
@@ -197,17 +197,17 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         {
           mainText: 'The Renaissance encouraged artists, thinkers, and scientists to question ancient authority.',
           supportText: 'For centuries, Galen\'s word had been law. Now people asked: what if he was wrong?',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
         },
         {
           mainText: 'The printing press (1440s) meant new ideas could spread across Europe in months, not decades.',
           supportText: 'Previously, a single medical manuscript took months to copy by hand. Now a book could reach thousands.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
         },
         {
           mainText: 'Renaissance medicine changed knowledge far more than it changed treatment.',
           supportText: 'Doctors were discovering new truths about the body — but patients were still being bled and purged.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
         },
       ],
     },
@@ -253,7 +253,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       stage: 'Vesalius',
       tag: 'vesalius',
       label: 'Vesalius',
-      portrait: '/images/vesalius-1543.png',
+      portrait: '/images/history/medicine/portraits/vesalius-1543.png',
       name: 'Andreas Vesalius',
       role: 'Anatomist',
       sections: [
@@ -302,7 +302,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         {
           type: 'explainReveal',
           intro: 'Vesalius didn\'t just correct Galen — he changed how doctors thought knowledge should work.',
-          atmosphereImage: '/headers/history-medicine-germ-bridge.png',
+          atmosphereImage: '/images/history/medicine/headers/germ-bridge.png',
           steps: [
             {
               id: 'galens-errors',
@@ -384,7 +384,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       type: 'keyFigureReveal',
       stage: 'Harvey and Paré',
       label: 'William Harvey',
-      portrait: '/headers/history-medicine-germ-bridge.png',
+      portrait: '/images/history/medicine/headers/germ-bridge.png',
       name: 'William Harvey',
       role: 'Physician & Anatomist',
       sections: [
@@ -431,17 +431,17 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         {
           mainText: 'Ambroise Paré was a French military surgeon treating soldiers wounded in battle.',
           supportText: 'Gunshot wounds were treated by pouring boiling oil into them — believed to neutralise gunpowder poison.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
         },
         {
           mainText: 'During one battle, Paré ran out of oil. He improvised with a soothing ointment made from egg yolk, rose oil and turpentine.',
           supportText: 'The next morning, patients treated with the ointment were in far less pain and recovering better.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
         },
         {
           mainText: 'Paré also stopped cauterising blood vessels with hot irons — he tied them off instead.',
           supportText: 'He designed artificial limbs and wrote surgical guides. His work reduced the horror of military surgery significantly.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
         },
       ],
     },
@@ -454,7 +454,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       title: 'Match the figure to their contribution',
       instruction: 'Connect each Renaissance figure to their key contribution.',
       weakAreaCategory: 'Renaissance medicine key figures',
-      backgroundImage: '/headers/history-medicine-germ-bridge.png',
+      backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
       pairs: [
         {
           id: 'vesalius-correction',
@@ -499,17 +499,17 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         {
           mainText: 'The Royal Society was founded as a formal institution where experiments were shared, tested and debated.',
           supportText: 'Its motto: Nullius in Verba — "Take nobody\'s word for it." Evidence, not authority, was the new standard.',
-          backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+          backgroundImage: '/images/history/medicine/headers/medieval-scripture.png',
         },
         {
           mainText: 'For the first time, scientific discoveries could be published, challenged, and built upon by others.',
           supportText: 'This network directly connected Vesalius, Harvey and the later work of Jenner, Pasteur and Koch.',
-          backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+          backgroundImage: '/images/history/medicine/headers/medieval-scripture.png',
         },
         {
           mainText: 'The Royal Society represents a shift in how knowledge itself was validated.',
           supportText: 'Not "Galen said it" but "we tested it, published it, and others repeated it." This is the foundation of modern medicine.',
-          backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+          backgroundImage: '/images/history/medicine/headers/medieval-scripture.png',
         },
       ],
     },

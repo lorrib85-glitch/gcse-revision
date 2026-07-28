@@ -12,7 +12,7 @@ const ITEM_A = {
   id: 'item-a',
   label: 'Item A',
   type: 'image',
-  src: '/exam-papers/sociology/aqa/8192-1/2023/jun-item-a.png',
+  src: '/images/sociology/exam-papers/aqa/8192-1/2023/jun-item-a.png',
   alt: 'Line graph showing the number of one-person households in England from 1996 to 2021, showing an upward trend from around 5.9 million to approximately 8.3 million.',
   caption: 'Number of one-person households in England, 1996–2021 (Office for National Statistics)',
 }

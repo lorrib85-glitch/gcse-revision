@@ -8,7 +8,7 @@ export const MATHS_GROUPS = [
     subtitle: 'BIDMAS, Fractions, Indices & Primes',
     icon: '🔢',
     accent: '#2DD4BF',
-    headerImage: '/headers/maths-numbers.webp',
+    headerImage: '/images/maths/_shared/numbers.webp',
     locked: false,
     modules: [
       { id: 'maths_bidmas',     title: 'Order of Operations',   subtitle: 'BIDMAS & calculation rules', locked: false },
@@ -25,7 +25,7 @@ export const MATHS_GROUPS = [
     subtitle: 'Equations, Functions & Coordinate Geometry',
     icon: '📈',
     accent: '#34D399',
-    headerImage: '/headers/maths-algebra.webp',
+    headerImage: '/images/maths/_shared/algebra.webp',
     locked: false,
     modules: [
       { id: 'maths_expressions', title: 'Expressions & Formulae', subtitle: 'Simplify, expand & factorise', locked: false },
@@ -41,7 +41,7 @@ export const MATHS_GROUPS = [
     subtitle: 'Shapes, Angles, Pythagoras & Trigonometry',
     icon: '📐',
     accent: '#4ADE80',
-    headerImage: '/headers/maths-geometry.webp',
+    headerImage: '/images/maths/_shared/geometry.webp',
     locked: false,
     modules: [
       { id: 'maths_angles',     title: 'Angles & Polygons',      subtitle: 'Rules, proof & properties',  locked: false },
@@ -57,7 +57,7 @@ export const MATHS_GROUPS = [
     subtitle: 'Averages, Charts & Probability',
     icon: '📊',
     accent: '#22D3EE',
-    headerImage: '/headers/maths-data.webp',
+    headerImage: '/images/maths/_shared/data.webp',
     locked: false,
     modules: [
       { id: 'maths_averages',    title: 'Averages & Spread',       subtitle: 'Mean, median, mode & range',  locked: false },
@@ -72,7 +72,7 @@ export const MATHS_GROUPS = [
     subtitle: 'Ratio, Finance, Measures & Problem Solving',
     icon: '🌍',
     accent: '#A3E635',
-    headerImage: '/headers/maths-realworld.webp',
+    headerImage: '/images/maths/_shared/realworld.webp',
     locked: false,
     modules: [
       { id: 'maths_ratio',       title: 'Ratio & Proportion',     subtitle: 'Direct & inverse proportion', locked: false },

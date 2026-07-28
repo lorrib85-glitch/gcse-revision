@@ -103,7 +103,7 @@ export const episode = {
       label: 'What came before',
       chapterTitle: 'The old certainties Vesalius would test',
       recallPrompts: ['Galen', 'Four humours', 'Church', 'Treatments'],
-      backgroundImage: '/headers/history-medicine-through-time.png',
+      backgroundImage: '/images/history/_shared/medicine-through-time.png',
       sourceContent: `For centuries, doctors trusted Galen. His books were taught in universities. The Church helped keep his ideas alive. The four humours explained illness as an imbalance in the body. Bloodletting and purging tried to bring the humours back into balance. These ideas lasted a very long time. But lasting a long time did not make them correct.`,
       concepts: [
         { tag: 'galen', label: 'Galen' },
@@ -122,22 +122,22 @@ export const episode = {
         {
           mainText: 'The Renaissance was a “rebirth” of learning.',
           supportText: 'Old books were still respected. But people now wanted to test them, not just trust them.',
-          backgroundImage: '/headers/history-medicine-renaissance.png',
+          backgroundImage: '/images/history/medicine/headers/renaissance.png',
         },
         {
           mainText: 'Humanism told people to use reason and study the world for themselves.',
           supportText: 'This made careful observation matter more. Blind trust in old books felt less safe.',
-          backgroundImage: '/headers/history-medicine-through-time.png',
+          backgroundImage: '/images/history/_shared/medicine-through-time.png',
         },
         {
           mainText: 'The Reformation weakened the Church’s grip on learning.',
           supportText: 'That left more room to question old ideas. Religion did not vanish. Its control simply loosened.',
-          backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+          backgroundImage: '/images/history/medicine/headers/medieval-scripture.png',
         },
         {
           mainText: 'Universities now held dissection in public anatomy theatres.',
           supportText: 'Doctors and students could watch a real body. They could check old claims against what they saw.',
-          backgroundImage: '/headers/history-medicine-renaissance.png',
+          backgroundImage: '/images/history/medicine/headers/renaissance.png',
         },
       ],
     },
@@ -193,7 +193,7 @@ export const episode = {
       stage: 'Vesalius',
       tag: 'vesalius',
       label: 'Vesalius',
-      portrait: '/images/vesalius-1543.png',
+      portrait: '/images/history/medicine/portraits/vesalius-1543.png',
       name: 'Andreas Vesalius',
       role: 'Renaissance anatomist',
       sections: [
@@ -240,18 +240,18 @@ export const episode = {
         {
           type: 'theoryCompare',
           title: 'Galen and Vesalius',
-          heroImage: '/figures/history/medicine/renaissance/galen-vesalius-hero.webp',
+          heroImage: '/images/history/medicine/galen-vesalius-hero.webp',
           heroImageAlt: 'Galen in Roman dress before classical ruins and animal anatomy sketches, standing back to back with Vesalius in Renaissance dress beside an anatomical book and a human skeleton',
           leftPerson: {
             name: 'Galen',
             subtitle: 'Ancient Roman doctor',
-            image: '/figures/history/medicine/medieval/galen-portrait.png',
+            image: '/images/history/medicine/portraits/galen-portrait.png',
             imageAlt: 'Portrait of the ancient Roman doctor Galen',
           },
           rightPerson: {
             name: 'Vesalius',
             subtitle: 'Renaissance anatomist',
-            image: '/images/vesalius-1543.png',
+            image: '/images/history/medicine/portraits/vesalius-1543.png',
             imageAlt: 'Portrait of the Renaissance anatomist Andreas Vesalius',
           },
           comparisons: [
@@ -378,7 +378,7 @@ export const episode = {
       instruction: 'Explore each factor. Then decide which mattered most.',
       mode: 'causes',
       centreLabel: 'Vesalius',
-      centreImage: '/images/vesalius-factorweb-portrait.webp',
+      centreImage: '/images/history/medicine/portraits/vesalius-factorweb-portrait.webp',
       centreImageAlt: 'Portrait of the Renaissance anatomist Andreas Vesalius',
       factors: [
         {

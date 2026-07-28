@@ -6,13 +6,13 @@ export const cinematicCarousel = {
   title: 'Inside the cell',
   intro: 'Four organelles. Four jobs.',
   items: [
-    { id: 'nucleus',   label: 'Nucleus',        image: '/figures/biology/building-blocks/animal-cell-clean.png', alt: 'Nucleus',
+    { id: 'nucleus',   label: 'Nucleus',        image: '/images/biology/cell-biology/animal-cell-clean.png', alt: 'Nucleus',
       facts: ['Controls the cell and contains DNA', 'GCSE: holds the genetic material as chromosomes'] },
-    { id: 'mito',      label: 'Mitochondria',   image: '/figures/biology/building-blocks/animal-cell-hotspot.png', alt: 'Mitochondria',
+    { id: 'mito',      label: 'Mitochondria',   image: '/images/biology/cell-biology/animal-cell-hotspot.png', alt: 'Mitochondria',
       facts: ['Site of aerobic respiration', 'GCSE: releases energy from glucose'] },
-    { id: 'ribosomes', label: 'Ribosomes',      image: '/figures/biology/building-blocks/animal-cell-clean.png', alt: 'Ribosomes',
+    { id: 'ribosomes', label: 'Ribosomes',      image: '/images/biology/cell-biology/animal-cell-clean.png', alt: 'Ribosomes',
       facts: ['Where proteins are made', 'GCSE: site of protein synthesis'] },
-    { id: 'membrane',  label: 'Cell membrane',  image: '/figures/biology/building-blocks/animal-cell-bg.png', alt: 'Cell membrane',
+    { id: 'membrane',  label: 'Cell membrane',  image: '/images/biology/cell-biology/animal-cell-bg.png', alt: 'Cell membrane',
       facts: ['Controls what enters and leaves', 'GCSE: partially permeable barrier'] },
   ],
 }
@@ -71,7 +71,7 @@ export const oppositeQualitiesReveal = {
   title: 'Hot or cold?',
   copy: 'Doctors used symptoms to decide which quality was strongest.',
   visualPair: 'warmCool',
-  backgroundImage: '/figures/history/medicine/medieval/opposite-qualities-background.svg',
+  backgroundImage: '/images/history/medicine/opposite-qualities-background.svg',
   backgroundOpacity: 1,
   leftConcept: { label: 'Hot', icon: '☀', items: ['Fever', 'Red face', 'Flushed skin'] },
   rightConcept: { label: 'Cold', icon: '❄', items: ['Pale skin', 'Chills', 'Shivering'] },
@@ -91,28 +91,28 @@ export const timelineCanvas = {
   steps: [
     {
       id: 'central-asia',
-      image: '/figures/history/medicine/black-death/trade-routes-map.png',
+      image: '/images/history/medicine/trade-routes-map.png',
       label: 'It began in central Asia',
       detail: 'The Black Death began in central Asia, probably in the late 1330s. It spread west along trade routes that also carried spices, silk and grain.',
       stats: ['c.1338', 'Central Asia'],
     },
     {
       id: 'ship',
-      image: '/figures/history/medicine/black-death/plague-dock.png',
+      image: '/images/history/medicine/plague-dock.png',
       label: 'Trade ships carried it to England',
       detail: 'By 1347, the plague had devastated cities around the Mediterranean. Ships from infected ports sailed north with infected animals aboard. The Black Death reached England at Melcombe in June 1348.',
       stats: ['June 1348', 'Melcombe, Dorset'],
     },
     {
       id: 'spread-inland',
-      image: '/figures/history/medicine/black-death/medieval-town.png',
+      image: '/images/history/medicine/medieval-town.png',
       label: 'From the ports it followed the trade roads',
       detail: 'The plague moved inland along the same roads used for trade. It reached Bristol and London within months. Towns, monasteries and villages on these routes suffered most.',
       stats: ['Late 1348', 'Bristol and London'],
     },
     {
       id: 'england',
-      image: '/figures/history/medicine/black-death/trade-routes-map.png',
+      image: '/images/history/medicine/trade-routes-map.png',
       label: 'By 1350 it had reached Scotland',
       detail: 'From Melcombe, the plague swept across England and into Scotland. Historians estimate it killed one-third to one-half of England’s population by 1350 — the worst disaster in English history.',
       stats: ['By 1350', '~30–50% mortality'],
@@ -122,8 +122,8 @@ export const timelineCanvas = {
 
 // ── Group 2: BeforeAfterImageSlider (History) — Episode 13's live screen ─────
 export const beforeAfterImageSlider = {
-  beforeSrc: '/figures/history/medicine/modern/lungs-healthy.png',
-  afterSrc: '/figures/history/medicine/modern/lungs-cancer.png',
+  beforeSrc: '/images/history/medicine/lungs-healthy.png',
+  afterSrc: '/images/history/medicine/lungs-cancer.png',
   beforeAlt: 'Healthy lungs',
   afterAlt: 'Lungs damaged by smoking',
   beforeLabel: 'Healthy lungs',
@@ -143,7 +143,7 @@ export const evacuationChainRoute = {
   prompt: 'Where did this happen?',
   weakGroup: 'Evacuation chain',
   completionText: 'Five stages, each one further from the fighting. Q1 often asks for two features of one stage — precise details like these win the marks.',
-  backgroundImage: '/headers/history-medicine-trenches.png',
+  backgroundImage: '/images/history/medicine/headers/trenches.png',
   stages: [
     { id: 's-bearers', icon: 'helmet', title: 'Stretcher bearers',                clue: 'From the front line',   answerId: 'a-bearers' },
     { id: 's-rap',     icon: 'cross',  title: 'Regimental Aid Post',              clue: 'Close to the front',    answerId: 'a-rap' },
@@ -314,13 +314,13 @@ export const conceptReveal = {
   steps: [
     { mainText: 'The Renaissance was a “rebirth” of learning.',
       supportText: 'Old books were still respected. But people now wanted to test them, not just trust them.',
-      backgroundImage: '/headers/history-medicine-through-time.webp' },
+      backgroundImage: '/images/history/_shared/medicine-through-time.webp' },
     { mainText: 'Humanism told people to use reason and study the world for themselves.',
       supportText: 'This made careful observation matter more. Blind trust in old books felt less safe.',
-      backgroundImage: '/headers/history-medicine-through-time.webp' },
+      backgroundImage: '/images/history/_shared/medicine-through-time.webp' },
     { mainText: 'Universities now held dissection in public anatomy theatres.',
       supportText: 'Doctors and students could watch a real body and check old claims against what they saw.',
-      backgroundImage: '/headers/history-medicine-through-time.webp' },
+      backgroundImage: '/images/history/_shared/medicine-through-time.webp' },
   ],
 }
 
@@ -479,7 +479,7 @@ export const chapterComplete = {
 
 // KeyFigureReveal (History) — scrollable portrait hero + knowledge sections.
 export const keyFigureReveal = {
-  portrait: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
+  portrait: '/images/history/medicine/portraits/hippocrates-portrait.webp',
   name: 'Hippocrates',
   role: 'Ancient Greek doctor',
   sections: [
@@ -499,7 +499,7 @@ export const memoryHook = {
   id: 'bio-virus-hacker',
   label: 'Memory hook',
   hook: "Think of a virus as a tiny 'hacker' that sneaks in, takes over, and makes copies of itself.",
-  image: '/headers/bio-diseasewars.webp',
+  image: '/images/biology/_shared/diseasewars.webp',
   imageAlt: 'Stylised virus particle in a dark, cinematic scene',
 }
 
@@ -510,7 +510,7 @@ export const memoryHook = {
 export const interactiveHotspotImage = {
   title: 'Tap the Four Humours',
   introText: 'Medieval doctors believed the body contained four vital fluids. Each humour had its own qualities — and its own associated illness when it went out of balance.',
-  image: '/figures/history/medicine/medieval/four-humours-body.webp',
+  image: '/images/history/medicine/four-humours-body.webp',
   imageAlt: 'Medieval symbolic body diagram showing the positions of the Four Humours',
   ctaLabel: 'Explore the body',
   hotspots: [
@@ -537,7 +537,7 @@ export const interactiveHotspotImage = {
 export const cinematicRevealMoment = {
   label: 'ENGLAND, 1348',
   videoSrc: '/videos/black-death-intro.mp4',
-  fallbackImage: '/figures/history/medicine/black-death/plague-background.png',
+  fallbackImage: '/images/history/medicine/plague-background.png',
   year: '1348',
   headline: 'Something is coming.',
   body: 'In June 1348, ships docked at Melcombe in Dorset.\n\nWithin weeks, people began to die.\n\nThe disease moved fast — through towns, villages, and monasteries.\n\nNo one knew what it was. No one knew how to stop it.',
@@ -556,10 +556,10 @@ export const infographic = {
     caption: {
       interval: 1500,
       images: {
-        topLeft: '/figures/history/medicine/medieval/four-humours-blood.webp',
-        topRight: '/figures/history/medicine/medieval/four-humours-yellow-bile.webp',
-        bottomLeft: '/figures/history/medicine/medieval/four-humours-phlegm.webp',
-        bottomRight: '/figures/history/medicine/medieval/four-humours-black-bile.webp',
+        topLeft: '/images/history/medicine/four-humours-blood.webp',
+        topRight: '/images/history/medicine/four-humours-yellow-bile.webp',
+        bottomLeft: '/images/history/medicine/four-humours-phlegm.webp',
+        bottomRight: '/images/history/medicine/four-humours-black-bile.webp',
       },
       alt: 'The four humours revealed one quadrant at a time: blood (hot and wet), yellow bile (hot and dry), phlegm (cold and wet) and black bile (cold and dry), with arrows crossing the centre to link each humour to its opposite',
       parts: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'],
@@ -730,7 +730,7 @@ export const swipeSort = {
 export const interactiveHotspotReveal = {
   title: 'Staying well in 1400',
   introText: 'Tap each object to find out how people tried to stay healthy — before anyone knew about germs.',
-  image: '/figures/history/medicine/medieval/medieval-street.webp',
+  image: '/images/history/medicine/medieval-street.webp',
   imageAlt: 'A medieval street scene in 1400',
   hotspots: [
     {

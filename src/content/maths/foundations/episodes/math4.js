@@ -8,7 +8,7 @@ export default {
   "icon": "🧮",
   "color": "#2DD4BF",
   "colorLight": "rgba(45,212,191,.12)",
-  "headerImage": "/headers/maths-numbers.webp",
+  "headerImage": "/images/maths/_shared/numbers.webp",
 
   "module": "number-survival-kit",
   "moduleNumber": 1,

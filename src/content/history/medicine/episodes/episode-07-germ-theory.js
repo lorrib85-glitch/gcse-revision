@@ -93,7 +93,7 @@ export default {
       label: 'Pasteur',
       kicker: '1861',
       heading: 'Louis Pasteur: the wine detective',
-      headerImage: '/images/pasteur-1861.png',
+      headerImage: '/images/history/medicine/portraits/pasteur-1861.png',
       sub: 'Global breakthrough begins with someone\'s drink being ruined.',
       blocks: [
         { type: 'read', label: '📖 Core Knowledge', text: '<strong>Louis Pasteur</strong> was a French chemist. In the 1850s, he investigated why wine went bad. Using a microscope, he saw bacteria in the wine and believed they were causing it to spoil. He heated the wine to kill the bacteria — a process later called <strong>pasteurisation</strong>.' },

@@ -35,7 +35,7 @@ function buildWarmupCard() {
     title: '90s warm up',
     reason: 'Mixed questions to start the day.',
     durationMinutes: 2,
-    image: '/headers/pulse-90s-recall.png',
+    image: '/images/app/pulse-90s-recall.png',
     onSelect: { kind: 'quickfire' },
   }
 }
@@ -136,7 +136,7 @@ function buildWeekendPaperCard() {
       title: `Full ${subject} paper`,
       reason: 'A timed past paper, marked like the real thing.',
       durationMinutes: MEDICINE_2023_PAPER.timeMins,
-      image: '/headers/home-exam-paper.png',
+      image: '/images/app/home-exam-paper.png',
       onSelect: {
         kind: 'paper', subject, isTimedPaper: true,
         durationSeconds: MEDICINE_2023_PAPER.timeMins * 60,
@@ -151,7 +151,7 @@ function buildWeekendPaperCard() {
     title: `Full ${subject} paper`,
     reason: 'A timed past paper, marked like the real thing.',
     durationMinutes: 50,
-    image: '/headers/home-exam-paper.png',
+    image: '/images/app/home-exam-paper.png',
     onSelect: {
       kind: 'paper', subject, isTimedPaper: true,
       durationSeconds: 50 * 60,

@@ -224,7 +224,7 @@ const episode = {
       kicker: '1953',
       heading: 'The code inside every cell.',
       sub: 'Watson, Crick and Franklin unlocked the instruction manual for life itself.',
-      headerImage: '/images/watson-crick-1953.png',
+      headerImage: '/images/history/medicine/portraits/watson-crick-1953.png',
       blocks: [
         {
           type: 'read',

@@ -66,7 +66,7 @@ function EnglishBrowser({ onBack }) {
       <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
         <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
           <BackButton onClick={onBack} />
-          <img src="/headers/english-main.webp" alt="English" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
+          <img src="/images/english/_shared/main.webp" alt="English" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
           <div style={{ flex:1 }}>
             <div style={{ ...TYPE.titleLarge, color:'#F5F7FB' }}>AQA English Language</div>
             <div style={{ ...TYPE.metadata, color:'#5A6480' }}>Papers 1 & 2 · {ENGLISH_TOPIC_GROUPS.length} skill areas · {totalQs} questions · AI marked</div>
@@ -87,7 +87,7 @@ function EnglishBrowser({ onBack }) {
           {filtered.map(group => (
             <button key={group.id} onClick={() => setGroup(group)} style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14, width:'100%' }}>
               <div style={{ width:46, height:46, borderRadius:13, flexShrink:0, overflow:'hidden', border:'1px solid rgba(255,255,255,0.08)' }}>
-                <img src="/headers/english-main.webp" alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                <img src="/images/english/_shared/main.webp" alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
               </div>
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ ...TYPE.titleMedium, color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
@@ -153,7 +153,7 @@ function SociologyBrowser({ onBack, filterPrefix = null }) {
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <BackButton onClick={onBack} />
-          <img src={socGroup?.headerImage || '/headers/sociology-main.webp'} alt="Sociology" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
+          <img src={socGroup?.headerImage || '/images/sociology/_shared/main.webp'} alt="Sociology" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
             <div style={{ ...TYPE.titleLarge, color: '#F5F7FB' }}>{headerTitle}</div>
             <div style={{ ...TYPE.metadata, color: '#5A6480' }}>
@@ -188,11 +188,11 @@ function SociologyBrowser({ onBack, filterPrefix = null }) {
               <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <img src={(() => {
                   const id = group.id
-                  if (id.startsWith('soc_families'))     return '/headers/sociology-family.webp'
-                  if (id.startsWith('soc_education'))    return '/headers/sociology-education.webp'
-                  if (id.startsWith('soc_crime'))        return '/headers/sociology-crime.webp'
-                  if (id.startsWith('soc_stratification')) return '/headers/sociology-stratification.webp'
-                  return '/headers/sociology-main.webp'
+                  if (id.startsWith('soc_families'))     return '/images/sociology/_shared/family.webp'
+                  if (id.startsWith('soc_education'))    return '/images/sociology/_shared/education.webp'
+                  if (id.startsWith('soc_crime'))        return '/images/sociology/_shared/crime.webp'
+                  if (id.startsWith('soc_stratification')) return '/images/sociology/_shared/stratification.webp'
+                  return '/images/sociology/_shared/main.webp'
                 })()} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -402,7 +402,7 @@ function ChemistryBrowser({ onBack }) {
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <BackButton onClick={onBack} />
-          <img src="/headers/chem-logo.webp" alt="Chemistry" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
+          <img src="/images/chemistry/_shared/logo.webp" alt="Chemistry" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
             <div style={{ ...TYPE.titleLarge, color: '#F5F7FB' }}>AQA Chemistry Foundation</div>
             <div style={{ ...TYPE.metadata, color: '#5A6480' }}>Papers 1 & 2 · {CHEMISTRY_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked · Diagrams included</div>
@@ -423,11 +423,11 @@ function ChemistryBrowser({ onBack }) {
               <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <img src={(() => {
                   const id = group.id || ''
-                  if (['chem_atom','chem_periodic','chem_bonding','chem_giant','chem_matter','chem_ions'].some(k => id.startsWith(k))) return '/headers/chem-matteratoms.webp'
-                  if (['chem_react','chem_acid','chem_electro','chem_energy','chem_calcul'].some(k => id.startsWith(k))) return '/headers/chem-reactions.webp'
-                  if (['chem_rates','chem_revers','chem_hydro','chem_crack','chem_organic','chem_polymer'].some(k => id.startsWith(k))) return '/headers/chem-rates.webp'
-                  if (['chem_earth','chem_atmos','chem_pollu','chem_resource'].some(k => id.startsWith(k))) return '/headers/chem-earth.webp'
-                  return '/headers/chem-logo.webp'
+                  if (['chem_atom','chem_periodic','chem_bonding','chem_giant','chem_matter','chem_ions'].some(k => id.startsWith(k))) return '/images/chemistry/_shared/matteratoms.webp'
+                  if (['chem_react','chem_acid','chem_electro','chem_energy','chem_calcul'].some(k => id.startsWith(k))) return '/images/chemistry/_shared/reactions.webp'
+                  if (['chem_rates','chem_revers','chem_hydro','chem_crack','chem_organic','chem_polymer'].some(k => id.startsWith(k))) return '/images/chemistry/_shared/rates.webp'
+                  if (['chem_earth','chem_atmos','chem_pollu','chem_resource'].some(k => id.startsWith(k))) return '/images/chemistry/_shared/earth.webp'
+                  return '/images/chemistry/_shared/logo.webp'
                 })()} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -497,13 +497,13 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
   if (selected) return <TopicPracticeMode key={selected.topicId} selected={selected} onExit={exitTestTopic} />
 
   const EXAM_SUBJECTS = [
-    { logo: '/headers/sociology-main.webp', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: () => setSociologyOpen(true) },
-    { logo: '/headers/history-main.webp',   label: 'History',   color: SUBJECTS.History.subjectBrowserAccent, completed: 6,  total: 12, action: () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
-    { logo: '/headers/bio-main.webp',       label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: () => startTopic({ topicId: 'tb_cells', label: 'Biology', subject: 'Biology' }) },
-    { logo: '/headers/chem-logo.webp',      label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: () => setChemistryOpen(true) },
-    { logo: '/headers/maths-main.webp',     label: 'Maths',     color: '#2DD4BF', completed: 0,  total: 20, action: () => setMathsOpen(true) },
-    { logo: '/headers/english-main.webp',   label: 'English',   color: '#B66DFF', completed: 0,  total: 15, action: () => setEnglishOpen(true) },
-    { logo: '/headers/physics-main.webp',   label: 'Physics',   color: '#3B82F6', completed: 0,  total: 15, action: () => {} },
+    { logo: '/images/sociology/_shared/main.webp', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: () => setSociologyOpen(true) },
+    { logo: '/images/history/_shared/main.webp',   label: 'History',   color: SUBJECTS.History.subjectBrowserAccent, completed: 6,  total: 12, action: () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
+    { logo: '/images/biology/_shared/main.webp',       label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: () => startTopic({ topicId: 'tb_cells', label: 'Biology', subject: 'Biology' }) },
+    { logo: '/images/chemistry/_shared/logo.webp',      label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: () => setChemistryOpen(true) },
+    { logo: '/images/maths/_shared/main.webp',     label: 'Maths',     color: '#2DD4BF', completed: 0,  total: 20, action: () => setMathsOpen(true) },
+    { logo: '/images/english/_shared/main.webp',   label: 'English',   color: '#B66DFF', completed: 0,  total: 15, action: () => setEnglishOpen(true) },
+    { logo: '/images/physics/_shared/main.webp',   label: 'Physics',   color: '#3B82F6', completed: 0,  total: 15, action: () => {} },
   ]
 
   return (

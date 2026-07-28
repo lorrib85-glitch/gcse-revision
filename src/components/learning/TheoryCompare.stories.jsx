@@ -26,20 +26,20 @@ export default {
 const GALEN_VESALIUS_BLOCK = {
   type: 'theoryCompare',
   title: 'Galen and Vesalius',
-  heroImage: '/figures/history/medicine/renaissance/galen-vesalius-hero.webp',
+  heroImage: '/images/history/medicine/galen-vesalius-hero.webp',
   heroImageAlt: 'Galen in Roman dress before classical ruins and animal anatomy sketches, standing back to back with Vesalius in Renaissance dress beside an anatomical book and a human skeleton',
   heroObjectPosition: 'center 24%',
   emphasisSide: 'right',
   leftPerson: {
     name: 'Galen',
     subtitle: 'Ancient Roman doctor',
-    image: '/figures/history/medicine/medieval/galen-portrait.png',
+    image: '/images/history/medicine/portraits/galen-portrait.png',
     imageAlt: 'Portrait of the ancient Roman doctor Galen',
   },
   rightPerson: {
     name: 'Vesalius',
     subtitle: 'Renaissance anatomist',
-    image: '/images/vesalius-1543.png',
+    image: '/images/history/medicine/portraits/vesalius-1543.png',
     imageAlt: 'Portrait of the Renaissance anatomist Andreas Vesalius',
   },
   comparisons: [
@@ -159,8 +159,8 @@ export const PeopleMinimal = {
     block: {
       type: 'theoryCompare',
       title: 'Two anatomists',
-      leftPerson: { name: 'Galen', subtitle: 'Ancient Roman doctor', image: '/figures/history/medicine/medieval/galen-portrait.png', imageAlt: 'Portrait of Galen' },
-      rightPerson: { name: 'Vesalius', subtitle: 'Renaissance anatomist', image: '/images/vesalius-1543.png', imageAlt: 'Portrait of Vesalius' },
+      leftPerson: { name: 'Galen', subtitle: 'Ancient Roman doctor', image: '/images/history/medicine/portraits/galen-portrait.png', imageAlt: 'Portrait of Galen' },
+      rightPerson: { name: 'Vesalius', subtitle: 'Renaissance anatomist', image: '/images/history/medicine/portraits/vesalius-1543.png', imageAlt: 'Portrait of Vesalius' },
       comparisons: [
         { id: 'evidence-source', prompt: 'What did they study?', left: 'Animal dissection', right: 'Human dissection' },
       ],

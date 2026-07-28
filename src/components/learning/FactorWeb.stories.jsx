@@ -15,7 +15,7 @@ const VESALIUS_FACTORS = {
   title: 'Why could Vesalius challenge Galen?',
   instruction: 'Explore each factor. Then decide which mattered most.',
   centreLabel: 'Vesalius',
-  centreImage: '/images/vesalius-factorweb-portrait.webp',
+  centreImage: '/images/history/medicine/portraits/vesalius-factorweb-portrait.webp',
   centreImageAlt: 'Portrait of the Renaissance anatomist Andreas Vesalius',
   factors: [
     {
@@ -101,7 +101,7 @@ export const LongFactorLabels = {
       ...VESALIUS_FACTORS,
       title: 'Why did ideas about disease change?',
       centreLabel: 'Germ theory',
-      centreImage: '/images/pasteur-1861.png',
+      centreImage: '/images/history/medicine/portraits/pasteur-1861.png',
       centreImageAlt: 'Portrait of the French scientist Louis Pasteur',
       factors: [
         { ...VESALIUS_FACTORS.factors[0], title: 'Pasteur’s germ theory', shortTitle: 'Pasteur' },

@@ -40,10 +40,10 @@ export const QuadrantReveal = {
       caption: {
         interval: 1500,
         images: {
-          topLeft: '/figures/history/medicine/medieval/four-humours-blood.webp',
-          topRight: '/figures/history/medicine/medieval/four-humours-yellow-bile.webp',
-          bottomLeft: '/figures/history/medicine/medieval/four-humours-phlegm.webp',
-          bottomRight: '/figures/history/medicine/medieval/four-humours-black-bile.webp',
+          topLeft: '/images/history/medicine/four-humours-blood.webp',
+          topRight: '/images/history/medicine/four-humours-yellow-bile.webp',
+          bottomLeft: '/images/history/medicine/four-humours-phlegm.webp',
+          bottomRight: '/images/history/medicine/four-humours-black-bile.webp',
         },
         alt: 'The four humours revealed one quadrant at a time: blood (hot and wet), yellow bile (hot and dry), phlegm (cold and wet) and black bile (cold and dry), with arrows crossing the centre to link each humour to its opposite',
         parts: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'],

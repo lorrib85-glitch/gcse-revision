@@ -116,7 +116,7 @@ export default function PulseTab({ onStartQuickFire, best }) {
       <div style={{ position: 'relative', width: '100%', height: '34vh', minHeight: 260, maxHeight: 340, overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: 'url(/headers/pulse-quickquiz.png)',
+          backgroundImage: 'url(/images/app/pulse-quickquiz.png)',
           backgroundSize: 'cover', backgroundPosition: 'center right',
           filter: 'saturate(0.92)',
         }} />
@@ -131,7 +131,7 @@ export default function PulseTab({ onStartQuickFire, best }) {
           left: SPACING.compact, right: SPACING.compact, zIndex: 2,
           display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
         }}>
-          <img src="/logo.png" alt="RISE" style={{ height: 30, width: 'auto', display: 'block', borderRadius: RADII.small }} />
+          <img src="/images/app/logo.png" alt="RISE" style={{ height: 30, width: 'auto', display: 'block', borderRadius: RADII.small }} />
           <StreakChip />
         </div>
 

@@ -2,16 +2,16 @@
 // (Previously inline base64 data URIs; extracted to static files to keep
 // these ~230KB of past-paper diagrams out of the main JS bundle.)
 export const CHEM_IMAGES = {
-  p1j24_ion:          '/figures/p1j24_ion.jpg',
-  p1j24_fullerene:    '/figures/p1j24_fullerene.jpg',
-  p1j24_zinc_app:     '/figures/p1j24_zinc_app.jpg',
-  p1j24_thermometer:  '/figures/p1j24_thermometer.jpg',
-  p1j24_chrom:        '/figures/p1j24_chrom.jpg',
-  p2j23_co2:          '/figures/p2j23_co2.jpg',
-  p2j23_methane_pie:  '/figures/p2j23_methane_pie.jpg',
-  p2j23_fluoride:     '/figures/p2j23_fluoride.jpg',
-  p1j22_melt_pts:     '/figures/p1j22_melt_pts.jpg',
-  p1j22_thermo:       '/figures/p1j22_thermo.jpg',
-  p1j22_fullerene:    '/figures/p1j22_fullerene.jpg',
-  p1j22_reactivity:   '/figures/p1j22_reactivity.jpg',
+  p1j24_ion:          '/images/chemistry/exam-papers/p1j24-ion.jpg',
+  p1j24_fullerene:    '/images/chemistry/exam-papers/p1j24-fullerene.jpg',
+  p1j24_zinc_app:     '/images/chemistry/exam-papers/p1j24-zinc-app.jpg',
+  p1j24_thermometer:  '/images/chemistry/exam-papers/p1j24-thermometer.jpg',
+  p1j24_chrom:        '/images/chemistry/exam-papers/p1j24-chrom.jpg',
+  p2j23_co2:          '/images/chemistry/exam-papers/p2j23-co2.jpg',
+  p2j23_methane_pie:  '/images/chemistry/exam-papers/p2j23-methane-pie.jpg',
+  p2j23_fluoride:     '/images/chemistry/exam-papers/p2j23-fluoride.jpg',
+  p1j22_melt_pts:     '/images/chemistry/exam-papers/p1j22-melt-pts.jpg',
+  p1j22_thermo:       '/images/chemistry/exam-papers/p1j22-thermo.jpg',
+  p1j22_fullerene:    '/images/chemistry/exam-papers/p1j22-fullerene.jpg',
+  p1j22_reactivity:   '/images/chemistry/exam-papers/p1j22-reactivity.jpg',
 }

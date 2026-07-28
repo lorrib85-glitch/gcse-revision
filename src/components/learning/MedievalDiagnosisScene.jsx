@@ -20,7 +20,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 // rotation, miasma drift, a slow photo breathe). Reduced-motion users get
 // the static end state — that render IS the fallback image.
 
-const PHOTO = '/History/Medicine/thomas-diagnosis-chamber-1024.webp'
+const PHOTO = '/images/history/medicine/thomas-diagnosis-chamber-1024.webp'
 
 const ACCENT = SUBJECTS.History.accent
 const ACCENT_RGB = SUBJECTS.History.accentRgb

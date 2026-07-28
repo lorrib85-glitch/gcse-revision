@@ -23,7 +23,7 @@ export default {
     statement: 'Medieval doctors removed blood to cure illness.',
     isTrue: true,
     accentWords: ['removed blood', 'cure illness'],
-    backgroundImage: '/headers/history-medicine-bloodletting.png',
+    backgroundImage: '/images/history/medicine/headers/bloodletting.png',
     explanation: 'True. Which is alarming, obviously. But to medieval doctors, bloodletting was not random cruelty. They believed illness happened when the body fell out of balance. So if they thought you had too much blood? They tried to remove some.',
     revealBeats: [
       'Which is alarming, obviously.',
@@ -81,12 +81,12 @@ export default {
         {
           mainText: 'Today, we know many diseases are caused by bacteria or viruses.',
           supportText: 'Medieval people did not. No microscopes. No germ theory. No idea that tiny organisms could spread disease.',
-          backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
+          backgroundImage: '/images/history/medicine/medieval-street.webp',
         },
         {
           mainText: 'But people still got sick.',
           supportText: 'So they needed explanations.',
-          backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
+          backgroundImage: '/images/history/medicine/medieval-street.webp',
         },
       ],
     },
@@ -98,12 +98,12 @@ export default {
       steps: [
         {
           mainText: 'One Greek doctor thought he had found one.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
         },
         {
           mainText: 'His name was Hippocrates.',
           supportText: 'One Greek doctor would shape medicine for the next 2,000 years.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          backgroundImage: '/images/history/medicine/headers/germ-bridge.png',
         },
       ],
     },
@@ -113,14 +113,14 @@ export default {
       stage: 'Hippocrates',
       tag: 'four-humours',
       label: 'Hippocrates',
-      portrait: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
+      portrait: '/images/history/medicine/portraits/hippocrates-portrait.webp',
       name: 'Hippocrates',
       role: 'Ancient Greek doctor',
       sections: [
         {
           title: 'Who was he?',
           icon: 'ancient-figure',
-          image: '/figures/history/medicine/medieval/hippocrates-card-who-was-he.webp',
+          image: '/images/history/medicine/hippocrates-card-who-was-he.webp',
           imagePosition: 'center center',
           lines: [
             'One of the first doctors to argue that illness had natural causes, not just supernatural ones.',
@@ -129,7 +129,7 @@ export default {
         {
           title: 'Four humours',
           icon: 'medicine',
-          image: '/figures/history/medicine/medieval/hippocrates-card-four-humours.webp',
+          image: '/images/history/medicine/hippocrates-card-four-humours.webp',
           imagePosition: 'center center',
           lines: [
             'Hippocrates believed the body contained four humours:',
@@ -140,7 +140,7 @@ export default {
         {
           title: 'Observation',
           icon: 'knowledge',
-          image: '/figures/history/medicine/medieval/hippocrates-card-observation.webp',
+          image: '/images/history/medicine/hippocrates-card-observation.webp',
           imagePosition: 'center center',
           lines: [
             'Hippocrates believed doctors should observe symptoms carefully, examine patients closely, and keep records.',
@@ -150,7 +150,7 @@ export default {
         {
           title: 'Influence',
           icon: 'legacy',
-          image: '/figures/history/medicine/medieval/hippocrates-card-influence.webp',
+          image: '/images/history/medicine/hippocrates-card-influence.webp',
           imagePosition: 'center center',
           lines: [
             "Galen developed Hippocrates' Four Humours theory.",
@@ -189,7 +189,7 @@ export default {
       label: 'Explore the Humours',
       title: 'Tap the Four Humours',
       introText: 'Medieval doctors believed the body contained four vital fluids. Each humour had its own qualities — and its own associated illness when it went out of balance.',
-      image: '/figures/history/medicine/medieval/four-humours-body.webp',
+      image: '/images/history/medicine/four-humours-body.webp',
       imageAlt: 'Medieval symbolic body diagram showing the positions of the Four Humours',
       ctaLabel: 'Explore the body',
       hotspots: [
@@ -254,9 +254,9 @@ export default {
       stage: 'Galen',
       tag: 'galen',
       label: 'Galen',
-      portrait: '/figures/history/medicine/medieval/galen-portrait.png',
+      portrait: '/images/history/medicine/portraits/galen-portrait.png',
       portraitPosition: 'center 25%',
-      cardBackground: '/figures/history/medicine/medieval/galen-parchment.png',
+      cardBackground: '/images/history/medicine/galen-parchment.png',
       name: 'Galen',
       role: 'Roman doctor and writer',
       significance: 'The doctor whose ideas dominated medicine for over 1,400 years.',
@@ -264,7 +264,7 @@ export default {
         {
           title: 'Gladiators & dissection',
           icon: 'war-conflict',
-          image: '/figures/history/medicine/medieval/galen-gladiators.png',
+          image: '/images/history/medicine/galen-gladiators.png',
           imagePosition: 'center 55%',
           lines: [
             'Galen spent years patching up wounded gladiators — giving him direct, hands-on experience of the human body.',
@@ -275,7 +275,7 @@ export default {
         {
           title: 'Theory of the four humours',
           icon: 'bloodletting',
-          image: '/figures/history/medicine/medieval/galen-teaching.png',
+          image: '/images/history/medicine/galen-teaching.png',
           imagePosition: 'center center',
           lines: [
             "Galen promoted Hippocrates' Four Humours — Blood, Phlegm, Yellow bile, Black bile — and added his own contribution.",
@@ -286,7 +286,7 @@ export default {
         {
           title: 'The squealing pig',
           icon: 'science',
-          image: '/figures/history/medicine/medieval/galen-dissection.png',
+          image: '/images/history/medicine/galen-dissection.png',
           imagePosition: 'center 35%',
           lines: [
             'Galen wanted to prove the brain — not the heart — controlled the body.',
@@ -339,7 +339,7 @@ export default {
         { item: 'Shivering', side: 'right' },
       ],
       closingCaption: 'Doctors looked at symptoms to judge whether an illness seemed hot or cold.',
-      backgroundImage: '/figures/history/medicine/medieval/galen-parchment.png',
+      backgroundImage: '/images/history/medicine/galen-parchment.png',
       accessibility: {
         label: 'Symptoms revealed into hot and cold groups',
         leftLabel: 'Hot symptoms',
@@ -365,7 +365,7 @@ export default {
         { item: 'Phlegm', side: 'left' },
       ],
       closingCaption: 'Symptoms were grouped by the quality they appeared to show.',
-      backgroundImage: '/figures/history/medicine/medieval/galen-parchment.png',
+      backgroundImage: '/images/history/medicine/galen-parchment.png',
       accessibility: {
         label: 'Symptoms revealed into wet and dry groups',
         leftLabel: 'Wet symptoms',
@@ -415,27 +415,27 @@ export default {
       label: 'England, 1250',
       scenes: [
         {
-          image: '/figures/history/medicine/medieval/vl-medieval-town.webp',
+          image: '/images/history/medicine/vl-medieval-town.webp',
           headline: 'England, 1250',
           body: 'The ideas of Hippocrates and Galen had already existed for over 1,000 years.',
         },
         {
-          image: '/figures/history/medicine/medieval/vl-church.webp',
+          image: '/images/history/medicine/vl-church.webp',
           headline: 'The Church was everywhere',
           body: 'Almost everyone attended church. The Church shaped how people understood the world.',
         },
         {
-          image: '/figures/history/medicine/medieval/vl-monks-books.webp',
+          image: '/images/history/medicine/vl-monks-books.webp',
           headline: 'Knowledge moved slowly',
           body: 'Books had to be copied by hand, often by monks. A single manuscript could take months to create.',
         },
         {
-          image: '/figures/history/medicine/medieval/vl-university.webp',
+          image: '/images/history/medicine/vl-university.webp',
           headline: 'Doctors learnt from books',
           body: 'Universities taught accepted medical ideas. Ancient writers like Galen were treated as authorities.',
         },
         {
-          image: '/figures/history/medicine/medieval/vl-dissection.webp',
+          image: '/images/history/medicine/vl-dissection.webp',
           headline: 'Testing ideas was difficult',
           body: 'Human dissection was rare and considered a sin by the Church. Doctors had few ways to challenge old beliefs.',
         },
@@ -456,11 +456,11 @@ export default {
       headline: 'Thomas has a fever.\nHe\'s coughing blood.',
       question: 'Who should he trust?',
       helperText: 'Swipe to explore your options.',
-      promptVisual: { src: '/figures/history/medicine/medieval/thomas-doodle.webp', alt: 'Thomas' },
+      promptVisual: { src: '/images/history/medicine/thomas-doodle.png', alt: 'Thomas' },
       options: [
         {
           title: 'Physician',
-          image: '/figures/history/medicine/medieval/physician.webp',
+          image: '/images/history/medicine/physician.webp',
           sections: [
             { heading: 'Favourite methods', items: ['Astrology', 'Urine charts', 'Four Humours'] },
             { heading: 'Cost', items: ['💰💰💰💰💰'] },
@@ -480,7 +480,7 @@ export default {
         },
         {
           title: 'Barber Surgeon',
-          image: '/figures/history/medicine/medieval/barber-surgeon.webp',
+          image: '/images/history/medicine/barber-surgeon.webp',
           sections: [
             { heading: 'Favourite methods', items: ['Bloodletting', 'Tooth-pulling', 'Basic surgery'] },
             { heading: 'Cost', items: ['💰💰'] },
@@ -501,7 +501,7 @@ export default {
         },
         {
           title: 'Apothecary',
-          image: '/figures/history/medicine/medieval/apothecary.png',
+          image: '/images/history/medicine/apothecary.png',
           sections: [
             { heading: 'Favourite methods', items: ['Mixing remedies', 'Herbal medicine', 'Purging'] },
             { heading: 'Cost', items: ['💰💰💰'] },
@@ -523,7 +523,7 @@ export default {
         {
           title: 'Care at home',
           subtitle: 'Family remedies and home nursing',
-          image: '/figures/history/medicine/medieval/care-at-home.webp',
+          image: '/images/history/medicine/care-at-home.webp',
           sections: [
             { heading: 'Methods', items: ['Herbal remedies', 'Rest and nursing', 'Food and drink', 'Family remedies'] },
             { heading: 'Cost', items: ['💰'] },
@@ -542,7 +542,7 @@ export default {
         },
         {
           title: 'Priest',
-          image: '/figures/history/medicine/medieval/priest.webp',
+          image: '/images/history/medicine/priest.webp',
           sections: [
             { heading: 'Favourite methods', items: ['Prayer', 'Confession', 'Repentance'] },
             { heading: 'Cost', items: ['💰'] },
@@ -591,7 +591,7 @@ export default {
       label: 'Diagnose Like It\'s 1340',
       title: 'The Zodiac Man',
       introText: 'Tap the body parts to see how astrology was linked to medicine. Medieval physicians used charts like this to guide diagnosis and decide when to treat.',
-      image: '/figures/history/medicine/medieval/zodiac-man.webp',
+      image: '/images/history/medicine/zodiac-man.webp',
       imageAlt: 'Medieval Zodiac Man diagram linking zodiac signs to body parts',
       ctaLabel: 'Explore the Zodiac Man',
       hotspots: [
@@ -653,7 +653,7 @@ export default {
           id: 'god-sin',
           label: 'God & Sin',
           shortLabel: 'God & Sin',
-          icon: '/figures/history/medicine/medieval/icons/god-sin.png',
+          icon: '/images/history/medicine/god-sin.png',
           scenePrompt: 'What does the priest think causes Thomas\'s illness?',
           introText: 'Different people had different explanations.',
           explanation: 'The priest believes Thomas may be ill because God is punishing him for his sins.',
@@ -669,7 +669,7 @@ export default {
           id: 'four-humours',
           label: 'The Four Humours',
           shortLabel: 'Four Humours',
-          icon: '/figures/history/medicine/medieval/icons/four-humours.png',
+          icon: '/images/history/medicine/four-humours.png',
           scenePrompt: 'What does the physician think causes Thomas\'s illness?',
           introText: 'A trained physician used ancient ideas from Hippocrates and Galen.',
           explanation: 'The physician believes Thomas is ill because his four humours are out of balance.',
@@ -686,7 +686,7 @@ export default {
           id: 'astrology',
           label: 'Astrology',
           shortLabel: 'Astrology',
-          icon: '/figures/history/medicine/medieval/icons/astrology.png',
+          icon: '/images/history/medicine/astrology.png',
           scenePrompt: 'What does the astrologer think causes Thomas\'s illness?',
           introText: 'Some medieval medicine was linked to the stars and planets.',
           explanation: 'Some people believed the stars and planets affected health and when treatment should happen.',
@@ -710,7 +710,7 @@ export default {
       title: 'Knowledge check',
       instruction: 'Match each medieval medicine term to its description.',
       weakAreaCategory: 'Medieval Medicine Key Concepts',
-      backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+      backgroundImage: '/images/history/medicine/headers/medieval-scripture.png',
       pairs: [
         {
           id: 'urine-chart',
@@ -765,7 +765,7 @@ export default {
       label: 'Staying Well in 1400',
       title: 'Staying well in 1400',
       introText: 'Tap each object to find out how people tried to stay healthy — before anyone knew about germs.',
-      image: '/figures/history/medicine/medieval/medieval-street.webp',
+      image: '/images/history/medicine/medieval-street.webp',
       imageAlt: 'A medieval street scene in 1400',
       ctaLabel: 'Explore',
       hotspots: [
@@ -866,7 +866,7 @@ export default {
       label: 'A Walk Through Medieval London',
       title: 'A walk through medieval London',
       introText: 'By 1400, England had over 500 hospitals. Tap each one to find out what really happened inside.',
-      image: '/figures/history/medicine/medieval/vl-church.webp',
+      image: '/images/history/medicine/vl-church.webp',
       imageAlt: 'A medieval church and hospital building in London',
       ctaLabel: 'Step inside',
       hotspots: [
@@ -907,7 +907,7 @@ export default {
         {
           type: 'explainReveal',
           intro: 'At the Battle of Shrewsbury in 1403, a 16-year-old prince — later Henry V — was hit in the face by an arrow. The arrowhead broke off and lodged deep in the bone. Here is how his surgeon, John Bradmore, saved his life.',
-          atmosphereImage: '/figures/history/medicine/medieval/barber-surgeon.webp',
+          atmosphereImage: '/images/history/medicine/barber-surgeon.webp',
           steps: [
             {
               id: 'problem',
@@ -947,7 +947,7 @@ export default {
       title: 'Words from a medieval medicine chest',
       instruction: 'Match each term to its description.',
       weakAreaCategory: 'Medieval Medicine Key Concepts',
-      backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+      backgroundImage: '/images/history/medicine/headers/medieval-scripture.png',
       pairs: [
         {
           id: 'apothecary',

@@ -13,38 +13,38 @@ import BottomNav from '../../app/BottomNav.jsx'
 import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
 
 const MODULE_HEADER_IMAGES = {
-  'history-medicine-medieval-beliefs-causes': '/headers/history-medicine-through-time.webp',
-  'history-medicine-black-death': '/figures/history/medicine/black-death/plague-background.png',
-  'history-medicine-renaissance-medicine': '/headers/history-medicine-bloodletting.png',
-  'history-medicine-surgery-anaesthetics': '/headers/history-medicine-germ-bridge.png',
-  'history-medicine-jenner-vaccination': '/headers/history-medicine-medieval-scripture.png',
-  'history-medicine-germ-theory': '/headers/history-medicine-germ-bridge.png',
-  'history-medicine-great-stink': '/headers/history-medicine-through-time.webp',
-  'history-medicine-surgery-revolution': '/headers/history-medicine-bloodletting.png',
-  'history-medicine-accidental-miracle': '/headers/history-medicine-germ-bridge.png',
-  'history-medicine-modern-medicine': '/headers/history-medicine-medieval-scripture.png',
-  'history-medicine-cancer': '/headers/history-medicine-through-time.webp',
-  'sci_bio_w1': '/headers/bio-main.png',
-  'bio_building_blocks': '/headers/bio-main.png',
-  'math1': '/headers/maths-numbers.webp',
-  'math2': '/headers/maths-numbers.webp',
-  'soc1': '/headers/sociology-family.webp',
-  'soc2': '/headers/sociology-education.webp',
-  'soc3': '/headers/sociology-crime.webp',
-  'soc4': '/headers/sociology-stratification.webp',
-  'soc6': '/headers/sociology-main.webp',
+  'history-medicine-medieval-beliefs-causes': '/images/history/_shared/medicine-through-time.webp',
+  'history-medicine-black-death': '/images/history/medicine/plague-background.png',
+  'history-medicine-renaissance-medicine': '/images/history/medicine/headers/bloodletting.png',
+  'history-medicine-surgery-anaesthetics': '/images/history/medicine/headers/germ-bridge.png',
+  'history-medicine-jenner-vaccination': '/images/history/medicine/headers/medieval-scripture.png',
+  'history-medicine-germ-theory': '/images/history/medicine/headers/germ-bridge.png',
+  'history-medicine-great-stink': '/images/history/_shared/medicine-through-time.webp',
+  'history-medicine-surgery-revolution': '/images/history/medicine/headers/bloodletting.png',
+  'history-medicine-accidental-miracle': '/images/history/medicine/headers/germ-bridge.png',
+  'history-medicine-modern-medicine': '/images/history/medicine/headers/medieval-scripture.png',
+  'history-medicine-cancer': '/images/history/_shared/medicine-through-time.webp',
+  'sci_bio_w1': '/images/biology/_shared/main.png',
+  'bio_building_blocks': '/images/biology/_shared/main.png',
+  'math1': '/images/maths/_shared/numbers.webp',
+  'math2': '/images/maths/_shared/numbers.webp',
+  'soc1': '/images/sociology/_shared/family.webp',
+  'soc2': '/images/sociology/_shared/education.webp',
+  'soc3': '/images/sociology/_shared/crime.webp',
+  'soc4': '/images/sociology/_shared/stratification.webp',
+  'soc6': '/images/sociology/_shared/main.webp',
 }
 
 // ─── SubjectBrowser ────────────────────────────────────────────────────────────
 
 const SUBJECT_HEADER_IMGS = {
-  History:   '/headers/history-medicine-through-time.webp',
-  Biology:   '/headers/bio-main.png',
-  Chemistry: '/headers/chem-matteratoms.webp',
-  Maths:     '/headers/maths-numbers.webp',
-  Sociology: '/headers/sociology-family.webp',
-  English:   '/headers/english-macbeth.webp',
-  Physics:   '/headers/physics-forces.webp',
+  History:   '/images/history/_shared/medicine-through-time.webp',
+  Biology:   '/images/biology/_shared/main.png',
+  Chemistry: '/images/chemistry/_shared/matteratoms.webp',
+  Maths:     '/images/maths/_shared/numbers.webp',
+  Sociology: '/images/sociology/_shared/family.webp',
+  English:   '/images/english/_shared/macbeth.webp',
+  Physics:   '/images/physics/_shared/forces.webp',
 }
 
 const SUBJECT_DISPLAY_TITLES = {
@@ -72,28 +72,28 @@ const HISTORY_SERIES = [
     id: 'medicine',
     title: 'Medicine through time',
     short: 'Medicine',
-    headerImage: '/headers/history-medicine-through-time.webp',
+    headerImage: '/images/history/_shared/medicine-through-time.webp',
     comingSoon: false,
   },
   {
     id: 'spain-new-world',
     title: 'Spain and the new world',
     short: 'Spain',
-    headerImage: '/headers/history-spain-new-world.webp',
+    headerImage: '/images/history/_shared/spain-new-world.webp',
     comingSoon: false,
   },
   {
     id: 'elizabethan',
     title: 'Elizabethan England',
     short: 'Elizabethan',
-    headerImage: '/headers/history-elizabethan.webp',
+    headerImage: '/images/history/_shared/elizabethan.webp',
     comingSoon: true,
   },
   {
     id: 'usa',
     title: 'USA: conflict at home and abroad',
     short: 'USA',
-    headerImage: '/headers/history-usa-conflict.webp',
+    headerImage: '/images/history/_shared/usa-conflict.webp',
     comingSoon: false,
   },
 ]
@@ -103,14 +103,14 @@ const ENGLISH_SERIES = [
     id: 'macbeth',
     title: 'Macbeth',
     short: 'Macbeth',
-    headerImage: '/headers/history-medicine-through-time.webp',
+    headerImage: '/images/history/_shared/medicine-through-time.webp',
     comingSoon: false,
   },
   {
     id: 'inspector',
     title: 'An Inspector Calls',
     short: 'Inspector',
-    headerImage: '/headers/sociology-family.webp',
+    headerImage: '/images/sociology/_shared/family.webp',
     comingSoon: true,
   },
 ]
@@ -152,7 +152,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const bronze       = SUBJECTS[subjectName]?.subjectBrowserAccentDark || SUBJECTS.History.subjectBrowserAccentDark
   const accent       = sand
   const accentRgb    = hexToRgb(sand)
-  const headerImg    = SUBJECT_HEADER_IMGS[subjectName]    || '/headers/history-medicine-through-time.webp'
+  const headerImg    = SUBJECT_HEADER_IMGS[subjectName]    || '/images/history/_shared/medicine-through-time.webp'
   const displayTitle = SUBJECT_DISPLAY_TITLES[subjectName] || subjectName
   const displayDesc  = SUBJECT_DESCRIPTIONS[subjectName]   || ''
 
@@ -624,13 +624,13 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
 const SUBJECT_NAMES = ['History', 'Biology', 'Chemistry', 'Physics', 'Maths', 'English', 'Sociology']
 
 const SUBJECT_TOPIC_IMAGES = {
-  History:   ['/headers/history-medicine-through-time.webp', '/headers/history-elizabethan.webp', '/headers/history-spain-new-world.webp', '/headers/history-usa-conflict.webp'],
-  Biology:   ['/headers/bio-humanmachine.webp', '/headers/bio-diseasewars.webp', '/headers/bio-energyforlife.webp', '/headers/bio-controlsystems.webp', '/headers/bio-genetics.webp', '/headers/bio-ecosystems.webp'],
-  Chemistry: ['/headers/chem-matteratoms.webp', '/headers/chem-reactions.webp', '/headers/chem-rates.webp', '/headers/chem-earth.webp'],
-  Physics:   ['/headers/physics-energy.webp', '/headers/physics-forces.webp', '/headers/physics-matter.webp', '/headers/physics-space.webp', '/headers/physics-waves.webp'],
-  Maths:     ['/headers/maths-numbers.webp', '/headers/maths-algebra.webp', '/headers/maths-geometry.webp', '/headers/maths-data.webp', '/headers/maths-realworld.webp'],
-  English:   ['/headers/english-inspector.webp', '/headers/english-macbeth.webp', '/headers/english-poetry.webp', '/headers/english-reading.webp'],
-  Sociology: ['/headers/sociology-family.webp', '/headers/sociology-education.webp', '/headers/sociology-crime.webp', '/headers/sociology-stratification.webp'],
+  History:   ['/images/history/_shared/medicine-through-time.webp', '/images/history/_shared/elizabethan.webp', '/images/history/_shared/spain-new-world.webp', '/images/history/_shared/usa-conflict.webp'],
+  Biology:   ['/images/biology/_shared/humanmachine.webp', '/images/biology/_shared/diseasewars.webp', '/images/biology/_shared/energyforlife.webp', '/images/biology/_shared/controlsystems.webp', '/images/biology/_shared/genetics.webp', '/images/biology/_shared/ecosystems.webp'],
+  Chemistry: ['/images/chemistry/_shared/matteratoms.webp', '/images/chemistry/_shared/reactions.webp', '/images/chemistry/_shared/rates.webp', '/images/chemistry/_shared/earth.webp'],
+  Physics:   ['/images/physics/_shared/energy.webp', '/images/physics/_shared/forces.webp', '/images/physics/_shared/matter.webp', '/images/physics/_shared/space.webp', '/images/physics/_shared/waves.webp'],
+  Maths:     ['/images/maths/_shared/numbers.webp', '/images/maths/_shared/algebra.webp', '/images/maths/_shared/geometry.webp', '/images/maths/_shared/data.webp', '/images/maths/_shared/realworld.webp'],
+  English:   ['/images/english/_shared/inspector.webp', '/images/english/_shared/macbeth.webp', '/images/english/_shared/poetry.webp', '/images/english/_shared/reading.webp'],
+  Sociology: ['/images/sociology/_shared/family.webp', '/images/sociology/_shared/education.webp', '/images/sociology/_shared/crime.webp', '/images/sociology/_shared/stratification.webp'],
 }
 
 export default function ModulesTab({ onOpenModule }) {
@@ -650,7 +650,7 @@ export default function ModulesTab({ onOpenModule }) {
 
   const continueModule = getContinueModule()
   const continuePct = modPct(continueModule)
-  const continueHeaderImage = continueModule.headerImage || MODULE_HEADER_IMAGES[continueModule.id] || '/headers/history-medicine-through-time.webp'
+  const continueHeaderImage = continueModule.headerImage || MODULE_HEADER_IMAGES[continueModule.id] || '/images/history/_shared/medicine-through-time.webp'
 
   const biggestWinRaw = getBiggestWin()
   const biggestWinModule = biggestWinRaw ? MODULES.find(m => m.id === biggestWinRaw.moduleId) : null

@@ -12,7 +12,7 @@ const ITEM_A = {
   id: 'item-a',
   label: 'Item A',
   type: 'image',
-  src: '/exam-papers/sociology/aqa/8192-1/2020/nov-item-a.png',
+  src: '/images/sociology/exam-papers/aqa/8192-1/2020/nov-item-a.png',
   alt: 'Bar chart showing the number of cohabiting couple families in the United Kingdom from 1996 to 2019 in millions, showing a clear upward trend from approximately 1.5 million in 1996 to approximately 3.6 million in 2019.',
   caption: 'Number of cohabiting couple families in the United Kingdom, 1996–2019 (Office for National Statistics)',
 }

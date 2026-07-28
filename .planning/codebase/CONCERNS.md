@@ -43,8 +43,8 @@
 - Workaround: No workaround — the modules must be rebuilt with correct stage navigation. Mark these as requiring build completion before launch.
 
 **Missing image assets for history-medicine-western-front:**
-- Symptoms: Episode-14 includes TODOs for missing diagram images: `/figures/history/medicine/western-front/trench-system.webp`, `/figures/history/medicine/western-front/wounded-evacuation.webp`, `/figures/history/medicine/western-front/medical-post.webp` (lines 101, 106, 111). Fallback to .png files is in place, but the higher-quality .webp versions are not yet provided.
-- Files: `src/content/history/medicine/episodes/episode-14-western-front.js:101,106,111`, `/public/figures/` missing 3 .webp files
+- Symptoms: Episode-14 includes TODOs for missing diagram images: `/images/history/medicine/trench-system.webp`, `/images/history/medicine/wounded-evacuation.webp`, `/images/history/medicine/medical-post.webp` (lines 101, 106, 111). Fallback to .png files is in place, but the higher-quality .webp versions are not yet provided.
+- Files: `src/content/history/medicine/episodes/episode-14-western-front.js:101,106,111`, `/public/images/history/medicine/` missing 3 .webp files
 - Impact: Learners see lower-quality images in this module. Performance is slightly worse on supported browsers.
 - Workaround: None — must generate or source the .webp diagram images. Add to visual asset production pipeline.
 

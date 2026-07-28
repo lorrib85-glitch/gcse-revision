@@ -64,10 +64,10 @@ const BELIEF_HEADLINES = {
 }
 
 const THEORY_IMAGES = {
-  'god-sin':      '/History/Medicine/god_sin-1024.webp',
-  'four-humours': '/History/Medicine/four_humours_treatment-1024.webp',
-  'miasma':       '/History/Medicine/miasma-1024.webp',
-  'astrology':    '/History/Medicine/astrology-1024.webp',
+  'god-sin':      '/images/history/medicine/god-sin-1024.webp',
+  'four-humours': '/images/history/medicine/four-humours-treatment-1024.webp',
+  'miasma':       '/images/history/medicine/miasma-1024.webp',
+  'astrology':    '/images/history/medicine/astrology-1024.webp',
 }
 
 const DEFAULT_MIASMA_THEORY = {
