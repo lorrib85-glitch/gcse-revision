@@ -9,13 +9,13 @@ let store = {}
 // primitives here all share one flat store, ignoring the scope argument.
 vi.mock('../../../src/lib/storage.js', () => ({
   getJson: vi.fn((key, fallback) => (key in store ? store[key] : fallback)),
-  setJson: vi.fn((key, value) => { store[key] = value }),
+  setJson: vi.fn((key, value) => { store[key] = value; return true }),
   removeKey: vi.fn((key) => { delete store[key] }),
   getArray: vi.fn((key) => (key in store ? store[key] : [])),
   getObject: vi.fn((key) => (key in store ? store[key] : {})),
   listKeys: vi.fn((prefix = '') => Object.keys(store).filter(k => k.startsWith(prefix))),
   getJsonForScope: vi.fn((_scope, key, fallback) => (key in store ? store[key] : fallback)),
-  setJsonForScope: vi.fn((_scope, key, value) => { store[key] = value }),
+  setJsonForScope: vi.fn((_scope, key, value) => { store[key] = value; return true }),
   removeKeyForScope: vi.fn((_scope, key) => { delete store[key] }),
   listKeysForScope: vi.fn((_scope, prefix = '') => Object.keys(store).filter(k => k.startsWith(prefix))),
   getRawJson: vi.fn((key, fallback) => (key in store ? store[key] : fallback)),
@@ -66,7 +66,7 @@ const GUEST_USER = { loggedIn: true, provider: 'guest', name: 'Sam' }
 function seedMeaningfulLocal() {
   store['riseUser'] = { loggedIn: true, provider: 'google', uid: 'uid-1', name: 'Sam' }
   store['gcse_scores'] = [{ date: '2026-07-01', subject: 'History', pct: 72 }]
-  store['gcse_module_history-1'] = { screen: 4 }
+  store['gcse_chapter_history-1'] = { screen: 4 }
 }
 
 beforeEach(() => {
@@ -84,7 +84,7 @@ describe('collectLocalProgressSnapshot', () => {
     expect(snap.version).toBe(1)
     expect(snap.updatedAt).toBeTypeOf('number')
     expect(Object.keys(snap.data)).toEqual(
-      expect.arrayContaining(['riseUser', 'gcse_scores', 'gcse_mastery_v1', 'gcse_module_history-1'])
+      expect.arrayContaining(['riseUser', 'gcse_scores', 'gcse_mastery_v1', 'gcse_chapter_history-1'])
     )
   })
 
@@ -197,7 +197,7 @@ describe('syncProgressForUser', () => {
   it('restores cloud progress locally when local is fresh/empty', async () => {
     cloudDoc = {
       version: 1, updatedAt: Date.now(),
-      data: { gcse_scores: [{ pct: 88 }], 'gcse_module_history-1': { screen: 9 } },
+      data: { gcse_scores: [{ pct: 88 }], 'gcse_chapter_history-1': { screen: 9 } },
     }
     const result = await syncProgressForUser(GOOGLE_USER)
     expect(result.action).toBe('apply')
@@ -206,20 +206,20 @@ describe('syncProgressForUser', () => {
 
   it('merges divergent local and cloud progress — both sides survive, and the merge is idempotent on repeat', async () => {
     store['gcse_scores'] = [{ date: '2026-07-05', subject: 'History', pct: 60 }]
-    store['gcse_module_local-only'] = { screen: 2 }
+    store['gcse_chapter_local-only'] = { screen: 2 }
     cloudDoc = {
       version: 1, updatedAt: Date.now() - 1000,
       data: {
         gcse_scores: [{ date: '2026-07-01', subject: 'Maths', pct: 90 }],
-        'gcse_module_cloud-only': { screen: 5 },
+        'gcse_chapter_cloud-only': { screen: 5 },
       },
     }
     const first = await syncProgressForUser(GOOGLE_USER)
     expect(first.action).toBe('merge')
     expect(store['gcse_scores']).toHaveLength(2)
-    expect(store['gcse_module_local-only']).toEqual({ screen: 2 })
-    expect(store['gcse_module_cloud-only']).toEqual({ screen: 5 })
-    expect(cloudDoc.data['gcse_module_local-only']).toEqual({ screen: 2 })
+    expect(store['gcse_chapter_local-only']).toEqual({ screen: 2 })
+    expect(store['gcse_chapter_cloud-only']).toEqual({ screen: 5 })
+    expect(cloudDoc.data['gcse_chapter_local-only']).toEqual({ screen: 2 })
     expect(cloudDoc.data.gcse_scores).toHaveLength(2)
 
     // Repeating the sync with nothing new to contribute writes nothing else
@@ -245,22 +245,22 @@ describe('backupProgressForUser', () => {
     seedMeaningfulLocal()
     const result = await backupProgressForUser(GOOGLE_USER)
     expect(result.action).toBe('upload')
-    expect(cloudDoc.data['gcse_module_history-1']).toBeDefined()
+    expect(cloudDoc.data['gcse_chapter_history-1']).toBeDefined()
   })
 
   it('merges rather than clobbers when another device already pushed cloud-only progress since this device last synced', async () => {
     seedMeaningfulLocal()
     cloudDoc = {
       version: 1, updatedAt: Date.now(),
-      data: { 'gcse_module_from-other-device': { screen: 7, completed: true } },
+      data: { 'gcse_chapter_from-other-device': { screen: 7, completed: true } },
     }
     const result = await backupProgressForUser(GOOGLE_USER)
     expect(result.action).toBe('merge')
     // This device's own progress was uploaded...
-    expect(cloudDoc.data['gcse_module_history-1']).toBeDefined()
+    expect(cloudDoc.data['gcse_chapter_history-1']).toBeDefined()
     // ...and the other device's cloud-only progress was not clobbered.
-    expect(cloudDoc.data['gcse_module_from-other-device']).toEqual({ screen: 7, completed: true })
-    expect(store['gcse_module_from-other-device']).toEqual({ screen: 7, completed: true })
+    expect(cloudDoc.data['gcse_chapter_from-other-device']).toEqual({ screen: 7, completed: true })
+    expect(store['gcse_chapter_from-other-device']).toEqual({ screen: 7, completed: true })
   })
 
   it('does nothing for guests', async () => {
@@ -276,7 +276,7 @@ describe('size budget — honest oversize handling', () => {
     seedMeaningfulLocal()
     // Core state (a module) that compaction must never trim — keeps the
     // snapshot over the hard budget no matter what.
-    store['gcse_module_huge'] = { screen: 1, note: 'x'.repeat(1_000_000) }
+    store['gcse_chapter_huge'] = { screen: 1, note: 'x'.repeat(1_000_000) }
 
     const res = await syncProgressForUser(GOOGLE_USER)
     expect(res.action).toBe('blocked')
@@ -284,7 +284,7 @@ describe('size budget — honest oversize handling', () => {
     expect(firestoreCalls.setDocs).toHaveLength(0) // nothing was uploaded
     expect(cloudDoc).toBeNull()
     // Local progress is untouched and still there.
-    expect(store['gcse_module_huge'].screen).toBe(1)
+    expect(store['gcse_chapter_huge'].screen).toBe(1)
   })
 
   it('compacts an oversized-but-trimmable snapshot and uploads within budget', async () => {

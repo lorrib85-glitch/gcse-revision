@@ -39,8 +39,6 @@ describe('Legacy content imports are shrink-only', () => {
         'src/chapters.js',
         'src/app/LegacyApp.jsx',
         'src/components/layout/ChapterCompleteScreen.jsx',
-        'src/features/planner/dailyPlanner.js',
-        'src/features/subjects/Subjects.jsx',
       ],
     )
 
@@ -69,7 +67,6 @@ describe('Legacy content imports are shrink-only', () => {
         'src/data/contentSupport/historyMedicineEpisode01.js',
         'src/data/learningGraph/concepts/historyMedicine.js',
         'src/features/quickfire/logic/convertBankQuestion.js',
-        'src/features/subjects/Subjects.jsx',
         'src/unifiedWeaknessTracker.js',
       ],
     )
@@ -83,10 +80,7 @@ describe('Legacy content imports are shrink-only', () => {
   it('prevents new callers from importing the legacy parent-module alias', () => {
     const violators = importViolators(
       /import\s*\{[^}]*\bMODULE_GROUPS\b[^}]*\}\s*from\s*['"][^'"]*progress\.js['"]/s,
-      [
-        'src/components/layout/ModulePlayer.jsx',
-        'src/features/planner/dailyPlanner.js',
-      ],
+      [],
     )
 
     expect(
@@ -98,15 +92,23 @@ describe('Legacy content imports are shrink-only', () => {
   it('prevents new callers from importing legacy chapter-discovery names', () => {
     const violators = importViolators(
       /import\s*\{[^}]*(getContinueModule|getInProgressModule)[^}]*\}\s*from\s*['"][^'"]*progress\.js['"]/s,
-      [
-        'src/app/LegacyApp.jsx',
-        'src/features/subjects/Subjects.jsx',
-      ],
+      [],
     )
 
     expect(
       violators,
       `New code must use getContinueChapter/getInProgressChapter: ${violators.join(', ')}`,
+    ).toEqual([])
+  })
+  it('prevents new source callers from importing legacy chapter-progress names', () => {
+    const violators = importViolators(
+      /import\s*\{[^}]*(getModuleState|saveModuleState|getModulePct)[^}]*\}\s*from\s*['"][^'"]*progress\.js['"]/s,
+      [],
+    )
+
+    expect(
+      violators,
+      `New code must use getChapterState/saveChapterState/getChapterPct: ${violators.join(', ')}`,
     ).toEqual([])
   })
 })

@@ -104,12 +104,12 @@ describe('Journey — two accounts on one browser', () => {
     await withMockedCloud(async ({ authFlow, backupProgressForUser, getJson, GUEST_SCOPE, setActiveScope }) => {
       const userA = { loggedIn: true, provider: 'google', uid: 'uid-A', name: 'Alice' }
       const userB = { loggedIn: true, provider: 'google', uid: 'uid-B', name: 'Bob' }
-      const { saveModuleState, getModuleState, recordScore } = await import('../../../src/progress.js')
+      const { saveChapterState, getChapterState, recordScore } = await import('../../../src/progress.js')
 
       // A signs in and completes work.
       authFlow.signInGoogle(userA)
       await authFlow.reconcile(userA, null)
-      saveModuleState('history-medicine-black-death', { screen: 6, completed: true })
+      saveChapterState('history-medicine-black-death', { screen: 6, completed: true })
       recordScore({ subject: 'History', earned: 9, possible: 10, source: 'module' })
       await backupProgressForUser(userA)
 
@@ -120,11 +120,11 @@ describe('Journey — two accounts on one browser', () => {
       // B signs in — B must not see A's progress.
       authFlow.signInGoogle(userB)
       await authFlow.reconcile(userB, null)
-      expect(getModuleState('history-medicine-black-death')).toEqual({}) // B sees nothing of A's
+      expect(getChapterState('history-medicine-black-death')).toEqual({}) // B sees nothing of A's
       expect(getJson('gcse_scores', [])).toEqual([]) // B's scores namespace is empty
 
       // B creates separate progress.
-      saveModuleState('bio_building_life', { screen: 3 })
+      saveChapterState('bio_building_life', { screen: 3 })
       recordScore({ subject: 'Biology', earned: 5, possible: 10, source: 'module' })
       await backupProgressForUser(userB)
 
@@ -134,9 +134,9 @@ describe('Journey — two accounts on one browser', () => {
       await authFlow.reconcile(userA, null)
 
       // A's original progress remains intact...
-      expect(getModuleState('history-medicine-black-death')).toEqual({ screen: 6, completed: true })
+      expect(getChapterState('history-medicine-black-death')).toEqual({ screen: 6, completed: true })
       // ...and B's progress is absent from A's view.
-      expect(getModuleState('bio_building_life')).toEqual({})
+      expect(getChapterState('bio_building_life')).toEqual({})
     })
   })
 })
@@ -144,11 +144,11 @@ describe('Journey — two accounts on one browser', () => {
 describe('Journey — guest claims progress', () => {
   it('guest + account A cloud progress merge once; a later account B does not receive the claimed guest progress', async () => {
     await withMockedCloud(async ({ authFlow, claimableGuestProgress, GUEST_SCOPE, setActiveScope, getJson }) => {
-      const { saveModuleState, recordScore, getModuleState } = await import('../../../src/progress.js')
+      const { saveChapterState, recordScore, getChapterState } = await import('../../../src/progress.js')
 
       // Guest completes learning.
       setActiveScope(GUEST_SCOPE)
-      saveModuleState('sci_bio_w1', { screen: 4, completed: false })
+      saveChapterState('sci_bio_w1', { screen: 4, completed: false })
       recordScore({ subject: 'Biology', earned: 6, possible: 10, source: 'module' })
 
       const userA = { loggedIn: true, provider: 'google', uid: 'uid-guest-claims-A', name: 'Alice' }
@@ -162,21 +162,21 @@ describe('Journey — guest claims progress', () => {
 
       // The migration is marked complete: guest namespace is now empty...
       setActiveScope(GUEST_SCOPE)
-      expect(getJson('gcse_module_sci_bio_w1', null)).toBeNull()
+      expect(getJson('gcse_chapter_sci_bio_w1', null)).toBeNull()
       // ...and it's no longer offered as claimable to anyone.
       expect(claimableGuestProgress({ provider: 'google', uid: 'uid-guest-claims-A' })).toBe(false)
       expect(claimableGuestProgress({ provider: 'google', uid: 'someone-else' })).toBe(false)
 
       // A's own namespace really does have the claimed progress.
       setActiveScope('uid:uid-guest-claims-A')
-      expect(getModuleState('sci_bio_w1')).toEqual({ screen: 4, completed: false })
+      expect(getChapterState('sci_bio_w1')).toEqual({ screen: 4, completed: false })
 
       // Account B later signs in — B does not receive the previously claimed guest progress.
       const userB = { loggedIn: true, provider: 'google', uid: 'uid-guest-claims-B', name: 'Bob' }
       const { pendingClaimUid: bClaim } = authFlow.signInGoogle(userB)
       expect(bClaim).toBeNull() // nothing left to claim
       await authFlow.reconcile(userB, bClaim)
-      expect(getModuleState('sci_bio_w1')).toEqual({})
+      expect(getChapterState('sci_bio_w1')).toEqual({})
     })
   })
 })
@@ -184,11 +184,11 @@ describe('Journey — guest claims progress', () => {
 describe('Journey — failed guest claim', () => {
   it('a failed reconcile leaves guest progress recoverable; retry succeeds and migrates exactly once', async () => {
     await withMockedCloud(async ({ authFlow, failNextSetDoc, GUEST_SCOPE, setActiveScope, getJson }) => {
-      const { saveModuleState, getModuleState } = await import('../../../src/progress.js')
+      const { saveChapterState, getChapterState } = await import('../../../src/progress.js')
 
       // Guest has meaningful progress.
       setActiveScope(GUEST_SCOPE)
-      saveModuleState('history-medicine-cancer', { screen: 9 })
+      saveChapterState('history-medicine-cancer', { screen: 9 })
 
       const user = { loggedIn: true, provider: 'google', uid: 'uid-failed-claim', name: 'Sam' }
       const { pendingClaimUid } = authFlow.signInGoogle(user)
@@ -201,18 +201,18 @@ describe('Journey — failed guest claim', () => {
 
       // Guest progress remains recoverable — not deleted by the failed attempt.
       setActiveScope(GUEST_SCOPE)
-      expect(getJson('gcse_module_history-medicine-cancer', null)).toEqual({ screen: 9 })
+      expect(getJson('gcse_chapter_history-medicine-cancer', null)).toEqual({ screen: 9 })
 
       // Retry succeeds.
       setActiveScope('uid:uid-failed-claim')
       const { ok: retryOk } = await authFlow.reconcile(user, pendingClaimUid)
       expect(retryOk).toBe(true)
-      expect(getModuleState('history-medicine-cancer')).toEqual({ screen: 9 })
+      expect(getChapterState('history-medicine-cancer')).toEqual({ screen: 9 })
 
       // Progress migrates once only — the guest namespace is now empty, so a
       // third reconcile attempt has nothing left to (re-)claim.
       setActiveScope(GUEST_SCOPE)
-      expect(getJson('gcse_module_history-medicine-cancer', null)).toBeNull()
+      expect(getJson('gcse_chapter_history-medicine-cancer', null)).toBeNull()
     })
   })
 })
@@ -333,11 +333,11 @@ describe('Journey — account switch with pending work', () => {
     await withMockedCloud(async ({ authFlow, getJsonForScope, getCloudDocForUid }) => {
       const userA = { loggedIn: true, provider: 'google', uid: 'uid-pending-A', name: 'Alice' }
       const userB = { loggedIn: true, provider: 'google', uid: 'uid-pending-B', name: 'Bob' }
-      const { saveModuleState } = await import('../../../src/progress.js')
+      const { saveChapterState } = await import('../../../src/progress.js')
       const { backupProgressForUser } = await import('../../../src/data/progressSync/progressSync.js')
 
       authFlow.signInGoogle(userA)
-      saveModuleState('history-medicine-jenner-vaccination', { screen: 5 })
+      saveChapterState('history-medicine-jenner-vaccination', { screen: 5 })
 
       // A's pending cloud write is in flight (not yet awaited) when the
       // account switch happens — this is exactly the race the scope-pinning
@@ -352,13 +352,13 @@ describe('Journey — account switch with pending work', () => {
       await pendingWrite // now let A's stale write actually resolve
 
       // B's namespace was never touched by A's pending write.
-      expect(getJsonForScope('uid:uid-pending-B', 'gcse_module_history-medicine-jenner-vaccination', null)).toBeNull()
+      expect(getJsonForScope('uid:uid-pending-B', 'gcse_chapter_history-medicine-jenner-vaccination', null)).toBeNull()
       // A's own namespace and cloud doc did receive it — the write wasn't lost, just correctly scoped.
-      expect(getJsonForScope('uid:uid-pending-A', 'gcse_module_history-medicine-jenner-vaccination', null)).toEqual({ screen: 5 })
+      expect(getJsonForScope('uid:uid-pending-A', 'gcse_chapter_history-medicine-jenner-vaccination', null)).toEqual({ screen: 5 })
       const cloudA = getCloudDocForUid('uid-pending-A')
-      expect(cloudA?.data?.['gcse_module_history-medicine-jenner-vaccination']).toEqual({ screen: 5 })
+      expect(cloudA?.data?.['gcse_chapter_history-medicine-jenner-vaccination']).toEqual({ screen: 5 })
       const cloudB = getCloudDocForUid('uid-pending-B')
-      expect(cloudB?.data?.['gcse_module_history-medicine-jenner-vaccination']).toBeUndefined()
+      expect(cloudB?.data?.['gcse_chapter_history-medicine-jenner-vaccination']).toBeUndefined()
     })
   })
 })

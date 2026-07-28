@@ -85,7 +85,7 @@ describe('Journey — snapshot near the safety threshold', () => {
   it('governed history is compacted so core progress is unchanged and the snapshot becomes safe to sync', () => {
     // Core learner state that must never be touched.
     setJson('gcse_progress', { streak: 15, bestStreak: 22, lastActivityDate: '2026-07-10' })
-    setJson('gcse_module_history-1', { screen: 9, completed: true })
+    setJson('gcse_chapter_history-1', { screen: 9, completed: true })
     setJson('gcse_mastery_v1', { version: 1, concepts: { 'history:medicine:galen': { attempts: 8, correct: 6, lastSeen: 8 } } })
 
     // A large QuickFire answer log pushes the snapshot over the safety budget.
@@ -109,8 +109,8 @@ describe('Journey — snapshot near the safety threshold', () => {
 
     // Core progress is byte-for-byte unchanged.
     expect(compacted.data.gcse_progress).toEqual(snapshot.data.gcse_progress)
-    expect(compacted.data.gcse_module_history1 ?? compacted.data['gcse_module_history-1'])
-      .toEqual(snapshot.data['gcse_module_history-1'])
+    expect(compacted.data.gcse_chapter_history1 ?? compacted.data['gcse_chapter_history-1'])
+      .toEqual(snapshot.data['gcse_chapter_history-1'])
     expect(compacted.data.gcse_mastery_v1).toEqual(snapshot.data.gcse_mastery_v1)
 
     // The QuickFire total survived the compaction (folded into the baseline).

@@ -3,10 +3,10 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
-import { MODULES, getModuleAvailability, MODULE_AVAILABILITY } from '../../modules.js'
-import { getModuleState as safeGetModuleState, getModulePct as modPct, getContinueModule } from '../../progress.js'
+import { CHAPTERS, getChapterAvailability, CHAPTER_AVAILABILITY } from '../../chapters.js'
+import { getChapterState as safeGetChapterState, getChapterPct as chapterPct, getContinueChapter } from '../../progress.js'
 import { getWeakestSubject, getBiggestWin } from '../../unifiedWeaknessTracker.js'
-import { findTaggedScreen } from '../../data/tagModuleMap.js'
+import { findTaggedChapterScreen } from '../../data/tagChapterMap.js'
 import { StreakChip } from '../home/StreakChip.jsx'
 import BackButton from '../../components/core/BackButton.jsx'
 import BottomNav from '../../app/BottomNav.jsx'
@@ -116,13 +116,13 @@ const ENGLISH_SERIES = [
 ]
 
 function getSubjectModuleList(subjectName) {
-  const real = MODULES.filter(m => m.subject === subjectName)
+  const real = CHAPTERS.filter(m => m.subject === subjectName)
   const cs = (arr) => arr.map(x => ({ ...x, comingSoon: true }))
   switch (subjectName) {
     case 'History':
       return real
     case 'English': {
-      const macbethCh1 = MODULES.find(m => m.id === 'english-macbeth-power-ambition')
+      const macbethCh1 = CHAPTERS.find(m => m.id === 'english-macbeth-power-ambition')
       return [
         macbethCh1 ? { ...macbethCh1, series: 'macbeth', number: 1 } : null,
         { id: 'cs_macbeth_2', title: 'Out, damned spot',                  subtitle: 'Guilt and consequence',          comingSoon: true, series: 'macbeth',   number: 2 },
@@ -170,10 +170,10 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
     if (mod.comingSoon) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
     // Canonical availability: hidden stubs drop out entirely, coming-soon stubs
     // show but never open (guarded in handleCardClick / openModulePlayer).
-    const availability = getModuleAvailability(mod)
-    if (availability === MODULE_AVAILABILITY.HIDDEN) return null
-    if (availability !== MODULE_AVAILABILITY.AVAILABLE) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
-    const s = safeGetModuleState(mod.id)
+    const availability = getChapterAvailability(mod)
+    if (availability === CHAPTER_AVAILABILITY.HIDDEN) return null
+    if (availability !== CHAPTER_AVAILABILITY.AVAILABLE) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
+    const s = safeGetChapterState(mod.id)
     const screen = s.screen || 0
     const hasStarted = (s.hookDone && s.wylDone) || screen > 0
     const total = mod.screenCount || 1
@@ -215,7 +215,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
 
   function handleCardClick(item) {
     if (item.status === 'coming_soon') return
-    const realMod = MODULES.find(m => m.id === item.id)
+    const realMod = CHAPTERS.find(m => m.id === item.id)
     if (realMod && onOpenModule) onOpenModule(realMod)
   }
 
@@ -366,7 +366,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
       ) : (
       <div style={{ padding: '20px 24px 0' }}>
         {/* Owner-only entry to the Component Review Lab (personal inspection
-            tool). Deliberately NOT a MODULES entry — it opens the lab full-page
+            tool). Deliberately NOT a CHAPTERS entry — it opens the lab full-page
             via the ?componentReview flag rather than routing through
             ModulePlayer, so it needs no content loader and touches no learner
             data. History-only. */}
@@ -648,23 +648,23 @@ export default function ModulesTab({ onOpenModule }) {
     return <SubjectBrowser subjectName={subjectBrowser} onBack={() => setSubjectBrowser(null)} onOpenModule={onOpenModule} />
   }
 
-  const continueModule = getContinueModule()
-  const continuePct = modPct(continueModule)
+  const continueModule = getContinueChapter()
+  const continuePct = chapterPct(continueModule)
   const continueHeaderImage = continueModule.headerImage || MODULE_HEADER_IMAGES[continueModule.id] || '/images/history/_shared/medicine-through-time.webp'
 
   const biggestWinRaw = getBiggestWin()
-  const biggestWinModule = biggestWinRaw ? MODULES.find(m => m.id === biggestWinRaw.moduleId) : null
+  const biggestWinModule = biggestWinRaw ? CHAPTERS.find(m => m.id === biggestWinRaw.moduleId) : null
   const biggestWin = biggestWinModule ? {
     ...biggestWinRaw,
     mod: biggestWinModule,
     headerImage: biggestWinModule.headerImage || MODULE_HEADER_IMAGES[biggestWinModule.id],
-    startScreenIndex: findTaggedScreen(biggestWinModule, biggestWinRaw.conceptTag),
+    startScreenIndex: findTaggedChapterScreen(biggestWinModule, biggestWinRaw.conceptTag),
   } : null
 
   const weakestSubject = getWeakestSubject()?.subject || null
   const subjectThumbs = SUBJECT_NAMES.map(name => {
-    const mods = MODULES.filter(m => m.subject === name)
-    const pct = mods.length ? Math.round(mods.reduce((sum, m) => sum + modPct(m), 0) / mods.length) : 0
+    const mods = CHAPTERS.filter(m => m.subject === name)
+    const pct = mods.length ? Math.round(mods.reduce((sum, m) => sum + chapterPct(m), 0) / mods.length) : 0
     return { name, image: subjectImages[name], pct, isWeakest: name === weakestSubject }
   })
 

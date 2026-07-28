@@ -25,10 +25,17 @@
 // in flight across an account switch: a stale promise from a signed-out
 // user's reconcile call keeps reading/writing that user's own namespace,
 // never whatever scope becomes active while it was awaiting Firestore.
-import { getJsonForScope, setJsonForScope, listKeysForScope, getRawJson, scopeForUser, GUEST_SCOPE } from '../../lib/storage.js'
+import { getJsonForScope, setJsonForScope, removeKeyForScope, listKeysForScope, getRawJson, scopeForUser, GUEST_SCOPE } from '../../lib/storage.js'
 import { firebaseEnabled, app } from '../../auth/firebaseClient.js'
-import { mergeProgressData, progressDataEqual } from './progressMerge.js'
+import { mergeProgressData, progressDataEqual } from './canonicalProgressMerge.js'
 import { compactSnapshotForBudget } from './snapshotBudget.js'
+import {
+  CHAPTER_PROGRESS_KEY_PREFIX,
+  LEGACY_CHAPTER_PROGRESS_KEY_PREFIX,
+  canonicalizeChapterProgressData,
+  chapterProgressKeyInfo,
+  hasNonCanonicalChapterProgressKeys,
+} from '../chapterProgress.js'
 
 export const SNAPSHOT_VERSION = 1
 export const SYNC_META_KEY = 'gcse_sync_meta'
@@ -55,7 +62,7 @@ export const STATIC_PROGRESS_KEYS = [
   'gcse_todays_plan_revisit',
 ]
 
-export const DYNAMIC_KEY_PREFIXES = ['gcse_module_']
+export const DYNAMIC_KEY_PREFIXES = [CHAPTER_PROGRESS_KEY_PREFIX, LEGACY_CHAPTER_PROGRESS_KEY_PREFIX]
 
 // ─── Snapshot collect / apply (pure local storage side) ──────────────────────
 // Both take an explicit `scope` — the account namespace to read/write —
@@ -64,40 +71,71 @@ export const DYNAMIC_KEY_PREFIXES = ['gcse_module_']
 // pass a scope captured at the start of their operation.
 
 export function collectLocalProgressSnapshot(scope = GUEST_SCOPE) {
-  const data = {}
+  const rawData = {}
   const keys = [
     ...STATIC_PROGRESS_KEYS,
     ...DYNAMIC_KEY_PREFIXES.flatMap(prefix => listKeysForScope(scope, prefix)),
   ]
   for (const key of keys) {
     const value = getJsonForScope(scope, key, undefined)
-    if (value !== undefined) data[key] = value
+    if (value !== undefined) rawData[key] = value
   }
+
+  const data = canonicalizeChapterProgressData(rawData)
+
+  // Migrate the scoped local copy opportunistically. A failed canonical write
+  // never deletes its fallback, while the in-memory snapshot can still be
+  // backed up safely under canonical keys.
+  for (const [targetKey, value] of Object.entries(data)) {
+    const sourceKeys = Object.keys(rawData).filter(key => {
+      const info = chapterProgressKeyInfo(key)
+      return info?.targetKey === targetKey && key !== targetKey
+    })
+    if (sourceKeys.length === 0) continue
+    if (setJsonForScope(scope, targetKey, value)) {
+      for (const key of sourceKeys) removeKeyForScope(scope, key)
+    }
+  }
+
   return { version: SNAPSHOT_VERSION, updatedAt: Date.now(), data }
 }
 
 // Writes only the keys present in the snapshot — never deletes or renames
 // anything else in that scope's local storage.
 export function applyProgressSnapshot(snapshot, { currentUid, scope = GUEST_SCOPE } = {}) {
-  const data = snapshot?.data
-  if (!data || typeof data !== 'object') return 0
+  const rawData = snapshot?.data
+  if (!rawData || typeof rawData !== 'object') return 0
+  const data = canonicalizeChapterProgressData(rawData)
   let applied = 0
+
   for (const [key, value] of Object.entries(data)) {
     if (key === SYNC_META_KEY) continue
     if (key === 'riseUser' && currentUid) {
       // riseUser is the single global identity pointer (never scoped — see
       // storage.js). Two guards, both required: never adopt a snapshot
       // profile for a different account, and never overwrite whichever
-      // account is *actually* signed in right now on this device if it's
-      // no longer this reconcile's own uid (a stale reconcile from an
-      // account that has since signed out/switched must not touch it).
+      // account is actually signed in now if a stale reconcile completes.
       if (value?.uid && value.uid !== currentUid) continue
       const activeRiseUser = getRawJson('riseUser', null)
       if (activeRiseUser?.uid && activeRiseUser.uid !== currentUid) continue
     }
-    setJsonForScope(scope, key, value)
+
+    const written = setJsonForScope(scope, key, value)
+    if (!written) continue
     applied++
+
+    const info = chapterProgressKeyInfo(key)
+    if (!info) continue
+    for (const prefix of DYNAMIC_KEY_PREFIXES) {
+      for (const sourceKey of listKeysForScope(scope, prefix)) {
+        const sourceInfo = chapterProgressKeyInfo(sourceKey)
+        if (sourceInfo?.targetKey === key && sourceKey !== key) {
+          removeKeyForScope(scope, sourceKey)
+        }
+      }
+    }
   }
+
   return applied
 }
 
@@ -200,11 +238,12 @@ async function reconcile(user) {
 
   const cloud = await loadCloudProgress(user.uid)
   const local = collectLocalProgressSnapshot(scope)
+  const cloudNeedsChapterMigration = Boolean(cloud && hasNonCanonicalChapterProgressKeys(cloud.data))
   // Reuse the same pure decision decideSyncAction exposes for tests, so the
   // rule that's independently unit-tested is exactly the rule that runs here.
   const action = decideSyncAction({ cloud, local })
 
-  if (action === 'none') {
+  if (action === 'none' && !cloudNeedsChapterMigration) {
     setSyncMeta(scope, { lastSyncedAt: Math.max(local.updatedAt || 0, cloud?.updatedAt || 0) })
     return { action }
   }
@@ -222,10 +261,10 @@ async function reconcile(user) {
   // lossless for core state; persist it locally too when it changes anything.
   const budget = compactSnapshotForBudget(mergedRaw)
   const merged = budget.snapshot
-  if (action === 'apply' || action === 'merge' || budget.compacted) {
+  if (action === 'apply' || action === 'merge' || cloudNeedsChapterMigration || budget.compacted) {
     applyProgressSnapshot(merged, { currentUid: user.uid, scope })
   }
-  if (action === 'upload' || action === 'merge') {
+  if (action === 'upload' || action === 'merge' || cloudNeedsChapterMigration) {
     if (!budget.withinBudget) {
       setSyncMeta(scope, { lastBlockedAt: Date.now() })
       return { action: 'blocked', reason: 'over-budget' }

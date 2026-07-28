@@ -1,6 +1,11 @@
 import { CHAPTERS, isChapterAvailable } from './chapters.js'
 import { MODULES } from './data/modules.js'
 import { getJson, getObject, getArray, setJson, saveCritical, removeKey } from './lib/storage.js'
+import {
+  chapterProgressKey,
+  chapterProgressSourceKeys,
+  mergeChapterState,
+} from './data/chapterProgress.js'
 
 // Temporary compatibility export. Parent modules are now canonically owned by
 // src/data/modules.js; existing callers may continue importing MODULE_GROUPS
@@ -163,25 +168,74 @@ export function getAllConfidenceRatings() {
   return readArr(CONFIDENCE_KEY)
 }
 
-// ─── Legacy per-chapter screen progress names ─────────────────────
-// These functions and gcse_module_* keys are intentionally unchanged until
-// Phase 3 introduces tested chapter-key migration.
+// ─── Per-chapter screen progress ───────────────────────────────────
+// Canonical state lives under gcse_chapter_<id>. Reads fold any older
+// gcse_module_<id> or legacy-id copies forward without losing monotonic state.
 
-export function getModuleState(moduleId) {
-  return getObject('gcse_module_' + moduleId)
+function readChapterSources(chapterId) {
+  const canonicalKey = chapterProgressKey(chapterId)
+  const found = []
+  let state = null
+
+  for (const key of chapterProgressSourceKeys(chapterId)) {
+    const value = getJson(key, undefined)
+    if (value === undefined) continue
+    found.push(key)
+    // The canonical copy is read first and remains primary for unknown fields.
+    state = mergeChapterState(state, value)
+  }
+
+  return { canonicalKey, found, state: state || {} }
 }
 
-export function saveModuleState(moduleId, state) {
-  return saveCritical('gcse_module_' + moduleId, state)
+function removeMigratedChapterSources(canonicalKey, sourceKeys) {
+  for (const key of sourceKeys) {
+    if (key !== canonicalKey) removeKey(key)
+  }
 }
 
-export function getModulePct(mod) {
-  if (!mod || !mod.screenCount) return 0
-  const s = getModuleState(mod.id)
-  if (s.completed) return 100
-  const screen = s.screen || 0
-  return Math.min(100, Math.round((screen / mod.screenCount) * 100))
+export function getChapterState(chapterId) {
+  const { canonicalKey, found, state } = readChapterSources(chapterId)
+  const needsMigration = found.some(key => key !== canonicalKey)
+
+  if (needsMigration) {
+    const migrated = setJson(canonicalKey, state)
+    if (migrated) removeMigratedChapterSources(canonicalKey, found)
+  }
+
+  return state
 }
+
+export function saveChapterState(chapterId, state) {
+  const { canonicalKey, found } = readChapterSources(chapterId)
+  // Do not merge the existing canonical copy into a normal save: reviewing a
+  // completed chapter may deliberately move its resume screen backwards while
+  // retaining completed: true. Only fold still-unmigrated fallback copies in.
+  const fallbackKeys = found.filter(key => key !== canonicalKey)
+  let nextState = state
+  for (const key of fallbackKeys) {
+    nextState = mergeChapterState(nextState, getJson(key, undefined))
+  }
+
+  const saved = saveCritical(canonicalKey, nextState)
+  if (saved) removeMigratedChapterSources(canonicalKey, fallbackKeys)
+  return saved
+}
+
+export function getChapterPct(chapter) {
+  if (!chapter || !chapter.screenCount) return 0
+  const state = getChapterState(chapter.id)
+  if (state.completed) return 100
+  const screen = state.screen || 0
+  return Math.min(100, Math.round((screen / chapter.screenCount) * 100))
+}
+
+// Temporary compatibility aliases. They execute the canonical chapter-key
+// implementation, so even untouched Phase 4 runtime callers now write only
+// gcse_chapter_* keys.
+export const getModuleState = getChapterState
+export const saveModuleState = saveChapterState
+export const getModulePct = getChapterPct
 
 // ─── Chapter discovery ─────────────────────────────────────────────
 // The canonical parent-module catalogue determines chapter order. Progress
@@ -194,12 +248,12 @@ export function getContinueChapter() {
     .filter(chapter => chapter && isChapterAvailable(chapter))
 
   const inProgress = ordered.find(chapter => {
-    const pct = getModulePct(chapter)
+    const pct = getChapterPct(chapter)
     return pct > 0 && pct < 100
   })
   if (inProgress) return inProgress
 
-  const unvisited = ordered.find(chapter => getModulePct(chapter) === 0)
+  const unvisited = ordered.find(chapter => getChapterPct(chapter) === 0)
   if (unvisited) return unvisited
 
   return ordered[0] || CHAPTERS.find(isChapterAvailable) || CHAPTERS[0]
@@ -207,7 +261,7 @@ export function getContinueChapter() {
 
 export function getInProgressChapter() {
   const chapter = getContinueChapter()
-  const pct = getModulePct(chapter)
+  const pct = getChapterPct(chapter)
   return (pct > 0 && pct < 100) ? chapter : null
 }
 
@@ -242,27 +296,3 @@ export function getWeeklyTrend() {
   return { thisAvg, prevAvg, points, trendNote }
 }
 
-// ─── Legacy module ID migration shim ───────────────────────────────
-// One-shot storage migration: copies progress from old gcse_module_<legacy>
-// keys to new gcse_module_<canonical> keys. Safe to run on every page load:
-// - Only copies if old key has data AND new key has no data (no overwrite).
-// - Always removes old key once processed (idempotent: second run is a no-op).
-// - gcse_confidence is read-only in the current codebase; no migration needed.
-const _LEGACY_MODULE_ID_MAP = {
-  mod2: 'history-medicine-renaissance-medicine',
-  mod3: 'history-medicine-surgery-anaesthetics',
-  mod6: 'history-medicine-surgery-revolution',
-  mod7: 'history-medicine-accidental-miracle',
-  mod8: 'history-medicine-modern-medicine',
-  mod9: 'history-medicine-cancer',
-}
-;(function _migrateLegacyModuleIds() {
-  for (const [oldId, newId] of Object.entries(_LEGACY_MODULE_ID_MAP)) {
-    const oldKey = 'gcse_module_' + oldId
-    const newKey = 'gcse_module_' + newId
-    const oldVal = getJson(oldKey, null)
-    if (oldVal === null) continue
-    if (getJson(newKey, null) === null) setJson(newKey, oldVal)
-    removeKey(oldKey)
-  }
-})()

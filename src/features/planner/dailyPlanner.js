@@ -15,7 +15,7 @@
 //   scores:           Array<{ date, subject, pct, earned, possible, source }>,
 //   wrongAnswers:     Array<{ date, subject, topic, marks, source }>,
 //   correctAnswers:   Array<{ date, subject, topic, source }>,
-//   moduleStates:     { [moduleId]: { screen, completed, hookDone, wylDone, timestamp } },
+//   chapterStates:    { [chapterId]: { screen, completed, hookDone, wylDone, timestamp } },
 //   rotationHistory:  { [dateStr]: { main: string, secondary: string|null } },
 //   progress:         { streak, lastActivityDate, bestStreak },
 //   weakPoints:       WeakPoint[],
@@ -66,8 +66,9 @@
 //   nextReviewAt:      string | null,
 // }
 
-import { MODULES, isModuleAvailable } from '../../modules.js'
-import { MODULE_GROUPS } from '../../progress.js'
+import { CHAPTERS, isChapterAvailable } from '../../chapters.js'
+import { MODULES as PARENT_MODULES } from '../../data/modules.js'
+import { getChapterState } from '../../progress.js'
 import { getArray, getObject, setJson, saveCritical } from '../../lib/storage.js'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -240,12 +241,12 @@ export function loadLearningState() {
   const weakPoints      = getArray(WEAK_POINTS_KEY)
   const paperResults    = getArray(PAPER_RESULTS_KEY)
 
-  const moduleStates = {}
-  MODULES.forEach(m => {
-    moduleStates[m.id] = getObject('gcse_module_' + m.id)
+  const chapterStates = {}
+  CHAPTERS.forEach(chapter => {
+    chapterStates[chapter.id] = getChapterState(chapter.id)
   })
 
-  return { scores, wrongAnswers, correctAnswers, moduleStates, rotationHistory, progress, weakPoints, paperResults }
+  return { scores, wrongAnswers, correctAnswers, chapterStates, rotationHistory, progress, weakPoints, paperResults }
 }
 
 // ─── loadUserProfile ──────────────────────────────────────────────────────────
@@ -309,37 +310,37 @@ function daysSinceStudied(subject, learningState, date) {
 }
 
 function hasInProgressModule(subject, learningState) {
-  const group = MODULE_GROUPS.find(g => g.subject === subject)
+  const group = PARENT_MODULES.find(g => g.subject === subject)
   if (!group) return false
   return group.chapterIds.some(id => {
-    const state = learningState.moduleStates[id] || {}
+    const state = learningState.chapterStates[id] || {}
     return state.screen > 0 && !state.completed
   })
 }
 
 function getInProgressModuleForSubject(subject, learningState) {
-  const group = MODULE_GROUPS.find(g => g.subject === subject)
+  const group = PARENT_MODULES.find(g => g.subject === subject)
   if (!group) return null
   for (const id of group.chapterIds) {
-    const state = learningState.moduleStates[id] || {}
+    const state = learningState.chapterStates[id] || {}
     if (!(state.screen > 0 && !state.completed)) continue
-    const mod = MODULES.find(m => m.id === id)
+    const mod = CHAPTERS.find(m => m.id === id)
     // Never surface an unbuilt stub as a plan task, even if stale state exists.
-    if (mod && isModuleAvailable(mod)) return mod
+    if (mod && isChapterAvailable(mod)) return mod
   }
   return null
 }
 
 function getNextNewModuleForSubject(subject, learningState) {
-  const group = MODULE_GROUPS.find(g => g.subject === subject)
+  const group = PARENT_MODULES.find(g => g.subject === subject)
   if (!group) return null
   for (const id of group.chapterIds) {
-    const state = learningState.moduleStates[id] || {}
+    const state = learningState.chapterStates[id] || {}
     if (state.screen || state.completed) continue
-    const mod = MODULES.find(m => m.id === id)
+    const mod = CHAPTERS.find(m => m.id === id)
     // Skip coming-soon / hidden stubs so the planner never routes a learner
     // into an empty module.
-    if (mod && isModuleAvailable(mod)) return mod
+    if (mod && isChapterAvailable(mod)) return mod
   }
   return null
 }
@@ -743,7 +744,7 @@ export function buildWeekdayBlocks(mainSubject, secondarySubject, learningState,
               || getNextNewModuleForSubject(mainSubject, learningState)
 
   const mainReasonCodes = mainMod
-    ? ((learningState.moduleStates[mainMod.id]?.screen > 0)
+    ? ((learningState.chapterStates[mainMod.id]?.screen > 0)
         ? ['IN_PROGRESS_CONTINUITY']
         : ['NEXT_IN_SEQUENCE'])
     : ['SUBJECT_ROTATION']
@@ -1075,10 +1076,10 @@ function paperPracticeWeight(subject) {
 
 // Returns true if the subject has at least some covered content suitable for paper practice.
 function subjectHasPaperPractice(subject, learningState) {
-  const group = MODULE_GROUPS.find(g => g.subject === subject)
+  const group = PARENT_MODULES.find(g => g.subject === subject)
   if (group) {
     const hasStarted = group.chapterIds.some(id => {
-      const state = learningState.moduleStates[id] || {}
+      const state = learningState.chapterStates[id] || {}
       return state.screen > 0 || state.completed
     })
     if (hasStarted) return true
@@ -1088,12 +1089,12 @@ function subjectHasPaperPractice(subject, learningState) {
 
 // Estimates % of subject content covered based on module progress or answer history.
 function getSubjectCoverage(subject, learningState) {
-  const group = MODULE_GROUPS.find(g => g.subject === subject)
+  const group = PARENT_MODULES.find(g => g.subject === subject)
 
   if (group && group.chapterIds.length) {
     const total = group.chapterIds.length
     const done  = group.chapterIds.filter(id => {
-      const state = learningState.moduleStates[id] || {}
+      const state = learningState.chapterStates[id] || {}
       return state.completed || (state.screen && state.screen > 0)
     }).length
     return Math.round((done / total) * 100)

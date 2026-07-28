@@ -54,7 +54,7 @@ describe('accountScope — quarantined legacy progress recovery', () => {
     // Now available as GUEST progress.
     setActiveScope(GUEST_SCOPE)
     expect(getJson('gcse_progress', null)).toMatchObject({ streak: 9 })
-    expect(getJson('gcse_module_bio1', null)).toMatchObject({ screen: 5, completed: true })
+    expect(getJson('gcse_chapter_bio1', null)).toMatchObject({ screen: 5, completed: true })
     // Name restored.
     expect(getRawJson('riseUser', null)).toMatchObject({ name: 'Old Learner' })
     // Quarantine cleared → not offered again, nothing left to duplicate.

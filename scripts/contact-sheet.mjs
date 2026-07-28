@@ -20,7 +20,7 @@ import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { MODULES } from '../src/modules.js'
+import { CHAPTERS } from '../src/chapters.js'
 
 const PRE_INSTALLED_CHROMIUM = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome'
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -33,9 +33,9 @@ const args = process.argv.slice(2)
 const fullPage = args.includes('--full')
 const moduleId = args.find(a => !a.startsWith('--'))
 
-const mod = MODULES.find(m => m.id === moduleId)
+const mod = CHAPTERS.find(m => m.id === moduleId)
 if (!mod || !mod.screenCount) {
-  const available = MODULES.filter(m => m.screenCount > 0).map(m => `  ${m.id} (${m.screenCount} screens)`)
+  const available = CHAPTERS.filter(m => m.screenCount > 0).map(m => `  ${m.id} (${m.screenCount} screens)`)
   console.error(mod ? `Module "${moduleId}" has no screens.` : `Unknown module id: ${moduleId ?? '(none given)'}`)
   console.error(`\nAvailable modules:\n${available.join('\n')}`)
   process.exit(2)
@@ -129,7 +129,7 @@ frames.push({ file: 'frame-000-hook.png', label: 'hook' })
 // module state ourselves before asking for screen 0 (guest scope, see
 // src/lib/storage.js physicalKey).
 await page.evaluate((id) => {
-  localStorage.setItem(`guest::gcse_module_${id}`, JSON.stringify({
+  localStorage.setItem(`guest::gcse_chapter_${id}`, JSON.stringify({
     screen: 0, hookDone: true, wylDone: true, introDone: true,
   }))
 }, mod.id)
