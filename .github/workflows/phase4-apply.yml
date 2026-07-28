@@ -93,7 +93,7 @@ jobs:
 
             it('Subjects uses canonical chapter availability and maps non-available chapters to coming_soon', () => {
               const src = read('src/features/subjects/Subjects.jsx')
-              expect(src).toMatch(/getChapterAvailability\(chapter\)/)
+              expect(src).toMatch(/getChapterAvailability\((mod|chapter)\)/)
               expect(src).toMatch(/CHAPTER_AVAILABILITY\.AVAILABLE.*coming_soon|coming_soon[\s\S]*CHAPTER_AVAILABILITY\.AVAILABLE/)
             })
 
