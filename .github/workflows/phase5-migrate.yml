@@ -37,6 +37,18 @@ jobs:
           source = path.read_text()
           source = source.replace('\\\\`', '\\`')
           source = source.replace('\\\\${', '\\${')
+          source = source.replace(
+              "failures.push(\\`${id}: ${error.message}\\`)",
+              "failures.push(id + ': ' + error.message)",
+          )
+          source = source.replace(
+              "expect(Object.hasOwn(allowedLegacyMaximums, type), \\`Unexpected legacy type ${type}\\`).toBe(true)",
+              "expect(Object.hasOwn(allowedLegacyMaximums, type), 'Unexpected legacy type ' + type).toBe(true)",
+          )
+          source = source.replace(
+              "expect(count, \\`Legacy type ${type} grew\\`).toBeLessThanOrEqual(allowedLegacyMaximums[type])",
+              "expect(count, 'Legacy type ' + type + ' grew').toBeLessThanOrEqual(allowedLegacyMaximums[type])",
+          )
           path.write_text(source)
           PY
           set -o pipefail
