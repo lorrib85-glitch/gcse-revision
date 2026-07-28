@@ -23,7 +23,8 @@ describe('canonical chapter runtime', () => {
   it('ChapterPlayer owns the runtime and ModulePlayer remains a thin facade', () => {
     const canonical = read('src/components/layout/ChapterPlayer.jsx')
     const legacy = read('src/components/layout/ModulePlayer.jsx')
-    expect(canonical).toContain('export default function ChapterPlayer({ chapter, onBack, onChapterComplete })')
+    expect(canonical).toContain('export default function ChapterPlayer(props)')
+    expect(canonical).toContain('function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete })')
     expect(canonical).toContain('computeInitialChapterState(chapter, saved)')
     expect(canonical).toContain('getChapterGate(chapter,')
     expect(legacy).toContain("import ChapterPlayer from './ChapterPlayer.jsx'")

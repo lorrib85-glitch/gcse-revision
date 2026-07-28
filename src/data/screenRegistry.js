@@ -87,6 +87,7 @@ export const SCREEN_REGISTRY = Object.freeze({
       { path: 'items', kind: 'array' },
       { path: 'steps', kind: 'array' },
       { path: 'cards', kind: 'array' },
+      { path: 'stages', kind: 'array' },
     ]],
   }),
   matchingTask: screen('Matching task', 'MatchingTask', {
@@ -149,6 +150,7 @@ export const SCREEN_REGISTRY = Object.freeze({
     requiredAny: [[
       { path: 'events', kind: 'array' },
       { path: 'items', kind: 'array' },
+      { path: 'steps', kind: 'array' },
     ]],
   }),
   cinematicCarousel: screen('Cinematic carousel', 'CinematicCarousel', {
@@ -189,6 +191,16 @@ export const SCREEN_REGISTRY = Object.freeze({
       { path: 'fallbackImage', kind: 'string' },
     ]],
   }),
+  cinematicReveal: screen('Cinematic reveal (legacy)', 'ScreenContentRenderer', {
+    status: 'legacy',
+    replacement: 'cinematic',
+    headerMode: 'cinematic',
+  }),
+  video: screen('Video screen (legacy)', 'ScreenContentRenderer', {
+    status: 'legacy',
+    replacement: 'cinematic',
+    headerMode: 'cinematic',
+  }),
   factorWeb: screen('Factor web', 'FactorWeb', {
     layout: 'full',
     continuation: 'component',
@@ -206,7 +218,12 @@ export const SCREEN_REGISTRY = Object.freeze({
 
 export const BLOCK_REGISTRY = Object.freeze({
   read: block('Read block', 'ReadBlock', { required: [{ path: 'text', kind: 'string' }] }),
-  keypoint: block('Key point', 'KeypointBlock', { required: [{ path: 'text', kind: 'string' }] }),
+  keypoint: block('Key point', 'KeypointBlock', {
+    requiredAny: [[
+      { path: 'text', kind: 'string' },
+      { path: 'points', kind: 'array' },
+    ]],
+  }),
   funfact: block('Fun fact', 'FunFactBlock', { required: [{ path: 'text', kind: 'string' }] }),
   examtip: block('Exam tip', 'ExamTipBlock', {
     requiredAny: [[
@@ -240,12 +257,20 @@ export const BLOCK_REGISTRY = Object.freeze({
       { path: 'items', kind: 'array' },
     ]],
   }),
-  scenario: block('Scenario block', 'ScenarioBlock', { required: [{ path: 'scenarios', kind: 'array' }] }),
+  scenario: block('Scenario block', 'ScenarioBlock', {
+    requiredAny: [[
+      { path: 'scenarios', kind: 'array' },
+      { path: 'situation', kind: 'string' },
+    ]],
+  }),
   boss: block('Exam question frame', 'ExamQuestionFrame', {
     required: [{ path: 'question', kind: 'string' }],
     requiredAny: [[
       { path: 'markPoints', kind: 'string' },
+      { path: 'markPoints', kind: 'array' },
+      { path: 'ms', kind: 'string' },
       { path: 'ms', kind: 'array' },
+      { path: 'markScheme', kind: 'string' },
       { path: 'markScheme', kind: 'array' },
     ]],
   }),

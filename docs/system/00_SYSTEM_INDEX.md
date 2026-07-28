@@ -39,6 +39,14 @@ The canonical structural contract for `Subject → Module → Chapter → Screen
 
 ---
 
+### 1c.1. Governed Screen Registry
+
+`docs/system/SCREEN_REGISTRY.md`
+
+The canonical chapter authoring and runtime-routing contract. Defines the registered screen/block catalogue, required data validation, ScreenRenderer boundary, development failure behaviour and legacy-type shrink-only rules. Read before adding a screen type or changing ChapterPlayer component routing.
+
+---
+
 ### 1d. Subject Module Architecture (History & Science)
 
 `docs/system/HISTORY_MODULE_ARCHITECTURE.md`

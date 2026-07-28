@@ -20,6 +20,7 @@ const srcFiles = globSync('src/{components,features,app}/**/*.jsx', {
     '**/node_modules/**',
     'src/features/quickfire/**',
     'src/components/layout/ChapterPlayer.jsx',
+    'src/components/layout/ScreenRenderer.jsx',
   ],
 })
 
