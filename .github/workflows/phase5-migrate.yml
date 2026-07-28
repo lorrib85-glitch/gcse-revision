@@ -34,6 +34,12 @@ jobs:
           python - <<'PY'
           from pathlib import Path
 
+          def replace_once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected one anchor, found {count}')
+              return text.replace(old, new)
+
           path = Path('.github/phase5-migrate.mjs')
           source = path.read_text()
           source = source.replace('\\\\`', '\\`')
@@ -54,64 +60,36 @@ jobs:
 
           registry_path = Path('src/data/screenRegistry.js')
           registry = registry_path.read_text()
-          replacements = {
-              """      { path: 'items', kind: 'array' },
-              { path: 'steps', kind: 'array' },
-              { path: 'cards', kind: 'array' },
-            ]],
-          }),
-          matchingTask:""": """      { path: 'items', kind: 'array' },
-              { path: 'steps', kind: 'array' },
-              { path: 'cards', kind: 'array' },
-              { path: 'stages', kind: 'array' },
-            ]],
-          }),
-          matchingTask:""",
-              """  timelineCanvas: screen('Timeline canvas', 'TimelineCanvas', {
-            layout: 'full',
-            continuation: 'component',
-            requiredAny: [[
-              { path: 'events', kind: 'array' },
-              { path: 'items', kind: 'array' },
-            ]],
-          }),""": """  timelineCanvas: screen('Timeline canvas', 'TimelineCanvas', {
-            layout: 'full',
-            continuation: 'component',
-            requiredAny: [[
-              { path: 'events', kind: 'array' },
-              { path: 'items', kind: 'array' },
-              { path: 'steps', kind: 'array' },
-            ]],
-          }),""",
-              "  keypoint: block('Key point', 'KeypointBlock', { required: [{ path: 'text', kind: 'string' }] }),": """  keypoint: block('Key point', 'KeypointBlock', {
-            requiredAny: [[
-              { path: 'text', kind: 'string' },
-              { path: 'points', kind: 'array' },
-            ]],
-          }),""",
-              "  scenario: block('Scenario block', 'ScenarioBlock', { required: [{ path: 'scenarios', kind: 'array' }] }),": """  scenario: block('Scenario block', 'ScenarioBlock', {
-            requiredAny: [[
-              { path: 'scenarios', kind: 'array' },
-              { path: 'situation', kind: 'string' },
-            ]],
-          }),""",
-              """    requiredAny: [[
-              { path: 'markPoints', kind: 'string' },
-              { path: 'ms', kind: 'array' },
-              { path: 'markScheme', kind: 'array' },
-            ]],""": """    requiredAny: [[
-              { path: 'markPoints', kind: 'string' },
-              { path: 'markPoints', kind: 'array' },
-              { path: 'ms', kind: 'string' },
-              { path: 'ms', kind: 'array' },
-              { path: 'markScheme', kind: 'string' },
-              { path: 'markScheme', kind: 'array' },
-            ]],""",
-          }
-          for old, new in replacements.items():
-              if registry.count(old) != 1:
-                  raise SystemExit(f'Registry schema anchor changed: {old[:70]!r}')
-              registry = registry.replace(old, new)
+          registry = replace_once(
+              registry,
+              "      { path: 'cards', kind: 'array' },\n    ]],\n  }),\n  matchingTask:",
+              "      { path: 'cards', kind: 'array' },\n      { path: 'stages', kind: 'array' },\n    ]],\n  }),\n  matchingTask:",
+              'ordered route variants',
+          )
+          registry = replace_once(
+              registry,
+              "  timelineCanvas: screen('Timeline canvas', 'TimelineCanvas', {\n    layout: 'full',\n    continuation: 'component',\n    requiredAny: [[\n      { path: 'events', kind: 'array' },\n      { path: 'items', kind: 'array' },\n    ]],\n  }),",
+              "  timelineCanvas: screen('Timeline canvas', 'TimelineCanvas', {\n    layout: 'full',\n    continuation: 'component',\n    requiredAny: [[\n      { path: 'events', kind: 'array' },\n      { path: 'items', kind: 'array' },\n      { path: 'steps', kind: 'array' },\n    ]],\n  }),",
+              'timeline canvas variants',
+          )
+          registry = replace_once(
+              registry,
+              "  keypoint: block('Key point', 'KeypointBlock', { required: [{ path: 'text', kind: 'string' }] }),",
+              "  keypoint: block('Key point', 'KeypointBlock', {\n    requiredAny: [[\n      { path: 'text', kind: 'string' },\n      { path: 'points', kind: 'array' },\n    ]],\n  }),",
+              'key point variants',
+          )
+          registry = replace_once(
+              registry,
+              "  scenario: block('Scenario block', 'ScenarioBlock', { required: [{ path: 'scenarios', kind: 'array' }] }),",
+              "  scenario: block('Scenario block', 'ScenarioBlock', {\n    requiredAny: [[\n      { path: 'scenarios', kind: 'array' },\n      { path: 'situation', kind: 'string' },\n    ]],\n  }),",
+              'scenario variants',
+          )
+          registry = replace_once(
+              registry,
+              "    requiredAny: [[\n      { path: 'markPoints', kind: 'string' },\n      { path: 'ms', kind: 'array' },\n      { path: 'markScheme', kind: 'array' },\n    ]],",
+              "    requiredAny: [[\n      { path: 'markPoints', kind: 'string' },\n      { path: 'markPoints', kind: 'array' },\n      { path: 'ms', kind: 'string' },\n      { path: 'ms', kind: 'array' },\n      { path: 'markScheme', kind: 'string' },\n      { path: 'markScheme', kind: 'array' },\n    ]],",
+              'exam question variants',
+          )
           registry_path.write_text(registry)
           PY
           set -o pipefail
