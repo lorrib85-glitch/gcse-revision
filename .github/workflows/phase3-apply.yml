@@ -152,17 +152,32 @@ jobs:
         run: exit 1
 
       - name: Phase 3 migration contracts
-        run: >-
-          pnpm exec vitest run --project unit
-          tests/unit/progressSync/chapterProgressPersistence.test.js
-          tests/unit/progressSync/chapterProgressMerge.test.js
-          tests/unit/progressSync/chapterProgressSnapshot.test.js
-          tests/unit/progressSync/progressSync.test.js
-          tests/unit/progressSync/accountScope.test.js
-          tests/unit/planner/dailyPlanner.test.js
-          tests/unit/journeys/learnerJourneys.test.js
-          tests/unit/journeys/accountIsolationJourneys.test.js
-          tests/unit/saveFailure/progressFailureIntegration.test.js
+        id: migration-tests
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          pnpm exec vitest run --project unit \
+            tests/unit/progressSync/chapterProgressPersistence.test.js \
+            tests/unit/progressSync/chapterProgressMerge.test.js \
+            tests/unit/progressSync/chapterProgressSnapshot.test.js \
+            tests/unit/progressSync/progressSync.test.js \
+            tests/unit/progressSync/accountScope.test.js \
+            tests/unit/planner/dailyPlanner.test.js \
+            tests/unit/journeys/learnerJourneys.test.js \
+            tests/unit/journeys/accountIsolationJourneys.test.js \
+            tests/unit/saveFailure/progressFailureIntegration.test.js \
+            2>&1 | tee /tmp/phase3-migration-tests.txt
+
+      - name: Upload migration test failure
+        if: steps.migration-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase3-migration-test-failure
+          path: /tmp/phase3-migration-tests.txt
+
+      - name: Stop after migration test failure
+        if: steps.migration-tests.outcome == 'failure'
+        run: exit 1
 
       - name: Full unit suite
         run: pnpm test:unit
@@ -184,6 +199,7 @@ jobs:
           scripts/contact-sheet.mjs
           .storybook/preview.jsx
           tests/architecture/legacy-content-imports.test.js
+          tests/architecture/placeholder-module-safety.test.js
           tests/unit/progressSync/chapterProgressPersistence.test.js
           tests/unit/progressSync/chapterProgressMerge.test.js
           tests/unit/progressSync/chapterProgressSnapshot.test.js
