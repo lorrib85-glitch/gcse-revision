@@ -1,0 +1,76 @@
+// Maps question and concept tags to the most relevant chapter ID.
+// Used by recovery and planning surfaces after a learner gap is identified.
+
+// Returns the index of the first screen in a chapter tagged with the given tag,
+// or undefined when no screen matches and the caller should open from the start.
+export function findTaggedChapterScreen(chapter, tag) {
+  const index = (chapter.screenTags || []).indexOf(tag)
+  return index >= 0 ? index : undefined
+}
+
+export const TAG_CHAPTER_MAP = {
+  // Medieval
+  'four-humours': 'history-medicine-medieval-beliefs-causes',
+  'miasma': 'history-medicine-medieval-beliefs-causes',
+  'galen': 'history-medicine-medieval-beliefs-causes',
+  'medieval-causes': 'history-medicine-medieval-beliefs-causes',
+  'medieval-prevention': 'history-medicine-medieval-beliefs-causes',
+  'medieval-practitioners': 'history-medicine-medieval-beliefs-causes',
+  'black-death': 'history-medicine-medieval-beliefs-causes',
+  // Renaissance
+  'vesalius': 'history-medicine-vesalius-beginning-doubt',
+  'harvey': 'history-medicine-harvey-pare-renaissance-method',
+  'pare': 'history-medicine-harvey-pare-renaissance-method',
+  'printing-press': 'history-medicine-vesalius-beginning-doubt',
+  'royal-society': 'history-medicine-harvey-pare-renaissance-method',
+  'great-plague': 'history-medicine-great-plague-1665',
+  'scientific-method': 'history-medicine-harvey-pare-renaissance-method',
+  // 19th-century surgery
+  'anaesthetics': 'history-medicine-surgery-anaesthetics',
+  'antiseptic-surgery': 'history-medicine-surgery-anaesthetics',
+  'surgery': 'history-medicine-surgery-anaesthetics',
+  // Germ theory
+  'pasteur': 'history-medicine-germ-theory',
+  'germ-theory': 'history-medicine-germ-theory',
+  'vaccination': 'history-medicine-jenner-vaccination',
+  'koch': 'history-medicine-germ-theory',
+  // Public health
+  'john-snow': 'history-medicine-great-stink',
+  'public-health': 'history-medicine-great-stink',
+  'nightingale': 'history-medicine-great-stink',
+  'communication': 'history-medicine-great-stink',
+  // WWI / antibiotics
+  'penicillin': 'history-medicine-accidental-miracle',
+  'magic-bullet': 'history-medicine-accidental-miracle',
+  'war-and-medicine': 'history-medicine-accidental-miracle',
+  'wwi-medicine': 'history-medicine-accidental-miracle',
+  // Modern
+  'nhs': 'history-medicine-cancer',
+  'diagnosis': 'history-medicine-modern-medicine',
+  'lifestyle-factors': 'history-medicine-modern-medicine',
+  'genetics': 'history-medicine-modern-medicine',
+  // Crosses several chapters — null deliberately means no single recovery route.
+  'factors-in-change': null,
+  // Maths — Number survival kit
+  'maths:place-value': 'math1',
+  'maths:ordering-numbers': 'math1',
+  'maths:four-operations': 'math2',
+  'maths:written-methods': 'math2',
+  'maths:negative-numbers': 'math3',
+  'maths:ordering-negatives': 'math3',
+  'maths:bidmas': 'math4',
+  'maths:calculator-control': 'math4',
+  'maths:rounding': 'math5',
+  'maths:significant-figures': 'math5',
+  'maths:estimation': 'math5',
+  'maths:prime-numbers': 'math6',
+  'maths:hcf-lcm': 'math6',
+  'maths:prime-factorisation': 'math6',
+  'maths:indices': 'math7',
+  'maths:standard-form': 'math7',
+  'maths:powers-roots': 'math7',
+  'maths:equivalent-fractions': 'math8',
+  'maths:simplifying-fractions': 'math8',
+  'maths:fractions-of-amounts': 'math8',
+  'maths:mixed-numbers': 'math8',
+}
