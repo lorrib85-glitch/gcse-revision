@@ -37,7 +37,8 @@ jobs:
           from pathlib import Path
           path = Path('.github/phase3-migrate.mjs')
           source = path.read_text()
-          old = """function replaceRegex(path, pattern, to, expected = 1) {
+
+          old_helper = """function replaceRegex(path, pattern, to, expected = 1) {
             const source = read(path)
             const matches = [...source.matchAll(pattern)]
             if (matches.length !== expected) {
@@ -46,7 +47,7 @@ jobs:
             write(path, source.replace(pattern, to))
           }
           """
-          new = """function replaceRegex(path, pattern, to, expected = 1) {
+          new_helper = """function replaceRegex(path, pattern, to, expected = 1) {
             const source = read(path)
             const flags = pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g'
             const matches = [...source.matchAll(new RegExp(pattern.source, flags))]
@@ -55,10 +56,43 @@ jobs:
             }
             write(path, source.replace(pattern, to))
           }
+
+          function replaceRegexAllChecked(path, pattern, to, minimum = 1) {
+            const source = read(path)
+            const flags = pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g'
+            const globalPattern = new RegExp(pattern.source, flags)
+            const matches = [...source.matchAll(globalPattern)]
+            if (matches.length < minimum) {
+              throw new Error(`${path}: expected at least ${minimum} regex matches, found ${matches.length}: ${pattern}`)
+            }
+            write(path, source.replace(globalPattern, to))
+          }
           """
-          if source.count(old) != 1:
+          if source.count(old_helper) != 1:
               raise SystemExit('Phase 3 regex-helper anchor changed')
-          path.write_text(source.replace(old, new))
+          source = source.replace(old_helper, new_helper)
+
+          old_planner = """replaceAllChecked('src/features/planner/dailyPlanner.js', 'MODULE_GROUPS', '__PARENT_MODULES__', 1)
+          replaceAllChecked('src/features/planner/dailyPlanner.js', 'MODULES', 'CHAPTERS', 1)
+          replaceAllChecked('src/features/planner/dailyPlanner.js', '__PARENT_MODULES__', 'PARENT_MODULES', 1)
+          replaceExact(
+            'src/features/planner/dailyPlanner.js',
+            \"import { CHAPTERS, isModuleAvailable } from '../../modules.js'\\nimport { PARENT_MODULES } from '../../progress.js'\\nimport { getArray, getObject, setJson, saveCritical } from '../../lib/storage.js'\",
+            \"import { CHAPTERS, isChapterAvailable } from '../../chapters.js'\\nimport { MODULES as PARENT_MODULES } from '../../data/modules.js'\\nimport { getChapterState } from '../../progress.js'\\nimport { getArray, getObject, setJson, saveCritical } from '../../lib/storage.js'\",
+          )
+          """
+          new_planner = """replaceExact(
+            'src/features/planner/dailyPlanner.js',
+            \"import { MODULES, isModuleAvailable } from '../../modules.js'\\nimport { MODULE_GROUPS } from '../../progress.js'\\nimport { getArray, getObject, setJson, saveCritical } from '../../lib/storage.js'\",
+            \"import { CHAPTERS, isChapterAvailable } from '../../chapters.js'\\nimport { MODULES as PARENT_MODULES } from '../../data/modules.js'\\nimport { getChapterState } from '../../progress.js'\\nimport { getArray, getObject, setJson, saveCritical } from '../../lib/storage.js'\",
+          )
+          replaceAllChecked('src/features/planner/dailyPlanner.js', 'MODULE_GROUPS', 'PARENT_MODULES', 1)
+          replaceRegexAllChecked('src/features/planner/dailyPlanner.js', /\\bMODULES\\b/g, 'CHAPTERS', 1)
+          """
+          if source.count(old_planner) != 1:
+              raise SystemExit('Phase 3 planner-transform anchor changed')
+          source = source.replace(old_planner, new_planner)
+          path.write_text(source)
           PY
             node .github/phase3-migrate.mjs
           ) 2>&1 | tee /tmp/phase3-error.txt
