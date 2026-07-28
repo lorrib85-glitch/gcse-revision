@@ -90,6 +90,12 @@ jobs:
               "    requiredAny: [[\n      { path: 'markPoints', kind: 'string' },\n      { path: 'markPoints', kind: 'array' },\n      { path: 'ms', kind: 'string' },\n      { path: 'ms', kind: 'array' },\n      { path: 'markScheme', kind: 'string' },\n      { path: 'markScheme', kind: 'array' },\n    ]],",
               'exam question variants',
           )
+          registry = replace_once(
+              registry,
+              "  factorWeb: screen('Factor web', 'FactorWeb', {",
+              "  cinematicReveal: screen('Cinematic reveal (legacy)', 'ScreenContentRenderer', {\n    status: 'legacy',\n    replacement: 'cinematic',\n    headerMode: 'cinematic',\n  }),\n  video: screen('Video screen (legacy)', 'ScreenContentRenderer', {\n    status: 'legacy',\n    replacement: 'cinematic',\n    headerMode: 'cinematic',\n  }),\n  factorWeb: screen('Factor web', 'FactorWeb', {",
+              'legacy cinematic aliases',
+          )
           registry_path.write_text(registry)
           PY
           set -o pipefail
