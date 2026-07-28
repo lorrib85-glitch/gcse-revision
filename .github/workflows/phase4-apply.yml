@@ -35,19 +35,28 @@ jobs:
           from pathlib import Path
           path = Path('.github/phase4-migrate.mjs')
           source = path.read_text()
-          old = """const embeddedChapterProps = (chapterPlayer.match(/\\bchapter=\\{chapter\\}/g) || []).length
+
+          old_props = """const embeddedChapterProps = (chapterPlayer.match(/\\bchapter=\\{chapter\\}/g) || []).length
           if (embeddedChapterProps !== 2) {
             throw new Error(`ChapterPlayer: expected 2 embedded chapter props, found ${embeddedChapterProps}`)
           }
           """
-          new = """const embeddedChapterProps = (chapterPlayer.match(/\\bchapter=\\{chapter\\}/g) || []).length
+          new_props = """const embeddedChapterProps = (chapterPlayer.match(/\\bchapter=\\{chapter\\}/g) || []).length
           if (embeddedChapterProps !== 5) {
             throw new Error(`ChapterPlayer: expected 5 embedded chapter props, found ${embeddedChapterProps}`)
           }
           """
-          if source.count(old) != 1:
+          if source.count(old_props) != 1:
               raise SystemExit('Phase 4 embedded-prop assertion anchor changed')
-          path.write_text(source.replace(old, new))
+          source = source.replace(old_props, new_props)
+
+          old_next = "chapterNavigation = chapterNavigation.replaceAll('nextMod', 'nextChapter')"
+          new_next = "chapterNavigation = chapterNavigation.replace(/\\bnextMod\\b/g, 'nextChapter')"
+          if source.count(old_next) != 1:
+              raise SystemExit('Phase 4 nextMod transform anchor changed')
+          source = source.replace(old_next, new_next)
+
+          path.write_text(source)
           PY
           set -o pipefail
           node .github/phase4-migrate.mjs 2>&1 | tee /tmp/phase4-migration.txt
