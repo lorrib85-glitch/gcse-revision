@@ -1,0 +1,57 @@
+name: Phase 5 screen inventory
+
+on:
+  push:
+    branches: [agent/content-hierarchy-phase-5]
+
+permissions:
+  contents: read
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Inventory chapter screen types
+        run: |
+          node --input-type=module <<'NODE'
+          import { CHAPTER_CONTENT_LOADERS } from './src/content/chapterContentRegistry.js'
+          const screenTypes = new Map()
+          const blockTypes = new Map()
+          const failures = []
+          for (const [chapterId, load] of Object.entries(CHAPTER_CONTENT_LOADERS)) {
+            try {
+              const chapter = await load()
+              for (const [screenIndex, screen] of (chapter?.screens || []).entries()) {
+                const screenType = screen?.type || 'standard'
+                if (!screenTypes.has(screenType)) screenTypes.set(screenType, [])
+                screenTypes.get(screenType).push(`${chapterId}:${screenIndex}`)
+                for (const [blockIndex, block] of (screen?.blocks || []).entries()) {
+                  const blockType = block?.type || '<missing>'
+                  if (!blockTypes.has(blockType)) blockTypes.set(blockType, [])
+                  blockTypes.get(blockType).push(`${chapterId}:${screenIndex}:${blockIndex}`)
+                }
+              }
+            } catch (error) {
+              failures.push(`${chapterId}: ${error?.stack || error}`)
+            }
+          }
+          const serialise = map => Object.fromEntries([...map.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([type, refs]) => [type, { count: refs.length, examples: refs.slice(0, 8) }]))
+          const report = { screenTypes: serialise(screenTypes), blockTypes: serialise(blockTypes), failures }
+          console.log(JSON.stringify(report, null, 2))
+          await import('node:fs').then(({ writeFileSync }) => writeFileSync('/tmp/phase5-screen-inventory.json', JSON.stringify(report, null, 2)))
+          if (failures.length) process.exitCode = 1
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase5-screen-inventory
+          path: /tmp/phase5-screen-inventory.json
