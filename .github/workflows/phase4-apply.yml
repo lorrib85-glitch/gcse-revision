@@ -60,6 +60,51 @@ jobs:
           PY
           set -o pipefail
           node .github/phase4-migrate.mjs 2>&1 | tee /tmp/phase4-migration.txt
+          cat > tests/architecture/placeholder-module-safety.test.js <<'EOF'
+          import { describe, it, expect } from 'vitest'
+          import { readFileSync } from 'fs'
+          import { resolve } from 'path'
+
+          const root = resolve(process.cwd())
+          const read = (rel) => readFileSync(resolve(root, rel), 'utf8')
+
+          describe('Placeholder chapter safety', () => {
+            it('the compatibility metadata source still contains unbuilt chapters', () => {
+              // CHAPTERS is the canonical export, but Phase 2 deliberately aliases the
+              // existing metadata rows from src/modules.js until final legacy removal.
+              const canonical = read('src/chapters.js')
+              const metadata = read('src/modules.js')
+              expect(canonical).toContain('export const CHAPTERS = LEGACY_CHAPTERS')
+              expect(metadata).toMatch(/screenCount:\s*0/)
+            })
+
+            it('openChapterPlayer guards against chapters without screens before opening the overlay', () => {
+              const src = read('src/app/LegacyApp.jsx')
+              const fnStart = src.indexOf('function openChapterPlayer(')
+              const fnBody = src.slice(fnStart, fnStart + 800)
+              const guardPattern = /if\s*\(!\s*chapter\??\.\s*screenCount\s*\)\s*return/
+              expect(fnBody).toMatch(guardPattern)
+              const guardPos = fnBody.search(guardPattern)
+              const setViewPos = fnBody.indexOf("setView('chapter')")
+              expect(guardPos).toBeGreaterThanOrEqual(0)
+              expect(setViewPos).toBeGreaterThanOrEqual(0)
+              expect(guardPos).toBeLessThan(setViewPos)
+            })
+
+            it('Subjects uses canonical chapter availability and maps non-available chapters to coming_soon', () => {
+              const src = read('src/features/subjects/Subjects.jsx')
+              expect(src).toMatch(/getChapterAvailability\(chapter\)/)
+              expect(src).toMatch(/CHAPTER_AVAILABILITY\.AVAILABLE.*coming_soon|coming_soon[\s\S]*CHAPTER_AVAILABILITY\.AVAILABLE/)
+            })
+
+            it('the guard is a falsy screenCount check, so built chapters pass through', () => {
+              const src = read('src/app/LegacyApp.jsx')
+              const fnStart = src.indexOf('function openChapterPlayer(')
+              const fnBody = src.slice(fnStart, fnStart + 400)
+              expect(fnBody).toMatch(/if\s*\(!\s*chapter\??\.\s*screenCount/)
+            })
+          })
+          EOF
 
       - name: Upload migration assertion failure
         if: steps.apply.outcome == 'failure'
