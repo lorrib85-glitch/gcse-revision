@@ -75,17 +75,47 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Architecture contracts
-        run: pnpm test:architecture
+        id: architecture
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          pnpm test:architecture 2>&1 | tee /tmp/phase4-architecture.txt
+
+      - name: Upload architecture failure
+        if: steps.architecture.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-architecture-failure
+          path: /tmp/phase4-architecture.txt
+
+      - name: Stop after architecture failure
+        if: steps.architecture.outcome == 'failure'
+        run: exit 1
 
       - name: Focused Phase 4 runtime contracts
-        run: >-
-          pnpm exec vitest run --project unit
-          tests/unit/app/chapterNavigation.test.js
-          tests/unit/app/moduleNavigation.test.js
-          tests/unit/chapterPlayer/lifecycle.test.js
-          tests/unit/modulePlayer/lifecycle.test.js
-          tests/unit/modulePlayer/compatibility.test.js
-          tests/unit/journeys/learnerJourneys.test.js
+        id: focused
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          pnpm exec vitest run --project unit \
+            tests/unit/app/chapterNavigation.test.js \
+            tests/unit/app/moduleNavigation.test.js \
+            tests/unit/chapterPlayer/lifecycle.test.js \
+            tests/unit/modulePlayer/lifecycle.test.js \
+            tests/unit/modulePlayer/compatibility.test.js \
+            tests/unit/journeys/learnerJourneys.test.js \
+            2>&1 | tee /tmp/phase4-focused.txt
+
+      - name: Upload focused runtime failure
+        if: steps.focused.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-focused-failure
+          path: /tmp/phase4-focused.txt
+
+      - name: Stop after focused runtime failure
+        if: steps.focused.outcome == 'failure'
+        run: exit 1
 
       - name: Full unit suite
         run: pnpm test:unit
