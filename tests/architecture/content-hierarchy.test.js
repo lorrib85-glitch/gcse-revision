@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { CHAPTERS } from '../../src/chapters.js'
+import { MODULES } from '../../src/data/modules.js'
 import { MODULES as LEGACY_CHAPTERS } from '../../src/modules.js'
 import { MODULE_GROUPS as LEGACY_MODULES } from '../../src/progress.js'
 import {
@@ -24,15 +26,16 @@ describe('Canonical content hierarchy', () => {
     expect(LEGACY_CONTENT_NAMES.MODULE_GROUPS.canonicalName).toBe('MODULES')
     expect(LEGACY_CONTENT_NAMES.ModulePlayer.canonicalName).toBe('ChapterPlayer')
   })
+
+  it('keeps compatibility exports on the exact canonical objects', () => {
+    expect(LEGACY_CHAPTERS).toBe(CHAPTERS)
+    expect(LEGACY_MODULES).toBe(MODULES)
+  })
 })
 
 describe('Current content relationships', () => {
   it('satisfies the canonical module-to-chapter relationship contract', () => {
-    const errors = validateContentHierarchy({
-      chapters: LEGACY_CHAPTERS,
-      modules: LEGACY_MODULES,
-    })
-
+    const errors = validateContentHierarchy({ chapters: CHAPTERS, modules: MODULES })
     expect(errors).toEqual([])
   })
 

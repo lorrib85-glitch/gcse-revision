@@ -123,20 +123,39 @@ The following rules are enforced by `tests/architecture/content-hierarchy.test.j
 
 Chapters may remain temporarily unassigned during migration or while future modules are being structured. They must not be discoverable as production content unless the existing availability rules also permit them.
 
+## Canonical catalogue surfaces
+
+Phase 2 establishes these public data and discovery boundaries:
+
+| Responsibility | Canonical surface |
+|---|---|
+| Chapter metadata | `CHAPTERS` from `src/chapters.js` |
+| Chapter availability | `CHAPTER_AVAILABILITY`, `getChapterAvailability`, `isChapterAvailable` from `src/chapters.js` |
+| Parent module metadata | `MODULES` from `src/data/modules.js` |
+| Chapter content loaders | `CHAPTER_CONTENT_LOADERS`, `loadChapterContent` from `src/content/chapterContentRegistry.js` |
+| Recovery routing | `TAG_CHAPTER_MAP`, `findTaggedChapterScreen` from `src/data/tagChapterMap.js` |
+| Continue discovery | `getContinueChapter`, `getInProgressChapter` from `src/progress.js` |
+
+`src/data/modules.js` is the sole owner of the parent module list. Progress code may consume that catalogue but must not define a second copy.
+
+New chapter-building, discovery and architecture code must use these canonical surfaces. `tests/architecture/legacy-content-imports.test.js` keeps the remaining legacy imports on an explicit shrink-only allowlist.
+
 ## Current legacy names
 
-The codebase currently contains a naming inversion. These names are migration inputs, not the canonical model:
+The codebase still contains migration aliases. These names are compatibility inputs, not the canonical model:
 
 | Current name | Current meaning | Canonical destination |
 |---|---|---|
-| `MODULES` | Chapter metadata collection | `CHAPTERS` |
-| `MODULE_GROUPS` | Parent module metadata collection | `MODULES` |
+| `MODULES` from `src/modules.js` | Chapter metadata collection | `CHAPTERS` from `src/chapters.js` |
+| `MODULE_GROUPS` from `src/progress.js` | Parent module metadata collection | `MODULES` from `src/data/modules.js` |
+| `MODULE_CONTENT_LOADERS` | Chapter content loader registry | `CHAPTER_CONTENT_LOADERS` |
+| `TAG_MODULE_MAP` | Tag-to-chapter recovery routing | `TAG_CHAPTER_MAP` |
 | `ModulePlayer` | Runtime for one learner-facing chapter | `ChapterPlayer` |
 | `loadModuleContent` | Loads one chapter's full content | `loadChapterContent` |
 | `getModuleState` / `saveModuleState` | Chapter resume state | `getChapterState` / `saveChapterState` |
 | `gcse_module_<id>` | Stored chapter progress | `gcse_chapter_<id>` after a safe migration |
 
-Do not introduce new architecture APIs using the legacy meanings. Compatibility aliases may remain temporarily while existing imports and stored progress are migrated.
+Do not introduce new architecture APIs using the legacy meanings. Compatibility aliases remain temporarily while existing runtime imports and stored progress are migrated.
 
 ## Progress identity
 
@@ -150,7 +169,7 @@ The later storage migration must:
 - preserve screen position, opener gates, examiner attempts and completion;
 - avoid double-counting progress.
 
-Phase 1 changes no storage keys and no learner-facing behaviour.
+Phases 1 and 2 change no storage keys and no learner-facing behaviour.
 
 ## Runtime target
 

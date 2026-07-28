@@ -1,10 +1,10 @@
 // Pure logic module — builds Home's "Today's plan" task carousel.
 // See docs/superpowers/specs/2026-06-14-home-todays-plan-redesign.md
 
-import { MODULES } from './modules.js'
-import { getModuleState, getInProgressModule, todayStr, getScores } from './progress.js'
+import { CHAPTERS } from './chapters.js'
+import { getModuleState, getInProgressChapter, todayStr, getScores } from './progress.js'
 import { getBiggestWin, getWeakestSubject } from './unifiedWeaknessTracker.js'
-import { findTaggedScreen } from './data/tagModuleMap.js'
+import { findTaggedChapterScreen } from './data/tagChapterMap.js'
 import { MEDICINE_2023_PAPER } from './data/medicineExamPapers.js'
 import { getJson, setJson } from './lib/storage.js'
 
@@ -54,10 +54,11 @@ function pickRevisitCandidate() {
 }
 
 function buildRevisitCard(win) {
-  const mod = MODULES.find(m => m.id === win.moduleId)
+  const chapter = CHAPTERS.find(item => item.id === win.moduleId)
   // Use the canonical concept tag (not the human topic label) to find the exact
   // teaching screen; falls back to opening at screen 0 when not a screen tag.
-  const screenIndex = mod ? findTaggedScreen(mod, win.conceptTag) : undefined
+  // `moduleId` remains in the task payload until the runtime migration phase.
+  const screenIndex = chapter ? findTaggedChapterScreen(chapter, win.conceptTag) : undefined
   writeRevisitMemory(win.topic)
   return {
     type: 'revisit',
@@ -65,22 +66,22 @@ function buildRevisitCard(win) {
     title: win.label,
     reason: win.reasonText,
     durationMinutes: 5,
-    image: mod?.headerImage || null,
+    image: chapter?.headerImage || null,
     onSelect: { kind: 'module', moduleId: win.moduleId, screenIndex },
   }
 }
 
-function buildContinueCard(mod) {
-  const state = getModuleState(mod.id)
-  const remaining = Math.max(1, (mod.screenCount || 1) - (state.screen || 0))
+function buildContinueCard(chapter) {
+  const state = getModuleState(chapter.id)
+  const remaining = Math.max(1, (chapter.screenCount || 1) - (state.screen || 0))
   return {
     type: 'continue',
     kicker: 'Continue',
-    title: mod.title,
+    title: chapter.title,
     reason: `${remaining} screen${remaining === 1 ? '' : 's'} left in this module.`,
     durationMinutes: Math.round(remaining * 2.5),
-    image: mod.headerImage || null,
-    onSelect: { kind: 'module', moduleId: mod.id },
+    image: chapter.headerImage || null,
+    onSelect: { kind: 'module', moduleId: chapter.id },
   }
 }
 
@@ -193,13 +194,13 @@ export function getNextPlannerItem(plan) {
 }
 
 // Subject for a plan task: practice/paper cards carry it on onSelect;
-// module-backed cards (revisit/continue) resolve it via MODULES metadata;
+// chapter-backed cards (revisit/continue) resolve it via CHAPTERS metadata;
 // the mixed warm-up has none. 'Random' practice reads as 'Mixed' in the UI.
 export function getTaskSubject(task) {
   const selectSubject = task?.onSelect?.subject
   if (selectSubject) return selectSubject === 'Random' ? 'Mixed' : selectSubject
-  const moduleId = task?.onSelect?.moduleId
-  if (moduleId) return MODULES.find(m => m.id === moduleId)?.subject ?? null
+  const chapterId = task?.onSelect?.moduleId
+  if (chapterId) return CHAPTERS.find(chapter => chapter.id === chapterId)?.subject ?? null
   return null
 }
 
@@ -220,17 +221,17 @@ export function buildTodaysPlan() {
   if (revisitWin) {
     slot2 = buildRevisitCard(revisitWin)
 
-    const continueMod = getInProgressModule()
-    if (continueMod) {
-      slot3 = buildContinueCard(continueMod)
+    const continueChapter = getInProgressChapter()
+    if (continueChapter) {
+      slot3 = buildContinueCard(continueChapter)
     } else {
       const weakest = getWeakestSubject()
       slot3 = buildPracticeCard(weakest?.subject || 'Random', PRACTICE_MINUTES, weakest)
     }
   } else {
-    const continueMod = getInProgressModule()
-    if (continueMod) {
-      slot2 = buildContinueCard(continueMod)
+    const continueChapter = getInProgressChapter()
+    if (continueChapter) {
+      slot2 = buildContinueCard(continueChapter)
 
       const weakest = getWeakestSubject()
       slot3 = buildPracticeCard(weakest?.subject || 'Random', PRACTICE_MINUTES, weakest)

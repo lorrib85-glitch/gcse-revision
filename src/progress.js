@@ -1,5 +1,11 @@
-import { MODULES, isModuleAvailable } from './modules.js'
+import { CHAPTERS, isChapterAvailable } from './chapters.js'
+import { MODULES } from './data/modules.js'
 import { getJson, getObject, getArray, setJson, saveCritical, removeKey } from './lib/storage.js'
+
+// Temporary compatibility export. Parent modules are now canonically owned by
+// src/data/modules.js; existing callers may continue importing MODULE_GROUPS
+// until the final migration phase.
+export const MODULE_GROUPS = MODULES
 
 const KEY          = 'gcse_progress'
 const SCORES_KEY   = 'gcse_scores'
@@ -49,9 +55,9 @@ export function getProgress() {
 
 // ─── Activity & streak ─────────────────────────────────────────────
 // Call this any time the user does something meaningful:
-// - completes a module screen past the hook/intro
+// - completes a chapter screen past the hook/intro
 // - submits a test question answer
-// - finishes a module
+// - finishes a chapter
 // It updates the streak regardless of which feature they used.
 
 export function recordActivity() {
@@ -80,7 +86,7 @@ export function recordActivity() {
 }
 
 // ─── Score recording ───────────────────────────────────────────────
-// Call after any graded question or module section completion.
+// Call after any graded question or chapter section completion.
 // subject: e.g. 'Biology', 'History', 'Maths'
 // earned:  marks/points awarded
 // possible: total marks/points available
@@ -132,7 +138,7 @@ export function getImprovements() {
   return Object.entries(subjects)
     .map(([subject, { recent, older }]) => {
       const recentAvg = avg(recent)
-      const olderAvg  = avg(older)
+      const olderAvg = avg(older)
       if (recentAvg === null || recent.length < 2) return null
       const improvement = olderAvg !== null ? recentAvg - olderAvg : null
       return { subject, recentAvg, olderAvg, improvement, attempts: recent.length }
@@ -150,27 +156,25 @@ export function getScores() {
 }
 
 // ─── Confidence ratings ───────────────────────────────────────────
-// Keyed by moduleId, stored in a shared array.
-// Shape: [{ moduleId, subject, title, confidence, timestamp }, ...]
+// Keyed by the current legacy moduleId field, stored in a shared array.
+// Phase 3 migrates this terminology alongside chapter persistence.
 
 export function getAllConfidenceRatings() {
   return readArr(CONFIDENCE_KEY)
 }
 
-// ─── Per-module screen progress ────────────────────────────────────
+// ─── Legacy per-chapter screen progress names ─────────────────────
+// These functions and gcse_module_* keys are intentionally unchanged until
+// Phase 3 introduces tested chapter-key migration.
 
 export function getModuleState(moduleId) {
   return getObject('gcse_module_' + moduleId)
 }
 
-// Persist a module's resume state. Critical — screen progress/completion is
-// shown to the learner as saved, so a failed write returns false AND surfaces
-// the governed save-failure notice via saveCritical.
 export function saveModuleState(moduleId, state) {
   return saveCritical('gcse_module_' + moduleId, state)
 }
 
-// Percent of a module's screens completed (100 if marked complete).
 export function getModulePct(mod) {
   if (!mod || !mod.screenCount) return 0
   const s = getModuleState(mod.id)
@@ -179,68 +183,37 @@ export function getModulePct(mod) {
   return Math.min(100, Math.round((screen / mod.screenCount) * 100))
 }
 
-// Parent modules — each contains an ordered list of chapter IDs, in app-wide
-// priority order. "Chapter" = one entry in MODULES; "Module" = this parent
-// grouping. Used by handleChapterComplete (next-chapter routing) and by
-// getContinueModule (Subjects tab "Keep going" hero, Home's "Today's plan").
-export const MODULE_GROUPS = [
-  {
-    id: 'hist_medicine',
-    title: 'Medicine Through Time',
-    subject: 'History',
-    chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','history-medicine-vesalius-beginning-doubt','history-medicine-harvey-pare-renaissance-method','history-medicine-great-plague-1665','history-medicine-surgery-anaesthetics','history-medicine-jenner-vaccination','history-medicine-germ-theory','history-medicine-great-stink','history-medicine-surgery-revolution','history-medicine-accidental-miracle','history-medicine-modern-medicine','history-medicine-cancer'],
-  },
-  {
-    id: 'soc_family',
-    title: 'Sociology of the Family',
-    subject: 'Sociology',
-    chapterIds: ['soc1','soc2','soc3','soc4','soc6'],
-  },
-  {
-    id: 'maths_core',
-    title: 'GCSE Maths',
-    subject: 'Maths',
-    chapterIds: ['math1','math2'],
-  },
-  {
-    id: 'bio_core',
-    title: 'GCSE Biology',
-    subject: 'Biology',
-    chapterIds: ['sci_bio_w1','bio_building_life','bio_human_machine','bio_disease_wars','bio_control_systems','bio_genetics_evolution','bio_ecosystems_group'],
-  },
-  // No Chemistry group: no Chemistry module has metadata or content yet, so a
-  // chem_core group would only hold dangling ids. Add it back alongside the
-  // first real Chemistry module (metadata + loader).
-]
+// ─── Chapter discovery ─────────────────────────────────────────────
+// The canonical parent-module catalogue determines chapter order. Progress
+// percentage still uses its legacy function name until Phase 3.
 
-// The module the "Keep going" hero should resume — the highest-priority
-// in-progress module, or if nothing is in progress, the highest-priority
-// module the learner hasn't started yet.
-export function getContinueModule() {
-  // Only ever hand back a module a learner can actually open — an unbuilt
-  // stub in a MODULE_GROUP must never become the "Keep going" hero.
-  const ordered = MODULE_GROUPS
-    .flatMap(g => g.chapterIds)
-    .map(id => MODULES.find(m => m.id === id))
-    .filter(m => m && isModuleAvailable(m))
+export function getContinueChapter() {
+  const ordered = MODULES
+    .flatMap(module => module.chapterIds)
+    .map(id => CHAPTERS.find(chapter => chapter.id === id))
+    .filter(chapter => chapter && isChapterAvailable(chapter))
 
-  const inProgress = ordered.find(m => { const p = getModulePct(m); return p > 0 && p < 100 })
+  const inProgress = ordered.find(chapter => {
+    const pct = getModulePct(chapter)
+    return pct > 0 && pct < 100
+  })
   if (inProgress) return inProgress
 
-  const unvisited = ordered.find(m => getModulePct(m) === 0)
+  const unvisited = ordered.find(chapter => getModulePct(chapter) === 0)
   if (unvisited) return unvisited
 
-  return ordered[0] || MODULES.find(isModuleAvailable) || MODULES[0]
+  return ordered[0] || CHAPTERS.find(isChapterAvailable) || CHAPTERS[0]
 }
 
-// Like getContinueModule, but returns null unless that module is actually
-// in progress (used by Home's "Today's plan" — a not-yet-started module
-// isn't a "continue" task).
-export function getInProgressModule() {
-  const mod = getContinueModule()
-  const pct = getModulePct(mod)
-  return (pct > 0 && pct < 100) ? mod : null
+export function getInProgressChapter() {
+  const chapter = getContinueChapter()
+  const pct = getModulePct(chapter)
+  return (pct > 0 && pct < 100) ? chapter : null
 }
+
+// Temporary compatibility aliases for existing runtime callers.
+export const getContinueModule = getContinueChapter
+export const getInProgressModule = getInProgressChapter
 
 // ─── Weekly recall trend ────────────────────────────────────────────
 // Shared by PulseTab and Home's "this week" line.
