@@ -66,17 +66,9 @@ renderer = replace_once(
 """,
     'schema error detail mode',
 )
-renderer = replace_once(
-    renderer,
-    """        <p style={{ ...TYPE.body, color: 'rgba(245,247,251,.72)', lineHeight: 1.6 }}>
-          {chapter?.title || chapter?.id || 'Unknown chapter'} contains screen data that is not registered or is missing required fields.
-        </p>
-        <pre style={{
-          whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', padding: 14, borderRadius: 12,
-          background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)',
-          color: '#FFD6DE', ...TYPE.bodySmall, lineHeight: 1.5,
-        }}>{errors.map(error => `${error.code}: ${error.message}`).join('\n')}</pre>""",
-    """        <p style={{ ...TYPE.body, color: 'rgba(245,247,251,.72)', lineHeight: 1.6 }}>
+schema_copy_start = renderer.index("        <p style={{ ...TYPE.body, color: 'rgba(245,247,251,.72)', lineHeight: 1.6 }}>")
+schema_copy_end = renderer.index('        {onBack &&', schema_copy_start)
+renderer = renderer[:schema_copy_start] + """        <p style={{ ...TYPE.body, color: 'rgba(245,247,251,.72)', lineHeight: 1.6 }}>
           {showDetails
             ? `${chapter?.title || chapter?.id || 'Unknown chapter'} contains screen data that is not registered or is missing required fields.`
             : 'This chapter needs a quick content update before it can continue. Please go back and choose another chapter.'}
@@ -86,10 +78,9 @@ renderer = replace_once(
             whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', padding: 14, borderRadius: 12,
             background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)',
             color: '#FFD6DE', ...TYPE.bodySmall, lineHeight: 1.5,
-          }}>{errors.map(error => `${error.code}: ${error.message}`).join('\n')}</pre>
-        )}""",
-    'production-safe schema message',
-)
+          }}>{errors.map(error => `${error.code}: ${error.message}`).join(String.fromCharCode(10))}</pre>
+        )}
+""" + renderer[schema_copy_end:]
 renderer = replace_once(
     renderer,
     """function UnsupportedScreen({ screen, chapter, definition }) {
