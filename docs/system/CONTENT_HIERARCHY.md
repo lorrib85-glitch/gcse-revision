@@ -150,8 +150,8 @@ The codebase still contains migration aliases. These names are compatibility inp
 | `MODULE_GROUPS` from `src/progress.js` | Parent module metadata collection | `MODULES` from `src/data/modules.js` |
 | `MODULE_CONTENT_LOADERS` | Chapter content loader registry | `CHAPTER_CONTENT_LOADERS` |
 | `TAG_MODULE_MAP` | Tag-to-chapter recovery routing | `TAG_CHAPTER_MAP` |
-| `ModulePlayer` | Runtime for one learner-facing chapter | `ChapterPlayer` |
-| `loadModuleContent` | Loads one chapter's full content | `loadChapterContent` |
+| `ModulePlayer` | Compatibility export for the former chapter runtime | `ChapterPlayer` |
+| `loadModuleContent` | Removed app-shell action name | `loadChapterContent` |
 | `getModuleState` / `saveModuleState` | Chapter resume state | `getChapterState` / `saveChapterState` |
 | `gcse_module_<id>` | Stored chapter progress | `gcse_chapter_<id>` after a safe migration |
 
@@ -196,7 +196,7 @@ Module flow
         └── Governed component
 ```
 
-`ChapterPlayer` owns chapter navigation and state. `ScreenRenderer` maps registered screen types to governed components. Components remain focused on their own learning interaction.
+`ChapterPlayer` now owns chapter navigation and state. `ModulePlayer` and `moduleNavigation.js` remain temporary compatibility facades only. `ScreenRenderer` is the Phase 5 target for mapping registered screen types to governed components. Components remain focused on their own learning interaction.
 
 ## Change discipline
 

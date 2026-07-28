@@ -5,40 +5,39 @@ import { resolve } from 'path'
 const root = resolve(process.cwd())
 const read = (rel) => readFileSync(resolve(root, rel), 'utf8')
 
-describe('Placeholder module safety', () => {
-  it('chapters with screenCount 0 exist in the canonical chapter catalogue', () => {
-    // Dynamic import not available in static test; parse the compatibility
-    // catalogue that still owns the metadata rows during the migration window.
-    const src = read('src/modules.js')
-    expect(src).toMatch(/screenCount:\s*0/)
+describe('Placeholder chapter safety', () => {
+  it('the compatibility metadata source still contains unbuilt chapters', () => {
+    // CHAPTERS is the canonical export, but Phase 2 deliberately aliases the
+    // existing metadata rows from src/modules.js until final legacy removal.
+    const canonical = read('src/chapters.js')
+    const metadata = read('src/modules.js')
+    expect(canonical).toContain('export const CHAPTERS = LEGACY_CHAPTERS')
+    expect(metadata).toMatch(/screenCount:\s*0/)
   })
 
-  it('openModulePlayer in LegacyApp.jsx guards against chapters without screens', () => {
+  it('openChapterPlayer guards against chapters without screens before opening the overlay', () => {
     const src = read('src/app/LegacyApp.jsx')
-    // Runtime terminology is migrated in Phase 4. Until then, the legacy-named
-    // function must still guard the chapter before opening the player.
-    const fnStart = src.indexOf('function openModulePlayer(')
+    const fnStart = src.indexOf('function openChapterPlayer(')
     const fnBody = src.slice(fnStart, fnStart + 800)
-    expect(fnBody).toMatch(/if\s*\(!\s*mod.*screenCount.*\)\s*return/)
-    const guardPos = fnBody.search(/if\s*\(!\s*mod.*screenCount.*\)\s*return/)
-    const setViewPos = fnBody.indexOf("setView('module')")
+    const guardPattern = /if\s*\(!\s*chapter\??\.\s*screenCount\s*\)\s*return/
+    expect(fnBody).toMatch(guardPattern)
+    const guardPos = fnBody.search(guardPattern)
+    const setViewPos = fnBody.indexOf("setView('chapter')")
     expect(guardPos).toBeGreaterThanOrEqual(0)
     expect(setViewPos).toBeGreaterThanOrEqual(0)
     expect(guardPos).toBeLessThan(setViewPos)
   })
 
-  it('Subjects.jsx routes chapter availability through the canonical helper and maps non-available to coming_soon', () => {
+  it('Subjects uses canonical chapter availability and maps non-available chapters to coming_soon', () => {
     const src = read('src/features/subjects/Subjects.jsx')
-    // The allItems mapping derives availability from the canonical chapter
-    // helper and maps anything not AVAILABLE to coming_soon.
-    expect(src).toMatch(/getChapterAvailability\(mod\)/)
+    expect(src).toMatch(/getChapterAvailability\((mod|chapter)\)/)
     expect(src).toMatch(/CHAPTER_AVAILABILITY\.AVAILABLE.*coming_soon|coming_soon[\s\S]*CHAPTER_AVAILABILITY\.AVAILABLE/)
   })
 
-  it('chapters with screenCount > 0 are not affected — the guard only fires for 0', () => {
+  it('the guard is a falsy screenCount check, so built chapters pass through', () => {
     const src = read('src/app/LegacyApp.jsx')
-    const fnStart = src.indexOf('function openModulePlayer(')
+    const fnStart = src.indexOf('function openChapterPlayer(')
     const fnBody = src.slice(fnStart, fnStart + 400)
-    expect(fnBody).toMatch(/if\s*\(!\s*mod\??\.\s*screenCount/)
+    expect(fnBody).toMatch(/if\s*\(!\s*chapter\??\.\s*screenCount/)
   })
 })

@@ -6,14 +6,15 @@ import FaceTheExaminerDone from './FaceTheExaminerDone.jsx'
 import FaceTheExaminerMain from './FaceTheExaminerMain.jsx'
 import { buildAnnotatedSegments, replaceAnnotatedTargets } from './utils.js'
 
-export default function FaceTheExaminerContainer({ module, examiner, onExit, onContinue }) {
-  const theme = SUBJECTS[module.subject] || {
+export default function FaceTheExaminerContainer({ chapter, module, examiner, onExit, onContinue }) {
+  const activeChapter = chapter || module || {}
+  const theme = SUBJECTS[activeChapter.subject] || {
     accent: GENERAL.teal,
     background: GENERAL.backgroundApp,
   }
   const accent = theme.accent
   const bg = theme.background
-  const screenTitle = examiner.screenTitle || module.faceTheExaminerTitle || 'Mark the answer'
+  const screenTitle = examiner.screenTitle || activeChapter.faceTheExaminerTitle || 'Mark the answer'
 
   const [phase, setPhase] = useState('intro')
   const [overlayDark, setOverlayDark] = useState(false)
@@ -93,8 +94,8 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
           editedAnswer,
           marks: examiner.marks,
           markScheme: examiner.markScheme,
-          subject: examiner.subject || module.subject,
-          board: examiner.board || module.board || module.examBoard || undefined,
+          subject: examiner.subject || activeChapter.subject,
+          board: examiner.board || activeChapter.board || activeChapter.examBoard || undefined,
           type: examiner.type,
           originalMark: examiner.mark,
           studentEdits,
@@ -129,5 +130,5 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
     return <FaceTheExaminerDone bg={bg} accent={accent} examiner={examiner} remarkResult={remarkResult} onAdvance={advance} />
   }
 
-  return <FaceTheExaminerMain module={module} examiner={examiner} screenTitle={screenTitle} bg={bg} accent={accent} activeTab={activeTab} setActiveTab={setActiveTab} phase={phase} setPhase={setPhase} guessedMark={guessedMark} setGuessedMark={setGuessedMark} selectedCriteria={selectedCriteria} setSelectedCriteria={setSelectedCriteria} isReveal={isReveal} isImproving={isImproving} isRemarking={isRemarking} segments={segments} expandedEdit={expandedEdit} setExpandedEdit={setExpandedEdit} studentEdits={studentEdits} setStudentEdits={setStudentEdits} expandedTextareaRef={expandedTextareaRef} hasAnyEdit={hasAnyEdit} remarkLoading={remarkLoading} remarkError={remarkError} handleRemark={handleRemark} onExit={onExit} canImprove={canImprove} />
+  return <FaceTheExaminerMain module={activeChapter} examiner={examiner} screenTitle={screenTitle} bg={bg} accent={accent} activeTab={activeTab} setActiveTab={setActiveTab} phase={phase} setPhase={setPhase} guessedMark={guessedMark} setGuessedMark={setGuessedMark} selectedCriteria={selectedCriteria} setSelectedCriteria={setSelectedCriteria} isReveal={isReveal} isImproving={isImproving} isRemarking={isRemarking} segments={segments} expandedEdit={expandedEdit} setExpandedEdit={setExpandedEdit} studentEdits={studentEdits} setStudentEdits={setStudentEdits} expandedTextareaRef={expandedTextareaRef} hasAnyEdit={hasAnyEdit} remarkLoading={remarkLoading} remarkError={remarkError} handleRemark={handleRemark} onExit={onExit} canImprove={canImprove} />
 }

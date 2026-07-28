@@ -4,13 +4,14 @@ import ExitButton from './ExitButton.jsx'
 import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 
-// ── LearningHeader — single-row module header ─────────────────────────────────
+// ── LearningHeader — single-row chapter header ─────────────────────────────────
 // Single row: [back] [stage rail] [n/total] [exit]
-// Stage rail shows the module's 6 navigation stages; each dot jumps to the start of that stage.
+// Stage rail shows the chapter's 6 navigation stages; each dot jumps to the start of that stage.
 // Labels are hidden unless tapped. Tap n/total counter to open jump sheet (onJumpOpen callback).
-// Props: module, currentStage, stageNavigation, currentScreen, onStageJump,
+// Props: chapter (module remains a compatibility fallback), currentStage, stageNavigation, currentScreen, onStageJump,
 //        onBack, onExit, visible, onJumpOpen, screenPos
 export default function LearningHeader({
+  chapter,
   module,
   currentStage = 'Discover',
   stageNavigation = null,
@@ -22,7 +23,8 @@ export default function LearningHeader({
   onJumpOpen = null,
   screenPos = null,
 }) {
-  const subject = module?.subject || 'History'
+  const activeChapter = chapter || module
+  const subject = activeChapter?.subject || 'History'
   const accent = SUBJECT_ACCENTS[subject] || SUBJECT_ACCENTS.History
   const accentRgb = hexToRgb(accent)
 

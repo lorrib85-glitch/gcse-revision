@@ -400,12 +400,13 @@ function FeedbackAccordion({ id, title, open, onToggle, accent, children }) {
   )
 }
 
-// `embedded` — set by ModulePlayer when this screen runs inside a module,
+// `embedded` — set by ChapterPlayer when this screen runs inside a chapter,
 // where the floating LearningHeader capsule already owns back/exit and the
 // top strip. Standalone hosts keep this component's self-contained header.
-export default function GuidedExamResponse({ module = {}, exam = {}, onExit, onContinue, theme, embedded = false }) {
+export default function GuidedExamResponse({ chapter, module = {}, exam = {}, onExit, onContinue, theme, embedded = false }) {
+  const activeChapter = chapter || module
   const sections = Array.isArray(exam.sections) ? exam.sections : []
-  const rawSubject = exam.subject || module?.subject || ''
+  const rawSubject = exam.subject || activeChapter?.subject || ''
   const resolvedSubject = resolveSubject(rawSubject, exam.subjectLabel)
   const isGeneral = theme === 'general' || !resolvedSubject.theme
   const accent = isGeneral ? GENERAL.teal : resolvedSubject.theme.accent

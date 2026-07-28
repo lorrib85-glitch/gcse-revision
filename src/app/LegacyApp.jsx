@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, lazy, Suspense } from 'react'
-import { MODULE_CONTENT_LOADERS } from '../content/moduleContentRegistry.js'
-import { MODULES } from '../modules.js'
+import { CHAPTER_CONTENT_LOADERS } from '../content/chapterContentRegistry.js'
+import { CHAPTERS } from '../chapters.js'
 import { useAuth } from '../auth/useAuth.js'
 import { getProgress, recordActivity, getChapterState as safeGetChapterState, saveChapterState, getContinueChapter } from '../progress.js'
-import { buildChapterCompletePayload, prepareModuleScreenState, resolveTaskDestination } from './moduleNavigation.js'
+import { buildChapterCompletePayload, prepareChapterScreenState, resolveTaskDestination } from './chapterNavigation.js'
 import TestTab from '../features/quickfire/QuickFire.jsx'
 import { readQfBest } from '../features/quickfire/logic/quickFireBest.js'
 import Home from '../features/home/Home.jsx'
@@ -17,10 +17,10 @@ import { shouldOfferQuarantineRecovery, adoptQuarantinedProgress, dismissQuarant
 import { TYPE } from '../constants/typography.js'
 import { GENERAL } from '../constants/generalTheme.js'
 
-// ModulePlayer (and the ~40 learning/feedback components it imports) is only
-// needed once a user opens a module — lazy-load it as its own chunk so
+// ChapterPlayer (and the ~40 learning/feedback components it imports) is only
+// needed once a user opens a chapter — lazy-load it as its own chunk so
 // Home/Subjects/Progress/Quiz don't pay for it on first load.
-const ModulePlayer = lazy(() => import('../components/layout/ModulePlayer.jsx'))
+const ChapterPlayer = lazy(() => import('../components/layout/ChapterPlayer.jsx'))
 
 // ─── Helpers ──────────────────────────────────────────────────────────�[...] 
 
@@ -63,12 +63,12 @@ function SplashScreen() {
   )
 }
 
-// ─── Module loading screen ─────────────────────────────────────────────────────
-// Shown both while ModulePlayer's chunk downloads (Suspense fallback, first open
-// only) and while a module's full lesson content is being fetched (see
-// loadModuleContent below).
+// ─── Chapter loading screen ─────────────────────────────────────────────────────
+// Shown both while ChapterPlayer's chunk downloads (Suspense fallback, first open
+// only) and while a chapter's full lesson content is being fetched (see
+// loadChapterContent below).
 
-function ModuleLoadingScreen() {
+function ChapterLoadingScreen() {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 100,
@@ -80,18 +80,18 @@ function ModuleLoadingScreen() {
   )
 }
 
-// ─── Module content loading ────────────────────────────────────────────────────
-// All subjects now use per-module files via MODULE_CONTENT_LOADERS.
-// New modules: run /module-creation <id> to add a content file + registry entry.
+// ─── Chapter content loading ────────────────────────────────────────────────────
+// All subjects now use per-chapter files via CHAPTER_CONTENT_LOADERS.
+// New chapters: run /chapter-creation <id> to add a content file + registry entry.
 
-const _contentCache = {}
+const _chapterContentCache = {}
 
-async function loadModuleContent(mod) {
-  if (_contentCache[mod.id]) return _contentCache[mod.id]
-  const loader = MODULE_CONTENT_LOADERS[mod.id]
+async function loadChapterContent(chapter) {
+  if (_chapterContentCache[chapter.id]) return _chapterContentCache[chapter.id]
+  const loader = CHAPTER_CONTENT_LOADERS[chapter.id]
   if (!loader) return null
   const content = await loader()
-  if (content) _contentCache[mod.id] = content
+  if (content) _chapterContentCache[chapter.id] = content
   return content
 }
 
@@ -311,9 +311,9 @@ export default function App() {
   const { user, pendingAuth } = useAuth()
   const [showSplash, setShowSplash]   = useState(true)
   const [tab, setTab]                 = useState('home')
-  const [view, setView]               = useState(null)   // 'module' | 'chapter-complete' — overlays
+  const [view, setView]               = useState(null)   // 'chapter' | 'chapter-complete' — overlays
   const [progress, setProgress]       = useState(() => safeGetProgress())
-  const [activeModule,        setActiveModule]        = useState(null)
+  const [activeChapter,        setActiveChapter]        = useState(null)
   const [chapterCompleteData, setChapterCompleteData] = useState(null)
   const [examAutoStart,       setExamAutoStart]       = useState(null)
   const [quickfireOrigin,     setQuickfireOrigin]     = useState('pulse')
@@ -338,8 +338,8 @@ export default function App() {
     setOfferRecovery(false)
   }
 
-  function handleChapterComplete(completedModule) {
-    setChapterCompleteData(buildChapterCompletePayload(completedModule))
+  function handleChapterComplete(completedChapter) {
+    setChapterCompleteData(buildChapterCompletePayload(completedChapter))
     setView('chapter-complete')
   }
 
@@ -354,23 +354,23 @@ export default function App() {
     setProgress(safeGetProgress())
   }, [])
 
-  // Prefetch ModulePlayer chunk on idle so it's ready before the user opens a module
+  // Prefetch ChapterPlayer chunk on idle so it's ready before the user opens a chapter
   useEffect(() => {
     if (typeof requestIdleCallback !== 'undefined') {
-      const id = requestIdleCallback(() => import('../components/layout/ModulePlayer.jsx'))
+      const id = requestIdleCallback(() => import('../components/layout/ChapterPlayer.jsx'))
       return () => cancelIdleCallback(id)
     } else {
-      const id = setTimeout(() => import('../components/layout/ModulePlayer.jsx'), 2000)
+      const id = setTimeout(() => import('../components/layout/ChapterPlayer.jsx'), 2000)
       return () => clearTimeout(id)
     }
   }, [])
 
-  // Prefetch episode content for the most likely next module (in-progress or first unstarted)
+  // Prefetch episode content for the most likely next chapter (in-progress or first unstarted)
   // so opening it feels instant instead of waiting for a network download.
   useEffect(() => {
-    const mod = getContinueChapter()
-    if (!mod) return
-    const prefetch = () => loadModuleContent(mod)
+    const chapter = getContinueChapter()
+    if (!chapter) return
+    const prefetch = () => loadChapterContent(chapter)
     if (typeof requestIdleCallback !== 'undefined') {
       const id = requestIdleCallback(prefetch)
       return () => cancelIdleCallback(id)
@@ -380,24 +380,24 @@ export default function App() {
     }
   }, [])
 
-  function openModule(mod, screenIndex) {
-    openModulePlayer(mod, screenIndex)
+  function openChapter(chapter, screenIndex) {
+    openChapterPlayer(chapter, screenIndex)
   }
 
   // Dev-only render-pass tooling (docs/superpowers/plans/2026-07-06-content-quality-framework.md,
-  // Task P6): ?module=<id>&screen=<n> opens a module straight to a given screen so content-review
+  // Task P6): ?chapter=<id>&screen=<n> opens a chapter straight to a given screen so content-review
   // can screenshot any screen without scripting through everything before it. Production ignores it.
   useEffect(() => {
     if (!import.meta.env.DEV) return
     if (!user?.loggedIn || !user?.onboardingComplete) return
     const params = new URLSearchParams(window.location.search)
-    const moduleId = params.get('module')
+    const chapterId = params.get('chapter') || params.get('module')
     const screenParam = params.get('screen')
-    if (!moduleId) return
-    const mod = MODULES.find(m => m.id === moduleId)
-    if (!mod) return
+    if (!chapterId) return
+    const chapter = CHAPTERS.find(candidate => candidate.id === chapterId)
+    if (!chapter) return
     const screenIndex = screenParam !== null ? Number(screenParam) : undefined
-    openModulePlayer(mod, Number.isNaN(screenIndex) ? undefined : screenIndex)
+    openChapterPlayer(chapter, Number.isNaN(screenIndex) ? undefined : screenIndex)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.loggedIn, user?.onboardingComplete])
 
@@ -413,8 +413,8 @@ export default function App() {
     if (dest.kind === 'quickfire') {
       // explicit starter helper ensures we only start quickfire when the user tapped a START action
       startQuickfire('home')
-    } else if (dest.kind === 'module') {
-      openModule(dest.mod, dest.screenIndex)
+    } else if (dest.kind === 'chapter') {
+      openChapter(dest.chapter, dest.screenIndex)
     } else if (dest.kind === 'exam') {
       setExamAutoStart({
         subject:         dest.subject,
@@ -428,23 +428,23 @@ export default function App() {
     }
   }
 
-  function openModulePlayer(mod, screenIndex) {
-    if (!mod?.screenCount) return
+  function openChapterPlayer(chapter, screenIndex) {
+    if (!chapter?.screenCount) return
     if (screenIndex !== undefined && screenIndex !== null) {
-      const existing = safeGetChapterState(mod.id)
-      saveChapterState(mod.id, prepareModuleScreenState(screenIndex, existing))
+      const existing = safeGetChapterState(chapter.id)
+      saveChapterState(chapter.id, prepareChapterScreenState(screenIndex, existing))
     }
-    import('../components/layout/ModulePlayer.jsx')
-    const cached = _contentCache[mod.id]
+    import('../components/layout/ChapterPlayer.jsx')
+    const cached = _chapterContentCache[chapter.id]
     if (cached) {
-      setActiveModule(cached)
-      setView('module')
+      setActiveChapter(cached)
+      setView('chapter')
       return
     }
-    setActiveModule(null)
-    setView('module')
-    loadModuleContent(mod)
-      .then(fullMod => setActiveModule(fullMod || mod))
+    setActiveChapter(null)
+    setView('chapter')
+    loadChapterContent(chapter)
+      .then(fullChapter => setActiveChapter(fullChapter || chapter))
       .catch(() => setView(null))
   }
 
@@ -487,7 +487,7 @@ export default function App() {
         pastPaperLabel={d.pastPaperHint?.label}
         onContinue={() => {
           setChapterCompleteData(null)
-          if (d.nextModule) { openModule(d.nextModule) } else { closeOverlay() }
+          if (d.nextChapter) { openChapter(d.nextChapter) } else { closeOverlay() }
         }}
         onQuiz={() => {
           setChapterCompleteData(null)
@@ -514,10 +514,10 @@ export default function App() {
       />
     )
   }
-  if (view === 'module' && !activeModule) return <ModuleLoadingScreen />
-  if (view === 'module' && activeModule) return (
-    <Suspense fallback={<ModuleLoadingScreen />}>
-      <ModulePlayer module={activeModule} onBack={closeOverlay} onChapterComplete={handleChapterComplete} />
+  if (view === 'chapter' && !activeChapter) return <ChapterLoadingScreen />
+  if (view === 'chapter' && activeChapter) return (
+    <Suspense fallback={<ChapterLoadingScreen />}>
+      <ChapterPlayer chapter={activeChapter} onBack={closeOverlay} onChapterComplete={handleChapterComplete} />
     </Suspense>
   )
 
@@ -527,10 +527,10 @@ export default function App() {
     <div style={{ background: GENERAL.backgroundApp, minHeight: '100vh' }}>
       <div key={tab} className="tab-content">
         {tab === 'home'     && <Home onSelectTask={handleTodaysPlanSelect} onReviewProgress={() => setTab('pulse')} />}
-        {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
+        {tab === 'subjects' && <ModulesTab onOpenModule={openChapter} />}
         {tab === 'pulse'    && <PulseTab onStartQuickFire={() => startQuickfire('pulse')} best={readQfBest()} />}
-        {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab(quickfireOrigin)} />}
-        {tab === 'exams'    && <ExamPractice tab={tab} onOpenModule={openModule} onOpenPulse={() => setTab('pulse')} examAutoStart={examAutoStart} setExamAutoStart={setExamAutoStart} />}
+        {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openChapter} onExit={() => setTab(quickfireOrigin)} />}
+        {tab === 'exams'    && <ExamPractice tab={tab} onOpenModule={openChapter} onOpenPulse={() => setTab('pulse')} examAutoStart={examAutoStart} setExamAutoStart={setExamAutoStart} />}
       </div>
       <BottomNav tab={tab} setTab={setTab} />
     </div>
