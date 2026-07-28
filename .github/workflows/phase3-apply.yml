@@ -134,7 +134,22 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Architecture contracts
-        run: pnpm test:architecture
+        id: architecture
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          pnpm test:architecture 2>&1 | tee /tmp/phase3-architecture.txt
+
+      - name: Upload architecture failure
+        if: steps.architecture.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase3-architecture-failure
+          path: /tmp/phase3-architecture.txt
+
+      - name: Stop after architecture failure
+        if: steps.architecture.outcome == 'failure'
+        run: exit 1
 
       - name: Phase 3 migration contracts
         run: >-
