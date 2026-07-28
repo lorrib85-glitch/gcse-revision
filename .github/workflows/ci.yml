@@ -29,6 +29,21 @@ jobs:
       # drives, so install it (with its OS deps) before test:storybook.
       - run: pnpm exec playwright install --with-deps chromium
 
+      # Temporary Phase 2 diagnostics. Keep these as separate steps until the
+      # failing migration contract is identified, then remove before merge.
+      - name: Phase 2 — hierarchy and alias identity
+        run: pnpm exec vitest run --project architecture tests/architecture/content-hierarchy.test.js
+      - name: Phase 2 — legacy import allowlist
+        run: pnpm exec vitest run --project architecture tests/architecture/legacy-content-imports.test.js
+      - name: Phase 2 — chapter availability
+        run: pnpm exec vitest run --project architecture tests/architecture/module-availability.test.js
+      - name: Phase 2 — chapter metadata and loaders
+        run: pnpm exec vitest run --project architecture tests/architecture/module-metadata-integrity.test.js
+      - name: Phase 2 — content loading boundary
+        run: pnpm exec vitest run --project architecture tests/architecture/content-loading-boundary.test.js
+      - name: Phase 2 — recovery routing
+        run: pnpm exec vitest run --project architecture tests/architecture/recovery-routing-integrity.test.js
+
       # Architecture contracts run first so structural regressions are still
       # visible when unrelated lint debt prevents the later checks from running.
       # No gate is removed: this is the same verification set in safer order.
