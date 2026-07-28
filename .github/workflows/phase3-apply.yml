@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: agent/content-hierarchy-phase-3
-          fetch-depth: 0
+          fetch-depth: 1
 
       - uses: pnpm/action-setup@v4
 
@@ -27,7 +27,35 @@ jobs:
           cache: pnpm
 
       - name: Apply fail-fast migration edits
-        run: node .github/phase3-migrate.mjs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('.github/phase3-migrate.mjs')
+          source = path.read_text()
+          old = """function replaceRegex(path, pattern, to, expected = 1) {
+            const source = read(path)
+            const matches = [...source.matchAll(pattern)]
+            if (matches.length !== expected) {
+              throw new Error(`${path}: expected ${expected} regex matches, found ${matches.length}: ${pattern}`)
+            }
+            write(path, source.replace(pattern, to))
+          }
+          """
+          new = """function replaceRegex(path, pattern, to, expected = 1) {
+            const source = read(path)
+            const flags = pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g'
+            const matches = [...source.matchAll(new RegExp(pattern.source, flags))]
+            if (matches.length !== expected) {
+              throw new Error(`${path}: expected ${expected} regex matches, found ${matches.length}: ${pattern}`)
+            }
+            write(path, source.replace(pattern, to))
+          }
+          """
+          if source.count(old) != 1:
+              raise SystemExit('Phase 3 regex-helper anchor changed')
+          path.write_text(source.replace(old, new))
+          PY
+          node .github/phase3-migrate.mjs
 
       - run: pnpm install --frozen-lockfile
 
