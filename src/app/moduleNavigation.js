@@ -1,5 +1,5 @@
-import { MODULES } from '../modules.js'
-import { MODULE_GROUPS } from '../progress.js'
+import { CHAPTERS } from '../chapters.js'
+import { MODULES } from '../data/modules.js'
 import { MEDICINE_2023_PAPER } from '../data/medicineExamPapers.js'
 import { SUBJECTS } from '../constants/subjects.js'
 
@@ -116,31 +116,31 @@ const CHAPTER_COPY = [
 export function buildChapterCompletePayload(completedModule) {
   const accent = SUBJECTS[completedModule.subject]?.accent || completedModule.color || SUBJECTS.History.accent
 
-  const group         = MODULE_GROUPS.find(g => g.chapterIds.includes(completedModule.id))
+  const group         = MODULES.find(module => module.chapterIds.includes(completedModule.id))
   const chapterIdx    = group ? group.chapterIds.indexOf(completedModule.id) : -1
   const nextChapterId = group ? group.chapterIds[chapterIdx + 1] : null
 
   let nextMod, nextChapterLabel, nextChapterNum, nextChapterTitle, isFinalChapter, completionType
 
   if (nextChapterId) {
-    nextMod          = MODULES.find(m => m.id === nextChapterId)
+    nextMod          = CHAPTERS.find(chapter => chapter.id === nextChapterId)
     nextChapterLabel = 'Chapter'
     nextChapterNum   = chapterIdx + 2
     nextChapterTitle = nextMod?.title
     isFinalChapter   = false
     completionType   = 'chapter'
   } else if (group) {
-    const groupIdx  = MODULE_GROUPS.indexOf(group)
-    const nextGroup = MODULE_GROUPS[groupIdx + 1]
-    nextMod          = nextGroup ? MODULES.find(m => m.id === nextGroup.chapterIds[0]) : null
+    const groupIdx  = MODULES.indexOf(group)
+    const nextGroup = MODULES[groupIdx + 1]
+    nextMod          = nextGroup ? CHAPTERS.find(chapter => chapter.id === nextGroup.chapterIds[0]) : null
     nextChapterLabel = 'Next Module'
     nextChapterNum   = null
     nextChapterTitle = nextGroup?.title
     isFinalChapter   = !nextGroup
     completionType   = nextGroup ? 'module' : 'subject'
   } else {
-    const idx        = MODULES.findIndex(m => m.id === completedModule.id)
-    nextMod          = idx >= 0 && idx < MODULES.length - 1 ? MODULES[idx + 1] : null
+    const idx        = CHAPTERS.findIndex(chapter => chapter.id === completedModule.id)
+    nextMod          = idx >= 0 && idx < CHAPTERS.length - 1 ? CHAPTERS[idx + 1] : null
     nextChapterLabel = 'Chapter'
     nextChapterNum   = nextMod?.number
     nextChapterTitle = nextMod?.title
@@ -196,7 +196,7 @@ export function resolveTaskDestination(task) {
     return { kind: 'quickfire' }
   }
   if (sel.kind === 'module') {
-    const mod = MODULES.find(m => m.id === sel.moduleId)
+    const mod = CHAPTERS.find(chapter => chapter.id === sel.moduleId)
     if (!mod) return null
     return { kind: 'module', mod, screenIndex: sel.screenIndex }
   }
