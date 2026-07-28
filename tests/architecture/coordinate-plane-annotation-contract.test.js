@@ -40,13 +40,16 @@ function reachableStates(preset) {
           const scene = preset.derive(state.effectiveValues, context)
           states.push({ context, scene, requested })
 
-          // And each focusable point selected in turn.
+          // And each focusable point selected in turn. The selected id is
+          // recorded so the contract can check that THAT point is the active
+          // one, not merely that some point is.
           for (const point of scene.points.filter(item => item.focusable)) {
             const moved = { ...context, activeId: point.id }
             states.push({
               context: moved,
               scene: preset.derive(state.effectiveValues, moved),
               requested,
+              selectedId: point.id,
             })
           }
         }
@@ -90,23 +93,43 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
       for (const { scene, context } of defaults) {
         const active = scene.points.filter(point => point.tier === 'active')
 
-        // Key off ANNOTATABLE points, not focusable ones.
+        // Key off whether the scene HAS points, not off their tiers.
         //
-        // Focusability is a keyboard affordance, not a claim about teaching
-        // content. Three presets — straightLine, tableOfValues and intersection
-        // — annotate a point that is deliberately not focusable, so keying off
-        // focusability would allow zero active elements for exactly the presets
-        // this contract most needs to guard: a mutation stripping every active
-        // tier from tableOfValues would sail through.
+        // Two earlier forms of this assertion could not fail. Keying off
+        // `focusable` allowed zero active elements for straightLine,
+        // tableOfValues and intersection, none of whose points are focusable.
+        // Keying off "some point is not context" was circular: it derived the
+        // expectation from the very tiers under test, so demoting every point
+        // to context produced zero active AND zero expected, and passed.
         //
-        // Genuine no-point states stay legal: parallel and coincident
-        // intersections have no solution point at all, so nothing to annotate.
-        const hasAnnotatablePoint = scene.points.some(point => point.tier !== 'context')
-
+        // Under the normal policy every scene containing any point must have
+        // exactly one active. The legitimate zero-active states — parallel and
+        // coincident intersections — contain no points at all.
         expect(
           active,
           `${presetId} has ${active.length} active elements with activeId="${context.activeId}"`,
-        ).toHaveLength(hasAnnotatablePoint ? 1 : 0)
+        ).toHaveLength(scene.points.length > 0 ? 1 : 0)
+      }
+    })
+
+    // Deriving with an activeId proves nothing unless the contract checks that
+    // THAT point became active. Without this, a preset that always activated A
+    // would pass while the learner selected B — status and guides following one
+    // vertex while the highlight stayed on another.
+    it('makes the selected focusable point the sole active annotation', () => {
+      const selections = states.filter(
+        item => item.selectedId && item.context.showGuides === 'active',
+      )
+
+      for (const state of selections) {
+        const activeIds = state.scene.points
+          .filter(point => point.tier === 'active')
+          .map(point => point.id)
+
+        expect(
+          activeIds,
+          `${presetId} selected "${state.selectedId}" but activated ${JSON.stringify(activeIds)}`,
+        ).toEqual([state.selectedId])
       }
     })
 

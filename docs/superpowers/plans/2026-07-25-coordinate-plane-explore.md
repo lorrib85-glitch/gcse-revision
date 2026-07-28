@@ -5669,7 +5669,12 @@ export const Rotate = {
     const canvas = within(canvasElement)
 
     await userEvent.click(canvas.getByRole('button', { name: '180°' }))
-    await expect(canvas.getByText(/180° clockwise about \(0, 0\)/)).toBeVisible()
+
+    // A half-turn reaches the same image either way, so the direction group
+    // withdraws and the heading names no direction.
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Rotation 180° about (0, 0)')
+    expect(canvas.queryByRole('button', { name: 'Clockwise' })).toBeNull()
   },
 }
 
@@ -5719,8 +5724,10 @@ export const AtomicDiagonalDrag = {
     // Drag diagonally: both coordinates must move together.
     await userEvent.pointer([
       { target: handle, keys: '[MouseLeft>]' },
-      { target: svg, coords: { x: box.left + box.width * 0.75, y: box.top + box.height * 0.25 } },
-      { keys: '[/MouseLeft]' },
+      // ON THE HANDLE, not the svg — onPointerMove is bound to the handle and
+      // events do not propagate from an ancestor down to it.
+      { target: handle, coords: { x: box.left + box.width * 0.75, y: box.top + box.height * 0.25 } },
+      { target: handle, keys: '[/MouseLeft]' },
     ])
 
     const heading = canvasElement.querySelector('[data-cp-status-heading]').textContent
@@ -5817,9 +5824,12 @@ export const SteepLineStaysInPlot = {
 
 // Issue 4: the extreme transformation states.
 export const MaximumTranslation = {
-  args: { preset: 'translate', interactive: false, defaultValue: { dx: 4, dy: 4 } },
+  // The MODEL extreme, not the interaction limit. dx reaches 8 and dy reaches
+  // 5 for supplied content; (4, 4) is only as far as a learner can drag.
+  args: { preset: 'translate', interactive: false, defaultValue: { dx: 8, dy: 5 } },
   play: async ({ canvasElement }) => {
-    await expect(within(canvasElement).getByText('Vector (4, 4)')).toBeVisible()
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toBe('Vector (8, 5)')
     expectMobileContainment(canvasElement)
   },
 }
@@ -5828,10 +5838,19 @@ export const MaximumEnlargement = {
   args: {
     preset: 'enlarge',
     interactive: false,
-    difficultyCapabilities: { nonOriginCentre: true, negativeScaleFactor: true },
-    defaultValue: { cx: -1, cy: -1 },
+    difficultyCapabilities: {
+      nonOriginCentre: true,
+      fractionalScaleFactor: true,
+      negativeScaleFactor: true,
+    },
+    // Without an explicit scaleFactor this rendered the DEFAULT factor 2, not
+    // the maximum. The largest offered factor about a non-origin centre is the
+    // state that actually reaches furthest.
+    defaultValue: { cx: -1, cy: -1, scaleFactor: '3' },
   },
   play: async ({ canvasElement }) => {
+    expect(canvasElement.querySelector('[data-cp-status-heading]').textContent)
+      .toContain('scale factor 3')
     expectMobileContainment(canvasElement)
   },
 }
@@ -5863,10 +5882,15 @@ export const NarrowViewport = {
   play: async ({ canvasElement }) => {
     expectMobileContainment(canvasElement, 320)
 
-    // Touch targets survive the narrowest width.
-    for (const target of canvasElement.querySelectorAll('button')) {
+    // Touch targets survive the narrowest width — every interactive element,
+    // not only the buttons. The stepper value is a focusable slider too.
+    const interactive = canvasElement.querySelectorAll('button, [role="slider"]')
+    expect(interactive.length).toBeGreaterThan(0)
+
+    for (const target of interactive) {
       const box = target.getBoundingClientRect()
-      expect(box.height).toBeGreaterThanOrEqual(43.5)
+      expect(box.height, `${target.getAttribute('aria-label') ?? target.textContent} height`)
+        .toBeGreaterThanOrEqual(43.5)
     }
   },
 }
