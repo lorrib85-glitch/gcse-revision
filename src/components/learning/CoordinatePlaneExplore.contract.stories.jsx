@@ -3091,3 +3091,56 @@ export const TransformCentreInstructionsMatchTheControls = {
     expect(instruction).not.toMatch(/move the centre/i)
   },
 }
+
+// ─── The status area does not resize as the learner works ────────────────────
+//
+// Its sub-blocks each reserve their own worst case, because the content
+// genuinely changes shape: a heading wraps to two lines at 90° and 270° but
+// not at 180°, the working runs to three lines for a negative scale factor,
+// and the explanation drops from three lines to two between table rows.
+// Reserving only the total let the component's height move by up to 22px while
+// a learner stepped through options.
+function statusHeightProbe(preset, extraArgs = {}) {
+  return {
+    args: { preset, ...extraArgs },
+    play: async ({ canvasElement }) => {
+      const statusArea = () =>
+        canvasElement.querySelector('[data-cp-status-heading]').parentElement
+      const heights = new Set([statusArea().getBoundingClientRect().height.toFixed(1)])
+
+      for (const option of canvasElement.querySelectorAll('[data-cp-option]')) {
+        await userEvent.click(option)
+        heights.add(statusArea().getBoundingClientRect().height.toFixed(1))
+      }
+
+      for (const value of canvasElement.querySelectorAll('[data-cp-stepper-value]')) {
+        value.focus()
+        await userEvent.keyboard('{End}')
+        heights.add(statusArea().getBoundingClientRect().height.toFixed(1))
+        await userEvent.keyboard('{Home}')
+        heights.add(statusArea().getBoundingClientRect().height.toFixed(1))
+      }
+
+      expect(
+        [...heights],
+        `${preset} status area resized while working: ${[...heights].join(' , ')}`,
+      ).toHaveLength(1)
+    },
+  }
+}
+
+export const StatusHeightStablePlotPoint = statusHeightProbe('plotPoint')
+export const StatusHeightStableTableOfValues = statusHeightProbe('tableOfValues')
+export const StatusHeightStableReflect = statusHeightProbe('reflect', {
+  difficultyCapabilities: { diagonalMirrorLines: true },
+})
+export const StatusHeightStableRotate = statusHeightProbe('rotate', {
+  difficultyCapabilities: { nonOriginCentre: true },
+})
+export const StatusHeightStableEnlarge = statusHeightProbe('enlarge', {
+  difficultyCapabilities: {
+    nonOriginCentre: true,
+    fractionalScaleFactor: true,
+    negativeScaleFactor: true,
+  },
+})

@@ -171,6 +171,17 @@ function axisTitleText(axis) {
   return axis.unit ? `${axis.label} (${axis.unit})` : axis.label
 }
 
+function boxesOverlap(a, b) {
+  return a.x < b.x + b.width
+    && b.x < a.x + a.width
+    && a.y < b.y + b.height
+    && b.y < a.y + a.height
+}
+
+// How far the tick label runs sit from their axis.
+const X_TICK_LABEL_OFFSET = 16
+const Y_TICK_LABEL_OFFSET = 12
+
 // Presets author shape paths in model space so the maths stays readable.
 // Commands are single letters followed by coordinate pairs.
 function projectModelPath(path, scale) {
@@ -550,33 +561,62 @@ function CoordinatePlaneExplore({
     (scene.handles ?? []).map(handle => handle.pointId).filter(Boolean),
   )
 
+  /**
+   * Where every axis number actually sits.
+   *
+   * Computed once and used for BOTH the rendered text and the obstacle boxes
+   * handed to `layoutPointLabels` — computing them in two places is how a chip
+   * ends up routed around a box that is not where the text is.
+   *
+   * When both axes cross, the two label runs meet at the origin. At a unit
+   * spacing of about 21px the y-axis number one step below the x-axis lands
+   * inside the x-axis row and "−1" is printed over "−1": illegible at 390px and
+   * at 320px alike. There is no sliding out of it — the x-axis row is a
+   * continuous band across the whole plot, so any horizontal nudge lands on the
+   * next number along — so the colliding y-axis number is dropped instead. It
+   * costs one label per crossing, the value is still countable from the grid,
+   * and it removes the only genuinely unreadable thing on the plane.
+   */
+  const tickLabels = useMemo(() => {
+    const format = value => String(value).replace('-', '−')
+
+    const boxFor = (text, centreX, centreY) => {
+      const { width, height } = estimateChipBox(text)
+      return { x: centreX - width / 2, y: centreY - height / 2, width, height }
+    }
+
+    const xLabels = xTicks.filter(tick => tick !== xAnchor).map((tick) => {
+      const text = format(tick)
+      const x = scale.toX(tick)
+      const y = scale.toY(yAnchor) + X_TICK_LABEL_OFFSET
+      return { key: tick, text, x, y, box: boxFor(text, x, y) }
+    })
+
+    const yLabels = yTicks
+      .filter(tick => tick !== yAnchor)
+      .map((tick) => {
+        const text = format(tick)
+        const right = scale.toX(xAnchor) - Y_TICK_LABEL_OFFSET
+        const y = scale.toY(tick)
+        const { width, height } = estimateChipBox(text)
+        return {
+          key: tick,
+          text,
+          x: right,
+          y,
+          box: { x: right - width, y: y - height / 2, width, height },
+        }
+      })
+      .filter(label => !xLabels.some(other => boxesOverlap(label.box, other.box)))
+
+    return { xLabels, yLabels }
+  }, [xTicks, yTicks, xAnchor, yAnchor, scale])
+
   // Tick labels and axis titles are real obstacles. Reporting them is the
   // contract; tuning chip constants is not a substitute, because a constant
   // cannot know where a tick label happens to sit.
   const labelObstacles = useMemo(() => {
-    const boxes = []
-
-    for (const tick of xTicks) {
-      if (tick === xAnchor) continue
-      const { width, height } = estimateChipBox(String(tick))
-      boxes.push({
-        x: scale.toX(tick) - width / 2,
-        y: scale.toY(yAnchor) + 16 - height / 2,
-        width,
-        height,
-      })
-    }
-
-    for (const tick of yTicks) {
-      if (tick === yAnchor) continue
-      const { width, height } = estimateChipBox(String(tick))
-      boxes.push({
-        x: scale.toX(xAnchor) - 12 - width,
-        y: scale.toY(tick) - height / 2,
-        width,
-        height,
-      })
-    }
+    const boxes = [...tickLabels.xLabels, ...tickLabels.yLabels].map(label => label.box)
 
     if (axisTitleText(axes.x)) {
       const { width, height } = estimateChipBox(axisTitleText(axes.x))
@@ -600,7 +640,7 @@ function CoordinatePlaneExplore({
     }
 
     return boxes
-  }, [xTicks, yTicks, xAnchor, yAnchor, scale, axes, canvas])
+  }, [tickLabels, scale, axes, canvas])
 
   const placedLabels = useMemo(() => layoutPointLabels(
     projectedPoints.map((point, index) => ({
@@ -775,30 +815,32 @@ function CoordinatePlaneExplore({
 
         {/* Tick labels */}
         <g aria-hidden="true" data-cp-ticks="true">
-          {xTicks.filter(tick => tick !== xAnchor).map(tick => (
+          {tickLabels.xLabels.map(label => (
             <text
-              key={`tick-x-${tick}`}
-              x={scale.toX(tick)}
-              y={scale.toY(yAnchor) + 16}
+              key={`tick-x-${label.key}`}
+              data-cp-tick="x"
+              x={label.x}
+              y={label.y}
               textAnchor="middle"
               dominantBaseline="central"
               fill={roles.tickLabel}
               style={{ ...TYPE.caption, fontVariantNumeric: 'tabular-nums' }}
             >
-              {String(tick).replace('-', '−')}
+              {label.text}
             </text>
           ))}
-          {yTicks.filter(tick => tick !== yAnchor).map(tick => (
+          {tickLabels.yLabels.map(label => (
             <text
-              key={`tick-y-${tick}`}
-              x={scale.toX(xAnchor) - 12}
-              y={scale.toY(tick)}
+              key={`tick-y-${label.key}`}
+              data-cp-tick="y"
+              x={label.x}
+              y={label.y}
               textAnchor="end"
               dominantBaseline="central"
               fill={roles.tickLabel}
               style={{ ...TYPE.caption, fontVariantNumeric: 'tabular-nums' }}
             >
-              {String(tick).replace('-', '−')}
+              {label.text}
             </text>
           ))}
         </g>
@@ -1089,7 +1131,15 @@ function CoordinatePlaneExplore({
                     style={{
                       ...TYPE.titleMedium,
                       color: roles.textPrimary,
+                      // A focusable slider is an interactive target, so it owes
+                      // the same 44px as the −/+ buttons beside it. Width alone
+                      // left it 20px tall — tappable only by accident, and the
+                      // narrow-viewport story fails on exactly that.
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       minWidth: COMPONENT_SIZE.touchTarget,
+                      minHeight: COMPONENT_SIZE.touchTarget,
                       textAlign: 'center',
                       fontVariantNumeric: 'tabular-nums',
                     }}
@@ -1153,23 +1203,37 @@ function CoordinatePlaneExplore({
         <div
           id={statusId}
           style={{
-            minHeight: COMPONENT_SIZE.areaPerimeterStatusReserve,
             padding: `${SPACING.micro}px ${SPACING.compact}px 0`,
             textAlign: 'center',
           }}
         >
+          {/* Each sub-block reserves its own worst case rather than the area
+              reserving a single total.
+              A heading wraps to two lines at 90° and 270° but not at 180°; the
+              working runs to three lines for a negative scale factor; the
+              explanation drops from three lines to two between table rows.
+              Reserving only the total let the component's height move by up to
+              22px while a learner stepped through options. Line counts are
+              tokens, and `em` keeps each reserve tied to its own TYPE size. */}
           <div
             data-cp-status-heading="true"
             style={{
               ...TYPE.displayCard,
               color: roles.textPrimary,
               fontVariantNumeric: 'tabular-nums',
+              minHeight: `${COMPONENT_SIZE.coordinatePlaneHeadingLines * TYPE.displayCard.lineHeight}em`,
             }}
           >
             {scene.status.heading}
           </div>
 
-          <div style={{ minHeight: COMPONENT_SIZE.touchTarget, marginTop: SPACING.micro }}>
+          <div
+            style={{
+              ...TYPE.bodySmall,
+              minHeight: `${COMPONENT_SIZE.coordinatePlaneWorkingLines * TYPE.bodySmall.lineHeight}em`,
+              marginTop: SPACING.micro,
+            }}
+          >
             {/* Keyed by index, not by text. Calculation lines are legitimately
                 identical in some states — coincident lines print the same
                 equation twice — and keying by content collapses them into a
@@ -1196,6 +1260,7 @@ function CoordinatePlaneExplore({
               color: roles.textSecondary,
               maxWidth: '34ch',
               margin: `${SPACING.micro}px auto 0`,
+              minHeight: `${COMPONENT_SIZE.coordinatePlaneExplanationLines * TYPE.bodySmall.lineHeight}em`,
             }}
           >
             {scene.status.explanation}
