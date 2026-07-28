@@ -75,4 +75,11 @@ describe('governed screen registry', () => {
     expect(player).not.toContain('function ScreenContentRenderer')
     expect(player).not.toContain('function ReadBlock')
   })
+
+  it('keeps production failures recoverable and accepted data variants renderable', () => {
+    const renderer = read('src/components/layout/ScreenRenderer.jsx')
+    expect(renderer).not.toContain('function UnsupportedScreen({ screen, chapter, definition }) {\n  const type = getScreenType(screen)\n  if (!import.meta.env.DEV) return null')
+    expect(renderer).toContain("const scenarios = Array.isArray(block.scenarios) ? block.scenarios : [block]")
+    expect(renderer).toContain('Array.isArray(block.points)')
+  })
 })

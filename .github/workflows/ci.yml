@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: write
-
 jobs:
   verify:
     name: Architecture, lint, tests, build
@@ -78,59 +75,3 @@ jobs:
       # this never contacts or mutates production Firebase and needs no
       # production credentials.
       - run: pnpm test:rules
-
-  phase5-finalise:
-    name: Phase 5 final reviewed patch
-    if: github.actor != 'github-actions[bot]' && github.event_name == 'pull_request' && github.head_ref == 'agent/content-hierarchy-phase-5'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: agent/content-hierarchy-phase-5
-          fetch-depth: 0
-          show-progress: false
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-      - name: Apply reviewed renderer fixes
-        run: python .github/phase5-finalise.py
-      - run: pnpm install --frozen-lockfile
-      - name: Architecture contracts
-        run: pnpm test:architecture
-      - name: Focused renderer and runtime contracts
-        run: >-
-          pnpm exec vitest run --project unit
-          tests/unit/chapterPlayer/screenRenderer.test.jsx
-          tests/unit/data/screenRegistry.test.js
-          tests/unit/chapterPlayer/lifecycle.test.js
-          tests/unit/app/chapterNavigation.test.js
-      - name: Full unit suite
-        run: pnpm test:unit
-      - name: Changed-file lint
-        run: >-
-          pnpm exec eslint
-          src/components/layout/ScreenRenderer.jsx
-          tests/architecture/screen-registry.test.js
-          tests/unit/chapterPlayer/screenRenderer.test.jsx
-      - name: Production build
-        run: pnpm build
-      - name: Commit clean reviewed files
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin main --depth=1
-          git show origin/main:.github/workflows/ci.yml > .github/workflows/ci.yml
-          rm -f .github/workflows/phase5-finalise.yml
-          rm -f .github/phase5-finalise.py
-          git add \
-            src/components/layout/ScreenRenderer.jsx \
-            tests/architecture/screen-registry.test.js \
-            tests/unit/chapterPlayer/screenRenderer.test.jsx \
-            .github/workflows/ci.yml \
-            .github/workflows/phase5-finalise.yml \
-            .github/phase5-finalise.py
-          git diff --cached --check
-          git commit -m "Harden governed screen failure and data variants"
-          git push origin HEAD:agent/content-hierarchy-phase-5

@@ -73,10 +73,21 @@ function KeypointBlock({ block }) {
         ...TYPE.eyebrow,
         textTransform: 'uppercase', color: SUBJECTS.History.accent, marginBottom: 12,
       }}>⭐ Key Point</div>
-      <p style={{
-        ...TYPE.body,
-        fontSize: '.95rem', lineHeight: 1.65, margin: 0, color: '#E0E6F0',
-      }} dangerouslySetInnerHTML={{ __html: block.text }} />
+      {block.text && (
+        <p style={{
+          ...TYPE.body,
+          fontSize: '.95rem', lineHeight: 1.65, margin: 0, color: '#E0E6F0',
+        }} dangerouslySetInnerHTML={{ __html: block.text }} />
+      )}
+      {Array.isArray(block.points) && (
+        <ul style={{ margin: 0, paddingLeft: 20, color: '#E0E6F0' }}>
+          {block.points.map((point, index) => (
+            <li key={index} style={{ ...TYPE.body, fontSize: '.95rem', lineHeight: 1.65, marginBottom: 6 }}>
+              {point}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
@@ -448,14 +459,15 @@ function ScenarioBlock({ block }) {
   const [score, setScore] = useState(0)
   const [done, setDone] = useState(false)
 
-  const scenario = block.scenarios[current]
+  const scenarios = Array.isArray(block.scenarios) ? block.scenarios : [block]
+  const scenario = scenarios[current]
 
   function choose(optIdx) {
     const correct = optIdx === scenario.correctIndex
     if (correct) setScore(s => s + 1)
     setAnswered([...answered, { correct, chosen: optIdx }])
     setTimeout(() => {
-      if (current + 1 < block.scenarios.length) setCurrent(c => c + 1)
+      if (current + 1 < scenarios.length) setCurrent(c => c + 1)
       else setDone(true)
     }, 1000)
   }
@@ -467,7 +479,7 @@ function ScenarioBlock({ block }) {
         borderRadius: 16, padding: SPACING.compact, textAlign: 'center',
       }}>
         <div style={{ ...TYPE.titleLarge, fontSize: '1.1rem', color: '#4DFF88', marginBottom: 6 }}>
-          {score}/{block.scenarios.length} — {score === block.scenarios.length ? 'Perfect! 🎉' : 'Good effort!'}
+          {score}/{scenarios.length} — {score === scenarios.length ? 'Perfect! 🎉' : 'Good effort!'}
         </div>
         <p style={{ ...TYPE.body, fontSize: '.85rem', color: '#9CA8C7', margin: 0 }}>
           {block.completionText || 'Scenarios complete.'}
@@ -491,7 +503,7 @@ function ScenarioBlock({ block }) {
             🌱 {block.label || 'Glucose Decision'}
           </div>
           <div style={{ ...TYPE.metadata, color: '#4A5578' }}>
-            {current + 1}/{block.scenarios.length}
+            {current + 1}/{scenarios.length}
           </div>
         </div>
 
@@ -710,6 +722,7 @@ export const FULL_SCREEN_RENDERER_TYPES = Object.freeze([
 ])
 
 export function ChapterSchemaError({ chapter, errors, onBack }) {
+  const showDetails = import.meta.env.DEV
   return (
     <div role="alert" style={{
       minHeight: '100dvh', background: GENERAL.backgroundApp, color: '#F5F7FB',
@@ -719,13 +732,17 @@ export function ChapterSchemaError({ chapter, errors, onBack }) {
         <div style={{ ...TYPE.eyebrow, color: '#FF8DA1', marginBottom: 12 }}>Chapter schema error</div>
         <h1 style={{ ...TYPE.displaySection, margin: '0 0 12px' }}>This chapter cannot start safely.</h1>
         <p style={{ ...TYPE.body, color: 'rgba(245,247,251,.72)', lineHeight: 1.6 }}>
-          {chapter?.title || chapter?.id || 'Unknown chapter'} contains screen data that is not registered or is missing required fields.
+          {showDetails
+            ? `${chapter?.title || chapter?.id || 'Unknown chapter'} contains screen data that is not registered or is missing required fields.`
+            : 'This chapter needs a quick content update before it can continue. Please go back and choose another chapter.'}
         </p>
-        <pre style={{
-          whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', padding: 14, borderRadius: 12,
-          background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)',
-          color: '#FFD6DE', ...TYPE.bodySmall, lineHeight: 1.5,
-        }}>{errors.map(error => `${error.code}: ${error.message}`).join('\n')}</pre>
+        {showDetails && (
+          <pre style={{
+            whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', padding: 14, borderRadius: 12,
+            background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)',
+            color: '#FFD6DE', ...TYPE.bodySmall, lineHeight: 1.5,
+          }}>{errors.map(error => `${error.code}: ${error.message}`).join(String.fromCharCode(10))}</pre>
+        )}
         {onBack && <button type="button" onClick={onBack} style={{ marginTop: 16, padding: '10px 16px', borderRadius: 10, cursor: 'pointer' }}>Go back</button>}
       </div>
     </div>
@@ -734,7 +751,6 @@ export function ChapterSchemaError({ chapter, errors, onBack }) {
 
 function UnsupportedScreen({ screen, chapter, definition }) {
   const type = getScreenType(screen)
-  if (!import.meta.env.DEV) return null
   return (
     <ChapterSchemaError
       chapter={chapter}
