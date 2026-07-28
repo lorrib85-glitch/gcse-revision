@@ -24,6 +24,31 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Temporary Phase 2 isolation checks. Remove before merge.
+      - name: Phase 2 — changed source lint
+        run: >-
+          pnpm exec eslint
+          src/chapters.js
+          src/data/modules.js
+          src/content/chapterContentRegistry.js
+          src/content/moduleContentRegistry.js
+          src/data/tagChapterMap.js
+          src/data/tagModuleMap.js
+          src/progress.js
+          src/todaysPlan.js
+          src/app/moduleNavigation.js
+          tests/architecture/content-hierarchy.test.js
+          tests/architecture/content-loading-boundary.test.js
+          tests/architecture/legacy-content-imports.test.js
+          tests/architecture/module-availability.test.js
+          tests/architecture/module-metadata-integrity.test.js
+          tests/architecture/recovery-routing-integrity.test.js
+      - name: Phase 2 — discovery behaviour tests
+        run: >-
+          pnpm exec vitest run --project unit
+          tests/unit/todaysPlan.test.js
+          tests/unit/journeys/learnerJourneys.test.js
+
       # The storybook project runs under the Vitest Playwright browser
       # provider; the runner image doesn't ship the Chromium build Playwright
       # drives, so install it (with its OS deps) before test:storybook.
