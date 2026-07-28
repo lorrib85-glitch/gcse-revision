@@ -3,6 +3,8 @@ name: Phase 5 screen inventory
 on:
   push:
     branches: [agent/content-hierarchy-phase-5]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
