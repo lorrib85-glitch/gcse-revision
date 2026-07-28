@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   migrate:
@@ -63,16 +63,12 @@ jobs:
             node .github/phase3-migrate.mjs
           ) 2>&1 | tee /tmp/phase3-error.txt
 
-      - name: Publish failed assertion only
+      - name: Upload failed assertion
         if: steps.apply.outcome == 'failure'
-        run: |
-          git reset --hard HEAD
-          cp /tmp/phase3-error.txt .github/phase3-error.txt
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/phase3-error.txt
-          git commit -m "Record Phase 3 migration assertion failure"
-          git push origin HEAD:agent/content-hierarchy-phase-3
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase3-assertion-failure
+          path: /tmp/phase3-error.txt
 
       - name: Stop after failed assertion
         if: steps.apply.outcome == 'failure'
@@ -132,13 +128,19 @@ jobs:
       - name: Production build
         run: pnpm build
 
-      - name: Commit validated migration
+      - name: Package validated Phase 3 files
         run: |
           git diff --check
-          git rm .github/phase3-migrate.mjs .github/workflows/phase3-apply.yml
-          rm -f .github/phase3-error.txt
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Migrate chapter progress persistence"
-          git push origin HEAD:agent/content-hierarchy-phase-3
+          mkdir -p /tmp/phase3-validated/files
+          git diff --name-only | grep -v '^.github/' > /tmp/phase3-validated/changed-files.txt
+          while IFS= read -r file; do
+            mkdir -p "/tmp/phase3-validated/files/$(dirname "$file")"
+            cp "$file" "/tmp/phase3-validated/files/$file"
+          done < /tmp/phase3-validated/changed-files.txt
+          git diff -- . ':(exclude).github/**' > /tmp/phase3-validated/phase3.diff
+
+      - name: Upload validated Phase 3 bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase3-validated-files
+          path: /tmp/phase3-validated
