@@ -216,19 +216,36 @@ jobs:
       - name: Production build
         run: pnpm build
 
-      - name: Package validated Phase 3 files
-        run: |
-          git diff --check
-          mkdir -p /tmp/phase3-validated/files
-          git diff --name-only | grep -v '^.github/' > /tmp/phase3-validated/changed-files.txt
-          while IFS= read -r file; do
-            mkdir -p "/tmp/phase3-validated/files/$(dirname "$file")"
-            cp "$file" "/tmp/phase3-validated/files/$file"
-          done < /tmp/phase3-validated/changed-files.txt
-          git diff -- . ':(exclude).github/**' > /tmp/phase3-validated/phase3.diff
-
-      - name: Upload validated Phase 3 bundle
+      - name: Upload validated Phase 3 files
         uses: actions/upload-artifact@v4
         with:
           name: phase3-validated-files
-          path: /tmp/phase3-validated
+          path: |
+            docs/system/CONTENT_HIERARCHY.md
+            docs/system/PROGRESS_SYNC_ARCHITECTURE.md
+            src/data/chapterProgress.js
+            src/data/progressSync/canonicalProgressMerge.js
+            src/data/progressSync/progressSync.js
+            src/data/progressSync/accountScope.js
+            src/data/progressSync/snapshotBudget.js
+            src/progress.js
+            src/todaysPlan.js
+            src/app/LegacyApp.jsx
+            src/components/layout/ModulePlayer.jsx
+            src/features/subjects/Subjects.jsx
+            src/features/planner/dailyPlanner.js
+            scripts/contact-sheet.mjs
+            .storybook/preview.jsx
+            tests/architecture/legacy-content-imports.test.js
+            tests/unit/progressSync/chapterProgressPersistence.test.js
+            tests/unit/progressSync/chapterProgressMerge.test.js
+            tests/unit/progressSync/chapterProgressSnapshot.test.js
+            tests/unit/progressSync/progressMerge.test.js
+            tests/unit/progressSync/progressSync.test.js
+            tests/unit/progressSync/accountScope.test.js
+            tests/unit/progressSync/snapshotBudget.test.js
+            tests/unit/planner/dailyPlanner.test.js
+            tests/unit/journeys/learnerJourneys.test.js
+            tests/unit/journeys/accountIsolationJourneys.test.js
+            tests/unit/journeys/persistenceGrowthJourneys.test.js
+            tests/unit/saveFailure/progressFailureIntegration.test.js
