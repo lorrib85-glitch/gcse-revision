@@ -100,6 +100,25 @@ jobs:
           PY
           set -o pipefail
           node .github/phase5-migrate.mjs 2>&1 | tee /tmp/phase5-migration.txt
+          python - <<'PY'
+          from pathlib import Path
+
+          renderer_path = Path('src/components/layout/ScreenRenderer.jsx')
+          renderer = renderer_path.read_text()
+          old = "  chapter,\n  subject = chapter?.subject,"
+          new = "  chapter,\n  chapterNum,\n  subject = chapter?.subject,"
+          if renderer.count(old) != 1:
+              raise SystemExit('ScreenRenderer chapterNum prop anchor changed')
+          renderer_path.write_text(renderer.replace(old, new))
+
+          player_path = Path('src/components/layout/ChapterPlayer.jsx')
+          player = player_path.read_text()
+          old = "        chapter={chapter}\n        isLast={isLast}"
+          new = "        chapter={chapter}\n        chapterNum={chapterNum}\n        isLast={isLast}"
+          if player.count(old) != 1:
+              raise SystemExit('ChapterPlayer chapterNum pass-through anchor changed')
+          player_path.write_text(player.replace(old, new))
+          PY
 
       - name: Upload migration failure
         if: steps.migrate.outcome == 'failure'
