@@ -31,6 +31,14 @@ jobs:
         id: migrate
         continue-on-error: true
         run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('.github/phase5-migrate.mjs')
+          source = path.read_text()
+          source = source.replace('\\\\`', '\\`')
+          source = source.replace('\\\\${', '\\${')
+          path.write_text(source)
+          PY
           set -o pipefail
           node .github/phase5-migrate.mjs 2>&1 | tee /tmp/phase5-migration.txt
 
