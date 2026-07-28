@@ -24,29 +24,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Temporary Phase 2 diagnostics. Keep these as separate steps until the
-      # failing migration contract is identified, then remove before merge.
-      - name: Phase 2 — hierarchy and alias identity
-        run: pnpm exec vitest run --project architecture tests/architecture/content-hierarchy.test.js
-      - name: Legacy imports — chapter catalogue
-        run: pnpm exec vitest run --project architecture tests/architecture/legacy-content-imports.test.js -t "prevents new direct imports from the legacy chapter catalogue"
-      - name: Legacy imports — loader registry
-        run: pnpm exec vitest run --project architecture tests/architecture/legacy-content-imports.test.js -t "prevents new imports from the legacy loader-registry path"
-      - name: Legacy imports — recovery map
-        run: pnpm exec vitest run --project architecture tests/architecture/legacy-content-imports.test.js -t "prevents new imports from the legacy recovery-map path"
-      - name: Legacy imports — parent module alias
-        run: pnpm exec vitest run --project architecture tests/architecture/legacy-content-imports.test.js -t "prevents new callers from importing the legacy parent-module alias"
-      - name: Legacy imports — chapter discovery aliases
-        run: pnpm exec vitest run --project architecture tests/architecture/legacy-content-imports.test.js -t "prevents new callers from importing legacy chapter-discovery names"
-      - name: Phase 2 — chapter availability
-        run: pnpm exec vitest run --project architecture tests/architecture/module-availability.test.js
-      - name: Phase 2 — chapter metadata and loaders
-        run: pnpm exec vitest run --project architecture tests/architecture/module-metadata-integrity.test.js
-      - name: Phase 2 — content loading boundary
-        run: pnpm exec vitest run --project architecture tests/architecture/content-loading-boundary.test.js
-      - name: Phase 2 — recovery routing
-        run: pnpm exec vitest run --project architecture tests/architecture/recovery-routing-integrity.test.js
-
       # The storybook project runs under the Vitest Playwright browser
       # provider; the runner image doesn't ship the Chromium build Playwright
       # drives, so install it (with its OS deps) before test:storybook.
