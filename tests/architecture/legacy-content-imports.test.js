@@ -31,7 +31,10 @@ function importViolators(pattern, allowedPaths) {
 describe('Legacy content imports are shrink-only', () => {
   it('prevents new direct imports from the legacy chapter catalogue', () => {
     const violators = importViolators(
-      /from\s+['"][^'"]*\/modules\.js['"]/,
+      // Match direct relative paths to the root `src/modules.js` only. Do not
+      // catch the canonical `src/data/modules.js` merely because it shares the
+      // same filename.
+      /from\s+['"](?:\.\/|\.\.\/)+modules\.js['"]/,
       [
         'src/chapters.js',
         'src/app/LegacyApp.jsx',
