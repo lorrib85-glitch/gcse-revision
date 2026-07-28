@@ -92,6 +92,23 @@ jobs:
           if source.count(old_planner) != 1:
               raise SystemExit('Phase 3 planner-transform anchor changed')
           source = source.replace(old_planner, new_planner)
+
+          old_allowlist = """replaceExact(
+            'tests/architecture/legacy-content-imports.test.js',
+            \"        'src/features/subjects/Subjects.jsx',\\n\",
+            '',
+          )
+          """
+          new_allowlist = """replaceExact(
+            'tests/architecture/legacy-content-imports.test.js',
+            \"        'src/features/quickfire/logic/convertBankQuestion.js',\\n        'src/features/subjects/Subjects.jsx',\\n        'src/unifiedWeaknessTracker.js',\\n\",
+            \"        'src/features/quickfire/logic/convertBankQuestion.js',\\n        'src/unifiedWeaknessTracker.js',\\n\",
+          )
+          """
+          if source.count(old_allowlist) != 1:
+              raise SystemExit('Phase 3 recovery-allowlist anchor changed')
+          source = source.replace(old_allowlist, new_allowlist)
+
           path.write_text(source)
           PY
             node .github/phase3-migrate.mjs
