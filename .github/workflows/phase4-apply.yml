@@ -31,6 +31,27 @@ jobs:
         id: apply
         continue-on-error: true
         run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('.github/phase4-migrate.mjs')
+          source = path.read_text()
+          old = """const embeddedChapterProps = (chapterPlayer.match(/\\bchapter=\\{chapter\\}/g) || []).length
+          if (embeddedChapterProps !== 2) {
+            throw new Error(`ChapterPlayer: expected 2 embedded chapter props, found ${embeddedChapterProps}`)
+          }
+          """
+          new = """const embeddedChapterProps = (chapterPlayer.match(/\\bchapter=\\{chapter\\}/g) || []).length
+          const embeddedChapterContexts = chapterPlayer.split('\\n')
+            .map((line, index, lines) => line.includes('chapter={chapter}')
+              ? lines.slice(Math.max(0, index - 3), index + 2).join('\\n')
+              : null)
+            .filter(Boolean)
+          throw new Error(`ChapterPlayer embedded chapter props: ${embeddedChapterProps}\\n\\n${embeddedChapterContexts.join('\\n---\\n')}`)
+          """
+          if source.count(old) != 1:
+              raise SystemExit('Phase 4 embedded-prop diagnostic anchor changed')
+          path.write_text(source.replace(old, new))
+          PY
           set -o pipefail
           node .github/phase4-migrate.mjs 2>&1 | tee /tmp/phase4-migration.txt
 
