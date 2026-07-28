@@ -3,6 +3,8 @@ name: Apply Phase 3 chapter progress migration
 on:
   push:
     branches: [agent/content-hierarchy-phase-3]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: write
