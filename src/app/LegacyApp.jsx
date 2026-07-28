@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { MODULE_CONTENT_LOADERS } from '../content/moduleContentRegistry.js'
 import { MODULES } from '../modules.js'
 import { useAuth } from '../auth/useAuth.js'
-import { getProgress, recordActivity, getModuleState as safeGetModuleState, saveModuleState, getContinueModule } from '../progress.js'
+import { getProgress, recordActivity, getChapterState as safeGetChapterState, saveChapterState, getContinueChapter } from '../progress.js'
 import { buildChapterCompletePayload, prepareModuleScreenState, resolveTaskDestination } from './moduleNavigation.js'
 import TestTab from '../features/quickfire/QuickFire.jsx'
 import { readQfBest } from '../features/quickfire/logic/quickFireBest.js'
@@ -368,7 +368,7 @@ export default function App() {
   // Prefetch episode content for the most likely next module (in-progress or first unstarted)
   // so opening it feels instant instead of waiting for a network download.
   useEffect(() => {
-    const mod = getContinueModule()
+    const mod = getContinueChapter()
     if (!mod) return
     const prefetch = () => loadModuleContent(mod)
     if (typeof requestIdleCallback !== 'undefined') {
@@ -431,8 +431,8 @@ export default function App() {
   function openModulePlayer(mod, screenIndex) {
     if (!mod?.screenCount) return
     if (screenIndex !== undefined && screenIndex !== null) {
-      const existing = safeGetModuleState(mod.id)
-      saveModuleState(mod.id, prepareModuleScreenState(screenIndex, existing))
+      const existing = safeGetChapterState(mod.id)
+      saveChapterState(mod.id, prepareModuleScreenState(screenIndex, existing))
     }
     import('../components/layout/ModulePlayer.jsx')
     const cached = _contentCache[mod.id]

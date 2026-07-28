@@ -169,7 +169,21 @@ The later storage migration must:
 - preserve screen position, opener gates, examiner attempts and completion;
 - avoid double-counting progress.
 
-Phases 1 and 2 change no storage keys and no learner-facing behaviour.
+Phase 3 makes `gcse_chapter_<id>` the canonical chapter-progress key.
+
+During the migration window:
+
+- `getChapterState` reads the canonical key first and folds forward any
+  `gcse_module_<id>` or historical short-id copy;
+- `saveChapterState` writes only the canonical key;
+- compatibility APIs call the canonical implementation and therefore cannot
+  create new legacy keys;
+- local and cloud snapshots canonicalise cross-key duplicates with monotonic
+  screen, completion, opener-gate and examiner-attempt preservation;
+- a fallback key is removed only after its canonical replacement is safely
+  persisted.
+
+Existing chapter IDs remain unchanged and continue to be the learner-progress identity.
 
 ## Runtime target
 

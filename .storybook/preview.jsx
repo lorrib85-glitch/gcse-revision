@@ -15,8 +15,8 @@ function seedLocalStorage() {
   }
 
   // Progress on a History module so "Jump back in" shows
-  if (!localStorage.getItem('gcse_module_history-medicine')) {
-    localStorage.setItem('gcse_module_history-medicine', JSON.stringify({ screen: 4 }))
+  if (!localStorage.getItem('gcse_chapter_history-medicine')) {
+    localStorage.setItem('gcse_chapter_history-medicine', JSON.stringify({ screen: 4 }))
   }
 
   // Recent scores so streak + weak zone populate

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { mergeProgressData, progressDataEqual } from '../../../src/data/progressSync/progressMerge.js'
+import { mergeProgressData, progressDataEqual } from '../../../src/data/progressSync/canonicalProgressMerge.js'
 
 // Pure merge-logic tests — no Firebase, no storage, deterministic fixtures.
 // Every case also checks merge(x, x) === x (idempotency): re-running a sync
@@ -51,26 +51,26 @@ describe('mergeProgressData — additive logs (scores / wrong / correct / techni
   })
 })
 
-describe('mergeProgressData — gcse_module_<id> (per-module screen progress)', () => {
+describe('mergeProgressData — gcse_chapter_<id> (per-module screen progress)', () => {
   it('completion is monotonic — a completed module never un-completes', () => {
-    const local = { 'gcse_module_history-1': { screen: 3, completed: false } }
-    const cloud = { 'gcse_module_history-1': { screen: 12, completed: true, timestamp: 500 } }
+    const local = { 'gcse_chapter_history-1': { screen: 3, completed: false } }
+    const cloud = { 'gcse_chapter_history-1': { screen: 12, completed: true, timestamp: 500 } }
     const merged = mergeProgressData(local, cloud)
-    expect(merged['gcse_module_history-1'].completed).toBe(true)
-    expect(merged['gcse_module_history-1'].screen).toBe(12)
+    expect(merged['gcse_chapter_history-1'].completed).toBe(true)
+    expect(merged['gcse_chapter_history-1'].screen).toBe(12)
   })
 
   it('never rewinds the resume screen backward', () => {
-    const local = { 'gcse_module_history-1': { screen: 10 } }
-    const cloud = { 'gcse_module_history-1': { screen: 4 } }
+    const local = { 'gcse_chapter_history-1': { screen: 10 } }
+    const cloud = { 'gcse_chapter_history-1': { screen: 4 } }
     const merged = mergeProgressData(local, cloud)
-    expect(merged['gcse_module_history-1'].screen).toBe(10)
+    expect(merged['gcse_chapter_history-1'].screen).toBe(10)
   })
 
   it('is idempotent', () => {
-    const local = { 'gcse_module_history-1': { screen: 10, completed: true, hookDone: true, wylDone: false, timestamp: 999 } }
+    const local = { 'gcse_chapter_history-1': { screen: 10, completed: true, hookDone: true, wylDone: false, timestamp: 999 } }
     const merged = mergeProgressData(local, local)
-    expect(merged['gcse_module_history-1']).toEqual(local['gcse_module_history-1'])
+    expect(merged['gcse_chapter_history-1']).toEqual(local['gcse_chapter_history-1'])
   })
 
   it('a minimal real-world partial write ({ screen } only, no completed/hookDone/timestamp) does not grow new fields when merged with itself', () => {
@@ -79,9 +79,9 @@ describe('mergeProgressData — gcse_module_<id> (per-module screen progress)', 
     // NEITHER side had them, which meant merge(x, x) !== x for this — very
     // real — partial shape, so a second, unrelated sync would look like a
     // fresh change and re-write both sides for no reason.
-    const partial = { 'gcse_module_history-1': { screen: 2 } }
+    const partial = { 'gcse_chapter_history-1': { screen: 2 } }
     const merged = mergeProgressData(partial, partial)
-    expect(merged['gcse_module_history-1']).toEqual({ screen: 2 })
+    expect(merged['gcse_chapter_history-1']).toEqual({ screen: 2 })
   })
 })
 

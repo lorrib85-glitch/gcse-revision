@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { subscribeSaveFailure } from '../../../src/lib/storage.js'
-import { recordScore, saveModuleState } from '../../../src/progress.js'
+import { recordScore, saveChapterState } from '../../../src/progress.js'
 import { createSaveFailureController } from '../../../src/app/saveFailureController.js'
 
 // Proves the completion flows can't silently appear saved: when storage is
@@ -29,12 +29,12 @@ beforeEach(() => { warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => 
 afterEach(() => warnSpy.mockRestore())
 
 describe('progress completion flows surface save failures', () => {
-  it('saveModuleState failure returns false AND opens the governed notice', () => {
+  it('saveChapterState failure returns false AND opens the governed notice', () => {
     installLocalStorage({ failing: () => true })
     const controller = createSaveFailureController()
     const unsub = subscribeSaveFailure(d => controller.reportFailure(d))
 
-    const ok = saveModuleState('history-medicine-black-death', { screen: 12, completed: true })
+    const ok = saveChapterState('history-medicine-black-death', { screen: 12, completed: true })
 
     expect(ok).toBe(false)                      // caller is not told it saved
     expect(controller.snapshot().open).toBe(true) // learner sees the notice
@@ -62,7 +62,7 @@ describe('progress completion flows surface save failures', () => {
     const controller = createSaveFailureController()
     const unsub = subscribeSaveFailure(d => controller.reportFailure(d))
 
-    saveModuleState('history-medicine-germ-theory', { screen: 9, completed: true })
+    saveChapterState('history-medicine-germ-theory', { screen: 9, completed: true })
     expect(controller.snapshot().open).toBe(true)
 
     failing = false // storage frees up
@@ -70,7 +70,7 @@ describe('progress completion flows surface save failures', () => {
 
     expect(controller.snapshot().open).toBe(false)
     // No user is signed in in this test, so the write lands under the guest scope.
-    expect(JSON.parse(store['guest::gcse_module_history-medicine-germ-theory'])).toMatchObject({ completed: true })
+    expect(JSON.parse(store['guest::gcse_chapter_history-medicine-germ-theory'])).toMatchObject({ completed: true })
     unsub()
   })
 
@@ -79,7 +79,7 @@ describe('progress completion flows surface save failures', () => {
     const controller = createSaveFailureController()
     const unsub = subscribeSaveFailure(d => controller.reportFailure(d))
 
-    const ok = saveModuleState('history-medicine-germ-theory', { screen: 3 })
+    const ok = saveChapterState('history-medicine-germ-theory', { screen: 3 })
 
     expect(ok).toBe(true)
     expect(controller.snapshot().open).toBe(false)

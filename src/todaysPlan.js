@@ -2,7 +2,7 @@
 // See docs/superpowers/specs/2026-06-14-home-todays-plan-redesign.md
 
 import { CHAPTERS } from './chapters.js'
-import { getModuleState, getInProgressChapter, todayStr, getScores } from './progress.js'
+import { getChapterState, getInProgressChapter, todayStr, getScores } from './progress.js'
 import { getBiggestWin, getWeakestSubject } from './unifiedWeaknessTracker.js'
 import { findTaggedChapterScreen } from './data/tagChapterMap.js'
 import { MEDICINE_2023_PAPER } from './data/medicineExamPapers.js'
@@ -72,13 +72,13 @@ function buildRevisitCard(win) {
 }
 
 function buildContinueCard(chapter) {
-  const state = getModuleState(chapter.id)
+  const state = getChapterState(chapter.id)
   const remaining = Math.max(1, (chapter.screenCount || 1) - (state.screen || 0))
   return {
     type: 'continue',
     kicker: 'Continue',
     title: chapter.title,
-    reason: `${remaining} screen${remaining === 1 ? '' : 's'} left in this module.`,
+    reason: `${remaining} screen${remaining === 1 ? '' : 's'} left in this chapter.`,
     durationMinutes: Math.round(remaining * 2.5),
     image: chapter.headerImage || null,
     onSelect: { kind: 'module', moduleId: chapter.id },

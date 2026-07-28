@@ -23,7 +23,7 @@
 //   3. gcse_scores — the historical score log (already capped at 200); keep the
 //      newest SCORES_BUDGET_RETAIN. The streak lives in gcse_progress, not here.
 //
-// NEVER compacted: gcse_progress (streak), gcse_module_* (completion),
+// NEVER compacted: gcse_progress (streak), gcse_chapter_* (completion),
 // gcse_mastery_v1, gcse_planner_* (active planner), gcse_quickfire_memory_v1
 // (aggregate buckets), gcse_qf_baseline_v1, gcse_qf_best, riseUser — and any
 // unknown/future key passes through untouched. Deterministic and idempotent:

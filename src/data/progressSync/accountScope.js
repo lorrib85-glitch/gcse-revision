@@ -25,7 +25,7 @@ import {
   getRawJson, setRawJson, scopeForUser, GUEST_SCOPE,
   QUARANTINE_SCOPE, QUARANTINE_PROFILE_KEY,
 } from '../../lib/storage.js'
-import { mergeProgressData } from './progressMerge.js'
+import { mergeProgressData } from './canonicalProgressMerge.js'
 import { collectLocalProgressSnapshot, STATIC_PROGRESS_KEYS, DYNAMIC_KEY_PREFIXES } from './progressSync.js'
 
 const GUEST_CLAIM_KEY = 'gcse_guest_claim_v1'

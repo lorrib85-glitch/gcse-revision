@@ -81,7 +81,7 @@ const emptyState = {
   scores:          [],
   wrongAnswers:    [],
   correctAnswers:  [],
-  moduleStates:    {},
+  chapterStates:    {},
   rotationHistory: {},
   progress:        {},
   weakPoints:      [],
@@ -210,7 +210,7 @@ describe('buildWeekdayBlocks', () => {
     // dead card pointing at empty content.
     const bioAllDone = {
       ...emptyState,
-      moduleStates: { sci_bio_w1: { screen: 9, completed: true } },
+      chapterStates: { sci_bio_w1: { screen: 9, completed: true } },
     }
     const blocks = buildWeekdayBlocks('Biology', 'History', bioAllDone, defaultProfile)
     const mainBlock = blocks.find(b => b.type === 'mainProgress')

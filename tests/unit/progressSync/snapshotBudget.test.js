@@ -24,7 +24,7 @@ function quickFireSnapshot(n) {
     updatedAt: Date.now(),
     data: {
       gcse_progress: { streak: 12, bestStreak: 20, lastActivityDate: '2026-07-10' },
-      gcse_module_bio1: { screen: 8, completed: true },
+      gcse_chapter_bio1: { screen: 8, completed: true },
       gcse_mastery_v1: { version: 1, concepts: { 'history:medicine:galen': { attempts: 5, correct: 4, lastSeen: 5 } } },
       gcse_qf_answer_log: log,
       gcse_quickfire_memory_v1: {
@@ -70,7 +70,7 @@ describe('snapshotBudget — compaction of an oversized snapshot', () => {
     const d = result.snapshot.data
     // Core learner state is byte-for-byte unchanged.
     expect(d.gcse_progress).toEqual(snap.data.gcse_progress)
-    expect(d.gcse_module_bio1).toEqual(snap.data.gcse_module_bio1)
+    expect(d.gcse_chapter_bio1).toEqual(snap.data.gcse_chapter_bio1)
     expect(d.gcse_mastery_v1).toEqual(snap.data.gcse_mastery_v1)
     // Unknown/future key preserved.
     expect(d.some_future_key).toEqual({ keepMe: true })

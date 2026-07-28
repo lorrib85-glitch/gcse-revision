@@ -4,7 +4,8 @@ import { hexToRgb, SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { SPACING } from '../../constants/spacing.js'
-import { recordActivity, MODULE_GROUPS, getModuleState, saveModuleState } from '../../progress.js'
+import { recordActivity, getChapterState, saveChapterState } from '../../progress.js'
+import { MODULES } from '../../data/modules.js'
 import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialModuleState, clampScreenIndex, resolveFinishAction, getModuleGate } from '../../app/moduleNavigation.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
@@ -75,7 +76,7 @@ function scrollToTop() {
   } catch {}
 }
 
-// Module resume state persists via getModuleState / saveModuleState from
+// Module resume state persists via getChapterState / saveChapterState from
 // ../../progress.js (imported above) — same gcse_module_<id> key and shape.
 
 function ReadBlock({ block }) {
@@ -1254,12 +1255,12 @@ function JumpSheet({ screens, currentScreen, accent, accentRgb, onJumpTo, onClos
 // ─── Main ModulePlayer ────────────────────────────────────────────────────────
 
 export default function ModulePlayer({ module, onBack, onChapterComplete }) {
-  const saved   = getModuleState(module.id)
-  const _chapterGroup = MODULE_GROUPS.find(g => g.chapterIds.includes(module.id))
+  const saved   = getChapterState(module.id)
+  const _chapterGroup = MODULES.find(g => g.chapterIds.includes(module.id))
   const chapterNum    = _chapterGroup ? _chapterGroup.chapterIds.indexOf(module.id) + 1 : module.number
 
   // hookDone / wylDone / introDone track whether the universal openers have been seen.
-  // We persist these inside the module state so resuming skips them correctly.
+  // We persist these inside the chapter state so resuming skips them correctly.
   // Initial values are derived by computeInitialModuleState (moduleNavigation.js).
   const initial = computeInitialModuleState(module, saved)
   const [hookDone,   setHookDone]   = useState(initial.hookDone)
@@ -1287,7 +1288,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const [selectedHealer, setSelectedHealer] = useState(null)
 
   useEffect(() => {
-    saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts, completed })
+    saveChapterState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts, completed })
   }, [screen, module.id, hookDone, wylDone, recallDone, introDone, examinerAttempts, completed])
 
   // Reset cinematic header visibility whenever we navigate to a different screen
@@ -1340,7 +1341,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     // module as 'completed' — even while reviewing it afterwards moves `screen` back down. Keep
     // the intro flags true so re-opening reviews the content straight away rather than replaying
     // the hook/recall/outcomes screens.
-    saveModuleState(module.id, { screen: total, hookDone: true, wylDone: true, recallDone: true, introDone: true, examinerAttempts, completed: true })
+    saveChapterState(module.id, { screen: total, hookDone: true, wylDone: true, recallDone: true, introDone: true, examinerAttempts, completed: true })
     setTimeout(() => {
       if (onChapterComplete) onChapterComplete(module)
       else onBack()
@@ -1553,7 +1554,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           }
           const updated = [...examinerAttempts, attempt]
           setExaminerAttempts(updated)
-          saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts: updated })
+          saveChapterState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts: updated })
           setShowExaminer(false)
           completeModule()
           scrollToTop()

@@ -175,6 +175,19 @@ the device right now still matches too — so a stale reconcile from an
 account that has since signed out/switched can never overwrite the identity
 pointer for whichever account is now active.
 
+## Chapter progress key migration
+
+The canonical per-chapter key is now `gcse_chapter_<chapterId>`. During the
+migration window, sync discovery reads both `gcse_chapter_*` and the older
+`gcse_module_*` prefix. Before any merge or cloud write, old and new copies
+for the same chapter are folded into one canonical state.
+
+The fold is monotonic for resume screen, completion, opener gates and examiner
+attempts. Local fallback keys are removed only after the canonical replacement
+has persisted. Cloud snapshots restored from an older device are applied
+locally under canonical keys and then written back canonically, so old devices
+remain readable while upgraded devices cannot create new legacy keys.
+
 ## QuickFire ranking memory — per-answer persistence and multi-device merge
 
 `src/features/quickfire/logic/quickFireMemory.js` (pure, storage.js-backed).
