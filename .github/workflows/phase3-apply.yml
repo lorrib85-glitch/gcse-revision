@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   migrate:
@@ -249,3 +249,39 @@ jobs:
             tests/unit/journeys/accountIsolationJourneys.test.js
             tests/unit/journeys/persistenceGrowthJourneys.test.js
             tests/unit/saveFailure/progressFailureIntegration.test.js
+
+      - name: Commit validated Phase 3 files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            docs/system/CONTENT_HIERARCHY.md \
+            docs/system/PROGRESS_SYNC_ARCHITECTURE.md \
+            src/data/chapterProgress.js \
+            src/data/progressSync/canonicalProgressMerge.js \
+            src/data/progressSync/progressSync.js \
+            src/data/progressSync/accountScope.js \
+            src/data/progressSync/snapshotBudget.js \
+            src/progress.js \
+            src/todaysPlan.js \
+            src/app/LegacyApp.jsx \
+            src/components/layout/ModulePlayer.jsx \
+            src/features/subjects/Subjects.jsx \
+            src/features/planner/dailyPlanner.js \
+            scripts/contact-sheet.mjs \
+            .storybook/preview.jsx \
+            tests/architecture/legacy-content-imports.test.js \
+            tests/unit/progressSync/chapterProgressPersistence.test.js \
+            tests/unit/progressSync/chapterProgressMerge.test.js \
+            tests/unit/progressSync/chapterProgressSnapshot.test.js \
+            tests/unit/progressSync/progressMerge.test.js \
+            tests/unit/progressSync/progressSync.test.js \
+            tests/unit/progressSync/accountScope.test.js \
+            tests/unit/progressSync/snapshotBudget.test.js \
+            tests/unit/planner/dailyPlanner.test.js \
+            tests/unit/journeys/learnerJourneys.test.js \
+            tests/unit/journeys/accountIsolationJourneys.test.js \
+            tests/unit/journeys/persistenceGrowthJourneys.test.js \
+            tests/unit/saveFailure/progressFailureIntegration.test.js
+          git commit -m "Migrate chapter progress persistence"
+          git push origin HEAD:agent/content-hierarchy-phase-3
