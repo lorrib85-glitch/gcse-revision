@@ -33,6 +33,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+
           path = Path('.github/phase5-migrate.mjs')
           source = path.read_text()
           source = source.replace('\\\\`', '\\`')
@@ -50,6 +51,68 @@ jobs:
               "expect(count, 'Legacy type ' + type + ' grew').toBeLessThanOrEqual(allowedLegacyMaximums[type])",
           )
           path.write_text(source)
+
+          registry_path = Path('src/data/screenRegistry.js')
+          registry = registry_path.read_text()
+          replacements = {
+              """      { path: 'items', kind: 'array' },
+              { path: 'steps', kind: 'array' },
+              { path: 'cards', kind: 'array' },
+            ]],
+          }),
+          matchingTask:""": """      { path: 'items', kind: 'array' },
+              { path: 'steps', kind: 'array' },
+              { path: 'cards', kind: 'array' },
+              { path: 'stages', kind: 'array' },
+            ]],
+          }),
+          matchingTask:""",
+              """  timelineCanvas: screen('Timeline canvas', 'TimelineCanvas', {
+            layout: 'full',
+            continuation: 'component',
+            requiredAny: [[
+              { path: 'events', kind: 'array' },
+              { path: 'items', kind: 'array' },
+            ]],
+          }),""": """  timelineCanvas: screen('Timeline canvas', 'TimelineCanvas', {
+            layout: 'full',
+            continuation: 'component',
+            requiredAny: [[
+              { path: 'events', kind: 'array' },
+              { path: 'items', kind: 'array' },
+              { path: 'steps', kind: 'array' },
+            ]],
+          }),""",
+              "  keypoint: block('Key point', 'KeypointBlock', { required: [{ path: 'text', kind: 'string' }] }),": """  keypoint: block('Key point', 'KeypointBlock', {
+            requiredAny: [[
+              { path: 'text', kind: 'string' },
+              { path: 'points', kind: 'array' },
+            ]],
+          }),""",
+              "  scenario: block('Scenario block', 'ScenarioBlock', { required: [{ path: 'scenarios', kind: 'array' }] }),": """  scenario: block('Scenario block', 'ScenarioBlock', {
+            requiredAny: [[
+              { path: 'scenarios', kind: 'array' },
+              { path: 'situation', kind: 'string' },
+            ]],
+          }),""",
+              """    requiredAny: [[
+              { path: 'markPoints', kind: 'string' },
+              { path: 'ms', kind: 'array' },
+              { path: 'markScheme', kind: 'array' },
+            ]],""": """    requiredAny: [[
+              { path: 'markPoints', kind: 'string' },
+              { path: 'markPoints', kind: 'array' },
+              { path: 'ms', kind: 'string' },
+              { path: 'ms', kind: 'array' },
+              { path: 'markScheme', kind: 'string' },
+              { path: 'markScheme', kind: 'array' },
+            ]],""",
+          }
+          for old, new in replacements.items():
+              if registry.count(old) != 1:
+                  raise SystemExit(f'Registry schema anchor changed: {old[:70]!r}')
+              registry = registry.replace(old, new)
+          registry_path.write_text(registry)
           PY
           set -o pipefail
           node .github/phase5-migrate.mjs 2>&1 | tee /tmp/phase5-migration.txt
