@@ -2,11 +2,12 @@ import { CHAPTERS } from '../chapters.js'
 import { MODULES } from '../data/modules.js'
 import { MEDICINE_2023_PAPER } from '../data/medicineExamPapers.js'
 import { SUBJECTS } from '../constants/subjects.js'
+import { isCinematicHeaderScreen } from '../data/screenRegistry.js'
 
 // Header appears on all learning pages.
 // It is hidden only for full-screen cinematic/video moments where overlay UI would reduce immersion.
 export function isFullScreenVideoScreen(screen) {
-  return screen?.type === 'cinematic' || screen?.type === 'cinematicReveal' || screen?.type === 'video'
+  return isCinematicHeaderScreen(screen)
 }
 
 export function getStageNavigation(chapter, total) {
