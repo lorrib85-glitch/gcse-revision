@@ -37,7 +37,6 @@ describe('Legacy content imports are shrink-only', () => {
       /from\s+['"](?:\.\/|\.\.\/)+modules\.js['"]/,
       [
         'src/chapters.js',
-        'src/app/LegacyApp.jsx',
         'src/components/layout/ChapterCompleteScreen.jsx',
       ],
     )
@@ -51,7 +50,7 @@ describe('Legacy content imports are shrink-only', () => {
   it('prevents new imports from the legacy loader-registry path', () => {
     const violators = importViolators(
       /from\s+['"][^'"]*moduleContentRegistry\.js['"]/,
-      ['src/app/LegacyApp.jsx'],
+      [],
     )
 
     expect(

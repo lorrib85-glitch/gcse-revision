@@ -23,7 +23,7 @@ const DEPRECATED_ALIASES = [
 // here because these files use it for icon/chevron glyph alignment rather than text type.
 const MODULE_SCREEN_FILES = [
   'src/features/subjects/Subjects.jsx',
-  'src/components/layout/ModulePlayer.jsx',
+  'src/components/layout/ChapterPlayer.jsx',
 ]
 
 const DISALLOWED_MODULE_TYPOGRAPHY_PROPS = [

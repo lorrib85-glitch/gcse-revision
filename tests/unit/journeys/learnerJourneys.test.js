@@ -36,19 +36,19 @@ afterEach(async () => {
 
 describe('Journey 1 — progress survives a refresh', () => {
   it('module resume state written before a refresh is read back at the right screen', async () => {
-    const { prepareModuleScreenState } = await import('../../../src/app/moduleNavigation.js')
+    const { prepareChapterScreenState } = await import('../../../src/app/chapterNavigation.js')
     const { getChapterState, saveChapterState, getChapterPct } = await import('../../../src/progress.js')
-    const { MODULES } = await import('../../../src/modules.js')
+    const { CHAPTERS } = await import('../../../src/chapters.js')
 
-    const mod = MODULES.find(m => m.id === 'history-medicine-medieval-beliefs-causes')
+    const chapter = CHAPTERS.find(m => m.id === 'history-medicine-medieval-beliefs-causes')
     // Learner reaches screen 10 of a real module.
-    saveChapterState(mod.id, prepareModuleScreenState(10, getChapterState(mod.id)))
+    saveChapterState(chapter.id, prepareChapterScreenState(10, getChapterState(chapter.id)))
 
     // "Refresh": nothing clears the store, so a fresh read still resumes at 10.
-    const resumed = getChapterState(mod.id)
+    const resumed = getChapterState(chapter.id)
     expect(resumed.screen).toBe(10)
     expect(resumed.hookDone).toBe(true)
-    expect(getChapterPct(mod)).toBe(Math.round((10 / mod.screenCount) * 100))
+    expect(getChapterPct(chapter)).toBe(Math.round((10 / chapter.screenCount) * 100))
   })
 
   it('a failed write does not report success, so the app can tell progress was lost', async () => {
@@ -66,7 +66,7 @@ describe('Journey 2 — a wrong answer routes to the intended teaching screen', 
     const { logWrongAnswer, logCorrectAnswer, getWeakTopics, getBiggestWin } =
       await import('../../../src/unifiedWeaknessTracker.js')
     const { TAG_MODULE_MAP, findTaggedScreen } = await import('../../../src/data/tagModuleMap.js')
-    const { MODULES } = await import('../../../src/modules.js')
+    const { CHAPTERS } = await import('../../../src/chapters.js')
 
     // Two wrong answers on a recoverable concept crosses the weak threshold.
     for (let i = 0; i < 2; i++) {
@@ -82,11 +82,11 @@ describe('Journey 2 — a wrong answer routes to the intended teaching screen', 
     const targetId = TAG_MODULE_MAP['germ-theory']
     expect(win.moduleId).toBe(targetId)
 
-    const mod = MODULES.find(m => m.id === targetId)
-    expect(mod).toBeTruthy()
-    const screenIndex = findTaggedScreen(mod, 'germ-theory')
+    const chapter = CHAPTERS.find(m => m.id === targetId)
+    expect(chapter).toBeTruthy()
+    const screenIndex = findTaggedScreen(chapter, 'germ-theory')
     expect(screenIndex).toBeTypeOf('number')
-    expect(screenIndex).toBeLessThan(mod.screenCount)
+    expect(screenIndex).toBeLessThan(chapter.screenCount)
 
     // Successful retry is recorded and lifts the error rate.
     const before = getWeakTopics().find(t => t.topic === 'germ-theory').errorRate
@@ -121,24 +121,24 @@ describe('Journey 3 — completing a chapter updates the surfaces that read it',
   it('records the score/activity and hands off to the next chapter', async () => {
     const { recordScore, getScores, getProgress, getChapterState, saveChapterState } =
       await import('../../../src/progress.js')
-    const { buildChapterCompletePayload } = await import('../../../src/app/moduleNavigation.js')
-    const { MODULES } = await import('../../../src/modules.js')
+    const { buildChapterCompletePayload } = await import('../../../src/app/chapterNavigation.js')
+    const { CHAPTERS } = await import('../../../src/chapters.js')
 
-    const mod = MODULES.find(m => m.id === 'history-medicine-medieval-beliefs-causes')
+    const chapter = CHAPTERS.find(m => m.id === 'history-medicine-medieval-beliefs-causes')
 
     // Finish the module: mark complete + record a scored result.
-    saveChapterState(mod.id, { ...getChapterState(mod.id), screen: mod.screenCount, completed: true })
+    saveChapterState(chapter.id, { ...getChapterState(chapter.id), screen: chapter.screenCount, completed: true })
     recordScore({ subject: 'History', earned: 8, possible: 10, source: 'module' })
 
     // Progress surfaces reflect it.
-    expect(getChapterState(mod.id).completed).toBe(true)
+    expect(getChapterState(chapter.id).completed).toBe(true)
     const scores = getScores()
     expect(scores[0]).toMatchObject({ subject: 'History', source: 'module' })
     expect(getProgress().streak).toBeGreaterThanOrEqual(1)
 
     // Completion routes forward to the next real chapter.
-    const payload = buildChapterCompletePayload(mod)
-    expect(payload.completedChapter).toBe(mod.title)
+    const payload = buildChapterCompletePayload(chapter)
+    expect(payload.completedChapter).toBe(chapter.title)
     expect(payload.nextModule).toBeTruthy()
     expect(payload.nextModule.id).toBe('history-medicine-black-death')
   })

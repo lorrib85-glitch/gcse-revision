@@ -19,7 +19,7 @@ const srcFiles = globSync('src/{components,features,app}/**/*.jsx', {
   ignore: [
     '**/node_modules/**',
     'src/features/quickfire/**',
-    'src/components/layout/ModulePlayer.jsx',
+    'src/components/layout/ChapterPlayer.jsx',
   ],
 })
 
