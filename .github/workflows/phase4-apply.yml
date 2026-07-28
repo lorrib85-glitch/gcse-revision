@@ -41,15 +41,12 @@ jobs:
           }
           """
           new = """const embeddedChapterProps = (chapterPlayer.match(/\\bchapter=\\{chapter\\}/g) || []).length
-          const embeddedChapterContexts = chapterPlayer.split('\\n')
-            .map((line, index, lines) => line.includes('chapter={chapter}')
-              ? lines.slice(Math.max(0, index - 3), index + 2).join('\\n')
-              : null)
-            .filter(Boolean)
-          throw new Error(`ChapterPlayer embedded chapter props: ${embeddedChapterProps}\\n\\n${embeddedChapterContexts.join('\\n---\\n')}`)
+          if (embeddedChapterProps !== 5) {
+            throw new Error(`ChapterPlayer: expected 5 embedded chapter props, found ${embeddedChapterProps}`)
+          }
           """
           if source.count(old) != 1:
-              raise SystemExit('Phase 4 embedded-prop diagnostic anchor changed')
+              raise SystemExit('Phase 4 embedded-prop assertion anchor changed')
           path.write_text(source.replace(old, new))
           PY
           set -o pipefail
