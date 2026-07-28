@@ -109,6 +109,12 @@ jobs:
               raise SystemExit('Phase 3 recovery-allowlist anchor changed')
           source = source.replace(old_allowlist, new_allowlist)
 
+          old_docs = "  'Phase 2 changes no storage keys and no learner-facing behaviour.',"
+          new_docs = "  'Phases 1 and 2 change no storage keys and no learner-facing behaviour.',"
+          if source.count(old_docs) != 1:
+              raise SystemExit('Phase 3 content-hierarchy documentation anchor changed')
+          source = source.replace(old_docs, new_docs)
+
           path.write_text(source)
           PY
             node .github/phase3-migrate.mjs
