@@ -169,7 +169,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
   const allItems = rawChapters.map((chapter, i) => {
     if (chapter.comingSoon) return { ...chapter, number: i + 1, status: 'coming_soon', pct: 0 }
     // Canonical availability: hidden stubs drop out entirely, coming-soon stubs
-    // show but never open (guarded in handleCardClick / openModulePlayer).
+    // show but never open (guarded in handleCardClick / openChapterPlayer).
     const availability = getChapterAvailability(chapter)
     if (availability === CHAPTER_AVAILABILITY.HIDDEN) return null
     if (availability !== CHAPTER_AVAILABILITY.AVAILABLE) return { ...chapter, number: i + 1, status: 'coming_soon', pct: 0 }
@@ -177,12 +177,12 @@ function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
     const screen = s.screen || 0
     const hasStarted = (s.hookDone && s.wylDone) || screen > 0
     const total = chapter.screenCount || 1
-    // `completed` sticks once a module is finished — reviewing it afterwards moves `screen`
+    // `completed` sticks once a chapter is finished — reviewing it afterwards moves `screen`
     // back down, but it must never read as anything other than 'completed' again.
     const pct = s.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
     const status = s.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
     return { ...chapter, number: chapter.number || i + 1, status, pct }
-  }).filter(Boolean) // drop hidden modules
+  }).filter(Boolean) // drop hidden chapters
 
   const defaultSeries = isHistory ? 'medicine' : 'macbeth'
   const items = (hasSeries && activeSeries)
@@ -196,7 +196,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
   const realCount      = items.filter(m => m.status !== 'coming_soon').length
   const overallPct     = realCount > 0 ? Math.round((completedCount / realCount) * 100) : 0
 
-  // The next module to tackle — whether already in progress or not yet started — is
+  // The next chapter to tackle — whether already in progress or not yet started — is
   // highlighted as the hero CTA, so finishing one chapter always hands off the spotlight.
   const nextUpIndex = items.findIndex(m => m.status !== 'completed' && m.status !== 'coming_soon')
 

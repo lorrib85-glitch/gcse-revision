@@ -502,7 +502,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
 //             the concept, ascending. The first entry is the natural revisit
 //             point (cf. findTaggedChapterScreen in tagChapterMap.js, but concept-based
 //             and multi-screen).
-//   parts   — stageRange ids covering the concept (whole-module coverage,
+//   parts   — stageRange ids covering the concept (whole-chapter coverage,
 //             including exam-prep parts 5–6, whose screens are also mapped
 //             at screen level).
 export function deriveConceptSupport(map) {

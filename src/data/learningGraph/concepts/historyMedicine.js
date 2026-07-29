@@ -131,7 +131,7 @@ export const MEDICINE_TOPICS = {
   th_modern: { label: 'Modern Medicine',                       tags: ['period:modern'] },
 }
 
-// Bridge from legacy single-word screen tags (modules.js screenTags, consumed
+// Bridge from legacy single-word screen tags (`src/chapters.js` screenTags, consumed
 // by findTaggedChapterScreen / weak-spot routing) to canonical concept ids. Only
 // confident 1:1 mappings belong here — composite or navigational screen tags
 // (e.g. 'core-takeaway', 'medieval-practitioners') are deliberately absent.

@@ -213,7 +213,7 @@ Before handing back to Stage C:
 ## Verify (mechanical floor, still not approval)
 
 - `vitest run tests/architecture` green (includes the content-quality floor —
-  never add a module to a grandfather allowlist to get green).
+  never add a chapter to a grandfather allowlist to get green).
 - `./node_modules/.bin/vite build` green.
 - The chapter opens, progresses and completes in the running app.
 

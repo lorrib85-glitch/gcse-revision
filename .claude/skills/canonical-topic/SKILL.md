@@ -189,7 +189,7 @@ and every column of episode-level metadata the spine provides.
 
 - History: GCSE topic text, Key Topic reference (Series 2–4 only — find
   Key Topic N in the spine's "Specification structure" list for that
-  series), "Current module" cell, and "Notes".
+  series), "Current module" cell (legacy column name; its value is a chapter ID), and "Notes".
 - English Literature: Primary act/scene, Core focus, Retrieval priority.
 - Any subject: record what is there; do not infer columns that aren't
   present.
@@ -202,8 +202,7 @@ spine and pull Key Topic N's full bullet text as the reference. Series 1
 ### 2b. Build status
 
 Check `src/chapters.js` for any chapter whose `title` (case-insensitive,
-ignoring punctuation) matches the episode title, to supplement any explicit
-"Current module" column in the spine.
+ignoring punctuation) matches the episode title, to supplement any explicit legacy "Current module" column in the spine.
 
 Then determine status:
 
@@ -221,9 +220,9 @@ Then determine status:
 From the architecture source located in 1d (embedded in spine or separate
 doc), extract:
 
-- The ordered list of module sections (e.g. Section 1–6 for History and
+- The ordered list of chapter sections (e.g. Section 1–6 for History and
   English), each with its name, purpose, and "Typical components" list.
-- The Module Completion Test (numbered or bulleted checklist of pass
+- The Chapter Completion Test (numbered or bulleted checklist of pass
   criteria).
 - Any interleaving rule or throughline rule.
 - Any subject- or series-specific invariants (e.g. "every section must note

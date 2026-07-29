@@ -54,7 +54,7 @@ React + Vite GCSE revision app. Mobile-first, dark cinematic theme. Designed to 
 
 `src/App.jsx` is now a tiny wrapper that renders `src/app/LegacyApp.jsx`.
 
-The main app shell, tab state, auth flow, overlays, module opening and lazy-loading orchestration live in `src/app/LegacyApp.jsx`.
+The main app shell, tab state, auth flow, overlays, chapter opening and lazy-loading orchestration live in `src/app/LegacyApp.jsx`.
 
 Do not treat `src/App.jsx` as the old single-file app, and do not re-inline extracted components back into it.
 
@@ -91,7 +91,7 @@ make a chapter render; use registered screen definitions.
 - `App` — top-level router, manages tab state and session flow
 - `BottomNav` — fixed 5-tab nav (Home / Subjects / 90s Quiz / Progress / Exam) with SVG line icons
 - `BiologySection` — biology-specific horizontal scroll section with topic group image cards
-- `Home` — home screen: greeting, weekly recall trend line, and a "Today's plan" task carousel (`TaskCarousel`/`TaskCard`) built by `buildTodaysPlan()` (`src/todaysPlan.js`) — warm-up, weak-spot revisit or continue-module, exam practice, plus a weekend full-paper card
+- `Home` — home screen: greeting, weekly recall trend line, and a "Today's plan" task carousel (`TaskCarousel`/`TaskCard`) built by `buildTodaysPlan()` (`src/todaysPlan.js`) — warm-up, weak-spot revisit or continue-chapter, exam practice, plus a weekend full-paper card
 - `HomeAtmosphere` — LOCKED. Three drifting teal SVG wave bands + constellation network rendered in the 34vh hero section of Home. Must NOT be removed, renamed, or have its SVG/animation structure altered. Its call site in `Home` (`<HomeAtmosphere />`) must not be removed either.
 - `SubjectsTab` — subject browser; each subject presents its ordered chapter journey
 - `ProgressTab` — progress/stats screen
@@ -140,7 +140,7 @@ Screen-level learning interaction components.
 - `MisconceptionCheck.jsx` — Full-screen, cinematic true/false misconception trap, one statement at a time, with calm reveal and exam-trap framing.
 - `CentreImageReveal.jsx` — Cause → prescription → reveal flow with a parchment-textured input surface and fuzzy-match validation (screen type `centreImageReveal`; renamed from `MedicalTheoryPrescription`, internals unchanged).
 - `MedievalDiagnosisScene.jsx` — Cinematic 9:16 SVG hero ("Medieval diagnosis chamber"): Thomas at a candlelit table with the four medieval explanations of illness appearing as tappable zones around him. Opens the `centreImageReveal` select phase; reduced motion renders the static end state.
-- `PriorKnowledgeRecall.jsx` — Full-screen chapter-opening recall screen. Free-text recall scored via `/api/recall`; missing concepts logged to the weakness tracker. Standard Section 1 component for History chapters (see History Module Architecture below).
+- `PriorKnowledgeRecall.jsx` — Full-screen chapter-opening recall screen. Free-text recall scored via `/api/recall`; missing concepts logged to the weakness tracker. Standard Section 1 component for History chapters (see History chapter architecture below).
 - `QuickRecallScreen.jsx` — Rapid-fire retrieval screen (choice + connection questions).
 - `RecoveryQuizPlayer.jsx` — Lightweight recovery quiz player (3–4 focused questions).
 - `SpotTheError.jsx` — Diagnostic precision-check: student selects an error in a statement/calculation/explanation, explains why it's wrong, then rewrites it correctly. Logs "Error identification" and "Scientific precision" weaknesses.
