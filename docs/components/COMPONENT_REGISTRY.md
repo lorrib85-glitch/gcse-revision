@@ -341,6 +341,30 @@ presentation: {
 - **Use operation language.** "Subtract 4 from both sides", never "move the 4 across and change the sign". The plain relationship comes first, the formal term second: "Division undoes multiplication. These are inverse operations."
 - **Choreography is fixed:** predict → act → observe → explain → check. The learner commits to at least one decision before any final answer appears; wrong choices explain the misunderstanding and re-open immediately, with no scoring, streaks or progress tracker inside the component.
 
+**Status — internals frozen (2026-07-29).** The algebra presentations are
+architecture complete and pedagogically reviewed: the scene sequence, the
+verdict/reasoning split, the concrete models and the copy were audited against
+a 390px and 320px render pass and signed off. **Do not refactor, restyle or
+re-sequence the internals of `src/components/learning/calculationBreakdown/`
+speculatively.** Change them when real chapter use exposes a genuine learning
+problem — not to tidy the structure, shorten a file or unify a pattern.
+
+Specifically, these are settled decisions, not accidents:
+
+- the concrete model stays on screen **through** each decision scene — do not
+  reduce a choice screen back to a bare equation;
+- the verdict panel ("What happened") is situational and the reasoning rail
+  ("Rule to remember") is general — they must not share a heading or repeat a
+  sentence;
+- a one-sided balance move breaks the balance **immediately and visibly**, not
+  behind an optional reveal;
+- a decision scene carries one instruction, one question and the options — no
+  support line that restates the question or eliminates a distractor in advance.
+
+This is a scope freeze, not a `LOCKED_COMPONENTS.md` registration: the component
+is not in the locked registry and does not carry a locked self-declaration.
+Extending it with a *new* validated presentation variant remains in scope.
+
 **Where the code lives:** `src/components/learning/calculationBreakdown/` — `calculationBreakdownMath.js` (pure operation maths), `calculationBreakdownValidation.js` (model validation and fallback), `calculationBreakdownVisualRoles.js` (semantic colour roles), `calculationBreakdownParts.jsx` / `calculationBreakdownControls.jsx` / `calculationBreakdownFigures.jsx` (shared display pieces), `CalculationVisualModel.jsx` (the scene runner) and one file per variant. Maths never lives in JSX; variant rendering is a lookup table, not a switch.
 
 ---
