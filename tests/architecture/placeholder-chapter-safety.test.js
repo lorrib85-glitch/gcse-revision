@@ -6,13 +6,11 @@ const root = resolve(process.cwd())
 const read = (rel) => readFileSync(resolve(root, rel), 'utf8')
 
 describe('Placeholder chapter safety', () => {
-  it('the compatibility metadata source still contains unbuilt chapters', () => {
-    // CHAPTERS is the canonical export, but Phase 2 deliberately aliases the
-    // existing metadata rows from src/modules.js until final legacy removal.
-    const canonical = read('src/chapters.js')
-    const metadata = read('src/modules.js')
-    expect(canonical).toContain('export const CHAPTERS = LEGACY_CHAPTERS')
+  it('the canonical chapter catalogue contains governed unbuilt chapters', () => {
+    const metadata = read('src/chapters.js')
+    expect(metadata).toContain('export const CHAPTERS = [')
     expect(metadata).toMatch(/screenCount:\s*0/)
+    expect(metadata).toContain('export const CHAPTER_AVAILABILITY')
   })
 
   it('openChapterPlayer guards against chapters without screens before opening the overlay', () => {

@@ -1,5 +1,5 @@
 /**
- * Contract tests for extracted episode modules.
+ * Contract tests for extracted episode chapters.
  *
  * Scope: three directories that were repaired from legacy block types:
  *   src/content/sociology/families/episodes/
@@ -11,10 +11,10 @@
  */
 
 import { describe, it, expect, beforeAll } from 'vitest'
-import { MODULES } from '../../src/modules.js'
-import { MODULE_CONTENT_LOADERS } from '../../src/content/moduleContentRegistry.js'
+import { CHAPTERS } from '../../src/chapters.js'
+import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
 
-// ─── Module scope ─────────────────────────────────────────────────────────────
+// ─── Chapter scope ─────────────────────────────────────────────────────────────
 
 const TARGET_IDS = [
   // sociology/families/episodes/
@@ -29,7 +29,7 @@ const TARGET_IDS = [
 
 /**
  * Block types that were present in legacy content and must not appear in
- * repaired modules.  Ordered by the conversion they require.
+ * repaired chapters.  Ordered by the conversion they require.
  */
 const LEGACY_BLOCK_TYPES = new Set([
   'flipcards',        // → flashcards (remove color/icon from cards)
@@ -44,7 +44,7 @@ const LEGACY_BLOCK_TYPES = new Set([
 ])
 
 /**
- * Block types registered in the blocks renderer (ModulePlayer.jsx lines 879-900).
+ * Block types registered in the blocks renderer (ChapterPlayer.jsx lines 879-900).
  * tieredquiz is included because it is used inside blocks by convention across
  * the whole codebase, even though its full-screen path fires at the screen level.
  */
@@ -61,16 +61,16 @@ const EMOJI_PREFIX_RE = /^\p{Extended_Pictographic}/u
 
 // ─── Load once ────────────────────────────────────────────────────────────────
 
-describe('Extracted module content contracts', () => {
+describe('Extracted chapter content contracts', () => {
   const loaded = [] // { id, meta, content }[]
 
   beforeAll(async () => {
     for (const id of TARGET_IDS) {
-      const loader = MODULE_CONTENT_LOADERS[id]
-      if (!loader) throw new Error(`No loader registered for module "${id}" in moduleContentRegistry.js`)
+      const loader = CHAPTER_CONTENT_LOADERS[id]
+      if (!loader) throw new Error(`No loader registered for chapter "${id}" in chapterContentRegistry.js`)
       const content = await loader()
-      const meta = MODULES.find(m => m.id === id)
-      if (!meta) throw new Error(`No metadata row for "${id}" in src/modules.js`)
+      const meta = CHAPTERS.find(m => m.id === id)
+      if (!meta) throw new Error(`No metadata row for "${id}" in src/chapters.js`)
       loaded.push({ id, meta, content })
     }
   })
@@ -81,14 +81,14 @@ describe('Extracted module content contracts', () => {
     for (const { id, meta, content } of loaded) {
       expect(
         content.screens.length,
-        `[${id}] src/modules.js screenCount=${meta.screenCount} but content has ${content.screens.length} screens`,
+        `[${id}] src/chapters.js screenCount=${meta.screenCount} but content has ${content.screens.length} screens`,
       ).toBe(meta.screenCount)
     }
   })
 
   // ─── Rule 2: stub contract ───────────────────────────────────────────────────
 
-  it('Rule 2 — modules with screenCount 0 export screens: []', () => {
+  it('Rule 2 — chapters with screenCount 0 export screens: []', () => {
     for (const { id, meta, content } of loaded) {
       if (meta.screenCount === 0) {
         expect(

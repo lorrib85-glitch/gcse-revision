@@ -54,10 +54,10 @@ function pickRevisitCandidate() {
 }
 
 function buildRevisitCard(win) {
-  const chapter = CHAPTERS.find(item => item.id === win.moduleId)
+  const chapter = CHAPTERS.find(item => item.id === win.chapterId)
   // Use the canonical concept tag (not the human topic label) to find the exact
   // teaching screen; falls back to opening at screen 0 when not a screen tag.
-  // `moduleId` remains in the task payload until the runtime migration phase.
+  // `chapterId` remains in the task payload until the runtime migration phase.
   const screenIndex = chapter ? findTaggedChapterScreen(chapter, win.conceptTag) : undefined
   writeRevisitMemory(win.topic)
   return {
@@ -67,7 +67,7 @@ function buildRevisitCard(win) {
     reason: win.reasonText,
     durationMinutes: 5,
     image: chapter?.headerImage || null,
-    onSelect: { kind: 'module', moduleId: win.moduleId, screenIndex },
+    onSelect: { kind: 'module', chapterId: win.chapterId, screenIndex },
   }
 }
 
@@ -81,7 +81,7 @@ function buildContinueCard(chapter) {
     reason: `${remaining} screen${remaining === 1 ? '' : 's'} left in this chapter.`,
     durationMinutes: Math.round(remaining * 2.5),
     image: chapter.headerImage || null,
-    onSelect: { kind: 'module', moduleId: chapter.id },
+    onSelect: { kind: 'module', chapterId: chapter.id },
   }
 }
 
@@ -199,7 +199,7 @@ export function getNextPlannerItem(plan) {
 export function getTaskSubject(task) {
   const selectSubject = task?.onSelect?.subject
   if (selectSubject) return selectSubject === 'Random' ? 'Mixed' : selectSubject
-  const chapterId = task?.onSelect?.moduleId
+  const chapterId = task?.onSelect?.chapterId
   if (chapterId) return CHAPTERS.find(chapter => chapter.id === chapterId)?.subject ?? null
   return null
 }

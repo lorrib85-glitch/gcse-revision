@@ -7,8 +7,8 @@ import {
   getWeakTopics,
   clearWeaknessLog,
 } from '../../../src/unifiedWeaknessTracker.js'
-import { TAG_MODULE_MAP, findTaggedScreen } from '../../../src/data/tagModuleMap.js'
-import { MODULES, isModuleAvailable } from '../../../src/modules.js'
+import { TAG_CHAPTER_MAP, findTaggedChapterScreen } from '../../../src/data/tagModuleMap.js'
+import { CHAPTERS, isChapterAvailable } from '../../../src/chapters.js'
 
 function installLocalStorage() {
   const store = {}
@@ -41,7 +41,7 @@ describe('QuickFire → canonical concept identity', () => {
     const conv = quickFireFromBank(MEDIEVAL_ROW)
     expect(conv.topic).toBe('Medieval Medicine')   // human label preserved
     expect(conv.tag).toBe('four-humours')          // canonical routing identity
-    expect(conv.moduleId).toBe(TAG_MODULE_MAP['four-humours'])
+    expect(conv.moduleId).toBe(TAG_CHAPTER_MAP['four-humours'])
   })
 
   it('an incorrect QuickFire answer records both a display label and a canonical concept tag', () => {
@@ -62,12 +62,12 @@ describe('QuickFire → canonical concept identity', () => {
     expect(win.conceptTag).toBe('four-humours')
 
     // Route resolves to a real, available module...
-    const mod = MODULES.find(m => m.id === win.moduleId)
+    const mod = CHAPTERS.find(m => m.id === win.moduleId)
     expect(mod).toBeTruthy()
-    expect(isModuleAvailable(mod)).toBe(true)
+    expect(isChapterAvailable(mod)).toBe(true)
 
     // ...and to an exact tagged teaching screen.
-    const screen = findTaggedScreen(mod, win.conceptTag)
+    const screen = findTaggedChapterScreen(mod, win.conceptTag)
     expect(screen).toBeTypeOf('number')
     expect(screen).toBeGreaterThanOrEqual(0)
     expect(screen).toBeLessThan(mod.screenCount)
@@ -93,7 +93,7 @@ describe('QuickFire routing — legacy / backward compatibility', () => {
     for (let i = 0; i < 3; i++) {
       logWrongAnswer({ subject: 'History', topic: 'Medieval Medicine', source: 'quiz' }) // no conceptTag
     }
-    // "Medieval Medicine" is not a TAG_MODULE_MAP key, so it must not resolve.
+    // "Medieval Medicine" is not a TAG_CHAPTER_MAP key, so it must not resolve.
     expect(getBiggestWin()).toBeNull()
   })
 
@@ -103,7 +103,7 @@ describe('QuickFire routing — legacy / backward compatibility', () => {
     }
     const win = getBiggestWin()
     expect(win).toBeTruthy()
-    expect(win.moduleId).toBe(TAG_MODULE_MAP['germ-theory'])
+    expect(win.moduleId).toBe(TAG_CHAPTER_MAP['germ-theory'])
     expect(win.conceptTag).toBe('germ-theory')
   })
 

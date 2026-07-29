@@ -14,7 +14,7 @@ vi.mock('../../src/lib/storage.js', () => ({
 }))
 
 const { isTaskDoneToday, getNextPlannerItem, getTaskSubject } = await import('../../src/todaysPlan.js')
-const { MODULES } = await import('../../src/modules.js')
+const { CHAPTERS } = await import('../../src/chapters.js')
 
 const TODAY = new Date().toISOString().slice(0, 10)
 const YESTERDAY = (() => {
@@ -122,9 +122,9 @@ describe('getTaskSubject', () => {
     expect(getTaskSubject({ onSelect: { kind: 'practice', subject: 'Random' } })).toBe('Mixed')
   })
 
-  it('resolves module-backed tasks via MODULES metadata', () => {
-    const mod = MODULES[0]
-    expect(getTaskSubject({ onSelect: { kind: 'module', moduleId: mod.id } })).toBe(mod.subject)
+  it('resolves module-backed tasks via CHAPTERS metadata', () => {
+    const mod = CHAPTERS[0]
+    expect(getTaskSubject({ onSelect: { kind: 'module', chapterId: mod.id } })).toBe(mod.subject)
   })
 
   it('returns null for the mixed warm-up and for no task at all', () => {

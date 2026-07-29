@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { MODULES } from '../../src/modules.js'
+import { CHAPTERS } from '../../src/chapters.js'
 import { MEDICINE_EPISODES } from '../../src/content/history/medicine/index.js'
 import episodeMedievalBeliefs from '../../src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.js'
 import episodeBlackDeath from '../../src/content/history/medicine/episodes/episode-02-black-death.js'
@@ -18,12 +18,12 @@ import episodeWesternFront from '../../src/content/history/medicine/episodes/epi
 
 describe('Content registry — episode-01-medieval-beliefs-causes', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeMedievalBeliefs.id)
+    const meta = CHAPTERS.find(m => m.id === episodeMedievalBeliefs.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeMedievalBeliefs.id)
+    const meta = CHAPTERS.find(m => m.id === episodeMedievalBeliefs.id)
     expect(episodeMedievalBeliefs.number).toBe(meta.number)
   })
 
@@ -56,12 +56,12 @@ describe('Content registry — episode-01-medieval-beliefs-causes', () => {
 
 describe('Content registry — episode-03-renaissance-medicine', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeRenaissanceMedicine.id)
+    const meta = CHAPTERS.find(m => m.id === episodeRenaissanceMedicine.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeRenaissanceMedicine.id)
+    const meta = CHAPTERS.find(m => m.id === episodeRenaissanceMedicine.id)
     expect(episodeRenaissanceMedicine.number).toBe(meta.number)
   })
 
@@ -94,12 +94,12 @@ describe('Content registry — episode-03-renaissance-medicine', () => {
 
 describe('Content registry — episode-04-surgery-anaesthetics', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeSurgeryAnaesthetics.id)
+    const meta = CHAPTERS.find(m => m.id === episodeSurgeryAnaesthetics.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeSurgeryAnaesthetics.id)
+    const meta = CHAPTERS.find(m => m.id === episodeSurgeryAnaesthetics.id)
     expect(episodeSurgeryAnaesthetics.number).toBe(meta.number)
   })
 
@@ -132,12 +132,12 @@ describe('Content registry — episode-04-surgery-anaesthetics', () => {
 
 describe('Content registry — episode-02-black-death', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeBlackDeath.id)
+    const meta = CHAPTERS.find(m => m.id === episodeBlackDeath.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeBlackDeath.id)
+    const meta = CHAPTERS.find(m => m.id === episodeBlackDeath.id)
     expect(episodeBlackDeath.number).toBe(meta.number)
   })
 
@@ -170,12 +170,12 @@ describe('Content registry — episode-02-black-death', () => {
 
 describe('Content registry — episode-06-jenner-vaccination', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeJenner.id)
+    const meta = CHAPTERS.find(m => m.id === episodeJenner.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeJenner.id)
+    const meta = CHAPTERS.find(m => m.id === episodeJenner.id)
     expect(episodeJenner.number).toBe(meta.number)
   })
 
@@ -208,12 +208,12 @@ describe('Content registry — episode-06-jenner-vaccination', () => {
 
 describe('Content registry — episode-07-germ-theory', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeGermTheory.id)
+    const meta = CHAPTERS.find(m => m.id === episodeGermTheory.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeGermTheory.id)
+    const meta = CHAPTERS.find(m => m.id === episodeGermTheory.id)
     expect(episodeGermTheory.number).toBe(meta.number)
   })
 
@@ -246,12 +246,12 @@ describe('Content registry — episode-07-germ-theory', () => {
 
 describe('Content registry — episode-08-great-stink', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeGreatStink.id)
+    const meta = CHAPTERS.find(m => m.id === episodeGreatStink.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeGreatStink.id)
+    const meta = CHAPTERS.find(m => m.id === episodeGreatStink.id)
     expect(episodeGreatStink.number).toBe(meta.number)
   })
 
@@ -284,12 +284,12 @@ describe('Content registry — episode-08-great-stink', () => {
 
 describe('Content registry — episode-09-surgery-revolution', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeSurgeryRevolution.id)
+    const meta = CHAPTERS.find(m => m.id === episodeSurgeryRevolution.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeSurgeryRevolution.id)
+    const meta = CHAPTERS.find(m => m.id === episodeSurgeryRevolution.id)
     expect(episodeSurgeryRevolution.number).toBe(meta.number)
   })
 
@@ -322,12 +322,12 @@ describe('Content registry — episode-09-surgery-revolution', () => {
 
 describe('Content registry — episode-11-accidental-miracle', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeAccidentalMiracle.id)
+    const meta = CHAPTERS.find(m => m.id === episodeAccidentalMiracle.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeAccidentalMiracle.id)
+    const meta = CHAPTERS.find(m => m.id === episodeAccidentalMiracle.id)
     expect(episodeAccidentalMiracle.number).toBe(meta.number)
   })
 
@@ -360,12 +360,12 @@ describe('Content registry — episode-11-accidental-miracle', () => {
 
 describe('Content registry — episode-12-when-medicine-became-magic', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeWhenMedicineBecameMagic.id)
+    const meta = CHAPTERS.find(m => m.id === episodeWhenMedicineBecameMagic.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeWhenMedicineBecameMagic.id)
+    const meta = CHAPTERS.find(m => m.id === episodeWhenMedicineBecameMagic.id)
     expect(episodeWhenMedicineBecameMagic.number).toBe(meta.number)
   })
 
@@ -398,12 +398,12 @@ describe('Content registry — episode-12-when-medicine-became-magic', () => {
 
 describe('Content registry — episode-13-can-we-beat-cancer', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeCanWeBeatCancer.id)
+    const meta = CHAPTERS.find(m => m.id === episodeCanWeBeatCancer.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeCanWeBeatCancer.id)
+    const meta = CHAPTERS.find(m => m.id === episodeCanWeBeatCancer.id)
     expect(episodeCanWeBeatCancer.number).toBe(meta.number)
   })
 
@@ -436,12 +436,12 @@ describe('Content registry — episode-13-can-we-beat-cancer', () => {
 
 describe('Content registry — episode-14-western-front', () => {
   it('id exists in src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeWesternFront.id)
+    const meta = CHAPTERS.find(m => m.id === episodeWesternFront.id)
     expect(meta).toBeDefined()
   })
 
   it('number matches src/modules.js', () => {
-    const meta = MODULES.find(m => m.id === episodeWesternFront.id)
+    const meta = CHAPTERS.find(m => m.id === episodeWesternFront.id)
     expect(episodeWesternFront.number).toBe(meta.number)
   })
 

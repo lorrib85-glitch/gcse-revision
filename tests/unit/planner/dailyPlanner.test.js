@@ -215,7 +215,7 @@ describe('buildWeekdayBlocks', () => {
     const blocks = buildWeekdayBlocks('Biology', 'History', bioAllDone, defaultProfile)
     const mainBlock = blocks.find(b => b.type === 'mainProgress')
     const stubIds = ['bio_building_life', 'bio_human_machine', 'bio_disease_wars', 'bio_control_systems', 'bio_genetics_evolution', 'bio_ecosystems_group']
-    expect(stubIds).not.toContain(mainBlock.moduleId)
+    expect(stubIds).not.toContain(mainBlock.chapterId)
   })
 
   it('uses mainSubject for pulse when secondarySubject is null', () => {

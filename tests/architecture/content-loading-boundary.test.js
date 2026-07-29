@@ -4,7 +4,6 @@ import { resolve, dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { CHAPTERS } from '../../src/chapters.js'
 import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
-import { MODULE_CONTENT_LOADERS } from '../../src/content/moduleContentRegistry.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '../..')
@@ -29,7 +28,7 @@ describe('Content-loading boundary — app shell ownership', () => {
   it('LegacyApp does not define either loader registry name', () => {
     const src = readFileSync(resolve(root, 'src/app/LegacyApp.jsx'), 'utf8')
     expect(/(?:export\s+)?const\s+CHAPTER_CONTENT_LOADERS\s*=/.test(src)).toBe(false)
-    expect(/(?:export\s+)?const\s+MODULE_CONTENT_LOADERS\s*=/.test(src)).toBe(false)
+    expect(/(?:export\s+)?const\s+CHAPTER_CONTENT_LOADERS\s*=/.test(src)).toBe(false)
   })
 })
 
@@ -56,20 +55,6 @@ describe('Content-loading boundary — one canonical registry owner', () => {
       violators.map(file => file.replace(root + '/', '')),
       'CHAPTER_CONTENT_LOADERS defined outside chapterContentRegistry.js',
     ).toHaveLength(0)
-  })
-
-  it('no file defines a second MODULE_CONTENT_LOADERS registry', () => {
-    const violators = allSrcFiles.filter(file =>
-      /(?:export\s+)?const\s+MODULE_CONTENT_LOADERS\s*=/.test(readFileSync(file, 'utf8'))
-    )
-    expect(
-      violators.map(file => file.replace(root + '/', '')),
-      'MODULE_CONTENT_LOADERS must only be a re-exported compatibility alias',
-    ).toHaveLength(0)
-  })
-
-  it('the compatibility alias is the exact canonical registry object', () => {
-    expect(MODULE_CONTENT_LOADERS).toBe(CHAPTER_CONTENT_LOADERS)
   })
 })
 

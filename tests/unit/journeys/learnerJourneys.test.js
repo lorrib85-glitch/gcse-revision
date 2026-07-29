@@ -65,7 +65,7 @@ describe('Journey 2 — a wrong answer routes to the intended teaching screen', 
   it('logs a weakness, resolves it to a real module + exact screen, and updates evidence on retry', async () => {
     const { logWrongAnswer, logCorrectAnswer, getWeakTopics, getBiggestWin } =
       await import('../../../src/unifiedWeaknessTracker.js')
-    const { TAG_MODULE_MAP, findTaggedScreen } = await import('../../../src/data/tagModuleMap.js')
+    const { TAG_CHAPTER_MAP, findTaggedChapterScreen } = await import('../../../src/data/tagModuleMap.js')
     const { CHAPTERS } = await import('../../../src/chapters.js')
 
     // Two wrong answers on a recoverable concept crosses the weak threshold.
@@ -79,12 +79,12 @@ describe('Journey 2 — a wrong answer routes to the intended teaching screen', 
     // Recovery route: the biggest win points at a real, available module.
     const win = getBiggestWin()
     expect(win.topic).toBe('germ-theory')
-    const targetId = TAG_MODULE_MAP['germ-theory']
+    const targetId = TAG_CHAPTER_MAP['germ-theory']
     expect(win.moduleId).toBe(targetId)
 
     const chapter = CHAPTERS.find(m => m.id === targetId)
     expect(chapter).toBeTruthy()
-    const screenIndex = findTaggedScreen(chapter, 'germ-theory')
+    const screenIndex = findTaggedChapterScreen(chapter, 'germ-theory')
     expect(screenIndex).toBeTypeOf('number')
     expect(screenIndex).toBeLessThan(chapter.screenCount)
 

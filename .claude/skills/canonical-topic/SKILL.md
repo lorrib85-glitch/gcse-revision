@@ -1,6 +1,6 @@
 ---
 name: canonical-topic
-description: "Generate the canonical knowledge-source files for any GCSE subject episode or series — synthesizes the series spine, module architecture, current src/modules.js state, and session-provided source material into two structured, exhaustive reference files (a content file and an architecture file) per episode for future build/audit sessions"
+description: "Generate the canonical knowledge-source files for any GCSE subject episode or series — synthesizes the series spine, module architecture, current src/chapters.js state, and session-provided source material into two structured, exhaustive reference files (a content file and an architecture file) per episode for future build/audit sessions"
 argument-hint: "[<subject>: ]<episode title or series name>"
 allowed-tools:
   - Read
@@ -39,7 +39,7 @@ Together they synthesize:
 3. **The module architecture** — either embedded inside the spine (English),
    or in a separate `docs/system/<SUBJECT>_MODULE_ARCHITECTURE.md` file
    (History). Feeds the architecture file.
-4. The matching entry/entries in `src/modules.js`, if already built.
+4. The matching entry/entries in `src/chapters.js`, if already built.
    Feeds the architecture file.
 
 `$ARGUMENTS` format: `[<subject>: ]<episode title or series name>` — e.g.
@@ -201,17 +201,17 @@ spine and pull Key Topic N's full bullet text as the reference. Series 1
 
 ### 2b. Build status
 
-Check `src/modules.js` for any module whose `title` (case-insensitive,
+Check `src/chapters.js` for any module whose `title` (case-insensitive,
 ignoring punctuation) matches the episode title, to supplement any explicit
 "Current module" column in the spine.
 
 Then determine status:
 
-- Spine column absent **and** no `src/modules.js` title match → `Not yet built`.
+- Spine column absent **and** no `src/chapters.js` title match → `Not yet built`.
 - Spine column says `—` → `Not yet built`.
-- `src/modules.js` has a title match: note the `id` field.
+- `src/chapters.js` has a title match: note the `id` field.
 - Spine column lists two or more module ids joined by `+` → `Built across <id-1> + <id-2>`.
-- Spine column or `src/modules.js` match names one id:
+- Spine column or `src/chapters.js` match names one id:
   - Check whether any other episode in the same spine references the same id.
   - If yes → `Built (shared) as <id> — also covers Episode(s) <N, N, ...>` (ascending, excluding this episode).
   - Otherwise → `Built as <id>`.
@@ -230,10 +230,10 @@ doc), extract:
   a stagecraft device" for AIC, the Interleaving Rule and five agents of
   change for Medicine Through Time).
 
-### 2d. Current src/modules.js entry/entries
+### 2d. Current src/chapters.js entry/entries
 
 If build status (2b) names one or more module ids: for each, grep
-`src/modules.js` for `id: '<module-id>'` and read that module object's
+`src/chapters.js` for `id: '<module-id>'` and read that module object's
 `title`, `subtitle`, plus `hook`, `outcomes`, `recall`, and `screens`
 (each screen's `id`/`tag` plus a one-line summary of its type and content).
 

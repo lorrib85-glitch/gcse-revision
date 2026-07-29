@@ -5,7 +5,7 @@ description: >
   registry and series index. Use when extracting an episode into a content
   registry file, adding a new episode file, changing episode id/number/
   screenCount/screenTags, registering an episode in a series index, or checking
-  compatibility between src/modules.js and content files.
+  compatibility between src/chapters.js and content files.
 argument-hint: "[episode id or description]"
 ---
 
@@ -20,10 +20,10 @@ registry. Output a short status block first, then work through the steps.
 CONTENT REGISTRY CHECK
 ──────────────────────
 Episode:          <id>
-src/modules.js:   id ✓/✗  number ✓/✗  screenCount ✓/✗
+src/chapters.js:   id ✓/✗  number ✓/✗  screenCount ✓/✗
 Episode file:     screens non-empty ✓/✗  stageNavigation bounds ✓/✗
 Series index:     included ✓/✗  order ascending ✓/✗
-Loader entry:     MODULE_CONTENT_LOADERS[id] exists in LegacyApp.jsx ✓/✗
+Loader entry:     CHAPTER_CONTENT_LOADERS[id] exists in LegacyApp.jsx ✓/✗
 Action required:  <none / list>
 ```
 
@@ -34,19 +34,19 @@ Action required:  <none / list>
 - Adding a new episode file to the registry
 - Changing episode `id`, `number`, `screenCount`, or `screenTags`
 - Registering an episode in a series index
-- Spot-checking alignment between `src/modules.js` and extracted content files
+- Spot-checking alignment between `src/chapters.js` and extracted content files
 
 ## Authorities
 
 | File | Owns |
 |------|------|
-| `src/modules.js` | `id`, `number`, `screenCount`, `screenTags`, `headerImage`, all browsing metadata |
+| `src/chapters.js` | `id`, `number`, `screenCount`, `screenTags`, `headerImage`, all browsing metadata |
 | `src/content/<subject>/<series>/episodes/episode-NN-<slug>.js` | `hook`, `outcomes`, `screens`, `recall`, `stageNavigation` |
 | `src/content/<subject>/<series>/index.js` | ordered series array (`MEDICINE_EPISODES` etc.) |
-| `src/app/LegacyApp.jsx` | `MODULE_CONTENT_LOADERS` — one entry per built episode, consumed by the app loader |
+| `src/app/LegacyApp.jsx` | `CHAPTER_CONTENT_LOADERS` — one entry per built episode, consumed by the app loader |
 
-`src/modules.js` is the **single source of truth** for metadata. When content and
-metadata disagree, fix the content file — do not edit `src/modules.js` unless
+`src/chapters.js` is the **single source of truth** for metadata. When content and
+metadata disagree, fix the content file — do not edit `src/chapters.js` unless
 the user explicitly asks.
 
 ## Rules
@@ -57,10 +57,10 @@ the user explicitly asks.
 - Slug: `episode-NN-<kebab-id-without-subject-prefix>.js`
   - e.g. id `history-medicine-germ-theory`, number 7 → `episode-07-germ-theory.js`
 
-### Alignment with src/modules.js
+### Alignment with src/chapters.js
 
-- `episode.id` must exactly match the `id` field in `src/modules.js`
-- `episode.number` must exactly match the `number` field in `src/modules.js`
+- `episode.id` must exactly match the `id` field in `src/chapters.js`
+- `episode.number` must exactly match the `number` field in `src/chapters.js`
 
 ### Series index
 
@@ -70,9 +70,9 @@ the user explicitly asks.
 
 ### Loader entry
 
-- Every built episode must have an entry in `MODULE_CONTENT_LOADERS` in `src/app/LegacyApp.jsx`
+- Every built episode must have an entry in `CHAPTER_CONTENT_LOADERS` in `src/app/LegacyApp.jsx`
 - Entry format: `'<episode-id>': () => import('<path-to-episode-file>').then(m => m.default)`
-- Do not remove or restructure fields that `ModulePlayer` reads
+- Do not remove or restructure fields that `ChapterPlayer` reads
 
 ### Episode file requirements
 
@@ -87,18 +87,18 @@ the user explicitly asks.
 - Building a module that does not already exist inline
 - Running `/canonical-topic` unless separately requested
 - Touching unrelated subject files
-- Editing `src/modules.js` metadata (`screenCount`, `screenTags`) — that is a
+- Editing `src/chapters.js` metadata (`screenCount`, `screenTags`) — that is a
   Workflow C task requiring its own triage
 
 ## Extraction steps
 
-1. Read `src/modules.js` — find the target episode's metadata block (id, number)
+1. Read `src/chapters.js` — find the target episode's metadata block (id, number)
 2. Create `src/content/<subject>/<series>/episodes/episode-NN-<slug>.js`
    - `export default { id, subject, number, ... }` — follow existing episode files in the same series
-   - Set `number` to match `src/modules.js` (correct if it differs)
+   - Set `number` to match `src/chapters.js` (correct if it differs)
    - Add future fields (`series`, `recallTags`, `examTags`, `assetKeys`) as empty arrays
 3. Update the series index — import and append in number order in `index.js`
-4. Add a `MODULE_CONTENT_LOADERS` entry in `src/app/LegacyApp.jsx`:
+4. Add a `CHAPTER_CONTENT_LOADERS` entry in `src/app/LegacyApp.jsx`:
    `'<episode-id>': () => import('<relative-path-to-episode>').then(m => m.default)`
 5. Update `tests/architecture/content-registry.test.js` — add per-episode tests
    (see Test pattern below)
@@ -109,18 +109,18 @@ the user explicitly asks.
 ## Test pattern
 
 Add these tests for each newly extracted episode. Import `MODULES` from
-`src/modules.js` at the top of the test file.
+`src/chapters.js` at the top of the test file.
 
 ```javascript
-import { MODULES } from '../../src/modules.js'
+import { MODULES } from '../../src/chapters.js'
 
 describe('Content registry — <episode-slug>', () => {
-  it('id exists in src/modules.js', () => {
+  it('id exists in src/chapters.js', () => {
     const meta = MODULES.find(m => m.id === episode.id)
     expect(meta).toBeDefined()
   })
 
-  it('number matches src/modules.js', () => {
+  it('number matches src/chapters.js', () => {
     const meta = MODULES.find(m => m.id === episode.id)
     expect(episode.number).toBe(meta.number)
   })

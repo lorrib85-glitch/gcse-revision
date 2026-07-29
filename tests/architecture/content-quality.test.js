@@ -15,8 +15,8 @@ import {
   sentenceCaseViolations,
   violationFingerprints,
 } from '../../src/data/contentQualityChecks.js'
-import { MODULES } from '../../src/modules.js'
-import { MODULE_CONTENT_LOADERS } from '../../src/content/moduleContentRegistry.js'
+import { CHAPTERS } from '../../src/chapters.js'
+import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
 import {
   KNOWN_GUARDRAIL_VIOLATIONS,
   KNOWN_READABILITY_BASELINES,
@@ -34,9 +34,9 @@ import {
 // regression gate, not a requirement of the checks themselves.
 
 async function loadBuiltEpisodes() {
-  const builtModules = MODULES.filter(mod => mod.screenCount > 0)
+  const builtModules = CHAPTERS.filter(mod => mod.screenCount > 0)
   const episodes = await Promise.all(builtModules.map(async mod => {
-    const loader = MODULE_CONTENT_LOADERS[mod.id]
+    const loader = CHAPTER_CONTENT_LOADERS[mod.id]
     if (typeof loader !== 'function') {
       throw new Error(`${mod.id} has no content loader`)
     }
@@ -322,8 +322,8 @@ describe('Known-debt ratchet helpers', () => {
 })
 
 describe('Content quality floor', () => {
-  it('enumerates every built module from MODULES and MODULE_CONTENT_LOADERS', () => {
-    const expectedBuiltIds = MODULES.filter(mod => mod.screenCount > 0).map(mod => mod.id).sort()
+  it('enumerates every built module from CHAPTERS and CHAPTER_CONTENT_LOADERS', () => {
+    const expectedBuiltIds = CHAPTERS.filter(mod => mod.screenCount > 0).map(mod => mod.id).sort()
     const inspectedIds = ALL_EPISODES.map(ep => ep.id).sort()
     expect(inspectedIds).toEqual(expectedBuiltIds)
   })

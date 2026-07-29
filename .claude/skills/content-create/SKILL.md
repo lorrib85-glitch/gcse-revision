@@ -179,7 +179,7 @@ these jobs; if it does, it has two primary intents (halt 3).
    `docs/content/<subject>/<series>/<NN>_visual-assets.md`. Never generate
    bespoke imagery or diagrams.
 3. Register metadata per `CLAUDE.md` (per-module content file,
-   `MODULE_CONTENT_LOADERS` entry, `src/modules.js` metadata with
+   `CHAPTER_CONTENT_LOADERS` entry, `src/chapters.js` metadata with
    `screenCount` / `screenTags`). For a rebuild that changes screen count,
    update `screenCount`, `screenTags`, and any `stageNavigation` indices.
 4. **Commit per screen / story unit / stage**, never one mega-commit — each

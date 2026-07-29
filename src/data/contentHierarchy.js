@@ -14,23 +14,6 @@ export const CONTENT_HIERARCHY = Object.freeze([
   CONTENT_LEVELS.COMPONENT,
 ])
 
-// Temporary migration map. These names describe the current code, not the
-// canonical product model. New architecture work must use the canonical names.
-export const LEGACY_CONTENT_NAMES = Object.freeze({
-  MODULES: Object.freeze({
-    currentMeaning: 'chapter metadata collection',
-    canonicalName: 'CHAPTERS',
-  }),
-  MODULE_GROUPS: Object.freeze({
-    currentMeaning: 'module metadata collection',
-    canonicalName: 'MODULES',
-  }),
-  ModulePlayer: Object.freeze({
-    currentMeaning: 'chapter runtime',
-    canonicalName: 'ChapterPlayer',
-  }),
-})
-
 export function validateContentHierarchy({ chapters = [], modules = [] } = {}) {
   const errors = []
   const chapterById = new Map()

@@ -25,7 +25,7 @@ import {
   MEDICINE_SCREEN_TAG_CONCEPTS,
 } from '../../src/data/learningGraph/concepts/historyMedicine.js'
 
-import { MODULES } from '../../src/modules.js'
+import { CHAPTERS } from '../../src/chapters.js'
 import { ALL_QUESTIONS } from '../../src/data/questionBanks/questionRegistry.js'
 import { ALL_MEDICINE_QUESTIONS } from '../../src/data/questionBanks/history/medicine.js'
 import { MEDICINE_2023_PAPER, ALL_MEDICINE_PAPERS } from '../../src/data/medicineExamPapers.js'
@@ -167,7 +167,7 @@ describe('Learning graph — resolveEffectiveTags', () => {
   })
 
   it('resolves a real medicine question through module + topic + question layers', () => {
-    const mod = MODULES.find(m => m.id === 'history-medicine-medieval-beliefs-causes')
+    const mod = CHAPTERS.find(m => m.id === 'history-medicine-medieval-beliefs-causes')
     const question = ALL_MEDICINE_QUESTIONS.find(q => q.id === 'med-th1-003')
     const effective = resolveEffectiveTags(mod.tags, MEDICINE_TOPICS[question.topicId].tags, question.tags)
     expect(effective).toContain('subject:history')          // inherited from module
@@ -181,7 +181,7 @@ describe('Learning graph — resolveEffectiveTags', () => {
 
 describe('Learning graph — tagged content uses only registered vocabulary', () => {
   it('every module tag is a registered concept or known facet', () => {
-    for (const mod of MODULES) {
+    for (const mod of CHAPTERS) {
       for (const tag of mod.tags ?? []) {
         expect(tagProblem(tag), `${mod.id}: ${tagProblem(tag)}`).toBeNull()
       }
@@ -189,7 +189,7 @@ describe('Learning graph — tagged content uses only registered vocabulary', ()
   })
 
   it('all Medicine modules carry subject/course tags', () => {
-    const medicine = MODULES.filter(m => m.series === 'medicine')
+    const medicine = CHAPTERS.filter(m => m.series === 'medicine')
     for (const mod of medicine) {
       expect(mod.tags, `${mod.id} missing tags`).toBeDefined()
       expect(mod.tags).toContain('subject:history')
@@ -264,7 +264,7 @@ describe('Learning graph — exam paper tagging', () => {
 
 describe('Learning graph — legacy screen-tag bridge', () => {
   const medicineScreenTags = new Set(
-    MODULES.filter(m => m.series === 'medicine')
+    CHAPTERS.filter(m => m.series === 'medicine')
       .flatMap(m => m.screenTags ?? [])
       .filter(Boolean),
   )

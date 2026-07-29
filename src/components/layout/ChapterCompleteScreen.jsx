@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { MODULES } from '../../modules.js'
+import { CHAPTERS } from '../../chapters.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import {
   SUBJECT_BACKDROPS,
@@ -135,7 +135,7 @@ export default function ChapterCompleteScreen({
   // Direct props remain the public component contract. Metadata is only used as
   // a flexible fallback so production and Component Lab fixtures can supply a
   // title without duplicating artwork, subtitle or subject information.
-  const matchedModule = MODULES.find(module =>
+  const matchedModule = CHAPTERS.find(module =>
     module.title === completedChapter
     && (!subject || module.subject === subject)
     && (!accentSubject || module.subject === accentSubject)
@@ -149,7 +149,7 @@ export default function ChapterCompleteScreen({
   const completionLabel = COMPLETION_LABELS[resolvedCompletionType] || COMPLETION_LABELS.chapter
   const quizScope = quizScopeLabel || QUIZ_SCOPES[resolvedCompletionType] || QUIZ_SCOPES.chapter
 
-  const matchedNextModule = MODULES.find(module =>
+  const matchedNextModule = CHAPTERS.find(module =>
     module.title === nextChapterTitle
     && module.subject === resolvedSubject
   )
