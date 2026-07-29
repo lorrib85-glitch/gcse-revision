@@ -3,9 +3,17 @@ import re
 
 ROOT = Path('.')
 
+# The loader compatibility facade is part of the Phase 6 removal set.
+legacy_loader = ROOT / 'src/content/moduleContentRegistry.js'
+if legacy_loader.exists():
+    legacy_loader.unlink()
+
 # Any architecture suite still importing the chapter catalogue through the old
-# path must move to the canonical export and vocabulary.
+# path must move to the canonical export and vocabulary. The final anti-regression
+# test is excluded because it intentionally quotes the deleted symbols.
 for path in (ROOT / 'tests/architecture').glob('*.test.js'):
+    if path.name == 'legacy-content-imports.test.js':
+        continue
     text = path.read_text(encoding='utf-8')
     if "from '../../src/modules.js'" in text:
         text = text.replace(
@@ -60,6 +68,29 @@ for old, new in renames.items():
     text = text.replace('Module', 'Chapter').replace('module', 'chapter')
     (ROOT / new).write_text(text, encoding='utf-8')
     old_path.unlink()
+
+# The placeholder contract now reads the canonical metadata catalogue directly.
+placeholder_path = ROOT / 'tests/architecture/placeholder-chapter-safety.test.js'
+placeholder = placeholder_path.read_text(encoding='utf-8')
+placeholder = re.sub(
+    r"  it\('the compatibility metadata source still contains unbuilt chapters'.*?\n  \}\)\n",
+    """  it('the canonical chapter catalogue contains governed unbuilt chapters', () => {\n    const metadata = read('src/chapters.js')\n    expect(metadata).toContain('export const CHAPTERS = [')\n    expect(metadata).toMatch(/screenCount:\\s*0/)\n    expect(metadata).toContain('export const CHAPTER_AVAILABILITY')\n  })\n""",
+    placeholder,
+    count=1,
+    flags=re.S,
+)
+placeholder_path.write_text(placeholder, encoding='utf-8')
+
+# Remove compatibility assertions from the content loading boundary.
+loading_path = ROOT / 'tests/architecture/content-loading-boundary.test.js'
+loading = loading_path.read_text(encoding='utf-8')
+loading = loading.replace("import { MODULE_CONTENT_LOADERS } from '../../src/content/moduleContentRegistry.js'\n", '')
+loading = re.sub(
+    r"\n  it\('no file defines a second MODULE_CONTENT_LOADERS registry'.*?\n  \}\)\n\n"
+    r"  it\('the compatibility alias is the exact canonical registry object'.*?\n  \}\)\n",
+    '\n', loading, count=1, flags=re.S,
+)
+loading_path.write_text(loading, encoding='utf-8')
 
 # Confirm there are no actual imports of deleted catalogue/runtime files. Quoted
 # filenames inside the anti-regression tests themselves are intentional evidence.
