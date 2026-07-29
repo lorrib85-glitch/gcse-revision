@@ -32,6 +32,7 @@ jobs:
           python .github/phase6-fix-tests.py
           python .github/phase6-final-contract-fix.py
           python .github/phase6-unit-fix.py
+          python .github/phase6-source-import-fix.py
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Architecture contracts
@@ -51,7 +52,7 @@ jobs:
       - name: Commit clean Phase 6 files
         shell: bash
         run: |
-          rm -f .github/phase6-migrate.py .github/phase6-fix-tests.py .github/phase6-final-contract-fix.py .github/phase6-unit-fix.py .github/workflows/phase6.yml
+          rm -f .github/phase6-migrate.py .github/phase6-fix-tests.py .github/phase6-final-contract-fix.py .github/phase6-unit-fix.py .github/phase6-source-import-fix.py .github/workflows/phase6.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
