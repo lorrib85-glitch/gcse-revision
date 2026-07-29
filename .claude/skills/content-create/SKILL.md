@@ -8,17 +8,17 @@ description: >
   MediaPlaceholder, running the composed 390px render pass, and recording any
   deviation from the brief. It never freely invents screens and never treats
   "implemented" as "approved" — an independent post-build content-review does
-  that. Use for building new module content (Lane E) or rebuilding confirmed
+  that. Use for building new chapter content (Lane E) or rebuilding confirmed
   briefs in built content (Lane C).
-argument-hint: "<module id> [screen range | brief file] "
+argument-hint: "<chapter id> [screen range | brief file] "
 ---
 
 # Content create
 
 The build side of the governed review-to-rebuild pipeline. `content-review`
 diagnoses and writes amendment briefs; **`content-create` implements them.**
-For a genuinely new module it consumes a build spec/canonical spine instead
-of a brief, but the same chain and halts apply. Runs in Lane E (new module)
+For a genuinely new chapter it consumes a build spec/canonical spine instead
+of a brief, but the same chain and halts apply. Runs in Lane E (new chapter)
 or Lane C (rebuilding confirmed briefs) after `/gcse-triage`.
 
 This is the companion build-side skill named throughout
@@ -178,8 +178,8 @@ these jobs; if it does, it has two primary intents (halt 3).
 2. **Reserve every visual with `MediaPlaceholder`** + a manifest entry in
    `docs/content/<subject>/<series>/<NN>_visual-assets.md`. Never generate
    bespoke imagery or diagrams.
-3. Register metadata per `CLAUDE.md` (per-module content file,
-   `MODULE_CONTENT_LOADERS` entry, `src/modules.js` metadata with
+3. Register metadata per `CLAUDE.md` (per-chapter content file,
+   `CHAPTER_CONTENT_LOADERS` entry, `src/chapters.js` metadata with
    `screenCount` / `screenTags`). For a rebuild that changes screen count,
    update `screenCount`, `screenTags`, and any `stageNavigation` indices.
 4. **Commit per screen / story unit / stage**, never one mega-commit — each
@@ -192,7 +192,7 @@ Before handing back to Stage C:
 1. Start the dev server (`./node_modules/.bin/vite --port 5173`) and
    screenshot each built/rebuilt screen in the **composed render path** at
    390px via the dev-only jump
-   (`node scripts/screenshot.mjs "/?module=<id>&screen=<n>" <out>.png`).
+   (`node scripts/screenshot.mjs "/?chapter=<id>&screen=<n>" <out>.png`).
    Rendering a component's own Storybook story is not sufficient — the
    composed screen is what ships.
 2. Check each screenshot against the render acceptance criteria (chain link 8),
@@ -213,9 +213,9 @@ Before handing back to Stage C:
 ## Verify (mechanical floor, still not approval)
 
 - `vitest run tests/architecture` green (includes the content-quality floor —
-  never add a module to a grandfather allowlist to get green).
+  never add a chapter to a grandfather allowlist to get green).
 - `./node_modules/.bin/vite build` green.
-- The module opens, progresses and completes in the running app.
+- The chapter opens, progresses and completes in the running app.
 
 Passing these is necessary, not sufficient. **The build is "implemented", not
 "approved", until an independent `content-review` (Stage C) has re-audited it
@@ -232,5 +232,5 @@ against before / after / gold.**
   `PATTERN_GOVERNANCE.md`, not a looser builder-only standard.
 - A concept is never tested before the screen that teaches it.
 - Never generate imagery; reserve it with `MediaPlaceholder` + manifest.
-- Never add a new module to `GRANDFATHERED_EPISODES` /
+- Never add a new chapter to `GRANDFATHERED_EPISODES` /
   `SENTENCE_CASE_GRANDFATHERED_EPISODES` — new content passes the floor.

@@ -1,4 +1,4 @@
-// Maths topic groups — used in ModulesTab to render the Maths section.
+// Maths topic groups — used in SubjectsTab to render the Maths section.
 // Accent palette: teal-green family matching the cinematic maths images.
 
 export const MATHS_GROUPS = [

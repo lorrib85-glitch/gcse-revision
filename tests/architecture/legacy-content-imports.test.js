@@ -1,113 +1,84 @@
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { resolve, relative } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { readFileSync, readdirSync } from 'fs'
-import { join, relative, resolve } from 'path'
 
-const root = resolve(process.cwd())
-const srcRoot = resolve(root, 'src')
+const ROOT = resolve(process.cwd())
+const read = path => readFileSync(resolve(ROOT, path), 'utf8')
 
-function walk(dir) {
-  return readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
-    const path = join(dir, entry.name)
-    if (entry.isDirectory()) return walk(path)
-    return /\.(js|jsx|mjs)$/.test(entry.name) ? [path] : []
-  })
+function filesUnder(dir) {
+  const root = resolve(ROOT, dir)
+  const files = []
+  for (const name of readdirSync(root)) {
+    const full = resolve(root, name)
+    if (statSync(full).isDirectory()) files.push(...filesUnder(relative(ROOT, full)))
+    else files.push(relative(ROOT, full).replaceAll('\\', '/'))
+  }
+  return files
 }
 
-const sources = walk(srcRoot).map(path => ({
-  path,
-  relativePath: relative(root, path).replaceAll('\\', '/'),
-  content: readFileSync(path, 'utf8'),
-}))
-
-function importViolators(pattern, allowedPaths) {
-  const allowed = new Set(allowedPaths)
-  return sources
-    .filter(source => pattern.test(source.content))
-    .map(source => source.relativePath)
-    .filter(path => !allowed.has(path))
-    .sort()
-}
-
-describe('Legacy content imports are shrink-only', () => {
-  it('prevents new direct imports from the legacy chapter catalogue', () => {
-    const violators = importViolators(
-      // Match direct relative paths to the root `src/modules.js` only. Do not
-      // catch the canonical `src/data/modules.js` merely because it shares the
-      // same filename.
-      /from\s+['"](?:\.\/|\.\.\/)+modules\.js['"]/,
-      [
-        'src/chapters.js',
-        'src/components/layout/ChapterCompleteScreen.jsx',
-      ],
-    )
-
-    expect(
-      violators,
-      `New code must import CHAPTERS from src/chapters.js: ${violators.join(', ')}`,
-    ).toEqual([])
+describe('Canonical hierarchy closure', () => {
+  it('removes the old chapter-as-module surfaces', () => {
+    for (const path of [
+      'src/modules.js',
+      'src/components/layout/ModulePlayer.jsx',
+      'src/app/moduleNavigation.js',
+      'src/data/tagModuleMap.js',
+      'src/components/core/ModuleToolbar.jsx',
+    ]) expect(existsSync(resolve(ROOT, path)), path).toBe(false)
   })
 
-  it('prevents new imports from the legacy loader-registry path', () => {
-    const violators = importViolators(
-      /from\s+['"][^'"]*moduleContentRegistry\.js['"]/,
-      [],
-    )
-
-    expect(
-      violators,
-      `New code must import from chapterContentRegistry.js: ${violators.join(', ')}`,
-    ).toEqual([])
+  it('contains no import of the deleted root chapter catalogue', () => {
+    const violations = filesUnder('src')
+      .filter(path => /\.(js|jsx)$/.test(path))
+      .filter(path => {
+        const source = read(path)
+        return /from\s+['"](?:\.\.\/)+modules\.js['"]/.test(source)
+          || /import\(['"](?:\.\.\/)+modules\.js['"]\)/.test(source)
+      })
+    expect(violations).toEqual([])
   })
 
-  it('prevents new imports from the legacy recovery-map path', () => {
-    const violators = importViolators(
-      /from\s+['"][^'"]*tagModuleMap\.js['"]/,
-      [
-        'src/data/contentSupport/historyMedicineEpisode01.js',
-        'src/data/learningGraph/concepts/historyMedicine.js',
-        'src/features/quickfire/logic/convertBankQuestion.js',
-        'src/unifiedWeaknessTracker.js',
-      ],
-    )
-
-    expect(
-      violators,
-      `New code must import TAG_CHAPTER_MAP from tagChapterMap.js: ${violators.join(', ')}`,
-    ).toEqual([])
+  it('does not expose legacy chapter APIs from production source', () => {
+    const forbidden = [
+      'MODULE_GROUPS', 'getModuleState', 'saveModuleState', 'getModulePct',
+      'getContinueModule', 'getInProgressModule', 'LEGACY_CONTENT_NAMES',
+      'computeInitialModuleState', 'getModuleGate', 'prepareModuleScreenState',
+      'TAG_MODULE_MAP', 'findTaggedScreen', 'onOpenModule', 'ModulesTab',
+      'getSubjectModuleList',
+    ]
+    const source = filesUnder('src')
+      .filter(path => /\.(js|jsx)$/.test(path))
+      .map(path => `${path}\n${read(path)}`)
+      .join('\n')
+    for (const token of forbidden) expect(source, token).not.toContain(token)
   })
 
-  it('prevents new callers from importing the legacy parent-module alias', () => {
-    const violators = importViolators(
-      /import\s*\{[^}]*\bMODULE_GROUPS\b[^}]*\}\s*from\s*['"][^'"]*progress\.js['"]/s,
-      [],
-    )
 
-    expect(
-      violators,
-      `New code must import MODULES from src/data/modules.js: ${violators.join(', ')}`,
-    ).toEqual([])
+  it('contains no chapter-navigation compatibility payloads', () => {
+    const source = filesUnder('src')
+      .filter(path => /\.(js|jsx)$/.test(path))
+      .map(path => `${path}${String.fromCharCode(10)}${read(path)}`)
+      .join(String.fromCharCode(10))
+    for (const legacy of ["kind: 'module'", 'nextModule:        nextChapter', 'sel.moduleId']) {
+      expect(source, legacy).not.toContain(legacy)
+    }
   })
 
-  it('prevents new callers from importing legacy chapter-discovery names', () => {
-    const violators = importViolators(
-      /import\s*\{[^}]*(getContinueModule|getInProgressModule)[^}]*\}\s*from\s*['"][^'"]*progress\.js['"]/s,
-      [],
-    )
-
-    expect(
-      violators,
-      `New code must use getContinueChapter/getInProgressChapter: ${violators.join(', ')}`,
-    ).toEqual([])
-  })
-  it('prevents new source callers from importing legacy chapter-progress names', () => {
-    const violators = importViolators(
-      /import\s*\{[^}]*(getModuleState|saveModuleState|getModulePct)[^}]*\}\s*from\s*['"][^'"]*progress\.js['"]/s,
-      [],
-    )
-
-    expect(
-      violators,
-      `New code must use getChapterState/saveChapterState/getChapterPct: ${violators.join(', ')}`,
-    ).toEqual([])
+  it('keeps canonical authoring surfaces free of deleted paths and commands', () => {
+    const active = [
+      'CLAUDE.md',
+      'docs/system/CONTENT_HIERARCHY.md',
+      'docs/system/DEVELOPMENT_WORKFLOW.md',
+      'docs/components/COMPONENT_REGISTRY.md',
+      '.claude/skills/chapter-creation/SKILL.md',
+      '.claude/skills/gcse-content-registry/SKILL.md',
+    ].filter(path => existsSync(resolve(ROOT, path)))
+    const text = active.map(path => `${path}\n${read(path)}`).join('\n')
+    for (const legacy of [
+      'src/modules.js', 'ModulePlayer', 'moduleNavigation', 'module-creation',
+      'moduleContentRegistry.js', 'MODULE_CONTENT_LOADERS', 'loadModuleContent',
+      "import { MODULES } from '../../src/chapters.js'", 'Loader entry:     CHAPTER_CONTENT_LOADERS[id] exists in LegacyApp.jsx',
+      '/?module=<id>&screen=<n>',
+    ]) expect(text, legacy).not.toContain(legacy)
   })
 })

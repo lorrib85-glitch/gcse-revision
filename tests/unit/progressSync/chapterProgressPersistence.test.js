@@ -2,9 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   getChapterPct,
   getChapterState,
-  getModuleState,
   saveChapterState,
-  saveModuleState,
 } from '../../../src/progress.js'
 import { GUEST_SCOPE, setActiveScope } from '../../../src/lib/storage.js'
 
@@ -89,14 +87,14 @@ describe('canonical chapter progress persistence', () => {
     expect(store['guest::gcse_module_mod8']).toBeUndefined()
   })
 
-  it('all canonical and compatibility saves write only gcse_chapter keys', () => {
+  it('canonical saves write only gcse_chapter keys', () => {
     expect(saveChapterState('chapter-a', { screen: 2 })).toBe(true)
-    expect(saveModuleState('chapter-b', { screen: 3 })).toBe(true)
+    expect(saveChapterState('chapter-b', { screen: 3 })).toBe(true)
 
     expect(JSON.parse(store['guest::gcse_chapter_chapter-a'])).toEqual({ screen: 2 })
     expect(JSON.parse(store['guest::gcse_chapter_chapter-b'])).toEqual({ screen: 3 })
     expect(Object.keys(store).some(key => key.includes('gcse_module_'))).toBe(false)
-    expect(getModuleState('chapter-b')).toEqual({ screen: 3 })
+    expect(getChapterState('chapter-b')).toEqual({ screen: 3 })
   })
 
   it('keeps the fallback intact when canonical migration cannot be persisted', () => {

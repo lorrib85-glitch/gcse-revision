@@ -10,7 +10,7 @@ import {
 } from '../../src/components/learning/oppositeQualitiesRevealTheme.js'
 import canonicalEpisode from '../../src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.js'
 import runtimeEpisode from '../../src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.runtime.js'
-import { MODULES } from '../../src/modules.js'
+import { CHAPTERS } from '../../src/chapters.js'
 
 const hotCold = {
   type: 'oppositeQualitiesReveal',
@@ -170,7 +170,7 @@ describe('episode 1 opposite qualities integration', () => {
   })
 
   it('keeps module metadata aligned with runtime screen count and navigation', () => {
-    const meta = MODULES.find(mod => mod.id === canonicalEpisode.id)
+    const meta = CHAPTERS.find(mod => mod.id === canonicalEpisode.id)
     expect(meta.screenCount).toBe(runtimeEpisode.screens.length)
     expect(meta.screenTags).toHaveLength(runtimeEpisode.screens.length)
     expect(runtimeEpisode.stageNavigation.map(stage => stage.screenIndex)).toEqual([0, 1, 7, 12, 25, 28])

@@ -1,5 +1,5 @@
-// Biology topic groups — used in ModulesTab to render the Biology section.
-// Each group has a headerImage and an array of module definitions.
+// Biology topic groups — used in SubjectsTab to render the Biology section.
+// Each group has a headerImage and an array of chapter definitions.
 // color / accent: sage green family — #4F8A5B base, lighter tints per group.
 
 export const BIOLOGY_GROUPS = [

@@ -568,7 +568,7 @@ const RAW_ENTRIES = [
     id: 'buttons-and-progress', name: 'Buttons and progress', interaction: 'general',
     status: 'reference', subject: 'History', renderMode: 'inline',
     function: 'Reference page: every governed button style and progression/progress indicator rendered live, each labelled with its name.',
-    usage: 'Development reference only. Shows ContinueCTA, CinematicContinueCTA, CheckAnswerCTA, BackButton, ExitButton, ModuleToolbar, the BUTTONS token tiers, cinematic-primary-action, NavArrow, LearningProgressHeader, SequenceProgress, ScoreNumberLine, CircularTimer and the pill progress bar pattern.',
+    usage: 'Development reference only. Shows ContinueCTA, CinematicContinueCTA, CheckAnswerCTA, BackButton, ExitButton, LearningToolbar, the BUTTONS token tiers, cinematic-primary-action, NavArrow, LearningProgressHeader, SequenceProgress, ScoreNumberLine, CircularTimer and the pill progress bar pattern.',
     alternative: 'docs/system/BUTTON_RADII_SYSTEM.md (the written spec these components implement).',
     render: () => <ButtonsAndProgressPage />,
     fixture: null,

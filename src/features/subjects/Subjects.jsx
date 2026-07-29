@@ -12,7 +12,7 @@ import BackButton from '../../components/core/BackButton.jsx'
 import BottomNav from '../../app/BottomNav.jsx'
 import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
 
-const MODULE_HEADER_IMAGES = {
+const CHAPTER_HEADER_IMAGES = {
   'history-medicine-medieval-beliefs-causes': '/images/history/_shared/medicine-through-time.webp',
   'history-medicine-black-death': '/images/history/medicine/plague-background.png',
   'history-medicine-renaissance-medicine': '/images/history/medicine/headers/bloodletting.png',
@@ -115,14 +115,14 @@ const ENGLISH_SERIES = [
   },
 ]
 
-function getSubjectModuleList(subjectName) {
-  const real = CHAPTERS.filter(m => m.subject === subjectName)
+function getSubjectChapterList(subjectName) {
+  const real = CHAPTERS.filter(chapter => chapter.subject === subjectName)
   const cs = (arr) => arr.map(x => ({ ...x, comingSoon: true }))
   switch (subjectName) {
     case 'History':
       return real
     case 'English': {
-      const macbethCh1 = CHAPTERS.find(m => m.id === 'english-macbeth-power-ambition')
+      const macbethCh1 = CHAPTERS.find(chapter => chapter.id === 'english-macbeth-power-ambition')
       return [
         macbethCh1 ? { ...macbethCh1, series: 'macbeth', number: 1 } : null,
         { id: 'cs_macbeth_2', title: 'Out, damned spot',                  subtitle: 'Guilt and consequence',          comingSoon: true, series: 'macbeth',   number: 2 },
@@ -147,7 +147,7 @@ function getSubjectModuleList(subjectName) {
   }
 }
 
-function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
+function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
   const sand         = SUBJECTS[subjectName]?.subjectBrowserAccent || SUBJECTS.History.subjectBrowserAccent
   const bronze       = SUBJECTS[subjectName]?.subjectBrowserAccentDark || SUBJECTS.History.subjectBrowserAccentDark
   const accent       = sand
@@ -165,24 +165,24 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
     return null
   })
 
-  const rawMods = getSubjectModuleList(subjectName)
-  const allItems = rawMods.map((mod, i) => {
-    if (mod.comingSoon) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
+  const rawChapters = getSubjectChapterList(subjectName)
+  const allItems = rawChapters.map((chapter, i) => {
+    if (chapter.comingSoon) return { ...chapter, number: i + 1, status: 'coming_soon', pct: 0 }
     // Canonical availability: hidden stubs drop out entirely, coming-soon stubs
-    // show but never open (guarded in handleCardClick / openModulePlayer).
-    const availability = getChapterAvailability(mod)
+    // show but never open (guarded in handleCardClick / openChapterPlayer).
+    const availability = getChapterAvailability(chapter)
     if (availability === CHAPTER_AVAILABILITY.HIDDEN) return null
-    if (availability !== CHAPTER_AVAILABILITY.AVAILABLE) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
-    const s = safeGetChapterState(mod.id)
+    if (availability !== CHAPTER_AVAILABILITY.AVAILABLE) return { ...chapter, number: i + 1, status: 'coming_soon', pct: 0 }
+    const s = safeGetChapterState(chapter.id)
     const screen = s.screen || 0
     const hasStarted = (s.hookDone && s.wylDone) || screen > 0
-    const total = mod.screenCount || 1
-    // `completed` sticks once a module is finished — reviewing it afterwards moves `screen`
+    const total = chapter.screenCount || 1
+    // `completed` sticks once a chapter is finished — reviewing it afterwards moves `screen`
     // back down, but it must never read as anything other than 'completed' again.
     const pct = s.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
     const status = s.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
-    return { ...mod, number: mod.number || i + 1, status, pct }
-  }).filter(Boolean) // drop hidden modules
+    return { ...chapter, number: chapter.number || i + 1, status, pct }
+  }).filter(Boolean) // drop hidden chapters
 
   const defaultSeries = isHistory ? 'medicine' : 'macbeth'
   const items = (hasSeries && activeSeries)
@@ -196,8 +196,8 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const realCount      = items.filter(m => m.status !== 'coming_soon').length
   const overallPct     = realCount > 0 ? Math.round((completedCount / realCount) * 100) : 0
 
-  // The next module to tackle — whether already in progress or not yet started — is
-  // highlighted as the hero CTA, so finishing one module always hands off the spotlight.
+  // The next chapter to tackle — whether already in progress or not yet started — is
+  // highlighted as the hero CTA, so finishing one chapter always hands off the spotlight.
   const nextUpIndex = items.findIndex(m => m.status !== 'completed' && m.status !== 'coming_soon')
 
   const [ringPct, setRingPct] = useState(0)
@@ -215,12 +215,12 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
 
   function handleCardClick(item) {
     if (item.status === 'coming_soon') return
-    const realMod = CHAPTERS.find(m => m.id === item.id)
-    if (realMod && onOpenModule) onOpenModule(realMod)
+    const realChapter = CHAPTERS.find(chapter => chapter.id === item.id)
+    if (realChapter && onOpenChapter) onOpenChapter(realChapter)
   }
 
   function thumbFor(item) {
-    return item.headerImage || MODULE_HEADER_IMAGES[item.id] || headerImg
+    return item.headerImage || CHAPTER_HEADER_IMAGES[item.id] || headerImg
   }
 
   function stripEra(s) {
@@ -255,7 +255,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
         }} />
         <BackButton onClick={onBack} style={{ position: 'absolute', top: 20, left: 24, zIndex: 10 }} />
 
-        {/* Module journey indicator — circular progress, draws in on mount */}
+        {/* Chapter journey indicator — circular progress, draws in on mount */}
         <div style={{ position: 'absolute', top: 20, right: 24, zIndex: 10, width: RING_SIZE, height: RING_SIZE, opacity: 0.9 }}>
           <svg width={RING_SIZE} height={RING_SIZE} viewBox={`0 0 ${RING_SIZE} ${RING_SIZE}`} style={{ transform: 'rotate(-90deg)', display: 'block' }}>
             <circle cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={R} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={5} />
@@ -287,7 +287,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
               ...TYPE.bodySmall,
               fontSize: 13, color: 'rgba(255,255,255,0.52)', marginTop: 6,
             }}>{activeSeries?.comingSoon ? 'Coming soon'
-              : isHistory ? `${items.length} episodes · Edexcel History`
+              : isHistory ? `${items.length} chapters · Edexcel History`
               : `${items.length} chapters · AQA English literature`}</div>
           ) : displayDesc ? (
             <div style={{
@@ -351,7 +351,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
         </div>
       )}
 
-      {/* ── MODULE JOURNEY ── */}
+      {/* ── CHAPTER JOURNEY ── */}
       {hasSeries && activeSeries?.comingSoon ? (
         <div style={{ padding: '64px 24px', textAlign: 'center' }}>
           <div style={{
@@ -397,7 +397,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           const isFuture    = !isCompleted && !isCurrent
           const isLast      = i === items.length - 1
           const next        = items[i + 1]
-          // Completed and future read as smaller, quieter cards; current dominates as the hero
+          // Completed and future chapters read as smaller, quieter cards; current dominates as the hero
           const cardH       = isCurrent ? 206 : isCompleted ? 76 : 80
           const nodeSize    = isCurrent ? 56 : isCompleted ? 42 : 40
           const OVERLAP     = 14
@@ -633,7 +633,7 @@ const SUBJECT_TOPIC_IMAGES = {
   Sociology: ['/images/sociology/_shared/family.webp', '/images/sociology/_shared/education.webp', '/images/sociology/_shared/crime.webp', '/images/sociology/_shared/stratification.webp'],
 }
 
-export default function ModulesTab({ onOpenModule }) {
+export default function SubjectsTab({ onOpenChapter }) {
   const [subjectBrowser, setSubjectBrowser] = useState(null)
   const [subjectImages] = useState(() => {
     const map = {}
@@ -645,26 +645,26 @@ export default function ModulesTab({ onOpenModule }) {
   })
 
   if (subjectBrowser) {
-    return <SubjectBrowser subjectName={subjectBrowser} onBack={() => setSubjectBrowser(null)} onOpenModule={onOpenModule} />
+    return <SubjectBrowser subjectName={subjectBrowser} onBack={() => setSubjectBrowser(null)} onOpenChapter={onOpenChapter} />
   }
 
-  const continueModule = getContinueChapter()
-  const continuePct = chapterPct(continueModule)
-  const continueHeaderImage = continueModule.headerImage || MODULE_HEADER_IMAGES[continueModule.id] || '/images/history/_shared/medicine-through-time.webp'
+  const continueChapter = getContinueChapter()
+  const continuePct = chapterPct(continueChapter)
+  const continueHeaderImage = continueChapter.headerImage || CHAPTER_HEADER_IMAGES[continueChapter.id] || '/images/history/_shared/medicine-through-time.webp'
 
   const biggestWinRaw = getBiggestWin()
-  const biggestWinModule = biggestWinRaw ? CHAPTERS.find(m => m.id === biggestWinRaw.moduleId) : null
-  const biggestWin = biggestWinModule ? {
+  const biggestWinChapter = biggestWinRaw ? CHAPTERS.find(chapter => chapter.id === biggestWinRaw.chapterId) : null
+  const biggestWin = biggestWinChapter ? {
     ...biggestWinRaw,
-    mod: biggestWinModule,
-    headerImage: biggestWinModule.headerImage || MODULE_HEADER_IMAGES[biggestWinModule.id],
-    startScreenIndex: findTaggedChapterScreen(biggestWinModule, biggestWinRaw.conceptTag),
+    chapter: biggestWinChapter,
+    headerImage: biggestWinChapter.headerImage || CHAPTER_HEADER_IMAGES[biggestWinChapter.id],
+    startScreenIndex: findTaggedChapterScreen(biggestWinChapter, biggestWinRaw.conceptTag),
   } : null
 
   const weakestSubject = getWeakestSubject()?.subject || null
   const subjectThumbs = SUBJECT_NAMES.map(name => {
-    const mods = CHAPTERS.filter(m => m.subject === name)
-    const pct = mods.length ? Math.round(mods.reduce((sum, m) => sum + chapterPct(m), 0) / mods.length) : 0
+    const chapters = CHAPTERS.filter(chapter => chapter.subject === name)
+    const pct = chapters.length ? Math.round(chapters.reduce((sum, chapter) => sum + chapterPct(chapter), 0) / chapters.length) : 0
     return { name, image: subjectImages[name], pct, isWeakest: name === weakestSubject }
   })
 
@@ -695,14 +695,14 @@ export default function ModulesTab({ onOpenModule }) {
             Keep going<span style={{ color: GENERAL.teal }}>.</span>
           </div>
           <div style={{ ...TYPE.body, color: 'rgba(241,250,238,0.7)', marginTop: SPACING.micro }}>
-            {continueModule.title}
+            {continueChapter.title}
           </div>
         </div>
       </div>
 
       {/* ── Continue row ── */}
       <button
-        onClick={() => onOpenModule && onOpenModule(continueModule)}
+        onClick={() => onOpenChapter && onOpenChapter(continueChapter)}
         style={{
           display: 'flex', alignItems: 'center', gap: SPACING.compact, width: '100%',
           padding: `${SPACING.standard}px ${SPACING.compact}px 0`,
@@ -742,7 +742,7 @@ export default function ModulesTab({ onOpenModule }) {
             Biggest win
           </div>
           <button
-            onClick={() => onOpenModule && onOpenModule(biggestWin.mod, biggestWin.startScreenIndex)}
+            onClick={() => onOpenChapter && onOpenChapter(biggestWin.chapter, biggestWin.startScreenIndex)}
             style={{
               display: 'flex', alignItems: 'center', gap: SPACING.compact, width: '100%',
               padding: SPACING.compact, borderRadius: RADII.large,

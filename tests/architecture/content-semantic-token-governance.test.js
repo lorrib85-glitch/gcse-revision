@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { MODULES } from '../../src/modules.js'
-import { MODULE_CONTENT_LOADERS } from '../../src/content/moduleContentRegistry.js'
+import { CHAPTERS } from '../../src/chapters.js'
+import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
 
 const PRESENTATION_KEYS = new Set(['color', 'colorRgb', 'bg', 'colorLight'])
 
@@ -40,8 +40,8 @@ function collectPresentationFields(node, path = 'screens', out = []) {
 
 describe('Semantic content-data token governance', () => {
   it('prevents runtime screens/reveals/interactions from owning raw presentation fields', async () => {
-    for (const mod of MODULES.filter(m => m.screenCount > 0)) {
-      const content = await MODULE_CONTENT_LOADERS[mod.id]()
+    for (const mod of CHAPTERS.filter(m => m.screenCount > 0)) {
+      const content = await CHAPTER_CONTENT_LOADERS[mod.id]()
       const actual = collectPresentationFields(content.screens).sort()
       const expected = [...(LEGACY_PRESENTATION_FIELDS[mod.id] ?? [])].sort()
       expect(actual, `${mod.id} has raw presentation fields`).toEqual(expected)

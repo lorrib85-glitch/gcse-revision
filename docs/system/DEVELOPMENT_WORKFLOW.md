@@ -73,8 +73,8 @@ Component and feature-orchestration files (`src/components/**`,
 `src/features/**`) should stay under ~1200 lines. Past that, evaluate
 whether the file is doing too much and should be decomposed — this is
 what happened to `src/modules/history.js` (7318 lines, split into
-per-episode files) and has not yet happened to `ModulePlayer.jsx`
-(2400+ lines, flagged as a fragile area in `.planning/codebase/CONCERNS.md`).
+per-episode files) and was later applied to `ChapterPlayer.jsx`, whose screen routing now lives
+in the governed `ScreenRenderer.jsx` boundary.
 
 This threshold does not apply to content files (`src/content/**`,
 `src/modules/<subject>.js`, `src/data/*.js`) — their size tracks

@@ -65,7 +65,7 @@ describe('Journey 2 — a wrong answer routes to the intended teaching screen', 
   it('logs a weakness, resolves it to a real module + exact screen, and updates evidence on retry', async () => {
     const { logWrongAnswer, logCorrectAnswer, getWeakTopics, getBiggestWin } =
       await import('../../../src/unifiedWeaknessTracker.js')
-    const { TAG_MODULE_MAP, findTaggedScreen } = await import('../../../src/data/tagModuleMap.js')
+    const { TAG_CHAPTER_MAP, findTaggedChapterScreen } = await import('../../../src/data/tagChapterMap.js')
     const { CHAPTERS } = await import('../../../src/chapters.js')
 
     // Two wrong answers on a recoverable concept crosses the weak threshold.
@@ -79,12 +79,12 @@ describe('Journey 2 — a wrong answer routes to the intended teaching screen', 
     // Recovery route: the biggest win points at a real, available module.
     const win = getBiggestWin()
     expect(win.topic).toBe('germ-theory')
-    const targetId = TAG_MODULE_MAP['germ-theory']
-    expect(win.moduleId).toBe(targetId)
+    const targetId = TAG_CHAPTER_MAP['germ-theory']
+    expect(win.chapterId).toBe(targetId)
 
     const chapter = CHAPTERS.find(m => m.id === targetId)
     expect(chapter).toBeTruthy()
-    const screenIndex = findTaggedScreen(chapter, 'germ-theory')
+    const screenIndex = findTaggedChapterScreen(chapter, 'germ-theory')
     expect(screenIndex).toBeTypeOf('number')
     expect(screenIndex).toBeLessThan(chapter.screenCount)
 
@@ -128,19 +128,19 @@ describe('Journey 3 — completing a chapter updates the surfaces that read it',
 
     // Finish the module: mark complete + record a scored result.
     saveChapterState(chapter.id, { ...getChapterState(chapter.id), screen: chapter.screenCount, completed: true })
-    recordScore({ subject: 'History', earned: 8, possible: 10, source: 'module' })
+    recordScore({ subject: 'History', earned: 8, possible: 10, source: 'chapter' })
 
     // Progress surfaces reflect it.
     expect(getChapterState(chapter.id).completed).toBe(true)
     const scores = getScores()
-    expect(scores[0]).toMatchObject({ subject: 'History', source: 'module' })
+    expect(scores[0]).toMatchObject({ subject: 'History', source: 'chapter' })
     expect(getProgress().streak).toBeGreaterThanOrEqual(1)
 
     // Completion routes forward to the next real chapter.
     const payload = buildChapterCompletePayload(chapter)
     expect(payload.completedChapter).toBe(chapter.title)
-    expect(payload.nextModule).toBeTruthy()
-    expect(payload.nextModule.id).toBe('history-medicine-black-death')
+    expect(payload.nextChapter).toBeTruthy()
+    expect(payload.nextChapter.id).toBe('history-medicine-black-death')
   })
 
   it('a completed warm-up round is reflected in the Today\'s-plan done check', async () => {
@@ -268,7 +268,7 @@ describe('Journey 5 — guest links a Google account that already has cloud prog
 
       // Learner did real work as a guest before ever signing in.
       saveChapterState('history-medicine-black-death', { screen: 6, hookDone: true })
-      recordScore({ subject: 'History', earned: 8, possible: 10, source: 'module' })
+      recordScore({ subject: 'History', earned: 8, possible: 10, source: 'chapter' })
 
       // This Google account already has cloud progress from a previous
       // session (e.g. signed in on a browser that later got cleared).
@@ -339,7 +339,7 @@ describe('Journey 7 — local and cloud each hold unique progress', () => {
       setActiveScope(scopeForUser(user))
 
       saveChapterState('bio_building_life', { screen: 5 })
-      logWrongAnswer({ subject: 'Biology', topic: 'osmosis', questionId: 'local-q1', marks: 1, source: 'module' })
+      logWrongAnswer({ subject: 'Biology', topic: 'osmosis', questionId: 'local-q1', marks: 1, source: 'chapter' })
 
       setCloudDoc({
         version: 1,
@@ -419,7 +419,7 @@ describe('Journey 9 — sign-out with pending progress', () => {
       setActiveScope(scopeForUser(user))
 
       saveChapterState('history-medicine-cancer', { screen: 9, completed: true })
-      recordScore({ subject: 'History', earned: 9, possible: 10, source: 'module' })
+      recordScore({ subject: 'History', earned: 9, possible: 10, source: 'chapter' })
 
       // This mirrors AuthContext.signOut(): flush before clearing the
       // session. The flush fails (cloud unreachable at the moment of sign-out).

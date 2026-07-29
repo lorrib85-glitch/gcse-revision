@@ -36,7 +36,7 @@
 //   duration:       number,       // minutes allocated to this block
 //   subject:        string,       // which subject this block addresses
 //   reasonCodes:    string[],     // machine-readable reasons for selection
-//   moduleId?:      string,       // resolved module for progress-type blocks
+//   chapterId?:     string,       // resolved chapter for progress-type blocks
 //   screenIndex?:   number,       // jump target for revisit/repair blocks
 //   topic?:         string,       // weak point topic (weakRepair, examMove)
 //   skillTag?:      string,       // skill tag for interleaving metadata
@@ -309,7 +309,7 @@ function daysSinceStudied(subject, learningState, date) {
   return Math.floor(diffMs / 86400000)
 }
 
-function hasInProgressModule(subject, learningState) {
+function hasInProgressChapter(subject, learningState) {
   const group = PARENT_MODULES.find(g => g.subject === subject)
   if (!group) return false
   return group.chapterIds.some(id => {
@@ -318,29 +318,29 @@ function hasInProgressModule(subject, learningState) {
   })
 }
 
-function getInProgressModuleForSubject(subject, learningState) {
+function getInProgressChapterForSubject(subject, learningState) {
   const group = PARENT_MODULES.find(g => g.subject === subject)
   if (!group) return null
   for (const id of group.chapterIds) {
     const state = learningState.chapterStates[id] || {}
     if (!(state.screen > 0 && !state.completed)) continue
-    const mod = CHAPTERS.find(m => m.id === id)
+    const chapter = CHAPTERS.find(item => item.id === id)
     // Never surface an unbuilt stub as a plan task, even if stale state exists.
-    if (mod && isChapterAvailable(mod)) return mod
+    if (chapter && isChapterAvailable(chapter)) return chapter
   }
   return null
 }
 
-function getNextNewModuleForSubject(subject, learningState) {
+function getNextNewChapterForSubject(subject, learningState) {
   const group = PARENT_MODULES.find(g => g.subject === subject)
   if (!group) return null
   for (const id of group.chapterIds) {
     const state = learningState.chapterStates[id] || {}
     if (state.screen || state.completed) continue
-    const mod = CHAPTERS.find(m => m.id === id)
+    const chapter = CHAPTERS.find(item => item.id === id)
     // Skip coming-soon / hidden stubs so the planner never routes a learner
-    // into an empty module.
-    if (mod && isChapterAvailable(mod)) return mod
+    // into an empty chapter.
+    if (chapter && isChapterAvailable(chapter)) return chapter
   }
   return null
 }
@@ -350,7 +350,7 @@ function getNextNewModuleForSubject(subject, learningState) {
 //
 //   weakness:       0–10   unmastered wrong-answer topics × 1.5 (capped)
 //   recency:        0–6    days since last scored, graduated scale
-//   in-progress:    +3     continuity bonus for mid-module work
+//   in-progress:    +3     continuity bonus for mid-chapter work
 //   never studied:  +4     exploration nudge for untouched subjects
 //   rotation:       −3–−6  penalty if subject was main in last 2 days
 
@@ -367,7 +367,7 @@ export function calculateSubjectPriority(subject, learningState, date) {
   else if (days >= 2)    score += 2
   else if (days >= 1)    score += 1
 
-  if (hasInProgressModule(subject, learningState)) score += 3
+  if (hasInProgressChapter(subject, learningState)) score += 3
 
   const history    = learningState.rotationHistory || {}
   const yesterday  = offsetDateStr(date, -1)
@@ -740,8 +740,8 @@ export function buildWeekdayBlocks(mainSubject, secondarySubject, learningState,
   const pulseDuration = WEEKDAY_DURATIONS.pulse
   const subjects = userProfile?.selectedSubjects || ALL_SUBJECTS
 
-  const mainMod = getInProgressModuleForSubject(mainSubject, learningState)
-              || getNextNewModuleForSubject(mainSubject, learningState)
+  const mainMod = getInProgressChapterForSubject(mainSubject, learningState)
+              || getNextNewChapterForSubject(mainSubject, learningState)
 
   const mainReasonCodes = mainMod
     ? ((learningState.chapterStates[mainMod.id]?.screen > 0)
@@ -771,7 +771,7 @@ export function buildWeekdayBlocks(mainSubject, secondarySubject, learningState,
       duration:    WEEKDAY_DURATIONS.mainProgress,
       subject:     mainSubject,
       reasonCodes: mainReasonCodes,
-      ...(mainMod ? { moduleId: mainMod.id } : {}),
+      ...(mainMod ? { chapterId: mainMod.id } : {}),
     },
     {
       type:        'weakRepair',

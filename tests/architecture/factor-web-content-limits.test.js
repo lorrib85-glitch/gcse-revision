@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { COMPONENT_TEXT_LIMITS } from '../../src/constants/contentLimits.js'
-import { MODULE_CONTENT_LOADERS } from '../../src/content/moduleContentRegistry.js'
+import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
 
 function collectFactorWebs(node, path = [], out = []) {
   if (Array.isArray(node)) {
@@ -30,7 +30,7 @@ describe('FactorWeb content limits', () => {
   it('keeps every registered FactorWeb within the governed mobile authoring limits', async () => {
     const violations = []
 
-    for (const [moduleId, load] of Object.entries(MODULE_CONTENT_LOADERS)) {
+    for (const [moduleId, load] of Object.entries(CHAPTER_CONTENT_LOADERS)) {
       const episode = await load()
       const factorWebs = collectFactorWebs(episode)
 

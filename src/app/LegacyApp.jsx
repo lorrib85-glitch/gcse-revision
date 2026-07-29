@@ -8,7 +8,7 @@ import TestTab from '../features/quickfire/QuickFire.jsx'
 import { readQfBest } from '../features/quickfire/logic/quickFireBest.js'
 import Home from '../features/home/Home.jsx'
 import PulseTab from '../features/pulse/Pulse.jsx'
-import ModulesTab from '../features/subjects/Subjects.jsx'
+import SubjectsTab from '../features/subjects/Subjects.jsx'
 import ExamPractice from '../features/exams/ExamPractice.jsx'
 import BottomNav from './BottomNav.jsx'
 import ChapterCompleteScreen from '../components/layout/ChapterCompleteScreen.jsx'
@@ -527,10 +527,10 @@ export default function App() {
     <div style={{ background: GENERAL.backgroundApp, minHeight: '100vh' }}>
       <div key={tab} className="tab-content">
         {tab === 'home'     && <Home onSelectTask={handleTodaysPlanSelect} onReviewProgress={() => setTab('pulse')} />}
-        {tab === 'subjects' && <ModulesTab onOpenModule={openChapter} />}
+        {tab === 'subjects' && <SubjectsTab onOpenChapter={openChapter} />}
         {tab === 'pulse'    && <PulseTab onStartQuickFire={() => startQuickfire('pulse')} best={readQfBest()} />}
-        {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openChapter} onExit={() => setTab(quickfireOrigin)} />}
-        {tab === 'exams'    && <ExamPractice tab={tab} onOpenModule={openChapter} onOpenPulse={() => setTab('pulse')} examAutoStart={examAutoStart} setExamAutoStart={setExamAutoStart} />}
+        {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenChapter={openChapter} onExit={() => setTab(quickfireOrigin)} />}
+        {tab === 'exams'    && <ExamPractice tab={tab} onOpenChapter={openChapter} onOpenPulse={() => setTab('pulse')} examAutoStart={examAutoStart} setExamAutoStart={setExamAutoStart} />}
       </div>
       <BottomNav tab={tab} setTab={setTab} />
     </div>

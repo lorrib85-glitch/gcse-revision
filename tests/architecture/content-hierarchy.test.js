@@ -1,12 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { CHAPTERS } from '../../src/chapters.js'
 import { MODULES } from '../../src/data/modules.js'
-import { MODULES as LEGACY_CHAPTERS } from '../../src/modules.js'
-import { MODULE_GROUPS as LEGACY_MODULES } from '../../src/progress.js'
 import {
   CONTENT_HIERARCHY,
   CONTENT_LEVELS,
-  LEGACY_CONTENT_NAMES,
   validateContentHierarchy,
 } from '../../src/data/contentHierarchy.js'
 
@@ -21,16 +18,6 @@ describe('Canonical content hierarchy', () => {
     ])
   })
 
-  it('records the current legacy names without redefining their meaning', () => {
-    expect(LEGACY_CONTENT_NAMES.MODULES.canonicalName).toBe('CHAPTERS')
-    expect(LEGACY_CONTENT_NAMES.MODULE_GROUPS.canonicalName).toBe('MODULES')
-    expect(LEGACY_CONTENT_NAMES.ModulePlayer.canonicalName).toBe('ChapterPlayer')
-  })
-
-  it('keeps compatibility exports on the exact canonical objects', () => {
-    expect(LEGACY_CHAPTERS).toBe(CHAPTERS)
-    expect(LEGACY_MODULES).toBe(MODULES)
-  })
 })
 
 describe('Current content relationships', () => {

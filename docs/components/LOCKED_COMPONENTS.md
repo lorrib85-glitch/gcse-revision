@@ -154,7 +154,7 @@ Constitutional rule — see `docs/system/BUTTON_RADII_SYSTEM.md` "Progression CT
 - The press feedback: opacity 0.6 + scale 0.90 on press, via `onPointerDown`/`onPointerUp`/`onPointerLeave`
 
 **Why locked:**
-Constitutional rule: **ExitButton is the only exit-navigation button implementation allowed anywhere in the app.** Consolidated from the inline exit-button implementation previously in `ModuleToolbar`/`LearningHeader` (2026-06-15).
+Constitutional rule: **ExitButton is the only exit-navigation button implementation allowed anywhere in the app.** Consolidated from the inline exit-button implementation previously in `LearningToolbar`/`LearningHeader` (2026-06-15).
 
 **Allowed changes:**
 - Import path corrections
@@ -213,9 +213,9 @@ Core navigation affordance. Learners develop spatial memory for progress locatio
 
 ---
 
-### ModuleToolbar
+### LearningToolbar
 
-**File:** `src/components/core/ModuleToolbar.jsx`
+**File:** `src/components/core/LearningToolbar.jsx`
 
 **What it owns:**
 - Back button (delegates to `BackButton` — see above)

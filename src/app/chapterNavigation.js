@@ -171,7 +171,6 @@ export function buildChapterCompletePayload(completedChapter) {
     backgroundPosition,
     moduleName:        parentModule?.title || completedChapter.title,
     nextChapter,
-    nextModule:        nextChapter, // temporary compatibility field
     pastPaperHint,
   }
 }
@@ -197,8 +196,8 @@ export function resolveTaskDestination(task) {
   if (sel.kind === 'quickfire') {
     return { kind: 'quickfire' }
   }
-  if (sel.kind === 'chapter' || sel.kind === 'module') {
-    const chapterId = sel.chapterId || sel.moduleId
+  if (sel.kind === 'chapter') {
+    const chapterId = sel.chapterId
     const chapter = CHAPTERS.find(candidate => candidate.id === chapterId)
     if (!chapter) return null
     return { kind: 'chapter', chapter, screenIndex: sel.screenIndex }

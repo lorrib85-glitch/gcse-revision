@@ -78,7 +78,7 @@ Foundation components used by many others. Handle atomic UI concerns.
 **File:** `src/components/core/ContinueCTA.jsx`
 **Purpose:** The only Primary Progression CTA implementation allowed anywhere in the app — see `docs/system/BUTTON_RADII_SYSTEM.md` "Progression CTA System". 56px tall, `RADII.large`, solid accent fill, `#0D0F14` text, "Continue" label, with built-in press-scale feedback.
 **Props:** `onClick`, `label` (default `'Continue'`), `accent`, `disabled`, `disabledBackground`, `disabledColor`, `textColor`, `onMouseEnter`, `onMouseLeave`, `style` (layout overrides only — width/flex, margin, position, animation, transition; never new height, radius, font or colour logic)
-**Used by:** every screen-to-screen "Continue" button across `src/components/learning/` and `src/components/feedback/`, plus `ModulePlayer`'s bottom navigation (also covers the "Finish ✓" label via `label`)
+**Used by:** every screen-to-screen "Continue" button across `src/components/learning/` and `src/components/feedback/`, plus `ChapterPlayer`'s bottom navigation (also covers the "Finish ✓" label via `label`)
 **Lock reason:** Constitutional rule — every Primary Progression CTA in the product must use this component. No inline implementations are allowed.
 
 ---
@@ -121,9 +121,9 @@ Foundation components used by many others. Handle atomic UI concerns.
 
 ---
 
-### ModuleToolbar — **LOCKED**
+### LearningToolbar — **LOCKED**
 
-**File:** `src/components/core/ModuleToolbar.jsx`
+**File:** `src/components/core/LearningToolbar.jsx`
 **Purpose:** Back and exit navigation buttons for learning screens. Navigation only — no learning logic. Delegates to `BackButton` and `ExitButton`.
 **Props:** `onBack`, `onExit`
 **Dependencies:** `BackButton`, `ExitButton`
@@ -203,7 +203,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **What it is:** Configuration-driven GCSE angle diagram — the Maths sibling of `CircuitDiagram`. Shapes and angles render as inline SVG; one learner-controlled value (a draggable ray, or a triangle's draggable apex) drives live sector values, angle classifications and an angle-fact status line. Five registered presets — `angleTypes` (drag a ray, watch the value and its acute/right/obtuse/straight/reflex classification), `straightLine` (two angles summing to 180°), `aroundPoint` (three angles summing to 360°), `verticallyOpposite` (equal pairs sharing a colour), `triangle` (drag the apex, interior angles always total 180°) — plus a compatible-preset-object escape hatch. `interactive={false}` turns any preset into a static teaching or exam diagram at a fixed `value`. The drag handle is a keyboard-operable `role="slider"` (arrow keys / Home / End) with a ≥44px hit target; right angles render the GCSE square marker; values magnetise to 90°/180°/270°. Respects `prefers-reduced-motion` (and a `reducedMotion` prop override).
 **Best used for:** Teaching and exploring AQA Foundation angle facts where seeing the relationship respond to movement is the point — angle types, angles on a straight line, angles around a point, vertically opposite angles, angles in a triangle. Page-level questions, predictions and marking stay outside the component (compose it like `CircuitDiagram`).
 **Props:** `preset` (name or preset object, defaults to `angleTypes`), `value` (controlled), `defaultValue`, `onChange`, `interactive`, `disabled`, `subject` (defaults to `Maths`), `reducedMotion`, `label`, `showStatus`
-**Screen type:** none yet — not routed in `ModulePlayer.jsx` (new component pending review)
+**Screen type:** none yet — not routed in `ChapterPlayer.jsx` (new component pending review)
 **Dependencies:** `SUBJECTS`, `GENERAL` (via `angle/angleVisualRoles.js` semantic roles), `TYPE`, `SPACING`, `MOTION` (injected animation CSS via `ensureStyles()`, same pattern as `CircuitDiagram`/`GraphView`); pure geometry in `angle/angleGeometry.js`, presets in `angle/anglePresets.js`
 **Closest alternatives:** `GraphView` (interpreting data, not angle facts); a static figure image (when no interaction is needed and the diagram is one-off).
 
@@ -222,7 +222,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **What it is:** Configuration-driven GCSE area and perimeter diagram — the mensuration sibling of `AngleExplore`, and deliberately separate from it (`AngleExplore` stays focused on angle relationships). Shapes render as inline SVG in model space (whole centimetres mapped to pixels, never measured back from pixels); learner-controlled dimensions drive a live boundary trace, unit-square grids, decomposition pieces and a stable result → calculation → explanation status area. Six registered presets — `rectangle` (drag width and height independently, snapping to whole numbers, with a square state that marks equal sides and names side²), `fixedPerimeterRectangle` (perimeter pinned at 24 cm while area rises to a maximum at the square), `triangleArea` (slide the apex with the perpendicular height fixed; pair a rotated copy to earn ½ × base × perpendicular height), `parallelogramArea` (slant does not change area; a triggered cut-and-slide builds the equivalent rectangle), `trapeziumArea` (duplicate and rotate into a parallelogram of base a + b to derive ½ × (a + b) × h), `compositeShape` (L-shape with two valid decomposition splits plus a whole-minus-missing-corner method, and a perimeter mode that excludes internal lines and deduces missing outer lengths) — plus a compatible-preset-object escape hatch. `focus` selects `perimeter`, `area` or `compare` where the preset supports more than one. `interactive={false}` turns any preset into a static teaching or exam diagram. Drag handles are keyboard-operable `role="slider"` elements (arrow keys / Home / End) with ≥44px hit targets that never overlap in any reachable state; discrete choices (decomposition method, formula reveal) are real buttons, never disguised sliders. Respects `prefers-reduced-motion` (and a `reducedMotion` prop override).
 **Best used for:** Teaching the conceptual difference between perimeter and area, and deriving AQA Foundation area formulae from visual reasoning — rectangles and squares, triangles, parallelograms, trapezia, quadrilaterals and composite rectilinear shapes. Use it when seeing the reasoning is the point: perimeter accumulating as edges are traced, area accumulating as square units are counted or rearranged, or the two measures changing differently as one dimension moves. Prediction questions, marking, hints, scores and weakness tracking stay outside the component (compose it like `AngleExplore`/`CircuitDiagram`).
 **Props:** `preset` (name or preset object, defaults to `rectangle`), `focus` (`perimeter` | `area` | `compare`), `value` (controlled dimensions object), `defaultValue`, `onChange`, `interactive`, `disabled`, `subject` (defaults to `Maths`), `reducedMotion`, `label`, `showStatus`
-**Screen type:** none yet — not routed in `ModulePlayer.jsx` (new component pending review)
+**Screen type:** none yet — not routed in `ChapterPlayer.jsx` (new component pending review)
 **Dependencies:** `SUBJECTS`, `GENERAL` (via `areaPerimeter/areaPerimeterVisualRoles.js` semantic roles), `TYPE`, `SPACING`, `RADII`, `MOTION` (injected animation CSS via `ensureStyles()`, same pattern as `AngleExplore`/`CircuitDiagram`); neutral shared geometry in `geometry/shapeGeometry.js` (also used by `angle/`), presets in `areaPerimeter/areaPerimeterPresets.js`
 **Closest alternatives:** `AngleExplore` (angle facts, not mensuration — do not add area/perimeter modes to it); `CalculationBreakdown` (carrying out a method step by step, not seeing why a formula holds); `GraphView` (interpreting data); a static figure image (when no interaction is needed and the diagram is one-off).
 
@@ -241,7 +241,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **What it is:** Configuration-driven GCSE part-whole diagram — the fractions, ratio, proportion and percentage sibling of `AngleExplore` and `AreaPerimeterExplore`. One visual grammar runs through every preset: **same whole** (every bar in a preset shares one x and width; only the number of parts changes), **divided parts** (bars, 2D grids, circle sectors or discrete counters), **linked representations** (curved connectors plus a real stacked fraction glyph with a rule line, never `3/4` as flat text), and **scaling both sides together** (rungs joining two parallel lines, driven by one shared multiplier). That shared grammar is the point of the component: it is what lets a learner recognise `3/4`, `3 : 1` and `75%` as one idea rather than three topics. Eight registered presets — `fractionBar` (numerator and denominator, with the same quantity shown as a bar, a circle and notation at once), `equivalentFractions` (one multiplier; both bars deliberately share a colour and a dashed alignment line proves the shaded lengths match), `fractionOperations` (five methods × short step sequences — add and subtract step through see-the-mismatch → common denominator → combine → check, with a sum past one whole continuing into a second whole rather than overflowing one bar; `multiply` is a 2D area model with the overlap hatched; `divide` lays divisor-sized pieces along the dividend and counts them before the reciprocal rule appears; `ofAmount` uses counters, one row per part), `ratioShare` (shares, total, simplification, and the same split restated as fractions), `doubleNumberLine` (direct proportion and unit rate, exactly one live rung), `percentageGrid` (100 squares with the percentage, fraction and decimal shown together), `proportionScale` (unit blocks, solid for the original recipe and dashed for the scaled copies, with the ratio held constant), `bestValue` (two packs drawn to scale, with a basis toggle proving price-per-amount and amount-per-pound reach the same verdict) — plus a compatible-preset-object escape hatch. Three interaction kinds, all keyboard-operable: drag handles (`role="slider"`, arrow keys / Home / End, ≥44px hit target), stepper rows (`−` / `+`, for small discrete counts where dragging on a phone would be cruel), and real buttons for discrete choice (`methods`, `steps`). `method` and `step` seed the diagram rather than locking it — the visible tabs and step buttons always move; `interactive={false}` is how you get a fixed teaching or exam figure. Respects `prefers-reduced-motion` (and a `reducedMotion` prop override).
 **Best used for:** The whole part-whole spine — fractions, equivalent fractions, simplifying, comparing, adding and subtracting, fractions of amounts, ratio as shares, ratio simplification, direct proportion, percentages and fraction–decimal–percentage conversion. Use it when the connection between representations is the learning, or when a method needs its intermediate states shown rather than just its answer. Questions, predictions, marking, scores and weakness tracking stay outside the component (compose it like `AngleExplore`/`AreaPerimeterExplore`).
 **Props:** `preset` (name or preset object, defaults to `fractionBar`), `method`, `step`, `value` (controlled values object), `defaultValue`, `onChange`, `onMethodChange`, `onStepChange`, `interactive`, `disabled`, `subject` (defaults to `Maths`), `reducedMotion`, `label`, `showStatus`
-**Screen type:** none yet — not routed in `ModulePlayer.jsx` (new component pending review)
+**Screen type:** none yet — not routed in `ChapterPlayer.jsx` (new component pending review)
 **Dependencies:** `SUBJECTS`, `GENERAL` (via `fractionRatio/fractionRatioVisualRoles.js` semantic roles), `TYPE`, `SPACING`, `RADII`, `MOTION` (injected animation CSS via `ensureStyles()`, same pattern as `AngleExplore`/`AreaPerimeterExplore`); pure maths in `fractionRatio/fractionRatioMath.js`, pure layout in `fractionRatio/fractionRatioGeometry.js` (built on shared `geometry/shapeGeometry.js`), one file per preset under `fractionRatio/presets/`
 **Closest alternatives:** `AreaPerimeterExplore` (mensuration — do not add fraction modes to it); `AngleExplore` (angle facts); `CalculationBreakdown` (executing a procedure step by step with a typed answer and marking, rather than seeing why a method works); `GraphView` (interpreting supplied data, including pie charts — not manipulating a whole).
 
@@ -260,7 +260,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **What it is:** Configuration-driven GCSE coordinate plane — the coordinate-geometry sibling of `AngleExplore`, `AreaPerimeterExplore`, `FractionRatioExplore` and `NumberLineExplore`. One visual grammar runs through every preset: **one plane** (every preset shares an axis system, tick treatment and grid density), **points that carry their coordinates** (a named point is drawn with its coordinate chip — reading a coordinate is never a separate mode), and **a rule made visible as geometry** (across-then-up guides, the rise/run triangle, the mirror line, the centre of rotation, the rays from a centre of enlargement). That third clause is why transformations live here rather than in a separate component: a reflection *is* a rule that moves coordinates, and the coordinate movement is the teaching mechanism, not a finished diagram. Nine registered presets — `plotPoint` (drag a point, with `plot`/`read`/`quadrants` focus modes naming the quadrant and its sign pair), `midpoint` (two draggable endpoints, with the x-values and y-values bracketed and averaged *separately* so the formula is read off the picture rather than recalled; a bracket is omitted when its two values coincide rather than collapsing to a stray dot), `straightLine` (steppers for *m* and *c*, gradient and y-intercept as the core teaching with the x-intercept optional; `focus="compare"` splits by `comparisonRule` into `parallel` — equal rise/run triangles on both lines, intercepts independent — `perpendicular` — the negative-reciprocal relationship, Higher tier only, which *refuses* rather than fabricating a second horizontal line when *m* = 0 — and `free`), `tableOfValues` (step through integer *x* values; the line follows a fixed teaching sequence — no line from one point, a provisional dashed line from two, a solid line from three where the third coordinate confirms the rule — with completed pairs persisting as a trail), `intersection` (two lines whose meeting point is substituted back into *both* equations, distinguishing one solution, none and infinitely many rather than misreading coincident lines as parallel), and the four transformations `translate` (positive, negative and zero vector components), `reflect` (vertical, horizontal and diagonal mirror lines), `rotate` (clockwise and anticlockwise, 90°/180°/270°, centre not necessarily at the origin, with the direction control withdrawn at 180° where a half-turn reaches the same image either way) and `enlarge` (¼, ½, 2, 3, −1 and −2, with the ray pointing at whichever end is further from the centre and crossing the centre for negative factors) — plus a compatible-preset-object escape hatch. **A three-tier annotation contract** governs density: *active geometry* (full coordinate chip, guide lines and rule geometry), *related geometry* (compact label only) and *context geometry* (visible but unannotated), with only one point active by default; transformation presets refuse `showGuides="all"` outright, since eight labelled points each carrying guide lines is unreadable on a phone. **Option selections live in the value model**, so `value`/`defaultValue`/`onChange` carry the complete state and a static exam figure can specify a reflection in `y = x` or an enlargement by −1. **Capabilities constrain state rather than hiding controls** — a pinned centre genuinely pins the figure — and controls that cannot affect the current state are absent rather than inert. Axis placement is resolved **per axis**, so positive-only *x* against signed *y* renders correctly. `interactive={false}` gives a static teaching or exam figure that still carries a descriptive `<desc>` of the actual figure state. Drag handles expose one semantic slider per control over one visual ring (Left/Right drives x, Up/Down drives y); discrete choices are real buttons. Respects `prefers-reduced-motion` (and a `reducedMotion` prop override).
 **Best used for:** Coordinates and quadrants, midpoints, straight-line graphs and `y = mx + c`, tables of values, parallel and perpendicular gradients, solving simultaneous equations graphically, and all four transformations. Because axis labels, units and independent scales are part of the plane API, it also serves science graphs — `subject="Physics"` with `xAxis={{ label: 'Time', unit: 's', min: 0, max: 20 }}` gives a usable distance–time frame, not merely a recoloured Maths diagram. Questions, predictions, marking, scores and weakness tracking stay outside the component (compose it like `AngleExplore`/`AreaPerimeterExplore`).
 **Props:** `preset` (name or preset object, defaults to `plotPoint`), `focus`, `comparisonRule`, `value` (controlled values object), `defaultValue`, `onChange`, `interactive`, `disabled`, `showGuides` (`'active' | 'all' | 'none'`), `difficultyCapabilities`, `xAxis`, `yAxis`, `grid`, `subject`, `reducedMotion`, `label`, `showStatus`
-**Screen type:** none yet — not routed in `ModulePlayer.jsx`; pending component review.
+**Screen type:** none yet — not routed in `ChapterPlayer.jsx`; pending component review.
 **Dependencies:** `SUBJECTS`, `GENERAL` (via `coordinatePlane/coordinatePlaneVisualRoles.js` semantic roles), `TYPE`, `SPACING`, `COMPONENT_SIZE`, `RADII`, `MOTION` (injected animation CSS via `ensureStyles()`, same pattern as `AngleExplore`/`AreaPerimeterExplore`); pure maths in `coordinatePlane/coordinatePlaneMath.js`, geometry and model-space clipping in `coordinatePlane/coordinatePlaneGeometry.js`, shared label placement in `coordinatePlane/pointLabelLayout.js`, capability and option resolution in `coordinatePlane/presets/optionState.js`, one file per preset under `coordinatePlane/presets/`
 **Closest alternatives:** `GraphView` (interpreting supplied data as a chart — not manipulating a plane); `NumberLineExplore` (position in one dimension); `AngleExplore` (angle facts — do not add coordinate modes to it); `AreaPerimeterExplore` (mensuration); a static figure image (when no interaction is needed and the diagram is one-off).
 
@@ -283,7 +283,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Best used for:** Supported reconstruction where understanding the structure and relationships matters, but fully independent recall would create unnecessary cognitive load.
 **Props:** `block`, `subject`, `onComplete`
 **Block shape:** `{ type: 'builder', label?, instruction?, layout?: 'reaction'|'expression'|'equation'|'calculation'|'text'|'cloze'|'sentence'|'quote', template?, slots?, pieces: Array<string|number|{ id?, label?, text? }>, answer: Array<string|number|{ label?, text? }>, operators?, groupLabels?, contextImage?, completionNoun? }`
-**Block type:** `builder` — rendered inside a normal content screen in `ModulePlayer.jsx`.
+**Block type:** `builder` — rendered inside a normal content screen in `ChapterPlayer.jsx`.
 **Dependencies:** `SUBJECTS`, `GENERAL`, `BUTTONS`, `COMPONENT_SIZE`, `SPACING`, `RADII`, `TYPE`, `ContinueCTA`, `ScreenBody`, `ScreenTitle`
 
 - **Decision**
@@ -302,7 +302,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Best used for:** Multi-step GCSE Maths or Science calculations where understanding the method matters as much as obtaining the final answer — including equations, rearranging formulae, fractions, percentages, substitution, geometry and scientific equations.
 **Props:** `block`, `subject` (defaults to `Maths`), `accent`, `reducedMotion` (test/story override only), `onContinue`
 **Block shape:** `{ title?, goalPrompt?, problem, understand: { heading?, intro?, whatsHappening?, goal?, whyGoal?, decision?, check? }, steps: [{ mode: 'worked'|'yourTurn', title, why?, transform: { from, leftOp?, rightOp?, to }, whyStep?, check?, answer?, resultExpr?, hint?, reasoning?, cta? }], solution: { celebrateTitle?, celebrateSubtitle?, result, rows?, why? }, presentation?, backgroundImage?, backgroundOpacity? }`
-**Screen type:** `calculationBreakdown` — full-screen component currently available in the Component Lab but not yet routed in `ModulePlayer.jsx`.
+**Screen type:** `calculationBreakdown` — full-screen component currently available in the Component Lab but not yet routed in `ChapterPlayer.jsx`.
 **Dependencies:** `GENERAL`, `SUBJECTS`, `TYPE`, `SPACING`, `RADII`, `MOTION`, `ContinueCTA`, `CheckAnswerCTA`, `InteractionShell`, `ScreenTitle`, `src/components/learning/calculationBreakdown/`
 
 - **Decision**
@@ -377,7 +377,7 @@ Extending it with a *new* validated presentation variant remains in scope.
 **Best used for:** Browsing a small related set of things in turn, each worth a focused look — e.g. the organelles inside a cell, the planets of the solar system, the stages of a specialised cell. Designed for cinematic single-item focus, not for scanning a large list.
 **Props:** `block`, `subject` (defaults to `Biology`), `onContinue`
 **Block shape:** `{ type: 'cinematicCarousel', title?, intro?, items: [{ id, image, label, facts: string[] }] }`
-**Screen type:** `cinematicCarousel` (full-screen, routed directly in `ModulePlayer.jsx` like `TimelineCanvas`)
+**Screen type:** `cinematicCarousel` (full-screen, routed directly in `ChapterPlayer.jsx` like `TimelineCanvas`)
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
 
 - **Decision**
@@ -719,7 +719,7 @@ Do not automatically display “Weak spot fixed”.
 **Best used for:** Displaying GCSE Maths/Science data (frequency tables, linear/real-life graphs, scatter graphs with line of best fit, proportion/probability pie charts) alongside a question elsewhere on the screen (e.g. an `ExamQuestionFrame`/`quiz` block that says "use the graph to find..."). Purely a data display — does not log to the weakness tracker itself.
 **Props:** `block`, `subject` (defaults to `Maths`)
 **Block shape:** `{ type: 'graphView', graphType: 'bar'|'line'|'scatter'|'pie', title?, caption?, xLabel?, yLabel?, data?: [{label, value}], points?: [{x, y}], lineOfBestFit?: {from: {x,y}, to: {x,y}}, xMin?, xMax?, yMin?, yMax? }`
-**Screen type:** `graphView` (content block, rendered inside `Screen` in `ModulePlayer.jsx`)
+**Screen type:** `graphView` (content block, rendered inside `Screen` in `ChapterPlayer.jsx`)
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `TYPE`, `CardContainer`
 
 - **Decision**
@@ -824,7 +824,7 @@ Do not automatically display “Weak spot fixed”.
 **Props:** `block`, `subject`
 **Block shape:** `{ type: 'memoryHook', label?, hook, image?, imageAlt? }`
 **Dependencies:** `SUBJECTS`, `GENERAL`, `SPACING`, `COMPONENT_SIZE`, `RADII`, `TYPE`
-**Block type:** `memoryHook` (routed in `ModulePlayer`)
+**Block type:** `memoryHook` (routed in `ChapterPlayer`)
 **Contract:** `docs/system/component-contracts/memory-hook.md` (composition classification: content)
 
 - **Decision**
@@ -856,7 +856,7 @@ Memory aids must reduce cognitive load. Do not force every topic into a mnemonic
 **What it is:** Configuration-driven GCSE number line — the shared visual foundation for number topics, and a sibling of `AngleExplore` and `AreaPerimeterExplore`. One line, one interaction model and one status voice cover what would otherwise be six near-identical single-purpose diagrams. The line, its shaded intervals, movement arcs and endpoints render as inline SVG in model space (values are never measured back from pixels); learner-controlled values drive a live status line. Seven registered presets — `orderNumbers` (slide one value between four pinned integers, a decimal and a fraction; the ordering statement re-sorts live, and landing on a pinned value shows the two forms sharing one point), `negativeMovement` (start and move as two independent handles, with an animated arc showing direction; adding a negative visibly lands where subtracting does), `roundingIntervals` (the two multiples a value sits between with the halfway point marked; precision switches between nearest 10, whole number and 1 d.p.), `inequalityRange` (endpoint, direction and open/closed toggles keeping symbol, diagram and interval notation tied together), `boundsInterval` (the error interval of a rounded value — lower bound included, upper excluded), `multiplyPattern` (multiplying by a negative as repeated equal jumps that only change direction), `estimateRange` (estimation as a sensible range rather than a single answer) — plus a compatible-preset-object escape hatch. `interactive={false}` turns any preset into a static teaching or exam diagram at fixed values. Draggable markers are keyboard-operable `role="slider"` elements (arrow keys / Home / End) with ≥44px hit targets; discrete choices (open/closed, direction, precision, jump size) are real buttons, never disguised sliders. Filled markers include an endpoint, open markers exclude it, and a line marker denotes a fixed reference another marker may legitimately sit on. Respects `prefers-reduced-motion` (and a `reducedMotion` prop override) — the arc's draw-in becomes an instantly finished arc.
 **Best used for:** Teaching AQA Foundation number topics where position, direction and size are the point — place value, ordering integers/decimals/fractions, negative numbers, addition and subtraction as movement, multiplication patterns with negatives, rounding, estimation ranges, inequalities, upper and lower bounds, and scale reading. Use it when seeing where a number *lives* is the lesson. Questions, predictions, marking, scoring and weakness tracking stay outside the component (compose it like `AngleExplore`/`AreaPerimeterExplore`).
 **Props:** `preset` (name or preset object, defaults to `orderNumbers`), `value` (controlled values object), `defaultValue`, `options` (initial discrete choices), `onChange`, `interactive`, `disabled`, `subject` (defaults to `Maths`), `reducedMotion`, `label`, `showStatus`
-**Screen type:** none yet — not routed in `ModulePlayer.jsx` (new component pending review)
+**Screen type:** none yet — not routed in `ChapterPlayer.jsx` (new component pending review)
 **Dependencies:** `SUBJECTS`, `GENERAL` (via `numberLine/numberLineVisualRoles.js` semantic roles), `TYPE`, `SPACING`, `RADII`, `MOTION` (injected animation CSS via `ensureStyles()`, same pattern as `AngleExplore`/`AreaPerimeterExplore`); pure maths in `numberLine/numberLineGeometry.js` (which re-exports the neutral `geometry/shapeGeometry.js` helpers), presets in `numberLine/numberLinePresets.js`
 **Closest alternatives:** `AngleExplore` (angle facts — do not add number-line modes to it); `AreaPerimeterExplore` (mensuration); `GraphView` (interpreting data, not number position); `CalculationBreakdown` (executing a method step by step); a static figure image (when no interaction is needed and the diagram is one-off).
 
@@ -1009,7 +1009,7 @@ Portraits are optional. Supply `image`/`imageAlt` per side (and/or a `heroImage`
 **Best used for:** A deliberately different rhythm to `TimelineChain` — an occasional "jarring" interruption to vary pacing between chapter moments, reusing the same kind of causal-chain content. Not for routine use; the spring/bounce motion is an intentional one-off exception to the Motion Rules (documented in-file).
 **Props:** `block`, `subject` (defaults to `History`), `onContinue`
 **Block shape:** `{ type: 'timelineCanvas', title?, intro?, steps: [{ id?, icon?, image?, label, detail, stats?: [string, string] }] }`
-**Screen type:** `timelineCanvas` (full-screen, routed directly in `ModulePlayer.jsx` like `TimelineChain`)
+**Screen type:** `timelineCanvas` (full-screen, routed directly in `ChapterPlayer.jsx` like `TimelineChain`)
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
 
 - **Decision**
@@ -1031,7 +1031,7 @@ Portraits are optional. Supply `image`/`imageAlt` per side (and/or a `heroImage`
 **Props:** `block`, `subject` (defaults to `History`), `onContinue`, `variant` (`'interactive'` | `'reveal'`; falls back to `block.variant`, then `'interactive'`)
 **Block shape (interactive):** `{ type: 'timelineChain', title, intro?, steps: [{ id?, icon?, image?, label, detail }] }`
 **Block shape (reveal):** `{ type: 'timelineChain', variant: 'reveal', title?, intro?, source?, steps: [{ id?, icon?, statement, detail? }], takeaway? }` — `statement`/`detail`/`takeaway` accept a plain string or an array of `{ text, highlight? }` segments for inline subject-accent highlighting. `statement` (not `label`) is the primary field so full-sentence copy is not scanned by the sentence-case heading guard.
-**Screen type:** `timelineChain` (full-screen, routed directly in `ModulePlayer.jsx`). Legacy `type: 'visualNarrative'` screens are mapped to the reveal variant at render time via `src/data/visualNarrativeCompat.js`.
+**Screen type:** `timelineChain` (full-screen, routed directly in `ChapterPlayer.jsx`). Legacy `type: 'visualNarrative'` screens are mapped to the reveal variant at render time via `src/data/visualNarrativeCompat.js`.
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `ContinueCTA`, `timelineChainReveal.js` (pure reveal logic)
 
 - **Decision**
@@ -1050,7 +1050,7 @@ Portraits are optional. Supply `image`/`imageAlt` per side (and/or a `heroImage`
 **Best used for:** Slotting a short causal/sequence chain (2–5 steps) into an existing content screen alongside its heading/intro — e.g. recapping a transmission chain just explored elsewhere. Each card front can show a placeholder/illustrative `image` with an overlaid step number, plus a short label; tapping flips to reveal the "why it mattered" detail. An optional `outro` paragraph (e.g. a reflection prompt) renders below the chain.
 **Props:** `block`, `subject` (defaults to `History`)
 **Block shape:** `{ type: 'timelineChain', intro?, steps: [{ id?, icon?, image?, label, detail }], outro? }`
-**Screen type:** `timelineChain` (content block, rendered inside `Screen` in `ModulePlayer.jsx` — same block-type string as the full-screen variant's screen type, but checked on `block.type` rather than `screen.type`)
+**Screen type:** `timelineChain` (content block, rendered inside `Screen` in `ChapterPlayer.jsx` — same block-type string as the full-screen variant's screen type, but checked on `block.type` rather than `screen.type`)
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
 
 ---
@@ -1112,9 +1112,9 @@ Module-level orchestration and chapter framing screens.
 
 ---
 
-### ModulePlayer
+### ChapterPlayer
 
-**File:** `src/components/layout/ModulePlayer.jsx`
+**File:** `src/components/layout/ChapterPlayer.jsx`
 **Purpose:** In-module lesson flow orchestrator. Routes between all block types based on module screen data.
 **Props:** `moduleId`, `onComplete`, `onBack`
 **Dependencies:** All learning + feedback components
@@ -1183,7 +1183,7 @@ These components may form a sequence, but should not automatically be stacked ar
   }]
 }
 ```
-**Screen type:** `quoteAnalyser` (full-screen, routed in `ModulePlayer.jsx`)
+**Screen type:** `quoteAnalyser` (full-screen, routed in `ChapterPlayer.jsx`)
 **Animation:** word-by-word quote reveal via staggered `opacity` transitions; card entrance via `qa-card-in` CSS keyframe; seen-tick pop via `qa-tick-pop`; expanded overlay via `qa-slide-up`
 **Dependencies:** `SUBJECTS`, `RADII`, `TYPE`, `ContinueCTA`
 

@@ -24,7 +24,7 @@ export const HISTORY_MEDICINE_CONCEPTS = [
   // religion, public-health-act-1875/nhs). A learner weak here needs synthesis /
   // essay-structure support, not more content recall — a distinct tutoring
   // decision. Legacy short tag already used in-app: 'factors-in-change'
-  // (src/data/quickQuizData.js, src/data/tagModuleMap.js).
+  // (src/data/quickQuizData.js, src/data/tagChapterMap.js).
   { id: 'history:medicine:factors-in-change', label: 'Factors (agents) of change in medicine' },
 
   // Medieval medicine, c1250–c1500
@@ -131,8 +131,8 @@ export const MEDICINE_TOPICS = {
   th_modern: { label: 'Modern Medicine',                       tags: ['period:modern'] },
 }
 
-// Bridge from legacy single-word screen tags (modules.js screenTags, consumed
-// by findTaggedScreen / weak-spot routing) to canonical concept ids. Only
+// Bridge from legacy single-word screen tags (`src/chapters.js` screenTags, consumed
+// by findTaggedChapterScreen / weak-spot routing) to canonical concept ids. Only
 // confident 1:1 mappings belong here — composite or navigational screen tags
 // (e.g. 'core-takeaway', 'medieval-practitioners') are deliberately absent.
 // The legacy tags themselves are unchanged; this map lets graph consumers

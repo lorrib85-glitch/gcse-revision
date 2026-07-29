@@ -35,7 +35,7 @@ Governs Home, the Subjects/Modules browser, Progress, Exam landing/navigation, o
 
 `docs/system/CONTENT_HIERARCHY.md`
 
-The canonical structural contract for `Subject → Module → Chapter → Screen → Component`. Defines what each level owns, the chapter-authoring boundary, relationship rules, stable progress identity, and the migration away from the current inverted `MODULES` / `MODULE_GROUPS` / `ModulePlayer` terminology. Read before changing content metadata, chapter runtime, navigation, discovery, progress or component routing.
+The canonical structural contract for `Subject → Module → Chapter → Screen → Component`. Defines what each level owns, the chapter-authoring boundary, relationship rules, stable progress identity, and the final canonical ownership boundaries for modules, chapters, screens and components. Read before changing content metadata, chapter runtime, navigation, discovery, progress or component routing.
 
 ---
 

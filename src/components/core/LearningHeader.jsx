@@ -8,11 +8,10 @@ import { TYPE } from '../../constants/typography.js'
 // Single row: [back] [stage rail] [n/total] [exit]
 // Stage rail shows the chapter's 6 navigation stages; each dot jumps to the start of that stage.
 // Labels are hidden unless tapped. Tap n/total counter to open jump sheet (onJumpOpen callback).
-// Props: chapter (module remains a compatibility fallback), currentStage, stageNavigation, currentScreen, onStageJump,
+// Props: chapter, currentStage, stageNavigation, currentScreen, onStageJump,
 //        onBack, onExit, visible, onJumpOpen, screenPos
 export default function LearningHeader({
   chapter,
-  module,
   currentStage = 'Discover',
   stageNavigation = null,
   currentScreen = 0,
@@ -23,7 +22,7 @@ export default function LearningHeader({
   onJumpOpen = null,
   screenPos = null,
 }) {
-  const activeChapter = chapter || module
+  const activeChapter = chapter
   const subject = activeChapter?.subject || 'History'
   const accent = SUBJECT_ACCENTS[subject] || SUBJECT_ACCENTS.History
   const accentRgb = hexToRgb(accent)

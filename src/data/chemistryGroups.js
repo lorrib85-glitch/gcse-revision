@@ -1,4 +1,4 @@
-// Chemistry topic groups — used in ModulesTab to render the Chemistry section.
+// Chemistry topic groups — used in SubjectsTab to render the Chemistry section.
 // Accent palette: deep purple/violet family matching the cinematic chem images.
 
 export const CHEMISTRY_GROUPS = [

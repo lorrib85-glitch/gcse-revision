@@ -20,24 +20,19 @@ const sources = walk(srcRoot).map(path => ({
 }))
 
 describe('canonical chapter runtime', () => {
-  it('ChapterPlayer owns the runtime and ModulePlayer remains a thin facade', () => {
+  it('ChapterPlayer is the sole chapter runtime', () => {
     const canonical = read('src/components/layout/ChapterPlayer.jsx')
-    const legacy = read('src/components/layout/ModulePlayer.jsx')
     expect(canonical).toContain('export default function ChapterPlayer(props)')
     expect(canonical).toContain('function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete })')
     expect(canonical).toContain('computeInitialChapterState(chapter, saved)')
     expect(canonical).toContain('getChapterGate(chapter,')
-    expect(legacy).toContain("import ChapterPlayer from './ChapterPlayer.jsx'")
-    expect(legacy).not.toContain('useState')
   })
 
-  it('production source does not import the legacy player or navigation implementation', () => {
+  it('production source contains no deleted runtime imports', () => {
     const playerViolators = sources
-      .filter(source => source.path !== 'src/components/layout/ModulePlayer.jsx')
       .filter(source => /from\s+['"][^'"]*ModulePlayer\.jsx['"]|import\(['"][^'"]*ModulePlayer\.jsx['"]\)/.test(source.content))
       .map(source => source.path)
     const navigationViolators = sources
-      .filter(source => source.path !== 'src/app/moduleNavigation.js')
       .filter(source => /from\s+['"][^'"]*moduleNavigation\.js['"]/.test(source.content))
       .map(source => source.path)
     expect(playerViolators).toEqual([])

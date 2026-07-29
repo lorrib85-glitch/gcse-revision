@@ -7,11 +7,6 @@ import {
   mergeChapterState,
 } from './data/chapterProgress.js'
 
-// Temporary compatibility export. Parent modules are now canonically owned by
-// src/data/modules.js; existing callers may continue importing MODULE_GROUPS
-// until the final migration phase.
-export const MODULE_GROUPS = MODULES
-
 const KEY          = 'gcse_progress'
 const SCORES_KEY   = 'gcse_scores'
 const CONFIDENCE_KEY = 'gcse_confidence'
@@ -161,8 +156,7 @@ export function getScores() {
 }
 
 // ─── Confidence ratings ───────────────────────────────────────────
-// Keyed by the current legacy moduleId field, stored in a shared array.
-// Phase 3 migrates this terminology alongside chapter persistence.
+// Keyed by chapterId and stored in a shared array.
 
 export function getAllConfidenceRatings() {
   return readArr(CONFIDENCE_KEY)
@@ -230,16 +224,8 @@ export function getChapterPct(chapter) {
   return Math.min(100, Math.round((screen / chapter.screenCount) * 100))
 }
 
-// Temporary compatibility aliases. They execute the canonical chapter-key
-// implementation, so even untouched Phase 4 runtime callers now write only
-// gcse_chapter_* keys.
-export const getModuleState = getChapterState
-export const saveModuleState = saveChapterState
-export const getModulePct = getChapterPct
-
 // ─── Chapter discovery ─────────────────────────────────────────────
-// The canonical parent-module catalogue determines chapter order. Progress
-// percentage still uses its legacy function name until Phase 3.
+// The canonical parent-module catalogue determines chapter order.
 
 export function getContinueChapter() {
   const ordered = MODULES
@@ -264,10 +250,6 @@ export function getInProgressChapter() {
   const pct = getChapterPct(chapter)
   return (pct > 0 && pct < 100) ? chapter : null
 }
-
-// Temporary compatibility aliases for existing runtime callers.
-export const getContinueModule = getContinueChapter
-export const getInProgressModule = getInProgressChapter
 
 // ─── Weekly recall trend ────────────────────────────────────────────
 // Shared by PulseTab and Home's "this week" line.

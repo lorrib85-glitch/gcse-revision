@@ -450,7 +450,7 @@ function ChemistryBrowser({ onBack }) {
 
 
 
-function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart = false, examAutoStart = null, clearExamAutoStart } = {}) {
+function TestTab({ mode = 'test', onOpenChapter, onExit, onOpenPulse, autoStart = false, examAutoStart = null, clearExamAutoStart } = {}) {
   const [mathsOpen,     setMathsOpen]     = useState(false)
   const [englishOpen,   setEnglishOpen]   = useState(false)
   const [sociologyOpen, setSociologyOpen] = useState(false)
@@ -466,7 +466,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
       <ExamMode
         mode={mode}
         onExit={onExit}
-        onOpenModule={onOpenModule}
+        onOpenChapter={onOpenChapter}
         onOpenPulse={onOpenPulse}
         examAutoStart={examAutoStart}
         clearExamAutoStart={clearExamAutoStart}

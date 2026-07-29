@@ -7,8 +7,8 @@ import {
   getWeakTopics,
   clearWeaknessLog,
 } from '../../../src/unifiedWeaknessTracker.js'
-import { TAG_MODULE_MAP, findTaggedScreen } from '../../../src/data/tagModuleMap.js'
-import { MODULES, isModuleAvailable } from '../../../src/modules.js'
+import { TAG_CHAPTER_MAP, findTaggedChapterScreen } from '../../../src/data/tagChapterMap.js'
+import { CHAPTERS, isChapterAvailable } from '../../../src/chapters.js'
 
 function installLocalStorage() {
   const store = {}
@@ -41,7 +41,7 @@ describe('QuickFire → canonical concept identity', () => {
     const conv = quickFireFromBank(MEDIEVAL_ROW)
     expect(conv.topic).toBe('Medieval Medicine')   // human label preserved
     expect(conv.tag).toBe('four-humours')          // canonical routing identity
-    expect(conv.moduleId).toBe(TAG_MODULE_MAP['four-humours'])
+    expect(conv.chapterId).toBe(TAG_CHAPTER_MAP['four-humours'])
   })
 
   it('an incorrect QuickFire answer records both a display label and a canonical concept tag', () => {
@@ -51,7 +51,7 @@ describe('QuickFire → canonical concept identity', () => {
     expect(raw[0].conceptTag).toBe('four-humours')
   })
 
-  it('the weakness becomes eligible for valid recovery routing to an available module and a real tagged screen', () => {
+  it('the weakness becomes eligible for valid recovery routing to an available chapter and a real tagged screen', () => {
     for (let i = 0; i < 2; i++) {
       logWrongAnswer({ subject: 'History', topic: 'Medieval Medicine', conceptTag: 'four-humours', source: 'quiz', questionType: 'mcq' })
     }
@@ -61,16 +61,16 @@ describe('QuickFire → canonical concept identity', () => {
     expect(win.topic).toBe('Medieval Medicine')
     expect(win.conceptTag).toBe('four-humours')
 
-    // Route resolves to a real, available module...
-    const mod = MODULES.find(m => m.id === win.moduleId)
-    expect(mod).toBeTruthy()
-    expect(isModuleAvailable(mod)).toBe(true)
+    // Route resolves to a real, available chapter...
+    const chapter = CHAPTERS.find(item => item.id === win.chapterId)
+    expect(chapter).toBeTruthy()
+    expect(isChapterAvailable(chapter)).toBe(true)
 
     // ...and to an exact tagged teaching screen.
-    const screen = findTaggedScreen(mod, win.conceptTag)
+    const screen = findTaggedChapterScreen(chapter, win.conceptTag)
     expect(screen).toBeTypeOf('number')
     expect(screen).toBeGreaterThanOrEqual(0)
-    expect(screen).toBeLessThan(mod.screenCount)
+    expect(screen).toBeLessThan(chapter.screenCount)
   })
 
   it('a correct answer updates the same canonical weakness (error rate falls / clears)', () => {
@@ -93,17 +93,17 @@ describe('QuickFire routing — legacy / backward compatibility', () => {
     for (let i = 0; i < 3; i++) {
       logWrongAnswer({ subject: 'History', topic: 'Medieval Medicine', source: 'quiz' }) // no conceptTag
     }
-    // "Medieval Medicine" is not a TAG_MODULE_MAP key, so it must not resolve.
+    // "Medieval Medicine" is not a TAG_CHAPTER_MAP key, so it must not resolve.
     expect(getBiggestWin()).toBeNull()
   })
 
   it('sources that log the canonical slug directly as topic still route (prior-knowledge recall)', () => {
     for (let i = 0; i < 2; i++) {
-      logWrongAnswer({ subject: 'History', topic: 'germ-theory', source: 'module' }) // slug-as-topic, no conceptTag
+      logWrongAnswer({ subject: 'History', topic: 'germ-theory', source: 'module' }) // legacy slug-as-topic, no conceptTag
     }
     const win = getBiggestWin()
     expect(win).toBeTruthy()
-    expect(win.moduleId).toBe(TAG_MODULE_MAP['germ-theory'])
+    expect(win.chapterId).toBe(TAG_CHAPTER_MAP['germ-theory'])
     expect(win.conceptTag).toBe('germ-theory')
   })
 
