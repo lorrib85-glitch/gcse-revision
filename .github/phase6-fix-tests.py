@@ -58,16 +58,18 @@ for old, new in renames.items():
         continue
     text = old_path.read_text(encoding='utf-8')
     text = text.replace('Module', 'Chapter').replace('module', 'chapter')
-    # The canonical catalogue exports CHAPTERS; parent MODULES imports, if any,
-    # remain untouched because the replacement above only operates in these old
-    # chapter-as-module contracts.
     (ROOT / new).write_text(text, encoding='utf-8')
     old_path.unlink()
 
-# Confirm no architecture test imports deleted runtime/catalogue files.
-joined = '\n'.join(p.read_text(encoding='utf-8') for p in (ROOT / 'tests/architecture').glob('*.test.js'))
-for forbidden in ["../../src/modules.js", 'ModulePlayer.jsx', 'moduleNavigation.js', 'MODULE_CONTENT_LOADERS']:
-    if forbidden in joined:
-        raise RuntimeError(f'stale architecture contract survived: {forbidden}')
+# Confirm there are no actual imports of deleted catalogue/runtime files. Quoted
+# filenames inside the anti-regression tests themselves are intentional evidence.
+for path in (ROOT / 'tests/architecture').glob('*.test.js'):
+    text = path.read_text(encoding='utf-8')
+    if "from '../../src/modules.js'" in text or "from '../../src/content/moduleContentRegistry.js'" in text:
+        raise RuntimeError(f'stale architecture import survived: {path}')
+    if re.search(r"from\s+['\"][^'\"]*ModulePlayer\.jsx['\"]", text):
+        raise RuntimeError(f'stale ModulePlayer import survived: {path}')
+    if re.search(r"from\s+['\"][^'\"]*moduleNavigation\.js['\"]", text):
+        raise RuntimeError(f'stale moduleNavigation import survived: {path}')
 
 print('Remaining Phase 6 architecture tests migrated')
