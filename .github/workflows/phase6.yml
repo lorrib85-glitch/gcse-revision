@@ -1,0 +1,55 @@
+name: Phase 6 closure
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase6-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  close-hierarchy-migration:
+    if: github.head_ref == 'agent/content-hierarchy-phase-6-final'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/content-hierarchy-phase-6-final
+          fetch-depth: 0
+          show-progress: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Apply Phase 6 migration
+        run: python .github/phase6-migrate.py
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Architecture contracts
+        run: pnpm test:architecture
+      - name: Focused hierarchy and runtime tests
+        run: pnpm exec vitest run tests/architecture/content-hierarchy.test.js tests/architecture/legacy-content-imports.test.js tests/architecture/chapter-runtime-contract.test.js tests/unit/app/chapterNavigation.test.js tests/unit/chapterPlayer/lifecycle.test.js tests/unit/chapterPlayer/lifecycle-regression.test.js tests/unit/planner/dailyPlanner.test.js
+      - name: Full unit suite
+        run: pnpm test:unit
+      - name: Changed-file lint
+        shell: bash
+        run: |
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMR origin/main...HEAD; git diff --name-only --diff-filter=ACMR)
+          mapfile -t js_files < <(printf '%s\n' "${files[@]}" | sort -u | grep -E '\.(js|jsx)$' || true)
+          if [ ${#js_files[@]} -gt 0 ]; then pnpm exec eslint "${js_files[@]}"; fi
+      - name: Production build
+        run: pnpm build
+      - name: Commit clean Phase 6 files
+        shell: bash
+        run: |
+          rm -f .github/phase6-migrate.py .github/workflows/phase6.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Close the module and chapter hierarchy migration"
+          git push origin HEAD:agent/content-hierarchy-phase-6-final
