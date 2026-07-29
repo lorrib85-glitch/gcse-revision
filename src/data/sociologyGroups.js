@@ -1,4 +1,4 @@
-// Sociology topic groups — used in ModulesTab to render the Sociology section.
+// Sociology topic groups — used in SubjectsTab to render the Sociology section.
 // Accent palette: pink-purple family.
 
 export const SOCIOLOGY_GROUPS = [

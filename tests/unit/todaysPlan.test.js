@@ -49,7 +49,7 @@ describe('isTaskDoneToday', () => {
   })
 
   it('does not mark a practice card done from a module (non-exam) score', () => {
-    store.gcse_scores = [{ date: TODAY, subject: 'Chemistry', source: 'module', pct: 80 }]
+    store.gcse_scores = [{ date: TODAY, subject: 'Chemistry', source: 'chapter', pct: 80 }]
     const task = { type: 'practice', onSelect: { kind: 'practice', subject: 'Chemistry' } }
     expect(isTaskDoneToday(task)).toBe(false)
   })
@@ -85,7 +85,7 @@ describe('isTaskDoneToday', () => {
   })
 
   it('leaves continue/revisit cards untracked (no date-stamped module signal)', () => {
-    store.gcse_scores = [{ date: TODAY, subject: 'History', source: 'module', pct: 100 }]
+    store.gcse_scores = [{ date: TODAY, subject: 'History', source: 'chapter', pct: 100 }]
     expect(isTaskDoneToday({ type: 'continue' })).toBe(false)
     expect(isTaskDoneToday({ type: 'revisit' })).toBe(false)
   })
@@ -124,7 +124,7 @@ describe('getTaskSubject', () => {
 
   it('resolves module-backed tasks via CHAPTERS metadata', () => {
     const mod = CHAPTERS[0]
-    expect(getTaskSubject({ onSelect: { kind: 'module', chapterId: mod.id } })).toBe(mod.subject)
+    expect(getTaskSubject({ onSelect: { kind: 'chapter', chapterId: mod.id } })).toBe(mod.subject)
   })
 
   it('returns null for the mixed warm-up and for no task at all', () => {

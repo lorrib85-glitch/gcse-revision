@@ -22,6 +22,8 @@ describe('Canonical hierarchy closure', () => {
       'src/modules.js',
       'src/components/layout/ModulePlayer.jsx',
       'src/app/moduleNavigation.js',
+      'src/data/tagModuleMap.js',
+      'src/components/core/ModuleToolbar.jsx',
     ]) expect(existsSync(resolve(ROOT, path)), path).toBe(false)
   })
 
@@ -41,12 +43,25 @@ describe('Canonical hierarchy closure', () => {
       'MODULE_GROUPS', 'getModuleState', 'saveModuleState', 'getModulePct',
       'getContinueModule', 'getInProgressModule', 'LEGACY_CONTENT_NAMES',
       'computeInitialModuleState', 'getModuleGate', 'prepareModuleScreenState',
+      'TAG_MODULE_MAP', 'findTaggedScreen', 'onOpenModule', 'ModulesTab',
+      'getSubjectModuleList',
     ]
     const source = filesUnder('src')
       .filter(path => /\.(js|jsx)$/.test(path))
       .map(path => `${path}\n${read(path)}`)
       .join('\n')
     for (const token of forbidden) expect(source, token).not.toContain(token)
+  })
+
+
+  it('contains no chapter-navigation compatibility payloads', () => {
+    const source = filesUnder('src')
+      .filter(path => /\.(js|jsx)$/.test(path))
+      .map(path => `${path}${String.fromCharCode(10)}${read(path)}`)
+      .join(String.fromCharCode(10))
+    for (const legacy of ["kind: 'module'", 'nextModule:        nextChapter', 'sel.moduleId']) {
+      expect(source, legacy).not.toContain(legacy)
+    }
   })
 
   it('keeps canonical authoring surfaces free of deleted paths and commands', () => {
@@ -62,6 +77,8 @@ describe('Canonical hierarchy closure', () => {
     for (const legacy of [
       'src/modules.js', 'ModulePlayer', 'moduleNavigation', 'module-creation',
       'moduleContentRegistry.js', 'MODULE_CONTENT_LOADERS', 'loadModuleContent',
+      "import { MODULES } from '../../src/chapters.js'", 'Loader entry:     CHAPTER_CONTENT_LOADERS[id] exists in LegacyApp.jsx',
+      '/?module=<id>&screen=<n>',
     ]) expect(text, legacy).not.toContain(legacy)
   })
 })

@@ -1,8 +1,8 @@
 // ─── Unified Weakness Tracker ─────────────────────────────────────────────────
-// Core personalization system: tracks every wrong answer across modules, exams, quizzes.
+// Core personalization system: tracks every wrong answer across chapters, exams and quizzes.
 // Single source of truth for weakness identification and recovery recommendations.
 
-import { TAG_MODULE_MAP } from './data/tagModuleMap.js'
+import { TAG_CHAPTER_MAP } from './data/tagChapterMap.js'
 import { getArray, setJson, removeKey } from './lib/storage.js'
 
 const WRONG_ANSWERS_KEY = 'gcse_wrong_answers'
@@ -33,7 +33,7 @@ function saveCoachTypeResults(data) { setJson(COACH_TYPE_RESULTS_KEY, data) }
  * Log a wrong answer. Called when a student gets a question incorrect.
  *
  * @param {Object} metadata - { subject, topic, questionId, questionText, marks, source, questionType }
- *   source: 'module' | 'exam' | 'quiz'
+ *   source: 'chapter' | 'exam' | 'quiz'
  *   questionType: 'mcq' | 'written' | 'connection' | 'truefalse' | etc.
  *   marks: number of marks available on this question
  */
@@ -47,7 +47,7 @@ export function logWrongAnswer(metadata = {}) {
     date: new Date().toISOString().slice(0, 10),
     subject,
     topic,
-    // Canonical recovery-routing identity (a TAG_MODULE_MAP key), stored
+    // Canonical recovery-routing identity (a TAG_CHAPTER_MAP key), stored
     // separately from the human-readable `topic`. null for sources that don't
     // supply one — those stay safe (routed only if `topic` is itself a key).
     conceptTag: metadata.conceptTag || null,
@@ -193,7 +193,7 @@ export function getTopicStatistics(subject, topic) {
     recentIncorrectCount,
     marksAtStake,
     bySource: {
-      module: topicWrongs.filter(a => a.source === 'module').length,
+      chapter: topicWrongs.filter(a => a.source === 'chapter' || a.source === 'module').length,
       exam: topicWrongs.filter(a => a.source === 'exam').length,
       quiz: topicWrongs.filter(a => a.source === 'quiz').length,
     },
@@ -249,10 +249,10 @@ function buildBiggestWinReason(stats) {
 // never mis-routed.
 function resolveRouteTag(subject, topic, wrongAnswers) {
   const tagged = wrongAnswers.find(
-    a => a.subject === subject && a.topic === topic && a.conceptTag && TAG_MODULE_MAP[a.conceptTag],
+    a => a.subject === subject && a.topic === topic && a.conceptTag && TAG_CHAPTER_MAP[a.conceptTag],
   )
   if (tagged) return tagged.conceptTag
-  if (TAG_MODULE_MAP[topic]) return topic
+  if (TAG_CHAPTER_MAP[topic]) return topic
   return null
 }
 
@@ -300,9 +300,9 @@ export function getBiggestWin(excludeTopic = null) {
     topic: top.topic,
     label: humanizeTopic(top.topic),
     reasonText: buildBiggestWinReason(stats),
-    moduleId: TAG_MODULE_MAP[top.routeTag],
+    chapterId: TAG_CHAPTER_MAP[top.routeTag],
     // Canonical tag for the caller to resolve the exact tagged screen via
-    // findTaggedScreen — the human `topic` is not a screen tag.
+    // findTaggedChapterScreen — the human `topic` is not a screen tag.
     conceptTag: top.routeTag,
   }
 }
@@ -408,7 +408,7 @@ export function clearWeaknessLog() {
  *         'onlyOneIdeaDeveloped' | 'vagueLanguage' | 'repeatsQuestion' | 'noSpecificDetail'
  *   evidence: short quote/description of where the pattern showed up
  *   suggestion: concrete next-time action tied to this pattern
- *   source: 'module' | 'exam' | 'quiz'
+ *   source: 'chapter' | 'exam' | 'quiz'
  */
 export function logExamTechnique(metadata = {}) {
   const { subject, type } = metadata

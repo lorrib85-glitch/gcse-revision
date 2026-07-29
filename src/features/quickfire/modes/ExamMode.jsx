@@ -38,7 +38,7 @@ function shuffle(arr) {
   return a
 }
 
-export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStart, clearExamAutoStart }) {
+export function ExamMode({ mode, onExit, onOpenChapter, onOpenPulse, examAutoStart, clearExamAutoStart }) {
   const { ALL_MATHS_QUESTIONS, ALL_ENGLISH_QUESTIONS, ALL_SOCIOLOGY_QUESTIONS, ALL_CHEMISTRY_QUESTIONS, GUIDED_COACH_TYPES } = useTestData() || {}
 
   const [activePaper,        setActivePaper]        = useState(null)

@@ -500,7 +500,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
 // Shape: { [conceptId]: { concept, screens: number[], parts: string[] } }
 //   screens — screen indices (from the per-screen map, 0–32 today) that teach
 //             the concept, ascending. The first entry is the natural revisit
-//             point (cf. findTaggedScreen in tagModuleMap.js, but concept-based
+//             point (cf. findTaggedChapterScreen in tagChapterMap.js, but concept-based
 //             and multi-screen).
 //   parts   — stageRange ids covering the concept (whole-module coverage,
 //             including exam-prep parts 5–6, whose screens are also mapped

@@ -60,23 +60,31 @@ Do not treat `src/App.jsx` as the old single-file app, and do not re-inline extr
 
 ## Bundle Size / Lazy Loading
 
-`ChapterPlayer` (and the ~40 learning/feedback components it imports) is loaded via `React.lazy()` + `Suspense` in `App.jsx`, as its own chunk — it's only needed once a user opens a module, not for Home/Subjects/Progress/Quiz. Follow this pattern for any other large, module-only component added in future: lazy-import it in `App.jsx` rather than adding it to the static import list. Small shared helpers used outside `ChapterPlayer` (e.g. `getAllConfidenceRatings`) live in `src/progress.js`, not in `ChapterPlayer.jsx`, so importing them doesn't pull in the lazy chunk.
+`ChapterPlayer` and the learning components reached through `ScreenRenderer` are
+loaded with `React.lazy()` only when a learner opens a chapter. Home, Subjects,
+Progress and Quiz do not pay for the chapter runtime on first load.
 
-### Module content loading — per-module files (standard) and per-subject files (legacy)
+### Chapter content loading
 
-`src/chapters.js` holds only lightweight metadata for all modules — `id, subject, number, title, subtitle, era, icon, color, colorLight, headerImage, screenCount, screenTags`. Full lesson content (`hook`, `outcomes`, `screens`, `intro`, `recall`) is loaded on demand by `openChapterPlayer()` via `loadChapterContent()` in `LegacyApp.jsx`, which checks two loader maps:
+The canonical ownership chain is:
 
-**`CHAPTER_CONTENT_LOADERS`** (preferred) — maps each module ID directly to its own file. Opening one module downloads only that module's file. History episodes use this pattern: each lives in `src/content/history/medicine/episodes/episode-NN-<slug>.js` and exports `default { id, subject, screens, ... }`. All new modules must follow this pattern.
+- `src/data/modules.js` — parent curriculum modules and ordered `chapterIds`;
+- `src/chapters.js` — lightweight chapter metadata and availability;
+- `src/content/chapterContentRegistry.js` — `CHAPTER_CONTENT_LOADERS` and
+  `loadChapterContent`;
+- `src/content/<subject>/<series>/episodes/<file>.js` — one chapter's full hook,
+  outcomes, recall, stage navigation and screens.
 
-**`SUBJECT_MODULE_LOADERS`** (legacy, pending migration) — maps a subject name to a single file containing all modules for that subject (`biology.js`, `maths.js`, `sociology.js`, `chemistry.js`, `english.js`). Opening any module for that subject downloads the entire subject file. Biology, Maths and Sociology are the priority subjects to migrate to per-module files.
-
-When adding a new module: create its content file, add a `CHAPTER_CONTENT_LOADERS` entry in `LegacyApp.jsx`, and add a metadata entry to `src/chapters.js` with `screenCount` (= `screens.length`) and `screenTags` (= `screens.map(s => s.tag ?? null)`). Do not add new modules to the legacy subject files. Anywhere that previously read `mod.screens.length` should use `mod.screenCount`; anything needing a tagged screen index should use `findTaggedScreen(mod, tag)` (`src/data/tagModuleMap.js`), which reads `mod.screenTags`.
+All subjects use per-chapter lazy loaders. Adding a chapter means running
+`/chapter-creation <chapter-id>`, adding its content file and loader, placing the
+ID in one parent module, and keeping `screenCount` / `screenTags` aligned. Do not
+add new content to subject-wide bundles and do not edit `ChapterPlayer` merely to
+make a chapter render; use registered screen definitions.
 
 ### Exam Mode question banks are lazy-loaded via context
 
 `src/data/mathsTopics.js`, `englishTopics.js`, `sociologyTopics.js`, `chemistryTopics.js` and `guidedAnswerCoach.js` are only needed inside Exam Mode (`TestTab mode="exam"`, the Exams tab) — they are NOT statically imported in `App.jsx`. Instead, `App.jsx` defines `TestDataContext` / `useTestData()` / `TestDataProvider`, which only wraps the `tab === 'exams'` `TestTab` render. `TestDataProvider` `Promise.all`s dynamic `import()`s of all five files on mount, shows `ModuleLoadingScreen` until they resolve, then provides the merged exports (`MATHS_TOPIC_GROUPS`, `ALL_MATHS_QUESTIONS`, `FORMULA_SHEET`, `DIAGRAMS`, `ENGLISH_TOPIC_GROUPS`, `ALL_ENGLISH_QUESTIONS`, `SOCIOLOGY_TOPIC_GROUPS`, `ALL_SOCIOLOGY_QUESTIONS`, `CHEMISTRY_TOPIC_GROUPS`, `ALL_CHEMISTRY_QUESTIONS`, `GUIDED_COACH_TYPES`) via context. Any component reading these exports (`FormulaSheet`, `MathsDiagram`, `MathsBrowser`, `EnglishBrowser`, `SociologyBrowser`, `ChemistryBrowser`, `TestTab`) destructures them from `useTestData() || {}` rather than importing them directly. The Pulse tab (`TestTab mode="quickfire"`) is not wrapped in `TestDataProvider` and never needs these exports. `SOCIOLOGY_GROUPS` (`sociologyGroups.js`) and `CHEM_IMAGES` (`chemImages.js`) stay as ordinary static imports — they're small and used outside Exam Mode too.
 
-When adding a new module: add its full content to the matching `src/modules/<subject>.js` file (creating a new per-subject file + loader entry if it's a new subject), and add a matching metadata entry to `src/chapters.js` with `screenCount` (= `screens.length`) and `screenTags` (= `screens.map(s => s.tag ?? null)`). Anywhere that previously read `mod.screens.length` should use `mod.screenCount`; anything needing a tagged screen index should use `findTaggedScreen(mod, tag)` (`src/data/tagModuleMap.js`), which reads `mod.screenTags`.
 
 ## Key Components in App.jsx
 
@@ -85,12 +93,10 @@ When adding a new module: add its full content to the matching `src/modules/<sub
 - `BiologySection` — biology-specific horizontal scroll section with topic group image cards
 - `Home` — home screen: greeting, weekly recall trend line, and a "Today's plan" task carousel (`TaskCarousel`/`TaskCard`) built by `buildTodaysPlan()` (`src/todaysPlan.js`) — warm-up, weak-spot revisit or continue-module, exam practice, plus a weekend full-paper card
 - `HomeAtmosphere` — LOCKED. Three drifting teal SVG wave bands + constellation network rendered in the 34vh hero section of Home. Must NOT be removed, renamed, or have its SVG/animation structure altered. Its call site in `Home` (`<HomeAtmosphere />`) must not be removed either.
-- `ModulesTab` — subjects/modules browser
-- `SubjectSection` — renders a subject heading + its module cards
-- `ModuleCard` — individual module card with progress, accent colour, icon
+- `SubjectsTab` — subject browser; each subject presents its ordered chapter journey
 - `ProgressTab` — progress/stats screen
 - `TestTab` — quiz/test mode (also used for Exam Mode)
-- `ChapterPlayer` — imported from `src/components/layout/ChapterPlayer.jsx`; handles in-module lesson flow
+- `ChapterPlayer` — imported from `src/components/layout/ChapterPlayer.jsx`; handles one chapter learning journey
 
 ## Component Folders
 
@@ -106,7 +112,7 @@ Foundation components used by many others.
 - `ExitButton.jsx` — LOCKED. The only exit-navigation button allowed anywhere in the app.
 - `LearningHeader.jsx` — Floating capsule header shell. Composes BackButton + ExitButton + LearningProgressHeader.
 - `LearningProgressHeader.jsx` — LOCKED. Progress rail + jump sheet (progression display only).
-- `ModuleToolbar.jsx` — LOCKED. Back + exit navigation buttons only, delegating to BackButton + ExitButton.
+- `LearningToolbar.jsx` — LOCKED. Back + exit navigation buttons only, delegating to BackButton + ExitButton.
 
 ### `src/components/learning/`
 Screen-level learning interaction components.
@@ -231,8 +237,8 @@ docs/system/TEACHING_VOICE_GUIDE.md
 
 | File | Contents |
 |------|----------|
-| `src/chapters.js` | `MODULES` array — lightweight metadata for all 30 modules (id, title, subject, colour, screenCount, screenTags, etc.) for browsing/cards/progress. Full lesson content lives in `src/modules/<subject>.js` (see Bundle Size / Lazy Loading) |
-| `src/content/history/medicine/episodes/episode-NN-<slug>.js` | Per-episode content files — the canonical per-module pattern. Each exports `default { id, subject, screens, ... }` and is loaded individually via `CHAPTER_CONTENT_LOADERS` in `LegacyApp.jsx`. |
+| `src/chapters.js` | `CHAPTERS` array — lightweight metadata for all 30 modules (id, title, subject, colour, screenCount, screenTags, etc.) for browsing/cards/progress. Full lesson content lives in `src/modules/<subject>.js` (see Bundle Size / Lazy Loading) |
+| `src/content/history/medicine/episodes/episode-NN-<slug>.js` | Per-episode content files — the canonical per-chapter pattern. Each exports `default { id, subject, screens, ... }` and is loaded individually through `src/content/chapterContentRegistry.js`. |
 | `src/modules/<subject>.js` | `biology.js`, `maths.js`, `sociology.js`, `chemistry.js`, `english.js` — legacy per-subject bundles, pending migration to per-module files. Dynamically imported via `SUBJECT_MODULE_LOADERS` when any module for that subject is opened. Do not add new modules here. |
 | `src/content.js` | `TOPICS` and `TOPIC_DATA` — History topic content and questions |
 | `src/contentIndex.js` | `CONTENT_INDEX` — maps topic tags to section metadata for the Targeted Brush-Up system |

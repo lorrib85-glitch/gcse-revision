@@ -201,7 +201,7 @@ spine and pull Key Topic N's full bullet text as the reference. Series 1
 
 ### 2b. Build status
 
-Check `src/chapters.js` for any module whose `title` (case-insensitive,
+Check `src/chapters.js` for any chapter whose `title` (case-insensitive,
 ignoring punctuation) matches the episode title, to supplement any explicit
 "Current module" column in the spine.
 
@@ -210,8 +210,8 @@ Then determine status:
 - Spine column absent **and** no `src/chapters.js` title match → `Not yet built`.
 - Spine column says `—` → `Not yet built`.
 - `src/chapters.js` has a title match: note the `id` field.
-- Spine column lists two or more module ids joined by `+` → `Built across <id-1> + <id-2>`.
-- Spine column or `src/chapters.js` match names one id:
+- Spine column lists two or more chapter ids joined by `+` → `Built across <id-1> + <id-2>`.
+- Spine column or `src/chapters.js` match names one chapter id:
   - Check whether any other episode in the same spine references the same id.
   - If yes → `Built (shared) as <id> — also covers Episode(s) <N, N, ...>` (ascending, excluding this episode).
   - Otherwise → `Built as <id>`.
@@ -232,17 +232,17 @@ doc), extract:
 
 ### 2d. Current src/chapters.js entry/entries
 
-If build status (2b) names one or more module ids: for each, grep
-`src/chapters.js` for `id: '<module-id>'` and read that module object's
-`title`, `subtitle`, plus `hook`, `outcomes`, `recall`, and `screens`
-(each screen's `id`/`tag` plus a one-line summary of its type and content).
+If build status (2b) names one or more chapter ids: for each, read the matching metadata row in `src/chapters.js`, then resolve the chapter's
+loader in `src/content/chapterContentRegistry.js` and read the returned content
+file for `hook`, `outcomes`, `recall`, `screens` and `stageNavigation`. Metadata
+and authored chapter content deliberately have separate owners.
 
 For `Built (shared)` or `Built across` statuses, only note the
 `hook`/`outcomes`/`recall`/screens relevant to *this* episode's content.
 
 ### 2e. Era / period
 
-- If built: use the (first, if multiple) module's `era` field verbatim.
+- If built: use the (first, if multiple) chapter's `era` field verbatim.
 - If not built: derive a date range or period from the spine's episode
   metadata (2a):
   - History: from the GCSE topic text or Key Topic reference.

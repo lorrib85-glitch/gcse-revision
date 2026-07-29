@@ -274,7 +274,7 @@ describe('computeInitialChapterState', () => {
     expect(result.screen).toBe(0)
   })
 
-  it('missing/corrupt saved object ({} — what getModuleState returns on parse failure) falls back to fresh-start defaults for every field', () => {
+  it('missing/corrupt saved object ({} — what getChapterState returns on parse failure) falls back to fresh-start defaults for every field', () => {
     const chapter = makeChapter({
       hook: { statement: 'x' },
       outcomes: { bullets: [] },
@@ -294,7 +294,7 @@ describe('computeInitialChapterState', () => {
 })
 
 // Contract-level coverage only — go/goTo-specific delta and idx call-site
-// framing is covered in tests/unit/modulePlayer/lifecycle.test.js instead
+// framing is covered in tests/unit/chapterPlayer/lifecycle-regression.test.js instead
 // of being repeated here.
 describe('clampScreenIndex', () => {
   it('passes an in-range index through unchanged', () => {

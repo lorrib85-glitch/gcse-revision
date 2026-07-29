@@ -121,9 +121,9 @@ Foundation components used by many others. Handle atomic UI concerns.
 
 ---
 
-### ModuleToolbar — **LOCKED**
+### LearningToolbar — **LOCKED**
 
-**File:** `src/components/core/ModuleToolbar.jsx`
+**File:** `src/components/core/LearningToolbar.jsx`
 **Purpose:** Back and exit navigation buttons for learning screens. Navigation only — no learning logic. Delegates to `BackButton` and `ExitButton`.
 **Props:** `onBack`, `onExit`
 **Dependencies:** `BackButton`, `ExitButton`

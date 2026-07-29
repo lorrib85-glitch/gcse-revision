@@ -57,7 +57,6 @@ function buildRevisitCard(win) {
   const chapter = CHAPTERS.find(item => item.id === win.chapterId)
   // Use the canonical concept tag (not the human topic label) to find the exact
   // teaching screen; falls back to opening at screen 0 when not a screen tag.
-  // `chapterId` remains in the task payload until the runtime migration phase.
   const screenIndex = chapter ? findTaggedChapterScreen(chapter, win.conceptTag) : undefined
   writeRevisitMemory(win.topic)
   return {
@@ -67,7 +66,7 @@ function buildRevisitCard(win) {
     reason: win.reasonText,
     durationMinutes: 5,
     image: chapter?.headerImage || null,
-    onSelect: { kind: 'module', chapterId: win.chapterId, screenIndex },
+    onSelect: { kind: 'chapter', chapterId: win.chapterId, screenIndex },
   }
 }
 
@@ -81,7 +80,7 @@ function buildContinueCard(chapter) {
     reason: `${remaining} screen${remaining === 1 ? '' : 's'} left in this chapter.`,
     durationMinutes: Math.round(remaining * 2.5),
     image: chapter.headerImage || null,
-    onSelect: { kind: 'module', chapterId: chapter.id },
+    onSelect: { kind: 'chapter', chapterId: chapter.id },
   }
 }
 
@@ -166,7 +165,7 @@ function buildWeekendPaperCard() {
 // "done today" state without any new storage key. Only warm-up and
 // practice/paper cards route through a scored round (Quick Fire / Exam
 // Mode), so those are the only types currently trackable; continue/revisit
-// cards have no date-stamped signal in module state and are left alone.
+// cards have no date-stamped signal in chapter state and are left alone.
 // Practice and paper rounds are matched separately (ExamMode tags paper-round
 // scores with source 'exam-paper', practice rounds with 'exam') so a Random
 // practice round that happens to draw a question in today's weekend-paper

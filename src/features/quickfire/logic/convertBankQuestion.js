@@ -11,7 +11,7 @@
 // exactly as before and forward nothing — they resolve to zero concept ids, so
 // the recorder records no evidence and never throws.
 
-import { TAG_MODULE_MAP } from '../../../data/tagModuleMap.js'
+import { TAG_CHAPTER_MAP } from '../../../data/tagChapterMap.js'
 
 export const CANONICAL_METADATA_FIELDS = [
   'tags', 'primaryConcept', 'secondaryConcepts', 'learningStage',
@@ -28,12 +28,12 @@ export function quickFireFromBank(q) {
     correct: isTrueFalse ? (q.correct ? 0 : 1) : q.correctIndex,
     subject: q.subject,
     topic: q.topic,
-    // `tag` is the canonical recovery-routing identity (TAG_MODULE_MAP key),
+    // `tag` is the canonical recovery-routing identity (TAG_CHAPTER_MAP key),
     // distinct from the human-readable `topic`. Forwarded so a QuickFire answer
     // can log its concept tag and feed weakness→recovery routing, not just the
     // mastery engine. Absent for untagged/non-canonical rows (fail-safe).
     tag: q.tag,
-    moduleId: TAG_MODULE_MAP[q.tag] || null,
+    chapterId: TAG_CHAPTER_MAP[q.tag] || null,
     ms: q.explanation,
     hint: q.reasoning,
   }

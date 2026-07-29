@@ -17,7 +17,7 @@ describe('progressDataEqual', () => {
 
 describe('mergeProgressData — additive logs (scores / wrong / correct / techniques / coach results)', () => {
   it('unions two divergent score logs — both entries survive', () => {
-    const local = { gcse_scores: [{ date: '2026-07-01', subject: 'History', earned: 8, possible: 10, pct: 80, source: 'module' }] }
+    const local = { gcse_scores: [{ date: '2026-07-01', subject: 'History', earned: 8, possible: 10, pct: 80, source: 'chapter' }] }
     const cloud = { gcse_scores: [{ date: '2026-06-30', subject: 'Maths', earned: 5, possible: 10, pct: 50, source: 'quiz' }] }
     const merged = mergeProgressData(local, cloud)
     expect(merged.gcse_scores).toHaveLength(2)
@@ -27,7 +27,7 @@ describe('mergeProgressData — additive logs (scores / wrong / correct / techni
   })
 
   it('dedupes an entry that exists on both sides (already-synced) instead of doubling it', () => {
-    const shared = { date: '2026-07-01', subject: 'History', earned: 8, possible: 10, pct: 80, source: 'module' }
+    const shared = { date: '2026-07-01', subject: 'History', earned: 8, possible: 10, pct: 80, source: 'chapter' }
     const local = { gcse_scores: [shared] }
     const cloud = { gcse_scores: [shared] }
     const merged = mergeProgressData(local, cloud)

@@ -110,7 +110,7 @@ describe('Journey — two accounts on one browser', () => {
       authFlow.signInGoogle(userA)
       await authFlow.reconcile(userA, null)
       saveChapterState('history-medicine-black-death', { screen: 6, completed: true })
-      recordScore({ subject: 'History', earned: 9, possible: 10, source: 'module' })
+      recordScore({ subject: 'History', earned: 9, possible: 10, source: 'chapter' })
       await backupProgressForUser(userA)
 
       // A signs out.
@@ -125,7 +125,7 @@ describe('Journey — two accounts on one browser', () => {
 
       // B creates separate progress.
       saveChapterState('bio_building_life', { screen: 3 })
-      recordScore({ subject: 'Biology', earned: 5, possible: 10, source: 'module' })
+      recordScore({ subject: 'Biology', earned: 5, possible: 10, source: 'chapter' })
       await backupProgressForUser(userB)
 
       // A signs back in.
@@ -149,7 +149,7 @@ describe('Journey — guest claims progress', () => {
       // Guest completes learning.
       setActiveScope(GUEST_SCOPE)
       saveChapterState('sci_bio_w1', { screen: 4, completed: false })
-      recordScore({ subject: 'Biology', earned: 6, possible: 10, source: 'module' })
+      recordScore({ subject: 'Biology', earned: 6, possible: 10, source: 'chapter' })
 
       const userA = { loggedIn: true, provider: 'google', uid: 'uid-guest-claims-A', name: 'Alice' }
       expect(claimableGuestProgress(userA)).toBe(true)

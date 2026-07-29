@@ -135,12 +135,12 @@ export default function ChapterCompleteScreen({
   // Direct props remain the public component contract. Metadata is only used as
   // a flexible fallback so production and Component Lab fixtures can supply a
   // title without duplicating artwork, subtitle or subject information.
-  const matchedModule = CHAPTERS.find(module =>
-    module.title === completedChapter
-    && (!subject || module.subject === subject)
-    && (!accentSubject || module.subject === accentSubject)
+  const matchedChapter = CHAPTERS.find(chapter =>
+    chapter.title === completedChapter
+    && (!subject || chapter.subject === subject)
+    && (!accentSubject || chapter.subject === accentSubject)
   )
-  const resolvedSubject = subject || matchedModule?.subject || accentSubject || 'History'
+  const resolvedSubject = subject || matchedChapter?.subject || accentSubject || 'History'
   const theme = SUBJECTS[resolvedSubject] || SUBJECTS.History
   const resolvedAccent = accent || theme.accent
   const accentRgb = hexToRgb(resolvedAccent).join(',')
@@ -149,32 +149,32 @@ export default function ChapterCompleteScreen({
   const completionLabel = COMPLETION_LABELS[resolvedCompletionType] || COMPLETION_LABELS.chapter
   const quizScope = quizScopeLabel || QUIZ_SCOPES[resolvedCompletionType] || QUIZ_SCOPES.chapter
 
-  const matchedNextModule = CHAPTERS.find(module =>
-    module.title === nextChapterTitle
-    && module.subject === resolvedSubject
+  const matchedNextChapter = CHAPTERS.find(chapter =>
+    chapter.title === nextChapterTitle
+    && chapter.subject === resolvedSubject
   )
-  const resolvedNextSubtitle = nextChapterSubtitle || matchedNextModule?.subtitle
+  const resolvedNextSubtitle = nextChapterSubtitle || matchedNextChapter?.subtitle
   const resolvedNextImage = nextChapterImage === false
     ? null
     : nextChapterImage
-      || matchedNextModule?.headerImage
+      || matchedNextChapter?.headerImage
       || SUBJECT_BACKDROPS[resolvedSubject]
       || SUBJECT_BACKDROPS.History
   const resolvedNextImagePosition = nextChapterImagePosition
-    || (matchedNextModule?.headerImage ? 'center 34%' : null)
+    || (matchedNextChapter?.headerImage ? 'center 34%' : null)
     || SUBJECT_BACKDROP_POSITIONS[resolvedSubject]
     || SUBJECT_BACKDROP_POSITIONS.History
 
   const resolvedBackground = backgroundAsset === false
     ? null
     : backgroundAsset
-      || matchedModule?.completionBackground
-      || matchedModule?.headerImage
+      || matchedChapter?.completionBackground
+      || matchedChapter?.headerImage
       || SUBJECT_BACKDROPS[resolvedSubject]
       || SUBJECT_BACKDROPS.History
   const resolvedBackgroundPosition = backgroundPosition
-    || matchedModule?.completionBackgroundPosition
-    || (matchedModule?.headerImage ? 'center 30%' : null)
+    || matchedChapter?.completionBackgroundPosition
+    || (matchedChapter?.headerImage ? 'center 30%' : null)
     || SUBJECT_BACKDROP_POSITIONS[resolvedSubject]
     || SUBJECT_BACKDROP_POSITIONS.History
 
