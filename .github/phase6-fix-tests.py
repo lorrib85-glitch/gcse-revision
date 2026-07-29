@@ -72,9 +72,16 @@ for old, new in renames.items():
 # The placeholder contract now reads the canonical metadata catalogue directly.
 placeholder_path = ROOT / 'tests/architecture/placeholder-chapter-safety.test.js'
 placeholder = placeholder_path.read_text(encoding='utf-8')
+placeholder_replacement = """  it('the canonical chapter catalogue contains governed unbuilt chapters', () => {
+    const metadata = read('src/chapters.js')
+    expect(metadata).toContain('export const CHAPTERS = [')
+    expect(metadata).toMatch(/screenCount:\s*0/)
+    expect(metadata).toContain('export const CHAPTER_AVAILABILITY')
+  })
+"""
 placeholder = re.sub(
     r"  it\('the compatibility metadata source still contains unbuilt chapters'.*?\n  \}\)\n",
-    """  it('the canonical chapter catalogue contains governed unbuilt chapters', () => {\n    const metadata = read('src/chapters.js')\n    expect(metadata).toContain('export const CHAPTERS = [')\n    expect(metadata).toMatch(/screenCount:\\s*0/)\n    expect(metadata).toContain('export const CHAPTER_AVAILABILITY')\n  })\n""",
+    lambda _match: placeholder_replacement,
     placeholder,
     count=1,
     flags=re.S,
