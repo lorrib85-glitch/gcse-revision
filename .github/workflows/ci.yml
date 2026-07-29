@@ -7,6 +7,18 @@ on:
     branches: [main]
 
 jobs:
+  phase6-audit:
+    if: github.head_ref == 'agent/content-hierarchy-phase-6'
+    name: Phase 6 vocabulary audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python .github/phase6-audit.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase6-vocabulary-audit
+          path: phase6-audit.txt
+
   verify:
     name: Architecture, lint, tests, build
     runs-on: ubuntu-latest
