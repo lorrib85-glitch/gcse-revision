@@ -27,7 +27,26 @@ jobs:
           node-version: 24
           cache: pnpm
       - name: Apply final live vocabulary migration
-        run: python .github/phase6-live-vocabulary.py
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('.github/phase6-live-vocabulary.py')
+          text = path.read_text(encoding='utf-8')
+          old = """    text = text.replace('findTaggedScreen', 'findTaggedChapterScreen')
+              if text != original:
+          """
+          new = """    text = text.replace('findTaggedScreen', 'findTaggedChapterScreen')
+              text = text.replace('onOpenModule', 'onOpenChapter')
+              text = text.replace('ModulesTab', 'SubjectsTab')
+              text = text.replace('getSubjectModuleList', 'getSubjectChapterList')
+              if text != original:
+          """
+          if old not in text:
+              raise SystemExit('source-wide vocabulary anchor missing')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+          python .github/phase6-live-vocabulary.py
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Architecture contracts
