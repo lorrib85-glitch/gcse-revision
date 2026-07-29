@@ -300,10 +300,10 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **File:** `src/components/learning/CalculationBreakdown.jsx`
 **What it is:** A staged teaching-and-application component that helps the learner interpret one procedural calculation, choose a useful first move, follow worked transformations, complete part of the method themselves and see why the full solution works. It lives inside the standard interaction frame and owns only the local calculation sequence.
 **Best used for:** Multi-step GCSE Maths or Science calculations where understanding the method matters as much as obtaining the final answer — including equations, rearranging formulae, fractions, percentages, substitution, geometry and scientific equations.
-**Props:** `block`, `subject` (defaults to `Maths`), `accent`, `onContinue`
-**Block shape:** `{ title?, goalPrompt?, problem, understand: { heading?, intro?, whatsHappening?, goal?, whyGoal?, decision?, check? }, steps: [{ mode: 'worked'|'yourTurn', title, why?, transform: { from, leftOp?, rightOp?, to }, whyStep?, check?, answer?, resultExpr?, hint?, cta? }], solution: { celebrateTitle?, celebrateSubtitle?, result, rows?, why? }, backgroundImage?, backgroundOpacity? }`
+**Props:** `block`, `subject` (defaults to `Maths`), `accent`, `reducedMotion` (test/story override only), `onContinue`
+**Block shape:** `{ title?, goalPrompt?, problem, understand: { heading?, intro?, whatsHappening?, goal?, whyGoal?, decision?, check? }, steps: [{ mode: 'worked'|'yourTurn', title, why?, transform: { from, leftOp?, rightOp?, to }, whyStep?, check?, answer?, resultExpr?, hint?, reasoning?, cta? }], solution: { celebrateTitle?, celebrateSubtitle?, result, rows?, why? }, presentation?, backgroundImage?, backgroundOpacity? }`
 **Screen type:** `calculationBreakdown` — full-screen component currently available in the Component Lab but not yet routed in `ModulePlayer.jsx`.
-**Dependencies:** `GENERAL`, `SUBJECTS`, `TYPE`, `SPACING`, `RADII`, `MOTION`, `ContinueCTA`, `InteractionShell`, `ScreenTitle`
+**Dependencies:** `GENERAL`, `SUBJECTS`, `TYPE`, `SPACING`, `RADII`, `MOTION`, `ContinueCTA`, `CheckAnswerCTA`, `InteractionShell`, `ScreenTitle`, `src/components/learning/calculationBreakdown/`
 
 - **Decision**
   - **Use when:** a calculation contains several connected operations and the learner needs to understand both what to do and why each move is valid or useful. Choose it when the method should be explicitly modelled before the learner applies part of it.
@@ -311,6 +311,37 @@ Screen-level learning interaction components. Each is a distinct learning beat.
   - **Choose instead:** use `FractionRatioExplore`, `AreaPerimeterExplore` or another visual exploration component when the learner first needs to see why the mathematics works. Use `BuilderBlock` when the learner should reconstruct a short equation from supplied pieces. Use `FillInTheBlanksBlock` for one missing value or term. Use `ExamQuestionFrame` when the learner should attempt the full calculation independently. Use `GuidedExamResponse` for an extended written response rather than a numerical method.
   - **Content shape:** one problem with a clear interpretation, a defined goal, a small number of purposeful steps, an explanation of why each move helps, at least one learner-completed step and a complete final solution with a check or explanation. Avoid breaking obvious arithmetic into patronising micro-steps. Scaffolding should become lighter when stronger learner evidence makes the full support unnecessary.
   - **Rhythm role:** teaching, practice, repair.
+
+#### Optional algebra reasoning presentations
+
+`CalculationBreakdown` remains **one generic calculation component**. `block.presentation` is an opt-in field that swaps the generic worked-step sequence for a scene sequence built for one specific teaching job — why an algebraic operation is valid, not just which operation to perform. These are **not separate components** and must not be registered, routed or documented as such; they share this component's public API, frame, title treatment, stage surface, navigation, CTAs and accessibility behaviour.
+
+**Backwards compatibility is absolute:** a block with no `presentation` field (or `variant: 'standard'`) renders the existing walkthrough unchanged. Every existing algebra, percentage, geometry, fractions and science block is untouched.
+
+```js
+presentation: {
+  variant: 'standard' | 'algebraWhy' | 'inverseMachine' | 'groupSplit' | 'balance',
+  model: { /* per-variant, see below */ },
+  reasoning?: { goal?, structure?, inverse?, equality?, check? },
+}
+```
+
+| Variant | Teaching job | Model |
+|---|---|---|
+| `algebraWhy` | Builds a coefficient from repeated addition, names the goal, forces a decision against a live subtraction misconception, then divides both sides and checks by substitution | `{ variable, coefficient, total, solution? }` |
+| `inverseMachine` | Multi-step equations as actions undone **in reverse order** — the reverse chain is derived from the forward operations, never authored | `{ variable, operations: [{ type, value }], result }` |
+| `groupSplit` | Makes a coefficient concrete: the learner shares the total into equal groups by tap, keyboard or one "split" action | `{ variable, groupCount, total, solution? }` |
+| `balance` | Why the same operation goes on **both** sides; the one-sided move is offered, refused and explained | `{ states: [{ left, right, operation, resultLeft, resultRight, misconception? }] }` |
+
+**Rules for authoring a presentation:**
+
+- **Never a parsed equation.** Visual models receive explicit numbers. The only string input is `operation`, read through a closed token grammar (`'÷ 3'`, `'+ 4'`) that rejects anything else; `left`/`right`/`resultLeft`/`resultRight` are display strings and are never parsed.
+- **Invalid models are refused, not repaired.** `calculationBreakdownValidation.js` rejects inexact group splits, group counts outside 2–5, totals over 30, chains that do not solve to a whole number, no-op steps and division by zero. A rejected model logs its reasons in development and falls back to the standard walkthrough — it never draws misleading groups.
+- **`reasoning` is optional everywhere.** Each variant derives all five explanations from its model; authored copy overrides individual fields. `step.reasoning` may also be supplied on a generic worked step, where it renders as the same "Why this works" panel.
+- **Use operation language.** "Subtract 4 from both sides", never "move the 4 across and change the sign". The plain relationship comes first, the formal term second: "Division undoes multiplication. These are inverse operations."
+- **Choreography is fixed:** predict → act → observe → explain → check. The learner commits to at least one decision before any final answer appears; wrong choices explain the misunderstanding and re-open immediately, with no scoring, streaks or progress tracker inside the component.
+
+**Where the code lives:** `src/components/learning/calculationBreakdown/` — `calculationBreakdownMath.js` (pure operation maths), `calculationBreakdownValidation.js` (model validation and fallback), `calculationBreakdownVisualRoles.js` (semantic colour roles), `calculationBreakdownParts.jsx` / `calculationBreakdownControls.jsx` / `calculationBreakdownFigures.jsx` (shared display pieces), `CalculationVisualModel.jsx` (the scene runner) and one file per variant. Maths never lives in JSX; variant rendering is a lookup table, not a switch.
 
 ---
 

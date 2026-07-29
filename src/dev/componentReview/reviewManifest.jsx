@@ -6,7 +6,9 @@
 
 import AngleExplore from '../../components/learning/AngleExplore.jsx'
 import AreaPerimeterExplore from '../../components/learning/AreaPerimeterExplore.jsx'
+import CalculationBreakdown from '../../components/learning/CalculationBreakdown.jsx'
 import TeachScreenShell from '../../components/core/TeachScreenShell.jsx'
+import * as FIX from './fixtures.js'
 import {
   REVIEW_ENTRIES as CORE_REVIEW_ENTRIES,
   REVIEW_QUESTIONS,
@@ -190,6 +192,71 @@ const AREA_PERIMETER_EXPLORE_ENTRY = {
   ],
 }
 
+// CalculationBreakdown reviews as one component with optional algebra
+// reasoning presentations, not as five components. Every variant renders
+// through the same public API — only `block.presentation` changes.
+function extendCalculationBreakdown(entry) {
+  return {
+    ...entry,
+    function: 'Multi-step maths walkthrough: breaks one calculation into stages (understand → worked steps → learner-applied step → full solution) and checks understanding at each stage. Optional algebra presentations swap those stages for a scene sequence that explains why an operation is valid, not just which operation to perform.',
+    usage: 'New component — pending review; not yet routed in ModulePlayer. Review variants cover the generic walkthrough and the four opt-in algebra reasoning presentations.',
+    alternative: 'GuidedExamResponse (written scaffold); GraphView (data, not procedure); FractionRatioExplore / AreaPerimeterExplore (seeing why a method works, with no staged tutoring).',
+    variants: [
+      {
+        id: 'standard',
+        label: 'Standard walkthrough',
+        description: 'The generic job, unchanged: interpret one calculation, choose a useful first move, follow worked transformations and complete a step. Works for algebra, percentages, geometry, fractions and science calculations alike, and is what every block without a `presentation` field renders.',
+        render: (fx, { onDone }) => <CalculationBreakdown block={fx} onContinue={onDone} />,
+      },
+      {
+        id: 'algebra-why',
+        label: 'Algebra Why Lab — 3x = 18',
+        description: 'Answers the question a learner who can already "divide by 3" still cannot answer. Four scenes build the coefficient out of repeated addition, name the goal, make the learner commit to an inverse operation against a live subtraction misconception, then divide both sides and confirm by substitution.',
+        render: (fx, { onDone }) => <CalculationBreakdown block={FIX.calculationAlgebraWhy} onContinue={onDone} />,
+      },
+      {
+        id: 'inverse-machine',
+        label: 'Inverse Operation Studio — 3x + 4 = 19',
+        description: 'Teaches order of undoing, which is where multi-step equations are actually lost. The learner identifies the last action performed, chooses its inverse, watches the value move back, and replays the original forward chain as the check. The reverse path is derived from the forward operations, so content cannot state the two inconsistently.',
+        render: (fx, { onDone }) => <CalculationBreakdown block={FIX.calculationInverseMachine} onContinue={onDone} />,
+      },
+      {
+        id: 'group-split',
+        label: 'Group Split Explorer — 3x = 18',
+        description: 'Makes a coefficient concrete before it is abstract. The learner shares 18 counters into three equal groups one tap at a time — or deals them in one action — and sees "divide by 3" as something they have done. Counters are conserved by construction and the whole model is completable from the keyboard.',
+        render: (fx, { onDone }) => <CalculationBreakdown block={FIX.calculationGroupSplit} onContinue={onDone} />,
+      },
+      {
+        id: 'balance',
+        label: 'Balance & Solve — 3x = 18',
+        description: 'Targets the "do it to one side" error directly. The one-sided move is offered as a real choice, refused with an explanation, and shown as a tilt only inside an optional aside — the balance stays level through every valid transformation.',
+        render: (fx, { onDone }) => <CalculationBreakdown block={FIX.calculationBalance} onContinue={onDone} />,
+      },
+      {
+        id: 'reduced-motion',
+        label: 'Reduced motion',
+        description: 'The same Algebra Why Lab sequence with every scene transition removed, so the reduced-motion path can be reviewed as a first-class state rather than assumed.',
+        render: (fx, { onDone }) => (
+          <CalculationBreakdown block={FIX.calculationAlgebraWhy} reducedMotion onContinue={onDone} />
+        ),
+      },
+      {
+        id: 'mobile-width',
+        label: 'Mobile width — 320px',
+        description: 'The narrowest supported screen, checked against the busiest presentation: eighteen 44px counter targets, three group zones and the equation all have to stay readable and contained rather than scrolling sideways.',
+        // A transformed ancestor becomes the containing block for the shell's
+        // fixed positioning, so this is a genuine 320px render inside the
+        // lab's 390px frame rather than a scaled-down picture of one.
+        render: (fx, { onDone }) => (
+          <div style={{ width: 320, height: '100%', position: 'relative', transform: 'translateZ(0)', overflow: 'hidden', margin: '0 auto' }}>
+            <CalculationBreakdown block={FIX.calculationGroupSplit} onContinue={onDone} />
+          </div>
+        ),
+      },
+    ],
+  }
+}
+
 // AreaPerimeterExplore sits beside its AngleExplore sibling rather than at the
 // end of the catalogue, so the two Maths diagram families review together.
 export const REVIEW_ENTRIES = CORE_REVIEW_ENTRIES.flatMap(entry => {
@@ -199,6 +266,10 @@ export const REVIEW_ENTRIES = CORE_REVIEW_ENTRIES.flatMap(entry => {
 
   if (entry.id === 'acronym-memorise') {
     return [extendAcronymMemorise(entry)]
+  }
+
+  if (entry.id === 'calculation-breakdown') {
+    return [extendCalculationBreakdown(entry)]
   }
 
   return [entry]

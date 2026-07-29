@@ -4,10 +4,28 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
-import { MOTION } from '../../constants/motion.js'
-import ContinueCTA from '../core/ContinueCTA.jsx'
+import CheckAnswerCTA from '../core/CheckAnswerCTA.jsx'
 import { ScreenTitle } from '../core/ScreenText.jsx'
 import InteractionShell from '../layout/InteractionShell.jsx'
+import {
+  Arrow,
+  ChevronDown,
+  ChoiceButton,
+  Lightbulb,
+  MathLine,
+  PhaseActions,
+  ReasoningPanel,
+  SectionHeading,
+  Target,
+  WhyCallout,
+  bodyStyle,
+  choiceListStyle,
+  opTag,
+  reasoningToItems,
+  stageHeaderStyle,
+} from './calculationBreakdown/calculationBreakdownParts.jsx'
+import CalculationVisualModel from './calculationBreakdown/CalculationVisualModel.jsx'
+import { resolveCalculationPresentation } from './calculationBreakdown/calculationBreakdownValidation.js'
 
 // ─── CalculationBreakdown ────────────────────────────────────────────────────
 //
@@ -17,11 +35,22 @@ import InteractionShell from '../layout/InteractionShell.jsx'
 //
 // Content lives entirely in `block`, so the same mechanic supports equations,
 // percentages, fractions, geometry and science calculations.
+//
+// `block.presentation.variant` optionally swaps the generic worked-step
+// sequence for one of the algebra reasoning presentations in
+// ./calculationBreakdown/ — they share this frame, its title treatment, its
+// stage surface and its CTAs, and differ only in what happens inside the
+// stage. Omitting `presentation` (or setting variant 'standard') keeps the
+// generic flow exactly as it is, which is what every existing block does.
 
 export default function CalculationBreakdown({
   block,
   subject = 'Maths',
   accent: accentOverride,
+  // Test/story override for the reduced-motion preference, matching the
+  // AngleExplore / AreaPerimeterExplore / CircuitDiagram convention. Left
+  // undefined in production so the system preference governs.
+  reducedMotion,
   onContinue,
 }) {
   const {
@@ -39,6 +68,65 @@ export default function CalculationBreakdown({
   const accent = accentOverride || theme.accent
   const accentRgb = theme.accentRgb || GENERAL.tealRgb
 
+  // An invalid model is refused rather than approximated: the reasons are
+  // logged in development and the generic walkthrough renders instead, so a
+  // content mistake never draws a misleading diagram.
+  const presentation = resolveCalculationPresentation(block)
+  if (presentation.errors.length > 0 && import.meta.env?.DEV) {
+    console.error(
+      `[CalculationBreakdown] presentation "${presentation.attempted ?? 'unknown'}" was rejected and fell back to the standard walkthrough:\n- ${presentation.errors.join('\n- ')}`,
+    )
+  }
+  const usesVisualModel = presentation.variant !== 'standard'
+
+  return (
+    <InteractionShell
+      subject={subject}
+      backgroundImage={backgroundImage}
+      backgroundOpacity={backgroundOpacity}
+    >
+      <div style={styles.viewport}>
+        <header style={styles.titleBlock}>
+          <ScreenTitle>{title}</ScreenTitle>
+          <p style={styles.screenIntro}>{goalPrompt}</p>
+        </header>
+
+        <div style={styles.scrollArea}>
+          <section
+            style={stageFrame(accentRgb)}
+            // The visual models announce their own state changes precisely;
+            // the generic flow keeps the coarse section-level live region.
+            aria-live={usesVisualModel ? undefined : 'polite'}
+          >
+            {usesVisualModel ? (
+              <CalculationVisualModel
+                variant={presentation.variant}
+                model={presentation.model}
+                reasoning={presentation.reasoning}
+                subject={subject}
+                accent={accent}
+                reducedMotion={reducedMotion}
+                onContinue={onContinue}
+              />
+            ) : (
+              <StandardSequence
+                problem={problem}
+                understand={understand}
+                steps={steps}
+                solution={solution}
+                accent={accent}
+                onContinue={onContinue}
+              />
+            )}
+          </section>
+        </div>
+      </div>
+    </InteractionShell>
+  )
+}
+
+// ─── The generic worked-step sequence ────────────────────────────────────────
+function StandardSequence({ problem, understand, steps, solution, accent, onContinue }) {
   const phases = [
     { kind: 'understand' },
     ...steps.map((step, stepIndex) => ({ kind: 'step', step, stepIndex })),
@@ -64,57 +152,42 @@ export default function CalculationBreakdown({
       : `Step ${phase.stepIndex + 1}`
 
   return (
-    <InteractionShell
-      subject={subject}
-      backgroundImage={backgroundImage}
-      backgroundOpacity={backgroundOpacity}
-    >
-      <div style={styles.viewport}>
-        <header style={styles.titleBlock}>
-          <ScreenTitle>{title}</ScreenTitle>
-          <p style={styles.screenIntro}>{goalPrompt}</p>
-        </header>
-
-        <div style={styles.scrollArea}>
-          <section style={stageFrame(accentRgb)} aria-live="polite">
-            <div style={styles.stageHeader}>
-              <span style={{ ...TYPE.label, color: accent }}>{phaseLabel}</span>
-            </div>
-
-            {phase.kind === 'understand' && (
-              <UnderstandPhase
-                problem={problem}
-                understand={understand}
-                steps={steps}
-                accent={accent}
-                onContinue={advance}
-              />
-            )}
-
-            {phase.kind === 'step' && (
-              <StepPhase
-                key={phase.stepIndex}
-                step={phase.step}
-                stepIndex={phase.stepIndex}
-                accent={accent}
-                onContinue={advance}
-                onBack={goBack}
-              />
-            )}
-
-            {phase.kind === 'solution' && (
-              <SolutionPhase
-                solution={solution}
-                steps={steps}
-                accent={accent}
-                onContinue={advance}
-                onBack={goBack}
-              />
-            )}
-          </section>
-        </div>
+    <>
+      <div style={stageHeaderStyle}>
+        <span style={{ ...TYPE.label, color: accent }}>{phaseLabel}</span>
       </div>
-    </InteractionShell>
+
+      {phase.kind === 'understand' && (
+        <UnderstandPhase
+          problem={problem}
+          understand={understand}
+          steps={steps}
+          accent={accent}
+          onContinue={advance}
+        />
+      )}
+
+      {phase.kind === 'step' && (
+        <StepPhase
+          key={phase.stepIndex}
+          step={phase.step}
+          stepIndex={phase.stepIndex}
+          accent={accent}
+          onContinue={advance}
+          onBack={goBack}
+        />
+      )}
+
+      {phase.kind === 'solution' && (
+        <SolutionPhase
+          solution={solution}
+          steps={steps}
+          accent={accent}
+          onContinue={advance}
+          onBack={goBack}
+        />
+      )}
+    </>
   )
 }
 
@@ -218,7 +291,7 @@ function OrientationChoiceList({ decision, accent, onResolved }) {
 
   return (
     <>
-      <div style={styles.choiceList}>
+      <div style={choiceListStyle}>
         {options.map((option, index) => {
           const label = typeof option === 'string' ? option : option.label
           const isCorrect = resolved && index === correct
@@ -271,6 +344,7 @@ function StepPhase({ step, stepIndex, accent, onContinue, onBack }) {
     answer,
     hint,
     resultExpr,
+    reasoning,
     cta = 'Continue',
   } = step
 
@@ -282,6 +356,8 @@ function StepPhase({ step, stepIndex, accent, onContinue, onBack }) {
     : check
       ? checkDone
       : true
+
+  const reasoningItems = reasoningToItems(reasoning)
 
   return (
     <>
@@ -303,6 +379,12 @@ function StepPhase({ step, stepIndex, accent, onContinue, onBack }) {
           <WhyCallout label="Why this step" accent={accent}>
             {whyStep}
           </WhyCallout>
+        </div>
+      )}
+
+      {reasoningItems.length > 0 && (
+        <div style={styles.sectionWithDivider}>
+          <ReasoningPanel items={reasoningItems} accent={accent} />
         </div>
       )}
 
@@ -382,7 +464,7 @@ function YourTurn({ answer, hint, resultExpr, accent, onSolved }) {
       )}
 
       {!solved && (
-        <ContinueCTA
+        <CheckAnswerCTA
           onClick={check}
           accent={accent}
           label="Check my answer"
@@ -517,7 +599,7 @@ function ChoiceList({ check, accent, mono = false, onResolved }) {
   }
 
   return (
-    <div style={styles.choiceList}>
+    <div style={choiceListStyle}>
       {options.map((option, index) => (
         <ChoiceButton
           key={`${option}-${index}`}
@@ -534,130 +616,6 @@ function ChoiceList({ check, accent, mono = false, onResolved }) {
     </div>
   )
 }
-
-function ChoiceButton({
-  label,
-  index,
-  isCorrect,
-  isWrong,
-  accent,
-  mono = false,
-  disabled,
-  onClick,
-}) {
-  const border = isCorrect ? accent : isWrong ? GENERAL.feedbackIncorrect : GENERAL.line.strong
-  const background = isCorrect
-    ? `${accent}18`
-    : isWrong
-      ? `rgba(${GENERAL.feedbackIncorrectRgb},0.1)`
-      : GENERAL.surfaceTint
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      style={{
-        ...choiceRow,
-        borderColor: border,
-        background,
-        cursor: disabled ? 'default' : 'pointer',
-      }}
-    >
-      <span style={choiceBadge(isCorrect || isWrong ? border : GENERAL.cinematic.textMuted)}>
-        {String.fromCharCode(65 + index)}
-      </span>
-      <span style={{
-        ...(mono ? { ...TYPE.body, fontStyle: 'italic' } : TYPE.body),
-        color: GENERAL.cinematic.textPrimary,
-        flex: 1,
-        textAlign: 'left',
-        minWidth: 0,
-      }}>
-        {label}
-      </span>
-      {isCorrect && <Check accent={accent} />}
-    </button>
-  )
-}
-
-function PhaseActions({ onContinue, onBack, accent, label = 'Continue', disabled = false }) {
-  return (
-    <div style={styles.actions}>
-      <ContinueCTA
-        onClick={onContinue}
-        accent={accent}
-        label={label}
-        disabled={disabled}
-      />
-      {onBack && (
-        <button type="button" onClick={onBack} style={styles.previousButton}>
-          Review previous step
-        </button>
-      )}
-    </div>
-  )
-}
-
-function WhyCallout({ label, accent, children }) {
-  return (
-    <div style={whyCallout(accent)}>
-      <Lightbulb accent={accent} />
-      <div>
-        <div style={{ ...TYPE.label, color: accent, marginBottom: 3 }}>{label}</div>
-        <p style={bodyStyle}>{children}</p>
-      </div>
-    </div>
-  )
-}
-
-function SectionHeading({ children }) {
-  return (
-    <h3 style={{ ...TYPE.displayCard, color: GENERAL.cinematic.textPrimary, margin: `0 0 ${SPACING.micro}px` }}>
-      {children}
-    </h3>
-  )
-}
-
-function MathLine({ expr, size = 22, accent, align = 'center', muted = false, wrap = false }) {
-  if (!expr) return null
-  return (
-    <div style={{
-      fontFamily: "'Sora', sans-serif",
-      fontSize: size,
-      fontWeight: 500,
-      letterSpacing: '0.01em',
-      lineHeight: 1.35,
-      textAlign: align,
-      color: muted ? GENERAL.cinematic.textMuted : accent || GENERAL.cinematic.textPrimary,
-      whiteSpace: wrap ? 'normal' : 'nowrap',
-      overflowWrap: wrap ? 'anywhere' : 'normal',
-    }}>
-      {expr}
-    </div>
-  )
-}
-
-// ─── Inline icons ─────────────────────────────────────────────────────────────
-const ChevronDown = ({ accent }) => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
-)
-
-const Arrow = ({ accent }) => (
-  <svg width="18" height="14" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-)
-
-const Check = ({ accent }) => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }} aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
-)
-
-const Target = ({ accent }) => (
-  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" style={{ flexShrink: 0 }} aria-hidden="true"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4" /></svg>
-)
-
-const Lightbulb = ({ accent }) => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12c.5.5 1 1.5 1 2h6c0-.5.5-1.5 1-2a7 7 0 0 0-4-12z" /></svg>
-)
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 const styles = {
@@ -682,9 +640,6 @@ const styles = {
     minHeight: 0,
     overflowY: 'auto',
     paddingBottom: `calc(${SPACING.cinematic}px + env(safe-area-inset-bottom, 0px))`,
-  },
-  stageHeader: {
-    padding: `${SPACING.standard}px ${SPACING.standard}px 0`,
   },
   equationHero: {
     padding: `${SPACING.separation}px ${SPACING.standard}px ${SPACING.cinematic}px`,
@@ -718,26 +673,6 @@ const styles = {
     width: '100%',
     maxWidth: 230,
   },
-  choiceList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: SPACING.micro,
-  },
-  actions: {
-    padding: `${SPACING.standard}px`,
-    borderTop: `1px solid ${GENERAL.line.soft}`,
-  },
-  previousButton: {
-    ...TYPE.bodySmall,
-    display: 'block',
-    width: '100%',
-    marginTop: SPACING.compact,
-    padding: SPACING.micro,
-    color: GENERAL.cinematic.textMuted,
-    background: 'transparent',
-    border: 'none',
-    cursor: 'pointer',
-  },
   solutionHero: {
     padding: `${SPACING.compact}px ${SPACING.standard}px ${SPACING.cinematic}px`,
     textAlign: 'center',
@@ -764,12 +699,6 @@ const styles = {
   },
 }
 
-const bodyStyle = {
-  ...TYPE.bodySmall,
-  color: GENERAL.cinematic.textSecondary,
-  margin: 0,
-}
-
 function stageFrame(accentRgb) {
   return {
     position: 'relative',
@@ -780,32 +709,6 @@ function stageFrame(accentRgb) {
     boxShadow: `inset 0 1px 0 ${GENERAL.line.soft}, ${GENERAL.shadow.raised}`,
   }
 }
-
-const choiceRow = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: SPACING.compact,
-  width: '100%',
-  minHeight: 54,
-  border: '1px solid',
-  borderRadius: RADII.medium,
-  padding: `${SPACING.micro}px ${SPACING.compact}px`,
-  transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}, background ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-}
-
-const choiceBadge = borderColor => ({
-  ...TYPE.caption,
-  fontWeight: 700,
-  width: 24,
-  height: 24,
-  flexShrink: 0,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: RADII.pill,
-  border: `1px solid ${borderColor}`,
-  color: borderColor,
-})
 
 function goalLine(accent) {
   return {
@@ -819,34 +722,12 @@ function goalLine(accent) {
   }
 }
 
-function whyCallout(accent) {
-  return {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: SPACING.compact,
-    marginTop: SPACING.standard,
-    paddingLeft: SPACING.compact,
-    borderLeft: `2px solid ${accent}`,
-  }
-}
-
 function decisionFeedback(isCorrect, accent) {
   return {
     marginTop: SPACING.compact,
     padding: `${SPACING.compact}px 0 0 ${SPACING.compact}px`,
     borderTop: `1px solid ${GENERAL.line.soft}`,
     borderLeft: `2px solid ${isCorrect ? accent : GENERAL.feedbackIncorrect}`,
-  }
-}
-
-function opTag(accent) {
-  return {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: 16,
-    fontWeight: 500,
-    color: accent,
-    minWidth: 42,
-    textAlign: 'center',
   }
 }
 

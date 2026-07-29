@@ -501,3 +501,53 @@ export const calculationBreakdown = {
     why: 'Each step keeps the equation balanced. We isolate x to find its value.',
   },
 }
+
+// CalculationBreakdown algebra presentations. Each hands the component
+// explicit, validated numbers — the visual model, the wording and (for the
+// machine) the whole undo path are derived, never authored twice.
+export const calculationAlgebraWhy = {
+  title: 'Why do we divide by 3?',
+  goalPrompt: 'Understand what 3x means before solving it',
+  presentation: {
+    variant: 'algebraWhy',
+    model: { variable: 'x', coefficient: 3, total: 18, solution: 6 },
+  },
+}
+
+export const calculationInverseMachine = {
+  title: 'Undo it in reverse',
+  goalPrompt: 'Solve 3x + 4 = 19 by undoing each action',
+  presentation: {
+    variant: 'inverseMachine',
+    model: {
+      variable: 'x',
+      operations: [
+        { type: 'multiply', value: 3 },
+        { type: 'add', value: 4 },
+      ],
+      result: 19,
+    },
+  },
+}
+
+export const calculationGroupSplit = {
+  title: 'Share it into equal groups',
+  goalPrompt: 'See 3x = 18 as three equal shares',
+  presentation: {
+    variant: 'groupSplit',
+    model: { variable: 'x', groupCount: 3, total: 18, solution: 6 },
+  },
+}
+
+export const calculationBalance = {
+  title: 'Keep both sides equal',
+  goalPrompt: 'See why the same operation goes on both sides',
+  presentation: {
+    variant: 'balance',
+    model: {
+      states: [
+        { left: '3x', right: '18', operation: '÷ 3', resultLeft: 'x', resultRight: '6' },
+      ],
+    },
+  },
+}

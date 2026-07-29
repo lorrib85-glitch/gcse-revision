@@ -40,6 +40,10 @@ export const SCREEN_TYPE_FUNCTIONS = {
   infographic: { functions: ['teach-mechanism'], interaction: 'passive' },
   // CalculationBreakdown: step-by-step maths walkthrough with a check at each
   // stage and a learner-applied step — teaches the procedure, then assesses.
+  // `block.presentation` optionally swaps the generic steps for one of the
+  // algebra reasoning presentations; the classification is unchanged, because
+  // they are the same component doing the same job with a different visual
+  // model (see docs/components/COMPONENT_REGISTRY.md).
   calculationBreakdown: { functions: ['sequence-process', 'apply'], interaction: 'assessed' },
 
   // Reveal interactions — active but unassessed

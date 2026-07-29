@@ -1,3 +1,4 @@
+import { expect, fn, userEvent, within } from 'storybook/test'
 import CalculationBreakdown from './CalculationBreakdown.jsx'
 
 const algebra = {
@@ -212,25 +213,423 @@ const fractions = {
   },
 }
 
+// ─── Algebra reasoning presentations ─────────────────────────────────────────
+//
+// Opt-in `presentation` blocks. Each one hands the component explicit,
+// validated numbers — never an equation string to parse — and the component
+// derives the visual model, the wording and (for the machine) the entire undo
+// path from them.
+
+const algebraWhyLab = {
+  title: 'Why do we divide by 3?',
+  goalPrompt: 'Understand what 3x means before solving it',
+  presentation: {
+    variant: 'algebraWhy',
+    model: { variable: 'x', coefficient: 3, total: 18, solution: 6 },
+  },
+}
+
+const inverseMachine = {
+  title: 'Undo it in reverse',
+  goalPrompt: 'Solve 3x + 4 = 19 by undoing each action',
+  presentation: {
+    variant: 'inverseMachine',
+    model: {
+      variable: 'x',
+      operations: [
+        { type: 'multiply', value: 3 },
+        { type: 'add', value: 4 },
+      ],
+      result: 19,
+    },
+  },
+}
+
+const groupSplit = {
+  title: 'Share it into equal groups',
+  goalPrompt: 'See 3x = 18 as three equal shares',
+  presentation: {
+    variant: 'groupSplit',
+    model: { variable: 'x', groupCount: 3, total: 18, solution: 6 },
+  },
+}
+
+const balance = {
+  title: 'Keep both sides equal',
+  goalPrompt: 'See why the same operation goes on both sides',
+  presentation: {
+    variant: 'balance',
+    model: {
+      states: [
+        { left: '3x', right: '18', operation: '÷ 3', resultLeft: 'x', resultRight: '6' },
+      ],
+    },
+  },
+}
+
+// A model that cannot be drawn honestly — 19 does not share equally between 3.
+// The component refuses it and renders the generic walkthrough instead.
+const invalidGroupSplit = {
+  ...algebra,
+  presentation: {
+    variant: 'groupSplit',
+    model: { variable: 'x', groupCount: 3, total: 19, solution: 6.33 },
+  },
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function sceneId(canvasElement) {
+  return canvasElement.querySelector('[data-cb-scene]')?.getAttribute('data-cb-scene')
+}
+
+async function chooseAndCheck(canvas, optionName) {
+  await userEvent.click(canvas.getByRole('button', { name: optionName }))
+  await userEvent.click(canvas.getByRole('button', { name: 'Check my answer' }))
+}
+
+async function continueScene(canvas) {
+  await userEvent.click(canvas.getByRole('button', { name: /^(Continue|Next challenge)$/ }))
+}
+
+// Feedback copy deliberately appears twice: once in the verdict panel and once
+// in the polite live region that announces the change. Assert presence rather
+// than uniqueness for anything the live region also carries.
+function expectText(canvas, matcher) {
+  const matches = canvas.getAllByText(matcher)
+  expect(matches.length, `No element matched ${matcher}`).toBeGreaterThan(0)
+  return expect(matches[0]).toBeVisible()
+}
+
+// ContinueCTA is a locked component and expresses its disabled state through
+// styling rather than the `disabled` attribute, so the gate is asserted for
+// what it actually has to do: pressing Continue must not advance the scene.
+async function expectGateHeld(canvas, canvasElement) {
+  const before = sceneId(canvasElement)
+  await continueScene(canvas)
+  expect(sceneId(canvasElement), 'Continue advanced the scene before the learner had committed to a decision').toBe(before)
+}
+
+function expectTouchTargets(canvasElement) {
+  const buttons = [...canvasElement.querySelectorAll('button')]
+  for (const button of buttons) {
+    const { width, height } = button.getBoundingClientRect()
+    if (width === 0 && height === 0) continue
+    expect(
+      height,
+      `Interactive target "${button.textContent?.trim() || button.getAttribute('aria-label')}" is under 44px tall`,
+    ).toBeGreaterThanOrEqual(43.5)
+  }
+}
+
 export default {
   title: 'Learning/CalculationBreakdown',
   component: CalculationBreakdown,
   parameters: { layout: 'fullscreen' },
 }
 
+// ─── Backwards compatibility — blocks with no `presentation` ─────────────────
+
 export const Default = {
   name: 'Algebra',
-  args: { block: algebra, onContinue: () => {} },
+  args: { block: algebra, onContinue: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // The generic understand → steps → solution phase machine is untouched.
+    await expect(canvas.getByText('Understand the question')).toBeVisible()
+    expect(canvasElement.querySelector('[data-cb-scene]')).toBeNull()
+
+    await userEvent.click(canvas.getByRole('button', { name: /Expand the brackets/ }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Continue' }))
+    await expect(canvas.getByText('Step 1')).toBeVisible()
+
+    await userEvent.click(canvas.getByRole('button', { name: /3x − 12 = 2x \+ 7/ }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Continue' }))
+    await expect(canvas.getByText('Step 2')).toBeVisible()
+
+    // The typed answer now uses the governed CheckAnswerCTA.
+    await userEvent.type(canvas.getByLabelText('Your answer'), '7')
+    await userEvent.click(canvas.getByRole('button', { name: 'Check my answer' }))
+    await userEvent.click(canvas.getByRole('button', { name: 'See the solution' }))
+
+    await expect(canvas.getByText('Complete solution')).toBeVisible()
+    await expect(canvas.getByText('x = 19')).toBeVisible()
+
+    // onContinue still fires only once past the final phase.
+    expect(args.onContinue).not.toHaveBeenCalled()
+    await userEvent.click(canvas.getByRole('button', { name: 'Next challenge' }))
+    expect(args.onContinue).toHaveBeenCalledTimes(1)
+  },
 }
 
 export const Percentage = {
-  args: { block: percentage, onContinue: () => {} },
+  args: { block: percentage, onContinue: fn() },
 }
 
 export const Geometry = {
-  args: { block: geometry, onContinue: () => {} },
+  args: { block: geometry, onContinue: fn() },
 }
 
 export const Fractions = {
-  args: { block: fractions, onContinue: () => {} },
+  args: { block: fractions, onContinue: fn() },
+}
+
+// ─── Algebra Why Lab ─────────────────────────────────────────────────────────
+
+export const AlgebraWhyLab = {
+  name: 'Algebra Why Lab — 3x = 18',
+  args: { block: algebraWhyLab, onContinue: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Scene 1 — 3x is built out of three equal groups, not asserted as a rule.
+    expect(sceneId(canvasElement)).toBe('read')
+    await expect(canvas.getByText('3x = 3 × x = x + x + x')).toBeVisible()
+    expect(canvasElement.querySelector('[data-cb-variable-groups]')?.getAttribute('data-cb-variable-groups')).toBe('3')
+    expect(canvasElement.querySelectorAll('[data-cb-variable-group]')).toHaveLength(3)
+    expect(canvasElement.querySelector('[data-cb-counter-field]')?.getAttribute('data-cb-counter-field')).toBe('18')
+
+    await continueScene(canvas)
+
+    // Scene 2 — the learner must commit to an inverse operation before the
+    // answer is available anywhere on screen.
+    expect(sceneId(canvasElement)).toBe('goal')
+    await expect(canvas.getByRole('button', { name: /Divide both sides by 3/ })).toBeVisible()
+    expect(canvas.queryByText('x = 6')).toBeNull()
+    await expectGateHeld(canvas, canvasElement)
+
+    // The subtraction misconception is explained, not just marked wrong.
+    await chooseAndCheck(canvas, /Subtract 3 from both sides/)
+    await expectText(canvas, /subtraction only undoes addition/)
+    await expectGateHeld(canvas, canvasElement)
+
+    await chooseAndCheck(canvas, /Divide both sides by 3/)
+    await expectText(canvas, /Division undoes multiplication/)
+
+    await continueScene(canvas)
+
+    // Scene 3 — dividing by 3 splits 18 into three equal groups of 6.
+    expect(sceneId(canvasElement)).toBe('undo')
+    await expectText(canvas, '3x ÷ 3 = 18 ÷ 3')
+    const zones = [...canvasElement.querySelectorAll('[data-cb-group-zone]')]
+    expect(zones).toHaveLength(3)
+    expect(zones.map(zone => zone.getAttribute('data-cb-group-count'))).toEqual(['6', '6', '6'])
+    await expect(canvas.getByText('Why both sides')).toBeVisible()
+
+    await continueScene(canvas)
+
+    // Scene 4 — reveal, then the substitution check.
+    expect(sceneId(canvasElement)).toBe('check')
+    await expectText(canvas, 'x = 6')
+    await expectText(canvas, '3 × 6 = 18')
+    await expect(canvas.getByText('How to check it')).toBeVisible()
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Next challenge' }))
+    expect(args.onContinue).toHaveBeenCalledTimes(1)
+  },
+}
+
+// ─── Inverse Operation Studio ────────────────────────────────────────────────
+
+export const InverseOperationStudio = {
+  name: 'Inverse Operation Studio — 3x + 4 = 19',
+  args: { block: inverseMachine, onContinue: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Scene 1 — the forward chain, in the order it was applied.
+    expect(sceneId(canvasElement)).toBe('read-forward')
+    const forward = canvasElement.querySelector('[data-cb-machine="forward"]')
+    expect(forward).not.toBeNull()
+    await expectText(canvas, 'Multiply by 3')
+    await expectText(canvas, 'Add 4')
+
+    await continueScene(canvas)
+
+    // Scene 2 — the last action is identified before anything is undone.
+    expect(sceneId(canvasElement)).toBe('identify-last')
+    await chooseAndCheck(canvas, /^B Add 4/)
+    await expectText(canvas, /first one we undo/)
+    await continueScene(canvas)
+
+    // Scene 3 — the reverse path is derived: subtract 4 comes first.
+    expect(sceneId(canvasElement)).toBe('undo-0')
+    await expectText(canvas, 'Undo + 4')
+    expect(canvasElement.querySelector('[data-cb-machine="reverse"]')).not.toBeNull()
+    await chooseAndCheck(canvas, /Subtract 4 from both sides/)
+    await expectText(canvas, '19 − 4 = 15')
+    await continueScene(canvas)
+
+    // Scene 4 — then divide by 3, revealing x = 5.
+    expect(sceneId(canvasElement)).toBe('undo-1')
+    await expectText(canvas, 'Undo × 3')
+    await chooseAndCheck(canvas, /Divide both sides by 3/)
+    await expectText(canvas, '15 ÷ 3 = 5')
+    await continueScene(canvas)
+
+    // Scene 5 — replaying the original forward machine returns 19.
+    expect(sceneId(canvasElement)).toBe('replay-check')
+    await expectText(canvas, 'x = 5')
+    await expectText(canvas, 'Matches the result')
+    await expectText(canvas, /returns 19/)
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Next challenge' }))
+    expect(args.onContinue).toHaveBeenCalledTimes(1)
+  },
+}
+
+// ─── Group Split Explorer ────────────────────────────────────────────────────
+
+export const GroupSplitExplorer = {
+  name: 'Group Split Explorer — 3x = 18',
+  args: { block: groupSplit, onContinue: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    expect(sceneId(canvasElement)).toBe('read')
+    expect(canvasElement.querySelectorAll('[data-cb-counter]')).toHaveLength(18)
+    await continueScene(canvas)
+
+    // Scene 2 — nothing has been shared yet, and Continue is held back.
+    expect(sceneId(canvasElement)).toBe('share')
+    expect(canvasElement.querySelectorAll('[data-cb-counter="loose"]')).toHaveLength(18)
+    expect(canvasElement.querySelectorAll('[data-cb-counter="grouped"]')).toHaveLength(0)
+    await expectGateHeld(canvas, canvasElement)
+
+    // Keyboard alone can deal counters — dragging is never required.
+    const firstCounter = canvas.getAllByRole('button', { name: /Deal a counter into group/ })[0]
+    firstCounter.focus()
+    await userEvent.keyboard('{Enter}')
+    expect(canvasElement.querySelectorAll('[data-cb-counter="loose"]')).toHaveLength(17)
+    expect(canvasElement.querySelectorAll('[data-cb-counter="grouped"]')).toHaveLength(1)
+
+    // Conservation: loose + grouped is always the original total.
+    expect(canvasElement.querySelectorAll('[data-cb-counter]')).toHaveLength(18)
+
+    // And the whole model can be completed from the keyboard.
+    const splitAll = canvas.getByRole('button', { name: 'Split into 3 equal groups' })
+    splitAll.focus()
+    await userEvent.keyboard('{Enter}')
+
+    const zones = [...canvasElement.querySelectorAll('[data-cb-group-zone]')]
+    expect(zones).toHaveLength(3)
+    expect(zones.map(zone => zone.getAttribute('data-cb-group-count'))).toEqual(['6', '6', '6'])
+    expect(canvasElement.querySelectorAll('[data-cb-counter="loose"]')).toHaveLength(0)
+    expect(canvasElement.querySelectorAll('[data-cb-counter="grouped"]')).toHaveLength(18)
+
+    await continueScene(canvas)
+
+    expect(sceneId(canvasElement)).toBe('reveal')
+    await expectText(canvas, 'x = 6')
+    await expectText(canvas, '3 × 6 = 18')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Next challenge' }))
+    expect(args.onContinue).toHaveBeenCalledTimes(1)
+  },
+}
+
+// ─── Balance & Solve ─────────────────────────────────────────────────────────
+
+export const BalanceAndSolve = {
+  name: 'Balance & Solve — 3x = 18',
+  args: { block: balance, onContinue: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Scene 1 — the equation begins equal, and the figure says so.
+    expect(sceneId(canvasElement)).toBe('read')
+    expect(canvasElement.querySelector('[data-cb-balance]')?.getAttribute('data-cb-balance')).toBe('valid')
+    await expectText(canvas, 'Balanced. Anything done from here has to keep it that way.')
+    await continueScene(canvas)
+
+    // Scene 2 — the one-sided move is offered, refused, and explained. It can
+    // never complete the step.
+    expect(sceneId(canvasElement)).toBe('choose-0')
+    await chooseAndCheck(canvas, /Divide one side only by 3/)
+    await expectText(canvas, /two sides stop being equal/)
+    await expectGateHeld(canvas, canvasElement)
+
+    await chooseAndCheck(canvas, /Divide both sides by 3/)
+    await continueScene(canvas)
+
+    // Scene 3 — the same operation on both sides, balance still level.
+    expect(sceneId(canvasElement)).toBe('apply-0')
+    await expectText(canvas, '3x ÷ 3 = 18 ÷ 3')
+    expect(
+      [...canvasElement.querySelectorAll('[data-cb-balance]')].map(node => node.getAttribute('data-cb-balance')),
+    ).toEqual(['valid'])
+
+    // The tilt exists only inside the optional aside.
+    await userEvent.click(canvas.getByRole('button', { name: 'What if we changed only one side?' }))
+    expect(canvasElement.querySelector('[data-cb-balance="invalid"]')).not.toBeNull()
+    await userEvent.click(canvas.getByRole('button', { name: 'Hide the one-sided version' }))
+    expect(canvasElement.querySelector('[data-cb-balance="invalid"]')).toBeNull()
+
+    await continueScene(canvas)
+
+    expect(sceneId(canvasElement)).toBe('reveal')
+    await expectText(canvas, 'x = 6')
+    expect(canvasElement.querySelector('[data-cb-balance]')?.getAttribute('data-cb-balance')).toBe('valid')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Next challenge' }))
+    expect(args.onContinue).toHaveBeenCalledTimes(1)
+  },
+}
+
+// ─── Governance ──────────────────────────────────────────────────────────────
+
+export const ReducedMotion = {
+  name: 'Reduced motion',
+  args: { block: algebraWhyLab, reducedMotion: true, onContinue: fn() },
+  play: async ({ canvasElement }) => {
+    const scene = canvasElement.querySelector('[data-cb-scene]')
+    await expect(scene).toHaveAttribute('data-reduced-motion', 'true')
+    // No entrance animation is scheduled at all when motion is reduced.
+    expect(getComputedStyle(scene).animationName).toBe('none')
+  },
+}
+
+export const MobileWidth = {
+  name: 'Mobile width — 320px',
+  args: { block: groupSplit, onContinue: fn() },
+  // A transformed ancestor becomes the containing block for the shell's fixed
+  // positioning, so this renders the component at a genuine 320px.
+  decorators: [
+    Story => (
+      <div style={{ width: 320, height: 720, position: 'relative', transform: 'translateZ(0)', overflow: 'hidden' }}>
+        <Story />
+      </div>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    const shell = canvasElement.querySelector('[data-cb-scene]')
+    expect(shell.scrollWidth).toBeLessThanOrEqual(shell.clientWidth)
+    expectTouchTargets(canvasElement)
+
+    await continueScene(canvas)
+
+    // The counter field is the widest thing this component draws.
+    const sharing = canvasElement.querySelector('[data-cb-scene]')
+    expect(sharing.scrollWidth).toBeLessThanOrEqual(sharing.clientWidth)
+    expectTouchTargets(canvasElement)
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Split into 3 equal groups' }))
+    const zones = canvasElement.querySelector('[data-cb-group-zones]')
+    expect(zones.scrollWidth).toBeLessThanOrEqual(zones.clientWidth)
+  },
+}
+
+export const InvalidModelFallsBack = {
+  name: 'Invalid model falls back to standard',
+  args: { block: invalidGroupSplit, onContinue: fn() },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // 19 counters cannot be shared equally between 3 groups, so no visual
+    // model is drawn — the generic walkthrough renders instead.
+    expect(canvasElement.querySelector('[data-cb-scene]')).toBeNull()
+    await expect(canvas.getByText('Understand the question')).toBeVisible()
+  },
 }
