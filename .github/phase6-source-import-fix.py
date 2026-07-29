@@ -13,6 +13,7 @@ for path in list((ROOT / 'src').rglob('*.js')) + list((ROOT / 'src').rglob('*.js
     pattern = re.compile(
         r"import\s*\{(?P<names>[^}]+)\}\s*from\s*['\"](?P<target>(?:\.\./)+modules\.js)['\"]"
     )
+    had_legacy_catalogue_import = bool(pattern.search(text))
 
     def replace_import(match):
         names = match.group('names')
@@ -24,6 +25,14 @@ for path in list((ROOT / 'src').rglob('*.js')) + list((ROOT / 'src').rglob('*.js
         return f"import {{{names}}} from '{target}'"
 
     text = pattern.sub(replace_import, text)
+
+    # A file importing the old root catalogue used MODULES to mean chapters.
+    # Rename both the import specifier and every reference in that same file.
+    if had_legacy_catalogue_import:
+        text = re.sub(r'\bMODULES\b', 'CHAPTERS', text)
+        text = text.replace('isModuleAvailable', 'isChapterAvailable')
+        text = text.replace('getModuleAvailability', 'getChapterAvailability')
+        text = text.replace('MODULE_AVAILABILITY', 'CHAPTER_AVAILABILITY')
 
     # Dynamic imports are uncommon in source but close the same escape hatch.
     text = re.sub(
