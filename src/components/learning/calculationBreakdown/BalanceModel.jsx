@@ -2,24 +2,25 @@
 //
 // Why the same operation must go on both sides. The balance is a conceptual
 // model, not a physics toy: it stays level through every valid transformation,
-// and the only time it tilts is inside an optional aside that shows what
-// changing one side alone would do.
+// and tilts only when a move has actually broken the equality.
 //
-// The one-sided option is offered as a choice and refused as an answer — the
-// learner meets the misconception, is told why it fails, and chooses again.
+// The one-sided move is offered as a real choice and refused as an answer. It
+// breaks the balance the moment it is committed — visibly, before any text
+// explains it — so the learner discovers the rule rather than being told it in
+// advance. Nothing in the scene copy or the question hints that keeping the
+// balance true is the goal; that is the thing being discovered.
 
 import { TYPE } from '../../../constants/typography.js'
 import { SPACING } from '../../../constants/spacing.js'
 import { MOTION } from '../../../constants/motion.js'
 import {
   describeInverseRelationship,
-  formatNumber,
   formatOperation,
   operationSymbol,
 } from './calculationBreakdownMath.js'
 import { MathLine, bodyStyle } from './calculationBreakdownParts.jsx'
 import { figureFrame, visuallyHidden } from './calculationBreakdownFigures.jsx'
-import { OperationChoice, OPERATION_CHOICE_INITIAL_STATE, SecondaryRevealButton } from './calculationBreakdownControls.jsx'
+import { OperationChoice, OPERATION_CHOICE_INITIAL_STATE } from './calculationBreakdownControls.jsx'
 
 // Geometry of the figure, in viewBox units. The SVG scales with its container
 // and the pan labels are positioned as a percentage of the same box, so the
@@ -72,34 +73,61 @@ export function buildBalanceScenes({ model, reasoning, roles, accent }) {
       id: `choose-${index}`,
       label: states.length > 1 ? `Choose move ${index + 1}` : 'Choose the operation',
       heading: 'What keeps it balanced?',
-      intro: `Look at what is being done to the left side, then choose the move that undoes it without breaking the balance.`,
-      announce: `Choose the operation that keeps ${state.left} equals ${state.right} true.`,
+      // States the starting fact only. Neither this line nor the question
+      // mentions keeping the balance true — the learner has to discover that
+      // by trying a one-sided move and watching it break.
+      intro: `The balance is level: ${state.left} is worth exactly what ${state.right} is worth.`,
+      announce: `The balance is level. Choose a move.`,
       summary: `${wording.bothSides} keeps the balance level.`,
       requiresDecision: true,
       initialState: OPERATION_CHOICE_INITIAL_STATE,
       reasoning: index === 0
         ? [{ key: 'goal', label: 'What we are trying to achieve', text: why.goal }]
         : [],
-      render: ({ state: choiceState, setState, resolved, resolve, announce }) => (
-        <>
-          <div style={figureFrame}>
-            <BalanceFigure left={state.left} right={state.right} roles={roles} status="valid" />
-          </div>
-          <div style={{ marginTop: SPACING.standard }}>
-            <OperationChoice
-              question={`Which move keeps ${state.left} = ${state.right} true?`}
-              support="The same action on both sides is the only move that leaves the equation saying the same thing."
-              options={buildBalanceOptions(state)}
-              state={choiceState}
-              setState={setState}
-              resolved={resolved}
-              onResolved={resolve}
-              onAnnounce={announce}
-              accent={accent}
-            />
-          </div>
-        </>
-      ),
+      render: ({ state: choiceState, setState, resolved, resolve, announce, prefersReducedMotion }) => {
+        // A one-sided move breaks the balance the moment it is committed —
+        // not two scenes later behind an optional button. This is the whole
+        // point of the variant, and the learner who reaches for it is exactly
+        // the one who needs to see it happen.
+        const broken = choiceState.checked
+          && choiceState.picked === 'one-side'
+          && !resolved
+
+        return (
+          <>
+            <div style={figureFrame}>
+              {broken && (
+                <MathLine
+                  expr={`${state.left} ${operationSymbol(operation)} = ${state.right}`}
+                  size={20}
+                  accent={roles.balanceInvalid}
+                  wrap
+                />
+              )}
+              <BalanceFigure
+                left={broken ? state.resultLeft : state.left}
+                right={state.right}
+                roles={roles}
+                status={broken ? 'invalid' : 'valid'}
+                changedSide={broken ? 'left' : null}
+                prefersReducedMotion={prefersReducedMotion}
+              />
+            </div>
+            <div style={{ marginTop: SPACING.standard }}>
+              <OperationChoice
+                question={`Choose the move that will find one ${state.resultLeft}.`}
+                options={buildBalanceOptions(state)}
+                state={choiceState}
+                setState={setState}
+                resolved={resolved}
+                onResolved={resolve}
+                onAnnounce={announce}
+                accent={accent}
+              />
+            </div>
+          </>
+        )
+      },
     })
 
     scenes.push({
@@ -115,53 +143,30 @@ export function buildBalanceScenes({ model, reasoning, roles, accent }) {
           { key: 'equality', label: 'Why both sides', text: why.equality },
         ]
         : [],
-      render: ({ state: sceneState, setState, prefersReducedMotion }) => (
-        <>
-          <div style={figureFrame}>
-            <MathLine
-              expr={`${state.left} ${operationSymbol(operation)} = ${state.right} ${operationSymbol(operation)}`}
-              size={20}
-              accent={roles.equationPrimary}
-              wrap
-            />
-            <BalanceFigure
-              left={state.resultLeft}
-              right={state.resultRight}
-              roles={roles}
-              status="valid"
-              prefersReducedMotion={prefersReducedMotion}
-            />
-            <p style={{ ...bodyStyle, textAlign: 'center' }}>
-              Same action, same both sides. The balance stays level, so the equation is still true.
-            </p>
-          </div>
-
-          <div style={{ marginTop: SPACING.compact }}>
-            <SecondaryRevealButton
-              label={sceneState.showMisconception ? 'Hide the one-sided version' : 'What if we changed only one side?'}
-              expanded={Boolean(sceneState.showMisconception)}
-              onClick={() => setState(current => ({ ...current, showMisconception: !current.showMisconception }))}
-              accent={accent}
-            />
-            {sceneState.showMisconception && (
-              <div style={{ marginTop: SPACING.compact }}>
-                <div style={figureFrame}>
-                  <BalanceFigure
-                    left={state.resultLeft}
-                    right={state.right}
-                    roles={roles}
-                    status="invalid"
-                    prefersReducedMotion={prefersReducedMotion}
-                  />
-                  <p style={{ ...bodyStyle, textAlign: 'center' }}>
-                    {state.misconception
-                      ?? `${wording.oneSide} makes the left worth less than the right. The equation is no longer equal, so anything worked out from here would be wrong.`}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </>
+      // The optional "what if we changed only one side?" aside used to live
+      // here. It has been removed, not lost: the break now happens on the
+      // choose scene at the moment the learner proposes it, which is both
+      // earlier and unconditional. Keeping the aside as well would teach the
+      // same thing twice.
+      render: ({ prefersReducedMotion }) => (
+        <div style={figureFrame}>
+          <MathLine
+            expr={`${state.left} ${operationSymbol(operation)} = ${state.right} ${operationSymbol(operation)}`}
+            size={20}
+            accent={roles.equationPrimary}
+            wrap
+          />
+          <BalanceFigure
+            left={state.resultLeft}
+            right={state.resultRight}
+            roles={roles}
+            status="valid"
+            prefersReducedMotion={prefersReducedMotion}
+          />
+          <p style={{ ...bodyStyle, textAlign: 'center' }}>
+            Same action, same both sides. The balance stays level, so the equation is still true.
+          </p>
+        </div>
       ),
     })
   })
@@ -210,56 +215,76 @@ function buildBalanceOptions(state) {
       id: 'one-side',
       label: wording.oneSide,
       correct: false,
-      feedback: `That changes what the left side is worth without changing the right. The two sides stop being equal, so the equation is no longer true and the step cannot be completed this way.`,
+      // Describes what the learner is looking at, now that the balance has
+      // actually tipped — the general rule lives in the reasoning rail.
+      feedback: `Look at the balance: the left is now ${state.resultLeft} while the right is still ${state.right}. The two sides are no longer equal, so the equation is no longer true.`,
     },
     {
       id: 'both-sides',
       label: wording.bothSides,
       correct: true,
-      feedback: `${describeInverseRelationship(operation)} Doing it to both sides at once keeps them worth the same, so ${state.resultLeft} = ${state.resultRight} is still true.`,
+      feedback: `Yes. Both pans change together, so the balance stays level and ${state.resultLeft} = ${state.resultRight} is still true.`,
     },
     {
       id: 'wrong-family',
       label: formatOperation(wrongFamily).bothSides,
       correct: false,
-      feedback: `That is fair — both sides are treated the same — but it does not undo ${wording.plain}, so the variable is no closer to being on its own.`,
+      feedback: `The balance stays level — both sides were treated the same — but it does not undo ${wording.plain}, so ${state.resultLeft} is no closer to being on its own.`,
     },
   ]
 }
 
 /**
- * Structure in SVG, values in canonical HTML type. The beam tilts only for the
- * deliberate `invalid` aside, by a small fixed angle: this is a diagram of an
- * idea, not a swinging scale.
+ * Structure in SVG, values in canonical HTML type.
+ *
+ * The beam tilts only when a move has actually broken the equality, by a small
+ * fixed angle: this is a diagram of an idea, not a swinging scale. The tilt is
+ * a rotation of the beam group with each pan counter-rotated so it still hangs
+ * upright, which lets the change animate as one restrained movement. Under
+ * reduced motion the same tilted state renders with no transition at all.
  */
-function BalanceFigure({ left, right, roles, status = 'valid', prefersReducedMotion = false }) {
+function BalanceFigure({
+  left,
+  right,
+  roles,
+  status = 'valid',
+  changedSide = null,
+  prefersReducedMotion = false,
+}) {
   const invalid = status === 'invalid'
   const angle = invalid ? TILT_DEGREES : 0
-  const radians = (angle * Math.PI) / 180
 
-  const leftEnd = {
-    x: PIVOT.x - BEAM_HALF * Math.cos(radians),
-    y: PIVOT.y - BEAM_HALF * Math.sin(radians),
-  }
-  const rightEnd = {
-    x: PIVOT.x + BEAM_HALF * Math.cos(radians),
-    y: PIVOT.y + BEAM_HALF * Math.sin(radians),
-  }
+  // Rest geometry: the tilt is applied as a transform, so these never move.
+  const leftEnd = { x: PIVOT.x - BEAM_HALF, y: PIVOT.y }
+  const rightEnd = { x: PIVOT.x + BEAM_HALF, y: PIVOT.y }
 
   const beamColour = invalid ? roles.balanceInvalid : roles.balanceBeam
   const panColour = invalid ? roles.balanceInvalid : roles.balanceValid
   const panFill = invalid ? roles.balanceInvalidSoft : roles.balanceValidSoft
+  const transition = prefersReducedMotion
+    ? undefined
+    : `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`
+
+  // Where each pan ends up once the beam has rotated — the HTML labels ride
+  // along with it.
+  const radians = (angle * Math.PI) / 180
+  const rotated = end => ({
+    x: PIVOT.x + (end.x - PIVOT.x) * Math.cos(radians),
+    y: PIVOT.y + (end.x - PIVOT.x) * Math.sin(radians),
+  })
 
   return (
-    <div style={{ position: 'relative', width: '100%', maxWidth: 280 }} data-cb-balance={status}>
+    <div
+      style={{ position: 'relative', width: '100%', maxWidth: 280 }}
+      data-cb-balance={status}
+      data-cb-balance-changed-side={changedSide ?? undefined}
+      data-reduced-motion={prefersReducedMotion ? 'true' : 'false'}
+    >
       <svg
         viewBox={`0 0 ${BOX.width} ${BOX.height}`}
         width="100%"
         height="auto"
-        style={{
-          display: 'block',
-          transition: prefersReducedMotion ? undefined : `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-        }}
+        style={{ display: 'block' }}
         role="img"
         aria-label={`Balance showing ${left} on the left and ${right} on the right. ${invalid ? 'The balance is tipped: the two sides are no longer equal.' : 'The balance is level: the two sides are equal.'}`}
       >
@@ -276,20 +301,43 @@ function BalanceFigure({ left, right, roles, status = 'valid', prefersReducedMot
           stroke={roles.balanceStructure} strokeWidth="1.5" strokeLinecap="round"
         />
 
-        {/* Beam */}
-        <line
-          x1={leftEnd.x} y1={leftEnd.y} x2={rightEnd.x} y2={rightEnd.y}
-          stroke={beamColour} strokeWidth="2" strokeLinecap="round"
-        />
-        <circle cx={PIVOT.x} cy={PIVOT.y} r="3.5" fill={beamColour} />
+        <g
+          data-cb-balance-beam={invalid ? 'tipped' : 'level'}
+          style={{
+            transform: `rotate(${angle}deg)`,
+            transformOrigin: `${PIVOT.x}px ${PIVOT.y}px`,
+            transition,
+          }}
+        >
+          <line
+            x1={leftEnd.x} y1={leftEnd.y} x2={rightEnd.x} y2={rightEnd.y}
+            stroke={beamColour} strokeWidth="2" strokeLinecap="round"
+            style={{ transition: prefersReducedMotion ? undefined : `stroke ${MOTION.duration.standard} ${MOTION.easing.standard}` }}
+          />
+          <circle cx={PIVOT.x} cy={PIVOT.y} r="3.5" fill={beamColour} />
 
-        {/* Pans hang vertically from each beam end */}
-        <Pan end={leftEnd} stroke={panColour} fill={panFill} />
-        <Pan end={rightEnd} stroke={panColour} fill={panFill} />
+          {/* Counter-rotated so each pan keeps hanging upright as the beam tips */}
+          <Pan end={leftEnd} stroke={panColour} fill={panFill} angle={angle} transition={transition} />
+          <Pan end={rightEnd} stroke={panColour} fill={panFill} angle={angle} transition={transition} />
+        </g>
       </svg>
 
-      <PanLabel end={leftEnd} text={left} roles={roles} />
-      <PanLabel end={rightEnd} text={right} roles={roles} />
+      <PanLabel end={rotated(leftEnd)} text={left} roles={roles} transition={transition} />
+      <PanLabel end={rotated(rightEnd)} text={right} roles={roles} transition={transition} />
+
+      {changedSide && (
+        <div
+          style={{
+            ...TYPE.caption,
+            fontWeight: 700,
+            color: roles.balanceInvalid,
+            textAlign: 'center',
+            marginTop: SPACING.micro,
+          }}
+        >
+          {`Only the ${changedSide} side changed`}
+        </div>
+      )}
 
       <span style={visuallyHidden}>
         {invalid
@@ -300,13 +348,19 @@ function BalanceFigure({ left, right, roles, status = 'valid', prefersReducedMot
   )
 }
 
-function Pan({ end, stroke, fill }) {
+function Pan({ end, stroke, fill, angle = 0, transition }) {
   const top = end.y + HANGER
   const halfTop = PAN.topWidth / 2
   const halfBottom = PAN.bottomWidth / 2
 
   return (
-    <g>
+    <g
+      style={{
+        transform: `rotate(${-angle}deg)`,
+        transformOrigin: `${end.x}px ${end.y}px`,
+        transition,
+      }}
+    >
       <line x1={end.x} y1={end.y} x2={end.x} y2={top} stroke={stroke} strokeWidth="1" strokeLinecap="round" />
       <path
         d={`M ${end.x - halfTop} ${top} L ${end.x + halfTop} ${top} L ${end.x + halfBottom} ${top + PAN.height} L ${end.x - halfBottom} ${top + PAN.height} Z`}
@@ -319,7 +373,7 @@ function Pan({ end, stroke, fill }) {
   )
 }
 
-function PanLabel({ end, text, roles }) {
+function PanLabel({ end, text, roles, transition }) {
   const centreY = end.y + HANGER + PAN.height / 2
 
   return (
@@ -332,6 +386,7 @@ function PanLabel({ end, text, roles }) {
         transform: 'translate(-50%, -50%)',
         pointerEvents: 'none',
         maxWidth: `${(PAN.topWidth / BOX.width) * 100}%`,
+        transition: transition ? `top ${MOTION.duration.standard} ${MOTION.easing.standard}` : undefined,
       }}
     >
       <div style={{

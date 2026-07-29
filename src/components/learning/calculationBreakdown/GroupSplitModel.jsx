@@ -89,7 +89,7 @@ export function buildGroupSplitScenes({ model, reasoning, roles, accent }) {
       reasoning: [{ key: 'goal', label: 'What we are trying to achieve', text: why.goal }],
       render: ({ state, setState, resolved, resolve, announce, prefersReducedMotion }) => (
         <SharingBoard
-          variable={variable}
+          equation={equation}
           groupCount={groupCount}
           total={total}
           perGroup={split.perGroup}
@@ -157,7 +157,7 @@ export function buildGroupSplitScenes({ model, reasoning, roles, accent }) {
 }
 
 function SharingBoard({
-  variable,
+  equation,
   groupCount,
   total,
   perGroup,
@@ -170,10 +170,16 @@ function SharingBoard({
 }) {
   const loose = total - dealt
   const groups = countersByGroup(dealt, groupCount)
-  const nextGroup = dealCounterToGroup(dealt, groupCount) + 1
+  const nextIndex = dealCounterToGroup(dealt, groupCount)
+  const nextGroup = nextIndex + 1
 
   return (
     <div style={figureFrame}>
+      {/* The algebra stays on screen while the sharing happens. Without it the
+          learner is moving counters around with nothing to connect the action
+          back to the equation it stands for. */}
+      <MathLine expr={equation} size={24} accent={roles.equationAccent} />
+
       <div style={{ width: '100%' }}>
         <div style={{ ...TYPE.caption, color: roles.textMuted, marginBottom: SPACING.micro }}>
           {loose > 0 ? `${loose} still to share` : 'All counters shared'}
@@ -243,7 +249,12 @@ function SharingBoard({
 
       {/* Labelled "Group 1…3", not "x 1…3": these zones hold counters being
           shared out, and only become worth one x once they are equal. */}
-      <GroupZones counts={groups} roles={roles} expected={resolved ? perGroup : null} />
+      <GroupZones
+        counts={groups}
+        roles={roles}
+        expected={resolved ? perGroup : null}
+        nextIndex={loose > 0 ? nextIndex : null}
+      />
 
       <p style={{ ...bodyStyle, textAlign: 'center', margin: 0 }}>
         {resolved

@@ -167,12 +167,22 @@ export function reasoningToItems(reasoning) {
     .map(([key, label]) => ({ key, label, text: reasoning[key] }))
 }
 
-export function ReasoningPanel({ items, accent, title = 'Why this works', style }) {
+/**
+ * The durable half of the explanation: the general rules the learner should
+ * still be able to state after the scaffolding has gone. It accumulates as
+ * scenes complete and never disappears.
+ *
+ * Deliberately titled differently from the verdict panel ("What happened"),
+ * which is momentary and situational. Two panels titled the same thing, one
+ * under the other, read as the app repeating itself.
+ */
+export function ReasoningPanel({ items, accent, title = 'Rule to remember', style }) {
   if (!items?.length) return null
 
   return (
     <section
       aria-label={title}
+      data-cb-reasoning-rail="true"
       style={{
         padding: `${SPACING.compact}px`,
         borderRadius: RADII.medium,

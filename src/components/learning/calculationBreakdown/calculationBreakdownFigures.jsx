@@ -18,6 +18,8 @@ import { formatTerm } from './calculationBreakdownMath.js'
 const COUNTER_SIZE = 16
 const COUNTER_SIZE_SMALL = 12
 
+const VARIABLE_BOX_SIZES = Object.freeze({ standard: 48, compact: 40, tight: 36 })
+
 /** N labelled containers standing for N lots of the variable. */
 export function VariableGroups({
   variable,
@@ -27,7 +29,7 @@ export function VariableGroups({
   highlightIndex = null,
   size = 'standard',
 }) {
-  const boxSize = size === 'compact' ? 40 : 48
+  const boxSize = VARIABLE_BOX_SIZES[size] ?? VARIABLE_BOX_SIZES.standard
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: SPACING.micro }}>
@@ -73,6 +75,11 @@ export function VariableGroups({
 /**
  * A field of counters. `grouped` counters read as belonging to a share — they
  * are filled and solid-outlined where loose counters are tinted and dashed.
+ *
+ * `clusters` splits the same counters into N visually separated blocks without
+ * claiming they have been shared yet. That is what lets a decision screen keep
+ * the total on view while quietly suggesting the structure the learner is
+ * about to choose — the shape of the answer is visible, the answer is not.
  */
 export function CounterField({
   count,
@@ -80,30 +87,52 @@ export function CounterField({
   grouped = false,
   small = false,
   label,
+  clusters = 1,
   // Four across keeps the field narrow enough to sit beside an x-group model
   // at 390px instead of pushing it onto its own row.
   maxPerRow = 4,
 }) {
-  const size = small ? COUNTER_SIZE_SMALL : COUNTER_SIZE
+  const clustered = clusters > 1 && count % clusters === 0
+  const size = small || clustered ? COUNTER_SIZE_SMALL : COUNTER_SIZE
+  const perCluster = clustered ? count / clusters : count
+  const columns = clustered ? 2 : Math.min(maxPerRow, Math.max(count, 1))
+  const gap = size === COUNTER_SIZE_SMALL ? 4 : 6
+
+  const grid = blockCount => (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${columns}, ${size}px)`,
+        gap,
+        justifyContent: 'center',
+      }}
+    >
+      {Array.from({ length: blockCount }, (_, index) => (
+        <Counter key={index} size={size} roles={roles} grouped={grouped} />
+      ))}
+    </div>
+  )
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: SPACING.micro }}>
       <div
         data-cb-counter-field={count}
+        data-cb-counter-clusters={clustered ? clusters : undefined}
         aria-hidden="true"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${Math.min(maxPerRow, Math.max(count, 1))}, ${size}px)`,
-          gap: small ? 4 : 6,
-          justifyContent: 'center',
-        }}
+        style={{ display: 'flex', gap: SPACING.micro, justifyContent: 'center' }}
       >
-        {Array.from({ length: count }, (_, index) => (
-          <Counter key={index} size={size} roles={roles} grouped={grouped} />
-        ))}
+        {clustered
+          ? Array.from({ length: clusters }, (_, index) => (
+            <div key={index} data-cb-counter-cluster={index}>{grid(perCluster)}</div>
+          ))
+          : grid(count)}
       </div>
       {label && <div style={{ ...TYPE.caption, color: roles.textMuted }}>{label}</div>}
-      <span style={visuallyHidden}>{`${count} ${grouped ? 'shared' : 'loose'} ${count === 1 ? 'counter' : 'counters'}`}</span>
+      <span style={visuallyHidden}>
+        {clustered
+          ? `${count} ${grouped ? 'shared' : 'loose'} counters, shown in ${clusters} equal blocks of ${perCluster}`
+          : `${count} ${grouped ? 'shared' : 'loose'} ${count === 1 ? 'counter' : 'counters'}`}
+      </span>
     </div>
   )
 }
@@ -191,8 +220,15 @@ export function ModelPair({ left, right, roles, leftLabel = 'Left side', rightLa
   )
 }
 
-/** Group zones for a share-into-equal-groups model. */
-export function GroupZones({ counts, roles, variable, expected = null }) {
+/**
+ * Group zones for a share-into-equal-groups model.
+ *
+ * `nextIndex` marks the zone the next counter will land in. Round-robin
+ * dealing is only legible if the learner can see where the next one is going —
+ * leaving that in the ARIA label alone makes the order look arbitrary to
+ * everyone who can see the screen.
+ */
+export function GroupZones({ counts, roles, variable, expected = null, nextIndex = null }) {
   return (
     <div
       style={{
@@ -205,11 +241,13 @@ export function GroupZones({ counts, roles, variable, expected = null }) {
     >
       {counts.map((count, index) => {
         const complete = expected !== null && count === expected
+        const isNext = !complete && nextIndex === index
         return (
           <div
             key={index}
             data-cb-group-zone={index}
             data-cb-group-count={count}
+            data-cb-group-next={isNext ? 'true' : undefined}
             style={{
               display: 'flex',
               flexDirection: 'column',
@@ -218,13 +256,19 @@ export function GroupZones({ counts, roles, variable, expected = null }) {
               minHeight: 92,
               padding: `${SPACING.micro}px 4px`,
               borderRadius: RADII.small,
-              border: `1px ${complete ? 'solid' : 'dashed'} ${complete ? roles.counterGrouped : roles.lineStrong}`,
-              background: complete ? roles.counterGroupedSoft : roles.surface,
+              border: `1px ${complete || isNext ? 'solid' : 'dashed'} ${
+                complete ? roles.counterGrouped : isNext ? roles.operationActive : roles.lineStrong
+              }`,
+              background: complete ? roles.counterGroupedSoft : isNext ? roles.operationActiveSoft : roles.surface,
             }}
           >
-            <span style={{ ...TYPE.caption, color: roles.textMuted }}>
+            <span style={{ ...TYPE.caption, color: isNext ? roles.operationActive : roles.textMuted }}>
               {variable ? `${variable} ${index + 1}` : `Group ${index + 1}`}
             </span>
+            {/* Named as well as outlined — never state by colour alone. */}
+            {isNext && (
+              <span style={{ ...TYPE.caption, fontWeight: 700, color: roles.operationActive }}>Next</span>
+            )}
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(2, 12px)',

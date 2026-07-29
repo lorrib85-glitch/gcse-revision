@@ -79,7 +79,9 @@ export function buildAlgebraWhyScenes({ model, reasoning, roles, accent }) {
       id: 'goal',
       label: 'State the goal',
       heading: `Find the value of one ${variable}`,
-      intro: `We know what ${coefficient} groups are worth. We want what one group is worth.`,
+      // One scene instruction. The question below asks for the decision; a
+      // third support line would only restate one of them.
+      intro: `${coefficient} equal groups are worth ${formatNumber(total)} between them.`,
       announce: `Scene 2 of 4. Choose the operation that finds one group.`,
       summary: `Goal: find one ${variable}, by undoing the multiplication.`,
       requiresDecision: true,
@@ -87,34 +89,42 @@ export function buildAlgebraWhyScenes({ model, reasoning, roles, accent }) {
       reasoning: [{ key: 'goal', label: 'What we are trying to achieve', text: why.goal }],
       render: ({ state, setState, resolved, resolve, announce }) => (
         <>
+          {/* The model stays on screen through the decision. Withdrawing it
+              here would push the learner back onto symbols at the one moment
+              we want them reasoning from the groups. The counters sit in
+              equal blocks so the shape of the answer is visible — which
+              operation produces it is still the learner's to work out. */}
           <div style={figureFrame}>
             <MathLine expr={equation} size={26} accent={roles.equationAccent} />
-            <p style={{ ...TYPE.bodySmall, color: roles.textSecondary, margin: 0, textAlign: 'center' }}>
-              {`${variable} is being multiplied by ${coefficient}.`}
-            </p>
+            <ModelPair
+              roles={roles}
+              leftLabel={`${coefficient} groups of ${variable}`}
+              rightLabel={`${formatNumber(total)} units`}
+              left={<VariableGroups variable={variable} count={coefficient} roles={roles} size="tight" />}
+              right={<CounterField count={total} roles={roles} clusters={coefficient} />}
+            />
           </div>
           <div style={{ marginTop: SPACING.standard }}>
             <OperationChoice
-              question={`If ${coefficient} equal groups total ${formatNumber(total)}, how do we find one group?`}
-              support="Look at what is being done to the variable, then choose the operation that undoes it."
+              question={`Choose the operation that will find one ${variable}.`}
               options={[
                 {
                   id: 'subtract',
                   label: `Subtract ${coefficient} from both sides`,
                   correct: false,
-                  feedback: `Subtracting ${coefficient} takes ${coefficient} away from the total. It does not undo three equal groups — ${variable} is multiplied by ${coefficient}, and subtraction only undoes addition.`,
+                  feedback: `That takes ${coefficient} counters off the total and leaves ${formatNumber(total - coefficient)} — but there are still ${coefficient} groups on the left, so one ${variable} is no closer to being on its own.`,
                 },
                 {
                   id: 'divide',
                   label: `Divide both sides by ${coefficient}`,
                   correct: true,
-                  feedback: `${describeInverseRelationship(acting)} Sharing ${formatNumber(total)} into ${coefficient} equal groups gives the value of one ${variable}.`,
+                  feedback: `Yes. ${formatNumber(total)} shared into ${coefficient} equal groups leaves ${formatNumber(solution)} in each, and one group is one ${variable}.`,
                 },
                 {
                   id: 'multiply',
                   label: `Multiply both sides by ${coefficient}`,
                   correct: false,
-                  feedback: `Multiplying again makes ${coefficient} × ${term} — even more groups of ${variable}. We need fewer groups, not more.`,
+                  feedback: `That makes ${coefficient} × ${term} — even more groups of ${variable}, and a total of ${formatNumber(total * coefficient)}. We need fewer groups, not more.`,
                 },
               ]}
               state={state}

@@ -301,6 +301,31 @@ function expectText(canvas, matcher) {
   return expect(matches[0]).toBeVisible()
 }
 
+/**
+ * The verdict panel and the reasoning rail must do different jobs: one says
+ * what just happened to this equation, the other carries the general rule.
+ * They may not share a heading, and no sentence may appear in both.
+ */
+function expectNoDuplicatedExplanation(canvasElement) {
+  const verdict = canvasElement.querySelector('[data-cb-verdict]')
+  const rail = canvasElement.querySelector('[data-cb-reasoning-rail]')
+  expect(verdict, 'no verdict panel rendered').not.toBeNull()
+  expect(rail, 'no reasoning rail rendered').not.toBeNull()
+
+  const headingOf = node => node.querySelector('h3, div')?.textContent?.trim()
+  expect(headingOf(verdict)).toBe('What happened')
+  expect(headingOf(rail)).toBe('Rule to remember')
+
+  const sentences = node => (node.textContent ?? '')
+    .split(/(?<=[.?!])\s+/)
+    .map(part => part.trim())
+    .filter(part => part.length > 12)
+
+  const railSentences = new Set(sentences(rail))
+  const repeated = sentences(verdict).filter(sentence => railSentences.has(sentence))
+  expect(repeated, `Sentence repeated in both panels: ${repeated.join(' | ')}`).toEqual([])
+}
+
 // ContinueCTA is a locked component and expresses its disabled state through
 // styling rather than the `disabled` attribute, so the gate is asserted for
 // what it actually has to do: pressing Continue must not advance the scene.
@@ -399,13 +424,27 @@ export const AlgebraWhyLab = {
     expect(canvas.queryByText('x = 6')).toBeNull()
     await expectGateHeld(canvas, canvasElement)
 
+    // The concrete model is still on screen at the moment of the decision —
+    // three x groups, all 18 counters, and the equation — so the learner can
+    // reason from the picture instead of falling back on symbols.
+    await expectText(canvas, '3x = 18')
+    expect(canvasElement.querySelectorAll('[data-cb-variable-group]')).toHaveLength(3)
+    expect(canvasElement.querySelector('[data-cb-counter-field]')?.getAttribute('data-cb-counter-field')).toBe('18')
+    // The counters sit in three equal blocks, so the shape of the answer is
+    // visible without naming the operation that produces it.
+    expect(canvasElement.querySelectorAll('[data-cb-counter-cluster]')).toHaveLength(3)
+
+    // One instruction, one question, no third line eliminating a distractor.
+    expect(canvas.queryByText(/Look at what is being done to the variable/)).toBeNull()
+    expect(canvas.queryByText('x is being multiplied by 3.')).toBeNull()
+
     // The subtraction misconception is explained, not just marked wrong.
     await chooseAndCheck(canvas, /Subtract 3 from both sides/)
-    await expectText(canvas, /subtraction only undoes addition/)
+    await expectText(canvas, /no closer to being on its own/)
     await expectGateHeld(canvas, canvasElement)
 
     await chooseAndCheck(canvas, /Divide both sides by 3/)
-    await expectText(canvas, /Division undoes multiplication/)
+    expectNoDuplicatedExplanation(canvasElement)
 
     await continueScene(canvas)
 
@@ -459,6 +498,10 @@ export const InverseOperationStudio = {
     expect(canvasElement.querySelector('[data-cb-machine="reverse"]')).not.toBeNull()
     await chooseAndCheck(canvas, /Subtract 4 from both sides/)
     await expectText(canvas, '19 − 4 = 15')
+    // The verdict says what just happened; the rail carries the general rule.
+    // Neither repeats the other, and they no longer share a heading.
+    expectNoDuplicatedExplanation(canvasElement)
+    await expectText(canvas, /Subtraction undoes addition/)
     await continueScene(canvas)
 
     // Scene 4 — then divide by 3, revealing x = 5.
@@ -497,12 +540,20 @@ export const GroupSplitExplorer = {
     expect(canvasElement.querySelectorAll('[data-cb-counter="grouped"]')).toHaveLength(0)
     await expectGateHeld(canvas, canvasElement)
 
+    // The algebra stays visible while the counters move, and the receiving
+    // group is marked on screen rather than only in the ARIA label.
+    await expectText(canvas, '3x = 18')
+    expect(canvasElement.querySelector('[data-cb-group-next="true"]')?.getAttribute('data-cb-group-zone')).toBe('0')
+    await expectText(canvas, 'Next')
+
     // Keyboard alone can deal counters — dragging is never required.
     const firstCounter = canvas.getAllByRole('button', { name: /Deal a counter into group/ })[0]
     firstCounter.focus()
     await userEvent.keyboard('{Enter}')
     expect(canvasElement.querySelectorAll('[data-cb-counter="loose"]')).toHaveLength(17)
     expect(canvasElement.querySelectorAll('[data-cb-counter="grouped"]')).toHaveLength(1)
+    // The marker follows the rotation, so the next destination is predictable.
+    expect(canvasElement.querySelector('[data-cb-group-next="true"]')?.getAttribute('data-cb-group-zone')).toBe('1')
 
     // Conservation: loose + grouped is always the original total.
     expect(canvasElement.querySelectorAll('[data-cb-counter]')).toHaveLength(18)
@@ -546,11 +597,29 @@ export const BalanceAndSolve = {
     // Scene 2 — the one-sided move is offered, refused, and explained. It can
     // never complete the step.
     expect(sceneId(canvasElement)).toBe('choose-0')
+
+    // Nothing tells the learner the goal is to keep the balance true — that
+    // is what the one-sided attempt is there to teach them.
+    expect(canvas.queryByText(/The same action on both sides is the only move/)).toBeNull()
+    expect(canvas.queryByText(/without breaking the balance/)).toBeNull()
+    expect(canvasElement.querySelector('[data-cb-balance]')?.getAttribute('data-cb-balance')).toBe('valid')
+
+    // A one-sided move breaks the balance immediately and visibly.
     await chooseAndCheck(canvas, /Divide one side only by 3/)
-    await expectText(canvas, /two sides stop being equal/)
+    const broken = canvasElement.querySelector('[data-cb-balance]')
+    expect(broken?.getAttribute('data-cb-balance')).toBe('invalid')
+    expect(broken?.getAttribute('data-cb-balance-changed-side')).toBe('left')
+    expect(canvasElement.querySelector('[data-cb-balance-beam]')?.getAttribute('data-cb-balance-beam')).toBe('tipped')
+    // The incorrect equation is retained, the changed side is named, and the
+    // announcement says the sides are no longer equal.
+    await expectText(canvas, '3x ÷ 3 = 18')
+    await expectText(canvas, 'Only the left side changed')
+    await expectText(canvas, /no longer equal/)
     await expectGateHeld(canvas, canvasElement)
 
+    // Immediate retry: choosing correctly restores the level balance.
     await chooseAndCheck(canvas, /Divide both sides by 3/)
+    expect(canvasElement.querySelector('[data-cb-balance]')?.getAttribute('data-cb-balance')).toBe('valid')
     await continueScene(canvas)
 
     // Scene 3 — the same operation on both sides, balance still level.
@@ -560,11 +629,9 @@ export const BalanceAndSolve = {
       [...canvasElement.querySelectorAll('[data-cb-balance]')].map(node => node.getAttribute('data-cb-balance')),
     ).toEqual(['valid'])
 
-    // The tilt exists only inside the optional aside.
-    await userEvent.click(canvas.getByRole('button', { name: 'What if we changed only one side?' }))
-    expect(canvasElement.querySelector('[data-cb-balance="invalid"]')).not.toBeNull()
-    await userEvent.click(canvas.getByRole('button', { name: 'Hide the one-sided version' }))
-    expect(canvasElement.querySelector('[data-cb-balance="invalid"]')).toBeNull()
+    // The optional "what if we changed only one side?" aside is gone — that
+    // lesson now happens at the moment of the choice, unconditionally.
+    expect(canvas.queryByRole('button', { name: /changed only one side/ })).toBeNull()
 
     await continueScene(canvas)
 
@@ -587,6 +654,27 @@ export const ReducedMotion = {
     await expect(scene).toHaveAttribute('data-reduced-motion', 'true')
     // No entrance animation is scheduled at all when motion is reduced.
     expect(getComputedStyle(scene).animationName).toBe('none')
+  },
+}
+
+export const ReducedMotionBalanceBreak = {
+  name: 'Reduced motion — balance break is static',
+  args: { block: balance, reducedMotion: true, onContinue: fn() },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await continueScene(canvas)
+    await chooseAndCheck(canvas, /Divide one side only by 3/)
+
+    // The reduced-motion path reaches the same tilted end state — it is not
+    // skipped, only un-animated.
+    const figure = canvasElement.querySelector('[data-cb-balance]')
+    expect(figure?.getAttribute('data-cb-balance')).toBe('invalid')
+    await expect(figure).toHaveAttribute('data-reduced-motion', 'true')
+
+    const beam = canvasElement.querySelector('[data-cb-balance-beam]')
+    expect(beam?.getAttribute('data-cb-balance-beam')).toBe('tipped')
+    expect(getComputedStyle(beam).transitionDuration).toBe('0s')
+    expect(getComputedStyle(beam).transform).not.toBe('none')
   },
 }
 
@@ -619,6 +707,31 @@ export const MobileWidth = {
     await userEvent.click(canvas.getByRole('button', { name: 'Split into 3 equal groups' }))
     const zones = canvasElement.querySelector('[data-cb-group-zones]')
     expect(zones.scrollWidth).toBeLessThanOrEqual(zones.clientWidth)
+  },
+}
+
+export const MobileWidthDecision = {
+  name: 'Mobile width — 320px, decision scene',
+  args: { block: algebraWhyLab, onContinue: fn() },
+  decorators: [
+    Story => (
+      <div style={{ width: 320, height: 720, position: 'relative', transform: 'translateZ(0)', overflow: 'hidden' }}>
+        <Story />
+      </div>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await continueScene(canvas)
+
+    // The densest screen in the component — equation, three x groups, three
+    // clustered blocks of counters and three options — still contained.
+    const scene = canvasElement.querySelector('[data-cb-scene]')
+    expect(scene.getAttribute('data-cb-scene')).toBe('goal')
+    expect(scene.scrollWidth).toBeLessThanOrEqual(scene.clientWidth)
+    expect(canvasElement.querySelectorAll('[data-cb-variable-group]')).toHaveLength(3)
+    expect(canvasElement.querySelectorAll('[data-cb-counter-cluster]')).toHaveLength(3)
+    expectTouchTargets(canvasElement)
   },
 }
 

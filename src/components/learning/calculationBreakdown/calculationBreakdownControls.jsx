@@ -10,8 +10,7 @@
 
 import { GENERAL } from '../../../constants/generalTheme.js'
 import { TYPE } from '../../../constants/typography.js'
-import { SPACING, COMPONENT_SIZE } from '../../../constants/spacing.js'
-import { RADII } from '../../../constants/radii.js'
+import { SPACING } from '../../../constants/spacing.js'
 import CheckAnswerCTA from '../../core/CheckAnswerCTA.jsx'
 import { ChoiceButton, Check, Cross, bodyStyle, choiceListStyle } from './calculationBreakdownParts.jsx'
 
@@ -21,10 +20,18 @@ export const OPERATION_CHOICE_INITIAL_STATE = Object.freeze({ picked: null, chec
  * @param options each `{ id, label, correct, feedback }`. Exactly one option
  *   should be correct; feedback on the wrong options must name the
  *   misunderstanding, not just say "no".
+ *
+ * Feedback here is deliberately *situational* — what just happened to this
+ * equation. The general rule it illustrates belongs to the reasoning rail and
+ * must not be repeated in both places: two panels saying the same sentence
+ * under the same heading make the screen longer without teaching anything.
+ *
+ * There is no `support` line. One scene instruction plus one question is the
+ * whole brief; a third line either repeats the question or eliminates a
+ * distractor before the learner has thought about it.
  */
 export function OperationChoice({
   question,
-  support,
   options = [],
   state = OPERATION_CHOICE_INITIAL_STATE,
   setState,
@@ -57,7 +64,6 @@ export function OperationChoice({
   return (
     <div>
       <p style={{ ...TYPE.body, color: GENERAL.cinematic.textPrimary, margin: 0 }}>{question}</p>
-      {support && <p style={{ ...bodyStyle, marginTop: SPACING.micro }}>{support}</p>}
 
       <div style={{ ...choiceListStyle, marginTop: SPACING.compact }} role="group" aria-label={question}>
         {options.map((option, index) => {
@@ -96,7 +102,7 @@ export function OperationChoice({
       )}
 
       {showVerdict && (
-        <div style={verdictStyle(pickedIsCorrect, accent)}>
+        <div style={verdictStyle(pickedIsCorrect, accent)} data-cb-verdict={pickedIsCorrect ? 'correct' : 'incorrect'}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -104,10 +110,13 @@ export function OperationChoice({
             ...TYPE.label,
             color: pickedIsCorrect ? accent : GENERAL.feedbackIncorrect,
           }}>
+            {/* Icon + the option's own status chip carry the verdict, so the
+                heading can stay the same in both states and name its job:
+                this panel says what just happened, not what the rule is. */}
             {pickedIsCorrect
               ? <Check accent={accent} />
               : <Cross accent={GENERAL.feedbackIncorrect} />}
-            {pickedIsCorrect ? 'Why this works' : 'Not yet — here is why'}
+            What happened
           </div>
           <p style={{ ...bodyStyle, color: GENERAL.feedbackText, marginTop: SPACING.micro }}>
             {pickedOption.feedback}
@@ -120,37 +129,6 @@ export function OperationChoice({
         </div>
       )}
     </div>
-  )
-}
-
-/**
- * A secondary, optional reveal — the misconception aside in the balance model.
- * Never the primary action on a scene, and never required to progress.
- */
-export function SecondaryRevealButton({ label, onClick, expanded, accent }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-expanded={expanded}
-      style={{
-        ...TYPE.bodySmall,
-        fontWeight: 600,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        minHeight: COMPONENT_SIZE.touchTarget,
-        padding: `${SPACING.micro}px ${SPACING.compact}px`,
-        color: accent,
-        background: 'transparent',
-        border: `1px solid ${GENERAL.line.strong}`,
-        borderRadius: RADII.medium,
-        cursor: 'pointer',
-      }}
-    >
-      {label}
-    </button>
   )
 }
 

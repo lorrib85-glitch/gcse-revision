@@ -110,7 +110,6 @@ export function buildInverseMachineScenes({ model, reasoning, roles, accent }) {
           <div style={{ marginTop: SPACING.standard }}>
             <OperationChoice
               question={`Reading left to right, which action was done to ${variable} last?`}
-              support="Order matters: undoing them in the wrong order gives the wrong answer."
               options={operations.map((operation, index) => ({
                 id: `op-${index}`,
                 label: formatOperation(operation).instruction,
@@ -142,7 +141,7 @@ export function buildInverseMachineScenes({ model, reasoning, roles, accent }) {
       id: `undo-${index}`,
       label: `Undo step ${index + 1}`,
       heading: `Undo ${formatOperation(undoing).symbol}`,
-      intro: `${formatOperation(undoing).instruction} was done to ${variable}. Choose the operation that undoes it.`,
+      intro: `${formatOperation(undoing).instruction} was done to ${variable}.`,
       announce: `Undo step ${index + 1}. Choose the inverse of ${formatOperation(undoing).plain}.`,
       summary: `${formatOperation(inverse).bothSides}: ${formatNumber(stage.from)} becomes ${formatNumber(stage.to)}.`,
       requiresDecision: true,
@@ -182,9 +181,6 @@ export function buildInverseMachineScenes({ model, reasoning, roles, accent }) {
           <div style={{ marginTop: SPACING.standard }}>
             <OperationChoice
               question={`Which operation undoes ${formatOperation(undoing).symbol}?`}
-              support={index === 0
-                ? 'Undo in reverse order: the last action on is the first action off.'
-                : 'One action has already come off. Undo the next one in.'}
               options={buildUndoOptions(undoing, stage, variable)}
               state={state}
               setState={setState}
@@ -253,7 +249,7 @@ function buildUndoOptions(operation, stage, variable) {
       id: 'correct',
       label: formatOperation(correct).bothSides,
       correct: true,
-      feedback: `${describeInverseRelationship(operation)} ${formatNumber(stage.from)} ${operationSymbol(correct)} = ${formatNumber(stage.to)}.`,
+      feedback: `Yes. ${formatNumber(stage.from)} ${operationSymbol(correct)} = ${formatNumber(stage.to)}.`,
     },
     {
       id: 'repeat',
