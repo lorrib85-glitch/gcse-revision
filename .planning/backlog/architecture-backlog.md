@@ -468,3 +468,60 @@ walkthrough at 390px all passed; these observations came out of that session.
 - Lab spec updated (or addendum added) to match the actual production-access
   model in `src/App.jsx`.
 - Decision recorded on self-hosting Manrope/Sora vs keeping Google Fonts.
+
+---
+
+## A9 — AreaPerimeterExplore story suite: 8 failures from ambiguous `getByText`
+
+**Status:** Backlog
+**Priority:** Medium — the suite is red on `main`, so every unrelated change has
+to re-prove it was already failing
+**Area:** `src/components/learning/AreaPerimeterExplore.stories.jsx`
+
+### Context
+`vitest run --project storybook` fails 8 of 19 `AreaPerimeterExplore` stories on
+`main`. Confirmed pre-existing and unrelated to the CalculationBreakdown algebra
+presentations work (96dc82f) by stashing that change and re-running: same file,
+same 8 failures, same count.
+
+Failing stories: Rectangle Area, Rectangle Square State, Rectangle Compare,
+Fixed Perimeter, Triangle Area, Triangle Perpendicular Height, Parallelogram
+Area, Trapezium Area.
+
+### Root cause (established, not assumed)
+Every failure is the same error — `Found multiple elements with the text: …` —
+on an `Area = … cm²` / `Perimeter … — area … cm²` status string.
+
+`AreaPerimeterExplore.jsx:373` renders a screen-reader-only
+`aria-live="polite"` announcement region (`data-ap-status-announcement`) whose
+text duplicates the visible status (`data-ap-status-heading`,
+`data-ap-status-calculation`, `data-ap-status-explanation`). The stories query
+with `canvas.getByText('Area = 30 cm²')`, which throws when more than one node
+matches.
+
+**The component is correct.** The live region is the accessibility behaviour we
+want and must not be removed to make the tests pass. This is a test-authoring
+problem: the assertions were written before the announcement region existed and
+were never updated.
+
+### Fix
+Roughly 8 one-line changes in the story file. Either:
+
+- scope the query to the visible node —
+  `within(canvasElement.querySelector('[data-ap-status-heading]')).getByText(…)`,
+  which also asserts the value landed in the right place; or
+- assert presence rather than uniqueness with `getAllByText(…)[0]`.
+
+The first is preferable: it keeps the assertion specific about *which* element
+carries the value. `CalculationBreakdown.stories.jsx` uses the second form (an
+`expectText` helper) for the same reason and can be aligned either way.
+
+Do not "fix" this by deleting the live region, by removing `aria-live`, or by
+making the announcement text differ from the visible text purely to dodge the
+matcher.
+
+### Acceptance criteria
+- `vitest run --project storybook` passes with 0 failures.
+- `AreaPerimeterExplore.jsx` is unchanged — no accessibility behaviour removed.
+- A short note in the story file explaining why status queries are scoped, so
+  the next person adding a story does not reintroduce the ambiguity.
