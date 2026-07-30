@@ -48,7 +48,7 @@ export default function InteractionShell({
         paddingLeft: SPACING.compact,
         paddingRight: SPACING.compact,
         // No large bottom padding — interaction surface manages its own spacing;
-        // ModulePlayer CTA bar is fixed on top. Safe-area only to avoid system chrome.
+        // ChapterPlayer CTA bar is fixed on top. Safe-area only to avoid system chrome.
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}>
         {children}

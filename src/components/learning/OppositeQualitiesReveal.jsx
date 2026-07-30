@@ -286,7 +286,7 @@ export default function OppositeQualitiesReveal({
     typeof document === 'undefined' ? true : document.visibilityState !== 'hidden',
   )
   const [screenBackdropHost, setScreenBackdropHost] = useState(null)
-  const continueModule = useInlineNavigationOwner(true)
+  const continueChapter = useInlineNavigationOwner(true)
 
   useEffect(() => {
     if (block.backgroundMode !== 'screen') {
@@ -364,7 +364,7 @@ export default function OppositeQualitiesReveal({
   const activeTextShadow = view.active?.side === 'right'
     ? visuals.rightActiveTextShadow
     : visuals.leftActiveTextShadow
-  const finishScreen = onComplete || continueModule
+  const finishScreen = onComplete || continueChapter
   const usesScreenBackdrop = Boolean(screenBackdropHost && block.backgroundMode === 'screen')
 
   return (

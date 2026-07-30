@@ -8,7 +8,7 @@ const root = resolve(process.cwd())
 // If a file outside this set starts using localStorage, the test fails — add it
 // to this list only after a deliberate decision, with preference for routing
 // through src/lib/storage.js instead. The former grandfathered call sites
-// (LegacyApp, ModulePlayer, QuickFireMode, ExamMode, authService, todaysPlan)
+// (LegacyApp, ChapterPlayer, QuickFireMode, ExamMode, authService, todaysPlan)
 // were all migrated to storage.js helpers — do not re-grandfather them.
 const APPROVED_LOCALSTORAGE_FILES = new Set([
   'src/lib/storage.js',             // canonical storage abstraction

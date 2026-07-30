@@ -514,7 +514,7 @@ const ORGANISATION_QUICKFIRE_QS = [
     correct: 0,
     ms: 'The heart pumps blood around the body.',
     hint: 'This muscular organ in your chest contracts to push blood around your body.',
-    moduleId: null,
+    chapterId: null,
     tags: ['biology:organisation', 'topic:circulation', 'format:mc', 'skill:recall'],
     source: 'handwritten',
   },

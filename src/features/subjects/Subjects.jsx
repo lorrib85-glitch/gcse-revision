@@ -368,7 +368,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
         {/* Owner-only entry to the Component Review Lab (personal inspection
             tool). Deliberately NOT a CHAPTERS entry — it opens the lab full-page
             via the ?componentReview flag rather than routing through
-            ModulePlayer, so it needs no content loader and touches no learner
+            ChapterPlayer, so it needs no content loader and touches no learner
             data. History-only. */}
         {isHistory && (
           <button

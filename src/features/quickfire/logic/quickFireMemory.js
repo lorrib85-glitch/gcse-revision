@@ -83,7 +83,7 @@ export function bumpQuickFireMemoryForAnswer(question, isCorrect) {
   const next = {
     subjects: bumpSeededBucket(memory.subjects || {}, subject, isCorrect, { subject }),
     topics: bumpSeededBucket(memory.topics || {}, topicKey, isCorrect, {
-      key: topicKey, subject, topic, moduleId: question.moduleId || null,
+      key: topicKey, subject, topic, chapterId: question.chapterId || null,
     }),
     updatedAt: new Date().toISOString(),
   }

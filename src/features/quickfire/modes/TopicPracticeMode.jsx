@@ -5,7 +5,7 @@ import { GENERAL } from '../../../constants/generalTheme.js'
 import { hexToRgb } from '../../../constants/subjects.js'
 import { recordScore } from '../../../progress.js'
 import { FIGURES } from '../../../figures.js'
-import { QUESTION_BANKS_BY_MODULE } from '../../../data/questionBanks/questionRegistry.js'
+import { QUESTION_BANKS_BY_TOPIC } from '../../../data/questionBanks/questionRegistry.js'
 import BackButton from '../../../components/core/BackButton.jsx'
 import ContinueCTA from '../../../components/core/ContinueCTA.jsx'
 import { gradeWithAI, cleanQuestionText } from '../utils.js'
@@ -41,7 +41,7 @@ export function TopicPracticeMode({ selected, onExit }) {
   const [tqMcHint, setTqMcHint] = useState(false)
   const [tqMcLocked, setTqMcLocked] = useState(false)
 
-  const questions = QUESTION_BANKS_BY_MODULE[selected.topicId] || []
+  const questions = QUESTION_BANKS_BY_TOPIC[selected.topicId] || []
   const q = questions[qIdx]
   const gs = feedback ? (GRADE_STYLE[feedback.grade] || GRADE_STYLE['Developing']) : null
   const isMC = q?.type === 'mc'

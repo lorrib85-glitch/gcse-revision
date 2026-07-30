@@ -5,8 +5,8 @@
 // results.
 //
 // Consumed by:
-//   - scripts/check-content-quality.mjs — on-demand check for one module,
-//     loaded via MODULE_CONTENT_LOADERS; this is what content-review runs.
+//   - scripts/check-content-quality.mjs — on-demand check for one chapter,
+//     loaded via CHAPTER_CONTENT_LOADERS; this is what content-review runs.
 //   - tests/architecture/content-quality.test.js — the separate CI
 //     regression floor, which additionally enumerates every built episode
 //     and keeps shrink-only grandfather allowlists. That enumeration is a

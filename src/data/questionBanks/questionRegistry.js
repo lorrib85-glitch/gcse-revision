@@ -7,7 +7,7 @@ import { NUMBER_QUICKFIRE, ALL_NUMBER_QUESTIONS } from './maths/number.js'
 import { LANGUAGE_PAPER1_QUICKFIRE, ALL_LANGUAGE_PAPER1_QUESTIONS } from './english/languagePaper1.js'
 
 // Keyed by topicId — drop-in replacement for PAST_PAPER_QS
-export const QUESTION_BANKS_BY_MODULE = {
+export const QUESTION_BANKS_BY_TOPIC = {
   ...MEDICINE_BY_TOPIC,
   ...BUILDING_BLOCKS_BY_TOPIC,
   ...ORGANISATION_BY_TOPIC,
@@ -15,8 +15,8 @@ export const QUESTION_BANKS_BY_MODULE = {
   ...BIOENERGETICS_BY_TOPIC,
 }
 
-// All quickfire questions from module banks (replaces QUICK_FIRE_HANDWRITTEN_QUESTIONS)
-export const ALL_MODULE_QUICKFIRE_QUESTIONS = [
+// All quickfire questions from the topic banks (replaces QUICK_FIRE_HANDWRITTEN_QUESTIONS)
+export const ALL_BANK_QUICKFIRE_QUESTIONS = [
   ...MEDICINE_QUICKFIRE_QUESTIONS,
   ...BUILDING_BLOCKS_QUICKFIRE,
   ...ORGANISATION_QUICKFIRE,
@@ -40,12 +40,8 @@ export function getQuestionsBySubject(subject) {
   return ALL_QUESTIONS.filter(q => q.subject === subject)
 }
 
-export function getQuestionsByModule(moduleId) {
-  return QUESTION_BANKS_BY_MODULE[moduleId] || []
-}
-
 export function getQuestionsByTopic(topicId) {
-  return QUESTION_BANKS_BY_MODULE[topicId] || []
+  return QUESTION_BANKS_BY_TOPIC[topicId] || []
 }
 
 export function getQuestionsByTags(tags) {

@@ -2,7 +2,7 @@
 //
 // The canonical Macbeth docs live in docs/content/english/Macbeth/.
 // This file deliberately keeps the first runtime Macbeth chapter small for now:
-// it wires the existing QuoteAnalyser sample into ModulePlayer so the chapter
+// it wires the existing QuoteAnalyser sample into ChapterPlayer so the chapter
 // no longer falls through to the generic "coming soon" state.
 
 export default {

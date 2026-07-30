@@ -12,7 +12,7 @@ import { describe, it, expect } from 'vitest'
 import { qfQuestionId } from '../../../src/features/quickfire/logic/questionId.js'
 import { quickFireFromBank } from '../../../src/features/quickfire/logic/convertBankQuestion.js'
 import { QUICK_QUIZ_QUESTIONS } from '../../../src/data/quickQuizData.js'
-import { ALL_MODULE_QUICKFIRE_QUESTIONS } from '../../../src/data/questionBanks/questionRegistry.js'
+import { ALL_BANK_QUICKFIRE_QUESTIONS } from '../../../src/data/questionBanks/questionRegistry.js'
 
 describe('qfQuestionId — key precedence', () => {
   it('uses q.id when present', () => {
@@ -46,7 +46,7 @@ describe('qfQuestionId — live question pool coverage', () => {
   })
 
   it('every module-bank quickfire question keys by its stable id', () => {
-    for (const q of ALL_MODULE_QUICKFIRE_QUESTIONS) {
+    for (const q of ALL_BANK_QUICKFIRE_QUESTIONS) {
       expect(typeof q.id, `${q.subject}: "${(q.q || '').slice(0, 40)}" has no id`).toBe('string')
       expect(qfQuestionId(q)).toBe(q.id)
     }

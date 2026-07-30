@@ -13,8 +13,9 @@ vi.mock('../../src/lib/storage.js', () => ({
   listKeys: vi.fn((prefix = '') => Object.keys(store).filter(k => k.startsWith(prefix))),
 }))
 
-const { isTaskDoneToday, getNextPlannerItem, getTaskSubject } = await import('../../src/todaysPlan.js')
+const { isTaskDoneToday, getNextPlannerItem, getTaskSubject, buildTodaysPlan } = await import('../../src/todaysPlan.js')
 const { CHAPTERS } = await import('../../src/chapters.js')
+const { MODULES } = await import('../../src/data/modules.js')
 
 const TODAY = new Date().toISOString().slice(0, 10)
 const YESTERDAY = (() => {
@@ -122,13 +123,47 @@ describe('getTaskSubject', () => {
     expect(getTaskSubject({ onSelect: { kind: 'practice', subject: 'Random' } })).toBe('Mixed')
   })
 
-  it('resolves module-backed tasks via CHAPTERS metadata', () => {
-    const mod = CHAPTERS[0]
-    expect(getTaskSubject({ onSelect: { kind: 'chapter', chapterId: mod.id } })).toBe(mod.subject)
+  it('resolves chapter-backed tasks via CHAPTERS metadata', () => {
+    const chapter = CHAPTERS[0]
+    expect(getTaskSubject({ onSelect: { kind: 'chapter', chapterId: chapter.id } })).toBe(chapter.subject)
   })
 
   it('returns null for the mixed warm-up and for no task at all', () => {
     expect(getTaskSubject({ type: 'warmup', onSelect: { kind: 'quickfire' } })).toBe(null)
     expect(getTaskSubject(null)).toBe(null)
+  })
+})
+
+// Gate 5 of the hierarchy migration: a task that routes the learner into one
+// learner-facing journey must name it with chapterId. "moduleId" is reserved
+// for genuine parent curriculum units in src/data/modules.js, which plan tasks
+// never route to.
+describe('plan task payload semantics', () => {
+  // A part-finished chapter is what makes buildTodaysPlan emit a "Continue"
+  // card, which is the plan's chapter-routing task.
+  function seedChapterInProgress() {
+    const ordered = MODULES.flatMap(module => module.chapterIds)
+    const chapter = CHAPTERS.find(item => ordered.includes(item.id) && (item.screenCount || 0) > 2)
+    store[`gcse_chapter_${chapter.id}`] = { screen: 1, completed: false }
+    return chapter
+  }
+
+  it('gives every chapter-routing task a chapterId naming a real chapter', () => {
+    seedChapterInProgress()
+    const chapterIds = new Set(CHAPTERS.map(chapter => chapter.id))
+    const chapterTasks = buildTodaysPlan().filter(task => task.onSelect?.kind === 'chapter')
+
+    expect(chapterTasks.length).toBeGreaterThan(0)
+    for (const task of chapterTasks) {
+      expect(Object.keys(task.onSelect)).not.toContain('moduleId')
+      expect(chapterIds, task.title).toContain(task.onSelect.chapterId)
+    }
+  })
+
+  it('carries no moduleId on any plan task', () => {
+    seedChapterInProgress()
+    for (const task of buildTodaysPlan()) {
+      expect(Object.keys(task.onSelect ?? {}), task.title).not.toContain('moduleId')
+    }
   })
 })

@@ -30,7 +30,7 @@ function extendAngleExplore(entry) {
   return {
     ...entry,
     function: 'Configuration-driven GCSE geometry diagram for exploring angle facts, parallel-line relationships, triangle properties and polygon angle rules. One learner-controlled value drives the SVG while page-level questions and marking remain outside the component.',
-    usage: 'New component — pending review; not yet routed in ModulePlayer. Review variants cover core angle facts, formal parallel-line rules, triangle properties, quadrilateral and polygon angle sums, regular polygons and static jobs.',
+    usage: 'New component — pending review; not yet routed in ChapterPlayer. Review variants cover core angle facts, formal parallel-line rules, triangle properties, quadrilateral and polygon angle sums, regular polygons and static jobs.',
     variants: [
       {
         ...variants['angle-types'],
@@ -130,7 +130,7 @@ const AREA_PERIMETER_EXPLORE_ENTRY = {
   subject: 'Maths',
   renderMode: 'inline',
   function: 'Configuration-driven GCSE area and perimeter diagram — the mensuration sibling of AngleExplore. Learner-controlled dimensions drive a live boundary trace, square-unit grids and decomposition visuals, so perimeter is built by tracing and adding edges while area is built by counting, rearranging or decomposing square units. Page-level prediction, marking and scoring remain outside the component.',
-  usage: 'New component — pending review; not yet routed in ModulePlayer. Review variants cover rectangles and squares, the fixed-perimeter comparison, triangle and parallelogram formula derivation, trapezia, composite rectilinear area and perimeter, and static worked-example use.',
+  usage: 'New component — pending review; not yet routed in ChapterPlayer. Review variants cover rectangles and squares, the fixed-perimeter comparison, triangle and parallelogram formula derivation, trapezia, composite rectilinear area and perimeter, and static worked-example use.',
   alternative: 'AngleExplore (angle facts, not mensuration); CalculationBreakdown (carrying out a method, not seeing why a formula holds); a static figure image for one-off diagrams.',
   render: () => <AreaPerimeterExplore preset="rectangle" focus="compare" />,
   fixture: null,
@@ -199,7 +199,7 @@ function extendCalculationBreakdown(entry) {
   return {
     ...entry,
     function: 'Multi-step maths walkthrough: breaks one calculation into stages (understand → worked steps → learner-applied step → full solution) and checks understanding at each stage. Optional algebra presentations swap those stages for a scene sequence that explains why an operation is valid, not just which operation to perform.',
-    usage: 'New component — pending review; not yet routed in ModulePlayer. Review variants cover the generic walkthrough and the four opt-in algebra reasoning presentations.',
+    usage: 'New component — pending review; not yet routed in ChapterPlayer. Review variants cover the generic walkthrough and the four opt-in algebra reasoning presentations.',
     alternative: 'GuidedExamResponse (written scaffold); GraphView (data, not procedure); FractionRatioExplore / AreaPerimeterExplore (seeing why a method works, with no staged tutoring).',
     variants: [
       {

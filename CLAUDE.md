@@ -156,11 +156,11 @@ Screen-level learning interaction components.
 - **`VisualNarrativeScreen` — RETIRED.** Do not create, restore, register, refine, or lock a standalone `VisualNarrativeScreen` component. Its progressive numbered-reveal behaviour is now owned solely by `TimelineChain` with `variant: 'reveal'` (`timelineChainReveal.js`). New progressive narrative / statement-sequence screens **must** use the reveal variant; interactive ordering/causal-chain screens continue to use `TimelineChain`'s default `interactive` variant. Legacy `type: 'visualNarrative'` lesson data is supported **only** through `src/data/visualNarrativeCompat.js`, which is migration-only compatibility code — never author new content as `visualNarrative`, and never build new features on the compat mapper. Any older per-module architecture or planning doc that still lists `VisualNarrativeScreen` under "suggested components" is **superseded** by this rule; use the reveal variant instead.
 
 ### `src/components/layout/`
-Module-level orchestration and chapter framing screens.
+Chapter-level orchestration and chapter framing screens.
 - `ChapterCompleteScreen.jsx` — End-of-chapter completion screen with score and stats.
 - `ChapterHookScreen.jsx` — Chapter intro hook screen with true/false warm-up.
 - `ChapterOutcomeScreen.jsx` — Chapter outcome/outcome reveal screen.
-- `ChapterPlayer.jsx` — In-module lesson flow orchestrator. Routes between all block types.
+- `ChapterPlayer.jsx` — Runtime for one authored chapter: lifecycle, opening gates, navigation, persistence and completion. Screen and block routing belongs to `ScreenRenderer.jsx`, not here.
 
 ### `src/components/feedback/`
 Question feedback and exam practice components.
@@ -217,7 +217,7 @@ docs/system/LEARNING_EXPERIENCE_PRINCIPLES.md
 
 ## Content Voice
 
-Read before authoring or editing any learner-facing content (module copy, screen text, narration, feedback):
+Read before authoring or editing any learner-facing content (chapter copy, screen text, narration, feedback):
 
 docs/system/TEACHING_VOICE_GUIDE.md
 
@@ -237,16 +237,16 @@ docs/system/TEACHING_VOICE_GUIDE.md
 
 | File | Contents |
 |------|----------|
-| `src/chapters.js` | `CHAPTERS` array — lightweight metadata for all 30 modules (id, title, subject, colour, screenCount, screenTags, etc.) for browsing/cards/progress. Full lesson content lives in `src/modules/<subject>.js` (see Bundle Size / Lazy Loading) |
-| `src/content/history/medicine/episodes/episode-NN-<slug>.js` | Per-episode content files — the canonical per-chapter pattern. Each exports `default { id, subject, screens, ... }` and is loaded individually through `src/content/chapterContentRegistry.js`. |
-| `src/modules/<subject>.js` | `biology.js`, `maths.js`, `sociology.js`, `chemistry.js`, `english.js` — legacy per-subject bundles, pending migration to per-module files. Dynamically imported via `SUBJECT_MODULE_LOADERS` when any module for that subject is opened. Do not add new modules here. |
+| `src/chapters.js` | **The chapter metadata source.** `CHAPTERS` array — lightweight metadata for every chapter (id, title, subject, colour, screenCount, screenTags, etc.) for browsing/cards/progress, plus `CHAPTER_AVAILABILITY`, `getChapterAvailability` and `isChapterAvailable`. Full lesson content lives in per-chapter content files (see Bundle Size / Lazy Loading) |
+| `src/data/modules.js` | **The parent-module catalogue.** `MODULES` — each parent curriculum unit with its ordered `chapterIds`, plus `getModuleById`. Chapter order across the app is derived from here. |
+| `src/content/<subject>/<series>/episodes/<file>.js` | Per-chapter content files — the canonical pattern. Each exports `default { id, subject, screens, ... }` and is loaded individually through `src/content/chapterContentRegistry.js` (`CHAPTER_CONTENT_LOADERS`). |
 | `src/content.js` | `TOPICS` and `TOPIC_DATA` — History topic content and questions |
 | `src/contentIndex.js` | `CONTENT_INDEX` — maps topic tags to section metadata for the Targeted Brush-Up system |
 | `src/progress.js` | Progress helpers: `getProgress`, `saveSessionResult`, `getSessionDraft`, etc. |
 | `src/lib/storage.js` | **Persistence + account-ownership boundary.** The only file allowed to touch `localStorage` directly (enforced by `tests/architecture/storage-boundary.test.js`). `getJson`/`setJson`/`removeKey`/`listKeys`/`saveCritical` transparently namespace every key under the currently active account scope (`'guest'` or `'uid:<firebase-uid>'`) — feature code never sees this or constructs a scoped key itself. `getRawJson`/`setRawJson`/`removeRawKey` bypass scoping for `riseUser` and two governance keys; `*ForScope` variants target an explicit scope for the sync/migration layer. Also runs the one-time legacy flat-key migration. See `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`. |
 | `src/data/progressSync/` | `progressSync.js` (Firestore reconcile orchestration), `progressMerge.js` (pure per-key merge rules — not a whole-snapshot "pick a side"), `accountScope.js` (guest-progress claim/migration flow, called from `AuthContext`). See `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`. |
 | `src/unifiedWeaknessTracker.js` | **Canonical weakness tracker.** `logWrongAnswer`, `logCorrectAnswer`, `logExamTechnique`, etc. — single source of truth for weakness identification, feeding `WeakSpotRecovery` and recovery quizzes. (`src/weaknessTracker.js` is a legacy, unused file — do not extend it.) |
-| `src/data/tagModuleMap.js` | `TAG_MODULE_MAP` + `findTaggedScreen()` — maps weakness tags to a module/screen for "fix this gap" links |
+| `src/data/tagChapterMap.js` | `TAG_CHAPTER_MAP` + `findTaggedChapterScreen()` — maps weakness tags to a chapter/screen for "fix this gap" links |
 | `src/data/learningGraph/` | **Canonical learning graph** — concept registry (`subject:course:concept` ids, e.g. `history:medicine:galen`), facet tag schema, and `resolveEffectiveTags()` inheritance resolver. Single vocabulary for module/topic/question/exam-paper `tags`; never invent concept spellings outside the registry. See `docs/system/LEARNING_GRAPH.md`; enforced by `tests/architecture/learning-graph.test.js`. |
 | `src/data/masteryEngine/` | **Canonical learner mastery engine** — pure logic layer recording what one learner knows, as per-concept evidence keyed by registered learning graph concept ids (unknown ids throw). Mastery/confidence/strength are derived at read time, never stored; persistence only via its `masteryStore.js` through `src/lib/storage.js`. App/UI consumers are authorised phase by phase via the allowlist guard in `tests/architecture/mastery-engine.test.js` — currently only the write-only QuickFire recorder (`src/features/quickfire/logic/masteryRecorder.js`, Phase 3A); anything else stays blocked until its consumer phase is explicitly authorised. See `docs/system/MASTERY_ENGINE.md`. |
 | `src/data/mathsTopics.js` | Maths topic groups and questions |
@@ -318,7 +318,7 @@ Use sentence case, not title case. Capitalise only the first word and proper nou
 - ✓ `Trust me, I'm following Jupiter`
 - ✗ `Trust Me, I'm Following Jupiter`
 
-This applies to module titles, chapter names, screen headings, button labels, and any other copy written into the codebase.
+This applies to module titles, chapter titles, screen headings, button labels, and any other copy written into the codebase.
 
 ## Commands
 
@@ -337,7 +337,7 @@ This applies to module titles, chapter names, screen headings, button labels, an
 
 ### Learning hierarchy (non-negotiable)
 
-Every module should prioritise:
+Every chapter should prioritise:
 
 1. Retrieval
 2. Understanding

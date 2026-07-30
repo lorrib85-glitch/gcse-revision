@@ -28,7 +28,7 @@ function mkQuestion(id, overrides = {}) {
     correct: 0,
     subject: 'Biology',
     topic: 'Cells',
-    moduleId: null,
+    chapterId: null,
     ...overrides,
   }
 }
@@ -63,7 +63,7 @@ describe('repetition guard', () => {
   })
 
   it('dedupes legacy-keyed questions (no id) by their text-derived key', () => {
-    const chem = { q: 'What is the pH of a neutral solution?', subject: 'Chemistry', topic: 'Acids', options: ['7', '1'], correct: 0, moduleId: null }
+    const chem = { q: 'What is the pH of a neutral solution?', subject: 'Chemistry', topic: 'Acids', options: ['7', '1'], correct: 0, chapterId: null }
     const queue = selectQuickFireQueue({ questions: [chem, { ...chem }], dateKey: '2026-07-05', now: NOW })
     expect(queue.length).toBe(1)
     expect(queue[0].q).toBe(chem.q)
@@ -84,9 +84,9 @@ describe('weakness scoring is preserved', () => {
   })
 
   it('boosts modules self-rated as confused or clicking', () => {
-    const q = mkQuestion('a', { moduleId: 'sci_bio_w1' })
-    expect(scoreQuestion(q, { ...base, confidenceRatings: [{ moduleId: 'sci_bio_w1', confidence: 'confused' }] })).toBe(4)
-    expect(scoreQuestion(q, { ...base, confidenceRatings: [{ moduleId: 'sci_bio_w1', confidence: 'clicking' }] })).toBe(2)
+    const q = mkQuestion('a', { chapterId: 'sci_bio_w1' })
+    expect(scoreQuestion(q, { ...base, confidenceRatings: [{ chapterId: 'sci_bio_w1', confidence: 'confused' }] })).toBe(4)
+    expect(scoreQuestion(q, { ...base, confidenceRatings: [{ chapterId: 'sci_bio_w1', confidence: 'clicking' }] })).toBe(2)
   })
 
   it('previously wrong questions still get boosted and rank first', () => {

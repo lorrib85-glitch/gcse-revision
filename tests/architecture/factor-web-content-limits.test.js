@@ -30,7 +30,7 @@ describe('FactorWeb content limits', () => {
   it('keeps every registered FactorWeb within the governed mobile authoring limits', async () => {
     const violations = []
 
-    for (const [moduleId, load] of Object.entries(CHAPTER_CONTENT_LOADERS)) {
+    for (const [chapterId, load] of Object.entries(CHAPTER_CONTENT_LOADERS)) {
       const episode = await load()
       const factorWebs = collectFactorWebs(episode)
 
@@ -41,47 +41,47 @@ describe('FactorWeb content limits', () => {
         const factors = block.factors || []
 
         if (!title) {
-          violations.push(`${moduleId}:${path} has no visible title`)
+          violations.push(`${chapterId}:${path} has no visible title`)
         } else if ([...title].length > COMPONENT_TEXT_LIMITS.factorWeb.title) {
           violations.push(
-            `${moduleId}:${path} title is ${[...title].length} characters; maximum is ${COMPONENT_TEXT_LIMITS.factorWeb.title}: “${title}”`,
+            `${chapterId}:${path} title is ${[...title].length} characters; maximum is ${COMPONENT_TEXT_LIMITS.factorWeb.title}: “${title}”`,
           )
         }
 
         if ([...judgementTitle].length > COMPONENT_TEXT_LIMITS.factorWeb.title) {
           violations.push(
-            `${moduleId}:${path} judgementTitle is ${[...judgementTitle].length} characters; maximum is ${COMPONENT_TEXT_LIMITS.factorWeb.title}: “${judgementTitle}”`,
+            `${chapterId}:${path} judgementTitle is ${[...judgementTitle].length} characters; maximum is ${COMPONENT_TEXT_LIMITS.factorWeb.title}: “${judgementTitle}”`,
           )
         }
 
         if ([...centreLabel].length > COMPONENT_TEXT_LIMITS.factorWeb.centreLabel) {
           violations.push(
-            `${moduleId}:${path} centreLabel is ${[...centreLabel].length} characters; maximum is ${COMPONENT_TEXT_LIMITS.factorWeb.centreLabel}: “${centreLabel}”`,
+            `${chapterId}:${path} centreLabel is ${[...centreLabel].length} characters; maximum is ${COMPONENT_TEXT_LIMITS.factorWeb.centreLabel}: “${centreLabel}”`,
           )
         }
 
         if (factors.length < 4 || factors.length > 6) {
           violations.push(
-            `${moduleId}:${path} has ${factors.length} factors; FactorWeb supports 4–6 for the governed split layout`,
+            `${chapterId}:${path} has ${factors.length} factors; FactorWeb supports 4–6 for the governed split layout`,
           )
         }
 
         factors.forEach((factor, index) => {
           const nodeLabel = factor.shortTitle || factor.title || ''
           if (!factor.id) {
-            violations.push(`${moduleId}:${path}.factors.${index} has no stable id`)
+            violations.push(`${chapterId}:${path}.factors.${index} has no stable id`)
           }
           if (!nodeLabel) {
-            violations.push(`${moduleId}:${path}.factors.${index} has no visible node label`)
+            violations.push(`${chapterId}:${path}.factors.${index} has no visible node label`)
           } else if ([...nodeLabel].length > COMPONENT_TEXT_LIMITS.factorWeb.nodeLabel) {
             violations.push(
-              `${moduleId}:${path}.factors.${index} node label is ${[...nodeLabel].length} characters; maximum is ${COMPONENT_TEXT_LIMITS.factorWeb.nodeLabel}: “${nodeLabel}”`,
+              `${chapterId}:${path}.factors.${index} node label is ${[...nodeLabel].length} characters; maximum is ${COMPONENT_TEXT_LIMITS.factorWeb.nodeLabel}: “${nodeLabel}”`,
             )
           }
         })
 
         if ((block.centreImage || block.centerImage) && !(block.centreImageAlt || block.centerImageAlt)) {
-          violations.push(`${moduleId}:${path} has a centre image without meaningful alt text`)
+          violations.push(`${chapterId}:${path} has a centre image without meaningful alt text`)
         }
       })
     }

@@ -203,10 +203,10 @@ describe('buildWeekdayBlocks', () => {
     expect(blocks[2].subject).toBe('History')
   })
 
-  it('never routes the main-progress block into an unbuilt stub module', () => {
-    // Biology's only built module (sci_bio_w1) is complete; the remaining
-    // Biology chapters in MODULE_GROUPS are screenCount-0 stubs. The planner
-    // must not hand back a stub as the next module — better no module than a
+  it('never routes the main-progress block into an unbuilt stub chapter', () => {
+    // Biology's only built chapter (sci_bio_w1) is complete; the remaining
+    // Biology chapters in CHAPTERS are screenCount-0 stubs. The planner must
+    // not hand back a stub as the next chapter — better no chapter than a
     // dead card pointing at empty content.
     const bioAllDone = {
       ...emptyState,

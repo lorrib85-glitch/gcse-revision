@@ -11,7 +11,7 @@ import { QUICK_QUIZ_QUESTIONS } from '../../../data/quickQuizData.js'
 import { quickFireFromBank } from '../logic/convertBankQuestion.js'
 import { qfQuestionId } from '../logic/questionId.js'
 import { selectQuickFireQueue } from '../logic/quickFireSelector.js'
-import { ALL_MODULE_QUICKFIRE_QUESTIONS } from '../../../data/questionBanks/questionRegistry.js'
+import { ALL_BANK_QUICKFIRE_QUESTIONS } from '../../../data/questionBanks/questionRegistry.js'
 import { recordQuestionResult } from '../logic/masteryRecorder.js'
 import { readQuickFireMemory, bumpQuickFireMemoryForAnswer, bucketAccuracy } from '../logic/quickFireMemory.js'
 import { saveQfBestIfBeaten } from '../logic/quickFireBest.js'
@@ -42,12 +42,12 @@ function shuffle(arr) {
 
 // TODO phase 2: Chemistry quickfire questions have no module bank yet — migrate when Chemistry is designed
 const CHEMISTRY_QF_PENDING = [
-  { q: 'What is the pH of a neutral solution?', options: ['7', '1', '14', '0'], correct: 0, subject: 'Chemistry', topic: 'Acids and Alkalis', moduleId: null, ms: 'Neutral solutions have pH 7.', hint: 'On the pH scale, this number sits exactly halfway between acidic and alkaline.' },
-  { q: 'What particle has a negative charge?', options: ['Electron', 'Proton', 'Neutron', 'Nucleus'], correct: 0, subject: 'Chemistry', topic: 'Atomic Structure', moduleId: null, ms: 'Electrons have a negative charge.', hint: 'This subatomic particle orbits the nucleus and has a much smaller mass than a proton or neutron.' },
+  { q: 'What is the pH of a neutral solution?', options: ['7', '1', '14', '0'], correct: 0, subject: 'Chemistry', topic: 'Acids and Alkalis', chapterId: null, ms: 'Neutral solutions have pH 7.', hint: 'On the pH scale, this number sits exactly halfway between acidic and alkaline.' },
+  { q: 'What particle has a negative charge?', options: ['Electron', 'Proton', 'Neutron', 'Nucleus'], correct: 0, subject: 'Chemistry', topic: 'Atomic Structure', chapterId: null, ms: 'Electrons have a negative charge.', hint: 'This subatomic particle orbits the nucleus and has a much smaller mass than a proton or neutron.' },
 ]
 
 const QUICK_FIRE_QUESTIONS = [
-  ...ALL_MODULE_QUICKFIRE_QUESTIONS,
+  ...ALL_BANK_QUICKFIRE_QUESTIONS,
   ...CHEMISTRY_QF_PENDING,
   ...QUICK_QUIZ_QUESTIONS.filter(q => QUICK_FIRE_BANK_TYPES.has(q.type)).map(quickFireFromBank),
 ]
@@ -55,14 +55,14 @@ const QUICK_FIRE_QUESTIONS = [
 // ─── Subject metadata ─────────────────────────────────────────────────────────
 
 const QUICK_FIRE_SUBJECT_META = {
-  History:      { icon: '🏛️', logo: '/images/history/_shared/main.webp',   color: SUBJECTS.History.subjectBrowserAccent, moduleId: 'history-medicine-medieval-beliefs-causes' },
-  Maths:        { icon: '✖️', logo: '/images/maths/_shared/main.webp',     color: '#2DD4BF', moduleId: null },
-  Sociology:    { icon: '👥', logo: '/images/sociology/_shared/main.webp', color: '#FF5C7A', moduleId: null },
-  Chemistry:    { icon: '⚗️', logo: '/images/chemistry/_shared/logo.webp',      color: '#9B59E8', moduleId: null },
-  Biology:      { icon: '🌿', logo: '/images/biology/_shared/main.webp',        color: '#4F8A5B', moduleId: 'sci_bio_w1' },
-  English:      { icon: '📘', logo: '/images/english/_shared/main.webp',   color: '#B66DFF', moduleId: null },
-  Physics:      { icon: '⚡', logo: '/images/physics/_shared/main.webp',   color: '#3B82F6', moduleId: null },
-  'Quick Fire': { icon: '⚡', logo: null,                            color: GENERAL.teal, moduleId: null },
+  History:      { icon: '🏛️', logo: '/images/history/_shared/main.webp',   color: SUBJECTS.History.subjectBrowserAccent, chapterId: 'history-medicine-medieval-beliefs-causes' },
+  Maths:        { icon: '✖️', logo: '/images/maths/_shared/main.webp',     color: '#2DD4BF', chapterId: null },
+  Sociology:    { icon: '👥', logo: '/images/sociology/_shared/main.webp', color: '#FF5C7A', chapterId: null },
+  Chemistry:    { icon: '⚗️', logo: '/images/chemistry/_shared/logo.webp',      color: '#9B59E8', chapterId: null },
+  Biology:      { icon: '🌿', logo: '/images/biology/_shared/main.webp',        color: '#4F8A5B', chapterId: 'sci_bio_w1' },
+  English:      { icon: '📘', logo: '/images/english/_shared/main.webp',   color: '#B66DFF', chapterId: null },
+  Physics:      { icon: '⚡', logo: '/images/physics/_shared/main.webp',   color: '#3B82F6', chapterId: null },
+  'Quick Fire': { icon: '⚡', logo: null,                            color: GENERAL.teal, chapterId: null },
 }
 
 // ─── Stats accumulators ───────────────────────────────────────────────────────
@@ -93,7 +93,7 @@ function addQuickFireAnswer(stats, question, isCorrect) {
     subjects: bumpQuickFireBucket(stats.subjects || {}, subject, isCorrect, { subject }),
     topics: bumpQuickFireBucket(stats.topics || {}, topicKey, isCorrect, {
       key: topicKey, subject, topic,
-      moduleId: question.moduleId || null,
+      chapterId: question.chapterId || null,
     }),
   }
 }
@@ -111,7 +111,7 @@ function rankedQuickFireSubjects(memory) {
       subject,
       icon: QUICK_FIRE_SUBJECT_META[subject]?.icon || '📚',
       color: QUICK_FIRE_SUBJECT_META[subject]?.color || '#9CA8C7',
-      moduleId: QUICK_FIRE_SUBJECT_META[subject]?.moduleId || null,
+      chapterId: QUICK_FIRE_SUBJECT_META[subject]?.chapterId || null,
       answered: bucket.answered || 0,
       correct: bucket.correct || 0,
       accuracy: bucketAccuracy(bucket),
@@ -149,13 +149,18 @@ function pickQuickFireRecommendation(memory) {
     return {
       subject: weakTopic.subject,
       topic: weakTopic.topic,
-      moduleId: weakTopic.moduleId || QUICK_FIRE_SUBJECT_META[weakTopic.subject]?.moduleId || null,
+      // Historical read only: topic buckets persisted before the chapter
+      // rename carry the same value under `moduleId`. Read it forward so a
+      // returning learner keeps their weak-topic link; the next answer in this
+      // topic rewrites the bucket with `chapterId`. Never written back.
+      chapterId: weakTopic.chapterId || weakTopic.moduleId
+        || QUICK_FIRE_SUBJECT_META[weakTopic.subject]?.chapterId || null,
       accuracy: bucketAccuracy(weakTopic),
       answered: weakTopic.answered || 0,
     }
   }
 
-  return { subject: 'Biology', topic: 'Photosynthesis', moduleId: 'sci_bio_w1', accuracy: 0, answered: 0 }
+  return { subject: 'Biology', topic: 'Photosynthesis', chapterId: 'sci_bio_w1', accuracy: 0, answered: 0 }
 }
 
 // ─── Per-question history ─────────────────────────────────────────────────────

@@ -13,5 +13,5 @@ export function useInlineNavigationOwner(active = true) {
     return api.claim()
   }, [active, api])
 
-  return api?.continueModule || null
+  return api?.continueChapter || null
 }

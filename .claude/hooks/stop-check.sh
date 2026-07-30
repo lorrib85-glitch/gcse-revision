@@ -15,7 +15,7 @@ fi
 if [ "$GATE_OK" = "1" ]; then
   awk 'BEGIN{ok=1}
     /\/index-[^\/]+\.js/ {if ($2+0 > 600) {print "BUDGET: main bundle " $2 "kB > 600kB limit"; ok=0}}
-    /\/ModulePlayer-[^\/]+\.js/ {if ($2+0 > 550) {print "BUDGET: ModulePlayer " $2 "kB > 550kB limit"; ok=0}}
+    /\/ChapterPlayer-[^\/]+\.js/ {if ($2+0 > 550) {print "BUDGET: ChapterPlayer " $2 "kB > 550kB limit"; ok=0}}
     /\/history-[^\/]+\.js/ {if ($2+0 > 450) {print "BUDGET: history " $2 "kB > 450kB limit"; ok=0}}
     END{exit !ok}' /tmp/vite-build-check.log > /tmp/budget-check.log 2>&1 || GATE_OK=0
 fi

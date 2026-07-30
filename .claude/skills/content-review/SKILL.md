@@ -290,7 +290,7 @@ requires rendering and looking at the pixels at 390px width:
 
 1. Start the dev server (`./node_modules/.bin/vite --port 5173`).
 2. For each screen in scope, screenshot it via the dev-only jump:
-   `node scripts/screenshot.mjs "/?module=<id>&screen=<n>" <out>.png`
+   `node scripts/screenshot.mjs "/?chapter=<id>&screen=<n>" <out>.png`
    (see `src/app/LegacyApp.jsx` — dev-only, no deep-linking needed).
 3. Render the **composed screen in the real render path** — not a
    component's own Storybook story in isolation. A component passing its

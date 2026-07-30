@@ -33,7 +33,7 @@ describe('getSupportForConcept — supported Episode 1 concepts', () => {
       expect(res.concept).toBe(concept)
       // these medieval concepts appear in Episode 1 (and, being interleaved,
       // may also appear in later episodes) — assert Episode 1 support exists.
-      const ep1 = res.screens.filter(s => s.moduleId === EP01)
+      const ep1 = res.screens.filter(s => s.chapterId === EP01)
       expect(ep1.length, `${concept} has no Episode 1 support`).toBeGreaterThan(0)
       for (const s of ep1) {
         expect(typeof s.screenIndex).toBe('number')

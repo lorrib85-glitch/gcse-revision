@@ -23,7 +23,7 @@ const MIGRATED_VALUES = [
   { hex: '#D9A441', token: 'SUBJECTS[subject].accent' },
   // SwipeSort bespoke near-black backdrop → resolved subject background.
   { hex: '#05060A', token: 'SUBJECTS[subject].background' },
-  // ModulePlayer full-screen shells → GENERAL.backgroundApp; ConceptReveal
+  // ChapterPlayer full-screen shells → GENERAL.backgroundApp; ConceptReveal
   // subject-atmospheric gradient → resolved subject background token.
   { hex: '#080C1A', token: 'GENERAL.backgroundApp / SUBJECTS[subject].background' },
   // Bronze survives ONLY as its canonical SUBJECTS.History.subjectBrowserAccent

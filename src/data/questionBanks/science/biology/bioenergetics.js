@@ -254,7 +254,7 @@ const BIOENERGETICS_QUICKFIRE_QS = [
     correct: 0,
     ms: 'Plants use carbon dioxide during photosynthesis.',
     hint: 'Plants take this gas in through their leaves and combine it with water using light energy.',
-    moduleId: 'sci_bio_w1',
+    chapterId: 'sci_bio_w1',
     tags: ['biology:bioenergetics', 'topic:photosynthesis', 'format:mc', 'skill:recall'],
     source: 'handwritten',
   },
