@@ -20,8 +20,8 @@ import { TEST_TOPICS } from '../../data/examTestTopics.js'
 export { TestDataProvider } from './testDataContext.jsx'
 
 // NOTE: Past paper question banks have been extracted to
-// src/data/questionBanks/ and are now accessed via QUESTION_BANKS_BY_MODULE.
-// PAST_PAPER_QS has been removed — use QUESTION_BANKS_BY_MODULE[topicId] instead.
+// src/data/questionBanks/ and are now accessed via QUESTION_BANKS_BY_TOPIC.
+// PAST_PAPER_QS has been removed — use QUESTION_BANKS_BY_TOPIC[topicId] instead.
 
 // ─── English topic view ───────────────────────────────────────────────────────
 function EnglishTopicView({ group, onBack }) {

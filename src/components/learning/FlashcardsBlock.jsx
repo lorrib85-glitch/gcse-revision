@@ -4,7 +4,7 @@ import { TYPE } from '../../constants/typography.js'
 
 // ─── FlashcardsBlock — unscored prompt/answer reveal grid ─────────────────────
 //
-// Extracted from ModulePlayer so the existing runtime pattern can be reviewed in
+// Extracted from ChapterPlayer so the existing runtime pattern can be reviewed in
 // the Component Lab without maintaining a second implementation.
 //
 // block shape: {

@@ -75,9 +75,9 @@ function bucketAccuracy(bucket) {
   return bucket?.answered ? Math.round((bucket.correct / bucket.answered) * 100) : 0
 }
 
-function confidencePriority(confidenceRatings, moduleId) {
-  if (!moduleId) return 0
-  const rating = confidenceRatings.find(item => item.moduleId === moduleId)
+function confidencePriority(confidenceRatings, chapterId) {
+  if (!chapterId) return 0
+  const rating = confidenceRatings.find(item => item.chapterId === chapterId)
   if (!rating) return 0
   if (rating.confidence === 'confused') return 4
   if (rating.confidence === 'clicking') return 2
@@ -90,7 +90,7 @@ export function scoreQuestion(question, { memory, questionHistory, confidenceRat
   const topicBucket = memory.topics?.[question.subject + '::' + question.topic]
   const subjectWeakness = subjectBucket?.answered ? Math.max(0, 70 - bucketAccuracy(subjectBucket)) / 10 : 0
   const topicWeakness = topicBucket?.answered ? Math.max(0, 75 - bucketAccuracy(topicBucket)) / 8 : 0
-  const confidenceBoost = confidencePriority(confidenceRatings, question.moduleId)
+  const confidenceBoost = confidencePriority(confidenceRatings, question.chapterId)
   const wrongBoost = hist?.lastResult === 'incorrect' ? WRONG_BOOST : 0
   const recentlyCorrect = hist?.lastAt != null && now - hist.lastAt < RECENT_CORRECT_WINDOW_MS
   const correctPenalty = hist?.lastResult === 'correct'

@@ -121,7 +121,7 @@ describe('ChapterPlayer — resume saved chapter state (src/components/layout/Ch
 
   it('given saved.examinerAttempts is a populated array, examinerAttempts resumes from that array', () => {
     const chapter = makeChapter()
-    const attempts = [{ moduleId: 'test-chapter', finalMark: 4 }]
+    const attempts = [{ chapterId: 'test-chapter', finalMark: 4 }]
     expect(computeInitialChapterState(chapter, { examinerAttempts: attempts }).examinerAttempts).toEqual(attempts)
   })
 
@@ -161,7 +161,7 @@ describe('ChapterPlayer — stale saved screen index reset (src/components/layou
 describe('ChapterPlayer — go/goTo screen clamping (src/components/layout/ChapterPlayer.jsx:1511-1524, clampScreenIndex)', () => {
   // total = 5 throughout (matches makeChapter()'s default screens length).
   // go(delta) calls clampScreenIndex(screen + delta, total); goTo(idx) calls
-  // clampScreenIndex(idx, total) directly. See moduleNavigation.test.js for
+  // clampScreenIndex(idx, total) directly. See chapterNavigation.test.js for
   // clampScreenIndex's own contract-level boundary coverage — these assert
   // the delta/idx call-site framing specific to go/goTo instead of repeating it.
   const total = 5

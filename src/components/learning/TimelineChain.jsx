@@ -1007,7 +1007,7 @@ function ChainCard({
 //
 // The same causal reveal chain, scaled down for use inline within a content
 // screen's `blocks` array (block.type === 'timelineChain', rendered inside
-// `Screen` in ModulePlayer.jsx). No fixed positioning and no completion
+// `Screen` in ChapterPlayer.jsx). No fixed positioning and no completion
 // gating — the screen's own Continue/Next controls progression.
 //
 // Block shape:

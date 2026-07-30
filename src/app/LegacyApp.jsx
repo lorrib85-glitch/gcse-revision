@@ -391,7 +391,7 @@ export default function App() {
     if (!import.meta.env.DEV) return
     if (!user?.loggedIn || !user?.onboardingComplete) return
     const params = new URLSearchParams(window.location.search)
-    const chapterId = params.get('chapter') || params.get('module')
+    const chapterId = params.get('chapter')
     const screenParam = params.get('screen')
     if (!chapterId) return
     const chapter = CHAPTERS.find(candidate => candidate.id === chapterId)

@@ -70,12 +70,12 @@ export default function TheoryCompare({ block, subject = 'History', onComplete }
 
   const steps = buildComparisonSteps(block)
   const [revealed, setRevealed] = useState(steps.length > 0 ? 1 : 0)
-  const continueModule = useInlineNavigationOwner(true)
+  const continueChapter = useInlineNavigationOwner(true)
 
   const view = deriveVisibleState(block, steps, revealed)
   const activeComparisonRef = useRef(null)
   const previousRevealedRef = useRef(revealed)
-  const finishScreen = onComplete || continueModule
+  const finishScreen = onComplete || continueChapter
 
   useEffect(() => { ensurePeopleStyles() }, [])
 

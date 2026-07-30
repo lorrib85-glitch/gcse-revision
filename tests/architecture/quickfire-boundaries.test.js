@@ -79,7 +79,7 @@ describe('QuickFire.jsx — banned inline definitions', () => {
     const hasDef = /(?:^|\n)(?:export\s+)?const PAST_PAPER_QS\s*=/.test(qfSrc)
     expect(
       hasDef,
-      'QuickFire.jsx defines PAST_PAPER_QS — move question banks to src/data/questionBanks/ and access via QUESTION_BANKS_BY_MODULE',
+      'QuickFire.jsx defines PAST_PAPER_QS — move question banks to src/data/questionBanks/ and access via QUESTION_BANKS_BY_TOPIC',
     ).toBe(false)
   })
 
@@ -186,7 +186,7 @@ describe('Quickfire — utils.js exports', () => {
 
 // ─── Rule 7: Question bank structure ─────────────────────────────────────────
 // New question banks go in src/data/questionBanks/, accessed via
-// QUESTION_BANKS_BY_MODULE. Broad catch-all files at src/data/ root are banned.
+// QUESTION_BANKS_BY_TOPIC. Broad catch-all files at src/data/ root are banned.
 
 describe('Question bank structure', () => {
   it('questionRegistry.js exists at src/data/questionBanks/questionRegistry.js', () => {

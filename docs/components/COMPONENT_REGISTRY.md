@@ -1112,12 +1112,60 @@ Module-level orchestration and chapter framing screens.
 
 ---
 
+## Chapter runtime architecture
+
+Two components make up the chapter runtime. Neither is an authoring choice —
+they are named here so authors can recognise them and route around them.
+
 ### ChapterPlayer
 
 **File:** `src/components/layout/ChapterPlayer.jsx`
-**Purpose:** In-module lesson flow orchestrator. Routes between all block types based on module screen data.
-**Props:** `moduleId`, `onComplete`, `onBack`
-**Dependencies:** All learning + feedback components
+**What it is:** The internal runtime for one authored chapter. It owns the
+chapter lifecycle — opening gates (hook, what-you'll-learn, prior-knowledge
+recall), navigation between screens, progress persistence to
+`gcse_chapter_<chapterId>`, repair and examiner diversions, and completion.
+**Props:** `chapter` (a chapter definition resolved through
+`CHAPTER_CONTENT_LOADERS`), `onBack`, `onChapterComplete`
+**Dependencies:** `ScreenRenderer`, `screenRegistry.js` schema validation,
+`chapterNavigation.js`, `progress.js`, `MODULES`
+
+- **Not an authoring choice.** Content authors never select `ChapterPlayer`
+  as a screen or component, and never add a screen type to it. It resolves
+  every screen through `ScreenRenderer`; it holds no component-routing
+  branches of its own.
+
+### ScreenRenderer
+
+**File:** `src/components/layout/ScreenRenderer.jsx`
+**What it is:** The sole runtime boundary mapping registered screen and block
+types to approved components. `FULL_SCREEN_RENDERER_TYPES` and
+`BLOCK_RENDERER_TYPES` are proved equal to the active entries of
+`SCREEN_REGISTRY` / `BLOCK_REGISTRY` by
+`tests/architecture/screen-registry.test.js`.
+**Props:** `screen`, `chapter`, `chapterNum`, `subject`, plus the runtime
+callbacks `ChapterPlayer` supplies.
+**Dependencies:** `src/data/screenRegistry.js`, every routed learning and
+feedback component
+
+- **Not an authoring choice.** Authors select entries from
+  `screenRegistry.js`, never `ScreenRenderer` directly.
+
+### Chapter-building rule
+
+A normal chapter is buildable by:
+
+1. adding chapter metadata to `src/chapters.js`;
+2. adding its content loader to `src/content/chapterContentRegistry.js`;
+3. composing registered screens and blocks from `src/data/screenRegistry.js`;
+4. adding the chapter id to exactly one parent module in `src/data/modules.js`;
+5. passing schema and architecture tests.
+
+Adding a normal chapter must **not** require editing `ChapterPlayer`,
+`ScreenRenderer`, app navigation or progress persistence. Editing
+`screenRegistry.js` and `ScreenRenderer` is permitted only when introducing a
+genuinely new governed component type — never for ordinary chapter creation.
+This is enforced by
+`tests/architecture/chapter-authoring-boundary.test.js`.
 
 ---
 

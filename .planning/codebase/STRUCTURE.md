@@ -1,5 +1,27 @@
 # Codebase Structure
 
+> **⚠ SUPERSEDED FOR THE CONTENT HIERARCHY — mapped 2026-07-09, before the
+> `Subject → Module → Chapter → Screen → Component` migration completed.**
+>
+> This map still describes the pre-migration hierarchy: `src/modules.js`,
+> `ModulePlayer.jsx`, `moduleNavigation.js`, `moduleContentRegistry.js` /
+> `MODULE_CONTENT_LOADERS`, `SUBJECT_MODULE_LOADERS` and `/module-creation` are
+> all deleted, and screen routing no longer lives in the chapter runtime. Its
+> line counts and component-routing claims are stale for the same reason.
+>
+> For anything about the hierarchy, chapter authoring or the runtime boundary,
+> the current sources of truth are:
+>
+> - `docs/system/CONTENT_HIERARCHY.md` — the canonical structural contract
+> - `docs/components/COMPONENT_REGISTRY.md` — `ChapterPlayer` / `ScreenRenderer`
+> - `docs/system/SCREEN_REGISTRY.md` — the screen/block authoring catalogue
+> - `src/chapters.js`, `src/data/modules.js`,
+>   `src/content/chapterContentRegistry.js`
+>
+> Re-run `/gsd-map-codebase` to refresh this file. Do not treat the sections
+> below as current guidance.
+
+
 **Analysis Date:** 2026-07-09
 
 ## Directory Layout

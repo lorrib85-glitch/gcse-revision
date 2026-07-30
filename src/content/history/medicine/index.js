@@ -1,16 +1,18 @@
 // Medicine Through Time — series content registry.
 //
-// MEDICINE_EPISODES is the ordered list of all built episodes in this series.
-// The app loads episodes individually via MODULE_CONTENT_LOADERS in LegacyApp.jsx —
-// each episode ID maps directly to its own file, so opening one episode never
-// downloads the others.
+// MEDICINE_EPISODES is the ordered list of all built chapters in this series.
+// The app loads chapters individually via CHAPTER_CONTENT_LOADERS in
+// src/content/chapterContentRegistry.js — each chapter ID maps directly to its
+// own file, so opening one chapter never downloads the others.
 //
-// To add a new episode:
+// To add a new chapter:
 //   1. Create src/content/history/medicine/episodes/episode-NN-<slug>.js
 //   2. Import and append it to MEDICINE_EPISODES below (maintain number order)
-//   3. Add a metadata entry in src/modules.js
-//   4. Add a MODULE_CONTENT_LOADERS entry in src/app/LegacyApp.jsx
-//   5. Run: vitest run tests/architecture
+//   3. Add its chapter metadata to src/chapters.js
+//   4. Add a CHAPTER_CONTENT_LOADERS entry in
+//      src/content/chapterContentRegistry.js
+//   5. Add the chapter id to one parent module in src/data/modules.js
+//   6. Run: vitest run tests/architecture
 
 import episode01 from './episodes/episode-01-medieval-beliefs-causes.js'
 import episode02 from './episodes/episode-02-black-death.js'

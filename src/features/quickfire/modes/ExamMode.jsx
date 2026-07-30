@@ -13,7 +13,7 @@ import BackButton from '../../../components/core/BackButton.jsx'
 import ExamQuestionFrame from '../../../components/feedback/ExamQuestionFrame.jsx'
 import ExamRoundDebrief from '../../../components/feedback/ExamRoundDebrief.jsx'
 import GuidedAnswerCoach from '../../../components/learning/GuidedAnswerCoach.jsx'
-import { QUESTION_BANKS_BY_MODULE } from '../../../data/questionBanks/questionRegistry.js'
+import { QUESTION_BANKS_BY_TOPIC } from '../../../data/questionBanks/questionRegistry.js'
 import { useTestData } from '../useTestData.js'
 import { StreakChip } from '../../home/StreakChip.jsx'
 import { TEST_TOPICS } from '../../../data/examTestTopics.js'
@@ -127,7 +127,7 @@ export function ExamMode({ mode, onExit, onOpenChapter, onOpenPulse, examAutoSta
 
   function allExamQuestions() {
     const fromTestTopics = TEST_TOPICS.flatMap(group => group.topics.flatMap(topic => (
-      QUESTION_BANKS_BY_MODULE[topic.id] || []
+      QUESTION_BANKS_BY_TOPIC[topic.id] || []
     ).map(question => normaliseExamQuestion(question, group.subject, topic.label, topic.id))))
     return [
       ...fromTestTopics,

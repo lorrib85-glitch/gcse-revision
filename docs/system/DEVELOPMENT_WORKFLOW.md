@@ -77,8 +77,8 @@ per-episode files) and was later applied to `ChapterPlayer.jsx`, whose screen ro
 in the governed `ScreenRenderer.jsx` boundary.
 
 This threshold does not apply to content files (`src/content/**`,
-`src/modules/<subject>.js`, `src/data/*.js`) — their size tracks
-curriculum content volume, not code complexity.
+`src/data/*.js`) — their size tracks curriculum content volume, not code
+complexity.
 
 A `PostToolUse` hook (`.claude/hooks/component-size-check.sh`) nudges
 when an in-scope file is both over the threshold and just grew from its

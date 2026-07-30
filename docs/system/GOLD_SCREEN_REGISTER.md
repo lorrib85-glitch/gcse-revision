@@ -30,7 +30,7 @@ not a matter of taste.
    secondary reference.
 4. Each render used to seat a gold is reproducible from its module id +
    screen index via the dev screen-jump
-   (`?module=<id>&screen=<n>`, `import.meta.env.DEV`), so the next reviewer
+   (`?chapter=<id>&screen=<n>`, `import.meta.env.DEV`), so the next reviewer
    can re-render and re-check it.
 
 ## How the register is used

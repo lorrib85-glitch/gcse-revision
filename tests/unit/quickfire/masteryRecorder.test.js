@@ -10,7 +10,7 @@ import {
   loadMasteryState,
   MASTERY_STORAGE_KEY,
 } from '../../../src/data/masteryEngine/index.js'
-import { ALL_MODULE_QUICKFIRE_QUESTIONS } from '../../../src/data/questionBanks/questionRegistry.js'
+import { ALL_BANK_QUICKFIRE_QUESTIONS } from '../../../src/data/questionBanks/questionRegistry.js'
 import { QUICK_QUIZ_QUESTIONS } from '../../../src/data/quickQuizData.js'
 import { quickFireFromBank } from '../../../src/features/quickfire/logic/convertBankQuestion.js'
 
@@ -22,11 +22,11 @@ const scopedKey = key => `guest::${key}`
 
 // Real QuickFire bank question: tags mix facets with two concept ids
 // ('history:medicine' course node + 'history:medicine:miasma' atom).
-const medQf001 = ALL_MODULE_QUICKFIRE_QUESTIONS.find(q => q.id === 'med-qf-001')
+const medQf001 = ALL_BANK_QUICKFIRE_QUESTIONS.find(q => q.id === 'med-qf-001')
 
 // Shapes QuickFire really serves that must be ignored: the chemistry
 // placeholder and 90s-quiz conversions carry no tags at all.
-const untaggedQuestion = { q: 'What is the pH of a neutral solution?', subject: 'Chemistry', topic: 'Acids and Alkalis', moduleId: null }
+const untaggedQuestion = { q: 'What is the pH of a neutral solution?', subject: 'Chemistry', topic: 'Acids and Alkalis', chapterId: null }
 const facetOnlyQuestion = { id: 'x1', tags: ['period:medieval', 'format:mc', 'skill:recall'] }
 const unknownConceptQuestion = { id: 'x2', tags: ['history:medicine:not-a-real-concept'] }
 

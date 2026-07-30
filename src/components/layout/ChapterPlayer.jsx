@@ -943,7 +943,7 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
         onExit={onBack}
         onContinue={({ originalMark: _originalMark, finalMark, guessedMark }) => {
           const attempt = {
-            moduleId: chapter.id,
+            chapterId: chapter.id,
             questionId: `${chapter.id}-q1`,
             guessedMark,
             examinerMark: chapter.examiner.mark,

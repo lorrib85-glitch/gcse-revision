@@ -35,7 +35,7 @@ const SUPPORT_MAPS = [
 
 // Build, once, a concept → { screens, parts } aggregate across all support
 // maps. Screens/parts are resolved to their full metadata and sorted
-// deterministically. Screen identity is (moduleId, screenIndex) so the layer
+// deterministically. Screen identity is (chapterId, screenIndex) so the layer
 // is unambiguous once more than one episode is registered.
 function buildRegistry(maps) {
   const byConcept = new Map()
@@ -48,7 +48,7 @@ function buildRegistry(maps) {
         const s = screenByIndex.get(idx)
         if (s) {
           rec.screens.push({
-            moduleId: support.id,
+            chapterId: support.id,
             screenIndex: s.screenIndex,
             label: s.label,
             purpose: s.purpose,
@@ -60,7 +60,7 @@ function buildRegistry(maps) {
         const p = partById.get(pid)
         if (p) {
           rec.parts.push({
-            moduleId: support.id,
+            chapterId: support.id,
             id: p.id,
             title: p.title,
             screenRange: [...p.screenRange],
@@ -71,8 +71,8 @@ function buildRegistry(maps) {
     }
   }
   for (const rec of byConcept.values()) {
-    rec.screens.sort((a, b) => a.moduleId.localeCompare(b.moduleId) || a.screenIndex - b.screenIndex)
-    rec.parts.sort((a, b) => a.moduleId.localeCompare(b.moduleId) || a.id.localeCompare(b.id))
+    rec.screens.sort((a, b) => a.chapterId.localeCompare(b.chapterId) || a.screenIndex - b.screenIndex)
+    rec.parts.sort((a, b) => a.chapterId.localeCompare(b.chapterId) || a.id.localeCompare(b.id))
   }
   return byConcept
 }
@@ -110,7 +110,7 @@ export function getSupportForConcept(conceptId) {
 
 /**
  * The single best revisit screen for a concept: the exact screen match with the
- * lowest (moduleId, screenIndex). Returns null if the concept has no
+ * lowest (chapterId, screenIndex). Returns null if the concept has no
  * screen-level support (parts alone are not returned here — exact over broad).
  * Throws for an unregistered concept id.
  */
@@ -125,7 +125,7 @@ export function getBestSupportScreen(conceptId) {
  *   perConcept — getSupportForConcept result per input id, in input order.
  *   screens    — the union of supporting screens, each annotated with the
  *                matchedConcepts it covers, ranked by how many of the input
- *                concepts it supports (desc), then (moduleId, screenIndex).
+ *                concepts it supports (desc), then (chapterId, screenIndex).
  * Throws if any concept id is unregistered.
  */
 export function getSupportForConcepts(conceptIds) {
@@ -136,7 +136,7 @@ export function getSupportForConcepts(conceptIds) {
   const merged = new Map()
   for (const { concept, screens } of perConcept) {
     for (const s of screens) {
-      const key = `${s.moduleId}::${s.screenIndex}`
+      const key = `${s.chapterId}::${s.screenIndex}`
       const hit = merged.get(key) ?? { screen: s, matchedConcepts: new Set() }
       hit.matchedConcepts.add(concept)
       merged.set(key, hit)
@@ -146,7 +146,7 @@ export function getSupportForConcepts(conceptIds) {
     .map(({ screen, matchedConcepts }) => ({ ...cloneScreen(screen), matchedConcepts: [...matchedConcepts].sort() }))
     .sort((a, b) =>
       b.matchedConcepts.length - a.matchedConcepts.length ||
-      a.moduleId.localeCompare(b.moduleId) ||
+      a.chapterId.localeCompare(b.chapterId) ||
       a.screenIndex - b.screenIndex)
   return { concepts: [...conceptIds], perConcept, screens }
 }

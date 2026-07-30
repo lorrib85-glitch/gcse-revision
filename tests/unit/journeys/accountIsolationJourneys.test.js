@@ -368,7 +368,7 @@ describe('Journey — abandoned QuickFire round', () => {
     await withMockedCloud(async () => {
       const { bumpQuickFireMemoryForAnswer, readQuickFireMemory } = await import('../../../src/features/quickfire/logic/quickFireMemory.js')
 
-      const q = { id: 'qf-abandon-1', subject: 'Biology', topic: 'Cells', moduleId: 'sci_bio_w1' }
+      const q = { id: 'qf-abandon-1', subject: 'Biology', topic: 'Cells', chapterId: 'sci_bio_w1' }
       // Learner answers several questions.
       bumpQuickFireMemoryForAnswer(q, true)
       bumpQuickFireMemoryForAnswer(q, true)

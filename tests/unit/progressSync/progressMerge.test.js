@@ -288,8 +288,8 @@ describe('mergeProgressData — riseUser identity guard', () => {
 
 describe('mergeProgressData — unknown/legacy keys are never dropped', () => {
   it('preserves a key this merge module does not explicitly know about', () => {
-    const merged = mergeProgressData({ gcse_confidence: [{ moduleId: 'x', confidence: 3 }] }, {})
-    expect(merged.gcse_confidence).toEqual([{ moduleId: 'x', confidence: 3 }])
+    const merged = mergeProgressData({ gcse_confidence: [{ chapterId: 'x', confidence: 3 }] }, {})
+    expect(merged.gcse_confidence).toEqual([{ chapterId: 'x', confidence: 3 }])
   })
 
   it('prefers whichever side actually has the value when only one side does', () => {

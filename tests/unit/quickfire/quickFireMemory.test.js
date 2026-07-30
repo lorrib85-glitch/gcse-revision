@@ -18,8 +18,8 @@ globalThis.localStorage = {
 
 beforeEach(() => fakeStore.clear())
 
-const bioQ = { id: 'q1', subject: 'Biology', topic: 'Cells', moduleId: 'sci_bio_w1' }
-const historyQ = { id: 'q2', subject: 'History', topic: 'Medieval Medicine', moduleId: 'history-medicine-medieval-beliefs-causes' }
+const bioQ = { id: 'q1', subject: 'Biology', topic: 'Cells', chapterId: 'sci_bio_w1' }
+const historyQ = { id: 'q2', subject: 'History', topic: 'Medieval Medicine', chapterId: 'history-medicine-medieval-beliefs-causes' }
 
 describe('bumpQuickFireMemoryForAnswer — per-answer persistence', () => {
   it('persists ranking memory immediately, not just at round end', () => {

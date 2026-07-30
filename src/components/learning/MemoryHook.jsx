@@ -10,7 +10,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 // at a glance without turning a reading screen into another interaction.
 //
 // Content component (Route A) — rendered inside a composed screen / the
-// ModulePlayer content flow. It never owns a screen.
+// ChapterPlayer content flow. It never owns a screen.
 //
 // block shape: {
 //   label?: string,     // defaults to 'Memory hook'

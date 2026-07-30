@@ -65,7 +65,7 @@ const SCOPED_CSS = `
     color: rgba(255,255,255,0.30);
   }
 
-  /* The normal module CTA is the shell's immediate sibling. Hide it only while
+  /* The normal chapter CTA is the shell's immediate sibling. Hide it only while
      a child has explicitly claimed inline navigation, so one Continue action is
      visible and it stays at the end of the learning content. */
   .cs-shell.cs-inline-navigation + div {
@@ -97,17 +97,17 @@ export default function ContentShell({
     }
   }, [])
 
-  // The module action remains owned by ModulePlayer. Inline components invoke
+  // The chapter action remains owned by ChapterPlayer. Inline components invoke
   // the existing governed CTA rather than duplicating navigation logic.
-  const continueModule = useCallback(() => {
-    const moduleNavigation = shellRef.current?.nextElementSibling
-    const continueButton = moduleNavigation?.querySelector('button')
+  const continueChapter = useCallback(() => {
+    const chapterNavigation = shellRef.current?.nextElementSibling
+    const continueButton = chapterNavigation?.querySelector('button')
     continueButton?.click()
   }, [])
 
   const inlineNavigation = useMemo(
-    () => ({ claim, continueModule }),
-    [claim, continueModule],
+    () => ({ claim, continueChapter }),
+    [claim, continueChapter],
   )
 
   const ownsInlineNavigation = inlineNavigationOwners > 0

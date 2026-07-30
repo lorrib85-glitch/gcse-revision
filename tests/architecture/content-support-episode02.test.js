@@ -116,7 +116,7 @@ describe('Episode 2 — Black Death concepts resolve to teaching screens via the
   ]) {
     it(`${concept} returns Episode 2 screens`, () => {
       const res = getSupportForConcept(concept)
-      const ep2Screens = res.screens.filter(s => s.moduleId === EP02)
+      const ep2Screens = res.screens.filter(s => s.chapterId === EP02)
       expect(ep2Screens.length, `${concept} has no Episode 2 support`).toBeGreaterThan(0)
       for (const s of ep2Screens) {
         expect(s.conceptTags).toContain(concept)

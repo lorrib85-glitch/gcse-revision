@@ -1,13 +1,13 @@
 #!/bin/bash
 # PostToolUse (Edit|Write) hook: nudge when a component/feature file grows
 # past a line threshold. Scoped to src/components/** and src/features/**
-# only — content files (src/content, src/modules, src/data) are expected
-# to be large since they hold one module's/subject's full curriculum
+# only — content files (src/content, src/data) are expected
+# to be large since they hold one chapter's/subject's full curriculum
 # content, not code, so they're deliberately excluded.
 #
 # Only fires when the file is BOTH over the threshold AND bigger than it
 # was at HEAD, so it doesn't nag on every touch to an already-oversized
-# file (e.g. ModulePlayer.jsx) unless this edit made it grow further.
+# file (e.g. ChapterPlayer.jsx) unless this edit made it grow further.
 set -uo pipefail
 
 cd "$CLAUDE_PROJECT_DIR" || exit 0
@@ -33,5 +33,5 @@ HEAD_LINES=$(git show "HEAD:$REL" 2>/dev/null | wc -l | tr -d ' ')
 HEAD_LINES=${HEAD_LINES:-0}
 
 if [ "$CURRENT_LINES" -gt "$HEAD_LINES" ]; then
-  jq -n --arg msg "⚠ $REL is now $CURRENT_LINES lines and just grew — consider whether it should be decomposed before it becomes the next ModulePlayer.jsx (2400+ lines, flagged as a fragile area in .planning/codebase/CONCERNS.md)." '{systemMessage: $msg}'
+  jq -n --arg msg "⚠ $REL is now $CURRENT_LINES lines and just grew — consider whether it should be decomposed before it becomes the next ChapterPlayer.jsx (flagged as a fragile area in .planning/codebase/CONCERNS.md)." '{systemMessage: $msg}'
 fi
