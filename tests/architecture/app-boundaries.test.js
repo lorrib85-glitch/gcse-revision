@@ -18,6 +18,7 @@ describe('Feature files exist', () => {
     'src/app/LegacyApp.jsx',
     'src/features/home/Home.jsx',
     'src/features/pulse/Pulse.jsx',
+    'src/features/progress/Progress.jsx',
     'src/features/subjects/Subjects.jsx',
     'src/features/quickfire/QuickFire.jsx',
   ]

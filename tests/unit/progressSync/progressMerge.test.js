@@ -153,6 +153,29 @@ describe('mergeProgressData — gcse_mastery_v1', () => {
   })
 })
 
+describe('mergeProgressData — gcse_study_time_v1', () => {
+  it('keeps days only one device saw, and the fuller record of a shared day', () => {
+    const local = { gcse_study_time_v1: { '2026-07-29': 1800, '2026-07-30': 600 } }
+    const cloud = { gcse_study_time_v1: { '2026-07-30': 900, '2026-07-31': 300 } }
+    const merged = mergeProgressData(local, cloud)
+    expect(merged.gcse_study_time_v1).toEqual({
+      '2026-07-29': 1800, '2026-07-30': 900, '2026-07-31': 300,
+    })
+  })
+
+  it('never sums a day already reflected on both devices', () => {
+    const both = { '2026-07-30': 1200 }
+    const merged = mergeProgressData({ gcse_study_time_v1: both }, { gcse_study_time_v1: both })
+    expect(merged.gcse_study_time_v1).toEqual(both)
+  })
+
+  it('survives a missing or malformed side without losing the good one', () => {
+    const good = { '2026-07-30': 1200 }
+    expect(mergeProgressData({ gcse_study_time_v1: good }, {}).gcse_study_time_v1).toEqual(good)
+    expect(mergeProgressData({ gcse_study_time_v1: null }, { gcse_study_time_v1: good }).gcse_study_time_v1).toEqual(good)
+  })
+})
+
 describe('mergeProgressData — quickfire running-total buckets (max-safe merge)', () => {
   it('never produces an internally inconsistent bucket (correct > answered) even when maxing independently', () => {
     const local = { gcse_quickfire_memory_v1: { subjects: { Biology: { answered: 3, correct: 3, subject: 'Biology' } }, topics: {} } }

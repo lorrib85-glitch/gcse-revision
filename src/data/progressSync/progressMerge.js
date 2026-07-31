@@ -209,6 +209,24 @@ function mergeMasteryState(a, b) {
   return { ...av, concepts }
 }
 
+// ─── gcse_study_time_v1 — recorded study seconds per calendar day ─────────────
+// { 'YYYY-MM-DD': seconds }. A day's seconds are appended locally in small
+// ticks, so per-day max is the right rule: whichever device did more study on
+// a given day holds the fuller record for it, and days only one device saw
+// carry across untouched. Summing would double-count every already-synced day.
+function mergeStudyTime(a, b) {
+  const isDayMap = value => Boolean(value) && typeof value === 'object' && !Array.isArray(value)
+  if (!isDayMap(a)) return isDayMap(b) ? b : (a ?? b ?? null)
+  if (!isDayMap(b)) return a
+  const merged = { ...a }
+  for (const [date, seconds] of Object.entries(b)) {
+    const local = Number(merged[date]) || 0
+    const cloud = Number(seconds) || 0
+    merged[date] = Math.max(local, cloud)
+  }
+  return merged
+}
+
 // ─── gcse_quickfire_memory_v1 — running accuracy buckets ──────────────────────
 // { subjects: {[key]: {answered, correct, seedAnswered?, seedCorrect?}},
 //   topics: {...} }. Each bucket is a lifetime running total, incremented by
@@ -548,6 +566,7 @@ function mergeProgressValue(key, local, cloud, { currentUid, preferLocalOnTie })
   if (key === 'gcse_planner_prefs') return mergeShallow(local, cloud, preferLocalOnTie)
   if (key === 'gcse_progress') return mergeProgressRecord(local, cloud)
   if (key === 'gcse_mastery_v1') return mergeMasteryState(local, cloud)
+  if (key === 'gcse_study_time_v1') return mergeStudyTime(local, cloud)
   // gcse_quickfire_memory_v1, gcse_qf_answer_log and gcse_qf_baseline_v1 are
   // handled together in mergeProgressData (below) — the bucket merge needs both
   // sides' logs AND baselines at once, which per-key dispatch can't see.

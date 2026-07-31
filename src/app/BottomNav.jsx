@@ -15,6 +15,9 @@ function NavIcon({ id, active }) {
   if (id === 'pulse') return (
     <svg {...props}><polyline points="2,13 6,13 8,6 11,18 14,10 16,13 20,13" {...s} /></svg>
   )
+  if (id === 'progress') return (
+    <svg {...props}><polyline points="3,15.5 8.5,10 12.5,14 19,6.5" {...s} /><polyline points="14.5,6.5 19,6.5 19,11" {...s} /></svg>
+  )
   if (id === 'exams') return (
     <svg {...props}><rect x="4" y="2" width="14" height="18" rx="2" {...s} /><line x1="8" y1="7" x2="14" y2="7" {...s} /><line x1="8" y1="11" x2="14" y2="11" {...s} /><line x1="8" y1="15" x2="11" y2="15" {...s} /></svg>
   )
@@ -26,6 +29,7 @@ export default function BottomNav({ tab, setTab }) {
     { id: 'home',     label: 'Home' },
     { id: 'subjects', label: 'Subjects' },
     { id: 'pulse',    label: 'Pulse' },
+    { id: 'progress', label: 'Progress' },
     { id: 'exams',    label: 'Exams' },
   ]
 
@@ -36,7 +40,7 @@ export default function BottomNav({ tab, setTab }) {
       background: `rgba(${hexToRgb(GENERAL.neutral[0])},0.96)`,
       backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
       borderTop: '1px solid rgba(255,255,255,0.05)',
-      display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+      display: 'grid', gridTemplateColumns: `repeat(${tabs.length}, 1fr)`,
       padding: '10px 6px calc(10px + env(safe-area-inset-bottom))',
       gap: 4,
     }}>

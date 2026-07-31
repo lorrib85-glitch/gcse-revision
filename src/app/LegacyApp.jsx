@@ -9,6 +9,8 @@ import { readQfBest } from '../features/quickfire/logic/quickFireBest.js'
 import Home from '../features/home/Home.jsx'
 import PulseTab from '../features/pulse/Pulse.jsx'
 import SubjectsTab from '../features/subjects/Subjects.jsx'
+import ProgressTab from '../features/progress/Progress.jsx'
+import { useStudyClock } from '../features/progress/useStudyClock.js'
 import ExamPractice from '../features/exams/ExamPractice.jsx'
 import BottomNav from './BottomNav.jsx'
 import ChapterCompleteScreen from '../components/layout/ChapterCompleteScreen.jsx'
@@ -380,6 +382,10 @@ export default function App() {
     }
   }, [])
 
+  // Accumulates the real study time reported on the Progress tab. Only the
+  // working surfaces count — browsing Home, Subjects or Pulse is not studying.
+  useStudyClock(view === 'chapter' || tab === 'quickfire' || tab === 'exams')
+
   function openChapter(chapter, screenIndex) {
     openChapterPlayer(chapter, screenIndex)
   }
@@ -526,9 +532,10 @@ export default function App() {
   return (
     <div style={{ background: GENERAL.backgroundApp, minHeight: '100vh' }}>
       <div key={tab} className="tab-content">
-        {tab === 'home'     && <Home onSelectTask={handleTodaysPlanSelect} onReviewProgress={() => setTab('pulse')} />}
+        {tab === 'home'     && <Home onSelectTask={handleTodaysPlanSelect} onReviewProgress={() => setTab('progress')} />}
         {tab === 'subjects' && <SubjectsTab onOpenChapter={openChapter} />}
         {tab === 'pulse'    && <PulseTab onStartQuickFire={() => startQuickfire('pulse')} best={readQfBest()} />}
+        {tab === 'progress' && <ProgressTab />}
         {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenChapter={openChapter} onExit={() => setTab(quickfireOrigin)} />}
         {tab === 'exams'    && <ExamPractice tab={tab} onOpenChapter={openChapter} onOpenPulse={() => setTab('pulse')} examAutoStart={examAutoStart} setExamAutoStart={setExamAutoStart} />}
       </div>
