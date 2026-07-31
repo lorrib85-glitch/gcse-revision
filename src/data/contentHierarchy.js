@@ -1,3 +1,5 @@
+import { getChapterAvailability, CHAPTER_AVAILABILITY } from '../chapters.js'
+
 export const CONTENT_LEVELS = Object.freeze({
   SUBJECT: 'subject',
   MODULE: 'module',
@@ -80,6 +82,20 @@ export function validateContentHierarchy({ chapters = [], modules = [] } = {}) {
         )
       }
     }
+  }
+
+  // Reverse direction: a chapter the learner can see must have exactly one
+  // parent. Ownership is what gives a chapter its position in the journey —
+  // completion hand-off, the planner and continue-chapter all resolve through
+  // MODULES, so an orphan drops out of all three while still being browsable.
+  // An explicitly hidden chapter (superseded or migration entry) is the only
+  // permitted exemption; availability metadata already carries that meaning, so
+  // no separate allowlist exists.
+  for (const [chapterId, chapter] of chapterById) {
+    const availability = getChapterAvailability(chapter)
+    if (availability === CHAPTER_AVAILABILITY.HIDDEN) continue
+    if (chapterOwners.has(chapterId)) continue
+    errors.push(`Chapter "${chapterId}" is ${availability} but belongs to no module`)
   }
 
   return errors

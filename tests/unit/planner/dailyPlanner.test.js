@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { CHAPTERS, isChapterAvailable } from '../../../src/chapters.js'
+import { MODULES } from '../../../src/data/modules.js'
 
 // Mock localStorage-backed storage so all planner tests run in node cleanly.
 // Must be declared before the dynamic import below.
@@ -204,18 +206,33 @@ describe('buildWeekdayBlocks', () => {
   })
 
   it('never routes the main-progress block into an unbuilt stub chapter', () => {
-    // Biology's only built chapter (sci_bio_w1) is complete; the remaining
-    // Biology chapters in CHAPTERS are screenCount-0 stubs. The planner must
-    // not hand back a stub as the next chapter — better no chapter than a
-    // dead card pointing at empty content.
+    // Every *built* Biology chapter must be complete for this to exercise the
+    // guard — otherwise the planner simply returns the next available chapter
+    // and the stub path is never reached. The fixture is derived from the
+    // module catalogue rather than hardcoded, so adding a Biology chapter
+    // cannot silently make this test vacuous again.
+    const bioModule = MODULES.find(module => module.subject === 'Biology')
+    const bioChapters = bioModule.chapterIds.map(id => CHAPTERS.find(c => c.id === id))
+    const builtIds = bioChapters.filter(isChapterAvailable).map(c => c.id)
+    const stubIds  = bioChapters.filter(c => !isChapterAvailable(c)).map(c => c.id)
+
+    expect(builtIds.length, 'fixture needs at least one built Biology chapter').toBeGreaterThan(0)
+    expect(stubIds.length, 'fixture needs at least one Biology stub to avoid').toBeGreaterThan(0)
+
     const bioAllDone = {
       ...emptyState,
-      chapterStates: { sci_bio_w1: { screen: 9, completed: true } },
+      chapterStates: Object.fromEntries(
+        builtIds.map(id => [id, { screen: 999, completed: true }]),
+      ),
     }
     const blocks = buildWeekdayBlocks('Biology', 'History', bioAllDone, defaultProfile)
     const mainBlock = blocks.find(b => b.type === 'mainProgress')
-    const stubIds = ['bio_building_life', 'bio_human_machine', 'bio_disease_wars', 'bio_control_systems', 'bio_genetics_evolution', 'bio_ecosystems_group']
+
+    // Better no chapter than a dead card pointing at empty content.
     expect(stubIds).not.toContain(mainBlock.chapterId)
+    if (mainBlock.chapterId) {
+      expect(isChapterAvailable(CHAPTERS.find(c => c.id === mainBlock.chapterId))).toBe(true)
+    }
   })
 
   it('uses mainSubject for pulse when secondarySubject is null', () => {
