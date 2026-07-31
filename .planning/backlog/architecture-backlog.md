@@ -525,3 +525,47 @@ matcher.
 - `AreaPerimeterExplore.jsx` is unchanged — no accessibility behaviour removed.
 - A short note in the story file explaining why status queries are scoped, so
   the next person adding a story does not reintroduce the ambiguity.
+
+---
+
+## A10 — Completion hand-off does not check module availability
+
+**Status:** Open — not started
+**Priority:** Medium
+**Area:** `src/app/chapterNavigation.js`, `src/data/modules.js`, `docs/system/CONTENT_HIERARCHY.md`
+
+### Context
+`buildChapterCompletePayload` resolves "what comes next" by walking the parent
+module's `chapterIds`, then falling through to `MODULES[moduleIdx + 1]` and
+offering that module's first chapter. Neither step consults
+`getChapterAvailability`, so a learner finishing the last chapter of a module
+can be handed a `comingSoon` stub they cannot open.
+
+The current mitigation is positional: modules whose chapters are all unbuilt
+stubs are parked at the end of the `MODULES` array, with a comment saying so.
+That works today and was deliberately preserved through the Phase 2B/2C
+hierarchy work, but it encodes build status in array position — a property that
+belongs to `availability`, not to ordering.
+
+### Why it matters
+- Module array order is meant to be curriculum sequence, not a build-status
+  proxy. Anyone reordering modules for curriculum reasons can silently
+  reintroduce the dead-end hand-off.
+- The rule cannot be stated as authoring guidance without contradicting the
+  hierarchy contract, so `CONTENT_HIERARCHY.md` records it as a known gap
+  rather than a rule.
+
+### Fix
+Filter on availability where the hand-off is computed: skip chapters and
+modules with no `available` chapter when choosing the next destination, and
+treat "no available successor" as the end-of-subject case that already exists.
+Once that lands, module array position carries no build-status meaning and the
+"unbuilt modules last" comment in `src/data/modules.js` can go.
+
+### Acceptance criteria
+- Finishing the last chapter of a module never offers a chapter that
+  `isChapterAvailable` rejects.
+- `MODULES` can be reordered on curriculum grounds without changing whether the
+  hand-off is reachable.
+- The known-gap section in `docs/system/CONTENT_HIERARCHY.md` is removed in the
+  same change.

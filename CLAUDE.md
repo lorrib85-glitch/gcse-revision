@@ -68,8 +68,10 @@ Progress and Quiz do not pay for the chapter runtime on first load.
 
 The canonical ownership chain is:
 
-- `src/data/modules.js` — parent curriculum modules and ordered `chapterIds`;
-- `src/chapters.js` — lightweight chapter metadata and availability;
+- `src/data/modules.js` — parent curriculum modules, chapter membership and the
+  canonical order of real chapters;
+- `src/chapters.js` — per-chapter metadata and availability (array position is
+  not journey order);
 - `src/content/chapterContentRegistry.js` — `CHAPTER_CONTENT_LOADERS` and
   `loadChapterContent`;
 - `src/content/<subject>/<series>/episodes/<file>.js` — one chapter's full hook,
@@ -80,6 +82,10 @@ All subjects use per-chapter lazy loaders. Adding a chapter means running
 ID in one parent module, and keeping `screenCount` / `screenTags` aligned. Do not
 add new content to subject-wide bundles and do not edit `ChapterPlayer` merely to
 make a chapter render; use registered screen definitions.
+
+Placing the ID in a module is not optional: every non-hidden chapter — including
+an unbuilt `comingSoon` stub — must belong to exactly one module, and only an
+explicitly `hidden` chapter is exempt. See `docs/system/CONTENT_HIERARCHY.md`.
 
 ### Exam Mode question banks are lazy-loaded via context
 
@@ -93,7 +99,7 @@ make a chapter render; use registered screen definitions.
 - `BiologySection` — biology-specific horizontal scroll section with topic group image cards
 - `Home` — home screen: greeting, weekly recall trend line, and a "Today's plan" task carousel (`TaskCarousel`/`TaskCard`) built by `buildTodaysPlan()` (`src/todaysPlan.js`) — warm-up, weak-spot revisit or continue-chapter, exam practice, plus a weekend full-paper card
 - `HomeAtmosphere` — LOCKED. Three drifting teal SVG wave bands + constellation network rendered in the 34vh hero section of Home. Must NOT be removed, renamed, or have its SVG/animation structure altered. Its call site in `Home` (`<HomeAtmosphere />`) must not be removed either.
-- `SubjectsTab` — subject browser; each subject presents its ordered chapter journey
+- `SubjectsTab` — subject browser; each subject presents its ordered chapter journey, built by `src/features/subjects/subjectCatalogue.js` from the subject's modules. History and English series tabs (labels, hero images, the empty Elizabethan tab) are local presentation in `Subjects.jsx` — a `series` is not a module id
 - `ProgressTab` — progress/stats screen
 - `TestTab` — quiz/test mode (also used for Exam Mode)
 - `ChapterPlayer` — imported from `src/components/layout/ChapterPlayer.jsx`; handles one chapter learning journey
@@ -237,8 +243,9 @@ docs/system/TEACHING_VOICE_GUIDE.md
 
 | File | Contents |
 |------|----------|
-| `src/chapters.js` | **The chapter metadata source.** `CHAPTERS` array — lightweight metadata for every chapter (id, title, subject, colour, screenCount, screenTags, etc.) for browsing/cards/progress, plus `CHAPTER_AVAILABILITY`, `getChapterAvailability` and `isChapterAvailable`. Full lesson content lives in per-chapter content files (see Bundle Size / Lazy Loading) |
-| `src/data/modules.js` | **The parent-module catalogue.** `MODULES` — each parent curriculum unit with its ordered `chapterIds`, plus `getModuleById`. Chapter order across the app is derived from here. |
+| `src/chapters.js` | **The chapter metadata source.** `CHAPTERS` array — per-chapter metadata (id, title, subject, `series`, authored `number`, colour, screenCount, screenTags, etc.), plus `CHAPTER_AVAILABILITY`, `getChapterAvailability` and `isChapterAvailable`. Position in this array is authoring order, **not** learner journey order — nothing derives browse order from it. Full lesson content lives in per-chapter content files (see Bundle Size / Lazy Loading) |
+| `src/data/modules.js` | **The parent-module catalogue.** `MODULES` — each parent curriculum unit with its ordered `chapterIds`, plus `getModuleById`. Owns which module a real chapter belongs to and its canonical order inside that module. Every chapter whose availability is not `hidden` — `available` and `comingSoon` alike — must belong to exactly one module. |
+| `src/features/subjects/subjectCatalogue.js` | **Subject-browser catalogue.** `getSubjectChapterList(subject)` — real chapters resolved from the subject's modules in canonical order, merged with the `cs_*` synthetic placeholder cards. Synthetic cards are browse-surface presentation only: no content, no loader, no progress, never openable, and never added to `CHAPTERS` or `MODULES`. |
 | `src/content/<subject>/<series>/episodes/<file>.js` | Per-chapter content files — the canonical pattern. Each exports `default { id, subject, screens, ... }` and is loaded individually through `src/content/chapterContentRegistry.js` (`CHAPTER_CONTENT_LOADERS`). |
 | `src/content.js` | `TOPICS` and `TOPIC_DATA` — History topic content and questions |
 | `src/contentIndex.js` | `CONTENT_INDEX` — maps topic tags to section metadata for the Targeted Brush-Up system |
@@ -271,10 +278,12 @@ docs/system/TEACHING_VOICE_GUIDE.md
 
 ## Public Assets
 
-All images live under `/public/images/`, organised **subject → module**, mirroring
-the `src/content/<subject>/<series>/` source tree. The folder segment for a module
-is its `series` value from `src/chapters.js` (e.g. `series: "medicine"` →
-`/images/history/medicine/`). Videos stay in `/public/videos/`.
+All images live under `/public/images/`, organised **subject → content series**,
+mirroring the `src/content/<subject>/<series>/` source tree. The folder segment is
+a chapter's `series` value from `src/chapters.js` (e.g. `series: "medicine"` →
+`/images/history/medicine/`). A series folder groups the art shared by a family of
+chapters; its name does not have to equal a module id, and asset layout is not
+module ownership. Videos stay in `/public/videos/`.
 
 ```
 /public/images/
@@ -284,12 +293,12 @@ is its `series` value from `src/chapters.js` (e.g. `series: "medicine"` →
     _shared/                subject-wide art: subject card, series cards, topic groups
       icons/                subject icon set
     exam-papers/            past-paper diagrams and source scans
-    <series>/               one folder per module — images shared across all its chapters
+    <series>/               one folder per content series — images shared across its chapters
       headers/              per-chapter/episode hero cards
       portraits/            people (figures, theorists, characters)
 ```
 
-Names are lowercase kebab-case throughout. A module folder is flat by design — only `headers/` and `portraits/` subdivide it, because images are reused across chapters. Full placement rules live in `docs/system/VISUAL_ASSET_SYSTEM.md`.
+Names are lowercase kebab-case throughout. A series folder is flat by design — only `headers/` and `portraits/` subdivide it, because images are reused across chapters. Full placement rules live in `docs/system/VISUAL_ASSET_SYSTEM.md`.
 
 Key paths: `/images/app/logo.png` (RISE logo, also the favicon), `/images/app/mystery-cube.png` (locked module cards).
 

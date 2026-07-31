@@ -38,9 +38,11 @@ The manifest isn't a deliverable the learner ever sees. Its value is forcing the
 
 ## Where assets live
 
-All images sit under `/public/images/`, organised **subject → module**, mirroring the
-`src/content/<subject>/<series>/` source tree. A module's folder segment is its `series`
-value in `src/modules.js`, so an image path is derivable from the module it serves.
+All images sit under `/public/images/`, organised **subject → content series**, mirroring
+the `src/content/<subject>/<series>/` source tree. The folder segment is a chapter's
+`series` value in `src/chapters.js`, so an image path is derivable from the chapters it
+serves. A series names a family of related chapters for grouping art — it does not have
+to equal a module id, and this layout carries no module ownership.
 
 ```
 /public/images/
@@ -50,24 +52,24 @@ value in `src/modules.js`, so an image path is derivable from the module it serv
     _shared/                subject-wide art: subject card, series cards, topic groups
       icons/                subject icon set
     exam-papers/            past-paper diagrams and source scans
-    <series>/               one module — images shared across all its chapters
+    <series>/               one content series — images shared across its chapters
       headers/              per-chapter/episode hero cards
       portraits/            people (figures, theorists, characters)
 ```
 
-This layout is a direct expression of the reuse philosophy below. A module folder is
+This layout is a direct expression of the reuse philosophy below. A series folder is
 **flat on purpose**: chapter subfolders were removed because the same street scene,
-diagram or portrait is expected to serve several chapters of a module. Nesting by
+diagram or portrait is expected to serve several chapters of a series. Nesting by
 chapter quietly encourages a new commission per chapter, which is exactly the
 fragmentation the Scene Pack model exists to prevent.
 
 Placement rules:
 
 - Names are lowercase kebab-case throughout — no spaces, underscores, capitals or apostrophes.
-- `backgrounds/` is for backdrops genuinely reusable *across modules*. A backdrop serving one module belongs in that module's folder.
+- `backgrounds/` is for backdrops genuinely reusable *across series*. A backdrop serving one series belongs in that series' folder.
 - `app/` is for art used by two or more subjects.
 - Filenames don't repeat their folder — `history/medicine/headers/black-death.png`, not `history-medicine-black-death.png`.
-- Search a module's folder, then its subject's `_shared/`, then `backgrounds/`, before commissioning anything new.
+- Search a series folder, then its subject's `_shared/`, then `backgrounds/`, before commissioning anything new.
 
 ## Asset categories
 
