@@ -11,6 +11,7 @@ import { StreakChip } from '../home/StreakChip.jsx'
 import BackButton from '../../components/core/BackButton.jsx'
 import BottomNav from '../../app/BottomNav.jsx'
 import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
+import { getSubjectChapterList } from './subjectCatalogue.js'
 
 const CHAPTER_HEADER_IMAGES = {
   'history-medicine-medieval-beliefs-causes': '/images/history/_shared/medicine-through-time.webp',
@@ -115,38 +116,6 @@ const ENGLISH_SERIES = [
   },
 ]
 
-function getSubjectChapterList(subjectName) {
-  const real = CHAPTERS.filter(chapter => chapter.subject === subjectName)
-  const cs = (arr) => arr.map(x => ({ ...x, comingSoon: true }))
-  switch (subjectName) {
-    case 'History':
-      return real
-    case 'English': {
-      const macbethCh1 = CHAPTERS.find(chapter => chapter.id === 'english-macbeth-power-ambition')
-      return [
-        macbethCh1 ? { ...macbethCh1, series: 'macbeth', number: 1 } : null,
-        { id: 'cs_macbeth_2', title: 'Out, damned spot',                  subtitle: 'Guilt and consequence',          comingSoon: true, series: 'macbeth',   number: 2 },
-        { id: 'cs_macbeth_3', title: 'Double, double, toil and trouble',  subtitle: 'The witches and fate',           comingSoon: true, series: 'macbeth',   number: 3 },
-        { id: 'cs_macbeth_4', title: 'Fair is foul, foul is fair',        subtitle: 'Appearance vs reality',          comingSoon: true, series: 'macbeth',   number: 4 },
-        { id: 'cs_inspector_1', title: 'We are members of one body',      subtitle: "Priestley's social message",     comingSoon: true, series: 'inspector', number: 1 },
-        { id: 'cs_inspector_2', title: 'I accept no blame',               subtitle: 'Responsibility and denial',      comingSoon: true, series: 'inspector', number: 2 },
-        { id: 'cs_inspector_3', title: 'Fire, blood and anguish',         subtitle: 'Consequences and resolution',    comingSoon: true, series: 'inspector', number: 3 },
-      ].filter(Boolean)
-    }
-    case 'Physics':
-      return cs([
-        { id: 'cs_forces', title: 'Forces & Motion',     subtitle: 'AQA Physics · Topic 5 & 6' },
-        { id: 'cs_energy', title: 'Energy',              subtitle: 'AQA Physics · Topic 1' },
-        { id: 'cs_waves',  title: 'Waves & Electricity', subtitle: 'AQA Physics · Topic 6 & 2' },
-        { id: 'cs_space',  title: 'Space',               subtitle: 'AQA Physics · Topic 8' },
-        { id: 'cs_matter', title: 'Matter & Particles',  subtitle: 'AQA Physics · Topic 3 & 4' },
-      ])
-    default:
-      if (real.length > 0) return real
-      return cs([{ id: `cs_${subjectName.toLowerCase()}`, title: 'Content coming soon', subtitle: subjectName }])
-  }
-}
-
 function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
   const sand         = SUBJECTS[subjectName]?.subjectBrowserAccent || SUBJECTS.History.subjectBrowserAccent
   const bronze       = SUBJECTS[subjectName]?.subjectBrowserAccentDark || SUBJECTS.History.subjectBrowserAccentDark
@@ -165,24 +134,26 @@ function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
     return null
   })
 
-  const rawChapters = getSubjectChapterList(subjectName)
-  const allItems = rawChapters.map((chapter, i) => {
-    if (chapter.comingSoon) return { ...chapter, number: i + 1, status: 'coming_soon', pct: 0 }
-    // Canonical availability: hidden stubs drop out entirely, coming-soon stubs
-    // show but never open (guarded in handleCardClick / openChapterPlayer).
-    const availability = getChapterAvailability(chapter)
-    if (availability === CHAPTER_AVAILABILITY.HIDDEN) return null
-    if (availability !== CHAPTER_AVAILABILITY.AVAILABLE) return { ...chapter, number: i + 1, status: 'coming_soon', pct: 0 }
-    const s = safeGetChapterState(chapter.id)
-    const screen = s.screen || 0
-    const hasStarted = (s.hookDone && s.wylDone) || screen > 0
-    const total = chapter.screenCount || 1
-    // `completed` sticks once a chapter is finished — reviewing it afterwards moves `screen`
-    // back down, but it must never read as anything other than 'completed' again.
-    const pct = s.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
-    const status = s.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
-    return { ...chapter, number: chapter.number || i + 1, status, pct }
-  }).filter(Boolean) // drop hidden chapters
+  // Canonical availability: hidden stubs drop out before numbering so they can
+  // never shift a visible chapter's position; coming-soon stubs show but never
+  // open (guarded in handleCardClick / openChapterPlayer).
+  const allItems = getSubjectChapterList(subjectName)
+    .filter(chapter => chapter.comingSoon || getChapterAvailability(chapter) !== CHAPTER_AVAILABILITY.HIDDEN)
+    .map((chapter, i) => {
+      // Authored chapter numbers win — a generated position is only for
+      // synthetic cards that carry none.
+      const number = chapter.number ?? i + 1
+      if (chapter.comingSoon || getChapterAvailability(chapter) !== CHAPTER_AVAILABILITY.AVAILABLE) return { ...chapter, number, status: 'coming_soon', pct: 0 }
+      const s = safeGetChapterState(chapter.id)
+      const screen = s.screen || 0
+      const hasStarted = (s.hookDone && s.wylDone) || screen > 0
+      const total = chapter.screenCount || 1
+      // `completed` sticks once a chapter is finished — reviewing it afterwards moves `screen`
+      // back down, but it must never read as anything other than 'completed' again.
+      const pct = s.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
+      const status = s.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
+      return { ...chapter, number, status, pct }
+    })
 
   const defaultSeries = isHistory ? 'medicine' : 'macbeth'
   const items = (hasSeries && activeSeries)
