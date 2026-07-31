@@ -54,7 +54,7 @@ function mediaFrameStyle(theme, aspect, objectFit = 'contain') {
 // Visual paths and media behaviour stay in content data. Supported media shapes:
 //   imageReveal — MediaPlaceholder reveal config in media.caption
 //   image/diagram + src — a supplied still graphic; complete once loaded
-//   clip/video + src — a short supplied clip; complete on the ended event
+//   clip/video + src — a short silent supplied clip; complete on the ended event
 //   placeholder — MediaPlaceholder remains visible and does not unlock progression
 //
 // Props:
@@ -106,7 +106,10 @@ export default function Infographic({
         poster={resolvedMedia.poster}
         aria-label={resolvedMedia.alt || 'Infographic clip'}
         autoPlay={resolvedMedia.autoPlay !== false}
-        muted={resolvedMedia.muted !== false}
+        // The clip slot is silent by contract — a short motion graphic, never a
+        // narrated one. Silence is not author-overridable, so the clip needs a
+        // text alternative (`aria-label`) rather than a captions track.
+        muted
         controls={resolvedMedia.controls === true}
         playsInline
         preload="metadata"

@@ -257,8 +257,9 @@ export default function BuilderBlock({ block, subject = 'Biology', onComplete })
         onClick={() => handleSlotPress(slotIndex)}
         disabled={locked}
         aria-pressed={selected}
-        aria-invalid={showIncorrect || undefined}
-        aria-label={`${slotGroupName(slotIndex)} gap ${slotIndex + 1}: ${piece?.label ?? 'empty'}${selected ? ', selected' : ''}${locked ? ', locked' : ''}`}
+        // `aria-invalid` is not supported on role="button", so a wrong answer is
+        // carried in the accessible name alongside the red border.
+        aria-label={`${slotGroupName(slotIndex)} gap ${slotIndex + 1}: ${piece?.label ?? 'empty'}${showIncorrect ? ', incorrect' : ''}${selected ? ', selected' : ''}${locked ? ', locked' : ''}`}
         style={{
           width: inline ? 'auto' : '100%',
           minWidth: inline

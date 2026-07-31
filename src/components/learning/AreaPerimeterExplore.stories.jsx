@@ -1,6 +1,24 @@
 import { expect, userEvent, within } from 'storybook/test'
 import AreaPerimeterExplore from './AreaPerimeterExplore.jsx'
 
+// Every value change is mirrored verbatim into a visually hidden aria-live
+// region, so the status heading exists twice in the DOM once a learner has
+// interacted. Text queries have to skip the mirror or they match twice.
+const IGNORE_LIVE_REGION = 'script, style, [data-ap-status-announcement]'
+
+function canvasOf(canvasElement) {
+  const queries = within(canvasElement)
+  return {
+    ...queries,
+    getByText: (matcher, options) =>
+      queries.getByText(matcher, { ignore: IGNORE_LIVE_REGION, ...options }),
+    queryByText: (matcher, options) =>
+      queries.queryByText(matcher, { ignore: IGNORE_LIVE_REGION, ...options }),
+    getAllByText: (matcher, options) =>
+      queries.getAllByText(matcher, { ignore: IGNORE_LIVE_REGION, ...options }),
+  }
+}
+
 function statusText(canvasElement) {
   return [
     canvasElement.querySelector('[data-ap-status-heading]')?.textContent ?? '',
@@ -34,7 +52,7 @@ export default {
 export const RectanglePerimeter = {
   args: { preset: 'rectangle', focus: 'perimeter' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     const width = canvas.getByRole('slider', { name: 'Width of the rectangle' })
 
     await expect(canvas.getByText('Perimeter = 20 cm')).toBeVisible()
@@ -55,7 +73,7 @@ export const RectanglePerimeter = {
 export const RectangleArea = {
   args: { preset: 'rectangle', focus: 'area' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     const height = canvas.getByRole('slider', { name: 'Height of the rectangle' })
 
     // Rows and columns come first; the multiplication is the second line.
@@ -75,7 +93,7 @@ export const RectangleArea = {
 export const RectangleSquareState = {
   args: { preset: 'rectangle', focus: 'area', defaultValue: { width: 5, height: 4 } },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     const height = canvas.getByRole('slider', { name: 'Height of the rectangle' })
 
     expect(canvasElement.querySelectorAll('[data-ap-shape^="rectangle-equal-"]').length).toBe(0)
@@ -93,7 +111,7 @@ export const RectangleSquareState = {
 export const RectangleCompare = {
   args: { preset: 'rectangle', focus: 'compare' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     const width = canvas.getByRole('slider', { name: 'Width of the rectangle' })
 
     await expect(canvas.getByText('Perimeter 20 cm — area 24 cm²')).toBeVisible()
@@ -118,7 +136,7 @@ export const RectangleCompare = {
 export const FixedPerimeter = {
   args: { preset: 'fixedPerimeterRectangle' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     const width = canvas.getByRole('slider', { name: 'Width of the rectangle (perimeter stays 24 cm)' })
 
     await expect(canvas.getByText('Area = 32 cm²')).toBeVisible()
@@ -159,7 +177,7 @@ export const FixedPerimeter = {
 export const TriangleArea = {
   args: { preset: 'triangleArea' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     const apex = canvas.getByRole('slider', { name: 'Slide the apex along the top' })
 
     await expect(canvas.getByText('Area = 16 cm²')).toBeVisible()
@@ -188,7 +206,7 @@ export const TriangleArea = {
 export const TrianglePerpendicularHeight = {
   args: { preset: 'triangleArea' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     const height = canvas.getByRole('slider', { name: 'Perpendicular height of the triangle' })
 
     await expect(canvas.getByText('Area = 16 cm²')).toBeVisible()
@@ -209,7 +227,7 @@ export const TrianglePerpendicularHeight = {
 export const TriangleFormulaReveal = {
   args: { preset: 'triangleArea' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
 
     // The formula is withheld until the pairing is triggered.
     expect(statusText(canvasElement)).not.toContain('½ × base')
@@ -229,7 +247,7 @@ export const TriangleFormulaReveal = {
 export const ParallelogramArea = {
   args: { preset: 'parallelogramArea' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     const slant = canvas.getByRole('slider', { name: 'Slide the top edge sideways' })
 
     await expect(canvas.getByText('Area = 28 cm²')).toBeVisible()
@@ -256,7 +274,7 @@ export const ParallelogramArea = {
 export const ParallelogramCutAndSlide = {
   args: { preset: 'parallelogramArea' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
 
     expect(shape(canvasElement, 'parallelogram-rectangle')).toBeNull()
 
@@ -279,7 +297,7 @@ export const ParallelogramCutAndSlide = {
 export const TrapeziumArea = {
   args: { preset: 'trapeziumArea' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     const top = canvas.getByRole('slider', { name: 'Length of the top parallel side' })
     const bottom = canvas.getByRole('slider', { name: 'Length of the bottom parallel side' })
     const height = canvas.getByRole('slider', { name: 'Perpendicular height of the trapezium' })
@@ -309,7 +327,7 @@ export const TrapeziumArea = {
 export const TrapeziumDuplicateAndRotate = {
   args: { preset: 'trapeziumArea' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
 
     expect(shape(canvasElement, 'trapezium-duplicate')).toBeNull()
 
@@ -329,7 +347,7 @@ export const TrapeziumDuplicateAndRotate = {
 export const CompositeArea = {
   args: { preset: 'compositeShape', focus: 'area' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
 
     await expect(canvas.getByText('Area = 36 cm²')).toBeVisible()
     await expect(canvas.getByText('24 cm² + 12 cm² = 36 cm²')).toBeVisible()
@@ -355,7 +373,7 @@ export const CompositeArea = {
 export const CompositePerimeter = {
   args: { preset: 'compositeShape', focus: 'perimeter' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
 
     await expect(canvas.getByText('Perimeter = 26 cm')).toBeVisible()
     await expect(canvas.getByText('7 + 4 + 3 + 2 + 4 + 6 = 26 cm')).toBeVisible()
@@ -387,7 +405,7 @@ export const StaticWorkedExample = {
     interactive: false,
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     const diagram = canvasElement.querySelector('.ap-explore')
 
     await expect(diagram).toHaveAttribute('data-ap-interactive', 'false')
@@ -401,7 +419,7 @@ export const StaticWorkedExample = {
 export const KeyboardOnly = {
   args: { preset: 'rectangle', focus: 'compare' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     const width = canvas.getByRole('slider', { name: 'Width of the rectangle' })
     const height = canvas.getByRole('slider', { name: 'Height of the rectangle' })
 
@@ -451,7 +469,7 @@ export const MobileWidth = {
     ),
   ],
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = canvasOf(canvasElement)
     expectMobileContainment(canvasElement)
 
     const svg = canvasElement.querySelector('svg[data-ap-canvas]')

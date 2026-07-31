@@ -593,8 +593,9 @@ export default function ColSortBlockCore({ block, subject = 'Biology', onComplet
               key={`${cursor}-${cur.label}`}
               className="csb-current-card"
               role="group"
+              // Not a tab stop: the card is dragged with a pointer, and every
+              // column button already names the card it would sort.
               aria-label={`Evidence to sort: ${cur.label}`}
-              tabIndex={0}
               onPointerDown={startDrag}
               onPointerMove={moveDrag}
               onPointerUp={endDrag}

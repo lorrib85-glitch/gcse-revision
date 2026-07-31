@@ -35,6 +35,9 @@ export default function SegmentedControl({
     buttonRefs.current[optionIndex]?.focus()
   }
 
+  // Roving tabindex means only a tab is ever focused, so the arrow/Home/End
+  // handling lives on the tabs themselves rather than on the tablist container
+  // — the container stays correctly out of the tab order.
   function handleKeyDown(event) {
     if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
       event.preventDefault()
@@ -60,7 +63,6 @@ export default function SegmentedControl({
     <div
       role="tablist"
       aria-label={ariaLabel}
-      onKeyDown={handleKeyDown}
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))`,
@@ -88,6 +90,7 @@ export default function SegmentedControl({
             disabled={disabled}
             tabIndex={active || (activeEnabledIndex === -1 && firstEnabled) ? 0 : -1}
             onClick={() => !disabled && onChange?.(option.value)}
+            onKeyDown={handleKeyDown}
             style={{
               ...TYPE.label,
               minWidth: 0,

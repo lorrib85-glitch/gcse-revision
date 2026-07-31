@@ -186,11 +186,14 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
   }
 
   return (
-    <CinematicShell style={{
-      background: theme.background,
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
+    <CinematicShell
+      onKeyDown={handleKeyDown}
+      style={{
+        background: theme.background,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <style>{`
         @keyframes kfr-slide-in {
           from { opacity: 0; transform: translateX(18px); }
@@ -266,8 +269,6 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
       <div
         role="region"
         aria-label={`${block.name || 'Key figure'} reveal`}
-        tabIndex={0}
-        onKeyDown={handleKeyDown}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchCancel={() => { touchRef.current = null }}
