@@ -230,10 +230,10 @@ export function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, 
 
             {feedback.achieved?.length > 0 && (
               <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
-                <div style={{ ...TYPE.eyebrow, textTransform:'uppercase', color:GENERAL.success, marginBottom:10 }}>✓ What you got right</div>
+                <div style={{ ...TYPE.eyebrow, textTransform:'uppercase', color:GENERAL.feedbackCorrect, marginBottom:10 }}>✓ What you got right</div>
                 {feedback.achieved.map((a,i) => (
                   <div key={i} style={{ display:'flex', gap:8, marginBottom: i<feedback.achieved.length-1?8:0 }}>
-                    <span style={{ color:GENERAL.success, flexShrink:0, fontSize:'.9rem' }}>✓</span>
+                    <span style={{ color:GENERAL.feedbackCorrect, flexShrink:0, fontSize:'.9rem' }}>✓</span>
                     <p style={{ margin:0, ...TYPE.body, fontSize:'.88rem', color:'#C8D0E8' }}>{a}</p>
                   </div>
                 ))}
@@ -242,10 +242,10 @@ export function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, 
 
             {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && (
               <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
-                <div style={{ ...TYPE.eyebrow, textTransform:'uppercase', color:GENERAL.error, marginBottom:10 }}>→ Next time, also include</div>
+                <div style={{ ...TYPE.eyebrow, textTransform:'uppercase', color:GENERAL.feedbackIncorrect, marginBottom:10 }}>→ Next time, also include</div>
                 {feedback.missed.map((m,i) => (
                   <div key={i} style={{ display:'flex', gap:8, marginBottom: i<feedback.missed.length-1?8:0 }}>
-                    <span style={{ color:GENERAL.error, flexShrink:0, fontSize:'.9rem' }}>→</span>
+                    <span style={{ color:GENERAL.feedbackIncorrect, flexShrink:0, fontSize:'.9rem' }}>→</span>
                     <p style={{ margin:0, ...TYPE.body, fontSize:'.88rem', color:'#C8D0E8' }}>{m}</p>
                   </div>
                 ))}

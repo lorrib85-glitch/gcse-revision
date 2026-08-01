@@ -6,6 +6,19 @@
 //
 // Single source of truth for all subject-aware components.
 // Do NOT duplicate colours or create local palette maps.
+//
+// Subject Browser presentation palette (A3):
+//   subjectBrowserAccent      — the browser's primary accent for a subject
+//   subjectBrowserAccentDark  — its dark gradient stop
+// These two are intentionally distinct from `accent`/`accentTertiary`: the
+// browser is a shell surface with its own cinematic identity, not in-module
+// subject theming. Both are required for every subject the browser can render
+// (guarded in tests/architecture/app-boundaries.test.js).
+//
+// There is deliberately NO per-subject field for the active timeline node's
+// text colour — that role was reviewed and collapsed to GENERAL.softWhite.
+// Reintroducing a subject-tinted token for it is a design reversal, not a
+// refactor, and is guarded against in the same test file.
 
 export const SUBJECTS = {
   Maths: {

@@ -53,17 +53,36 @@ export const GENERAL = {
   // surface (e.g. a CTA button whose background is a subject accent colour).
   textOnAccent: '#08090D',
 
+  // ── System / operational status tokens ────────────────────────────────
+  // These are the loud, high-chroma signals. They mean "the app did or did
+  // not do something" — a failed fetch, an unreachable grading server, an
+  // input that can't be submitted, a dev-lab component that threw. They are
+  // NOT learner feedback: never use them to tell a student their answer was
+  // right or wrong (use the feedback* tokens below), because an API failure
+  // and a wrong answer must not look like the same event.
+  //
+  // `successSoft`/`error` are additionally read by GRADE_COLOURS
+  // (src/features/quickfire/utils.js) for performance-band styling
+  // (Excellent / Good / Developing / Needs Work). A band is a summary of how
+  // well a whole answer scored, which is a third concept — deliberately
+  // distinct from both binary answer feedback and system state — and it
+  // keeps these tokens by review, not by accident.
+  //
+  // Call sites are censused and guarded by
+  // tests/architecture/feedback-token-governance.test.js.
   success:     '#4DFF88',
   successSoft: '#38D27A',
   error:       '#FF5D73',
   errorSoft:   '#FF5C7A',
 
+  // ── Learning / answer-feedback tokens ─────────────────────────────────
   // Canonical answer-feedback tokens — the single source of truth for
-  // correct/incorrect/hint/feedback-copy colour across AnswerInteraction and
-  // UnifiedQuestionScreen (and any future shared question UI). These match
-  // the documented `correct`/`incorrect` values in PRODUCT_UI_CONSTITUTION.md
-  // — deliberately calmer than `success` above, which stays as-is for any
-  // existing call site that isn't part of this feedback-token migration.
+  // correct/incorrect/hint/feedback-copy colour across AnswerInteraction,
+  // UnifiedQuestionScreen, and AI-marked written feedback ("what you got
+  // right" / "next time, also include"). These match the documented
+  // `correct`/`incorrect` values in PRODUCT_UI_CONSTITUTION.md —
+  // deliberately calmer than the system `success`/`error` above, because
+  // marking a student's work should read as guidance, not as an alarm.
   feedbackCorrect:      '#4CAF7D',
   feedbackCorrectRgb:   '76,175,125',
   feedbackIncorrect:    '#E05A52',

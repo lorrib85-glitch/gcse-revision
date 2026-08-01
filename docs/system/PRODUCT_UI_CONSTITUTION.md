@@ -80,8 +80,19 @@ No mascots. No confetti. No pastel buttons. No "Amazing! You're a superstar!" co
 `GENERAL.feedbackIncorrect` (`src/constants/generalTheme.js`), alongside
 `GENERAL.feedbackHint` (supportive/hint accent) and `GENERAL.feedbackText`
 (feedback/hint body copy, matching `text-primary` above) — the canonical
-answer-feedback token set shared by `AnswerInteraction` and
-`UnifiedQuestionScreen`.
+answer-feedback token set shared by `AnswerInteraction`,
+`UnifiedQuestionScreen` and AI-marked written feedback.
+
+**These are not the same as `GENERAL.success` / `GENERAL.error`.** Those are
+louder, higher-chroma *system-status* tokens: a failed request, an unreachable
+grading server, an input that can't be submitted. Never use them to tell a
+learner whether their answer was right — an API failure and a wrong answer must
+not read as the same event. `GENERAL.successSoft` / `GENERAL.error` are
+additionally read by `GRADE_COLOURS` (`src/features/quickfire/utils.js`) for
+**performance bands** (Excellent / Good / Developing / Needs Work), a third
+concept distinct from both. Their call sites are censused and guarded by
+`tests/architecture/feedback-token-governance.test.js`; see architecture backlog
+A7 for the full classification.
 
 Subject accent colours are defined in `src/constants/subjects.js`. See `docs/system/SUBJECT_THEME_SYSTEM.md`.
 

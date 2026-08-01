@@ -135,7 +135,7 @@ Canonical documentation: `docs/system/MASTERY_ENGINE.md`.
 
 ## A7 — Classify and (selectively) migrate `GENERAL.success`/`GENERAL.error` to canonical feedback tokens
 
-**Status:** Backlog
+**Status:** Resolved
 **Priority:** Medium
 **Area:** `src/constants/generalTheme.js`, `src/features/quickfire/` (current call sites), any other `GENERAL.success`/`GENERAL.error` call site found at audit time
 
@@ -171,6 +171,73 @@ First-pass read of the 11 known call sites (not a finished classification — co
 - Category 1 call sites use `feedbackCorrect`/`feedbackIncorrect`/`feedbackHint`/`feedbackText`.
 - Categories 2-4 either keep their current token or get a deliberate, documented rename — never a silent value change.
 - Docs state plainly what `GENERAL.success`/`GENERAL.error` are for once this audit lands.
+
+### Outcome — audit complete
+
+The first-pass guesses above were re-run against current `main` and **partly
+corrected**. Actual count was **18 occurrences across 6 files**, not 11 across 3 —
+the earlier note missed `ComponentReviewLab.jsx`, `QuoteAnalyser.jsx` and
+`GuidedExamResponse.jsx`, and counted lines rather than occurrences.
+
+| # | File | Occurrences | Cat | Rendered purpose | Action |
+|---|---|---|---|---|---|
+| 1 | `modes/MathsQuestion.jsx:233,236` | 2 × `success` | **1** | "✓ What you got right" — AI marking verdict | → `feedbackCorrect` |
+| 2 | `modes/MathsQuestion.jsx:245,248` | 2 × `error` | **1** | "→ Next time, also include" — AI marking verdict | → `feedbackIncorrect` |
+| 3 | `QuickFire.jsx:358` | 2 × `success` | **1** | same block inside `ChemistryTopicView` | → `feedbackCorrect` |
+| 4 | `QuickFire.jsx:359` | 2 × `error` | **1** | same block inside `ChemistryTopicView` | → `feedbackIncorrect` |
+| 5 | `modes/MathsQuestion.jsx:217` | 1 × `error` | **2** | inline strip: submit validation ("Pick an option first") + "Could not reach the grading server" | retained |
+| 6 | `QuickFire.jsx:346` | 1 × `error` | **2** | same validation / grading-server strip | retained |
+| 7 | `utils.js:6,7,9` | 1 × `success`, 2 × `successSoft`, 2 × `error` | **3** | `GRADE_COLOURS` — Excellent / Good / Developing / Needs Work | retained |
+| 8 | `ComponentReviewLab.jsx:67,411` | 2 × `error` | **2** | dev-only lab: "unused" status chip + render error boundary. Not a learner surface | retained |
+| 9 | `QuoteAnalyser.jsx:578` | 1 × `errorSoft` | **2** | `checkError` — request timeout / API failure, not the interpretation verdict | retained |
+| 10 | `GuidedExamResponse.jsx:555,556` | 1 × `error`, 1 × `errorSoft` | **2** | "Marking failed — your response hasn't been lost." The request failed; no verdict was produced | retained |
+
+**No Category 4.** Every call site was classifiable from its rendered purpose.
+
+**Category 3 decision:** performance bands are retained on the system tokens and
+documented as a deliberately distinct third concept. A band summarises how well a
+whole answer scored — neither binary answer feedback nor system state. No new
+token family was invented, per the rule against speculative tokens.
+
+**Rename decision:** `GENERAL.success`/`error` were **not** renamed. A rename was
+optional, and Category 3 means they are not used *solely* for system state, so the
+precondition for a safe mechanical rename is not met.
+
+Migrated (Category 1 only): 8 occurrences, 2 files. `#4DFF88` → `#4CAF7D`,
+`#FF5D73` → `#E05A52`. Container backgrounds (`#151720` / `#1E2A40`) were not
+touched, so only the text and glyph colour changes; both stay above WCAG AA on
+that surface (correct 6.58:1, incorrect 4.90:1). No copy, interaction or answer
+logic changed.
+
+**Honest limitation on visual verification.** Both Category 1 blocks sit in code
+that is **currently unreachable in the running app**. `TestTab` is only ever
+mounted as `mode="quickfire"` (with `autoStart`, which goes straight to
+`QuickFireMode`) or `mode="exam"` (which returns `ExamMode`), so the
+`EXAM_SUBJECTS` landing that opens `MathsBrowser` → `MathsTopicView` →
+`MathsQuestion` and `ChemistryBrowser` → `ChemistryTopicView` never renders. When
+that landing was temporarily mounted to verify, `MathsBrowser` threw
+`Cannot read properties of undefined (reading 'reduce')` — it reads
+`MATHS_TOPIC_GROUPS` from `useTestData()`, and `TestDataProvider` only wraps the
+Exams tab. So these panels cannot render today even when reached. The live
+marking surface a learner actually hits is `ExamQuestionFrame.jsx` ("POINTS TO
+ADD"), which never used the legacy tokens; `TopicPracticeMode.jsx` renders a
+similar block already on `GENERAL.teal`/`slate`. The migration is still correct
+and is guarded by tests, but no 390px screenshot of those two panels is
+obtainable without routing work that was explicitly out of scope. Routing/repair
+of these components remains open under A1.
+
+**Guard added:** `tests/architecture/feedback-token-governance.test.js` —
+an explicit per-file census of every reviewed legacy-token usage (exact
+occurrence counts + the classification that justifies each), plus block-level
+assertions that the `feedback.achieved` / `feedback.missed` regions avoid
+system-status tokens. Deliberately **not** a repo-wide ban: Categories 2 and 3
+stay legal at their reviewed counts. Mutation-verified — reverting
+QuickFire's "What you got right" to `GENERAL.success` fails 2 tests; adding an
+unclassified `GENERAL.error` to `Home.jsx` fails the census test. Both reverted.
+
+**Not resolved by this item:** the larger raw-hex cleanup (`#4DFF88`, `#FF5D73`
+etc. hardcoded outside `GENERAL.*` call sites in `src/content/**`, `src/data/**`).
+Still open and still explicitly out of scope — see the rule above.
 
 ---
 
@@ -238,7 +305,7 @@ Architecture tests are now green: `pnpm vitest run tests/architecture` reports 4
 
 ## A3 — Remove duplicated subject palette maps from feature files
 
-**Status:** In progress  
+**Status:** Resolved  
 **Priority:** High  
 **Area:** `src/features/subjects/Subjects.jsx`, `src/constants/subjects.js`, subject theme helpers, tests
 
@@ -282,11 +349,58 @@ Dead-code precursor cleanup is complete:
 - Did **not** add the migrated hex values to `color-token-governance.test.js`'s `MIGRATED_VALUES` — several of them (`#C89B6D`, `#9B59E8`, `#2DD4BF`, `#3B82F6`, `#C9B07C`) already appear as raw literals in `QuickFire.jsx` and `InteractiveHotspotImage.jsx` for unrelated purposes; gating on them now would fail the test immediately and fixing those call sites means touching `QuickFire.jsx`, which is out of scope for this slice.
 - `pnpm vitest run tests/architecture` and `pnpm vitest run tests/unit` pass; `pnpm vite build` succeeds; manual smoke check in dev server confirmed no rendered colour change for History and Biology.
 
-### Work (remaining)
-- `cream` still needs a human design-review decision (subject-identity token vs. collapse to a `GENERAL` light-neutral) before it can be moved out of `SUBJECT_BROWSER_PENDING_CREAM` in `Subjects.jsx`.
+**Final slice (`cream` decision + `SubjectSection`) — closed.**
+
+Two items above were recorded as outstanding but had in fact already landed by the
+time this entry was audited. Corrected against the code, not against the notes:
+
+- **`cream` was resolved by collapse, not by per-subject migration.** The design
+  review came down on the "collapse to a light neutral" side: the active timeline
+  node's text colour is now `GENERAL.softWhite` (`Subjects.jsx:414`) for every
+  subject, and `SUBJECT_BROWSER_PENDING_CREAM` is gone. The former per-subject
+  cream values are **not recoverable** — this repository's history begins at a
+  single root commit (`5bdb10e`) that adds `Subjects.jsx` whole, and no blob in
+  any ref contains `SUBJECT_BROWSER_PENDING_CREAM`. Reintroducing subject-tinted
+  active-node text is therefore a **design change requiring new colour choices**,
+  not an ownership refactor. Guarded by the
+  `Subjects.jsx does not regrow a cream/subject-tinted timeline-node token`
+  block, which forbids both the old local map and a new `subjectBrowserCream`
+  field in `constants/subjects.js`.
+- **`SubjectSection` was already deleted.** Full-repo search (`rg SubjectSection`
+  across all tracked files, plus a scan of every commit reachable from all refs)
+  returns only this backlog entry — zero definitions, zero call sites. The two
+  live top-level components in `Subjects.jsx` are `SubjectBrowser` and
+  `SubjectsTab`, and nothing else.
+
+Guards hardened in this pass (`tests/architecture/app-boundaries.test.js`):
+
+- `SubjectSection` added to the dead-code regression list alongside `ModulePage`
+  and `HistoryMedicineBrowser`, now table-driven.
+- New assertion that `Subjects.jsx` declares **exactly** `SubjectBrowser` and
+  `SubjectsTab` at top level — catches a fourth dead component, not just the
+  three known names.
+- New field-presence assertion: every subject listed in the browser's own
+  `SUBJECT_DISPLAY_TITLES` must own both `subjectBrowserAccent` and
+  `subjectBrowserAccentDark` in `SUBJECTS`, so no subject silently falls through
+  to the History fallback. Driven off the browser's list so adding a subject
+  there without the fields fails here.
+- Mutation-verified: deleting `Biology.subjectBrowserAccentDark` fails the
+  field-presence test; re-adding a `function SubjectSection(` stub fails two
+  tests. Both reverted.
+
+Rendered output confirmed unchanged at 390px for History, Biology, English and
+Maths — active node `rgb(241,250,238)` (`#F1FAEE`, `GENERAL.softWhite`) on all
+four; progress-ring stroke exactly each subject's `subjectBrowserAccent`
+(History `#C89B6D`, Biology `#4CAF7D`, English `#B96F78`, Maths `#2DD4BF`);
+future nodes `rgba(accent,0.55)`; no horizontal overflow; no console errors.
+
+**Status: Resolved.** No local Subject Browser palette remains, both surviving
+roles are canonical in `SUBJECTS`, the dead functions are gone, and ownership +
+dead-code regression are both guarded.
+
+### Work (remaining — tracked separately, NOT part of A3)
 - Move shared dark/surface roles to the planned `GENERAL.background.*` tokens from brand backlog B9 where appropriate (separate from this slice).
-- Once `QuickFire.jsx`'s unrelated reuse of these same hex values is addressed (separately, out of scope here), revisit adding `subjectBrowserAccent`/`subjectBrowserAccentDark` to the colour-token governance migrated list.
-- **`SubjectSection` (`Subjects.jsx:98`, `function SubjectSection({ heading, accent, modules, onModuleClick })`) is a third piece of dead code, found during a lint-warning audit.** Zero call sites anywhere in the repo — same unreachable-function shape as `ModulePage` and `HistoryMedicineBrowser`, just not caught by the original A3 pass. Not yet removed (docs-only pass — no app code changed here). Future cleanup should: delete `SubjectSection` in full; extend the existing `Subjects.jsx dead code does not regrow` guard in `tests/architecture/app-boundaries.test.js` to also assert `SubjectSection` is not reintroduced as a function name (same pattern as the current `ModulePage`/`HistoryMedicineBrowser` assertions); confirm `pnpm vitest run tests/architecture` and `pnpm vite build` stay green after removal.
+- Once `QuickFire.jsx`'s unrelated reuse of these same hex values is addressed (separately, out of scope here), revisit adding `subjectBrowserAccent`/`subjectBrowserAccentDark` to the colour-token governance migrated list. Deliberately not added now: guarding raw-hex uniqueness repo-wide would fail on legitimate other-role uses of the same literals. A3 guards **ownership and field presence**, not colour uniqueness.
 
 ### Rules
 - Do not create replacement local maps in another feature file.
