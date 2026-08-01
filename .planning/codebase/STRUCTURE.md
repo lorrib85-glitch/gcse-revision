@@ -328,7 +328,7 @@ gcse-revision/
 ├── pnpm-lock.yaml              # Lockfile
 ├── CLAUDE.md                   # Project instructions (THIS FILE)
 ├── BRAND.md                    # Design & brand reference
-├── COMPONENTS.md               # Component registry
+│                               # (root COMPONENTS.md was deleted — see docs/components/)
 ├── firestore.rules             # Firestore security rules
 └── README.md                   # (if exists)
 ```
@@ -421,7 +421,7 @@ gcse-revision/
 **Reference & Design:**
 - `CLAUDE.md` (project instructions — READ BEFORE ANY WORK)
 - `BRAND.md` (design reference)
-- `COMPONENTS.md` (component registry)
+- `docs/components/COMPONENT_REGISTRY.md` (component registry) and `docs/components/LOCKED_COMPONENTS.md` (locked components)
 - `docs/system/PRODUCT_UI_CONSTITUTION.md` (design law)
 - `docs/system/HISTORY_MODULE_ARCHITECTURE.md` (History-specific rules)
 - `docs/system/SCIENCE_MODULE_BLUEPRINT.md` (Science-specific rules)

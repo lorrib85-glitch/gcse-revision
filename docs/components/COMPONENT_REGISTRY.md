@@ -1,7 +1,15 @@
 # Component Registry
 
 **Last updated:** 2026-07-28
-**Scope:** All standalone components in `src/components/`
+**Scope:** The canonical human-readable registry for documented standalone
+components in `src/components/`. Catalogue completeness is governed separately —
+a component missing an entry here is a documentation gap, not evidence that the
+component is defective or unusable.
+
+**Authority:** This file is the only human-readable Component Registry. The
+machine-readable pedagogical taxonomy is `src/data/componentFunctions.js`; the
+authorable screen/block contract is `src/data/screenRegistry.js`; locked-component
+rules are in `docs/components/LOCKED_COMPONENTS.md`.
 
 ---
 

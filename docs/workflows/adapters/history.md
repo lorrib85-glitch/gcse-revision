@@ -52,7 +52,7 @@ each episode file — reference it.
 
 - **GCSE topic** — the spec topic text, including Key Topic reference for
   Series 2–4 (e.g. "The USA in Transition, 1954–63 (Key Topic 1)").
-- **Current module** — the `src/modules.js` id(s) that deliver this episode,
+- **Current chapter** — the `src/chapters.js` id(s) that deliver this episode,
   or `—` if not yet built.
 
 ---

@@ -178,4 +178,4 @@ Shells are structural primitives. They must never:
 - Own answer state or interaction state
 - Handle learning flow logic
 
-If you find yourself adding conditional rendering or state to a shell, the logic belongs in `ModulePlayer.jsx` or the consuming component.
+If you find yourself adding conditional rendering or state to a shell, the logic belongs in `ChapterPlayer.jsx`/`ScreenRenderer.jsx` or the consuming component.

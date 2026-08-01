@@ -30,6 +30,18 @@ A locked component has an established visual and behavioural contract that other
 - Answer reveal behaviour
 - Score recording
 
+**Answer-flow contract (the behaviour "answer state logic" means here):**
+- Maximum two attempts. Attempt 1 incorrect shows the hint and allows a retry;
+  attempt 2 incorrect reveals the answer, logs the weakness silently and
+  completes the interaction. Correct on either attempt completes it.
+- The question is never replaced by feedback, and feedback appears below the
+  answer area — the stem stays visible throughout.
+- Weakness logging is silent: no "saved to your weak spots" message.
+- This component is for non-timed learning activities only. Timed exam flows do
+  not use it and must not gain hints or retry through it.
+- The parent must wire `onComplete` — without it the component locks but the
+  screen never learns that progression is allowed.
+
 **Why locked:**
 Every question type in the product delegates answer logic here. If AnswerInteraction's behaviour changes, every quiz flow is affected.
 
@@ -91,6 +103,13 @@ This is a constitutional, app-wide rule: **BackButton is the only back-navigatio
 **Why locked:**
 The visual contract for all content cards. Changing it cascades across every card surface in the product.
 
+**Surface constraints (what "card visual appearance" means here):**
+- `variant` is always explicit (`contained` | `inline` | `compact` | `fullBleed`).
+  The component never infers a variant from its content.
+- Subject atmosphere stays barely-there: tint, glow and shadow opacities live in
+  the 0.06–0.12 range. Heavier tinting makes the surface compete with the lesson.
+- No CSS filters (sepia, hue-rotate and friends) on wrapped content or images.
+
 **Allowed changes:**
 - Import path corrections
 - Token migration for exact-match values
@@ -133,7 +152,7 @@ Constitutional rule — see `docs/system/BUTTON_RADII_SYSTEM.md` "Progression CT
 - The `disabled` state appearance (`disabledBackground`/`disabledColor`)
 
 **Why locked:**
-Constitutional rule — see `docs/system/BUTTON_RADII_SYSTEM.md` "Progression CTA System". This is the only Primary Progression CTA implementation allowed anywhere in the app. Consolidated from inline implementations across `src/components/learning/`, `src/components/feedback/`, and `ModulePlayer.jsx`'s bottom navigation (2026-06-15).
+Constitutional rule — see `docs/system/BUTTON_RADII_SYSTEM.md` "Progression CTA System". This is the only Primary Progression CTA implementation allowed anywhere in the app. Consolidated from inline implementations across `src/components/learning/`, `src/components/feedback/`, and the chapter runtime's bottom navigation (2026-06-15, when the runtime was still `ModulePlayer.jsx`; it is now `src/components/layout/ChapterPlayer.jsx`).
 
 **Allowed changes:**
 - Import path corrections

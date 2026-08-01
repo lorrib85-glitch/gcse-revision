@@ -395,8 +395,8 @@ Structural rules a composed screen must satisfy; checked in the render pass
   screen reads as two or more heavy boxes crammed together, it fails.
 
 Machine-checked structural and semantic floors live alongside this render
-pass. Architecture tests enumerate built modules from `MODULES` +
-`MODULE_CONTENT_LOADERS`, collect nested learner-facing text for readability,
+pass. Architecture tests enumerate built chapters from `CHAPTERS` +
+`CHAPTER_CONTENT_LOADERS`, collect nested learner-facing text for readability,
 enforce exam-prep follow-through using registered `exam-technique`
 functions, verify recovery tags against loaded runtime screens, and reject
 new raw presentation fields (`color`, `colorRgb`, `bg`, `colorLight`) in

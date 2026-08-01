@@ -1,5 +1,16 @@
 # Unified Weakness Tracker — Integration Plan
 
+> **⚠ HISTORICAL — this plan has been carried out.** It describes the original
+> integration of `src/unifiedWeaknessTracker.js` against the pre-migration
+> architecture: `ModulePlayer.jsx`, `src/modules.js` and the flat `src/*.jsx`
+> component layout are all deleted. The chapter runtime is now
+> `src/components/layout/ChapterPlayer.jsx` with `ScreenRenderer.jsx` as the
+> only component-routing boundary.
+>
+> For current guidance use `CLAUDE.md` ("Weak area philosophy") and
+> `docs/system/CONTENT_HIERARCHY.md`. Do not follow the integration points
+> below as instructions.
+
 ## Overview
 
 The new `unifiedWeaknessTracker.js` is a comprehensive system that logs every wrong answer across modules, exams, and quizzes, then surfaces weakness data for personalization.

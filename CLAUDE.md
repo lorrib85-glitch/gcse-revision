@@ -89,20 +89,23 @@ explicitly `hidden` chapter is exempt. See `docs/system/CONTENT_HIERARCHY.md`.
 
 ### Exam Mode question banks are lazy-loaded via context
 
-`src/data/mathsTopics.js`, `englishTopics.js`, `sociologyTopics.js`, `chemistryTopics.js` and `guidedAnswerCoach.js` are only needed inside Exam Mode (`TestTab mode="exam"`, the Exams tab) — they are NOT statically imported in `App.jsx`. Instead, `App.jsx` defines `TestDataContext` / `useTestData()` / `TestDataProvider`, which only wraps the `tab === 'exams'` `TestTab` render. `TestDataProvider` `Promise.all`s dynamic `import()`s of all five files on mount, shows `ModuleLoadingScreen` until they resolve, then provides the merged exports (`MATHS_TOPIC_GROUPS`, `ALL_MATHS_QUESTIONS`, `FORMULA_SHEET`, `DIAGRAMS`, `ENGLISH_TOPIC_GROUPS`, `ALL_ENGLISH_QUESTIONS`, `SOCIOLOGY_TOPIC_GROUPS`, `ALL_SOCIOLOGY_QUESTIONS`, `CHEMISTRY_TOPIC_GROUPS`, `ALL_CHEMISTRY_QUESTIONS`, `GUIDED_COACH_TYPES`) via context. Any component reading these exports (`FormulaSheet`, `MathsDiagram`, `MathsBrowser`, `EnglishBrowser`, `SociologyBrowser`, `ChemistryBrowser`, `TestTab`) destructures them from `useTestData() || {}` rather than importing them directly. The Pulse tab (`TestTab mode="quickfire"`) is not wrapped in `TestDataProvider` and never needs these exports. `SOCIOLOGY_GROUPS` (`sociologyGroups.js`) and `CHEM_IMAGES` (`chemImages.js`) stay as ordinary static imports — they're small and used outside Exam Mode too.
+`src/data/mathsTopics.js`, `englishTopics.js`, `sociologyTopics.js`, `chemistryTopics.js` and `guidedAnswerCoach.js` are only needed inside Exam Mode (`TestTab mode="exam"`, the Exams tab) — they are never statically imported by the app shell. The context lives in `src/features/quickfire/`: `TestDataContext` (`testDataContextObject.js`), `TestDataProvider` (`testDataContext.jsx`) and `useTestData()` (`useTestData.js`), re-exported through `QuickFire.jsx`. `ExamPractice.jsx` is the only place that mounts the provider, wrapping the Exams tab's `TestTab` render. `TestDataProvider` `Promise.all`s dynamic `import()`s of all five files on mount, shows `ModuleLoadingScreen` until they resolve, then provides the merged exports (`MATHS_TOPIC_GROUPS`, `ALL_MATHS_QUESTIONS`, `FORMULA_SHEET`, `DIAGRAMS`, `ENGLISH_TOPIC_GROUPS`, `ALL_ENGLISH_QUESTIONS`, `SOCIOLOGY_TOPIC_GROUPS`, `ALL_SOCIOLOGY_QUESTIONS`, `CHEMISTRY_TOPIC_GROUPS`, `ALL_CHEMISTRY_QUESTIONS`, `GUIDED_COACH_TYPES`) via context. Any component reading these exports (`FormulaSheet`, `MathsDiagram`, `MathsBrowser`, `EnglishBrowser`, `SociologyBrowser`, `ChemistryBrowser`, `TestTab`) destructures them from `useTestData() || {}` rather than importing them directly. The QuickFire round (`TestTab mode="quickfire"`) is not wrapped in `TestDataProvider` and never needs these exports. `SOCIOLOGY_GROUPS` (`sociologyGroups.js`) and `CHEM_IMAGES` (`chemImages.js`) stay as ordinary static imports — they're small and used outside Exam Mode too.
 
 
-## Key Components in App.jsx
+## Tab shell and its screens
 
-- `App` — top-level router, manages tab state and session flow
-- `BottomNav` — fixed 5-tab nav (Home / Subjects / 90s Quiz / Progress / Exam) with SVG line icons
-- `BiologySection` — biology-specific horizontal scroll section with topic group image cards
-- `Home` — home screen: greeting, weekly recall trend line, and a "Today's plan" task carousel (`TaskCarousel`/`TaskCard`) built by `buildTodaysPlan()` (`src/todaysPlan.js`) — warm-up, weak-spot revisit or continue-chapter, exam practice, plus a weekend full-paper card
+The shell lives in `src/app/LegacyApp.jsx`; each tab renders a feature module.
+
+- `LegacyApp` — top-level router: tab state, auth flow, overlays, chapter opening
+- `BottomNav` (`src/app/BottomNav.jsx`) — fixed 5-tab nav (Home / Subjects / Pulse / Progress / Exams) with SVG line icons
+- `Home` (`src/features/home/Home.jsx`) — greeting, hero banner and the "Today's plan" list (`HeroBanner` + `PlannerRow`) built by `buildTodaysPlan()` (`src/todaysPlan.js`) — warm-up, weak-spot revisit or continue-chapter, exam practice, plus a weekend full-paper card
 - `HomeAtmosphere` — LOCKED. Three drifting teal SVG wave bands + constellation network rendered in the 34vh hero section of Home. Must NOT be removed, renamed, or have its SVG/animation structure altered. Its call site in `Home` (`<HomeAtmosphere />`) must not be removed either.
-- `SubjectsTab` — subject browser; each subject presents its ordered chapter journey, built by `src/features/subjects/subjectCatalogue.js` from the subject's modules. History and English series tabs (labels, hero images, the empty Elizabethan tab) are local presentation in `Subjects.jsx` — a `series` is not a module id
-- `ProgressTab` — progress/stats screen
-- `TestTab` — quiz/test mode (also used for Exam Mode)
-- `ChapterPlayer` — imported from `src/components/layout/ChapterPlayer.jsx`; handles one chapter learning journey
+- `SubjectsTab` (`src/features/subjects/Subjects.jsx`) — subject browser; each subject presents its ordered chapter journey, built by `src/features/subjects/subjectCatalogue.js` from the subject's modules. History and English series tabs (labels, hero images, the empty Elizabethan tab) are local presentation in `Subjects.jsx` — a `series` is not a module id
+- `PulseTab` (`src/features/pulse/Pulse.jsx`) — recall-trend screen and the entry point to QuickFire
+- `ProgressTab` (`src/features/progress/Progress.jsx`) — progress/stats screen
+- `TestTab` (`src/features/quickfire/QuickFire.jsx`) — question runner; `mode="quickfire"` for the full-screen QuickFire round, `mode="exam"` inside Exam Mode
+- `ExamPractice` (`src/features/exams/ExamPractice.jsx`) — the Exams tab; wraps `TestTab mode="exam"` in `TestDataProvider`
+- `ChapterPlayer` (`src/components/layout/ChapterPlayer.jsx`) — one chapter learning journey; `ScreenRenderer.jsx` is the only component-routing boundary
 
 ## Component Folders
 
@@ -188,8 +191,8 @@ Question feedback and exam practice components.
 | 3 | `docs/system/BUTTON_RADII_SYSTEM.md` | Button dimensions and corner radii |
 | 3 | `docs/system/MOTION_SYSTEM.md` | Durations, easings, scale values |
 | 3 | `docs/system/TYPOGRAPHY_SYSTEM.md` | Font families, sizes, weights — TYPE tokens |
-| 3 | `docs/system/SCREEN_SHELL_SYSTEM.md` | ScreenShell layout API (reference only — not currently used) |
-| 4 | `docs/components/COMPONENT_REGISTRY.md` | All components — check before building anything new |
+| 3 | `docs/system/SCREEN_SHELL_SYSTEM.md` | Structural shells (`ContentShell` / `InteractionShell` / `CinematicShell`) and where `TeachScreenShell` sits inside them |
+| 4 | `docs/components/COMPONENT_REGISTRY.md` | The canonical human-readable component registry — check before building anything new. Catalogue completeness is governed separately |
 | 5 | `docs/components/LOCKED_COMPONENTS.md` | Locked components — must not change internals |
 
 See `docs/system/00_SYSTEM_INDEX.md` for the full order of authority.
@@ -247,32 +250,31 @@ docs/system/TEACHING_VOICE_GUIDE.md
 | `src/data/modules.js` | **The parent-module catalogue.** `MODULES` — each parent curriculum unit with its ordered `chapterIds`, plus `getModuleById`. Owns which module a real chapter belongs to and its canonical order inside that module. Every chapter whose availability is not `hidden` — `available` and `comingSoon` alike — must belong to exactly one module. |
 | `src/features/subjects/subjectCatalogue.js` | **Subject-browser catalogue.** `getSubjectChapterList(subject)` — real chapters resolved from the subject's modules in canonical order, merged with the `cs_*` synthetic placeholder cards. Synthetic cards are browse-surface presentation only: no content, no loader, no progress, never openable, and never added to `CHAPTERS` or `MODULES`. |
 | `src/content/<subject>/<series>/episodes/<file>.js` | Per-chapter content files — the canonical pattern. Each exports `default { id, subject, screens, ... }` and is loaded individually through `src/content/chapterContentRegistry.js` (`CHAPTER_CONTENT_LOADERS`). |
-| `src/content.js` | `TOPICS` and `TOPIC_DATA` — History topic content and questions |
 | `src/contentIndex.js` | `CONTENT_INDEX` — maps topic tags to section metadata for the Targeted Brush-Up system |
 | `src/progress.js` | Progress helpers: `getProgress`, `saveSessionResult`, `getSessionDraft`, etc. |
 | `src/lib/storage.js` | **Persistence + account-ownership boundary.** The only file allowed to touch `localStorage` directly (enforced by `tests/architecture/storage-boundary.test.js`). `getJson`/`setJson`/`removeKey`/`listKeys`/`saveCritical` transparently namespace every key under the currently active account scope (`'guest'` or `'uid:<firebase-uid>'`) — feature code never sees this or constructs a scoped key itself. `getRawJson`/`setRawJson`/`removeRawKey` bypass scoping for `riseUser` and two governance keys; `*ForScope` variants target an explicit scope for the sync/migration layer. Also runs the one-time legacy flat-key migration. See `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`. |
 | `src/data/progressSync/` | `progressSync.js` (Firestore reconcile orchestration), `progressMerge.js` (pure per-key merge rules — not a whole-snapshot "pick a side"), `accountScope.js` (guest-progress claim/migration flow, called from `AuthContext`). See `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`. |
-| `src/unifiedWeaknessTracker.js` | **Canonical weakness tracker.** `logWrongAnswer`, `logCorrectAnswer`, `logExamTechnique`, etc. — single source of truth for weakness identification, feeding `WeakSpotRecovery` and recovery quizzes. (`src/weaknessTracker.js` is a legacy, unused file — do not extend it.) |
+| `src/unifiedWeaknessTracker.js` | **Canonical weakness tracker.** `logWrongAnswer`, `logCorrectAnswer`, `logExamTechnique`, etc. — single source of truth for weakness identification, feeding `WeakSpotRecovery` and recovery quizzes. (The old `src/weaknessTracker.js` has been deleted — do not reintroduce it.) |
 | `src/data/tagChapterMap.js` | `TAG_CHAPTER_MAP` + `findTaggedChapterScreen()` — maps weakness tags to a chapter/screen for "fix this gap" links |
 | `src/data/learningGraph/` | **Canonical learning graph** — concept registry (`subject:course:concept` ids, e.g. `history:medicine:galen`), facet tag schema, and `resolveEffectiveTags()` inheritance resolver. Single vocabulary for module/topic/question/exam-paper `tags`; never invent concept spellings outside the registry. See `docs/system/LEARNING_GRAPH.md`; enforced by `tests/architecture/learning-graph.test.js`. |
 | `src/data/masteryEngine/` | **Canonical learner mastery engine** — pure logic layer recording what one learner knows, as per-concept evidence keyed by registered learning graph concept ids (unknown ids throw). Mastery/confidence/strength are derived at read time, never stored; persistence only via its `masteryStore.js` through `src/lib/storage.js`. App/UI consumers are authorised phase by phase via the allowlist guard in `tests/architecture/mastery-engine.test.js` — currently only the write-only QuickFire recorder (`src/features/quickfire/logic/masteryRecorder.js`, Phase 3A); anything else stays blocked until its consumer phase is explicitly authorised. See `docs/system/MASTERY_ENGINE.md`. |
 | `src/data/mathsTopics.js` | Maths topic groups and questions |
-| `src/data/mathsGroups.js` | `MATHS_GROUPS` — Maths topic group definitions for ModulesTab |
+| `src/data/mathsGroups.js` | `MATHS_GROUPS` — Maths topic group definitions. No current consumer |
 | `src/data/mathsQuestions.js` | `MATHS_FORMULA_SHEET` and AQA Maths past-paper questions |
 | `src/data/englishTopics.js` | English topic groups and questions |
 | `src/data/sociologyTopics.js` | Sociology topic groups and questions |
-| `src/data/sociologyGroups.js` | `SOCIOLOGY_GROUPS` — Sociology topic group definitions for ModulesTab |
+| `src/data/sociologyGroups.js` | `SOCIOLOGY_GROUPS` — Sociology topic group definitions, read by `QuickFire.jsx` |
 | `src/sociologyKeyTerms.js` | AQA GCSE Sociology specification vocabulary list |
 | `src/data/chemistryTopics.js` | Chemistry topic groups and questions |
-| `src/data/chemistryGroups.js` | `CHEMISTRY_GROUPS` — Chemistry topic group definitions for ModulesTab |
+| `src/data/chemistryGroups.js` | `CHEMISTRY_GROUPS` — Chemistry topic group definitions. No current consumer |
 | `src/data/chemImages.js` | `CHEM_IMAGES` — maps chemistry diagram keys to static file paths under `/public/figures/` (kept out of the JS bundle; only fetched when a `<ChemImage>` renders) |
 | `src/data/physicsTopics.js` | `PHYSICS_TOPIC_GROUPS` — AQA GCSE Physics Foundation past-paper questions by topic |
-| `src/data/biologyGroups.js` | `BIOLOGY_GROUPS` — 7 Biology topic group definitions with module lists and header images |
+| `src/data/biologyGroups.js` | `BIOLOGY_GROUPS` — 7 Biology topic group definitions with chapter lists and header images. No current consumer |
 | `src/figures.js` | `FIGURES` — figure image paths served from `/public/figures/` |
 | `src/data/medicineExamPapers.js` | Edexcel History (Medicine) past-paper sources and questions, by exam series |
 | `src/data/guidedAnswerCoach.js` | Content for `GuidedAnswerCoach` — exam-technique question types, model answers and mark schemes |
 | `src/data/recoveryQuizzes.js` | Recovery quiz definitions keyed by `recoveryQuizId` — used by RecoveryQuizPlayer |
-| `src/data/quickQuizData.js` | `QUICK_QUIZ_QUESTIONS` — 90s Quiz question bank (mcq, truefalse, fillgap, matchpairs, sequence, dragdrop) |
+| `src/data/quickQuizData.js` | `QUICK_QUIZ_QUESTIONS` — QuickFire question bank (mcq, truefalse, fillgap, matchpairs, sequence, dragdrop) |
 | `src/features/quickfire/logic/quickFireMemory.js` | QuickFire ranking memory (`gcse_quickfire_memory_v1`, `gcse_qf_answer_log`) — pure, storage.js-backed. `bumpQuickFireMemoryForAnswer()` persists immediately after each committed answer (not batched to round end), so an abandoned round keeps its ranking evidence. See `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`. |
 | `src/features/planner/dailyPlanner.js` | Adaptive daily revision planner — `buildDailyPlan()`, `buildSaturdayBlocks()`, `buildSundayBlocks()`, `processPaperResults()`, `applyPaperResultToLearningState()`, `savePaperResult()`, `loadLearningState()`. Pure functions except the three that read/write via `src/lib/storage.js`. Never access localStorage directly. |
 
@@ -419,7 +421,7 @@ Any interaction that records incorrect answers should:
 
 Do not create assessment interactions that bypass the weak area system.
 
-The canonical weakness tracker is `src/unifiedWeaknessTracker.js` — always log through it (`logWrongAnswer`, `logCorrectAnswer`, `logExamTechnique`). Do not use or extend `src/weaknessTracker.js`.
+The canonical weakness tracker is `src/unifiedWeaknessTracker.js` — always log through it (`logWrongAnswer`, `logCorrectAnswer`, `logExamTechnique`). The old `src/weaknessTracker.js` has been deleted; do not reintroduce a second tracker.
 
 ---
 
@@ -531,7 +533,7 @@ docs/system/VISUAL_ASSET_SYSTEM.md
 
 This is a standalone, app-wide feature. It is **not** part of the per-module History or Science architectures above and is not bound by their locked Section 1–6 / Part 1–6 structures.
 
-**Where it lives:** Exam Mode (5th bottom nav tab) → "Exam technique" chooser → `GuidedAnswerCoach` full-screen overlay (`src/App.jsx`, `activeCoachType` / `examTechniqueOpen`). It sits outside `ChapterPlayer` entirely.
+**Where it lives:** Exams tab (5th bottom nav tab) → "Exam technique" chooser → `GuidedAnswerCoach` full-screen overlay, owned by `src/features/quickfire/modes/ExamMode.jsx` (`activeCoachType` / `examTechniqueOpen`). It sits outside `ChapterPlayer` entirely.
 
 **What it is:** A bank of GCSE exam question types defined in `src/data/guidedAnswerCoach.js` (`GUIDED_COACH_TYPES` — currently `TYPE_A`–`TYPE_F`). Each type walks the student through an eight-stage scaffold:
 

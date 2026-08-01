@@ -99,7 +99,7 @@ Locked constant layers. Every component must import tokens from these files. No 
 | Buttons & Radii | `docs/system/BUTTON_RADII_SYSTEM.md` | `src/constants/buttons.js` + `src/constants/radii.js` |
 | Motion | `docs/system/MOTION_SYSTEM.md` | `src/constants/motion.js` |
 | Typography | `docs/system/TYPOGRAPHY_SYSTEM.md` | `src/constants/typography.js` |
-| Screen Shells | `docs/system/SCREEN_SHELL_SYSTEM.md` | `src/components/layout/ScreenShell.jsx` + `LearningScreenShell.jsx` |
+| Screen Shells | `docs/system/SCREEN_SHELL_SYSTEM.md` | `src/components/layout/ContentShell.jsx` + `InteractionShell.jsx` + `CinematicShell.jsx` (structural), `src/components/core/TeachScreenShell.jsx` (teaching composition) |
 
 ---
 
@@ -107,15 +107,50 @@ Locked constant layers. Every component must import tokens from these files. No 
 
 `docs/components/COMPONENT_REGISTRY.md`
 
-Complete registry of all components: location, purpose, props, lock status, and dependencies. Check here before building anything new.
+The canonical human-readable registry for documented standalone components: location, purpose, props, lock status, and dependencies. Check here before building anything new. Catalogue completeness is governed separately — a missing entry is a documentation gap, not a verdict on the component. There is no other Component Registry; the machine-readable pedagogical taxonomy is `src/data/componentFunctions.js` and the authorable screen/block contract is `src/data/screenRegistry.js`.
+
+---
+
+### 4b. Locked Components
+
+`docs/components/LOCKED_COMPONENTS.md`
+
+The locked-component reference: which components have frozen behavioural contracts, what each one owns, what may and may not change, and the modification protocol. Read before touching any component marked **LOCKED** in the registry. Kept in sync with source by `tests/architecture/locked-component-registry.test.js`.
 
 ---
 
 ### 5. Individual Component Specs
 
-`docs/components/`
+`docs/components/` · `docs/system/component-contracts/` · `docs/system/CONCEPT_REVEAL_CONTRACT.md`
 
-Per-component documentation. Added as components are created or significantly updated.
+Per-component documentation and execution contracts, added as components are created or significantly updated. Component contracts sit under `PATTERN_GOVERNANCE.md` (1f). `CONCEPT_REVEAL_CONTRACT.md` is a locked design contract governed outside the locked-component registry, enforced by `tests/architecture/concept-reveal-contract.test.js`.
+
+---
+
+## Supporting references
+
+Active documentation that is not part of the UI order of authority above. Read
+when working in the named area; none of it overrides sections 1–5.
+
+**Implemented systems — authoritative for their own area:**
+
+| Doc | Area | Enforcement |
+|-----|------|-------------|
+| `docs/system/LEARNING_GRAPH.md` | concept vocabulary, facet tags, tag inheritance | `tests/architecture/learning-graph.test.js` |
+| `docs/system/MASTERY_ENGINE.md` | per-concept evidence, derived mastery, consumer allowlist | `tests/architecture/mastery-engine.test.js` |
+| `docs/system/PROGRESS_SYNC_ARCHITECTURE.md` | account scoping, guest claims, storage boundary | `tests/architecture/storage-boundary.test.js` |
+| `docs/system/AUTH_SETUP.md` | Google sign-in, Firestore progress backup | Firestore rules tests |
+
+**Design-only — describes an intended layer, authorises no implementation:**
+
+- `docs/system/PEDAGOGICAL_MODEL.md`
+- `docs/system/EVIDENCE_MODEL.md`
+- `docs/system/LEARNING_OBJECTIVE_LAYER.md`
+- `docs/system/ADAPTIVE_TUTOR_DECISION_LOGIC.md`
+- `docs/system/AI_INTERPRETATION_BOUNDARY.md`
+
+Each of these carries a **Status: Design only** header. Reading one is not
+permission to build it; that needs an explicit request.
 
 ---
 
