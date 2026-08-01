@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { computeInitialChapterState, clampScreenIndex, resolveFinishAction, getChapterGate } from '../../../src/app/chapterNavigation.js'
+import {
+  computeInitialChapterState,
+  clampScreenIndex,
+  resolveFinishAction,
+  getChapterGate,
+  buildChapterProgressState,
+  buildCompletedChapterState,
+} from '../../../src/app/chapterNavigation.js'
 
 // ─────────────────────────────────────────────────────────────────────────
 // ChapterPlayer Phase 2 — pinned behaviour spec
@@ -23,28 +30,25 @@ import { computeInitialChapterState, clampScreenIndex, resolveFinishAction, getC
 //     effects (setHookDone, setWylDone, setRecallDone, setNavTo, scrollToTop,
 //     onBack handlers) still live inside ChapterPlayer's component closure and
 //     are not covered here.
-//   - Everything else (completeChapter's own persistence side effect) still
-//     lives entirely inside `ChapterPlayer`'s component closure. None of it is
-//     exported or callable in isolation, so none of it can be asserted
-//     against from `tests/unit` yet:
+//   - "completed chapter reopening / review persistence" is now real assertions
+//     against buildCompletedChapterState and buildChapterProgressState
+//     (chapterNavigation.js) — the two persisted state shapes every
+//     saveChapterState() call in ChapterPlayer now goes through. The save calls
+//     themselves (the autosave effect, completeChapter's write, and the Face the
+//     Examiner path passing its freshly appended attempts into completeChapter)
+//     stay inside ChapterPlayer's component closure; that they use these builders
+//     at all is guarded by tests/architecture/chapter-persistence-boundary.test.js,
+//     and the progress-store round trip by
+//     tests/unit/progressSync/chapterProgressPersistence.test.js.
 //
-//   - `tests/unit` runs under vitest environment: 'node' (vitest.config.js)
-//     — there is no `document`/`window`, so ChapterPlayer cannot be rendered.
-//   - React function components can only call `useState`/`useEffect` inside
-//     a real render pass; calling `ChapterPlayer(props)` directly throws
-//     "Invalid hook call" outside of one.
-//   - There is no `@testing-library/react` or jsdom in this project's
-//     dependency tree (only `@testing-library/dom` as a transitive dep of
-//     Storybook's browser-mode Vitest addon, which renders via real
-//     Chromium, not jsdom, and requires a `.stories.jsx` file per
-//     COMPONENT_AUTHORING_RULES.md).
-//   - Extracting the remaining logic into pure, importable functions is
-//     out of scope for this pass.
-//
-// Each remaining `it.todo(...)` names one pinned behaviour, in given/when/
-// then form, with the exact current source location. When its extraction
-// lands, replace the matching `it.todo` with a real `it` the same way the
-// items below were converted.
+// No `it.todo()` specs remain in this file. Every pinned behaviour is a real
+// assertion. React-side effects (setState calls, the 400ms completion
+// transition, scrollToTop, onChapterComplete hand-off) remain uncovered here by
+// design: `tests/unit` runs under vitest environment: 'node' (vitest.config.js)
+// with no `document`/`window`, React hooks cannot run outside a render pass, and
+// there is no jsdom or `@testing-library/react` in the dependency tree — only
+// Storybook's real-Chromium browser mode, which needs a `.stories.jsx` per
+// COMPONENT_AUTHORING_RULES.md.
 // ─────────────────────────────────────────────────────────────────────────
 
 function makeChapter(overrides = {}) {
@@ -238,7 +242,30 @@ describe('ChapterPlayer — hook/outcomes/recall gating decisions (src/component
 })
 
 describe('ChapterPlayer — completed chapter reopening (src/components/layout/ChapterPlayer.jsx:1556-1568, 1482-1484)', () => {
-  it.todo('completeChapter() persists screen=total, hookDone/wylDone/recallDone/introDone all true, and completed=true, regardless of the screen the user finished on')
+  // completeChapter()'s persisted shape is now built by buildCompletedChapterState
+  // (chapterNavigation.js) and asserted directly — the screen the learner finished
+  // on is not an input to it, which is exactly the property being pinned here.
+  // See chapterNavigation.test.js for the builder's own field-by-field contract.
+  describe('completeChapter() persists the full completion snapshot regardless of the finishing screen', () => {
+    const total = 5
+    const attempts = [{ chapterId: 'test-chapter', questionId: 'test-chapter-q1', finalMark: 4 }]
+    const completion = { screen: total, hookDone: true, wylDone: true, recallDone: true, introDone: true, examinerAttempts: attempts, completed: true }
+
+    // completeChapter() reads `total`, never `screen`; each case is the same call
+    // made from a different finishing position to prove that independence.
+    for (const [label, _finishedOn] of [['the first content screen', 0], ['a middle content screen', 2], ['the last screen', total - 1]]) {
+      it(`finishing on ${label} persists the identical completion snapshot`, () => {
+        expect(buildCompletedChapterState({ total, examinerAttempts: attempts })).toEqual(completion)
+      })
+    }
+
+    it('persists the supplied examiner-attempt array without mutating it', () => {
+      const supplied = [{ chapterId: 'test-chapter', finalMark: 6 }]
+      const state = buildCompletedChapterState({ total, examinerAttempts: supplied })
+      expect(state.examinerAttempts).toEqual([{ chapterId: 'test-chapter', finalMark: 6 }])
+      expect(supplied).toEqual([{ chapterId: 'test-chapter', finalMark: 6 }])
+    })
+  })
 
   it('reopening a chapter with saved.completed=true starts directly at content — hook/outcomes/recall gates are all bypassed (computeInitialChapterState)', () => {
     const chapter = makeChapter({
@@ -267,7 +294,42 @@ describe('ChapterPlayer — completed chapter reopening (src/components/layout/C
     expect(result.screen).toBe(0)
   })
 
-  it.todo('reviewing a completed chapter and navigating backward with go(-1) does not clear the persisted completed flag')
+  // The autosave effect writes buildChapterProgressState(...) on every screen
+  // change, including the backward ones a learner makes while reviewing. Only
+  // `screen` moves; `completed` is carried through, never re-derived.
+  describe('reviewing a completed chapter backward does not clear the persisted completed flag', () => {
+    const reviewing = (screen, overrides = {}) => buildChapterProgressState({
+      screen,
+      hookDone: true,
+      wylDone: true,
+      recallDone: true,
+      introDone: true,
+      examinerAttempts: [{ chapterId: 'test-chapter', finalMark: 4 }],
+      completed: true,
+      ...overrides,
+    })
+
+    it('go(-1) from a later screen lowers the persisted resume screen', () => {
+      expect(reviewing(4).screen).toBe(4)
+      expect(reviewing(clampScreenIndex(4 - 1, 5)).screen).toBe(3)
+    })
+
+    it('completed stays true after moving back to the first screen', () => {
+      expect(reviewing(0).completed).toBe(true)
+    })
+
+    it('examiner attempts survive the backward review save', () => {
+      expect(reviewing(1).examinerAttempts).toEqual([{ chapterId: 'test-chapter', finalMark: 4 }])
+    })
+
+    it('opener flags keep their current values through the review save', () => {
+      expect(reviewing(1)).toMatchObject({ hookDone: true, wylDone: true, recallDone: true, introDone: true })
+    })
+
+    it('an incomplete chapter moving backward stays incomplete — completion is never inferred', () => {
+      expect(reviewing(0, { completed: false }).completed).toBe(false)
+    })
+  })
 })
 
 describe('ChapterPlayer — last-screen finish decision with examiner/examinerExplains (src/components/layout/ChapterPlayer.jsx:1529-1541, resolveFinishAction)', () => {

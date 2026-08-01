@@ -68,6 +68,41 @@ export function computeInitialChapterState(chapter, saved) {
   }
 }
 
+// Pure: build the regular persisted chapter-progress snapshot — the exact object
+// ChapterPlayer's autosave effect writes through saveChapterState() on every
+// screen/flag change. This is the canonical shape of an in-progress save; the
+// completion shape is buildCompletedChapterState() below.
+//
+// `completed` is passed straight through, never inferred from screen position:
+// reviewing a finished chapter deliberately moves `screen` backwards while
+// keeping completed: true, which is what keeps the subject browser and
+// getChapterPct() reading 100 during review.
+export function buildChapterProgressState({ screen, hookDone, wylDone, recallDone, introDone, examinerAttempts, completed }) {
+  return { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts, completed }
+}
+
+// Pure: build the persisted chapter-completion snapshot — the exact object
+// ChapterPlayer's completeChapter() writes through saveChapterState().
+//
+// Completion always writes screen: total and every opener flag true, so it is
+// independent of the screen the learner happened to finish on and re-opening
+// reviews content rather than replaying the hook/outcomes/recall gates. The
+// caller supplies the examiner attempts that are current at completion time —
+// an examiner completion must pass its freshly appended array in, not a stale
+// render's copy. No existing saved object is merged in: the persisted public
+// shape stays explicit.
+export function buildCompletedChapterState({ total, examinerAttempts }) {
+  return {
+    screen: total,
+    hookDone: true,
+    wylDone: true,
+    recallDone: true,
+    introDone: true,
+    examinerAttempts,
+    completed: true,
+  }
+}
+
 // Pure: decide what handleFinish should do when the user continues from the
 // final content screen. Mirrors the priority order in ChapterPlayer.jsx's
 // handleFinish exactly: examinerExplains gate first (shown once), then the

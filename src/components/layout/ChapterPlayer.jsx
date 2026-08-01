@@ -5,7 +5,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { recordActivity, getChapterState, saveChapterState } from '../../progress.js'
 import { MODULES } from '../../data/modules.js'
-import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialChapterState, clampScreenIndex, resolveFinishAction, getChapterGate } from '../../app/chapterNavigation.js'
+import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialChapterState, clampScreenIndex, resolveFinishAction, getChapterGate, buildChapterProgressState, buildCompletedChapterState } from '../../app/chapterNavigation.js'
 import { findScreenIndexByType, resolveScreenDefinition, screenHasComponentOwnedContinuation, validateChapterDefinition } from '../../data/screenRegistry.js'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
 import QuickRecallScreen from '../learning/QuickRecallScreen.jsx'
@@ -686,7 +686,7 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
   const [selectedHealer, setSelectedHealer] = useState(null)
 
   useEffect(() => {
-    saveChapterState(chapter.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts, completed })
+    saveChapterState(chapter.id, buildChapterProgressState({ screen, hookDone, wylDone, recallDone, introDone, examinerAttempts, completed }))
   }, [screen, chapter.id, hookDone, wylDone, recallDone, introDone, examinerAttempts, completed])
 
   // Reset cinematic header visibility whenever we navigate to a different screen
@@ -732,14 +732,18 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
     completeChapter()
   }
 
-  function completeChapter() {
+  // `attempts` defaults to the current render's examinerAttempts. A caller that has
+  // just appended an attempt must pass the updated array in — reading it from this
+  // closure would persist the pre-attempt copy and rely on the autosave effect to
+  // repair it on the next render.
+  function completeChapter(attempts = examinerAttempts) {
     recordActivity()
     setCompleted(true)
     // Persist full completion with a sticky `completed` flag so SubjectBrowser always reads this
     // chapter as 'completed' — even while reviewing it afterwards moves `screen` back down. Keep
     // the intro flags true so re-opening reviews the content straight away rather than replaying
     // the hook/recall/outcomes screens.
-    saveChapterState(chapter.id, { screen: total, hookDone: true, wylDone: true, recallDone: true, introDone: true, examinerAttempts, completed: true })
+    saveChapterState(chapter.id, buildCompletedChapterState({ total, examinerAttempts: attempts }))
     setTimeout(() => {
       if (onChapterComplete) onChapterComplete(chapter)
       else onBack()
@@ -952,9 +956,11 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
           }
           const updated = [...examinerAttempts, attempt]
           setExaminerAttempts(updated)
-          saveChapterState(chapter.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts: updated })
           setShowExaminer(false)
-          completeChapter()
+          // completeChapter() writes the completion snapshot straight away, so the new
+          // attempt has to travel with it. The interim progress save this path used to
+          // make was overwritten by that same completion write on the very next line.
+          completeChapter(updated)
           scrollToTop()
         }}
       />

@@ -9,6 +9,8 @@ import {
   getChapterGate,
   resolveNextAvailableChapter,
   buildChapterCompletePayload,
+  buildChapterProgressState,
+  buildCompletedChapterState,
 } from '../../../src/app/chapterNavigation.js'
 import { CHAPTERS, isChapterAvailable } from '../../../src/chapters.js'
 
@@ -297,7 +299,7 @@ describe('computeInitialChapterState', () => {
 })
 
 // Contract-level coverage only — go/goTo-specific delta and idx call-site
-// framing is covered in tests/unit/chapterPlayer/lifecycle-regression.test.js instead
+// framing is covered in tests/unit/chapterPlayer/lifecycle.test.js instead
 // of being repeated here.
 describe('clampScreenIndex', () => {
   it('passes an in-range index through unchanged', () => {
@@ -410,6 +412,99 @@ describe('getChapterGate', () => {
   it('given hook is done but outcomes and recall conditions are both satisfiable, outcomes takes priority over recall', () => {
     const chapter = makeChapter({ outcomes: { bullets: [] }, recall: { questions: [] } })
     expect(getChapterGate(chapter, { hookDone: true, wylDone: false, recallDone: false, navTo: null })).toEqual({ type: 'outcomes' })
+  })
+})
+
+// ─── Persisted chapter-state builders ────────────────────────────────────────
+// These two functions are the whole persisted contract of ChapterPlayer: every
+// saveChapterState() call the player makes goes through one of them. Canonical
+// unit coverage lives here; lifecycle.test.js only proves the two behaviours
+// that were previously untestable inside the component closure.
+
+const PROGRESS_FIELDS = ['screen', 'hookDone', 'wylDone', 'recallDone', 'introDone', 'examinerAttempts', 'completed']
+
+describe('buildChapterProgressState', () => {
+  const input = () => ({
+    screen: 3,
+    hookDone: true,
+    wylDone: true,
+    recallDone: true,
+    introDone: true,
+    examinerAttempts: [{ questionId: 'q1', finalMark: 4 }],
+    completed: false,
+  })
+
+  it('returns exactly the seven persisted progress fields — no more, no fewer', () => {
+    expect(Object.keys(buildChapterProgressState(input())).sort()).toEqual([...PROGRESS_FIELDS].sort())
+  })
+
+  it('passes every supplied field through unchanged', () => {
+    expect(buildChapterProgressState(input())).toEqual(input())
+  })
+
+  it('preserves completed: true rather than inferring completion from screen position', () => {
+    const state = buildChapterProgressState({ ...input(), screen: 0, completed: true })
+    expect(state.completed).toBe(true)
+    expect(state.screen).toBe(0)
+  })
+
+  it('preserves completed: false on a chapter that has never been finished', () => {
+    expect(buildChapterProgressState({ ...input(), screen: 9, completed: false }).completed).toBe(false)
+  })
+
+  it('preserves opener booleans exactly rather than coercing them', () => {
+    const state = buildChapterProgressState({ ...input(), hookDone: false, wylDone: true, recallDone: false, introDone: true })
+    expect(state).toMatchObject({ hookDone: false, wylDone: true, recallDone: false, introDone: true })
+  })
+
+  it('retains examinerAttempts', () => {
+    const attempts = [{ questionId: 'q1' }, { questionId: 'q2' }]
+    expect(buildChapterProgressState({ ...input(), examinerAttempts: attempts })).toMatchObject({ examinerAttempts: attempts })
+  })
+
+  it('does not mutate the supplied input object or its examinerAttempts array', () => {
+    const attempts = [{ questionId: 'q1' }]
+    const source = { ...input(), examinerAttempts: attempts }
+    const snapshot = JSON.parse(JSON.stringify(source))
+    buildChapterProgressState(source)
+    expect(source).toEqual(snapshot)
+    expect(attempts).toHaveLength(1)
+  })
+})
+
+describe('buildCompletedChapterState', () => {
+  it('writes the canonical full-completion shape', () => {
+    const attempts = [{ questionId: 'q1', finalMark: 5 }]
+    expect(buildCompletedChapterState({ total: 12, examinerAttempts: attempts })).toEqual({
+      screen: 12,
+      hookDone: true,
+      wylDone: true,
+      recallDone: true,
+      introDone: true,
+      examinerAttempts: attempts,
+      completed: true,
+    })
+  })
+
+  it('returns exactly the seven persisted progress fields — no invented fields', () => {
+    const keys = Object.keys(buildCompletedChapterState({ total: 5, examinerAttempts: [] }))
+    expect(keys.sort()).toEqual([...PROGRESS_FIELDS].sort())
+  })
+
+  it('always writes screen: total, whatever the chapter length', () => {
+    expect(buildCompletedChapterState({ total: 1, examinerAttempts: [] }).screen).toBe(1)
+    expect(buildCompletedChapterState({ total: 30, examinerAttempts: [] }).screen).toBe(30)
+  })
+
+  it('retains the examiner attempts it is given', () => {
+    const attempts = [{ questionId: 'q1' }, { questionId: 'q2' }]
+    expect(buildCompletedChapterState({ total: 4, examinerAttempts: attempts }).examinerAttempts).toEqual(attempts)
+  })
+
+  it('does not mutate the supplied examinerAttempts array', () => {
+    const attempts = [{ questionId: 'q1' }]
+    buildCompletedChapterState({ total: 4, examinerAttempts: attempts })
+    expect(attempts).toEqual([{ questionId: 'q1' }])
   })
 })
 

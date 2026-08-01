@@ -491,127 +491,199 @@ dead-code regression are both guarded.
 
 ---
 
-## A4 — ModulePlayer staged extraction
+## A4 — ChapterPlayer staged extraction
 
-**Status:** In progress  
+**Status:** In progress — navigation and persistence boundaries complete; rendering split remains  
 **Priority:** High  
-**Area:** `src/components/layout/ModulePlayer.jsx`, `src/app/moduleNavigation.js`, `tests/unit/modulePlayer/`, future state-machine helpers
+**Area:** `src/components/layout/ChapterPlayer.jsx`, `src/app/chapterNavigation.js`, `tests/unit/chapterPlayer/`, `tests/architecture/chapter-persistence-boundary.test.js`
+
+### Naming note (corrected 2026-08-01)
+Phases 1–2 of this item were carried out while the runtime was still called
+`ModulePlayer.jsx` and its helper file `moduleNavigation.js`. The module →
+chapter migration has since renamed both:
+
+| Then | Now |
+|------|-----|
+| `src/components/layout/ModulePlayer.jsx` | `src/components/layout/ChapterPlayer.jsx` |
+| `src/app/moduleNavigation.js` | `src/app/chapterNavigation.js` |
+| `tests/unit/modulePlayer/lifecycle.test.js` | `tests/unit/chapterPlayer/lifecycle.test.js` |
+| `computeInitialModuleState` / `getModuleGate` / `completeModule` | `computeInitialChapterState` / `getChapterGate` / `completeChapter` |
+| `gcse_module_<id>` storage key | `gcse_chapter_<id>` (legacy keys migrate forward in `progress.js`) |
+
+Historical phase notes below keep their original commit records; the paths and
+terminology in the "Remaining phases" and status sections are the current ones.
 
 ### Context
-`ModulePlayer.jsx` remains the main bloat and fragile runtime area after the old `src/modules/history.js` bloat was resolved by the per-episode migration. It was around 2423 lines and contains lesson lifecycle state, navigation, gating, persistence, screen routing, and rendering concerns.
+`ChapterPlayer.jsx` was the main bloat and fragile runtime area after the old
+`src/modules/history.js` bloat was resolved by the per-episode migration. At the
+start of this item it was ~2423 lines holding chapter lifecycle state,
+navigation, gating, persistence, screen routing and rendering. It is **1076
+lines** today; the bulk of the reduction came from the separate `ScreenRenderer`
+split, and the remaining lines are still mostly inline rendering (`HookContent`,
+`IntroScreen`, `JumpSheet`, the bottom-nav shell).
 
 ### Progress
 Phase 1 is complete:
 
-- Commit `b743cb3` extracted pure navigation helpers into `src/app/moduleNavigation.js`:
+- Commit `b743cb3` extracted pure navigation helpers into the navigation helper
+  file (then `moduleNavigation.js`):
   - `isFullScreenVideoScreen`
   - `getStageNavigation`
   - `getCurrentStageFromNavigation`
-- Added `tests/unit/app/moduleNavigation.test.js` with 16 tests.
-- `ModulePlayer.jsx` reduced from 2423 to 2393 lines.
+- Added the navigation helper unit suite with 16 tests.
+- The runtime file reduced from 2423 to 2393 lines.
 - `scrollToTop`, storage helpers, rendering, and lifecycle logic were deliberately left in place.
 - `pnpm vitest run tests/architecture` passed 412/412.
-- `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
+- `pnpm vite build` succeeded and the chapter runtime remained its own lazy chunk.
 
 Phase 2 test scaffolding is documented:
 
-- Commit `34b1e3c` added `tests/unit/modulePlayer/lifecycle.test.js` with 39 `it.todo()` specs across seven behaviour groups:
-  - fresh module start
-  - resume saved module state
+- Commit `34b1e3c` added the lifecycle suite with 39 `it.todo()` specs across seven behaviour groups:
+  - fresh chapter start
+  - resume saved chapter state
   - stale saved screen index reset
   - go/goTo clamping
   - hook/outcomes/recall gating
-  - completed-module reopening
+  - completed-chapter reopening
   - final-screen finish decisions
-- These are intentionally `todo` specs rather than assertions because the behaviours currently live inside the `ModulePlayer` function closure and cannot be tested in the current node-only unit setup without either extraction or new render infrastructure.
-- The todo file is a map of behaviours to unlock as pure helpers are extracted, not a substitute for real coverage.
+- These were intentionally `todo` specs rather than assertions because the behaviours lived inside the runtime's function closure and could not be tested in the node-only unit setup without either extraction or new render infrastructure.
+- The todo file was a map of behaviours to unlock as pure helpers were extracted, not a substitute for real coverage.
 
 Phase 2 first extraction is complete:
 
-- Commit `7c3c406` added `computeInitialModuleState(module, saved)` to `src/app/moduleNavigation.js`.
-- `ModulePlayer.jsx` now consumes the helper for initial state instead of deriving those values inline.
-- Added 17 tests for `computeInitialModuleState` in `tests/unit/app/moduleNavigation.test.js`.
-- Converted 20 of the 39 lifecycle todos into real assertions in `tests/unit/modulePlayer/lifecycle.test.js`.
-- Remaining lifecycle todos after this extraction: 19.
-- `ModulePlayer.jsx` reduced from 2393 to 2387 lines.
-- `pnpm vitest run tests/unit/modulePlayer/lifecycle.test.js` passed 20 tests with 19 todo.
-- `pnpm vitest run tests/unit/app/moduleNavigation.test.js` passed 33 tests.
-- `pnpm vitest run tests/architecture` passed 412/412.
-- `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
-- `introDone` is currently preserved as hardcoded `true`; this is existing behaviour, not a deliberate fix.
+- Commit `7c3c406` added `computeInitialChapterState(chapter, saved)` (then `computeInitialModuleState`).
+- The runtime consumes the helper for initial state instead of deriving those values inline.
+- Added 17 tests for the helper.
+- Converted 20 of the 39 lifecycle todos into real assertions. Remaining: 19.
+- The runtime reduced from 2393 to 2387 lines.
+- `pnpm vitest run tests/architecture` passed 412/412; `pnpm vite build` succeeded.
+- `introDone` is preserved as hardcoded `true`; this is existing behaviour, not a deliberate fix.
 
 Phase 2 clamp extraction is complete:
 
-- Commit `c35d1af` added `clampScreenIndex(index, total)` to `src/app/moduleNavigation.js`.
-- `go()` and `goTo()` now call `clampScreenIndex` while keeping `setScreen`, `setAnimKey`, `scrollToTop`, `recordActivity`, and `setJumpOpen` inside `ModulePlayer.jsx`.
-- Added 6 contract-level tests for `clampScreenIndex` in `tests/unit/app/moduleNavigation.test.js`.
-- Converted all 7 go/goTo clamping lifecycle todos into real assertions.
-- Remaining lifecycle todos after this extraction: 12.
-- `ModulePlayer.jsx` stayed at 2387 lines; this extraction improved testability rather than size.
-- `pnpm vitest run tests/unit/modulePlayer/lifecycle.test.js` passed 27 tests with 12 todo.
-- `pnpm vitest run tests/unit/app/moduleNavigation.test.js` passed 39 tests.
-- `pnpm vitest run tests/architecture` passed 412/412.
-- `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
+- Commit `c35d1af` added `clampScreenIndex(index, total)`.
+- `go()` and `goTo()` call it while keeping `setScreen`, `setAnimKey`, `scrollToTop`, `recordActivity` and `setJumpOpen` in the runtime.
+- Added 6 contract-level tests; converted all 7 go/goTo clamping todos. Remaining: 12.
+- The runtime stayed at 2387 lines; this extraction improved testability rather than size.
 
 Phase 2 `resolveFinishAction` extraction is complete:
 
-- Added `resolveFinishAction(module, options)` to `src/app/moduleNavigation.js`: pure decision for the final-screen finish branch (`showExaminerExplains` / `showExaminer` / `completeModule`), mirroring `handleFinish`'s exact priority order (examinerExplains gate first while unshown, then examiner, then completion).
-- `handleFinish()` now calls `resolveFinishAction` and switches on `action.type`; all side effects (`setShowExaminerExplains`, `setShowExaminer`, `detectWeakSpot`/`completeModule`, `scrollToTop`) stay inside `ModulePlayer.jsx` exactly as before.
-- Added 7 contract-level tests for `resolveFinishAction` in `tests/unit/app/moduleNavigation.test.js`.
-- Converted all 4 final-screen finish decision lifecycle todos into real assertions.
-- Remaining lifecycle todos after this extraction: 8 (6 hook/outcomes/recall gating + 2 completed-module reopening/persistence side effects).
-- `ModulePlayer.jsx` went from 2387 to 2388 lines (net +1: the extraction traded an inline `if` for a call plus an `action.type` switch).
-- `pnpm vitest run tests/unit/modulePlayer/lifecycle.test.js` passed 31 tests with 8 todo.
-- `pnpm vitest run tests/unit/app/moduleNavigation.test.js` passed 46 tests.
-- `pnpm vitest run tests/architecture` passed 412/412.
-- `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
+- Added `resolveFinishAction(chapter, options)`: pure decision for the final-screen finish branch (`showExaminerExplains` / `showExaminer` / `completeChapter`), mirroring `handleFinish`'s exact priority order.
+- All side effects stay in the runtime.
+- Added 7 contract-level tests; converted all 4 finish-decision todos. Remaining: 8.
+- The runtime went from 2387 to 2388 lines (net +1).
 
-Phase 2 `getModuleGate` extraction is complete:
+Phase 2 `getChapterGate` extraction is complete:
 
-- Commit `6729877` added `getModuleGate(module, { hookDone, wylDone, recallDone, navTo })` to `src/app/moduleNavigation.js`: pure decision for which universal-opener gate (hook/outcomes/recall) to render, mirroring the exact priority order of ModulePlayer's three gate render blocks (hook first including the `navTo='hook'` override, then outcomes, then recall including the `navTo='recall'` override).
-- `ModulePlayer.jsx` now computes `moduleGate = getModuleGate(...)` once and switches on `moduleGate.type` at the three former inline-condition sites; all JSX and side effects (`setHookDone`, `setWylDone`, `setRecallDone`, `setNavTo`, `scrollToTop`, `onBack` handlers) stay exactly as they were.
-- Added 8 contract-level tests for `getModuleGate` in `tests/unit/app/moduleNavigation.test.js`.
-- Converted all 6 hook/outcomes/recall gating lifecycle todos into real assertions.
-- Remaining lifecycle todos after this extraction: 2 (both completed-module reopening/persistence side effects — `completeModule()`'s persistence call and `go(-1)` review-mode behaviour).
-- `ModulePlayer.jsx` went from 2388 to 2392 lines (net +4: the extraction traded three inline conditions for a helper call plus a comment).
-- `pnpm vitest run tests/unit/modulePlayer/lifecycle.test.js` passed 37 tests with 2 todo.
-- `pnpm vitest run tests/unit/app/moduleNavigation.test.js` passed 54 tests.
-- `pnpm vitest run tests/unit` passed 214 tests with 2 todo.
-- `pnpm vitest run tests/architecture` passed 412/412.
-- `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
+- Commit `6729877` added `getChapterGate(chapter, { hookDone, wylDone, recallDone, navTo })` (then `getModuleGate`): pure decision for which universal-opener gate to render.
+- The runtime computes the gate once and switches on `gate.type` at the three former inline-condition sites; all JSX and side effects unchanged.
+- Added 8 contract-level tests; converted all 6 gating todos. Remaining: 2 (both completed-chapter reopening/persistence side effects).
+- The runtime went from 2388 to 2392 lines (net +4).
 
-### Known test cleanup note
-Some lifecycle assertions intentionally duplicate `computeInitialModuleState` coverage from `moduleNavigation.test.js` because the lifecycle todo file is acting as a migration map. Do not add more duplicate coverage casually. Future extractions should prefer one canonical unit suite for the helper plus only enough lifecycle tests to prove the todo behaviour is now covered.
+Phase 7 persisted-state-shape extraction is complete (2026-08-01):
+
+- **What this phase was:** extraction of the persisted chapter-state *shapes*
+  into pure builders, plus deterministic completion persistence. It was **not** a
+  storage rewrite — the storage API was already outside the component. Ownership
+  is unchanged: `src/progress.js` owns `getChapterState()` / `saveChapterState()`,
+  `src/lib/storage.js` remains the only direct `localStorage` boundary, canonical
+  keys remain `gcse_chapter_<chapterId>`, and the `gcse_module_*` migration stays
+  in `progress.js`. Nothing moved out of `progress.js`.
+- Added two pure builders to `src/app/chapterNavigation.js`:
+  - `buildChapterProgressState({ screen, hookDone, wylDone, recallDone, introDone, examinerAttempts, completed })`
+    — the regular autosave shape. `completed` is passed through, never inferred
+    from screen position, so reviewing a finished chapter can lower `screen` while
+    staying complete.
+  - `buildCompletedChapterState({ total, examinerAttempts })` — the completion
+    shape: `screen: total`, every opener flag `true`, `completed: true`, plus the
+    attempts the caller supplies. No existing saved object is merged in.
+- `ChapterPlayer.jsx` persistence call sites went from **3 to 2**:
+  - the autosave effect now saves `buildChapterProgressState(...)`;
+  - `completeChapter(attempts = examinerAttempts)` now saves `buildCompletedChapterState(...)`;
+  - the Face the Examiner path's interim progress save was **removed** — it was
+    overwritten by the completion write on the very next line. It now calls
+    `completeChapter(updated)`, so the new attempt is persisted by the completion
+    write itself.
+- **Determinism, not a learner-facing data-loss bug.** Before this phase the
+  examiner completion wrote the completion snapshot with the *pre-attempt*
+  closure copy of `examinerAttempts`, and the autosave effect repaired it on the
+  next render. No permanent loss was observed at runtime; the correctness simply
+  depended on a subsequent render, which it no longer does.
+- Converted the **final 2 lifecycle todos** into real assertions. The lifecycle
+  suite now has **0 todos**.
+- Deleted `tests/unit/chapterPlayer/lifecycle-regression.test.js` — a
+  byte-identical duplicate of `lifecycle.test.js` left behind by the module →
+  chapter rename (commit `761db69`), carrying the same 2 todos and no unique
+  coverage.
+- Added `tests/architecture/chapter-persistence-boundary.test.js`: guards that
+  ChapterPlayer imports and uses both builders, defines no inline persisted-state
+  object literal, keeps `completeChapter(attempts = …)`, touches no
+  `localStorage`, and reads/writes only through the `progress.js` API. Four
+  mutations verified (drop `completed`; complete with `screen` instead of `total`;
+  examiner completion with stale attempts; inline completion literal) — 6, 5, 1
+  and 3 failures respectively, all reverted.
+- Extended `tests/unit/progressSync/chapterProgressPersistence.test.js` with one
+  round-trip test: completion snapshot saved and read back unchanged, a later
+  review save lowering `screen` while keeping `completed: true` and the examiner
+  attempts, `getChapterPct()` staying 100, and only `gcse_chapter_*` keys written.
+- `ChapterPlayer.jsx` went from 1070 to **1076 lines** (net +6: two builder call
+  sites, the `attempts` parameter and their comments). As with earlier
+  extractions, the win is testability, not size.
+- Gates: `pnpm test:architecture` 1330/1330, `pnpm test:unit` 1179/1179 with 0
+  todo, `pnpm test:storybook` 285/285, `pnpm lint` 0 errors, `pnpm build` green
+  with ChapterPlayer still its own lazy chunk.
+- 390px runtime walkthrough on `history-medicine-great-stink` (real, available):
+  fresh start → hook and outcomes gates → forward navigation → exit/reopen resume
+  → completion → reopen → backward review → exit/reopen. 25/25 checks passed, no
+  console errors, no horizontal overflow, no save-failure notice, completion
+  hand-off unchanged.
+
+### Known coverage note
+`tests/unit/chapterPlayer/lifecycle.test.js` is a migration map: it proves the
+formerly blocked behaviours are now covered and defers field-by-field contracts
+to `tests/unit/app/chapterNavigation.test.js`. Keep it that way — do not
+duplicate every builder case in both files.
+
+### Known gap — the FaceTheExaminer overlay is unreachable from shipped content
+No chapter in `src/content/**` currently defines a top-level `chapter.examiner`,
+so the `showExaminer` overlay (and therefore the live examiner-attempt append
+path) cannot be reached by a learner today. The `faceExaminer` *screen type* that
+several chapters do use is routed through `ScreenRenderer` and does not touch
+this path. Phase 7's determinism fix is therefore covered by unit and
+architecture tests plus a seeded-state runtime walkthrough, not by driving the
+overlay. Worth deciding separately whether the overlay should be wired to content
+or retired.
 
 ### Remaining phases
-Phase 2 — navigation/state-machine boundary:
-- Remaining lifecycle todos: completed-module side-effect/reopen edge cases (2, tied to `completeModule()`'s persistence call and `go(-1)` review-mode behaviour).
-- These 2 remaining todos are persistence-side-effect-adjacent and may belong in Phase 3 instead — decide when picked up.
-- Do not start Phase 3 storage extraction until this decision is made.
+Persistence / state-machine boundary — **complete**:
+- All lifecycle todos are real tests (0 remaining).
+- Persisted state shapes are canonical, pure and shared by every save path.
+- Direct completion uses the examiner attempts current at completion time.
+- Progress-store integration is covered.
 
-Phase 3 — persistence side effects:
-- Move `getModuleState`, `saveModuleState`, and state-shape-building logic only after storage behaviour is pinned by tests.
-- Preserve storage key format `gcse_module_${moduleId}` and saved object shape exactly.
-- Update `tests/architecture/storage-boundary.test.js` only when the storage functions are moved.
-
-Phase 4 — rendering split:
-- Split screen-type rendering and block sub-renderers only after logic/state is stable.
-- This is the highest-risk phase because it touches visual rendering.
+Rendering split — **open, not started**:
+- `ChapterPlayer.jsx` still contains substantial inline rendering: `HookContent`,
+  `IntroScreen`, `JumpSheet` and the bottom-nav shell, plus the gate and overlay
+  render branches.
+- `ScreenRenderer.jsx` already owns screen and block routing; this phase is about
+  the runtime's own JSX, not routing.
+- Highest-risk phase because it touches visual rendering. Do not start it in the
+  same pass as any state work.
 
 ### Rules
 - Do not combine phases.
 - Do not redesign UI during architecture extraction.
-- Do not change content module shape.
-- Do not change storage keys or saved state shape.
-- Do not move weakness tracking into ModulePlayer; it is already delegated to child components.
+- Do not change chapter content shape.
+- Do not change storage keys, the saved state shape, or `progress.js` migration semantics.
+- Do not move weakness tracking into ChapterPlayer; it is already delegated to child components.
 - Keep each extraction test-backed and boring.
 - Convert `it.todo()` specs to real assertions as each pure helper is extracted; do not leave todo specs as permanent coverage.
 
 ### Acceptance criteria
-- ModulePlayer gradually reduces in size while behaviour remains unchanged.
-- Navigation and stage-machine logic becomes testable outside React.
+- ChapterPlayer gradually reduces in size while behaviour remains unchanged.
+- Navigation, lifecycle and persisted-state logic is testable outside React.
 - Architecture tests and build stay green after each phase.
-- ModulePlayer remains lazy-loaded as its own chunk.
+- ChapterPlayer remains lazy-loaded as its own chunk.
 - Todo lifecycle specs are converted into real tests as the corresponding logic becomes testable.
 
 ---

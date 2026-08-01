@@ -114,6 +114,38 @@ describe('canonical chapter progress persistence', () => {
     expect(store['guest::gcse_chapter_history-medicine-cancer']).toBeUndefined()
   })
 
+  // ChapterPlayer's two persisted shapes, read back through the real store. The
+  // shapes themselves are asserted field-by-field in
+  // tests/unit/app/chapterNavigation.test.js; this proves saveChapterState /
+  // getChapterState round-trip them and that a later review save cannot rewind
+  // completion or drop examiner attempts.
+  it('round-trips a completion snapshot, then a backward review save, without losing completion or examiner attempts', () => {
+    const chapter = { id: 'chapter-review', screenCount: 8 }
+    const attempts = [{ chapterId: 'chapter-review', questionId: 'chapter-review-q1', finalMark: 5 }]
+    const completion = {
+      screen: 8,
+      hookDone: true,
+      wylDone: true,
+      recallDone: true,
+      introDone: true,
+      examinerAttempts: attempts,
+      completed: true,
+    }
+
+    expect(saveChapterState(chapter.id, completion)).toBe(true)
+    expect(getChapterState(chapter.id)).toEqual(completion)
+    expect(getChapterPct(chapter)).toBe(100)
+
+    const review = { ...completion, screen: 2 }
+    expect(saveChapterState(chapter.id, review)).toBe(true)
+    expect(getChapterState(chapter.id)).toEqual(review)
+    expect(getChapterState(chapter.id).completed).toBe(true)
+    expect(getChapterState(chapter.id).examinerAttempts).toEqual(attempts)
+    expect(getChapterPct(chapter)).toBe(100)
+
+    expect(Object.keys(store)).toEqual(['guest::gcse_chapter_chapter-review'])
+  })
+
   it('calculates percentage from canonical state and keeps completion sticky', () => {
     const chapter = { id: 'chapter-pct', screenCount: 10 }
     saveChapterState(chapter.id, { screen: 4 })
