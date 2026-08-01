@@ -530,11 +530,11 @@ matcher.
 
 ## A10 — Completion hand-off does not check module availability
 
-**Status:** Open — not started
+**Status:** Resolved — Phase 4 (2026-08-01)
 **Priority:** Medium
 **Area:** `src/app/chapterNavigation.js`, `src/data/modules.js`, `docs/system/CONTENT_HIERARCHY.md`
 
-### Context
+### The former failure (kept for history)
 `buildChapterCompletePayload` resolves "what comes next" by walking the parent
 module's `chapterIds`, then falling through to `MODULES[moduleIdx + 1]` and
 offering that module's first chapter. Neither step consults
@@ -569,3 +569,35 @@ Once that lands, module array position carries no build-status meaning and the
   hand-off is reachable.
 - The known-gap section in `docs/system/CONTENT_HIERARCHY.md` is removed in the
   same change.
+
+### Resolution — Phase 4
+All three acceptance criteria met.
+
+`src/app/chapterNavigation.js` gained `resolveNextAvailableChapter(completedChapter,
+{ modules, chapters })`: it skips coming-soon, hidden and missing chapters inside
+the parent module rather than stopping at the first one, then scans later modules
+in `MODULES` order for the first available chapter, and only ever returns a
+chapter whose `subject` matches the completed chapter's. `buildChapterCompletePayload`
+now consumes it — including dropping the old `CHAPTERS[idx + 1]` fallback for
+chapters with no parent module, which was the widest cross-subject leak. No
+available successor returns the existing end-of-journey payload
+(`isFinalChapter: true`, `completionType: 'subject'`), which
+`ChapterCompleteScreen` already renders without a next-chapter card.
+
+Live behaviour corrected: finishing `math8` offered the first Biology chapter and
+now ends the Maths journey; finishing the Western Front offered the unbuilt
+`spain-new-world-1` stub and now ends the History journey; finishing
+`sci_bio_w1` offered the English Macbeth chapter and now ends the Biology
+journey. Mid-module skipping is live too — `history-medicine-surgery-revolution`
+hands off past the coming-soon Nightingale chapter to
+`history-medicine-accidental-miracle`.
+
+The positional mitigation is gone: the "all-stub modules last" comment was
+removed from `src/data/modules.js` with no reordering, and
+`docs/system/CONTENT_HIERARCHY.md` now states the durable rule — *completion
+hand-off stays within the current subject and only targets an available chapter*
+— instead of recording a known gap.
+
+Covered by 13 tests in `tests/unit/app/chapterNavigation.test.js` (fixture
+edge cases plus real-catalogue checks). Mutation-verified: deleting the
+availability filter fails 7 of them, deleting the same-subject filter fails 5.

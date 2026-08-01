@@ -7,7 +7,10 @@ import {
   clampScreenIndex,
   resolveFinishAction,
   getChapterGate,
+  resolveNextAvailableChapter,
+  buildChapterCompletePayload,
 } from '../../../src/app/chapterNavigation.js'
+import { CHAPTERS, isChapterAvailable } from '../../../src/chapters.js'
 
 function makeChapter(overrides = {}) {
   return {
@@ -407,5 +410,126 @@ describe('getChapterGate', () => {
   it('given hook is done but outcomes and recall conditions are both satisfiable, outcomes takes priority over recall', () => {
     const chapter = makeChapter({ outcomes: { bullets: [] }, recall: { questions: [] } })
     expect(getChapterGate(chapter, { hookDone: true, wylDone: false, recallDone: false, navTo: null })).toEqual({ type: 'outcomes' })
+  })
+})
+
+// ─── Completion hand-off ─────────────────────────────────────────────────────
+// The hand-off must only ever offer a chapter the learner can actually open,
+// and must never move them into a different GCSE subject on its own. Fixtures
+// cover the edge cases; the real catalogue covers the named live behaviours.
+
+const HANDOFF_CHAPTERS = [
+  { id: 'p1', title: 'P1', subject: 'Alpha', screenCount: 4 },
+  { id: 'p2', title: 'P2', subject: 'Alpha', screenCount: 4 },
+  { id: 'p3', title: 'P3', subject: 'Alpha', screenCount: 0 },                         // comingSoon
+  { id: 'p4', title: 'P4', subject: 'Alpha', screenCount: 4, availability: 'hidden' },
+  { id: 'p5', title: 'P5', subject: 'Alpha', screenCount: 4 },
+  { id: 'q1', title: 'Q1', subject: 'Alpha', screenCount: 0 },                         // all-stub module
+  { id: 'r1', title: 'R1', subject: 'Beta',  screenCount: 4 },                         // other subject
+  { id: 's1', title: 'S1', subject: 'Alpha', screenCount: 0 },
+  { id: 's2', title: 'S2', subject: 'Alpha', screenCount: 4 },
+]
+
+const HANDOFF_MODULES = [
+  { id: 'm_alpha_1',    title: 'Alpha one',   subject: 'Alpha', chapterIds: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6-does-not-exist'] },
+  { id: 'm_alpha_stub', title: 'Alpha stubs', subject: 'Alpha', chapterIds: ['q1'] },
+  { id: 'm_beta',       title: 'Beta',        subject: 'Beta',  chapterIds: ['r1'] },
+  { id: 'm_alpha_2',    title: 'Alpha two',   subject: 'Alpha', chapterIds: ['s1', 's2'] },
+]
+
+const fixture = id => HANDOFF_CHAPTERS.find(chapter => chapter.id === id)
+const handoff = (id, modules = HANDOFF_MODULES) =>
+  resolveNextAvailableChapter(fixture(id), { modules, chapters: HANDOFF_CHAPTERS })
+
+describe('resolveNextAvailableChapter — within the current module', () => {
+  it('given the next chapter in the module is available, returns it', () => {
+    expect(handoff('p1')).toMatchObject({ nextChapter: fixture('p2'), isNextModule: false })
+  })
+
+  it('skips a comingSoon chapter sitting between two available chapters', () => {
+    const result = handoff('p2')
+    expect(result.nextChapter.id).not.toBe('p3')
+    expect(result).toMatchObject({ nextChapter: fixture('p5'), isNextModule: false })
+  })
+
+  it('skips a hidden chapter sitting between two available chapters', () => {
+    const result = handoff('p2')
+    expect(result.nextChapter.id).not.toBe('p4')
+    expect(result.nextChapter.id).toBe('p5')
+  })
+
+  it('given the rest of the module is unavailable or a missing reference, returns no within-module successor', () => {
+    expect(handoff('p5', [HANDOFF_MODULES[0]])).toBeNull()
+  })
+})
+
+describe('resolveNextAvailableChapter — later modules in the same subject', () => {
+  it('returns an available chapter from a later module of the same subject', () => {
+    expect(handoff('p5')).toMatchObject({
+      nextChapter: fixture('s2'),
+      isNextModule: true,
+      nextModule:   HANDOFF_MODULES[3],
+    })
+  })
+
+  it('skips a same-subject module whose chapters are all unavailable', () => {
+    expect(handoff('p5').nextChapter.id).not.toBe('q1')
+  })
+
+  it('never returns a chapter from a later module of another subject', () => {
+    expect(handoff('p5').nextChapter.subject).toBe('Alpha')
+    expect(handoff('r1')).toBeNull()
+  })
+
+  it('given no available same-subject successor exists, returns null', () => {
+    expect(handoff('s2')).toBeNull()
+  })
+
+  it('given a chapter that belongs to no module, returns null', () => {
+    expect(resolveNextAvailableChapter(
+      { id: 'orphan', subject: 'Alpha', screenCount: 4 },
+      { modules: HANDOFF_MODULES, chapters: HANDOFF_CHAPTERS },
+    )).toBeNull()
+  })
+})
+
+describe('buildChapterCompletePayload — real catalogue hand-offs', () => {
+  const realChapter = id => CHAPTERS.find(chapter => chapter.id === id)
+
+  it('math7 hands off to math8', () => {
+    const payload = buildChapterCompletePayload(realChapter('math7'))
+    expect(payload.nextChapter.id).toBe('math8')
+    expect(payload.isFinalChapter).toBe(false)
+    // Position inside the parent module, counted past any skipped chapter.
+    expect(payload.nextChapterNum).toBe(8)
+    expect(payload.nextChapterLabel).toBe('Chapter')
+  })
+
+  it('math8 has no automatic next chapter — it never crosses into another subject', () => {
+    const payload = buildChapterCompletePayload(realChapter('math8'))
+    expect(payload.nextChapter).toBeNull()
+    expect(payload.isFinalChapter).toBe(true)
+    expect(payload.completionType).toBe('subject')
+    expect(payload.nextChapterTitle).toBeUndefined()
+  })
+
+  it('the Western Front has no automatic next chapter while the later History modules are all coming soon', () => {
+    const payload = buildChapterCompletePayload(realChapter('history-medicine-western-front'))
+    expect(payload.nextChapter).toBeNull()
+    expect(payload.isFinalChapter).toBe(true)
+  })
+
+  it('skips the coming-soon Nightingale chapter inside Medicine Through Time', () => {
+    const payload = buildChapterCompletePayload(realChapter('history-medicine-surgery-revolution'))
+    expect(payload.nextChapter.id).toBe('history-medicine-accidental-miracle')
+  })
+
+  it('every chapter offered after any available chapter is itself available and in the same subject', () => {
+    for (const chapter of CHAPTERS.filter(isChapterAvailable)) {
+      const { nextChapter } = buildChapterCompletePayload(chapter)
+      if (!nextChapter) continue
+      expect(isChapterAvailable(nextChapter)).toBe(true)
+      expect(nextChapter.subject).toBe(chapter.subject)
+    }
   })
 })

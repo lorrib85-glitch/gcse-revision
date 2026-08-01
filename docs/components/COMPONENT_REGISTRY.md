@@ -162,17 +162,6 @@ Foundation components used by many others. Handle atomic UI concerns.
 
 ---
 
-### LearningToolbar — **Superseded — retained temporarily; do not use for new work**
-
-**File:** `src/components/core/LearningToolbar.jsx`
-**Purpose:** Back and exit navigation buttons for learning screens. Navigation only — no learning logic. Delegates to `BackButton` and `ExitButton`.
-**Props:** `onBack`, `onExit`
-**Dependencies:** `BackButton`, `ExitButton`
-**Status (2026-08-01):** superseded by `LearningHeader`, which composes `BackButton` and `ExitButton` directly. No production consumer remains — its only importer is the Component Lab page `src/dev/componentReview/ButtonsAndProgressPage.jsx`. The entry stays because the file still exists.
-**Lock status:** **not locked.** Its former lock was removed from `docs/components/LOCKED_COMPONENTS.md` (see the "Superseded — no longer locked" section there) along with the stale source marker. The back/exit contract it used to protect is still locked, via `BackButton` and `ExitButton`.
-
----
-
 ### SaveFailureNotice
 
 **File:** `src/components/core/SaveFailureNotice.jsx`

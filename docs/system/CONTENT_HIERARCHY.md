@@ -111,16 +111,17 @@ In active code and authoring documentation:
 Historical archive documents may preserve terminology that was accurate when they
 were written. They are not authoring guidance.
 
-## Known gap — completion hand-off and availability
+## Completion hand-off rule
 
-`buildChapterCompletePayload` (`src/app/chapterNavigation.js`) walks to the next
-chapter inside the module, then to the next module in `MODULES` array order,
-with no availability filter. Module sequence therefore currently influences
-cross-module hand-off.
+Completion hand-off stays within the current subject and only targets an
+available chapter.
 
-This is a gap, not a design rule. Ordering modules around it — for example
-keeping all-stub modules at the end of the array — is a temporary
-behaviour-preserving measure recorded in
-`.planning/backlog/architecture-backlog.md` (A10), not a constitutional
-authoring rule. Do not treat module array position as a place to encode build
-status.
+`buildChapterCompletePayload` (`src/app/chapterNavigation.js`) resolves the next
+chapter through `resolveNextAvailableChapter`, which skips coming-soon, hidden
+and missing chapters inside the parent module, then looks at later same-subject
+modules, and returns nothing when the subject has no available successor. Moving
+a learner between subjects belongs to the planner, Home and the subject browser
+— never to the completion screen.
+
+Module array position therefore carries no build-status meaning. Do not order
+`MODULES` around what is or is not built.

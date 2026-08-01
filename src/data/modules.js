@@ -67,11 +67,6 @@ export const MODULES = [
   // No Chemistry module yet: no Chemistry chapter has complete metadata and
   // content. Add the parent module alongside the first real Chemistry chapter.
 
-  // Modules whose chapters are all still unbuilt stubs are kept at the end of
-  // the catalogue on purpose. Array order drives the "next module" hand-off on
-  // the completion screen, which has no stub guard — moving these up next to
-  // hist_medicine would make finishing the Western Front offer a chapter that
-  // cannot be opened.
   {
     id: 'eng_macbeth',
     title: 'Macbeth',

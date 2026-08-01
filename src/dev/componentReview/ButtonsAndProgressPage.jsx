@@ -11,7 +11,6 @@ import CinematicContinueCTA from '../../components/core/CinematicContinueCTA.jsx
 import CheckAnswerCTA from '../../components/core/CheckAnswerCTA.jsx'
 import BackButton from '../../components/core/BackButton.jsx'
 import ExitButton from '../../components/core/ExitButton.jsx'
-import LearningToolbar from '../../components/core/LearningToolbar.jsx'
 import LearningProgressHeader from '../../components/core/LearningProgressHeader.jsx'
 import SequenceProgress from '../../components/core/SequenceProgress.jsx'
 import ScoreNumberLine from '../../components/core/ScoreNumberLine.jsx'
@@ -98,10 +97,6 @@ export default function ButtonsAndProgressPage() {
 
         <Item name="ExitButton" note="LOCKED. The only exit-navigation button — 44×44, near-invisible ✕ with press feedback.">
           <ExitButton onClick={() => {}} />
-        </Item>
-
-        <Item name="LearningToolbar" note="LOCKED. Back + exit navigation layer, delegating to BackButton and ExitButton.">
-          <LearningToolbar onBack={() => {}} onExit={() => {}} />
         </Item>
       </Section>
 

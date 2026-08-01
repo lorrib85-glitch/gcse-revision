@@ -32,9 +32,9 @@ const ALTERNATIVE_GOVERNANCE = {
   },
 }
 
-// Only the "## Locked Component List" section defines lock status. The
-// "## Superseded — no longer locked" section is history and must be excluded,
-// or unlocking a component would never take effect.
+// Only the "## Locked Component List" section defines lock status — parsing
+// stops at the next top-level heading, so any later section (history, protocol)
+// can never re-lock a component by mentioning it.
 export function parseCanonicalLocked(markdown) {
   // Anchored to the start of a line so a prose mention of the section name
   // earlier in the document cannot be mistaken for the section itself.
@@ -72,9 +72,9 @@ describe('the canonical locked list parses and is non-trivial', () => {
     expect(canonical.length).toBeGreaterThan(0)
   })
 
-  it('excludes the superseded section', () => {
-    expect(canonicalFiles.has('src/components/core/LearningToolbar.jsx')).toBe(false)
-    expect(read(CANONICAL)).toContain('## Superseded — no longer locked')
+  it('stops parsing at the next top-level section', () => {
+    expect(canonicalFiles.has('src/components/core/BackButton.jsx')).toBe(true)
+    expect(canonical.some(entry => /^## /.test(entry.name))).toBe(false)
   })
 })
 

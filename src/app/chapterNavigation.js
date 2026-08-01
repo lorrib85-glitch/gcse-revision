@@ -1,4 +1,4 @@
-import { CHAPTERS } from '../chapters.js'
+import { CHAPTERS, isChapterAvailable } from '../chapters.js'
 import { MODULES } from '../data/modules.js'
 import { MEDICINE_2023_PAPER } from '../data/medicineExamPapers.js'
 import { SUBJECTS } from '../constants/subjects.js'
@@ -113,41 +113,56 @@ const CHAPTER_COPY = [
   'Another one down.',
 ]
 
+// Pure: decide which chapter a learner should be offered after finishing one.
+//
+// Two rules, both absolute:
+//   1. only a chapter isChapterAvailable() accepts is ever offered — coming-soon
+//      stubs, hidden chapters and missing references are skipped, not stopped at;
+//   2. the hand-off never leaves the completed chapter's subject. Moving between
+//      subjects belongs to the planner, Home and the subject browser.
+//
+// Looks inside the parent module first, then at later same-subject modules in
+// MODULES order. Returns null when the subject has no available successor — the
+// end-of-journey case the completion screen already renders (isFinalChapter).
+// Module array position therefore carries no build-status meaning.
+export function resolveNextAvailableChapter(completedChapter, { modules = MODULES, chapters = CHAPTERS } = {}) {
+  const subject = completedChapter?.subject
+  const firstAvailable = chapterIds => chapterIds
+    .map(id => chapters.find(chapter => chapter.id === id))
+    .find(chapter => chapter?.subject === subject && isChapterAvailable(chapter)) || null
+
+  const parentIdx = modules.findIndex(module => module.chapterIds.includes(completedChapter?.id))
+  if (parentIdx === -1) return null
+
+  const parentModule = modules[parentIdx]
+  const remaining    = parentModule.chapterIds.slice(parentModule.chapterIds.indexOf(completedChapter.id) + 1)
+  const withinModule = firstAvailable(remaining)
+  if (withinModule) return { nextChapter: withinModule, isNextModule: false, nextModule: parentModule }
+
+  for (const module of modules.slice(parentIdx + 1)) {
+    const candidate = firstAvailable(module.chapterIds)
+    if (candidate) return { nextChapter: candidate, isNextModule: true, nextModule: module }
+  }
+  return null
+}
+
 // Pure: compute the data object needed by ChapterCompleteScreen.
 export function buildChapterCompletePayload(completedChapter) {
   const accent = SUBJECTS[completedChapter.subject]?.accent || completedChapter.color || SUBJECTS.History.accent
 
-  const parentModule  = MODULES.find(module => module.chapterIds.includes(completedChapter.id))
-  const chapterIdx    = parentModule ? parentModule.chapterIds.indexOf(completedChapter.id) : -1
-  const nextChapterId = parentModule ? parentModule.chapterIds[chapterIdx + 1] : null
+  const parentModule = MODULES.find(module => module.chapterIds.includes(completedChapter.id))
+  const handoff      = resolveNextAvailableChapter(completedChapter)
 
-  let nextChapter, nextChapterLabel, nextChapterNum, nextChapterTitle, isFinalChapter, completionType
-
-  if (nextChapterId) {
-    nextChapter          = CHAPTERS.find(chapter => chapter.id === nextChapterId)
-    nextChapterLabel = 'Chapter'
-    nextChapterNum   = chapterIdx + 2
-    nextChapterTitle = nextChapter?.title
-    isFinalChapter   = false
-    completionType   = 'chapter'
-  } else if (parentModule) {
-    const moduleIdx = MODULES.indexOf(parentModule)
-    const nextModule = MODULES[moduleIdx + 1]
-    nextChapter      = nextModule ? CHAPTERS.find(chapter => chapter.id === nextModule.chapterIds[0]) : null
-    nextChapterLabel = 'Next Module'
-    nextChapterNum   = null
-    nextChapterTitle = nextModule?.title
-    isFinalChapter   = !nextModule
-    completionType   = nextModule ? 'chapter' : 'subject'
-  } else {
-    const idx        = CHAPTERS.findIndex(chapter => chapter.id === completedChapter.id)
-    nextChapter          = idx >= 0 && idx < CHAPTERS.length - 1 ? CHAPTERS[idx + 1] : null
-    nextChapterLabel = 'Chapter'
-    nextChapterNum   = nextChapter?.number
-    nextChapterTitle = nextChapter?.title
-    isFinalChapter   = !nextChapter
-    completionType   = isFinalChapter ? 'subject' : 'chapter'
-  }
+  const nextChapter      = handoff?.nextChapter || null
+  const isFinalChapter   = !nextChapter
+  const completionType   = isFinalChapter ? 'subject' : 'chapter'
+  const nextChapterLabel = handoff?.isNextModule ? 'Next Module' : 'Chapter'
+  // A cross-module hand-off announces the module it opens; a within-module one
+  // announces the chapter and its position in the module.
+  const nextChapterNum   = handoff && !handoff.isNextModule
+    ? handoff.nextModule.chapterIds.indexOf(nextChapter.id) + 1
+    : null
+  const nextChapterTitle = handoff?.isNextModule ? handoff.nextModule.title : nextChapter?.title
 
   const backgroundAsset = completedChapter.completionBackground || completedChapter.headerImage
   const backgroundPosition = completedChapter.completionBackgroundPosition

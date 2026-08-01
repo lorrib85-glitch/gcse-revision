@@ -199,7 +199,7 @@ Constitutional rule — see `docs/system/BUTTON_RADII_SYSTEM.md` "Progression CT
 - The press feedback: opacity 0.6 + scale 0.90 on press, via `onPointerDown`/`onPointerUp`/`onPointerLeave`
 
 **Why locked:**
-Constitutional rule: **ExitButton is the only exit-navigation button implementation allowed anywhere in the app.** Consolidated from the inline exit-button implementation previously in `LearningToolbar`/`LearningHeader` (2026-06-15).
+Constitutional rule: **ExitButton is the only exit-navigation button implementation allowed anywhere in the app.** Consolidated from the inline exit-button implementations previously in the learning header layer (2026-06-15).
 
 **Allowed changes:**
 - Import path corrections
@@ -391,28 +391,6 @@ non-gamified, and its behavioural (not self-report) basis is a product rule.
 - Marking a weakness resolved from this screen (it starts a repair pathway,
   it does not complete one)
 - Changing the component API or block shape
-
----
-
-## Superseded — no longer locked
-
-### LearningToolbar
-
-**File:** `src/components/core/LearningToolbar.jsx`
-
-**Status:** Superseded — retained temporarily; do not use for new work.
-
-**Unlocked 2026-08-01.** `LearningHeader` composes `BackButton` and
-`ExitButton` directly, so the navigation contract this entry protected now lives
-in those two constitutional components and in `LearningHeader`. `LearningToolbar`
-has no production consumer — its only importer is the Component Lab reference
-page `src/dev/componentReview/ButtonsAndProgressPage.jsx`. A lock over a
-component nothing renders protects nothing and makes the canonical list harder
-to trust.
-
-The file and its executable code are unchanged; only the stale lock marker was
-removed. The back/exit visual and behavioural contract remains locked via the
-`BackButton` and `ExitButton` entries above.
 
 ---
 

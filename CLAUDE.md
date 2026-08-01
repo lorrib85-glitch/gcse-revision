@@ -127,7 +127,6 @@ Foundation components used by many others.
 - `ExitButton.jsx` — LOCKED. The only exit-navigation button allowed anywhere in the app.
 - `LearningHeader.jsx` — Floating capsule header shell. Composes BackButton + ExitButton + LearningProgressHeader.
 - `LearningProgressHeader.jsx` — LOCKED. Progress rail + jump sheet (progression display only).
-- `LearningToolbar.jsx` — Superseded by `LearningHeader`; retained temporarily, no production consumer. Do not use for new work.
 - `SequenceProgress.jsx` — LOCKED. The only local sequence-progress indicator (carousels, image sets, mini-steps). Never renders numbers or counters.
 
 ### `src/components/learning/`
