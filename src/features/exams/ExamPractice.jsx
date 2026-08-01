@@ -1,4 +1,5 @@
-import TestTab, { TestDataProvider } from '../quickfire/QuickFire.jsx'
+import TestTab from '../quickfire/QuickFire.jsx'
+import { TestDataProvider } from '../quickfire/testDataContext.jsx'
 
 export default function ExamPractice({ tab, onOpenChapter, onOpenPulse, examAutoStart, setExamAutoStart }) {
   if (tab !== 'exams') return null

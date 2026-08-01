@@ -195,9 +195,14 @@ function saveQfPrevSession(accuracy, answered) {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 // Owns the full 90-second Quick Fire session: countdown → questions → summary.
-// TestTab renders this component for the active session; the landing screen stays in TestTab.
+// TestTab renders this component directly for mode="quickfire" — it is the whole
+// screen, and the round begins on mount.
 // Props:
-//   onExit — called when the user presses BackButton on the summary to return to the landing
+//   onExit — TestTab passes the app's own onExit straight through, so pressing
+//            BackButton on the summary returns the learner to the tab that
+//            launched the round (Pulse, Home, or chapter completion). Never
+//            replace this with local state: that was the Phase 6 bug, and it
+//            stranded learners on an obsolete subject-selection landing.
 export function QuickFireMode({ onExit }) {
   const [qIdx, setQIdx] = useState(0)
   const [quickFireTimeLeft, setQuickFireTimeLeft] = useState(QUICK_FIRE_SECONDS)

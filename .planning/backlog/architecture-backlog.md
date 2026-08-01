@@ -239,16 +239,33 @@ unclassified `GENERAL.error` to `Home.jsx` fails the census test. Both reverted.
 etc. hardcoded outside `GENERAL.*` call sites in `src/content/**`, `src/data/**`).
 Still open and still explicitly out of scope — see the rule above.
 
+**Phase 6 follow-up — why the live census got smaller.** A7 stays resolved; only
+its surface shrank. A1 deleted the code both Category 1 blocks lived in: the
+`ChemistryTopicView` inside `QuickFire.jsx` and `modes/MathsQuestion.jsx` were
+part of the obsolete subject-selection landing, which A7 had already documented
+as unreachable. Their census entries were removed rather than zeroed — a
+zero-value allowance would licence the legacy tokens back into files that no
+longer use them. The Category 2 and Category 3 entries (`utils.js`,
+`ComponentReviewLab.jsx`, `QuoteAnalyser.jsx`, `GuidedExamResponse.jsx`) are
+untouched at their reviewed counts, and a brand-new unclassified usage anywhere
+in `src/` still fails the census. The semantic half of the guard became a
+repo-wide scan of the two Category 1 labels rather than a two-file allowlist, so
+it survives file deletion; it asserts the ban (never a system-status token) and
+not a specific token, because `TopicPracticeMode.jsx` renders the same labels on
+`GENERAL.teal`/`slate` — non-system, and re-tinting it is a colour decision
+outside A1's structural scope. The A7 limitation about being unable to screenshot
+those two panels is now moot: the panels no longer exist.
+
 ---
 
 ## A1 — Finish QuickFire architecture hardening
 
-**Status:** Backlog  
+**Status:** Resolved (Phase 6)  
 **Priority:** Medium  
 **Area:** `src/features/quickfire/`, `tests/architecture/`
 
 ### Context
-QuickFire has been reduced from a large monolith into separate mode/components/data layers:
+QuickFire was reduced from a large monolith into separate mode/components/data layers across Phases 1.5–1.8. That staged extraction stands and is preserved:
 
 - `QuickFire.jsx` reduced from 3406 lines to ~621 lines.
 - `QuickFireMode.jsx` extracted.
@@ -258,17 +275,70 @@ QuickFire has been reduced from a large monolith into separate mode/components/d
 - `TestDataProvider` extracted.
 - `FormulaSheet` extracted.
 - Question banks moved into `src/data/questionBanks/`.
-- Boundary tests added with a current `QuickFire.jsx` ceiling of 700 lines.
+- Boundary tests added with a then-current `QuickFire.jsx` ceiling of 700 lines.
 
-### Remaining work
-- Keep `QuickFire.jsx` as a thin orchestrator.
-- Reduce `QuickFire.jsx` ceiling toward 500 lines once the remaining inline Chemistry placeholder code is either removed or properly designed.
-- Do not extract Chemistry merely for tidiness until the Chemistry subject/module design is ready.
-- Keep the Chemistry quickfire TODO as an intentional exception.
-- Review whether any mode file grows beyond a reasonable limit as adaptive selection/content expansion begins.
+What that extraction left behind was a broken route rather than a size problem,
+which is what Phase 6 closed.
+
+### Resolution (Phase 6)
+
+**Root cause.** `TestTab` destructured the parent `onExit` but forwarded it only
+on the exam path. The quickfire path rendered
+`<QuickFireMode onExit={() => setQfSessionActive(false)} />` — a local state
+setter. Finishing a round therefore flipped local state and fell through to the
+old `EXAM_SUBJECTS` subject-selection landing instead of calling
+`setTab(quickfireOrigin)`. The learner was stranded on a screen no caller
+intends to open, and which could not render anyway: its browsers read
+`useTestData()`, and `TestDataProvider` deliberately wraps only the Exams tab.
+(This is the same unreachability documented under A7's "honest limitation on
+visual verification"; A7's finding was correct and is now acted on.)
+
+**Fix.** `QuickFire.jsx` is now a 38-line mode boundary: `mode="quickfire"` →
+`QuickFireMode` with the parent `onExit` passed by identity, `mode="exam"` →
+`ExamMode`, anything else → `null`. The unsupported default `mode="test"` is
+gone. The landing, `EXAM_SUBJECTS`, the inline `EnglishBrowser` /
+`EnglishTopicView` / `SociologyBrowser` / `SociologyTopicView` /
+`ChemistryBrowser` / `ChemistryTopicView` / `ChemImage`, and all local
+open/selected/session state were deleted. `MathsBrowser.jsx`,
+`MathsTopicView.jsx` and `MathsQuestion.jsx` were deleted — the landing was
+their only consumer chain. `ExamPractice.jsx` now imports `TestDataProvider`
+directly from `testDataContext.jsx` instead of through a `QuickFire.jsx`
+re-export.
+
+**Durable rule established:** exam question-bank data loads for Exam Mode, not
+for QuickFire.
+
+**Guards.** `tests/architecture/quickfire-boundaries.test.js` rewritten: ceiling
+80 lines; the eight deleted landing members cannot be redefined; no `useState`,
+no `useTestData`, no landing copy in `QuickFire.jsx`; `QuickFireMode` must
+receive `onExit` by identity; the three deleted browser files must stay deleted
+and stay unimported; `TestDataProvider` must wrap Exam Mode and must not appear
+in `LegacyApp.jsx` or `QuickFire.jsx`. `tests/unit/quickfire/exitContract.test.js`
+asserts the delegation behaviourally. Mutation-verified — reverting exit to
+local state fails 1 architecture + 2 unit tests; re-adding `EnglishBrowser` fails
+1; restoring `MathsBrowser.jsx` fails 2; wrapping the quickfire tab in
+`TestDataProvider` fails 1. All reverted.
+
+**Bundle.** Main `index` chunk 998.95 kB → 934.78 kB (gzip 254.44 → 239.91 kB).
+The five Exam Mode data modules remain separate lazy chunks.
+
+### Retained, not deleted
+- `TopicPracticeMode.jsx` — kept by instruction. Its only route was the landing's
+  `startTopic`, so it is currently unrouted. Not a defect introduced here; it
+  needs a supported caller before it is live again.
+- `FormulaSheet.jsx` — kept. Its only two consumers (`MathsBrowser`,
+  `MathsQuestion`) were deleted, so it is likewise unrouted.
+- `src/data/sociologyGroups.js` and `src/data/chemImages.js` — data files whose
+  only readers were the deleted landing. Left in place (this repo already
+  documents several group files with no current consumer); noted in `CLAUDE.md`.
+
+### Explicitly not claimed by this closure
+Adaptive question selection, new subject banks, future Chemistry design and
+mastery-driven recommendations remain open and untouched. A1 was structural
+hardening only.
 
 ### Guardrail targets
-Eventually enforce:
+Still the standing targets for future work:
 
 - Feature orchestrator files: max ~500 lines.
 - Mode files: max ~500–800 lines unless justified.
@@ -277,9 +347,13 @@ Eventually enforce:
 - No speculative Chemistry/Physics/Drama/Music module banks before those subjects are designed.
 
 ### Acceptance criteria
-- `QuickFire.jsx` remains below its architecture threshold.
-- `tests/architecture/quickfire-boundaries.test.js` stays green.
-- Any future extraction preserves behaviour and does not redesign UI.
+- ✅ QuickFire exits through the parent navigation contract.
+- ✅ The obsolete subject-grid landing is removed.
+- ✅ Dead browser fragments are deleted.
+- ✅ `QuickFire.jsx` is a thin mode boundary (38 lines, ceiling 80).
+- ✅ Tests enforce the final boundary, with mutation evidence.
+- ✅ Exam Mode retains lazy-loaded test data.
+- ✅ Live QuickFire and Exam flows verified at 390px.
 - Chemistry/Physics/Drama/Music structure is only added when real designed content exists.
 
 ---

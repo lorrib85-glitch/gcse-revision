@@ -19,15 +19,15 @@ const read = (rel) => readFileSync(resolve(root, rel), 'utf8')
 // Categories:
 //   2 — system / operational status (API failure, validation, dev-lab errors)
 //   3 — performance band (Excellent / Good / Developing / Needs Work)
+//
+// Phase 6 note: this census used to carry two more entries —
+// modes/MathsQuestion.jsx and QuickFire.jsx, each holding one Cat 2 strip. Both
+// blocks lived inside the obsolete QuickFire subject-selection landing, which
+// Phase 6 deleted along with MathsQuestion.jsx itself. Their allowances are
+// removed rather than zeroed: a zero-value entry would licence the tokens back
+// into files that no longer use them. The Cat 1 / Cat 2 / Cat 3 distinction is
+// unchanged — only the live surface got smaller.
 const LEGACY_TOKEN_CENSUS = {
-  'src/features/quickfire/modes/MathsQuestion.jsx': {
-    success: 0, successSoft: 0, error: 1, errorSoft: 0,
-    why: 'Cat 2 — single inline strip for submit-validation and "could not reach the grading server".',
-  },
-  'src/features/quickfire/QuickFire.jsx': {
-    success: 0, successSoft: 0, error: 1, errorSoft: 0,
-    why: 'Cat 2 — same inline validation / grading-server failure strip as MathsQuestion.',
-  },
   'src/features/quickfire/utils.js': {
     success: 1, successSoft: 2, error: 2, errorSoft: 0,
     why: 'Cat 3 — GRADE_COLOURS performance bands. A band summarises how well a whole answer scored; it is neither binary answer feedback nor system state, and stays on these tokens by review.',
@@ -85,35 +85,48 @@ describe('Legacy system-status tokens stay censused', () => {
 // Category 1 — AI-marked written feedback. These two labels tell a learner what
 // their answer achieved and missed, so they must render on the calm canonical
 // feedback tokens, never on the loud system ones. Anchored to the visible copy:
-// the label and its colour are authored on the same line in both files.
+// the label and its colour are authored on the same line.
 //
 // This is the semantic half of the guard. The census above is the count half —
 // it catches a regression that keeps the same number of legacy tokens while
 // swapping which role uses them.
-const MARKED_FEEDBACK_SURFACES = [
-  'src/features/quickfire/modes/MathsQuestion.jsx',
-  'src/features/quickfire/QuickFire.jsx',
-]
-
+//
+// Phase 6 made this a repo-wide scan rather than a two-file allowlist. Both
+// files it named (QuickFire.jsx's ChemistryTopicView and modes/MathsQuestion.jsx)
+// were part of the deleted subject-selection landing, so no live surface renders
+// this copy on the canonical feedback tokens today. Scanning src/ keeps the rule
+// enforceable wherever AI marking reappears, instead of pinning it to files that
+// no longer exist.
+//
+// The assertion is the ban, not a positive requirement: A7's rule is that a
+// marking verdict must never wear a system-status colour. TopicPracticeMode.jsx
+// renders the same two labels on GENERAL.teal/slate — a calm, non-system palette
+// that satisfies the rule. Re-tinting it is a feedback-colour decision, out of
+// scope here, so the guard does not force feedbackCorrect/feedbackIncorrect onto
+// every occurrence.
 const FEEDBACK_LABELS = [
   { copy: 'What you got right', token: 'feedbackCorrect' },
   { copy: 'Next time, also include', token: 'feedbackIncorrect' },
 ]
 
-describe('AI-marked answer feedback uses canonical feedback tokens', () => {
-  for (const file of MARKED_FEEDBACK_SURFACES) {
-    for (const { copy, token } of FEEDBACK_LABELS) {
-      it(`${file} — "${copy}" renders on GENERAL.${token}`, () => {
-        const lines = read(file).split('\n').filter((l) => l.includes(copy))
-        expect(lines.length, `"${copy}" not found in ${file}`).toBeGreaterThan(0)
-        for (const line of lines) {
-          expect(
-            line,
-            `"${copy}" is learner marking feedback — use GENERAL.${token}, not a system-status token`,
-          ).not.toMatch(/GENERAL\.(success|successSoft|error|errorSoft)\b/)
-          expect(line).toContain(`GENERAL.${token}`)
-        }
-      })
-    }
+describe('AI-marked answer feedback never uses system-status tokens', () => {
+  for (const { copy, token } of FEEDBACK_LABELS) {
+    it(`no "${copy}" label renders on a system-status token`, () => {
+      const offenders = srcFiles.filter((rel) =>
+        read(rel)
+          .split('\n')
+          .some(
+            (line) =>
+              line.includes(copy) &&
+              /GENERAL\.(success|successSoft|error|errorSoft)\b/.test(line),
+          ),
+      )
+      expect(
+        offenders,
+        `"${copy}" is learner marking feedback — it must not share a colour with an ` +
+        `unreachable grading server. Use GENERAL.${token} (or another non-system ` +
+        `token): ${offenders.join(', ')}`,
+      ).toEqual([])
+    })
   }
 })

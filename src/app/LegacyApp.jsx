@@ -536,7 +536,7 @@ export default function App() {
         {tab === 'subjects' && <SubjectsTab onOpenChapter={openChapter} />}
         {tab === 'pulse'    && <PulseTab onStartQuickFire={() => startQuickfire('pulse')} best={readQfBest()} />}
         {tab === 'progress' && <ProgressTab />}
-        {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenChapter={openChapter} onExit={() => setTab(quickfireOrigin)} />}
+        {tab === 'quickfire' && <TestTab mode="quickfire" onExit={() => setTab(quickfireOrigin)} />}
         {tab === 'exams'    && <ExamPractice tab={tab} onOpenChapter={openChapter} onOpenPulse={() => setTab('pulse')} examAutoStart={examAutoStart} setExamAutoStart={setExamAutoStart} />}
       </div>
       <BottomNav tab={tab} setTab={setTab} />
