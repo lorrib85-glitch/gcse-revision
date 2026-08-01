@@ -13,6 +13,39 @@ rules are in `docs/components/LOCKED_COMPONENTS.md`.
 
 ---
 
+## What an entry here does and does not mean
+
+An entry means one thing: **the component exists and is documented.** It is a
+catalogue, not an approval.
+
+| Question | Answered by |
+|---|---|
+| Does this component exist, and what is it? | this file |
+| May a chapter author use it in a `screens` array? | `src/data/screenRegistry.js` |
+| Which pedagogical function does it serve? | `src/data/componentFunctions.js` |
+| May its internals be changed? | `docs/components/LOCKED_COMPONENTS.md` |
+
+Consequences, all deliberate:
+
+- A component may be catalogued here while still under review, with no
+  authorable screen or block type. **Absence of a screen type is not an error.**
+- Runtime infrastructure, layout shells and support primitives may never need a
+  screen type at all.
+- Catalogue membership is **not** based on learner reachability. Component Lab
+  or Storybook-only components, components not yet approved for chapter
+  authoring, and superseded-but-retained components are all catalogued.
+  "Not routed yet" is a status, not a defect — do not route, retire or delete a
+  component merely because learners cannot currently reach it.
+
+**Completeness is enforced.** Every standalone component under
+`src/components/**` must appear here;
+`tests/architecture/component-registry-completeness.test.js` fails otherwise.
+Files that are private implementation details of one registered component family
+(a family subdirectory such as `learning/faceTheExaminer/`, or a named internal)
+are excluded by an explicit, reasoned list in that test — not by omission.
+
+---
+
 ## How to Use This Registry
 
 Before building anything new, check this registry. If a component already covers your use case — use it. If it doesn't quite fit, adapt it. Only build new components for genuinely distinct learning beats.
@@ -129,13 +162,14 @@ Foundation components used by many others. Handle atomic UI concerns.
 
 ---
 
-### LearningToolbar — **LOCKED**
+### LearningToolbar — **Superseded — retained temporarily; do not use for new work**
 
 **File:** `src/components/core/LearningToolbar.jsx`
 **Purpose:** Back and exit navigation buttons for learning screens. Navigation only — no learning logic. Delegates to `BackButton` and `ExitButton`.
 **Props:** `onBack`, `onExit`
 **Dependencies:** `BackButton`, `ExitButton`
-**Lock reason:** Navigation contract. Changing button positions or behaviour breaks muscle memory.
+**Status (2026-08-01):** superseded by `LearningHeader`, which composes `BackButton` and `ExitButton` directly. No production consumer remains — its only importer is the Component Lab page `src/dev/componentReview/ButtonsAndProgressPage.jsx`. The entry stays because the file still exists.
+**Lock status:** **not locked.** Its former lock was removed from `docs/components/LOCKED_COMPONENTS.md` (see the "Superseded — no longer locked" section there) along with the stale source marker. The back/exit contract it used to protect is still locked, via `BackButton` and `ExitButton`.
 
 ---
 
@@ -166,6 +200,149 @@ Foundation components used by many others. Handle atomic UI concerns.
 **Hard rule:** Never renders numbers, labels, counters, percentages, or "x of y" — no exceptions.
 **Rule:** Do not create local `ProgressDots` or one-off carousel dots anywhere in the codebase. Use this component instead.
 **Used by:** `QuickRecallScreen`, `CinematicCarousel`, `VisualLearning`, `GuidedChoiceCarousel`
+**Lock:** See `docs/components/LOCKED_COMPONENTS.md`.
+
+---
+
+### Core support primitives and runtime infrastructure
+
+The remaining `core/` components are support primitives and runtime
+infrastructure, not selectable learning activities. They carry no Decision block
+by design: an author never chooses between them and a learning component. Most
+have no authorable screen type, which is correct rather than an omission.
+
+---
+
+### AnimatedNumber
+
+**File:** `src/components/core/AnimatedNumber.jsx`
+**Purpose:** Counts a numeric display up from 0 to `value` on first scroll into view. Respects `prefers-reduced-motion` (renders the final value immediately).
+**Props:** `value`, `duration` (ms, default 1400)
+**Dependencies:** none beyond React; `IntersectionObserver`, `requestAnimationFrame`
+**Usage boundary:** score and stat reveals only. Do not animate a number the learner must read and act on immediately.
+**Used by:** `QuickFireMode`
+**Classification:** support primitive. No screen or block type. Not locked.
+
+---
+
+### CinematicDivider
+
+**File:** `src/components/core/CinematicDivider.jsx`
+**Purpose:** Decorative line–diamond–line separator for cinematic and editorial screens. Owns the motif, the governed line colour and the subject-accent treatment; the caller owns placement via `style`.
+**Props:** `accent` (default `GENERAL.teal`), `accentRgb`, `size` (`'compact' | 'standard' | 'wide'`, default `'standard'`), `style`
+**Dependencies:** `GENERAL`, `hexToRgb`
+**Usage boundary:** presentation only, `aria-hidden`. Do not build a second inline divider motif; extend the `size` scale instead.
+**Used by:** `QuoteAnalyser`, `TheoryCompare`, Component Lab
+**Classification:** support primitive. No screen or block type. Not locked.
+
+---
+
+### CircularTimer
+
+**File:** `src/components/core/CircularTimer.jsx`
+**Purpose:** Circular countdown ring with a centred value and label. Display only — the caller owns the countdown.
+**Props:** `seconds`, `totalSeconds`, `size` (default 84), `stroke` (default 4), `label` (default `'SEC'`), `color`, `trackColor`, `displayValue`, `valueStyle`, `labelStyle`, `ariaLabel`
+**Dependencies:** `GENERAL`, `MOTION`
+**Usage boundary:** timed flows only (QuickFire, timed recall). Never add a timer to an untimed learning screen — see the cognitive load law in `CLAUDE.md`.
+**Used by:** `PriorKnowledgeRecall`, `QuickFireQuestionScreen` (via the QuickFire re-export), Component Lab
+**Classification:** support primitive. No screen or block type. Not locked.
+
+---
+
+### ExamPrompt
+
+**File:** `src/components/core/ExamPrompt.jsx`
+**Purpose:** Cross-subject exam-question prompt primitive: the question stem plus its mark allocation, in Sora rather than a subject-specific face so one treatment serves prose, quotations, calculations, equations and source questions. Also exports `stripTrailingMarks(question, marks)`, which removes a trailing "(4 marks)" from authored question text so marks are not shown twice.
+**Props:** `question`, `marks`, and layout props
+**Dependencies:** `GENERAL`, `SPACING`, `TYPE`
+**Usage boundary:** the question stem only. Marking, feedback and answer capture stay with the surrounding exam component.
+**Used by:** `GuidedExamResponse`
+**Classification:** support primitive. No screen or block type. Not locked.
+
+---
+
+### InlineNavigationContext
+
+**File:** `src/components/core/InlineNavigationContext.jsx`
+**Purpose:** Lets a learning component running a progressive reveal inside `ContentShell` own the only visible Continue CTA. `ContentShell` provides the bridge to the chapter-level navigation action.
+**Exports:** `InlineNavigationContext` (React context), `useInlineNavigationOwner(active)` → the chapter continue handler while claimed
+**Dependencies:** React context only
+**Usage boundary:** the sanctioned alternative to reaching into the DOM for the shell's Continue button. Components must never query or mutate shell DOM directly.
+**Used by:** `ContentShell`, `TheoryCompare`, `OppositeQualitiesReveal`
+**Classification:** runtime infrastructure. No screen or block type. Not locked.
+
+---
+
+### MediaPlaceholder
+
+**File:** `src/components/core/MediaPlaceholder.jsx`
+**Purpose:** The governed reserved slot for an image or diagram the author has not yet supplied — so a screen can be composed and reviewed before art exists. With `kind="imageReveal"` the same slot becomes a slow quadrant-by-quadrant reveal inside one fixed frame, with optional arrows linking opposite quadrants.
+**Props:** `kind` (default `'image'`; `'diagram'`, `'imageReveal'`), `aspect` (default `'16:9'`), `caption`, `subject` (default `'History'`)
+**Image-reveal config:** `{ intro?, interval?, images: { topLeft, topRight, bottomLeft, bottomRight }, alt?, parts?, opposites?, progressText?, finished? }`
+**Block type:** `mediaPlaceholder` (registered in `screenRegistry.js`; function tag `teach-mechanism`, interaction `passive`)
+**Dependencies:** `SUBJECTS`, `RADII`, `SPACING`, `TYPE`, `MOTION`
+**Usage boundary:** the only approved way to reserve a missing visual. Do not ship an empty box, a grey `div` or a stand-in stock image instead.
+**Classification:** authorable block + support primitive. Not locked.
+
+---
+
+### ProgressRecoveryCard
+
+**File:** `src/components/core/ProgressRecoveryCard.jsx`
+**Purpose:** Shown once, before the login screen, when earlier progress is found on this device that cannot be confirmed as the current learner's (quarantined legacy data — see `accountScope.js`). Reveals nothing about the previous learner: no name, scores or subjects, only that some earlier progress exists. The learner chooses "Use this progress" or "Start fresh"; nothing is deleted either way.
+**Props:** `onUse`, `onStartFresh`, `busy` (default false)
+**Dependencies:** `GENERAL`, `TYPE`, `SPACING`, `RADII`
+**Usage boundary:** mounted once by `LegacyApp` in the auth flow. Never rendered inside a chapter. No technical wording ("migration", "namespace", "storage", "legacy") may reach the learner.
+**Classification:** runtime infrastructure (account-scope boundary UI). No screen or block type. Not locked.
+
+---
+
+### ScoreNumberLine
+
+**File:** `src/components/core/ScoreNumberLine.jsx`
+**Purpose:** Draggable/tappable number line for choosing a mark out of a small range. Keyboard and pointer accessible.
+**Props:** `value`, `max` (default 8), `min` (default 0), `onChange`, `accent`, `label` (default `'Score'`), `disabled`
+**Dependencies:** `GENERAL`, `RADII`, `TYPE`
+**Usage boundary:** awarding a mark. Not a general-purpose slider, rating or confidence control — self-reported confidence is not evidence in this product.
+**Used by:** `FaceTheExaminer` (`faceTheExaminer/MarkingPanel.jsx`), Component Lab
+**Classification:** support primitive. No screen or block type. Not locked.
+
+---
+
+### ScreenText
+
+**File:** `src/components/core/ScreenText.jsx`
+**Purpose:** The text primitives for content inside `ContentShell`. These are the intentional path — the shell's scoped CSS handles raw `h1`/`h2`/`p` only as a safety net, while these primitives carry the full intended design.
+**Exports:** `ScreenTitle`, `ScreenSubtitle`, `ScreenBody`, `ScreenIntro`, `ScreenCaption`, `ScreenCallout`, `ScreenList`
+**Dependencies:** `TYPE`, `HEADING_LAYOUT`
+**Usage boundary:** `ScreenTitle` deliberately ignores typography properties passed through `style` (`fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, `letterSpacing`) so callers cannot create a second screen-title system locally. Layout and colour overrides are allowed.
+**Used by:** 18 components across `learning/` and `layout/` — the most widely shared primitive in the tree.
+**Classification:** support primitive. No screen or block type. Not locked, but the `ScreenTitle` typography override guard is a hard rule.
+
+---
+
+### SegmentedControl
+
+**File:** `src/components/core/SegmentedControl.jsx`
+**Purpose:** Shared two-or-more option switcher for stable, mutually exclusive views, with roving focus. Disabled options stay visible so the learner can see the sequence without being able to skip it.
+**Props:** `options` (`[{ value, label, disabled? }]`), `value`, `onChange`, `accent`, `ariaLabel` (default `'Choose a view'`), `variant` (`'segmented' | 'tabs'`, default `'segmented'`)
+**Dependencies:** `GENERAL`, `RADII`, `TYPE`
+**Usage boundary:** switching between views of the same material. Not an answer control — answers go through `AnswerInteraction`.
+**Used by:** `FaceTheExaminer` (`faceTheExaminer/FaceTheExaminerMain.jsx`)
+**Classification:** support primitive. No screen or block type. Not locked.
+
+---
+
+### TeachScreenShell
+
+**File:** `src/components/core/TeachScreenShell.jsx`
+**Purpose:** Composes a teaching screen with the approved vertical rhythm, so spacing stops being a per-session judgement call. Slots render in a fixed order — eyebrow → heading → intro → body → memoryHook — with token-driven gaps and a calm entrance.
+**Props:** `heading` (required, sentence case), `eyebrow` (only when it adds information the heading lacks), `intro`, `children` (the teaching body, at most one visual), `memoryHook`, `subject` (default `'History'`)
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `TYPE`, `HEADING_LAYOUT`
+**Contract:** `docs/system/component-contracts/teach-screen-shell.md`; governed by `docs/system/PATTERN_GOVERNANCE.md`
+**Usage boundary:** this **is** Route A, the default composition route for new teaching and explanation screens. It owns the screen heading (`TYPE.displayScreen`) and the vertical rhythm; neither may be overridden locally. It is a composition primitive, **not** a universal wrapper — do not use it to wrap cinematic/full-screen (Route C) components, interaction engines that own their own screen (Route B), another shell, or another `TeachScreenShell`.
+**Sits inside:** `ContentShell` — see `docs/system/SCREEN_SHELL_SYSTEM.md`.
+**Classification:** composition primitive. No screen type of its own. Not locked.
 
 ---
 
@@ -715,8 +892,15 @@ Do not automatically display “Weak spot fixed”.
   - **Content shape:** one short introduction, usually two or three actionable priorities and one closing takeaway. Every priority must be specific enough to apply during the immediately following question and important enough to affect marks. Avoid vague encouragement, duplicated criteria and lengthy mark-scheme language.
   - **Rhythm role:** teaching, practice preparation.
 
-> **`ExaminerExplainsScreen` is legacy compatibility only.**
-> `src/components/learning/ExaminerExplainsScreen.jsx` re-exports `WhatExaminersLookFor` so existing routes and content do not break during migration. Do not register, select or author it as a separate learning component; new code and content must use `WhatExaminersLookFor`.
+---
+
+### ExaminerExplainsScreen — **Superseded — retained temporarily; do not use for new work**
+
+**File:** `src/components/learning/ExaminerExplainsScreen.jsx`
+**What it is:** A re-export of `WhatExaminersLookFor`. It exists so existing routes and authored content referencing the legacy `examinerExplains` screen type do not break during migration.
+**Status:** legacy compatibility only. Do not select or author it as a separate learning component; new code and content must use `WhatExaminersLookFor`. It is catalogued here because the file still exists — not because it is an available choice.
+**Lock status:** not locked.
+**Decision block:** not applicable — it is not a selectable component.
 
 ---
 
@@ -1120,6 +1304,64 @@ Module-level orchestration and chapter framing screens.
 
 ---
 
+### Structural shells
+
+The three shells define where a screen's content lives. They are structural
+infrastructure, not authoring choices, and carry no Decision block: an author
+picks a learning component, and the component picks its shell. Full rules —
+including where `TeachScreenShell` sits inside `ContentShell` — are in
+`docs/system/SCREEN_SHELL_SYSTEM.md`.
+
+---
+
+### ContentShell
+
+**File:** `src/components/layout/ContentShell.jsx`
+**Purpose:** The default scrolling content surface for a chapter screen. Provides the subject background, optional background image, safe-area and header clearance, scoped typography as a safety net for raw `h1`/`h2`/`h3`/`p`, and the inline-navigation bridge that lets a component own the visible Continue CTA.
+**Props:** `subject`, `backgroundImage` (default null), `backgroundOpacity` (default 0.13), `backgroundPosition` (default `'center'`), `header` (`'learning'` clears the fixed 80px `LearningHeader`; `'none'` applies safe-area only), `children`
+**Dependencies:** `SPACING`, `SUBJECTS`, `InlineNavigationContext`
+**Usage boundary:** the default shell. Prefer `ScreenText` primitives over raw tags inside it — the scoped CSS is a net, not the design. Provides `InlineNavigationContext`; components claim it through `useInlineNavigationOwner()` rather than touching shell DOM.
+**Used by:** `ChapterPlayer`, `CentreImageReveal`, Component Lab
+**Classification:** runtime infrastructure. No screen or block type. Not locked.
+
+---
+
+### InteractionShell
+
+**File:** `src/components/layout/InteractionShell.jsx`
+**Purpose:** Fixed, non-scrolling shell for an interaction engine that owns its whole screen and manages its own internal layout and progression.
+**Props:** `subject`, `backgroundImage` (default null), `backgroundOpacity` (default 0.13), `backgroundPosition` (default `'center'`), `children`
+**Dependencies:** `SPACING`, `SUBJECTS`
+**Usage boundary:** use when the interaction must not scroll and the component owns its own progression (Route B). If the content scrolls, use `ContentShell` instead.
+**Used by:** `FactorWeb`, `CalculationBreakdown`, `CinematicCarousel`, `GuidedChoiceCarousel`
+**Classification:** runtime infrastructure. No screen or block type. Not locked.
+
+---
+
+### CinematicShell
+
+**File:** `src/components/layout/CinematicShell.jsx`
+**Purpose:** Minimal full-viewport fixed container (`100dvh`, overflow and overscroll locked) for full-screen cinematic moments.
+**Props:** `children`, `style`, plus any DOM props (spread onto the container)
+**Dependencies:** none
+**Usage boundary:** the most restricted shell. Using it **requires a comment in the consuming component explaining why `ContentShell` or `InteractionShell` cannot be used** — that requirement is stated in the file itself. It supplies no background, padding or safe-area handling; the component owns all of that.
+**Used by:** 16 components, including `ChapterHookScreen`, `ChapterOutcomeScreen`, `ChapterCompleteScreen`, `ConceptReveal`, `TimelineCanvas`, `KeyFigureReveal`
+**Classification:** runtime infrastructure. No screen or block type. Not locked.
+
+---
+
+### ScreenTextBlock
+
+**File:** `src/components/layout/ScreenTextBlock.jsx`
+**Purpose:** Small titled text surface with three tones, for a short passage that needs to read as a distinct block within a screen (a source extract, a framing note, a set of instructions).
+**Props:** `title`, `children`, `accent`, `tone` (`'default' | 'quiet' | 'card'`), `inset` (default true), `framed` (default false), `style`, `titleStyle`, `bodyStyle`
+**Dependencies:** `TYPE`, `SCREEN_TEXT_LAYOUT`
+**Usage boundary:** one short passage inside a screen that already has a heading. Not a screen heading (use `ScreenText`'s `ScreenTitle`), and not a way to place a wall of text on a screen.
+**Used by:** `PriorKnowledgeRecall`, `FaceTheExaminer` (`faceTheExaminer/FaceTheExaminerMain.jsx`)
+**Classification:** support primitive. No screen or block type. Not locked.
+
+---
+
 ## Chapter runtime architecture
 
 Two components make up the chapter runtime. Neither is an authoring choice —
@@ -1197,6 +1439,18 @@ Question feedback and exam practice components.
   - **Content shape:** one board-accurate exam-style question with a clear command word, defensible mark allocation, sufficient context, any required source or image, a usable mark scheme and stable topic metadata for feedback and weakness evidence. Avoid vague prompts, invented mark-scheme rules and questions that could be marked in several incompatible ways.
   - **Rhythm role:** practice, assessment.
 
+### ExamRoundDebrief
+
+**File:** `src/components/feedback/ExamRoundDebrief.jsx`
+**What it is:** The examiner-voice end-of-round debrief. It synthesises across every answer in an exam round rather than question by question, surfaces one genuinely recurring pattern, quotes real moments from the learner's own answers in the `FaceTheExaminer` voice, and logs that pattern so it resurfaces in `WeakSpotRecovery`.
+**Props:** `subject`, `results` (the round's answer records)
+**Dependencies:** `SUBJECTS`, `GENERAL`, `SPACING`, `RADII`, `TYPE`, `logWrongAnswer` (`unifiedWeaknessTracker`), `/api/debrief`
+**Usage boundary:** Exam Mode only — mounted by `src/features/quickfire/modes/ExamMode.jsx` at the end of a round. It sits outside `ChapterPlayer` and has no authorable screen type; a chapter author never places it. One debrief per round, never per question.
+**Relationship to `GuidedAnswerCoach`:** both live in Exam Mode and both feed `unifiedWeaknessTracker.js`, but they are separate flows and are not composed. This component logs **content-knowledge** weaknesses via `logWrongAnswer`; the coach logs **exam-technique** patterns via `logExamTechnique`.
+**Classification:** feedback orchestration, runtime-only. No screen or block type. Not locked.
+
+---
+
 ### Exam practice and examiner feedback family rule
 
 Choose according to the learner's stage:
@@ -1257,3 +1511,115 @@ These components may form a sequence, but should not automatically be stacked ar
 **Lock reason:** Visual and interaction contract for embedded retrieval. Changing it risks inconsistency and duplication across question presentation.
 **Dependencies:** `AnswerInteraction`, `SUBJECTS`, `SPACING`, `TYPE`
 
+
+---
+
+## `src/components/learning/` — exam-technique, question and support components
+
+Catalogued 2026-08-01. These were built and are in use, but had no registry
+entry. Where a Decision block would require a product-level pedagogical
+judgement not supported by current source, stories, contracts or already-reviewed
+documentation, it is marked pending rather than invented.
+
+---
+
+### GuidedExamResponse
+
+**File:** `src/components/learning/GuidedExamResponse.jsx`
+**What it is:** The guided written-answer scaffold. It presents an exam question with its marks, breaks the response into named sections the learner writes into (optionally pre-seeded with sentence starters), submits for marking, then reveals a model answer with a mark-by-mark breakdown. Support can be dialled down across attempts, and recurring technique patterns are logged.
+**Props:** `chapter`, `module` (default `{}`), `exam` (default `{}`), `onExit`, `onContinue`, `theme` (`'general'` for non-subject branding), `embedded` (default false)
+**Exam shape:** `{ board, subject, subjectLabel?, topic, question, marks, sections, markScheme, sources?, beatText?, labels?, supportMode? }` where `supportMode` is `'guided' | 'light' | 'none'`
+**Screen type:** `guidedExamResponse` (registered in `screenRegistry.js`; function tag `exam-technique`, interaction `assessed`)
+**Dependencies:** `SPACING`, `COMPONENT_SIZE`, `MOTION`, `TYPE`, `RADII`, `BUTTONS`, `GENERAL`, `SUBJECTS`, `BackButton`, `ContinueCTA`, `ExamPrompt`, `logExamTechnique` / `getExamTechniquePatterns`
+**Usage boundary:** support *during* construction. Used both as an authorable chapter screen and, with `embedded`, as the worked-example and write stages inside `GuidedAnswerCoach`.
+**Classification:** authorable learning screen + embeddable stage. Not locked.
+
+- **Decision**
+  - **Use when:** the learner must produce a developed written response but cannot yet structure one unaided, so the answer needs breaking into named parts with visible expectations and a model to compare against.
+  - **Do not use when:** the learner can already construct the response independently — scaffolding a secure skill teaches dependence rather than technique.
+  - **Choose instead:** `ExamQuestionFrame` once the learner should attempt the question independently; `WhatExaminersLookFor` when only the priorities need clarifying beforehand; `FaceTheExaminer` when the job is judging and improving a prepared answer rather than writing one.
+  - **Content shape:** one board-accurate question with a defensible mark allocation, sections that correspond to real mark-scheme demands, a usable mark scheme and a model answer whose annotations explain *why* each part earns marks.
+  - **Rhythm role:** practice.
+
+*(This Decision block is derived from the already-reviewed `ExamQuestionFrame`
+entry and the "Exam practice and examiner feedback family rule" above, which
+already position `GuidedExamResponse` as the scaffolded alternative.)*
+
+---
+
+### GuidedAnswerCoach
+
+**File:** `src/components/learning/GuidedAnswerCoach.jsx`
+**What it is:** The multi-stage exam-technique coach for one question type. It walks the learner through an eight-stage scaffold: the question → what the examiner wants → watching an examiner think → an annotated model answer → write with support → write with light support → write independently → progress debrief. Support is withdrawn stage by stage.
+**Props:** `coachType` (one entry from `GUIDED_COACH_TYPES`), `onExit`
+**Data source:** `src/data/guidedAnswerCoach.js` (`GUIDED_COACH_TYPES`, currently `TYPE_A`–`TYPE_F`)
+**Dependencies:** `SequenceProgress`, `GuidedExamResponse`, `ContinueCTA`, `ScreenText`, `SPACING`, `MOTION`, `TYPE`, `RADII`, `BUTTONS`, `GENERAL`, `SUBJECTS`, `logCoachTypeResult` (`unifiedWeaknessTracker`)
+**Usage boundary:** a standalone, app-wide feature owned by the Exams tab (`src/features/quickfire/modes/ExamMode.jsx`), rendered as a full-screen overlay. It sits **outside** `ChapterPlayer` entirely, has no authorable screen type, and is not bound by the subject module architectures. A chapter author never places it.
+**Subject scope:** the component is subject-agnostic (palettes for History, Biology, Chemistry, Physics, Maths, English and Sociology, plus `theme="general"`); current content is six Edexcel GCSE History (Medicine) question types.
+**Adding content:** follow the existing `TYPE_A`–`TYPE_F` shape and add the entry to `GUIDED_COACH_TYPES`. Worked examples reuse `GuidedExamResponse`'s `exam` shape.
+**Classification:** runtime-only feature component. No screen or block type. Not locked.
+**Decision block:** not applicable — an author never selects it against a learning component; the learner chooses a question type in the Exams tab.
+
+---
+
+### UnifiedQuestionScreen
+
+**File:** `src/components/learning/UnifiedQuestionScreen.jsx`
+**What it is:** The shared single-question presentation used by other question components: stem, options, selection, correct/incorrect state, hint and explanation, over an optional subject backdrop.
+**Props:** `question`, `type` (default `'choice'`), `options`, `correct`, `hint`, `explanation`, `backgroundImage`, `subject` (default `'History'`), plus completion callbacks
+**Dependencies:** `SUBJECTS`, `MOTION`, `TYPE`, `SPACING`, `GENERAL`, `RADII`
+**Usage boundary:** composed by `QuickRecallScreen` and `TieredQuizScreen`. It is **not** an authorable screen type and has no `screenRegistry.js` entry — authors select the owning component instead. Its answer feedback shares the `GENERAL.feedbackCorrect` / `feedbackHint` / `feedbackText` tokens with `AnswerInteraction`.
+**Classification:** shared question presentation, runtime-only. Not locked.
+**Decision block:** not applicable — it is never selected directly by an author.
+
+---
+
+### TieredQuizScreen
+
+**File:** `src/components/learning/TieredQuizScreen.jsx`
+**What it is:** A multi-tier question sequence over a subject backdrop. Each tier is a set of questions rendered through `UnifiedQuestionScreen`, with shared `SequenceProgress` and a governed `ContinueCTA` at the end.
+**Props:** `subject` (default `'History'`), `backgroundImage`, `tiers` (default `[]`), `renderHeader`, `onContinue`
+**Screen type:** `tieredquiz` (registered in `screenRegistry.js`; function tag `retrieve`, interaction `assessed`). A legacy `tieredquiz` *block* entry also exists and routes to `LegacyUnroutedBlock` — author the screen form, not the block form.
+**Dependencies:** `UnifiedQuestionScreen`, `SequenceProgress`, `ContinueCTA`, `SUBJECTS`, `GENERAL`, `TYPE`, `SPACING`, `RADII`
+**Usage boundary:** graduated difficulty within one topic. Do not use it as a generic quiz chain — see the anti-patterns list in `CLAUDE.md`.
+**Classification:** authorable learning screen. Not locked.
+**Decision block:** pending product review. Choosing between this and `QuickRecallScreen` / `RecoveryQuizPlayer` is a pedagogical judgement that current source, stories and contracts do not settle.
+
+---
+
+### FlashcardsBlock
+
+**File:** `src/components/learning/FlashcardsBlock.jsx`
+**What it is:** An unscored prompt/answer reveal grid. Each card flips independently; nothing is marked and nothing is logged.
+**Props:** `block` (default `{}`)
+**Block shape:** `{ cards: [{ id?, front, back }] }`
+**Block type:** `flashcards` (registered in `screenRegistry.js`; function tag `retrieve`, interaction `reveal`)
+**Dependencies:** `GENERAL`, `TYPE`
+**Usage boundary:** self-testing only. Because it is unscored it does **not** feed the weak-area system — do not use it where the interaction needs to produce evidence. Extracted from `ChapterPlayer` so the existing runtime pattern could be reviewed in the Component Lab without maintaining a second implementation.
+**Classification:** authorable block. Not locked.
+**Decision block:** pending product review — its relationship to `AcronymMemorise`, `MemoryHook` and the scored retrieval components is a product judgement, and the "Memory and self-testing family rule" above does not yet cover it.
+
+---
+
+### BeforeAfterImageSlider
+
+**File:** `src/components/learning/BeforeAfterImageSlider.jsx`
+**What it is:** A draggable before/after image comparison. The learner must push the divider past both the 25% and 75% marks before the takeaway and `ContinueCTA` are earned — seeing both sides is the learning, not an optional extra.
+**Props:** `beforeSrc`, `afterSrc`, `beforeAlt`, `afterAlt`, `beforeLabel` (default `'Before'`), `afterLabel` (default `'After'`), `heading`, `accent`, `revealText`, `initial` (default 50), `onComplete`
+**Screen type:** `beforeAfterSlider` (registered in `screenRegistry.js`; function tag `teach-comparison`, interaction `reveal`)
+**Dependencies:** `MOTION`, `RADII`, `TYPE`, `SPACING`, `GENERAL`, `BUTTONS`, `ContinueCTA`, `ScreenText`
+**Usage boundary:** two images of the same subject where the *change between them* is the GCSE point. Not a general image viewer, and not a way to show two unrelated images.
+**Classification:** authorable learning screen. Not locked.
+**Decision block:** pending product review. Its boundary against `TheoryCompare` and `OppositeQualitiesReveal` needs a product judgement the current stories and source do not settle.
+
+---
+
+### CircuitSymbolReference
+
+**File:** `src/components/learning/CircuitSymbolReference.jsx`
+**What it is:** A reference sheet of the GCSE Physics circuit symbols, drawn from the shared `circuit/CircuitPrimitives.jsx` set so the symbols match those used in live `CircuitDiagram` figures exactly. The symbol shape is the exam convention; colour is only used to show state inside interactive diagrams.
+**Props:** `title` (default `'GCSE circuit symbols'`), `description`
+**Dependencies:** `circuit/CircuitPrimitives.jsx`, `circuit/circuitVisualRoles.js`, `GENERAL`
+**Usage boundary:** **Component Lab and Storybook only at present** — it has no authorable screen type and is reached only from `src/dev/componentReview/reviewManifestCore.jsx` and `CircuitDiagram.stories.jsx`. That is a status, not a defect: it is catalogued so it is not rebuilt, and it stays unrouted until a chapter genuinely needs a symbol reference.
+**Classification:** under review — not yet approved for chapter authoring. Not locked.
+**Decision block:** not applicable while unrouted.

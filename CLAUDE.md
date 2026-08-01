@@ -111,6 +111,12 @@ The shell lives in `src/app/LegacyApp.jsx`; each tab renders a feature module.
 
 All standalone components live under `src/components/`. Do not add new `.jsx` files directly to `src/`.
 
+The full catalogue is `docs/components/COMPONENT_REGISTRY.md`; locked status is
+defined canonically in `docs/components/LOCKED_COMPONENTS.md`. The `— LOCKED`
+notes below are high-risk reminders only and are deliberately not exhaustive —
+when this file and the canonical locked document disagree, the canonical
+document wins.
+
 ### `src/components/core/`
 Foundation components used by many others.
 - `AnswerInteraction.jsx` — LOCKED. Universal answer UI (choice, connection, true/false). Owns all answer logic.
@@ -121,7 +127,8 @@ Foundation components used by many others.
 - `ExitButton.jsx` — LOCKED. The only exit-navigation button allowed anywhere in the app.
 - `LearningHeader.jsx` — Floating capsule header shell. Composes BackButton + ExitButton + LearningProgressHeader.
 - `LearningProgressHeader.jsx` — LOCKED. Progress rail + jump sheet (progression display only).
-- `LearningToolbar.jsx` — LOCKED. Back + exit navigation buttons only, delegating to BackButton + ExitButton.
+- `LearningToolbar.jsx` — Superseded by `LearningHeader`; retained temporarily, no production consumer. Do not use for new work.
+- `SequenceProgress.jsx` — LOCKED. The only local sequence-progress indicator (carousels, image sets, mini-steps). Never renders numbers or counters.
 
 ### `src/components/learning/`
 Screen-level learning interaction components.

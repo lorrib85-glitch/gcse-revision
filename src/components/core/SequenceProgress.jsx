@@ -1,6 +1,9 @@
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 
+// ── SequenceProgress v1 — LOCKED COMPONENT ────────────────────────────────
+// Canonical lock entry: docs/components/LOCKED_COMPONENTS.md
+//
 // Local sequence progress — carousels, swipe cards, image sets, mini-steps.
 // NOT for the top module rail (that is LearningProgressHeader).
 // Hard rule: never renders numbers, labels, counters, or percentages.

@@ -1,7 +1,33 @@
 # Locked Components
 
-**Version:** v1  
-**Authority:** These components must not have their internals changed without explicit authorisation.
+**Version:** v2  
+**Authority:** This file is the **canonical list** of components whose internals
+require explicit authorisation. Nothing else defines locked status.
+
+Other files may mirror or enforce what is written here, but must not maintain an
+independent list:
+
+- `CLAUDE.md` carries short high-risk reminders only, and points back here.
+- `docs/components/COMPONENT_REGISTRY.md` marks an entry `LOCKED` only when it
+  appears below.
+- Source files carry a `LOCKED COMPONENT` marker comment matching this list.
+- `tests/architecture/locked-component-registry.test.js` proves all three
+  directions agree.
+
+**Parsing note:** only the `## Locked Component List` section below is canonical.
+Each entry is a `### Name` heading followed by a `**File:** \`path\`` line. The
+`## Superseded — no longer locked` section is history, not lock status, and is
+deliberately excluded by the architecture test.
+
+**Scope note:** the Component Registry only catalogues `src/components/**`. A
+locked component living outside that tree (e.g. a feature-level component) is
+listed here and carries a source marker, but has no Component Registry entry.
+
+**Documented exception — `ConceptReveal`:** it is governed by its own contract
+(`docs/system/CONCEPT_REVEAL_CONTRACT.md`) and its own architecture test
+(`tests/architecture/concept-reveal-contract.test.js`) instead of appearing in
+this list. That mechanism is asserted by the lock test; do not fold
+`ConceptReveal` into the general locked list.
 
 ---
 
@@ -209,6 +235,34 @@ This component is now the approved causation-and-judgement pattern for GCSE Hist
 - Hardcoding topic image paths or figure wording inside the shared component
 
 ---
+
+### HomeAtmosphere
+
+**File:** `src/features/home/Home.jsx`
+
+**Scope:** lives outside `src/components/**`, so it has no Component Registry
+entry. The lock is defined here and marked in `Home.jsx`.
+
+**What it owns:**
+- The three drifting SVG wave bands and the teal constellation network rendered
+  in the 34vh hero section of the Home tab
+- Its own call site: `<HomeAtmosphere />` inside `Home`
+
+**Why locked:**
+This is the first thing a learner sees on opening the app, and it carries the
+product's "premium streaming platform, not a school VLE" identity. It has been
+repeatedly at risk of being removed as decorative.
+
+**Allowed changes:**
+- Small colour adjustments to the teal values
+
+**Not allowed:**
+- Removing or renaming the component
+- Altering the wave, gradient or animation structure
+- Removing the `<HomeAtmosphere />` call site in `Home`
+
+---
+
 ### LearningProgressHeader
 
 **File:** `src/components/core/LearningProgressHeader.jsx`
@@ -232,30 +286,30 @@ Core navigation affordance. Learners develop spatial memory for progress locatio
 
 ---
 
-### LearningToolbar
+### RecoveryQuizPlayer
 
-**File:** `src/components/core/LearningToolbar.jsx`
+**File:** `src/components/learning/RecoveryQuizPlayer.jsx`
 
 **What it owns:**
-- Back button (delegates to `BackButton` — see above)
-- Exit button (delegates to `ExitButton` — see below)
-- Navigation button positions
+- The post-reteaching verification sequence: rapid focused question flow,
+  per-question feedback and the completion state
+- The recovery-quiz data contract read from `src/data/recoveryQuizzes.js`
 
 **Why locked:**
-Navigation contract. Learners build muscle memory for back/exit button positions.
-
-**2026-06-12 change:** the inline back-button implementation was replaced with `<BackButton onClick={onBack} />` as part of the app-wide BackButton consolidation (constitutional rule — see BackButton entry above). The exit button and toolbar layout are unchanged. Treated as covered by the same sign-off, since this component's back button was explicitly named in scope.
-
-**2026-06-15 change (v2):** the inline exit-button implementation was replaced with `<ExitButton onClick={onExit} />` as part of the app-wide ExitButton consolidation (constitutional rule — see ExitButton entry above). `LearningHeader` was updated the same way. Toolbar layout is unchanged.
+This is the component that decides whether a diagnosed weakness has been
+repaired. Changing its flow or completion logic changes what the whole weak-area
+personalisation system believes about the learner.
 
 **Allowed changes:**
 - Import path corrections
+- Token migration (SPACING, MOTION, RADII) where exact matches exist
+- Adding recovery quizzes in `src/data/recoveryQuizzes.js` using the existing shape
 
 **Not allowed:**
-- Moving button positions
-- Adding buttons to the toolbar
-- Changing button visual design
-- Reintroducing an inline back-button or exit-button implementation (must use `BackButton`/`ExitButton`)
+- Changing question flow, feedback timing or the completion contract
+- Changing the component API
+- Declaring a weakness repaired on any basis other than the documented
+  success threshold (see the governance rule in the Component Registry entry)
 
 ---
 
@@ -279,6 +333,86 @@ Visual contract for all retrieval screens. Every question presentation inherits 
 - Changing question presentation layout
 - Adding answer logic (it delegates to AnswerInteraction)
 - Changing the cinematic framing approach
+
+---
+
+### SequenceProgress
+
+**File:** `src/components/core/SequenceProgress.jsx`
+
+**What it owns:**
+- Every local progress indicator inside a learning component: carousels, image
+  sets, swipe cards, mini-steps, question sets
+- The two approved variants (`dots`, `sash`) and their `compact` sizes
+
+**Why locked:**
+Constitutional rule, in the same class as `BackButton`/`ContinueCTA`: this is the
+only local sequence-progress implementation allowed anywhere in the app. Before
+it existed, one-off `ProgressDots` and inline carousel dots had drifted across
+several components.
+
+**Hard rule:** it never renders numbers, labels, counters, percentages or
+"x of y" — no exceptions. That constraint is the reason it is locked.
+
+**Allowed changes:**
+- Import path corrections
+- Token migration (MOTION, RADII) where exact matches exist
+
+**Not allowed:**
+- Rendering any numeric or textual progress
+- Adding navigation or any interaction (it is display-only)
+- Adding a new variant without explicit sign-off
+- Creating any local `ProgressDots` or one-off carousel dots instead of using
+  this component
+
+---
+
+### WeakSpotRecovery
+
+**File:** `src/components/learning/WeakSpotRecovery.jsx`
+
+**What it owns:**
+- The intervention handoff shown once the weakness tracker has enough
+  behavioural evidence: the calm diagnosis framing and the route into repair
+- The `weakSpotRecovery` block contract
+
+**Why locked:**
+This is the learner-facing face of the weak-area system — the app's primary
+personalisation mechanism. Its tone is deliberately non-punitive and
+non-gamified, and its behavioural (not self-report) basis is a product rule.
+
+**Allowed changes:**
+- Import path corrections
+- Token migration (SPACING, MOTION, RADII) where exact matches exist
+
+**Not allowed:**
+- Changing the diagnosis framing to gamified or motivational copy
+- Basing the intervention on self-reported confidence
+- Marking a weakness resolved from this screen (it starts a repair pathway,
+  it does not complete one)
+- Changing the component API or block shape
+
+---
+
+## Superseded — no longer locked
+
+### LearningToolbar
+
+**File:** `src/components/core/LearningToolbar.jsx`
+
+**Status:** Superseded — retained temporarily; do not use for new work.
+
+**Unlocked 2026-08-01.** `LearningHeader` composes `BackButton` and
+`ExitButton` directly, so the navigation contract this entry protected now lives
+in those two constitutional components and in `LearningHeader`. `LearningToolbar`
+has no production consumer — its only importer is the Component Lab reference
+page `src/dev/componentReview/ButtonsAndProgressPage.jsx`. A lock over a
+component nothing renders protects nothing and makes the canonical list harder
+to trust.
+
+The file and its executable code are unchanged; only the stale lock marker was
+removed. The back/exit visual and behavioural contract remains locked via the
+`BackButton` and `ExitButton` entries above.
 
 ---
 
