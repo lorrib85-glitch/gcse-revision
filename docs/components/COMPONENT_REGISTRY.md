@@ -147,8 +147,8 @@ Foundation components used by many others. Handle atomic UI concerns.
 ### LearningHeader
 
 **File:** `src/components/core/LearningHeader.jsx`
-**Purpose:** Single-row floating capsule header shell for learning screens: `[back] [stage rail] [n/total] [exit]`. Composes `BackButton` (back navigation), `LearningProgressHeader` (stage rail) and `ExitButton` (exit navigation).
-**Props:** `module`, `currentStage`, `onBack`, `onExit`, `visible`, `onJumpOpen`, `screenPos`
+**Purpose:** Single-row floating capsule header shell for learning screens: `[back] [stage rail] [exit]`. Composes `BackButton` (back navigation), `LearningProgressHeader` (stage rail) and `ExitButton` (exit navigation). The stage rail is the only chapter-contents navigation — there is deliberately no numeric `n/total` counter.
+**Props:** `chapter`, `currentStage`, `stageNavigation`, `currentScreen`, `onStageJump`, `onBack`, `onExit`, `visible`
 **Dependencies:** `BackButton`, `ExitButton`, `LearningProgressHeader`, `SUBJECT_ACCENTS`/`hexToRgb`
 
 ---

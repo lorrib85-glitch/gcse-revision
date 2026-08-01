@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
-import { hexToRgb, SUBJECTS } from '../../constants/subjects.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { recordActivity, getChapterState, saveChapterState } from '../../progress.js'
@@ -500,148 +499,6 @@ function IntroScreen({ chapter, onDone }) {
   )
 }
 
-// ─── Chapter jump sheet ───────────────────────────────────────────────────────
-
-function JumpSheet({ screens, currentScreen, accent, accentRgb, onJumpTo, onClose }) {
-  const labeled = screens.filter(s => s.label)
-
-  return (
-    <>
-      <style>{`
-        @keyframes js-in {
-          from { opacity: 0; transform: translateY(-8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .js-row:hover { background: rgba(${accentRgb},0.07) !important; }
-        .js-row:active { background: rgba(${accentRgb},0.14) !important; }
-        .js-close:hover { background: rgba(255,255,255,0.10) !important; }
-      `}</style>
-
-      {/* Backdrop */}
-      <div
-        onClick={onClose}
-        style={{
-          position: 'fixed', inset: 0, zIndex: 2000,
-          background: 'rgba(0,0,0,0.54)',
-          backdropFilter: 'blur(3px)',
-          WebkitBackdropFilter: 'blur(3px)',
-        }}
-      />
-
-      {/* Dropdown sheet */}
-      <div style={{
-        position: 'fixed',
-        top: 'calc(66px + env(safe-area-inset-top, 0px))',
-        left: 12, right: 12,
-        maxHeight: 'min(72vh, 540px)',
-        background: 'rgba(9,12,22,0.97)',
-        backdropFilter: 'blur(28px)',
-        WebkitBackdropFilter: 'blur(28px)',
-        border: `1px solid rgba(${accentRgb},0.16)`,
-        borderRadius: 20,
-        zIndex: 2001,
-        overflow: 'hidden',
-        display: 'flex', flexDirection: 'column',
-        boxShadow: `0 8px 48px rgba(0,0,0,0.64), 0 0 0 1px rgba(${accentRgb},0.06)`,
-        animation: 'js-in 200ms cubic-bezier(.16,1,.3,1) both',
-      }}>
-
-        {/* Header */}
-        <div style={{
-          padding: '14px 18px 12px',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          flexShrink: 0,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-            <span style={{
-              ...TYPE.titleMedium,
-              fontSize: 13,
-              color: 'rgba(255,255,255,0.84)',
-            }}>Chapter contents</span>
-            <span style={{
-              ...TYPE.label,
-              fontSize: 11,
-              color: `rgba(${accentRgb},0.56)`,
-            }}>{labeled.length} sections</span>
-          </div>
-          <button
-            className="js-close"
-            onClick={onClose}
-            aria-label="Close contents"
-            style={{
-              width: 28, height: 28, borderRadius: 14,
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', color: 'rgba(255,255,255,0.42)', fontSize: 13,
-              ...TYPE.label,
-            }}
-          >✕</button>
-        </div>
-
-        {/* Screen list */}
-        <div style={{ overflowY: 'auto', flex: 1, padding: '4px 0 8px' }}>
-          {screens.map((s, i) => {
-            if (!s.label) return null
-            const isCurrent = i === currentScreen
-            return (
-              <button
-                key={i}
-                className="js-row"
-                onClick={() => onJumpTo(i)}
-                style={{
-                  width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-                  padding: '9px 18px',
-                  background: isCurrent ? `rgba(${accentRgb},0.09)` : 'none',
-                  border: 'none',
-                  borderLeft: isCurrent ? `3px solid ${accent}` : '3px solid transparent',
-                  cursor: 'pointer', textAlign: 'left',
-                  transition: 'background 100ms ease',
-                }}
-              >
-                <span style={{
-                  ...TYPE.eyebrow,
-                  fontSize: 10,
-                  color: `rgba(${accentRgb},${isCurrent ? '0.90' : '0.36'})`,
-                  minWidth: 22, flexShrink: 0,
-                }}>
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <span style={{
-                  ...(isCurrent ? TYPE.titleMedium : TYPE.body),
-                  fontSize: 14,
-                  color: isCurrent ? '#EAF7F0' : 'rgba(255,255,255,0.56)',
-                  flex: 1,
-                }}>
-                  {s.label}
-                </span>
-                {s.stage && (
-                  <span style={{
-                    ...TYPE.eyebrow,
-                    fontSize: 9,
-                    color: `rgba(${accentRgb},0.50)`,
-                    textTransform: 'uppercase', flexShrink: 0,
-                  }}>
-                    {s.stage}
-                  </span>
-                )}
-                {isCurrent && (
-                  <span style={{
-                    width: 6, height: 6, borderRadius: '50%',
-                    background: accent, flexShrink: 0,
-                    boxShadow: `0 0 6px ${accent}`,
-                  }} />
-                )}
-              </button>
-            )
-          })}
-        </div>
-      </div>
-    </>
-  )
-}
-
 // ─── Main ChapterPlayer ────────────────────────────────────────────────────────
 
 export default function ChapterPlayer(props) {
@@ -682,7 +539,6 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
   const [animKey, setAnimKey] = useState(0)
   const [cinematicHeaderVisible, setCinematicHeaderVisible] = useState(false)
   const [ihmExploreScreen, setIhmExploreScreen] = useState(null)
-  const [jumpOpen, setJumpOpen] = useState(false)
   const [selectedHealer, setSelectedHealer] = useState(null)
 
   useEffect(() => {
@@ -698,7 +554,6 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
     setAnimKey(k => k + 1)
     scrollToTop()
     recordActivity()
-    setJumpOpen(false)
   }
 
   function goTo(idx) {
@@ -707,7 +562,6 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
     setAnimKey(k => k + 1)
     scrollToTop()
     recordActivity()
-    setJumpOpen(false)
   }
 
   function handleFinish() {
@@ -825,7 +679,6 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
     onBack()
   }
 
-  const subjectRgb = hexToRgb(subjectColor) || SUBJECTS.History.accentRgb
   const H = {
     chapter,
     currentStage,
@@ -834,20 +687,7 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
     onStageJump:    goTo,
     onBack:         headerOnBack,
     onExit:         onBack,
-    onJumpOpen:     () => setJumpOpen(true),
-    screenPos:      null,
   }
-  const jumpSheetPortal = jumpOpen ? createPortal(
-    <JumpSheet
-      screens={chapter.screens}
-      currentScreen={screen}
-      accent={subjectColor}
-      accentRgb={subjectRgb}
-      onJumpTo={goTo}
-      onClose={() => setJumpOpen(false)}
-    />,
-    document.body
-  ) : null
   // ──────────────────────────────────────────────────────────────────────────
 
   // ── Confidence overlay — neutral, no colour judgement ──────────────────
@@ -891,24 +731,21 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
   // ── Full-screen recall screen — appears after outcomes, before content ────────
   if (chapterGate.type === 'recall') {
     return (
-      <>
-        <QuickRecallScreen
-          subject={chapter.subject}
-          chapterNum={chapterNum}
-          chapterTitle={chapter.title}
-          questions={chapter.recall.questions}
-          onBack={() => {
-            if (navTo === 'recall') setNavTo(null)
-            else if (chapter.hook?.statement) setNavTo('hook')
-            else onBack()
-          }}
-          onContinue={() => { setRecallDone(true); setNavTo(null); scrollToTop() }}
-          renderHeader={() => (
-            <LearningHeader {...H} currentStage="Discover" visible={true} />
-          )}
-        />
-        {jumpSheetPortal}
-      </>
+      <QuickRecallScreen
+        subject={chapter.subject}
+        chapterNum={chapterNum}
+        chapterTitle={chapter.title}
+        questions={chapter.recall.questions}
+        onBack={() => {
+          if (navTo === 'recall') setNavTo(null)
+          else if (chapter.hook?.statement) setNavTo('hook')
+          else onBack()
+        }}
+        onContinue={() => { setRecallDone(true); setNavTo(null); scrollToTop() }}
+        renderHeader={() => (
+          <LearningHeader {...H} currentStage="Discover" visible={true} />
+        )}
+      />
     )
   }
 
@@ -1016,7 +853,6 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
         setAnimKey={setAnimKey}
         scrollToTop={scrollToTop}
         headerProps={H}
-        jumpSheetPortal={jumpSheetPortal}
         subjectColor={subjectColor}
         headerOnBack={headerOnBack}
         ihmExploreScreen={ihmExploreScreen}
@@ -1070,7 +906,6 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
           )}
         </div>
       </div>
-      {jumpSheetPortal}
     </>
   )
 }

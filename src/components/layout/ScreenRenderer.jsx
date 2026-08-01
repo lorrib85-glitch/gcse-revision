@@ -778,7 +778,6 @@ export default function ScreenRenderer({
   setAnimKey,
   scrollToTop,
   headerProps: H,
-  jumpSheetPortal,
   subjectColor,
   headerOnBack,
   ihmExploreScreen,
@@ -831,7 +830,6 @@ export default function ScreenRenderer({
         </div>
         <style>{`@keyframes crSlideIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }`}</style>
       </div>
-      {jumpSheetPortal}
       </>
     )
   }
@@ -851,7 +849,6 @@ export default function ScreenRenderer({
             <LearningHeader {...H} visible={true} />
           )}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -869,7 +866,6 @@ export default function ScreenRenderer({
           )}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -885,7 +881,6 @@ export default function ScreenRenderer({
           onExit={headerOnBack}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -902,7 +897,6 @@ export default function ScreenRenderer({
           onExit={headerOnBack}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -917,7 +911,6 @@ export default function ScreenRenderer({
           subject={chapter.subject}
           onComplete={() => { isLast ? handleFinish() : go(1) }}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -932,7 +925,6 @@ export default function ScreenRenderer({
           subject={chapter.subject}
           onComplete={isLast ? handleFinish : () => go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -947,7 +939,6 @@ export default function ScreenRenderer({
           subject={chapter.subject}
           onComplete={isLast ? handleFinish : () => go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -962,7 +953,6 @@ export default function ScreenRenderer({
           subject={chapter.subject}
           onComplete={() => { isLast ? handleFinish() : go(1) }}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -977,7 +967,6 @@ export default function ScreenRenderer({
           subject={chapter.subject}
           onComplete={() => { isLast ? handleFinish() : go(1) }}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1012,7 +1001,6 @@ export default function ScreenRenderer({
             isLast ? handleFinish() : go(1)
           }}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1038,7 +1026,6 @@ export default function ScreenRenderer({
           onEnterExplore={() => setIhmExploreScreen(screen)}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1053,7 +1040,6 @@ export default function ScreenRenderer({
           selectedHealer={selectedHealer}
           onComplete={isLast ? handleFinish : () => go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1073,7 +1059,6 @@ export default function ScreenRenderer({
           variant="reveal"
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1087,7 +1072,6 @@ export default function ScreenRenderer({
           subject={chapter.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1101,7 +1085,6 @@ export default function ScreenRenderer({
           subject={chapter.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1115,7 +1098,6 @@ export default function ScreenRenderer({
           subject={chapter.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1127,7 +1109,6 @@ export default function ScreenRenderer({
         <TeachScreenShell heading={cur.title} intro={cur.copy} subject={chapter.subject}>
           <OppositeQualitiesReveal block={cur} subject={chapter.subject} />
         </TeachScreenShell>
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1146,7 +1127,6 @@ export default function ScreenRenderer({
           onBack={headerOnBack}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1161,7 +1141,6 @@ export default function ScreenRenderer({
           onBack={headerOnBack}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1177,7 +1156,6 @@ export default function ScreenRenderer({
           onRevealStart={() => setCinematicHeaderVisible(true)}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1200,7 +1178,6 @@ export default function ScreenRenderer({
           initial={cur.initial ?? 50}
           onComplete={isLast ? handleFinish : () => go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1222,7 +1199,6 @@ export default function ScreenRenderer({
           onContinue={() => isLast ? handleFinish() : go(1)}
           onTextRevealStart={() => setCinematicHeaderVisible(true)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1236,7 +1212,6 @@ export default function ScreenRenderer({
           subject={chapter.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1251,7 +1226,6 @@ export default function ScreenRenderer({
           subject={chapter.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }
@@ -1268,7 +1242,6 @@ export default function ScreenRenderer({
           subject={chapter.subject}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
-        {jumpSheetPortal}
       </>
     )
   }

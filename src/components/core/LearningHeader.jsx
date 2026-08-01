@@ -2,14 +2,16 @@ import LearningProgressHeader from './LearningProgressHeader.jsx'
 import BackButton from './BackButton.jsx'
 import ExitButton from './ExitButton.jsx'
 import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
-import { TYPE } from '../../constants/typography.js'
 
 // ── LearningHeader — single-row chapter header ─────────────────────────────────
-// Single row: [back] [stage rail] [n/total] [exit]
+// Single row: [back] [stage rail] [exit]
 // Stage rail shows the chapter's 6 navigation stages; each dot jumps to the start of that stage.
-// Labels are hidden unless tapped. Tap n/total counter to open jump sheet (onJumpOpen callback).
+// Labels are hidden unless tapped.
+// The rail is the only chapter-contents navigation. There is deliberately no
+// numeric n/total counter here — progression is shown as position on the rail,
+// never as a count.
 // Props: chapter, currentStage, stageNavigation, currentScreen, onStageJump,
-//        onBack, onExit, visible, onJumpOpen, screenPos
+//        onBack, onExit, visible
 export default function LearningHeader({
   chapter,
   currentStage = 'Discover',
@@ -19,8 +21,6 @@ export default function LearningHeader({
   onBack,
   onExit,
   visible = true,
-  onJumpOpen = null,
-  screenPos = null,
 }) {
   const activeChapter = chapter
   const subject = activeChapter?.subject || 'History'
@@ -63,27 +63,6 @@ export default function LearningHeader({
           accentRgb={accentRgb}
         />
       </div>
-
-      {/* Screen position / jump trigger */}
-      {onJumpOpen && screenPos && (
-        <button
-          aria-label="Open chapter contents"
-          onClick={onJumpOpen}
-          style={{
-            height: 44, padding: '0 6px',
-            background: 'none', border: 'none',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', flexShrink: 0,
-            ...TYPE.metadata,
-            fontSize: 11,
-            fontWeight: 600,
-            color: `rgba(${accentRgb},0.52)`,
-            letterSpacing: '0.04em',
-          }}
-        >
-          {screenPos.current}/{screenPos.total}
-        </button>
-      )}
 
       {/* Exit button */}
       <ExitButton onClick={onExit} />
