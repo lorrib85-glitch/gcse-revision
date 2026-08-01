@@ -493,7 +493,7 @@ dead-code regression are both guarded.
 
 ## A4 — ChapterPlayer staged extraction
 
-**Status:** In progress — navigation and persistence boundaries complete; rendering split remains  
+**Status:** In progress — navigation, persistence and dead-render removal complete; the live rendering split (bottom-nav shell + gate/overlay branches) remains  
 **Priority:** High  
 **Area:** `src/components/layout/ChapterPlayer.jsx`, `src/app/chapterNavigation.js`, `tests/unit/chapterPlayer/`, `tests/architecture/chapter-persistence-boundary.test.js`
 
@@ -517,10 +517,11 @@ terminology in the "Remaining phases" and status sections are the current ones.
 `ChapterPlayer.jsx` was the main bloat and fragile runtime area after the old
 `src/modules/history.js` bloat was resolved by the per-episode migration. At the
 start of this item it was ~2423 lines holding chapter lifecycle state,
-navigation, gating, persistence, screen routing and rendering. It is **1076
-lines** today; the bulk of the reduction came from the separate `ScreenRenderer`
-split, and the remaining lines are still mostly inline rendering (`HookContent`,
-`IntroScreen`, `JumpSheet`, the bottom-nav shell).
+navigation, gating, persistence, screen routing and rendering. It is **434
+lines** today. Most of the reduction came from the separate `ScreenRenderer`
+split and from removing three unreachable inline renderers (`HookContent`,
+`IntroScreen`, `JumpSheet`); what remains is the bottom-nav shell, the gate and
+overlay branches, and the runtime state orchestration.
 
 ### Progress
 Phase 1 is complete:
@@ -661,14 +662,70 @@ Persistence / state-machine boundary — **complete**:
 - Direct completion uses the examiner attempts current at completion time.
 - Progress-store integration is covered.
 
-Rendering split — **open, not started**:
-- `ChapterPlayer.jsx` still contains substantial inline rendering: `HookContent`,
-  `IntroScreen`, `JumpSheet` and the bottom-nav shell, plus the gate and overlay
-  render branches.
+Rendering split, part 1 — dead-render removal — **complete (2026-08-01)**:
+
+The slice was planned as "extract `HookContent` and `IntroScreen` into their own
+files". The audit that opened it found all three of the named inline renderers
+were **unreachable**, so the phase became a deletion rather than an extraction.
+No code was moved and no behaviour changed.
+
+- **`JumpSheet` — deleted** (commit `e31f4cc`). `LearningHeader` rendered its
+  contents trigger only when `onJumpOpen && screenPos`; `ChapterPlayer` was the
+  only caller and always passed `screenPos: null` (`git log -S` finds no other
+  value in ChapterPlayer or its `ModulePlayer` predecessor). `jumpOpen` could
+  never become true, so `jumpSheetPortal` was `null` at all 27 `ScreenRenderer`
+  sites and the 3 in `ChapterPlayer`. Audited against the six-stage rail before
+  deleting: both call `goTo(index)`, the rail is live, locked and always visible,
+  and the sheet's only distinct offering was per-screen granularity rendered as
+  `01`/`02`/`03` rows behind a `{current}/{total}` header button — the numeric
+  progress pattern the header deliberately excludes. Reviving it would have meant
+  reintroducing that pattern. The orphaned `onJumpOpen` / `screenPos` branch in
+  `LearningHeader` went with it, and the component + registry now record that the
+  rail is the only chapter-contents navigation and the absent counter is a
+  decision, not a gap.
+- **`HookContent` + `useHookPhase` — deleted.** Rendered only when
+  `!hookDone && chapter.hook && !chapter.hook.statement`. All 29 chapters that
+  define `chapter.hook` also define `hook.statement`, so `getChapterGate` returns
+  `{ type: 'hook' }` and `ChapterHookScreen` returns before the shell renders —
+  0 of 65 chapter content files could reach it. It was also not reusable: it
+  hardcoded the van Helmont willow-tree experiment (growing-tree SVG,
+  "1648 — Somewhere in Belgium", "+74 kg", "soil: −57g") inside a nominally
+  generic component. Its now-dead branches in `handleNext`, `nextLabel` and
+  `isFinishBtn` went with it.
+- **`IntroScreen` — deleted.** Rendered only when `!introDone && chapter.intro`.
+  `computeInitialChapterState` hardcodes `introDone: true` and `setIntroDone(true)`
+  was the only setter, so `introDone` was a permanent `true`. `introDone` is now a
+  plain constant read from `initial`, **not** React state — it stays in the
+  persisted object so the saved shape is byte-identical to what earlier versions
+  wrote. `computeInitialChapterState` and `buildChapterProgressState` are unchanged.
+
+`ChapterPlayer.jsx`: **1076 → 434 lines** (−60%). `ScreenRenderer.jsx`: 1278 → 1251.
+Lazy chunk: 75.05 kB → 60.28 kB (gzip 21.64 → 18.03 kB).
+
+Rendering split, part 2 — **open, not started**:
+- What remains in `ChapterPlayer.jsx` is the bottom-navigation shell and the gate
+  and overlay render branches (hook / outcomes / recall gates, examiner-explains,
+  face-the-examiner, recovery quiz, weak-spot recovery), around the runtime state
+  orchestration.
 - `ScreenRenderer.jsx` already owns screen and block routing; this phase is about
   the runtime's own JSX, not routing.
 - Highest-risk phase because it touches visual rendering. Do not start it in the
   same pass as any state work.
+
+### Content findings raised by the dead-render audit — not architecture work
+Deleting `IntroScreen` leaves authored data with no renderer. Both items are
+content/product decisions and were deliberately left out of the extraction slice:
+
+- **24 chapters author `intro.learningGoals` that never render.** All 24 also
+  define `outcomes`, which *do* render through the reachable
+  `ChapterOutcomeScreen` ("In this chapter, you'll learn to"). The two lists
+  overlap in intent but are not identical in any of the 24 — the goals are a
+  redundant second outcomes list, not unique teaching content. Decide whether to
+  merge anything worth keeping into `outcomes` and then strip the `intro` blocks.
+- **`sci_bio_w1` is the only chapter with an `intro.retrieval` question**, and it
+  has never rendered. This is genuinely lost content, and retrieval sits top of the
+  learning hierarchy — worth re-siting as a real recall or retrieval screen rather
+  than discarding.
 
 ### Rules
 - Do not combine phases.
