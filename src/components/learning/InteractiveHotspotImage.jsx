@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { TYPE } from '../../constants/typography.js'
-import { SPACING } from '../../constants/spacing.js'
+import { SPACING, COMPONENT_SIZE } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
@@ -175,7 +175,7 @@ function SynthesisScreen({ synthesis, accent, accentRgb, pageBg, text, muted, on
       zIndex: 40,
       display: 'flex',
       flexDirection: 'column',
-      padding: `calc(env(safe-area-inset-top, 0px) + ${SPACING.standard}px) ${SPACING.standard}px`,
+      padding: `calc(env(safe-area-inset-top, 0px) + ${COMPONENT_SIZE.learningHeaderClearance}px) ${SPACING.standard}px`,
       paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${SPACING.standard}px)`,
       overflow: 'hidden',
     }}>
@@ -422,7 +422,7 @@ export default function InteractiveHotspotImage({
       </div>
 
       <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', opacity: isExplore ? 1 : 0, transition: reduceMotion ? 'none' : 'opacity 500ms cubic-bezier(0.22,1,0.36,1)', pointerEvents: isExplore ? 'auto' : 'none' }}>
-        <div style={{ position: 'relative', width: '100%', marginTop: 'calc(env(safe-area-inset-top, 0px) + 80px)' }}>
+        <div style={{ position: 'relative', width: '100%', marginTop: `calc(env(safe-area-inset-top, 0px) + ${COMPONENT_SIZE.learningHeaderClearance}px)` }}>
           <img src={image} alt={imageAlt} draggable={false} style={{ display: 'block', width: '100%', height: 'auto', filter: selected ? selectedImageFilter : imageFilter, transition: reduceMotion ? 'none' : 'filter 300ms cubic-bezier(0.22,1,0.36,1)', userSelect: 'none' }} />
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: selected ? 'radial-gradient(circle at 70% 22%, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.08) 24%, rgba(0,0,0,0.42) 100%)' : 'linear-gradient(180deg, transparent 55%, rgba(3,7,5,0.45) 100%)', transition: reduceMotion ? 'none' : 'background 300ms cubic-bezier(0.22,1,0.36,1)' }} />
           <div style={{ position: 'absolute', top: '16px', right: '14px', pointerEvents: 'none', zIndex: 6 }}><SequenceProgress total={hotspots.length} current={-1} viewed={hotspots.map((h, i) => visited.has(h.id) ? i : -1).filter(i => i >= 0)} accent={accent} accentRgb={accentRgb} compact={true} ariaLabel="Hotspot progress" /></div>
