@@ -68,5 +68,8 @@ Do not start a planner rebuild until subject-selection onboarding exists.
 Do not let the live planner recommend subjects the learner is not taking once selected subjects are available.
 
 Do not create two competing planner source-of-truth systems.
+This rule is now enforced by `tests/architecture/planner-boundary.test.js`
+(Phase 11, 2026-08-02) — activating the parked engine under F4 means updating
+that guard deliberately. See backlog A17.
 
 Do not add large planner architecture while first-use readiness is still being validated.

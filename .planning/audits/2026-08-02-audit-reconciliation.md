@@ -144,13 +144,17 @@ claimed `main` was red and the suite is in fact green.
 
 ## 5. Remaining architecture debt
 
-| Item | Backlog | Size |
-|---|---|---|
-| `package-lock.json` still committed in a pnpm-only repo | **A11** | two lines |
-| `prop-types` unused devDependency | **A12** | one command |
-| `index.html` requests 5 unused font families | **A13** | needs a grep pass first |
-| Three private reduced-motion hooks that seed `false` | **A14** | own phase — changes first-render behaviour |
-| No guard keeping the planner single-sourced | **A17** | ~25-line test |
+> **Updated by Phase 11 (2026-08-02).** A11, A12 and A17 are closed — see §17.
+> The table below is the Phase 10 state, kept as the record of what this audit
+> found; the Status column carries the current position.
+
+| Item | Backlog | Size | Status |
+|---|---|---|---|
+| `package-lock.json` still committed in a pnpm-only repo | **A11** | two lines | **Closed (Phase 11)** — deleted + guarded |
+| `prop-types` unused devDependency | **A12** | one command | **Closed (Phase 11)** — direct declaration removed |
+| `index.html` requests 5 unused font families | **A13** | needs a grep pass first | Open — active action |
+| Three private reduced-motion hooks that seed `false` | **A14** | own phase — changes first-render behaviour | Open — active action |
+| No guard keeping the planner single-sourced | **A17** | ~25-line test | **Closed (Phase 11)** — guard landed |
 
 ## 6. Remaining documentation corrections
 
@@ -161,6 +165,10 @@ claimed `main` was red and the suite is in fact green.
   `STRUCTURE.md` already carry, via a GSD planning refresh.
 - `.planning/codebase/CONCERNS.md` claims `package-lock.json` was removed. It
   was not (**A11**). The claim becomes true the moment A11 lands.
+  **Closed in Phase 11:** A11 landed, so the claim is now true. `CONCERNS.md`
+  carries a dated verification note rather than a rewrite, and `STACK.md`'s
+  removal date was corrected from 2026-07-10 (the standardisation date) to
+  2026-08-02 (the actual deletion). Both now describe reality.
 
 ## 7. Files deleted this phase — and the proof for each
 
@@ -433,5 +441,54 @@ can wait indefinitely without risk.
 
 ---
 
+## 17. Phase 11 closure note (2026-08-02)
+
+Phase 11 was a small audit-closure phase: the two dependency-hygiene items and
+the one recommended guard. No reduced-motion, font, content or feature work.
+Started from `main` @ `5690f92` — five unrelated component/layout commits had
+landed after Phase 10, and were left untouched. Every Phase 10 finding this
+phase relied on was re-confirmed against that tree before anything changed.
+
+**Closed:**
+
+- **A11 — resolved.** `package-lock.json` deleted; `pnpm-lock.yaml` is the only
+  root lockfile. `tests/architecture/package-manager-boundary.test.js` now
+  enforces the pinned `pnpm@` package manager, the lockfile's presence, the
+  absence of npm/Yarn/Bun lockfiles, and pnpm-only CI installs.
+- **A12 — resolved, with a precise claim.** The unused *direct* declaration is
+  gone (four-line diff: one line of `package.json`, the three-line
+  `pnpm-lock.yaml` importer entry). `prop-types` has **not** left the dependency
+  graph — `pnpm why` shows it still resolving transitively through
+  `eslint-plugin-react@7.37.5`, which was deliberately not touched.
+- **A17 — resolved and guarded.** `tests/architecture/planner-boundary.test.js`
+  pins the parked-planner decision: no `src/dailyPlanner.js`, no importer or
+  barrel re-export of `src/features/planner/dailyPlanner.js` outside
+  `src/features/planner/`, and no coupling in either direction with
+  `src/todaysPlan.js`. Neither planner source file was edited. F4 must update
+  this guard deliberately to activate the engine — the failure message says so.
+
+**Dependency hygiene no longer remains open.** All five guards were
+mutation-verified, and every mutation was reverted byte-exact.
+
+### The remaining register, by kind
+
+The Phase 10 "five open items" framing flattened four different kinds of thing.
+They are not comparable and should not be counted together:
+
+| Kind | Item | What it actually asks for |
+|---|---|---|
+| **Active action** | **A14** reduced-motion consolidation | Real work. Its own phase — changes first-render behaviour on three components, needs per-screen verification. **The next audit item.** |
+| **Active action** | **A13** font request trim | Small, but needs a real grep pass over `font-family` declarations first. **Follows A14.** |
+| **Preventative guard** | A11, A17 guards | Now landed. Nothing to do; they fail if the decision is violated. |
+| **Register** | **A16** zero-consumer files | Not a task. A record of what has no importer *and why it stays*, so a future cleanup does not re-derive it. Review only when an owning decision changes. |
+| **Observation-only** | **A15** coordinate-plane cold-run headroom | **Not reproduced** (11/11 clean). Logged as observed-but-unconfirmed with the measured headroom. Nothing to fix; do not open work on it without a fresh reproduction. |
+
+Also still open, and unchanged by this phase: the §9 content/metadata anomalies
+(owner decision, not engineering), and the ROADMAP/STATE file-map staleness in
+§6 (a GSD planning refresh).
+
+---
+
 *Reconciled 2026-08-02 against `main` @ `bbc8d3d`. Every figure in this document
-was produced by rerunning the gate, not carried over from a previous report.*
+was produced by rerunning the gate, not carried over from a previous report.
+Section 17 added 2026-08-02 (Phase 11), verified against `main` @ `5690f92`.*

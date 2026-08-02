@@ -1156,7 +1156,7 @@ availability filter fails 7 of them, deleting the same-subject filter fails 5.
 
 ## A11 — Stale duplicate lockfile: `package-lock.json` is still committed
 
-**Status:** Backlog
+**Status:** **Resolved (Phase 11, 2026-08-02)** — lockfile deleted, guard landed
 **Priority:** Medium — cheap to fix, and the record currently says it is done
 **Area:** `package-lock.json`, `.planning/codebase/CONCERNS.md`
 
@@ -1194,11 +1194,36 @@ standalone minor task.
 - No document claims the removal happened before it did.
 - `pnpm install --frozen-lockfile` and `pnpm verify` still pass.
 
+### Resolution (Phase 11, 2026-08-02)
+`git rm package-lock.json`. `pnpm-lock.yaml` is now the only lockfile at the
+repository root — `yarn.lock`, `npm-shrinkwrap.json` and Bun lockfiles were
+already absent and remain so.
+
+The optional guard in step 3 was built rather than skipped, because the deletion
+alone is undone by one stray `npm install`:
+`tests/architecture/package-manager-boundary.test.js` asserts the pinned
+`pnpm@` package manager, the presence of `pnpm-lock.yaml`, the absence of each
+foreign lockfile (one test per file, so a failure names it), and that no CI
+workflow installs with `npm install` / `npm ci` / `yarn install` / `bun install`.
+Comment lines are excluded before that scan, so a workflow may still *explain*
+why pnpm is used. Ordinary prose mentions of npm are not policed and
+`node_modules` is never scanned.
+
+Mutation-verified: a stray root `package-lock.json` fails "does not commit
+package-lock.json"; `packageManager: "npm@10.0.0"` fails "pins pnpm in
+package.json"; `- run: npm ci` in `ci.yml` fails the workflow assertion. All
+three mutations were reverted byte-exact (checksum-verified).
+
+`pnpm install --frozen-lockfile` honoured the lockfile with no drift, and all
+five gates pass. `.planning/codebase/CONCERNS.md` carries a dated Phase 11
+verification note — the 2026-07-10 claim is now true, and was left in place
+rather than rewritten.
+
 ---
 
 ## A12 — `prop-types` is an unused devDependency
 
-**Status:** Backlog
+**Status:** **Resolved (Phase 11, 2026-08-02)** — direct declaration removed; still present transitively
 **Priority:** Low
 **Area:** `package.json`, `pnpm-lock.yaml`
 
@@ -1231,6 +1256,29 @@ only that entry and its now-unreferenced peers drop out.
 - `prop-types` gone from `package.json`.
 - `pnpm verify` passes unchanged (all five gates).
 - No production bundle size change — it was never in the graph.
+
+### Resolution (Phase 11, 2026-08-02)
+Importer census re-run immediately before removal, over `src/`, `tests/`,
+`.storybook/` and the root configs, for `from 'prop-types'`,
+`require('prop-types')` and `import('prop-types')`: **zero matches**. The single
+textual hit remains `eslint.config.js:51` `'react/prop-types': 'off'` — a rule
+name owned by `eslint-plugin-react`, not an import of the package. The rule was
+left off; no runtime prop validation was added and no component was edited.
+
+`pnpm remove -D prop-types` produced a four-line diff and nothing else:
+`package.json` lost one line, `pnpm-lock.yaml` lost the three-line importer
+entry. No other package changed version, and no version range was touched.
+
+**Precisely: `prop-types` is no longer a *direct* dependency, but it has not
+left the dependency graph.** `pnpm why prop-types` reports it still resolving at
+15.8.1 through `eslint-plugin-react@7.37.5` — itself a devDependency this repo
+needs. That parent was not touched. The correct claim is that the unused direct
+declaration is gone; the package is still installed transitively for lint.
+
+No one-package blacklist test was added. A permanent guard forbidding a single
+package name would be a framework built for one finding — the durable
+architecture guard is `package-manager-boundary.test.js`, and this census is the
+standing evidence for A12.
 
 ---
 
@@ -1384,7 +1432,7 @@ Phase 10 built an import census over all 380 non-story files in `src/`. This
 records what has no importer **and why it stays**, so a future cleanup does not
 have to re-derive it — and does not delete something load-bearing.
 
-Twelve dead files *were* removed in Phase 10: thirteen `src/content/**/index.js`
+Thirteen dead files *were* removed in Phase 10: thirteen `src/content/**/index.js`
 `EPISODE_LOADERS` registries that self-documented as being loaded by
 `src/content/moduleContentRegistry.js`, a file deleted during the chapter
 migration. Zero importers, superseded by `CHAPTER_CONTENT_LOADERS`. Everything
@@ -1419,7 +1467,7 @@ Logged to the content/product backlog for a one-line confirmation, then deletion
 
 ## A17 — Planner: one source, parked — keep it that way
 
-**Status:** Resolved as an audit finding; guard recommended
+**Status:** **Resolved and guarded (Phase 11, 2026-08-02)** — finding settled in Phase 10, enforcement landed in Phase 11
 **Priority:** Low
 **Area:** `src/todaysPlan.js`, `src/features/planner/dailyPlanner.js`
 
@@ -1457,6 +1505,47 @@ test would:
 3. assert `todaysPlan.js` and `dailyPlanner.js` never import each other.
 
 Roughly 25 lines in `tests/architecture/`. Do this before F4 starts, not after.
+
+### Guard landed (Phase 11, 2026-08-02)
+`tests/architecture/planner-boundary.test.js`. Re-confirmed against current
+`main` before writing it — the Phase 10 findings still hold: `src/dailyPlanner.js`
+does not exist, `src/features/planner/dailyPlanner.js` has no importer in `src/`
+(its only importer anywhere is `tests/unit/planner/dailyPlanner.test.js`), and
+`src/todaysPlan.js` is read by `Home.jsx` and `ExamMode.jsx`. Neither planner
+source file was edited.
+
+What it enforces — the three recommended assertions, plus two:
+
+1. `src/dailyPlanner.js` does not exist;
+2. `src/features/planner/dailyPlanner.js` and `src/todaysPlan.js` both do;
+3. no source file outside `src/features/planner/` imports the parked planner;
+4. no barrel file in `src/` re-exports it — asserted separately so an indirect
+   route fails under its own name;
+5. neither planner imports the other.
+
+Import detection resolves specifiers rather than string-matching the repository
+path: static imports, side-effect imports, `export … from` re-exports and
+dynamic `import()`, with relative specifiers and the `@` → `src` alias resolved
+against the importing file. A self-check asserts the scan can still see the unit
+test's import, so the boundary assertions can never pass vacuously. Paths
+resolve from the test file, not `process.cwd()`.
+
+Deliberately **not** asserted: line counts, export counts, function names, the
+number of test importers, or that the engine stays unrouted forever. The guard
+pins the decision as it stands, not the code.
+
+Unit tests may still import the parked planner, and planning docs may still
+reference it — only `src/` is scanned for the boundary.
+
+**F4 will need to update this guard on purpose.** The failure message says so:
+wiring the engine in requires the F4 product decision, selected-subject
+onboarding that populates `userProfile.selectedSubjects`, and an explicit change
+to this boundary. That is the point — activation should be a deliberate edit,
+not something discovered later.
+
+Mutation-verified: a probe file under `src/features/home/` importing the planner
+fails assertion 3; a barrel re-export fails 3 and 4; a recreated
+`src/dailyPlanner.js` fails 1. All probes deleted, tree clean before commit.
 
 ### Note for whoever picks this up
 `tests/unit/planner/dailyPlanner.test.js` accounts for **18 of the repository's

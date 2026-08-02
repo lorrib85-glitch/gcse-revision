@@ -17,8 +17,14 @@
 - Declared via `package.json` `"packageManager": "pnpm@10.33.0"` (Corepack /
   `pnpm/action-setup` read this field).
 - Single lockfile: `pnpm-lock.yaml`. `pnpm-workspace.yaml` is present
-  (single-package workspace). The old `package-lock.json` was removed
-  (2026-07-10) — CI and Vercel both use pnpm, so it was redundant and drifted.
+  (single-package workspace). The old `package-lock.json` was removed — CI and
+  Vercel both use pnpm, so it was redundant and drifted. **Date corrected
+  2026-08-02:** this doc previously dated the removal to 2026-07-10, when the
+  package-manager standardisation happened; the file itself was not actually
+  deleted until Phase 11 (2026-08-02). See backlog A11.
+- Enforced by `tests/architecture/package-manager-boundary.test.js`: the pinned
+  `pnpm@` package manager, `pnpm-lock.yaml`'s presence, the absence of npm /
+  Yarn / Bun lockfiles, and CI installing with pnpm only.
 - CI installs with `pnpm install --frozen-lockfile`; Vercel auto-detects pnpm
   from `pnpm-lock.yaml`. Use `pnpm <script>` locally, never `npm install`
   (that would regenerate `package-lock.json`).

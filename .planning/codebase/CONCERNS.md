@@ -243,6 +243,13 @@ current.
 - **Two lockfiles / split package-manager contract.** Standardised on pnpm
   (`packageManager` field, CI migrated to `pnpm install --frozen-lockfile`,
   `package-lock.json` removed). See STACK.md.
+  **Verified in Phase 11 (2026-08-02):** `package-lock.json` was actually
+  removed and a pnpm-only architecture guard now enforces the decision
+  (`tests/architecture/package-manager-boundary.test.js`). Phase 10 found this
+  claim was written on 2026-07-10 while the file was still tracked — the rest of
+  the claim (`packageManager` field, CI on `pnpm install --frozen-lockfile`) was
+  true then and remains true. Recorded here rather than rewritten, so the gap
+  between claim and reality stays visible. See backlog A11.
 - **QuickFire weaknesses were unroutable.** QuickFire now records a canonical
   `conceptTag` (the `TAG_MODULE_MAP` key, forwarded through
   `quickFireFromBank`) alongside the human `topic`, for every answer type — not
@@ -288,8 +295,12 @@ current.
 ### Inaccurate / outdated findings (left code alone)
 
 - **"No package-lock.json or pnpm-lock.yaml in git history" (Dependencies at
-  Risk).** Both `package-lock.json` and `pnpm-lock.yaml` are present and
-  committed. No action needed.
+  Risk).** Both `package-lock.json` and `pnpm-lock.yaml` were present and
+  committed, so the original finding was wrong. No action needed on the finding
+  itself. **Updated 2026-08-02 (Phase 11):** `package-lock.json` has since been
+  deleted as a stale duplicate (backlog A11) — `pnpm-lock.yaml` is now the only
+  lockfile, which is the intended end state, not a return to the original
+  finding.
 - **"Module content loading uses proportional screen index estimates" (Known
   Bugs).** The proportional `stageNavigation` indices in
   `episode-07-germ-theory.js` feed only the in-module progress rail, **not**
