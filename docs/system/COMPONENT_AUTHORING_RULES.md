@@ -153,24 +153,24 @@ Refactor passes must not redesign components.
 
 ---
 
-## Locked Component Rules
+## Component Contract Rules
 
-Some components are contractually locked — their internals must not change.
+There are no locked components. Every component's catalogue record
+(`src/component-catalogue/records/<id>.js`) carries a contract instead:
+`criticality`, invariants with evidence, an optional app-wide `exclusivity`
+rule, and the changes that require a product decision.
 
-See `docs/components/LOCKED_COMPONENTS.md` for the full list.
-
-When modifying locked components:
-- Preserve behaviour exactly
-- Preserve visual hierarchy
-- Preserve interaction flow
-- Avoid broad rewrites
+Before changing a component, read its record:
+- An internal change that preserves every documented invariant is ordinary work
+- A change affecting a documented invariant, an exclusivity rule, the public
+  API, a learner flow or product identity needs a product decision first
 - If uncertain: defer and report
 
 ---
 
 ## Back Navigation Rule
 
-`src/components/core/BackButton.jsx` is the **only** back-navigation button implementation allowed anywhere in the app. This is constitutional — see `docs/components/LOCKED_COMPONENTS.md`.
+`src/components/core/BackButton.jsx` is the **only** back-navigation button implementation allowed anywhere in the app. This is the `back-navigation` exclusivity rule in its catalogue record (`src/component-catalogue/records/back-button.js`).
 
 ```js
 import BackButton from '../core/BackButton.jsx'
@@ -246,7 +246,7 @@ Never:
 
 Before creating a new component:
 
-- [ ] Does a similar component already exist in `COMPONENT_REGISTRY.md`?
+- [ ] Does a similar component already exist in the component catalogue (`docs/components/COMPONENT_REGISTRY.md`)?
 - [ ] Is this a distinct, justified learning beat?
 - [ ] Is this a content component or a screen-owning component?
 - [ ] If screen-owning, does its approved contract explicitly grant composition ownership?

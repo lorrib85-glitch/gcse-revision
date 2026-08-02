@@ -23,11 +23,9 @@ function safeGetStreak() {
   try { return getProgress().streak || 0 } catch { return 0 }
 }
 
-// ─── HomeAtmosphere — LOCKED COMPONENT ────────────────────────────────────────
+// ─── HomeAtmosphere ───────────────────────────────────────────────────────────
 // Three drifting SVG wave bands + teal constellation network, rendered in the
-// 34vh hero section of the Home tab. Must NOT be removed, renamed, or have its
-// wave/gradient/animation structure altered. Small colour tweaks to teal values
-// are OK; removing the SVG layers or the component call in Home is not.
+// 34vh hero section of the Home tab.
 function HomeAtmosphere() {
   const nodes = [
     [180, 48], [222, 26], [266, 16], [300, 36], [332, 22],
@@ -506,9 +504,9 @@ export default function Home({ onSelectTask, onReviewProgress }) {
   return (
     <div style={{ minHeight: '100vh', background: GENERAL.neutral[900], paddingBottom: 'calc(120px + env(safe-area-inset-bottom, 0px))', overflowX: 'hidden', position: 'relative' }}>
 
-      {/* LOCKED atmosphere — call site preserved; sits as the ambient band
-          behind the utility row and hero banner. Wrapper opacity calms the
-          teal wash (~40% reduction) without touching the locked internals. */}
+      {/* The atmosphere sits as the ambient band behind the utility row and
+          hero banner. The wrapper opacity calms the teal wash (~40% reduction)
+          from outside, leaving the component's own internals untouched. */}
       <div aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 280, overflow: 'hidden', opacity: 0.6 }}>
         <HomeAtmosphere />
       </div>

@@ -101,7 +101,7 @@ The shell lives in `src/app/LegacyApp.jsx`; each tab renders a feature module.
 - `LegacyApp` — top-level router: tab state, auth flow, overlays, chapter opening
 - `BottomNav` (`src/app/BottomNav.jsx`) — fixed 5-tab nav (Home / Subjects / Pulse / Progress / Exams) with SVG line icons
 - `Home` (`src/features/home/Home.jsx`) — greeting, hero banner and the "Today's plan" list (`HeroBanner` + `PlannerRow`) built by `buildTodaysPlan()` (`src/todaysPlan.js`) — warm-up, weak-spot revisit or continue-chapter, exam practice, plus a weekend full-paper card
-- `HomeAtmosphere` — LOCKED. Three drifting teal SVG wave bands + constellation network rendered in the 34vh hero section of Home. Must NOT be removed, renamed, or have its SVG/animation structure altered. Its call site in `Home` (`<HomeAtmosphere />`) must not be removed either.
+- `HomeAtmosphere` — the drifting teal atmosphere in Home's hero section. It carries a critical contract; read its catalogue record before changing it
 - `SubjectsTab` (`src/features/subjects/Subjects.jsx`) — subject browser; each subject presents its ordered chapter journey, built by `src/features/subjects/subjectCatalogue.js` from the subject's modules. History and English series tabs (labels, hero images, the empty Elizabethan tab) are local presentation in `Subjects.jsx` — a `series` is not a module id
 - `PulseTab` (`src/features/pulse/Pulse.jsx`) — recall-trend screen and the entry point to QuickFire
 - `ProgressTab` (`src/features/progress/Progress.jsx`) — progress/stats screen
@@ -113,77 +113,72 @@ The shell lives in `src/app/LegacyApp.jsx`; each tab renders a feature module.
 
 All standalone components live under `src/components/`. Do not add new `.jsx` files directly to `src/`.
 
-The full catalogue is `docs/components/COMPONENT_REGISTRY.md`; locked status is
-defined canonically in `docs/components/LOCKED_COMPONENTS.md`. The `— LOCKED`
-notes below are high-risk reminders only and are deliberately not exhaustive —
-when this file and the canonical locked document disagree, the canonical
-document wins.
+### Where component facts live
+
+**`src/component-catalogue/records/` is the single home for every catalogue-level
+component fact** — identity, source path, purpose, props, dependencies,
+lifecycle, selection guidance and contract. One record per public component.
+
+- `docs/components/COMPONENT_REGISTRY.md` is **generated** from those records by
+  `pnpm catalogue:generate`. Never hand-edit it; `pnpm catalogue:check` fails if
+  it drifts.
+- **Inspect a component's record before creating or changing that component.**
+  This applies to developers and AI tools alike. If you change what the
+  catalogue says, change the record and regenerate.
+- Runtime authoring and pedagogical projections stay where they are until a
+  later migration phase: authorable screen and block types in
+  `src/data/screenRegistry.js`, function tags in `src/data/componentFunctions.js`,
+  Component Lab routing in `src/dev/componentReview/`. Do not copy those facts
+  into the catalogue.
+- `src/component-catalogue/**` is build-time governance data. The learner
+  runtime must never import it.
+
+### There are no locked components
+
+A rule can be constitutional; a whole component file cannot. Each record carries
+a **contract** instead: `criticality` (`standard` or `critical`), invariants with
+evidence, an optional app-wide `exclusivity` rule, and the list of *changes* that
+need a product decision.
+
+Internal changes that preserve a documented contract are ordinary development
+work. Sign-off is needed only when a change affects a documented invariant, an
+exclusivity rule, the public API, a learner flow, or product identity. Read the
+component's record to find out which applies — do not assume a file is untouchable,
+and do not assume it is free.
+
+Do not maintain a second component list anywhere. The folder notes below describe
+layers, not individual components.
 
 ### `src/components/core/`
-Foundation components used by many others.
-- `AnswerInteraction.jsx` — LOCKED. Universal answer UI (choice, connection, true/false). Owns all answer logic.
-- `BackButton.jsx` — LOCKED. The only back-navigation button allowed anywhere in the app.
-- `CardContainer.jsx` — LOCKED. Atmospheric content surface wrapper with optional background image.
-- `CinematicContinueCTA.jsx` — LOCKED. The only cinematic "Continue →" prompt allowed anywhere in the app.
-- `ContinueCTA.jsx` — LOCKED. The only Primary Progression CTA ("Continue") allowed anywhere in the app.
-- `ExitButton.jsx` — LOCKED. The only exit-navigation button allowed anywhere in the app.
-- `LearningHeader.jsx` — Floating capsule header shell. Composes BackButton + ExitButton + LearningProgressHeader.
-- `LearningProgressHeader.jsx` — LOCKED. Progress rail + jump sheet (progression display only).
-- `SequenceProgress.jsx` — LOCKED. The only local sequence-progress indicator (carousels, image sets, mini-steps). Never renders numbers or counters.
+
+Foundation components used by many others: navigation controls, progression
+CTAs, the learning header, text and shell primitives, and the shared answer UI.
+Individual components are catalogued in `src/component-catalogue/records/`.
 
 ### `src/components/learning/`
-Screen-level learning interaction components.
-- `AngleExplore.jsx` — Configuration-driven GCSE angle diagram (Maths sibling of `CircuitDiagram`): SVG shapes and angles with one draggable value (a ray, or a triangle's apex) driving live sector values, classifications and an angle-fact status line. Presets: `angleTypes`, `straightLine`, `aroundPoint`, `verticallyOpposite`, `triangle`; `interactive={false}` gives a static teaching/exam diagram. Geometry/presets/colour roles live in `src/components/learning/angle/`. Page-level questions and marking stay outside the component.
-- `CinematicCarousel.jsx` — Full-screen "deep dive" carousel: one large image at a time with prev/next glass nav and a sliding name + key-facts panel, for browsing a small related set of things in turn (e.g. organelles, planets).
-- `CinematicRevealMoment.jsx` — Full-screen cinematic video/image reveal moment.
-- `CircuitDiagram.jsx` — GCSE Physics simple series circuit (battery, wire loop, bulb, switch) drawn with inline SVG primitives. A single `closed` prop toggles open/closed: closed shows an animated cyan current overlay and an amber bulb glow; open raises the switch arm, hides the current, and dims the bulb. Respects `prefers-reduced-motion`.
-- `ColSortBlock.jsx` — Interactive column-sort categorisation task where learners sort items into labelled columns with visual feedback.
-- `CoordinatePlaneExplore.jsx` — Configuration-driven GCSE coordinate plane (Maths sibling of `AngleExplore`/`AreaPerimeterExplore`/`FractionRatioExplore`/`NumberLineExplore`): one plane, points that carry their coordinates, and a rule made visible as geometry. Nine presets — `plotPoint`, `midpoint`, `straightLine`, `tableOfValues`, `intersection`, `translate`, `reflect`, `rotate`, `enlarge`; `interactive={false}` gives a static teaching/exam diagram. A three-tier annotation contract (active / related / context) keeps one point fully annotated; option selections live in the value model so static figures can select any option; capabilities constrain state rather than hiding controls. Axis placement resolves per axis, and the plane API carries axis labels, units and independent scales, so it serves science graphs as well as coordinate geometry. Geometry, maths, label layout, option state and one-file-per-preset live in `src/components/learning/coordinatePlane/`. Enforced by `tests/architecture/coordinate-plane-{annotation-contract,control-reachability,visible-bounds}.test.js` over the shared state space in `tests/support/coordinatePlaneStateSpace.js`. Page-level questions and marking stay outside the component.
-- `ConceptReveal.jsx` — Concept introduction with atmospheric reveal.
-- `ExaminerExplainsScreen.jsx` — Full-screen explanation screen with animated word-by-word text reveal and background imagery.
-- `ExplainReveal.jsx` — Progressive cause-and-effect reasoning chain, revealed step by step.
-- `FaceTheExaminer.jsx` — Examiner-style written question interaction with mark, criteria selection, annotation, and optional re-mark.
-- `FillInTheBlanksBlock.jsx` — Inline fill-in-the-blanks chapter block.
-- `FractionRatioExplore.jsx` — Configuration-driven GCSE part-whole engine (Maths sibling of `AngleExplore`/`AreaPerimeterExplore`): one visual grammar — same whole, divided parts, linked representations, scaling both sides together — across fractions, ratio, proportion and percentages. Presets: `fractionBar`, `equivalentFractions`, `fractionOperations` (add/subtract/multiply/divide/of-an-amount, each with its own step sequence), `ratioShare`, `doubleNumberLine`, `percentageGrid`, `proportionScale`, `bestValue`; `interactive={false}` gives a static teaching/exam diagram. Pure maths, geometry, colour roles and one-file-per-preset live in `src/components/learning/fractionRatio/`. Questions and marking stay outside the component.
-- `GraphView.jsx` — Embeddable SVG chart block (bar, line, scatter, pie) for displaying GCSE Maths/Science data inline within a content screen.
-- `GuidedAnswerCoach.jsx` — Multi-stage exam-technique coach for written answers (question → examiner expectations → modelled thinking → annotated model answer → guided write → independent write → debrief); supports subject or general app branding.
-- `GuidedChoiceCarousel.jsx` — Scrollable single-choice carousel with atmospheric visual option cards (e.g. healer selection).
-- `GuidedExamResponse.jsx` — Guided written-answer scaffold: exam question + marks, scaffolded answer structure, model answer reveal, mark-by-mark breakdown.
-- `InteractiveHotspotImage.jsx` — Full-screen image with tappable hotspots (two-phase intro→explore). Two variants: `detail` (default) shows one card of labelled rows per hotspot; `reveal` pages through multiple pieces of information per hotspot (`reveals[]`) and supports an optional `synthesis` "collection complete" summary screen. (Absorbed the former `InteractiveCollectionExplorer`.)
-- `KeyFigureReveal.jsx` — Scrollable portrait-hero screen introducing a key person. Portrait hero image (~60vh), name/role overlaid at bottom, significance statement, up to 4 knowledge sections, Continue button.
-- `OrderedRouteTask.jsx` — Ordered chain activity (screen type `orderedRouteTask`): one job card at a time — tap the stage on the numbered vertical route it belongs to. Correct taps lock in immediately; wrong taps show a persistent clue-based hint. Subject-accent theming, learner-controlled completion via ContinueCTA. Use for recalling steps of a process in sequence. Do not use when order is unordered — use `MatchingTask` instead. (Renamed from `EvacuationChainRoute`.)
-- `MatchingTask.jsx` — Term-to-description card-pair matching activity with SVG connector lines and round splitting for large sets.
-- `MemoryHook.jsx` — In-page "make it stick" reminder block: anchors one hard idea with a memorable analogy/mnemonic, optional square thumbnail, and a pencil affordance letting the learner rewrite the hook in their own words (persisted via `storage.js`, `gcse_memory_hook_notes_v1`). Content component (block type `memoryHook`); reusable across subjects. Distinct from `AcronymMemorise` (interactive acronym drill).
-- `MisconceptionCheck.jsx` — Full-screen, cinematic true/false misconception trap, one statement at a time, with calm reveal and exam-trap framing.
-- `CentreImageReveal.jsx` — Cause → prescription → reveal flow with a parchment-textured input surface and fuzzy-match validation (screen type `centreImageReveal`; renamed from `MedicalTheoryPrescription`, internals unchanged).
-- `MedievalDiagnosisScene.jsx` — Cinematic 9:16 SVG hero ("Medieval diagnosis chamber"): Thomas at a candlelit table with the four medieval explanations of illness appearing as tappable zones around him. Opens the `centreImageReveal` select phase; reduced motion renders the static end state.
-- `PriorKnowledgeRecall.jsx` — Full-screen chapter-opening recall screen. Free-text recall scored via `/api/recall`; missing concepts logged to the weakness tracker. Standard Section 1 component for History chapters (see History chapter architecture below).
-- `QuickRecallScreen.jsx` — Rapid-fire retrieval screen (choice + connection questions).
-- `RecoveryQuizPlayer.jsx` — Lightweight recovery quiz player (3–4 focused questions).
-- `SpotTheError.jsx` — Diagnostic precision-check: student selects an error in a statement/calculation/explanation, explains why it's wrong, then rewrites it correctly. Logs "Error identification" and "Scientific precision" weaknesses.
-- `SwipeSort.jsx` — Swipe-gesture sorting activity; powers `naturalSupernaturalSwipe` screen type.
-- `TheoryCompare.jsx` — Side-by-side comparison of any two approaches, people or theories: one comparison theme revealed at a time, an optional dual-portrait hero, and a final takeaway. When no portraits/hero are supplied the two portrait boxes render empty, ready for images in future. Reveal logic lives in `theoryCompare.js`.
-- `TimelineCanvas.jsx` — Full-screen "swipe to pan" canvas: swipe horizontally to pan across a wide chain of cards with curved connectors that draw in as you pan; tap + to reveal why each step mattered. A deliberate one-off variation in rhythm from `TimelineChain`.
-- `TimelineChain.jsx` — Full-screen causal-sequence component with two variants. `interactive` (default): horizontal scroll-snap chain of flip cards connected by a connector rail, revealed step by step at the learner's pace. `reveal` (`variant: 'reveal'`): passive vertical sequence that reveals one statement at a time behind a "Reveal next" CTA, with optional secondary detail, structured `{ text, highlight? }` phrases, numbered or icon markers, and an accent takeaway — this absorbs the former `VisualNarrativeScreen`. Pure reveal logic lives in `timelineChainReveal.js`; legacy `type: 'visualNarrative'` blocks are mapped to it via `src/data/visualNarrativeCompat.js`.
-- `VisualLearning.jsx` — Click-to-continue cinematic scene sequence with background images, animated headlines, and optional final reveal.
-- `WeakSpotRecovery.jsx` — Full-screen behavioural intervention screen shown when a learner struggles.
+
+Screen-level learning interaction components — each one a distinct learning
+beat. This is the largest layer and the one an author actually chooses from; use
+the catalogue's `Decision` blocks to pick between near neighbours.
+
 
 ### Retired components — do not recreate
 
 - **`VisualNarrativeScreen` — RETIRED.** Do not create, restore, register, refine, or lock a standalone `VisualNarrativeScreen` component. Its progressive numbered-reveal behaviour is now owned solely by `TimelineChain` with `variant: 'reveal'` (`timelineChainReveal.js`). New progressive narrative / statement-sequence screens **must** use the reveal variant; interactive ordering/causal-chain screens continue to use `TimelineChain`'s default `interactive` variant. Legacy `type: 'visualNarrative'` lesson data is supported **only** through `src/data/visualNarrativeCompat.js`, which is migration-only compatibility code — never author new content as `visualNarrative`, and never build new features on the compat mapper. Any older per-module architecture or planning doc that still lists `VisualNarrativeScreen` under "suggested components" is **superseded** by this rule; use the reveal variant instead.
 
 ### `src/components/layout/`
-Chapter-level orchestration and chapter framing screens.
-- `ChapterCompleteScreen.jsx` — End-of-chapter completion screen with score and stats.
-- `ChapterHookScreen.jsx` — Chapter intro hook screen with true/false warm-up.
-- `ChapterOutcomeScreen.jsx` — Chapter outcome/outcome reveal screen.
-- `ChapterPlayer.jsx` — Runtime for one authored chapter: lifecycle, opening gates, navigation, persistence and completion. Screen and block routing belongs to `ScreenRenderer.jsx`, not here.
+
+Chapter-level orchestration, chapter framing screens and the three structural
+shells (`ContentShell` / `InteractionShell` / `CinematicShell`). `ChapterPlayer.jsx`
+is the runtime for one authored chapter — lifecycle, opening gates, navigation,
+persistence and completion. Screen and block routing belongs to
+`ScreenRenderer.jsx`, not there.
 
 ### `src/components/feedback/`
-Question feedback and exam practice components.
-- `ExamQuestionFrame.jsx` — Universal exam question component with mark scheme reveal.
-- `ExamRoundDebrief.jsx` — Examiner-voice end-of-round debrief; synthesises patterns across a full set of answers and logs recurring weaknesses for WeakSpotRecovery.
-- `RetrievalFrame.jsx` — LOCKED. Cinematic wrapper for retrieval moments. Delegates all answer logic to AnswerInteraction.
+
+Question feedback and exam-practice components, plus the governed presentation
+frame for retrieval questions embedded in a learning screen.
+
 
 ## Design System Documentation
 
@@ -193,15 +188,15 @@ Question feedback and exam practice components.
 |----------|-----|----------------|
 | 1 | `docs/system/PRODUCT_UI_CONSTITUTION.md` | Product identity, global colours, layout law, what Claude must never improvise |
 | 1 | `docs/system/GENERAL_APP_UI_CONSTITUTION.md` | Non-subject pages (Home, Subjects browser, Progress, Exam landing, onboarding, bottom nav) — design philosophy, copy style, personalisation, things to avoid |
-| 2 | `docs/system/COMPONENT_AUTHORING_RULES.md` | Required imports, forbidden patterns, locked component rules |
+| 2 | `docs/system/COMPONENT_AUTHORING_RULES.md` | Required imports, forbidden patterns, component contract rules |
 | 3 | `docs/system/SPACING_SYSTEM.md` | All spacing tokens |
 | 3 | `docs/system/SUBJECT_THEME_SYSTEM.md` | All subject colour palettes |
 | 3 | `docs/system/BUTTON_RADII_SYSTEM.md` | Button dimensions and corner radii |
 | 3 | `docs/system/MOTION_SYSTEM.md` | Durations, easings, scale values |
 | 3 | `docs/system/TYPOGRAPHY_SYSTEM.md` | Font families, sizes, weights — TYPE tokens |
 | 3 | `docs/system/SCREEN_SHELL_SYSTEM.md` | Structural shells (`ContentShell` / `InteractionShell` / `CinematicShell`) and where `TeachScreenShell` sits inside them |
-| 4 | `docs/components/COMPONENT_REGISTRY.md` | The canonical human-readable component registry — check before building anything new. Catalogue completeness is governed separately |
-| 5 | `docs/components/LOCKED_COMPONENTS.md` | Locked components — must not change internals |
+| 4 | `src/component-catalogue/records/` | **The component catalogue** — the single home for every component's identity, purpose, lifecycle, selection guidance and contract. Check before building anything new |
+| 5 | `docs/components/COMPONENT_REGISTRY.md` | The generated human-readable view of the catalogue. Read it; never edit it |
 
 See `docs/system/00_SYSTEM_INDEX.md` for the full order of authority.
 
@@ -350,6 +345,12 @@ This applies to module titles, chapter titles, screen headings, button labels, a
 
 # Run Storybook stories as Vitest browser tests
 ./node_modules/.bin/vitest
+
+# Regenerate docs/components/COMPONENT_REGISTRY.md from the component catalogue
+pnpm catalogue:generate
+
+# Fail if the generated registry has drifted from the catalogue records
+pnpm catalogue:check
 ```
 
 ## Educational design rules
@@ -382,7 +383,8 @@ Do not create a new component if an existing component can be adapted.
 
 Check in this order:
 
-1. Component Registry
+1. The component catalogue (`src/component-catalogue/records/`, read via the
+   generated `docs/components/COMPONENT_REGISTRY.md`)
 2. Existing learning interactions
 3. Existing screen types
 
@@ -392,6 +394,8 @@ New components require:
 - Reusability across at least 3 modules
 - Educational justification
 - A `.stories.jsx` file alongside the component (same directory, same name stem)
+- A catalogue record in `src/component-catalogue/records/`, with
+  `pnpm catalogue:generate` run and the regenerated registry committed
 
 Prefer extending existing systems.
 

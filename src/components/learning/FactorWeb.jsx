@@ -740,7 +740,7 @@ function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent
   )
 }
 
-// ── FactorWeb v1 — LOCKED COMPONENT ──────────────────────────────────────────
+// ── FactorWeb v1 ─────────────────────────────────────────────────────────────
 // A mobile-first causation and judgement screen. Factors sit in two balanced
 // columns around one focal image (or a governed image placeholder), then expand
 // into teaching and a supported relative-importance judgement.

@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { BUTTONS } from '../../constants/buttons.js'
 
-// ── ContinueCTA v1 — LOCKED COMPONENT ─────────────────────────────────────
-// The only Primary Progression CTA implementation allowed anywhere in the
-// app — see docs/system/BUTTON_RADII_SYSTEM.md "Progression CTA System".
+// ── ContinueCTA v1 ────────────────────────────────────────────────────────
+// The Primary Progression CTA — see docs/system/BUTTON_RADII_SYSTEM.md
+// "Progression CTA System".
 // 56px tall, RADII.large, solid accent fill, #0D0F14 text, "Continue" label.
 // `style` carries layout overrides only (width/flex, margin, position,
-// animation, transition) — never new height, radius, font or colour logic.
+// animation, transition).
 export default function ContinueCTA({
   onClick,
   label = 'Continue',

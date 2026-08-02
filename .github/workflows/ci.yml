@@ -29,6 +29,11 @@ jobs:
       # drives, so install it (with its OS deps) before test:storybook.
       - run: pnpm exec playwright install --with-deps chromium
 
+      # The generated component registry must match its catalogue records
+      # before anything else runs — a stale document is a governance
+      # regression, not a test failure, and it is the cheapest gate here.
+      - run: pnpm catalogue:check
+
       # Architecture contracts run first so structural regressions are still
       # visible when unrelated lint debt prevents the later checks from running.
       # No gate is removed: this is the same verification set in safer order.

@@ -1,6 +1,6 @@
 import { SUBJECTS } from '../../constants/subjects.js'
 
-// ── CardContainer v1 — LOCKED COMPONENT ────────────────────────────────────
+// ── CardContainer v1 ───────────────────────────────────────────────────────
 // Reusable cinematic content surface for learning modules.
 // Subtle atmospheric container that supports readability and pacing.
 // Content is the focus; surface almost disappears behind the learning.

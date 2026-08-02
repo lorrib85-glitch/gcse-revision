@@ -1,10 +1,8 @@
 import { useState } from 'react'
 
-// ── ExitButton v1 — LOCKED COMPONENT ──────────────────────────────────────
-// The only exit-navigation button allowed anywhere in the app.
+// ── ExitButton v1 ─────────────────────────────────────────────────────────
 // 44×44, near-invisible "X" icon, opacity/scale press feedback.
-// `style` may only carry layout overrides (position, margin, zIndex) —
-// never new size, icon or opacity behaviour.
+// `style` carries layout overrides (position, margin, zIndex).
 export default function ExitButton({ onClick, ariaLabel = 'Exit chapter', style }) {
   const [pressed, setPressed] = useState(false)
 

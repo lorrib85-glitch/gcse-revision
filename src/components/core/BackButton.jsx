@@ -1,11 +1,8 @@
 import { RADII } from '../../constants/radii.js'
 
-// ── BackButton v1 — LOCKED COMPONENT ──────────────────────────────────────
-// The only back-navigation button allowed anywhere in the app.
+// ── BackButton v1 ─────────────────────────────────────────────────────────
 // 40×40 pill, near-invisible fill/border, left chevron only, no label.
-// Visual identity (size, fill, border, radius, icon, opacity) is fixed.
-// `style` may only carry layout overrides (position, margin, zIndex) —
-// never new fill, border, radius, size or icon.
+// `style` carries layout overrides (position, margin, zIndex).
 export default function BackButton({ onClick, ariaLabel = 'Go back', style }) {
   return (
     <button

@@ -103,19 +103,23 @@ Locked constant layers. Every component must import tokens from these files. No 
 
 ---
 
-### 4. Component Registry
+### 4. Component catalogue
 
-`docs/components/COMPONENT_REGISTRY.md`
+`src/component-catalogue/records/` — authored · `docs/components/COMPONENT_REGISTRY.md` — generated
 
-The canonical human-readable registry for documented standalone components: location, purpose, props, lock status, and dependencies. Check here before building anything new. Catalogue completeness is governed separately — a missing entry is a documentation gap, not a verdict on the component. There is no other Component Registry; the machine-readable pedagogical taxonomy is `src/data/componentFunctions.js` and the authorable screen/block contract is `src/data/screenRegistry.js`.
+The single home for every catalogue-level component fact: identity, source path, purpose, props, dependencies, lifecycle, selection guidance and contract. One record per public component; private family internals are owned by their public record. Check here before building anything new.
+
+`docs/components/COMPONENT_REGISTRY.md` is generated from the records by `pnpm catalogue:generate` and must never be hand-edited; `pnpm catalogue:check` fails if it drifts. Integrity is enforced by `tests/architecture/component-catalogue-integrity.test.js`.
+
+Runtime authoring and pedagogical projections are deliberately not duplicated in the catalogue: the machine-readable pedagogical taxonomy stays in `src/data/componentFunctions.js` and the authorable screen/block contract stays in `src/data/screenRegistry.js`.
 
 ---
 
-### 4b. Locked Components
+### 4b. Component contracts
 
-`docs/components/LOCKED_COMPONENTS.md`
+There are no locked components. A rule can be constitutional; a whole component file cannot.
 
-The locked-component reference: which components have frozen behavioural contracts, what each one owns, what may and may not change, and the modification protocol. Read before touching any component marked **LOCKED** in the registry. Kept in sync with source by `tests/architecture/locked-component-registry.test.js`.
+Each catalogue record carries a contract: `criticality` (`standard` or `critical`), invariants with evidence, an optional app-wide `exclusivity` rule, and the *changes* that require a product decision. Internal changes preserving a documented contract are ordinary development work. Read the record before changing a component.
 
 ---
 
@@ -173,7 +177,7 @@ Before making any UI change, confirm:
 2. **Hierarchy** — does this preserve `Subject → Module → Chapter → Screen → Component` as defined in `CONTENT_HIERARCHY.md`?
 3. **Rules** — does this follow all authoring rules in `COMPONENT_AUTHORING_RULES.md`?
 4. **Tokens** — am I using tokens from the relevant Foundation System doc?
-5. **Existing components** — does something in `COMPONENT_REGISTRY.md` already cover this?
-6. **Locked components** — if touching a locked component, see `LOCKED_COMPONENTS.md` first.
+5. **Existing components** — does something in the component catalogue already cover this?
+6. **Contracts** — read the component's catalogue record: does this change touch a documented invariant, exclusivity rule or public API?
 
 **When in doubt: go simpler, darker, calmer, and less decorated.**

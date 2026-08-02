@@ -39,7 +39,7 @@ function ChoiceQuestion({ q, onSelect, subject }) {
   )
 }
 
-// ─── RecoveryQuizPlayer v1 — LOCKED COMPONENT ──────────────────────────────
+// ─── RecoveryQuizPlayer v1 ─────────────────────────────────────────────────
 //
 // Lightweight surgical intervention quiz player.
 // Plays recovery quizzes to repair weak spot misconceptions.

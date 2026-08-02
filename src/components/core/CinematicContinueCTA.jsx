@@ -2,12 +2,12 @@ import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 
-// ── CinematicContinueCTA v1 — LOCKED COMPONENT ────────────────────────────
-// The only Cinematic Reveal CTA implementation allowed anywhere in the app —
-// see docs/system/BUTTON_RADII_SYSTEM.md "Progression CTA System".
+// ── CinematicContinueCTA v1 ───────────────────────────────────────────────
+// The Cinematic Reveal CTA — see docs/system/BUTTON_RADII_SYSTEM.md
+// "Progression CTA System".
 // `layout="fixed"` anchors progression to a full-screen cinematic moment.
 // `layout="inline"` keeps the same governed treatment in normal content flow.
-// `style` remains for layout-only overrides — never new typography or colour logic.
+// `style` remains for layout-only overrides.
 export default function CinematicContinueCTA({
   onClick,
   accent,

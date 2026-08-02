@@ -421,7 +421,7 @@ gcse-revision/
 **Reference & Design:**
 - `CLAUDE.md` (project instructions — READ BEFORE ANY WORK)
 - `BRAND.md` (design reference)
-- `docs/components/COMPONENT_REGISTRY.md` (component registry) and `docs/components/LOCKED_COMPONENTS.md` (locked components)
+- `src/component-catalogue/records/` (the component catalogue — identity, lifecycle, selection guidance and contracts) and its generated view `docs/components/COMPONENT_REGISTRY.md`
 - `docs/system/PRODUCT_UI_CONSTITUTION.md` (design law)
 - `docs/system/HISTORY_MODULE_ARCHITECTURE.md` (History-specific rules)
 - `docs/system/SCIENCE_MODULE_BLUEPRINT.md` (Science-specific rules)

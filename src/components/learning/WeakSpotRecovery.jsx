@@ -25,7 +25,7 @@ function ensureStyles() {
   document.head.appendChild(el)
 }
 
-// ─── WeakSpotRecovery v1 — LOCKED COMPONENT ─────────────────────────────────
+// ─── WeakSpotRecovery v1 ────────────────────────────────────────────────────
 //
 // Premium intervention screen shown when a learner struggles with a concept.
 //

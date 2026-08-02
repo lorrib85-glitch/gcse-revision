@@ -3,7 +3,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { TYPE } from '../../constants/typography.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 
-// ── RetrievalFrame v1 — LOCKED COMPONENT ──────────────────────────────────────
+// ── RetrievalFrame v1 ─────────────────────────────────────────────────────────
 // Cinematic wrapper for retrieval moments woven into learning flow.
 // CRITICAL: RetrievalFrame is a wrapper only. AnswerInteraction v1 owns all answer logic.
 //

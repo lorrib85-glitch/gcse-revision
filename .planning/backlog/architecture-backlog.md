@@ -1415,8 +1415,9 @@ introduced — the OS/browser setting remains authoritative.
   in `APPROVED_ONE_SHOT_READERS`. None was migrated: each governs a one-time
   event (a mount-scoped entrance, a single celebration, or a preference read
   taken *at the moment* of a one-off scroll/focus, which is always current).
-  Two are ring-fenced (`MedievalDiagnosisScene`, `CentreImageReveal`) and were
-  audited without being altered.
+  Two belong to the `CentreImageReveal` family (`MedievalDiagnosisScene` is its
+  private internal) and were audited without being altered. Neither carries a
+  contract restricting change — "ring-fenced" was never their status.
 - **CSS safety nets — untouched.** 36 files carrying a
   `@media (prefers-reduced-motion: reduce)` rule, 36 occurrences, before and
   after.
@@ -1516,7 +1517,7 @@ below is **not** in that category.
 
 | File | Category | Why it stays |
 |---|---|---|
-| `src/components/feedback/RetrievalFrame.jsx` | **C — locked capability** | Zero importers, but LOCKED in `docs/components/LOCKED_COMPONENTS.md` and catalogued in the registry. Locked components are not retired casually. |
+| `src/components/feedback/RetrievalFrame.jsx` | **C — critical capability** | Zero importers, but its catalogue record (`src/component-catalogue/records/retrieval-frame.js`) marks it `critical`: it is the governed presentation contract for embedded retrieval. Not retired casually. |
 | `src/components/learning/RecoveryQuizPlayer.jsx` | **B — dev/governance** | Mounted by the Component Review Lab; guarded by `chapter-player-private-family.test.js`. |
 | `src/components/learning/WeakSpotRecovery.jsx` | **B — dev/governance** | Same, plus referenced by `ExamRoundDebrief` and the mastery-engine docs. |
 | `src/features/planner/dailyPlanner.js` | **C — parked by decision** | See A17. |

@@ -9,7 +9,7 @@ const componentPath = 'src/components/learning/FactorWeb.jsx'
 const storyPath = 'src/components/learning/FactorWeb.stories.jsx'
 const contractPath = 'docs/system/component-contracts/factor-web.md'
 const limitsPath = 'src/constants/contentLimits.js'
-const lockedComponentsPath = 'docs/components/LOCKED_COMPONENTS.md'
+const catalogueRecordPath = 'src/component-catalogue/records/factor-web.js'
 const componentRegistryPath = 'docs/components/COMPONENT_REGISTRY.md'
 const goldRegisterPath = 'docs/system/GOLD_SCREEN_REGISTER.md'
 const tokensPath = 'src/constants/factorWeb.js'
@@ -188,16 +188,21 @@ describe('FactorWeb governance', () => {
     expect(contract).toContain('## 9. Review checks')
   })
 
-  it('locks the verified FactorWeb contract in the existing component governance docs', () => {
-    const lockedComponents = read(lockedComponentsPath)
+  it('records the verified FactorWeb contract in the component catalogue', () => {
+    const record = read(catalogueRecordPath)
     const componentRegistry = read(componentRegistryPath)
     const goldRegister = read(goldRegisterPath)
 
-    expect(lockedComponents).toContain('### FactorWeb')
-    expect(lockedComponents).toContain('centre dots')
-    expect(lockedComponents).toContain('SequenceProgress')
-    expect(componentRegistry).toContain('### FactorWeb — **LOCKED**')
+    expect(record).toContain("criticality: 'critical'")
+    expect(record).toContain('centre dots')
+    expect(record).toContain('SequenceProgress')
+    expect(record).toContain('docs/system/component-contracts/factor-web.md')
+
+    // The generated registry must carry the same contract through.
+    expect(componentRegistry).toContain('### FactorWeb')
+    expect(componentRegistry).toContain('**Contract:** critical')
     expect(componentRegistry).toContain('docs/system/component-contracts/factor-web.md')
+
     expect(goldRegister).toContain('approved Vesalius portrait')
     expect(goldRegister).toContain('centre dots removed')
   })

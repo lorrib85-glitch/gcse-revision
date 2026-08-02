@@ -4,7 +4,7 @@ import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 
-// ── AnswerInteraction v1 — LOCKED COMPONENT ────────────────────────────────────
+// ── AnswerInteraction v1 ──────────────────────────────────────────────────────
 // Reusable answer submission and feedback component for all non-timed learning activities.
 // EXEMPT: True/False questions (use existing ChapterHookScreen design).
 //

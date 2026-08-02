@@ -17,7 +17,7 @@
 
 **UI change** → `docs/system/00_SYSTEM_INDEX.md` first, then follow its order of authority.
 
-**Component change** → `docs/components/COMPONENT_REGISTRY.md` (check before building anything new), then `docs/components/LOCKED_COMPONENTS.md` if touching a locked component.
+**Component change** → the component catalogue: read `docs/components/COMPONENT_REGISTRY.md` (generated) before building anything new, and edit `src/component-catalogue/records/<id>.js` when a fact changes. Each record carries the component’s contract — there are no locked components.
 
 **Subject content change** → read the relevant canonical subject architecture file:
 - History: `docs/system/HISTORY_MODULE_ARCHITECTURE.md` + `docs/content/history/HISTORY_SERIES_MAP.md`

@@ -94,4 +94,4 @@ The codebase is substantially complete. This is NOT a greenfield project.
 
 **For Science module work**: Load `docs/system/SCIENCE_MODULE_BLUEPRINT.md` before building any Biology, Chemistry, or Physics content.
 
-**Before any component work**: Check `docs/components/COMPONENT_REGISTRY.md` and `docs/components/LOCKED_COMPONENTS.md` first.
+**Before any component work**: read the component's catalogue record in `src/component-catalogue/records/` (rendered for humans as `docs/components/COMPONENT_REGISTRY.md`). Each record carries the component's contract — there are no locked components.
