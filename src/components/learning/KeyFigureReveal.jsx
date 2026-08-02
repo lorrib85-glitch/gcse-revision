@@ -12,7 +12,8 @@ import SequenceProgress from '../core/SequenceProgress.jsx'
 const DEFAULT_PARCHMENT = '/images/history/medicine/galen-parchment.png'
 const MEDALLION_SIZE = 48
 const MEDALLION_ICON_SIZE = 26
-const EVIDENCE_IMAGE_HEIGHT = 180
+const EVIDENCE_IMAGE_HEIGHT = `clamp(${SPACING.section}px, 18dvh, ${SPACING.cinematic * 2}px)`
+const PORTRAIT_MIN_HEIGHT = `clamp(${SPACING.section + SPACING.standard}px, 24dvh, ${SPACING.cinematic * 3}px)`
 
 const FIGURE_PRESETS = {
   'four-humours': {
@@ -186,6 +187,8 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
   }
 
   return (
+    // The portrait and knowledge card must share one viewport; a scrolling shell
+    // would split the figure from the explanation the learner is revealing.
     <CinematicShell
       onKeyDown={handleKeyDown}
       style={{
@@ -220,9 +223,9 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
 
       <div style={{
         position: 'relative',
-        height: portraitHeight,
+        minHeight: PORTRAIT_MIN_HEIGHT,
         overflow: 'hidden',
-        flexShrink: 0,
+        flex: `1 1 ${portraitHeight}`,
       }}>
         <img
           src={block.portrait}
@@ -273,7 +276,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         onTouchEnd={handleTouchEnd}
         onTouchCancel={() => { touchRef.current = null }}
         style={{
-          flex: 1,
+          flex: '0 0 auto',
           minHeight: 0,
           position: 'relative',
           paddingLeft: SPACING.standard,
@@ -287,7 +290,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           display: 'flex',
           flexDirection: 'column',
           gap: SPACING.micro,
-          overflow: 'hidden',
+          overflow: 'visible',
           outline: 'none',
         }}
       >
@@ -296,7 +299,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           className="kfr-card"
           aria-live="polite"
           style={{
-            flex: 1,
+            flex: '0 0 auto',
             minHeight: 0,
             borderRadius: RADII.medium,
             padding: SPACING.compact,
@@ -319,10 +322,6 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
 
           <div style={{
             position: 'relative',
-            height: '100%',
-            overflowY: 'auto',
-            overscrollBehavior: 'contain',
-            WebkitOverflowScrolling: 'touch',
           }}>
             <div style={{
               display: 'flex',
