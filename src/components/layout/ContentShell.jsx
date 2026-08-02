@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { SPACING } from '../../constants/spacing.js'
+import { SPACING, COMPONENT_SIZE } from '../../constants/spacing.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { InlineNavigationContext } from '../core/InlineNavigationContext.jsx'
 
@@ -78,7 +78,7 @@ export default function ContentShell({
   backgroundImage = null,
   backgroundOpacity = 0.13,
   backgroundPosition = 'center',
-  // 'learning' clears the fixed LearningHeader (80px); 'none' applies safe-area only (headerless screens)
+  // 'learning' uses the shared fixed-header clearance; 'none' applies safe-area only.
   header = 'learning',
   children,
 }) {
@@ -153,7 +153,7 @@ export default function ContentShell({
             boxSizing: 'border-box',
             paddingTop: header === 'none'
               ? 'env(safe-area-inset-top, 0px)'
-              : 'calc(80px + env(safe-area-inset-top, 0px))',
+              : `calc(${COMPONENT_SIZE.learningHeaderClearance}px + env(safe-area-inset-top, 0px))`,
             paddingLeft: SPACING.compact,
             paddingRight: SPACING.compact,
             paddingBottom: ownsInlineNavigation
