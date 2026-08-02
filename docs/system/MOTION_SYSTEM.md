@@ -79,6 +79,50 @@ Component-level handling is still required when motion is driven by JavaScript o
 
 ---
 
+## Reduced-motion ownership
+
+There are exactly **four** permitted mechanisms. Anything else is a defect.
+
+| Mechanism | What it is | When to use it |
+|---|---|---|
+| **CSS safety net** | Global and component-local `@media (prefers-reduced-motion: reduce)` rules | Always. Independent of JavaScript, so it keeps working when JS is slow, failed or disabled |
+| **Canonical React preference** | `usePrefersReducedMotion` (`src/hooks/usePrefersReducedMotion.js`) | The single app-owned reactive JS source. Default for any component whose motion is driven by JS |
+| **Third-party delegated hook** | `useReducedMotion` from `motion/react` | Allowed **inside components already built on Motion** (`TimelineCanvas`, `TimelineChain`, `FactorWeb`). It is reactive and correct on first render — do not swap it out just to make every import name match, and do not add Motion to a component that does not already use it |
+| **One-shot synchronous read** | `window.matchMedia('(prefers-reduced-motion: reduce)').matches`, read once | Only for genuinely one-time behaviour: a single celebration, one counter animation, one gesture response, one scroll-into-view. **Must be registered with a reason** in `APPROVED_ONE_SHOT_READERS` in `tests/architecture/reduced-motion-boundary.test.js` |
+
+**A private reactive hook is forbidden.** No component may own its own
+`matchMedia` + `change` subscription. `tests/architecture/reduced-motion-boundary.test.js`
+fails the build if one appears, if a file re-declares `usePrefersReducedMotion`
+or `useReducedMotion`, or if a new direct reader shows up unclassified.
+
+### The rules that follow from this
+
+- **The device preference is honoured from the first render.** The canonical
+  hook reads `matchMedia` in a lazy state initialiser, so a learner who already
+  asked for reduced motion never gets a frame of animation before an effect
+  corrects it. Any state that *drives* an entrance must be seeded from the
+  preference too — seeding it to the hidden/animated start value and fixing it
+  up in an effect reintroduces the same false first frame one level down.
+- **Reduced motion does not mean "remove all visual personality."** Colour,
+  depth, imagery, typography and atmosphere all stay. What goes is perceptible
+  movement.
+- **Meaningful content and functional feedback remain.** Nothing is dropped from
+  the screen, the reading order is unchanged, and every interaction stays
+  reachable.
+- **Transforms, autoplay-like animation and delayed staged reveals need an
+  equivalent calm path** — the final state, present immediately, in the same
+  order. Not a redesigned interaction.
+- **CSS rules stay even where JavaScript handling exists.** The two layers are
+  independent fallbacks, not duplicates. Never delete a component's
+  `@media (prefers-reduced-motion: reduce)` block because a hook covers the same
+  case.
+- **Timed automatic content replacement is sequencing, not motion.** Advancing
+  through a set of images on a timer is a separate product question from whether
+  those images animate in. Suppress the animation; do not silently redesign the
+  sequence.
+
+---
+
 ## Key-point reveal
 
 A screen's final key-point / payoff box (the callout that lands the takeaway) **always reveals gradually** — a deliberate fade-and-rise, timed to arrive slightly after the surrounding content, so the point registers as a moment rather than being present from first paint.

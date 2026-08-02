@@ -5,6 +5,7 @@ import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import CinematicDivider from '../core/CinematicDivider.jsx'
+import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion.js'
 
 function ensureStyles() {
   if (document.getElementById('qa-styles')) return
@@ -342,13 +343,16 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
     hintLabel: block.interpretationSupport?.hintLabel || 'Give me one hint',
   }
 
+  const reducedMotion = usePrefersReducedMotion()
+
   const [step, setStep] = useState('context')
-  const [visibleWords, setVisibleWords] = useState(0)
-  const [showAttribution, setShowAttribution] = useState(false)
-  const [showCTA, setShowCTA] = useState(false)
+  // Seeded from the preference, not from the animated start state: under reduced
+  // motion the quote, attribution and CTA are present on the very first frame.
+  const [visibleWords, setVisibleWords] = useState(() => (reducedMotion ? words.length : 0))
+  const [showAttribution, setShowAttribution] = useState(() => reducedMotion)
+  const [showCTA, setShowCTA] = useState(() => reducedMotion)
   const [activeWord, setActiveWord] = useState(null)
   const [openedWords, setOpenedWords] = useState([])
-  const [reducedMotion, setReducedMotion] = useState(false)
   const [interpretation, setInterpretation] = useState('')
   const [feedback, setFeedback] = useState(null)
   const [checking, setChecking] = useState(false)
@@ -359,15 +363,6 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
 
   const exploredWordCount = markedWordKeys.filter(key => openedWords.includes(key)).length
   const allWordsOpened = markedWordKeys.length > 0 && exploredWordCount === markedWordKeys.length
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return undefined
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const update = () => setReducedMotion(media.matches)
-    update()
-    media.addEventListener?.('change', update)
-    return () => media.removeEventListener?.('change', update)
-  }, [])
 
   useEffect(() => {
     if (step !== 'read') {

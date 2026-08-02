@@ -489,6 +489,122 @@ Also still open, and unchanged by this phase: the §9 content/metadata anomalies
 
 ---
 
+## 18. Phase 12 closure note (2026-08-02) — A14 reduced-motion
+
+Started from `main` @ `1483d2e` (Phase 11). The Phase 10 census was **re-run
+against that tree**, not carried over — and it corrected one of Phase 10's
+claims (below).
+
+### Census — before and after
+
+| Mechanism | Before | After | Change |
+|---|---:|---:|---|
+| Canonical hook (`src/hooks/usePrefersReducedMotion.js`) | 1 | 1 | Strengthened, not replaced |
+| Components importing the canonical hook | 10 | 13 | +3 migrated |
+| **Private reactive implementations** | **3** | **0** | All removed |
+| Third-party `motion/react` `useReducedMotion` | 3 | 3 | Retained, documented as approved |
+| One-shot synchronous readers | 15 | 15 | None migrated; all now registered with a reason |
+| Files with a `@media (prefers-reduced-motion: reduce)` rule | 36 | 36 | Unchanged |
+| Total `@media (prefers-reduced-motion` occurrences | 36 | 36 | Unchanged |
+| Architecture guards for reduced-motion | 0 | 1 file / 10 tests | New |
+
+The Phase 10 "about 15" one-shot estimate turned out to be exact: **15**.
+
+### The correction to the Phase 10 finding
+
+Phase 10 recorded three private hooks that "seed to `false`". Two do
+(`GuidedExamResponse`, `QuoteAnalyser`). The third, `CinematicCarousel`, already
+seeded synchronously from `matchMedia` — its faults were duplicate ownership
+under the canonical hook's exact name, and a privately-held legacy `addListener`
+fallback. The historical finding is preserved in the backlog; the corrected
+evidence sits beside it.
+
+### Private implementations removed
+
+`GuidedExamResponse.useReducedMotion()`, `QuoteAnalyser`'s local
+`reducedMotion` state + `matchMedia` effect, and
+`CinematicCarousel.usePrefersReducedMotion()`. In the first two, the dependent
+entrance state (`beatVisible`; `visibleWords` / `showAttribution` / `showCTA`)
+was **also** re-seeded from the preference — swapping the hook alone would have
+left a hidden first frame one level down. The carousel's legacy-listener
+compatibility moved into the canonical hook rather than being dropped.
+
+### One-shot readers retained / migrated
+
+**Retained: 15. Migrated: 0.** Each governs a one-time event — a mount-scoped
+entrance, one celebration, one counter, or a read taken *at the moment* of a
+single scroll/focus move (which is therefore always current). Two are
+ring-fenced (`MedievalDiagnosisScene`, `CentreImageReveal`): audited, not
+altered. Every retained entry carries a written reason in
+`APPROVED_ONE_SHOT_READERS`, and the guard fails on a stale entry, a blank
+reason, or a new unclassified reader.
+
+### Third-party hooks retained
+
+`TimelineCanvas`, `TimelineChain`, `FactorWeb` — `motion/react`'s
+`useReducedMotion`. Reactive and correct on first render. Documented as approved
+delegated implementations in `docs/system/MOTION_SYSTEM.md`; the guard
+explicitly permits the import.
+
+### Verification
+
+Gate counts measured on both sides — the "before" column is a real run of the
+stashed tree at `1483d2e`, not a figure carried over:
+
+| Gate | Before (files / tests) | After (files / tests) |
+|---|---|---|
+| `test:architecture` | 50 / **1391** | 51 / **1403** |
+| `test:unit` | 66 / **1222** | 67 / **1233** |
+| `test:storybook` | 31 / **285** | 33 / **301** |
+| `lint` | 0 errors, 90 warnings | 0 errors, 90 warnings |
+| `build` | pass | pass |
+
+Unit `+11` and Storybook `+16` are exactly the new tests. Architecture is `+12`
+for a 10-test file: the two new `.stories.jsx` files also add two cases to an
+existing story-iterating architecture test.
+- Real-browser run at **390 px** with Playwright `reducedMotion: 'reduce'`
+  applied *before* page load: **26/26** checks across GuidedExamResponse,
+  QuoteAnalyser and CinematicCarousel in the Component Review Lab — including a
+  live preference toggle on a mounted consumer in **both** directions
+  (`reduce → no-preference` restores animation, `no-preference → reduce`
+  suppresses it) with no duplicate listener and no console error. Zero
+  horizontal overflow, zero page errors, no copy or layout change.
+- `imageReveal` mode verified separately against a decorator-free story:
+  **7/7**, entrance and CTA animations absent under `reduce`, present under
+  `no-preference`.
+- **8 mutations** each failed the intended test and were reverted byte-exact:
+  private hook name, private reactive subscription, unclassified one-shot
+  reader, lost legacy `addListener` fallback, lost lazy initialiser, both
+  re-seeded hidden first frames, and a carousel that stops importing the
+  canonical hook. The first pass of the two seeding mutations *passed* — the
+  behavioural tests were then strengthened with a `MutationObserver` that
+  records any element painted at `opacity: 0` and corrected afterwards, which
+  catches them.
+
+### A14 status
+
+**Resolved.** Preference source is consistent, known from the first render, and
+governed. What is deliberately **not** claimed: that all JavaScript motion runs
+through one hook — three approved `motion/react` hooks and 15 registered
+one-shot reads remain by design.
+
+### Separate decision recorded, not taken
+
+`CinematicCarousel` `mode: 'imageReveal'` still replaces images on a
+`revealInterval` timer under reduced motion. Entrance animation is suppressed;
+automatic sequencing is not. Redesigning it (static grid / manual carousel /
+new Next control) is a component-contract decision and was deliberately left
+alone. Logged in A14 as a follow-up product question; it does not block closure,
+because A14 is about where the preference comes from and when it is known.
+
+### Next
+
+**A13 — font request cleanup** is now the next original-audit item. A15 remains
+observation-only.
+
+---
+
 *Reconciled 2026-08-02 against `main` @ `bbc8d3d`. Every figure in this document
 was produced by rerunning the gate, not carried over from a previous report.
-Section 17 added 2026-08-02 (Phase 11), verified against `main` @ `5690f92`.*
+Section 17 added 2026-08-02 (Phase 11), verified against `main` @ `5690f92`.
+Section 18 added 2026-08-02 (Phase 12), verified against `main` @ `1483d2e`.*

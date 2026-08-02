@@ -1321,7 +1321,7 @@ which is why Phase 10 recorded it instead of doing it.
 
 ## A14 — Reduced-motion has one canonical hook and several private re-implementations
 
-**Status:** Backlog
+**Status:** ✅ Resolved (Phase 12, 2026-08-02) — see "Resolution" at the end of this item
 **Priority:** Medium — accessibility correctness, not tidiness
 **Area:** `src/hooks/usePrefersReducedMotion.js` and ~20 learning components
 
@@ -1367,6 +1367,82 @@ because a JS hook covers the same case.
 - One JS source of reduced-motion truth, or a written reason per exception.
 - No component seeds reduced-motion to `false` and animates before correcting.
 - Every existing `@media (prefers-reduced-motion: reduce)` block still present.
+
+### Correction to the Phase 10 finding (recorded 2026-08-02, Phase 12)
+
+The Phase 10 table above says all three private implementations "seed to
+`false`". Re-running the census against current `main` proves that was too
+coarse. The historical finding is kept as written; the corrected evidence is:
+
+| File | Phase 10 said | Actually, on current `main` |
+|---|---|---|
+| `GuidedExamResponse.jsx:66` | seeds `false` | **Correct.** `useState(false)`, corrected in an effect. Genuine false first frame — and `beatVisible` also seeded `false`, so the effect additionally *scheduled* the 140 ms reveal timer before the correction landed |
+| `QuoteAnalyser.jsx:351` | seeds `false` | **Correct.** `useState(false)` + a component-local `matchMedia` effect |
+| `CinematicCarousel.jsx:102` | seeds `false` | **Wrong.** It already seeded from `matchMedia` in a lazy initialiser. Its defects were *duplicate ownership under the canonical hook's exact name* and a privately-held legacy `addListener` fallback |
+
+The "~15 one-shot readers" estimate was also re-derived rather than carried
+over. The actual count on current `main` is **15** — the list is now pinned
+file-by-file, with a reason each, in the architecture guard.
+
+### Resolution (Phase 12, 2026-08-02) — from `main` @ `1483d2e`
+
+**Canonical hook.** `src/hooks/usePrefersReducedMotion.js` keeps its default
+export and gains a testable core: `REDUCED_MOTION_QUERY`,
+`readPrefersReducedMotion()` and `subscribeToReducedMotionPreference()`. It now
+also carries the legacy `addListener`/`removeListener` fallback that was
+previously private to `CinematicCarousel`, and re-syncs when the effect
+subscribes. No context, store, provider, event bus or persisted preference was
+introduced — the OS/browser setting remains authoritative.
+
+**Private implementations removed — all three.**
+
+- `GuidedExamResponse` — private `useReducedMotion()` deleted; `beatVisible` now
+  seeded `reducedMotion || !beatText`, so under reduced motion the beat renders
+  in its final visible state and the 140 ms timer is never scheduled.
+- `QuoteAnalyser` — local `reducedMotion` state, `matchMedia` effect and
+  listener deleted; `visibleWords` / `showAttribution` / `showCTA` seeded from
+  the preference.
+- `CinematicCarousel` — private `usePrefersReducedMotion()` deleted, with its
+  legacy-listener compatibility moved into the canonical hook rather than lost.
+
+**Retained deliberately.**
+
+- **3 third-party hooks** — `motion/react`'s `useReducedMotion` in
+  `TimelineCanvas`, `TimelineChain`, `FactorWeb`. Reactive, correct on first
+  render, and part of the animation library those components already use.
+  Documented as approved delegated implementations, not re-implementations.
+- **15 one-shot synchronous readers** — every one now carries an explicit reason
+  in `APPROVED_ONE_SHOT_READERS`. None was migrated: each governs a one-time
+  event (a mount-scoped entrance, a single celebration, or a preference read
+  taken *at the moment* of a one-off scroll/focus, which is always current).
+  Two are ring-fenced (`MedievalDiagnosisScene`, `CentreImageReveal`) and were
+  audited without being altered.
+- **CSS safety nets — untouched.** 36 files carrying a
+  `@media (prefers-reduced-motion: reduce)` rule, 36 occurrences, before and
+  after.
+
+**Guarded.** `tests/architecture/reduced-motion-boundary.test.js` (10 tests)
+pins the ownership rule; `tests/unit/prefersReducedMotion.test.js` (11 tests)
+covers the hook's core including both listener vintages;
+`src/hooks/usePrefersReducedMotion.stories.jsx` plus reduced/normal-motion
+stories on all three migrated components cover the React and rendered
+behaviour. Eight targeted mutations were each shown to fail the right test and
+reverted byte-exact.
+
+**Separate, still open: the `imageReveal` timed sequence.** `CinematicCarousel`
+`mode: 'imageReveal'` advances between images on a `revealInterval` timer. Under
+reduced motion its *entrance animations* are now suppressed from the first
+frame (verified in a real browser), but the timed content replacement still
+happens. That is automatic sequencing, not motion, and changing it — to a static
+grid, a manual carousel, or a new Next control — is a component-contract
+decision, not an accessibility fix. Recorded here as a follow-up product
+question. **It does not block A14 closure:** A14 is about where the preference
+comes from and when it is known, and that is now consistent, immediate and
+governed.
+
+**Not claimed:** that all JavaScript motion runs through one hook. It does not —
+three approved `motion/react` hooks and 15 registered one-shot reads remain, by
+design.
 
 ---
 

@@ -11,6 +11,7 @@ import { logExamTechnique, getExamTechniquePatterns } from '../../unifiedWeaknes
 import BackButton from '../core/BackButton.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import ExamPrompt from '../core/ExamPrompt.jsx'
+import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion.js'
 
 const RECURRING_PATTERN_THRESHOLD = 3
 const SUPPORTED_SUPPORT_MODES = new Set(['guided', 'light', 'none'])
@@ -61,21 +62,6 @@ function renderFullScreen(node) {
   // virtual mobile viewport. Portalling to document.body would escape that frame.
   const isReviewPreview = document.querySelector('[data-review-preview-mode]')
   return isReviewPreview ? node : createPortal(node, document.body)
-}
-
-function useReducedMotion() {
-  const [reduced, setReduced] = useState(false)
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return undefined
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const update = () => setReduced(query.matches)
-    update()
-    query.addEventListener?.('change', update)
-    return () => query.removeEventListener?.('change', update)
-  }, [])
-
-  return reduced
 }
 
 function titleCase(value) {
@@ -414,10 +400,12 @@ export default function GuidedExamResponse({ chapter, module = {}, exam = {}, on
   const beatText = exam.beatText?.trim() || ''
   const supportMode = resolveSupportMode(exam)
   const labels = { ...DEFAULT_LABELS, ...(exam.labels || {}) }
-  const reducedMotion = useReducedMotion()
+  const reducedMotion = usePrefersReducedMotion()
 
   const [phase, setPhase] = useState(beatText ? 'darkBeat' : 'intro')
-  const [beatVisible, setBeatVisible] = useState(false)
+  // Seeded from the preference, not from the animated start state: a learner who
+  // already asked for reduced motion must never get a hidden first frame.
+  const [beatVisible, setBeatVisible] = useState(() => reducedMotion || !beatText)
   const [sectionTexts, setSectionTexts] = useState(() => sections.map(section => section.starter || ''))
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)

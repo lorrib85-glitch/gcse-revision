@@ -552,7 +552,7 @@ Extending it with a *new* validated presentation variant remains in scope.
 **Props:** `block`, `subject` (defaults to `Biology`), `onContinue`
 **Block shape:** `{ type: 'cinematicCarousel', title?, intro?, items: [{ id, image, label, facts: string[] }] }`
 **Screen type:** `cinematicCarousel` (full-screen, routed directly in `ChapterPlayer.jsx` like `TimelineCanvas`)
-**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `usePrefersReducedMotion`
 
 - **Decision**
   - **Use when:** the learner needs to explore a small related collection in which every item deserves its own image, name and focused set of facts. Choose it when viewing each item separately helps the learner notice or understand its individual features.
@@ -1498,7 +1498,7 @@ These components may form a sequence, but should not automatically be stacked ar
 ```
 **Screen type:** `quoteAnalyser` (full-screen, routed in `ChapterPlayer.jsx`)
 **Animation:** word-by-word quote reveal via staggered `opacity` transitions; card entrance via `qa-card-in` CSS keyframe; seen-tick pop via `qa-tick-pop`; expanded overlay via `qa-slide-up`
-**Dependencies:** `SUBJECTS`, `RADII`, `TYPE`, `ContinueCTA`
+**Dependencies:** `SUBJECTS`, `RADII`, `TYPE`, `ContinueCTA`, `usePrefersReducedMotion`
 
 ---
 
@@ -1533,7 +1533,7 @@ documentation, it is marked pending rather than invented.
 **Props:** `chapter`, `module` (default `{}`), `exam` (default `{}`), `onExit`, `onContinue`, `theme` (`'general'` for non-subject branding), `embedded` (default false)
 **Exam shape:** `{ board, subject, subjectLabel?, topic, question, marks, sections, markScheme, sources?, beatText?, labels?, supportMode? }` where `supportMode` is `'guided' | 'light' | 'none'`
 **Screen type:** `guidedExamResponse` (registered in `screenRegistry.js`; function tag `exam-technique`, interaction `assessed`)
-**Dependencies:** `SPACING`, `COMPONENT_SIZE`, `MOTION`, `TYPE`, `RADII`, `BUTTONS`, `GENERAL`, `SUBJECTS`, `BackButton`, `ContinueCTA`, `ExamPrompt`, `logExamTechnique` / `getExamTechniquePatterns`
+**Dependencies:** `SPACING`, `COMPONENT_SIZE`, `MOTION`, `TYPE`, `RADII`, `BUTTONS`, `GENERAL`, `SUBJECTS`, `BackButton`, `ContinueCTA`, `ExamPrompt`, `logExamTechnique` / `getExamTechniquePatterns`, `usePrefersReducedMotion`
 **Usage boundary:** support *during* construction. Used both as an authorable chapter screen and, with `embedded`, as the worked-example and write stages inside `GuidedAnswerCoach`.
 **Classification:** authorable learning screen + embeddable stage. Not locked.
 
