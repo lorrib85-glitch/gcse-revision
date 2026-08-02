@@ -11,8 +11,10 @@ import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 //
 // This IS Route A — the default learning-composition route for new teaching
 // and explanation screens. It owns the screen heading (TYPE.displayScreen) and
-// the vertical rhythm; those must not be overridden locally. It is a
-// composition primitive, NOT a universal wrapper: do not use it to wrap
+// the vertical rhythm; those must not be overridden locally. The surrounding
+// structural shell owns safe-area and fixed-header clearance, so this route
+// starts at the content edge rather than adding a second top inset.
+// It is a composition primitive, NOT a universal wrapper: do not use it to wrap
 // cinematic/full-screen (Route C) components, interaction engines that own
 // their own screen (Route B), another shell, or another TeachScreenShell.
 //
@@ -55,7 +57,7 @@ export default function TeachScreenShell({ heading, eyebrow, intro, children, me
       isolation: 'isolate',
       maxWidth: 420,
       margin: '0 auto',
-      padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.cinematic}px`,
+      padding: `0 ${SPACING.standard}px ${SPACING.cinematic}px`,
       boxSizing: 'border-box',
     }}>
 
