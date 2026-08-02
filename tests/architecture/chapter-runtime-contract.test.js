@@ -28,6 +28,15 @@ describe('canonical chapter runtime', () => {
     expect(canonical).toContain('getChapterGate(chapter,')
   })
 
+  // A4's direction of travel: ChapterPlayer reads as orchestration, not component
+  // implementation. Lower this alongside a real extraction; never raise it to
+  // accommodate JSX growing back into the runtime. Headroom is deliberate — it is
+  // room for comments and small orchestration edits, not for another render path.
+  it('stays within its line ceiling — the runtime orchestrates, it does not implement', () => {
+    const lines = read('src/components/layout/ChapterPlayer.jsx').split('\n').length
+    expect(lines).toBeLessThanOrEqual(300)
+  })
+
   it('production source contains no deleted runtime imports', () => {
     const playerViolators = sources
       .filter(source => /from\s+['"][^'"]*ModulePlayer\.jsx['"]|import\(['"][^'"]*ModulePlayer\.jsx['"]\)/.test(source.content))

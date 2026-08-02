@@ -103,21 +103,21 @@ export function buildCompletedChapterState({ total, examinerAttempts }) {
   }
 }
 
-// Pure: decide what handleFinish should do when the user continues from the
-// final content screen. Mirrors the priority order in ChapterPlayer.jsx's
-// handleFinish exactly: examinerExplains gate first (shown once), then the
-// examiner gate, then completion. All side effects (setShowExaminerExplains,
-// setShowExaminer, detectWeakSpot/completeChapter, scrollToTop) stay in
-// ChapterPlayer.jsx — this only returns the decision.
-export function resolveFinishAction(chapter, { showExaminerExplains } = {}) {
-  if (chapter.examinerExplains && !showExaminerExplains) {
-    return { type: 'showExaminerExplains' }
-  }
-  if (chapter.examiner) {
-    return { type: 'showExaminer' }
-  }
-  return { type: 'completeChapter' }
-}
+// Finish contract — the current rule, and why the helper that encoded it is gone
+// ─────────────────────────────────────────────────────────────────────────────
+// Continuing from the final content screen completes the chapter. There is no
+// decision left to make, so there is no resolveFinishAction() any more —
+// ChapterPlayer.handleFinish() calls completeChapter() unconditionally.
+//
+// History (kept so the removal is not re-litigated): the helper was extracted in
+// A4 phase 2 to mirror a three-way ladder — a module-level examinerExplains gate
+// shown once, then a module-level examiner gate, then completion — driven by
+// top-level `chapter.examinerExplains` / `chapter.examiner` metadata. The Phase 8
+// audit found no chapter has ever defined either key (0 of 81 content modules,
+// 0 of 60 rows in chapters.js), so only the third branch could ever be taken.
+// Both features do ship, but as *authored screens* (`type: 'examinerExplains'`,
+// `type: 'faceExaminer'`) routed by ScreenRenderer, which never touch this path.
+// Reintroducing a module-level ladder is a product decision, not a refactor.
 
 // Pure: decide which universal-opener gate (hook/outcomes/recall) ChapterPlayer
 // should render before its main content, or none. Mirrors the priority order

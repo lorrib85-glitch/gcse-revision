@@ -5,7 +5,6 @@ import {
   isFullScreenVideoScreen,
   computeInitialChapterState,
   clampScreenIndex,
-  resolveFinishAction,
   getChapterGate,
   resolveNextAvailableChapter,
   buildChapterCompletePayload,
@@ -330,42 +329,23 @@ describe('clampScreenIndex', () => {
   })
 })
 
-// Contract-level coverage for the final-screen finish decision — mirrors
-// ChapterPlayer.jsx's handleFinish priority order: examinerExplains gate
-// (shown once) first, then examiner, then completion.
-describe('resolveFinishAction', () => {
-  it('given chapter.examinerExplains present and not yet shown, returns showExaminerExplains', () => {
-    const chapter = makeChapter({ examinerExplains: { statement: 'x' } })
-    expect(resolveFinishAction(chapter, { showExaminerExplains: false })).toEqual({ type: 'showExaminerExplains' })
-  })
-
-  it('given chapter.examinerExplains present and already shown, does not loop back — falls through to the examiner/complete check', () => {
-    const chapter = makeChapter({ examinerExplains: { statement: 'x' } })
-    expect(resolveFinishAction(chapter, { showExaminerExplains: true })).toEqual({ type: 'completeChapter' })
-  })
-
-  it('given no examinerExplains and chapter.examiner present, returns showExaminer', () => {
-    const chapter = makeChapter({ examiner: { questions: [] } })
-    expect(resolveFinishAction(chapter, { showExaminerExplains: false })).toEqual({ type: 'showExaminer' })
-  })
-
-  it('given neither examinerExplains nor examiner, returns completeChapter', () => {
-    const chapter = makeChapter()
-    expect(resolveFinishAction(chapter, { showExaminerExplains: false })).toEqual({ type: 'completeChapter' })
-  })
-
-  it('given both examinerExplains and examiner, examinerExplains takes priority while unshown', () => {
-    const chapter = makeChapter({ examinerExplains: { statement: 'x' }, examiner: { questions: [] } })
-    expect(resolveFinishAction(chapter, { showExaminerExplains: false })).toEqual({ type: 'showExaminerExplains' })
-  })
-
-  it('given both examinerExplains and examiner, once examinerExplains has been shown, examiner takes priority over completion', () => {
-    const chapter = makeChapter({ examinerExplains: { statement: 'x' }, examiner: { questions: [] } })
-    expect(resolveFinishAction(chapter, { showExaminerExplains: true })).toEqual({ type: 'showExaminer' })
-  })
-
-  it('given an empty chapter object and no options, tolerates missing fields and returns completeChapter (matches current handleFinish, which never receives an empty chapter in practice but this mirrors property-access-only logic)', () => {
-    expect(resolveFinishAction({})).toEqual({ type: 'completeChapter' })
+// The final-screen finish contract — resolveFinishAction is deliberately gone.
+//
+// Continuing from the last content screen completes the chapter, unconditionally.
+// The helper that used to encode a three-way ladder (module-level examinerExplains
+// gate → module-level examiner gate → completion) was removed in A4 Phase 8: no
+// chapter has ever defined a top-level `chapter.examinerExplains` or
+// `chapter.examiner`, so only the completion branch was ever reachable. Both
+// features ship as authored *screens* routed by ScreenRenderer instead.
+//
+// Only the module-level fact is asserted here. The runtime side — that
+// ChapterPlayer's handleFinish completes directly and that no overlay state name
+// returns — is owned by tests/architecture/chapter-player-private-family.test.js,
+// which is where source-scanning guards belong.
+describe('finish contract — no module-level examiner ladder', () => {
+  it('chapterNavigation.js exports no resolveFinishAction', async () => {
+    const navigation = await import('../../../src/app/chapterNavigation.js')
+    expect(navigation.resolveFinishAction).toBeUndefined()
   })
 })
 

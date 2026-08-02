@@ -34,6 +34,10 @@ const FAMILY_INTERNALS = {
     owner: 'src/components/learning/CircuitDiagram.jsx',
     reason: 'Shared SVG circuit primitives for the Physics circuit family. Rendered only through CircuitDiagram and CircuitSymbolReference.',
   },
+  'src/components/layout/chapterPlayer': {
+    owner: 'src/components/layout/ChapterPlayer.jsx',
+    reason: "ChapterPlayer's own runtime JSX, split out of the player: the universal opener gate layer and the fixed bottom-navigation shell. Authors never place either — the runtime decides — so they are deliberately absent from screenRegistry.js, componentFunctions.js and the Component Lab. Guarded by tests/architecture/chapter-player-private-family.test.js.",
+  },
 }
 
 // Individual files that are private to one registered component.

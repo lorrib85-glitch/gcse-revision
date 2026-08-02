@@ -56,10 +56,22 @@ describe('chapter persistence boundary — ChapterPlayer call sites', () => {
     expect(saveCalls.length).toBeGreaterThan(0)
   })
 
-  it('completeChapter accepts the attempts to persist, so an examiner completion cannot save stale attempts', () => {
-    expect(source).toMatch(/function completeChapter\(attempts = examinerAttempts\)/)
-    expect(source).toMatch(/buildCompletedChapterState\(\{ total, examinerAttempts: attempts \}\)/)
-    expect(source).toMatch(/completeChapter\(updated\)/)
+  // Phase 7 gave completeChapter an `attempts` parameter so the module-level Face
+  // the Examiner overlay could pass its freshly appended attempt into the
+  // completion write instead of persisting a stale closure copy. Phase 8 removed
+  // that overlay (no chapter has ever defined a top-level chapter.examiner), so
+  // nothing appends attempts any more and the parameter is gone with it.
+  // examinerAttempts itself is deliberately NOT removed from the persisted shape:
+  // it is read back from saved state and written straight through, so existing
+  // saves round-trip unchanged and chapterProgress.js's merge rules keep working.
+  it('completion still persists the examiner attempts read back from saved state', () => {
+    expect(source).toMatch(/function completeChapter\(\) \{/)
+    expect(source).toMatch(/buildCompletedChapterState\(\{ total, examinerAttempts \}\)/)
+    expect(source).toMatch(/const examinerAttempts = initial\.examinerAttempts/)
+  })
+
+  it('the autosave snapshot still carries examinerAttempts — the persisted shape is unchanged', () => {
+    expect(source).toMatch(/buildChapterProgressState\(\{[^}]*examinerAttempts[^}]*\}\)/)
   })
 
   it('reads and writes chapter state only through the public progress API', () => {

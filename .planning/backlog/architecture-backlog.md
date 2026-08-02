@@ -493,9 +493,9 @@ dead-code regression are both guarded.
 
 ## A4 — ChapterPlayer staged extraction
 
-**Status:** In progress — navigation, persistence and dead-render removal complete; the live rendering split (bottom-nav shell + gate/overlay branches) remains  
+**Status:** **Resolved (2026-08-01)** — navigation, persistence, dead-render removal, the overlay audit, the live gate extraction and the bottom-navigation extraction are all complete. `ChapterPlayer.jsx` is **273 lines** and reads as runtime orchestration; `ScreenRenderer` remains the authored-screen router. See "Phase 8 — closure" below.  
 **Priority:** High  
-**Area:** `src/components/layout/ChapterPlayer.jsx`, `src/app/chapterNavigation.js`, `tests/unit/chapterPlayer/`, `tests/architecture/chapter-persistence-boundary.test.js`
+**Area:** `src/components/layout/ChapterPlayer.jsx`, `src/components/layout/chapterPlayer/`, `src/app/chapterNavigation.js`, `tests/unit/chapterPlayer/`, `tests/architecture/chapter-persistence-boundary.test.js`, `tests/architecture/chapter-player-private-family.test.js`
 
 ### Naming note (corrected 2026-08-01)
 Phases 1–2 of this item were carried out while the runtime was still called
@@ -702,19 +702,187 @@ No code was moved and no behaviour changed.
 `ChapterPlayer.jsx`: **1076 → 434 lines** (−60%). `ScreenRenderer.jsx`: 1278 → 1251.
 Lazy chunk: 75.05 kB → 60.28 kB (gzip 21.64 → 18.03 kB).
 
-Rendering split, part 2 — **open, not started**:
-- What remains in `ChapterPlayer.jsx` is the bottom-navigation shell and the gate
-  and overlay render branches (hook / outcomes / recall gates, examiner-explains,
-  face-the-examiner, recovery quiz, weak-spot recovery), around the runtime state
-  orchestration.
-- `ScreenRenderer.jsx` already owns screen and block routing; this phase is about
-  the runtime's own JSX, not routing.
-- Highest-risk phase because it touches visual rendering. Do not start it in the
-  same pass as any state work.
+Rendering split, part 2 — **complete (2026-08-01)**. Ran in two ordered halves:
+an audit of every remaining overlay branch, then extraction of the live renderers.
+
+#### Overlay reachability audit
+
+Five branches were audited before anything was moved. All five were dead; none
+had a duplicate-free live capability behind it.
+
+| Branch | Could it activate? | Evidence |
+|---|---|---|
+| `showWeakSpotRecovery` | No | Only ever `setShowWeakSpotRecovery(false)`. Never set true anywhere in `src/`. |
+| `detectedWeakSpot` | No | Initialised `null`; its setter was already named `_setDetectedWeakSpot` and never called. The branch required `showWeakSpotRecovery && detectedWeakSpot`. |
+| `recoveryQuizId` | No | Only producer was `onFixWeakSpot` **inside** the unreachable `WeakSpotRecovery` branch. |
+| `showExaminer` | No | Required a top-level `chapter.examiner`. **0 of 81** content modules and **0 of 60** `chapters.js` rows define one. |
+| `showExaminerExplains` | No | Required a top-level `chapter.examinerExplains`. Same result: 0 of 81, 0 of 60. |
+
+`detectWeakSpot()` was an alias — its whole body was `completeChapter()`.
+
+Both examiner features **do** ship, as authored screens routed by
+`ScreenRenderer`: `type: 'faceExaminer'` (5 chapters) and
+`type: 'examinerExplains'` (7 chapters). Neither touches the removed paths.
+So nothing live was deleted — the removal took away a second, unreachable route
+to features the authored-screen route already serves.
+
+#### Deleted from `ChapterPlayer.jsx`
+
+`showWeakSpotRecovery`, `detectedWeakSpot` + its unused setter, `recoveryQuizId`,
+`showExaminer`, `showExaminerExplains`, `detectWeakSpot()`, all four overlay
+render branches, the three `headerVisible` conditions that only referenced those
+states, and the imports used solely by them (`WeakSpotRecovery`,
+`RecoveryQuizPlayer`, `FaceTheExaminer`, `ExaminerExplainsScreen`,
+`findScreenIndexByType`).
+
+**ChapterPlayer's dormant integration was removed; the standalone component
+contracts were not retired.** `WeakSpotRecovery.jsx`, `RecoveryQuizPlayer.jsx`,
+`FaceTheExaminer.jsx` and `ExaminerExplainsScreen.jsx` all still exist, are still
+catalogued, and the two LOCKED ones are still locked. `RecoveryQuizPlayer` now
+has **no importer in `src/`** — that is a documented status ("not routed yet is a
+status, not a defect"), not a licence to delete it. `WeakSpotRecovery` is still
+rendered by the Component Lab. Their Component Lab `usage` strings were corrected
+to stop claiming a ChapterPlayer route that no longer exists.
+
+#### `examinerAttempts` — historical-only, deliberately preserved
+
+The dead module-level overlay was its **only** producer; the authored
+`faceExaminer` screen has never written attempts, and no other feature writes
+them. The field is therefore historical-only — but it was **not** removed:
+`computeInitialChapterState` still reads it back and both persisted-state
+builders still write it through, so existing saves round-trip byte-identically
+and `src/data/chapterProgress.js`'s merge rule keeps working. It is now a plain
+constant in the runtime rather than React state (the same treatment `introDone`
+received in part 1). Verified at runtime: the persisted object still has exactly
+the seven canonical fields, `examinerAttempts` among them.
+
+#### The finish contract
+
+`resolveFinishAction()` was **removed**, not simplified to a constant. With both
+module-level gates gone its only remaining behaviour was an unconditional
+`{ type: 'completeChapter' }`, and A4's own rule says not to keep a pure helper
+that no longer decides anything. `handleFinish()` now calls `completeChapter()`
+directly. The history and the reason are recorded as a comment block in
+`chapterNavigation.js` where the function used to be, so the removal is not
+re-litigated. `completeChapter()` also lost its `attempts` parameter — Phase 7
+added it purely so the examiner overlay could pass a freshly appended attempt in,
+and there is no such caller any more.
+
+#### Extracted renderers — a new private family
+
+`src/components/layout/chapterPlayer/` — implementation details of ChapterPlayer,
+imported by nothing else:
+
+- **`ChapterGateLayer.jsx`** — renders exactly one of `ChapterHookScreen`,
+  `ChapterOutcomeScreen`, `QuickRecallScreen`, plus the recall gate's
+  `LearningHeader` render callback. It maps an **already-decided** gate type onto
+  a component: `getChapterGate()` stays in `ChapterPlayer`, as does every piece of
+  lifecycle state and every callback. It holds no state, reads no storage, creates
+  no context.
+  Contract: `gateType`, `chapter`, `chapterNum`, `headerProps`, `onExit`,
+  `onHookContinue`, `onOutcomeBack`, `onOutcomeContinue`, `onRecallBack`,
+  `onRecallContinue`.
+- **`ChapterBottomNavigation.jsx`** — the fixed bottom shell verbatim: blurred
+  backdrop, safe-area padding, 420px inner column, governed `ContinueCTA`, and the
+  reserved placeholder height when a screen's component owns progression. It never
+  inspects the chapter or its screens and never calls
+  `screenHasComponentOwnedContinuation()`.
+  Contract: `visible`, `label`, `isFinish`, `subjectAccent`, `onContinue`.
+
+Extraction only — no token migration, no visual refinement, no copy change.
+Neither component is authorable: both are absent from `screenRegistry.js`,
+`componentFunctions.js` and the Component Lab, and are covered by the smallest
+possible exclusion in `component-registry-completeness.test.js` (a single
+`FAMILY_INTERNALS` directory entry naming ChapterPlayer as owner — not a
+folder-level loophole).
+
+#### Guards added
+
+`tests/architecture/chapter-player-private-family.test.js` (22 tests) proves:
+ChapterPlayer imports and renders both extracted components and does not reabsorb
+them; the family is imported only by ChapterPlayer; the family holds no state,
+persistence or context; the gate layer keeps hook → outcomes → recall order and
+uses the three existing opener components; the bottom shell uses `ContinueCTA`
+rather than an inline button and keeps the placeholder height; every deleted
+overlay state name is absent; no shipped content or `chapters.js` row defines
+top-level examiner metadata; and the authored `faceExaminer` / `examinerExplains`
+routes are still registered and still routed by `ScreenRenderer`.
+`chapter-runtime-contract.test.js` gained a **300-line ceiling** on
+`ChapterPlayer.jsx` (actual: 273 — deliberate headroom for comments and
+orchestration edits, not for another render path).
+
+Eleven mutations were run and every one failed the guards, then was reverted:
+reintroducing `showExaminer`; reintroducing `recoveryQuizId`; adding a top-level
+`chapter.examiner` fixture to a shipped episode; disabling ScreenRenderer's
+`faceExaminer` route; reordering the gate layer's branches; replacing
+`ContinueCTA` with an inline `<button>`; reabsorbing the bottom shell into
+ChapterPlayer; importing the private family from a second file; restoring the
+`resolveFinishAction` ladder; pushing ChapterPlayer past its line ceiling; and
+adding the family to the Component Lab.
+
+#### Result
+
+`ChapterPlayer.jsx`: **434 → 273 lines** (−37%; 2423 → 273, −89% across all of A4).
+Lazy chunk: **60.28 kB → 50.21 kB** (gzip **18.03 → 14.95 kB**).
+
+390px runtime walkthrough, 58/58 checks, 0 console errors, 0 horizontal overflow,
+0 save-failure notices, re-run three times: gate order and back/continue behaviour
+at each gate on `history-medicine-great-stink`; stage rail position and visibility
+unchanged at the recall gate; the full bottom-shell spec measured from computed
+styles (blur 16px, `rgba(8,9,13,0.92)`, z-index 20, 420px inner width, safe-area
+padding, `Finish ✓` label, green gradient, white text, green glow shadow, 56px
+placeholder height on a component-owned screen with no duplicate Continue);
+authored `examinerExplains` and `faceExaminer` screens rendering and continuing
+through `ScreenRenderer` with no module-level overlay appearing; completion firing
+once from both a standard final screen and an authored `examinerExplains` final
+screen with no loop back; stage jumping, exit and resume.
+
+#### What is left in `ChapterPlayer.jsx`
+
+Lifecycle state, the autosave effect, `go`/`goTo`, `handleFinish`/`completeChapter`,
+`handleNext`/`nextLabel`, `headerOnBack`, the header props object, the
+`getChapterGate` call, the route-definition decision, the full-layout
+`ScreenRenderer` call, the `LearningHeader + ContentShell + ScreenRenderer`
+composition, the two delegated renderers, and a 15-line defensive zero-screen
+fallback. That fallback is the only remaining inline JSX of any size and does not
+justify keeping A4 open.
+
+### Phase 8 — closure
+
+A4 is closed. The closure checklist, item by item:
+
+- navigation helpers extracted — yes (part 1, `chapterNavigation.js`);
+- persistence builders extracted — yes (phase 7, both builders, guarded);
+- lifecycle todos are real tests — yes, 0 todos remain;
+- dead render paths removed — yes (`JumpSheet`, `HookContent`/`useHookPhase`,
+  `IntroScreen` in part 1; the four overlay branches in part 2);
+- live gate rendering outside ChapterPlayer — yes (`ChapterGateLayer`);
+- bottom-navigation JSX outside ChapterPlayer — yes (`ChapterBottomNavigation`);
+- ChapterPlayer is primarily runtime orchestration — yes, 273 lines, ceiling 300;
+- `ScreenRenderer` remains the authored-screen router — yes, guarded;
+- all gates pass — architecture 1361/1361, unit 1173/1173, storybook 285/285,
+  lint 0 errors, build green with ChapterPlayer still its own lazy chunk.
+
+Two things are deliberately **not** reasons to keep A4 open: the short defensive
+zero-screen fallback, and the fact that ChapterPlayer still contains JSX calls to
+child components — that is what orchestration looks like.
+
+Two follow-ups are recorded as separate decisions, not A4 work:
+
+- **`RecoveryQuizPlayer.jsx` now has no importer in `src/`.** Retained
+  deliberately (LOCKED, catalogued, a real future capability). Whether the
+  weak-spot → recovery pathway should actually be built is a product decision.
+- **Real weak-spot detection was never implemented.** `detectWeakSpot()` was a
+  stub from the start. Removing the stub does not remove a capability, but it does
+  make the absence explicit: there is currently no in-chapter weakness
+  intervention, and building one means designing the trigger, not re-wiring these
+  components.
 
 ### Content findings raised by the dead-render audit — not architecture work
 Deleting `IntroScreen` leaves authored data with no renderer. Both items are
-content/product decisions and were deliberately left out of the extraction slice:
+content/product decisions and were deliberately left out of the extraction slice.
+Phase 8 did **not** act on either — no goals were merged into outcomes and no
+retrieval was re-sited:
 
 - **24 chapters author `intro.learningGoals` that never render.** All 24 also
   define `outcomes`, which *do* render through the reachable

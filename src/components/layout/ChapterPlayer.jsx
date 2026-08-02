@@ -1,19 +1,12 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
-import { BUTTONS } from '../../constants/buttons.js'
 import { recordActivity, getChapterState, saveChapterState } from '../../progress.js'
 import { MODULES } from '../../data/modules.js'
-import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialChapterState, clampScreenIndex, resolveFinishAction, getChapterGate, buildChapterProgressState, buildCompletedChapterState } from '../../app/chapterNavigation.js'
-import { findScreenIndexByType, resolveScreenDefinition, screenHasComponentOwnedContinuation, validateChapterDefinition } from '../../data/screenRegistry.js'
-import ChapterHookScreen from './ChapterHookScreen.jsx'
-import QuickRecallScreen from '../learning/QuickRecallScreen.jsx'
+import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialChapterState, clampScreenIndex, getChapterGate, buildChapterProgressState, buildCompletedChapterState } from '../../app/chapterNavigation.js'
+import { resolveScreenDefinition, screenHasComponentOwnedContinuation, validateChapterDefinition } from '../../data/screenRegistry.js'
 import LearningHeader from '../core/LearningHeader.jsx'
-import ContinueCTA from '../core/ContinueCTA.jsx'
-import FaceTheExaminer from '../learning/FaceTheExaminer.jsx'
-import WeakSpotRecovery from '../learning/WeakSpotRecovery.jsx'
-import RecoveryQuizPlayer from '../learning/RecoveryQuizPlayer.jsx'
-import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
-import ExaminerExplainsScreen from '../learning/ExaminerExplainsScreen.jsx'
+import ChapterGateLayer from './chapterPlayer/ChapterGateLayer.jsx'
+import ChapterBottomNavigation from './chapterPlayer/ChapterBottomNavigation.jsx'
 import ContentShell from './ContentShell.jsx'
 import ScreenRenderer, { ChapterSchemaError } from './ScreenRenderer.jsx'
 import { TYPE } from '../../constants/typography.js'
@@ -69,12 +62,15 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
   // null | 'hook' | 'wyl' | 'recall'
   const [navTo, setNavTo] = useState(null)
   const [screen, setScreen] = useState(initial.screen)
-  const [showWeakSpotRecovery, setShowWeakSpotRecovery] = useState(false)
-  const [detectedWeakSpot, _setDetectedWeakSpot] = useState(null)
-  const [recoveryQuizId, setRecoveryQuizId] = useState(null)
-  const [showExaminer,         setShowExaminer]         = useState(false)
-  const [showExaminerExplains, setShowExaminerExplains] = useState(false)
-  const [examinerAttempts, setExaminerAttempts] = useState(initial.examinerAttempts)
+  // examinerAttempts is a constant, not state. Its only producer was the
+  // module-level Face the Examiner overlay (chapter.examiner), which no shipped
+  // chapter ever defined and which was removed in the Phase 8 overlay audit. The
+  // authored `faceExaminer` *screen* type — routed by ScreenRenderer, and the
+  // one several chapters actually use — has never written attempts. The field is
+  // therefore historical-only, but it is still read back from saved state and
+  // written straight through so existing saves round-trip byte-identically and
+  // chapterProgress.js's merge rules keep working.
+  const examinerAttempts = initial.examinerAttempts
   // Sticks once a chapter has been finished — re-entering to review never un-completes it
   const [completed, setCompleted] = useState(initial.completed)
   const total   = chapter.screens.length
@@ -107,40 +103,24 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
     recordActivity()
   }
 
+  // Continuing from the final content screen always completes the chapter. The
+  // former module-level examinerExplains → examiner → complete ladder (and the
+  // resolveFinishAction helper that encoded it) is gone: no chapter has ever
+  // defined a top-level chapter.examinerExplains or chapter.examiner, and both
+  // types are authored as ordinary screens routed by ScreenRenderer instead.
   function handleFinish() {
-    const action = resolveFinishAction(chapter, { showExaminerExplains })
-    if (action.type === 'showExaminerExplains') {
-      setShowExaminerExplains(true)
-      scrollToTop()
-      return
-    }
-    if (action.type === 'showExaminer') {
-      setShowExaminer(true)
-    } else {
-      detectWeakSpot()
-    }
+    completeChapter()
     scrollToTop()
   }
 
-  function detectWeakSpot() {
-    // V1: Simple heuristic-based weak spot detection
-    // For now, no actual weak spot — just proceed to completion
-    // This is where we'd integrate actual score analysis in future versions
-    completeChapter()
-  }
-
-  // `attempts` defaults to the current render's examinerAttempts. A caller that has
-  // just appended an attempt must pass the updated array in — reading it from this
-  // closure would persist the pre-attempt copy and rely on the autosave effect to
-  // repair it on the next render.
-  function completeChapter(attempts = examinerAttempts) {
+  function completeChapter() {
     recordActivity()
     setCompleted(true)
     // Persist full completion with a sticky `completed` flag so SubjectBrowser always reads this
     // chapter as 'completed' — even while reviewing it afterwards moves `screen` back down. Keep
     // the intro flags true so re-opening reviews the content straight away rather than replaying
     // the hook/recall/outcomes screens.
-    saveChapterState(chapter.id, buildCompletedChapterState({ total, examinerAttempts: attempts }))
+    saveChapterState(chapter.id, buildCompletedChapterState({ total, examinerAttempts }))
     setTimeout(() => {
       if (onChapterComplete) onChapterComplete(chapter)
       else onBack()
@@ -192,9 +172,6 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
   })()
 
   const headerVisible =
-    !showWeakSpotRecovery &&
-    !recoveryQuizId &&
-    !showExaminer &&
     hookDone && wylDone &&
     (isFullScreenVideoScreen(cur) ? cinematicHeaderVisible : true)
 
@@ -220,150 +197,29 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
   }
   // ──────────────────────────────────────────────────────────────────────────
 
-  // ── Confidence overlay — neutral, no colour judgement ──────────────────
-  // Which universal-opener gate (if any) to render is decided by
-  // getChapterGate (chapterNavigation.js); the JSX and side effects below stay here.
+  // ── Universal opener gates — render before the player shell ────────────────
+  // Which gate (if any) to show is decided here by getChapterGate
+  // (chapterNavigation.js); ChapterGateLayer only maps that decision onto the
+  // hook / outcomes / recall screens. Every state change stays in this file.
   const chapterGate = getChapterGate(chapter, { hookDone, wylDone, recallDone, navTo })
 
-  // ── Full-screen hook screen — renders before the player shell ──────────────
-  if (chapterGate.type === 'hook') {
+  if (chapterGate.type) {
     return (
-      <ChapterHookScreen
-        subject={chapter.subject}
+      <ChapterGateLayer
+        gateType={chapterGate.type}
+        chapter={chapter}
         chapterNum={chapterNum}
-        chapterTitle={chapter.title}
-        statement={chapter.hook.statement}
-        isTrue={chapter.hook.isTrue}
-        accentWords={chapter.hook.accentWords || []}
-        explanation={chapter.hook.explanation || chapter.hook.correctFeedback || ''}
-        revealBeats={chapter.hook.revealBeats}
-        backgroundImage={chapter.hook.backgroundImage || ''}
-        onBack={onBack}
-        onContinue={() => { setHookDone(true); setNavTo(null); scrollToTop() }}
-      />
-    )
-  }
-
-  // ── Chapter outcomes screen — appears after hook, before recall ──────────────
-  if (chapterGate.type === 'outcomes') {
-    return (
-      <ChapterOutcomeScreen
-        subject={chapter.subject}
-        chapterNum={chapterNum}
-        chapterTitle={chapter.title}
-        outcomes={chapter.outcomes.bullets || chapter.outcomes}
-        onBack={() => setHookDone(false)}
-        onContinue={() => { setWylDone(true); scrollToTop() }}
-      />
-    )
-  }
-
-  // ── Full-screen recall screen — appears after outcomes, before content ────────
-  if (chapterGate.type === 'recall') {
-    return (
-      <QuickRecallScreen
-        subject={chapter.subject}
-        chapterNum={chapterNum}
-        chapterTitle={chapter.title}
-        questions={chapter.recall.questions}
-        onBack={() => {
+        headerProps={H}
+        onExit={onBack}
+        onHookContinue={() => { setHookDone(true); setNavTo(null); scrollToTop() }}
+        onOutcomeBack={() => setHookDone(false)}
+        onOutcomeContinue={() => { setWylDone(true); scrollToTop() }}
+        onRecallBack={() => {
           if (navTo === 'recall') setNavTo(null)
           else if (chapter.hook?.statement) setNavTo('hook')
           else onBack()
         }}
-        onContinue={() => { setRecallDone(true); setNavTo(null); scrollToTop() }}
-        renderHeader={() => (
-          <LearningHeader {...H} currentStage="Discover" visible={true} />
-        )}
-      />
-    )
-  }
-
-  if (showExaminerExplains) {
-    return (
-      <ExaminerExplainsScreen
-        subject={chapter.subject}
-        examinerExplains={chapter.examinerExplains}
-        onBack={() => { setShowExaminerExplains(false); go(-1) }}
-        onContinue={() => {
-          setShowExaminerExplains(false)
-          // Navigate to the faceExaminer screen if one exists in this chapter
-          const faceExamIdx = findScreenIndexByType(chapter.screens, 'faceExaminer')
-          if (faceExamIdx >= 0) {
-            setScreen(faceExamIdx)
-            setAnimKey(k => k + 1)
-            scrollToTop()
-            return
-          }
-          if (chapter.examiner) {
-            setShowExaminer(true)
-          } else {
-            detectWeakSpot()
-          }
-          scrollToTop()
-        }}
-      />
-    )
-  }
-
-  if (showExaminer) {
-    return (
-      <FaceTheExaminer
-        chapter={chapter}
-        examiner={chapter.examiner}
-        onExit={onBack}
-        onContinue={({ originalMark: _originalMark, finalMark, guessedMark }) => {
-          const attempt = {
-            chapterId: chapter.id,
-            questionId: `${chapter.id}-q1`,
-            guessedMark,
-            examinerMark: chapter.examiner.mark,
-            finalMark,
-            timestamp: Date.now(),
-          }
-          const updated = [...examinerAttempts, attempt]
-          setExaminerAttempts(updated)
-          setShowExaminer(false)
-          // completeChapter() writes the completion snapshot straight away, so the new
-          // attempt has to travel with it. The interim progress save this path used to
-          // make was overwritten by that same completion write on the very next line.
-          completeChapter(updated)
-          scrollToTop()
-        }}
-      />
-    )
-  }
-
-  // Recovery quiz player
-  if (recoveryQuizId) {
-    return (
-      <RecoveryQuizPlayer
-        recoveryQuizId={recoveryQuizId}
-        onComplete={() => {
-          setRecoveryQuizId(null)
-          completeChapter()
-        }}
-        onBack={() => setRecoveryQuizId(null)}
-      />
-    )
-  }
-
-  // Weak spot recovery screen
-  if (showWeakSpotRecovery && detectedWeakSpot) {
-    return (
-      <WeakSpotRecovery
-        block={detectedWeakSpot}
-        subject={chapter.subject}
-        progress={{ current: screen + 1, total: total }}
-        onBack={() => setShowWeakSpotRecovery(false)}
-        onFixWeakSpot={(quizId) => {
-          setShowWeakSpotRecovery(false)
-          setRecoveryQuizId(quizId)
-        }}
-        onSkip={() => {
-          setShowWeakSpotRecovery(false)
-          completeChapter()
-        }}
+        onRecallContinue={() => { setRecallDone(true); setNavTo(null); scrollToTop() }}
       />
     )
   }
@@ -405,30 +261,13 @@ function ValidatedChapterPlayer({ chapter, onBack, onChapterComplete }) {
         </div>
       </ContentShell>
 
-      {/* ── Bottom navigation — Next only ── */}
-      <div style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 20,
-        background: 'rgba(8,9,13,0.92)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        padding: '10px 16px calc(10px + env(safe-area-inset-bottom))',
-      }}>
-        <div style={{ maxWidth: 420, margin: '0 auto' }}>
-          {showNextBtn ? (
-            <ContinueCTA
-              onClick={handleNext}
-              label={nextBtnLabel}
-              accent={isFinishBtn
-                ? 'linear-gradient(135deg, #1A4D2E, #38D27A)'
-                : (SUBJECTS[chapter.subject]?.accent || subjectColor)}
-              textColor={isFinishBtn ? '#fff' : '#0D0F14'}
-              style={isFinishBtn ? { boxShadow: '0 4px 16px rgba(56,210,122,.35)' } : undefined}
-            />
-          ) : (
-            <div style={{ height: BUTTONS.continue.height }} />
-          )}
-        </div>
-      </div>
+      <ChapterBottomNavigation
+        visible={showNextBtn}
+        label={nextBtnLabel}
+        isFinish={isFinishBtn}
+        subjectAccent={SUBJECTS[chapter.subject]?.accent || subjectColor}
+        onContinue={handleNext}
+      />
     </>
   )
 }

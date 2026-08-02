@@ -1360,18 +1360,32 @@ they are named here so authors can recognise them and route around them.
 
 **File:** `src/components/layout/ChapterPlayer.jsx`
 **What it is:** The internal runtime for one authored chapter. It owns the
-chapter lifecycle — opening gates (hook, what-you'll-learn, prior-knowledge
-recall), navigation between screens, progress persistence to
-`gcse_chapter_<chapterId>`, repair and examiner diversions, and completion.
+chapter lifecycle — deciding which opening gate applies (hook, what-you'll-learn,
+prior-knowledge recall), navigation between screens, progress persistence to
+`gcse_chapter_<chapterId>`, and completion.
 **Props:** `chapter` (a chapter definition resolved through
 `CHAPTER_CONTENT_LOADERS`), `onBack`, `onChapterComplete`
 **Dependencies:** `ScreenRenderer`, `screenRegistry.js` schema validation,
-`chapterNavigation.js`, `progress.js`, `MODULES`
+`chapterNavigation.js`, `progress.js`, `MODULES`, and its two private-family
+renderers below
 
 - **Not an authoring choice.** Content authors never select `ChapterPlayer`
   as a screen or component, and never add a screen type to it. It resolves
   every screen through `ScreenRenderer`; it holds no component-routing
   branches of its own.
+- **Private family — `src/components/layout/chapterPlayer/`.** `ChapterGateLayer`
+  renders whichever opener gate `getChapterGate()` selected; `ChapterBottomNavigation`
+  renders the fixed bottom shell around the governed `ContinueCTA`. Both are
+  ChapterPlayer internals, imported by nothing else, and deliberately absent from
+  `screenRegistry.js`, `componentFunctions.js` and the Component Lab — authors
+  never place a gate or a bottom bar, the runtime does. Guarded by
+  `tests/architecture/chapter-player-private-family.test.js`.
+- **No module-level examiner or repair diversions.** Finishing the last content
+  screen completes the chapter, full stop. Face the Examiner and What Examiners
+  Look For are reached as authored screens (`faceExaminer`, `examinerExplains`)
+  routed by `ScreenRenderer`, never as end-of-chapter overlays; `WeakSpotRecovery`
+  and `RecoveryQuizPlayer` have no ChapterPlayer entry point. See A4 Phase 8 in
+  `.planning/backlog/architecture-backlog.md`.
 
 ### ScreenRenderer
 

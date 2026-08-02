@@ -502,7 +502,7 @@ const RAW_ENTRIES = [
     id: 'face-the-examiner', name: 'FaceTheExaminerContainer', contentType: 'faceExaminer',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Examiner-style marking flow: guess the mark, pick the criteria, reveal the annotated answer with strong/weak/irrelevant tags, then improve the weak points and re-mark.',
-    usage: 'Used as the module-level examiner in History episodes (1, 2, 3, 14), via module.examiner, and routable mid-module as type: faceExaminer.',
+    usage: 'Routed mid-chapter as an authored screen, type: faceExaminer. The former module-level chapter.examiner overlay in ChapterPlayer was removed in A4 Phase 8 — no chapter ever defined that key.',
     alternative: 'GuidedExamResponse (scaffolded written answer); MisconceptionCheck / SpotTheError (shorter diagnostic checks).',
     render: (fx, { onDone }) => (
       <FaceTheExaminerContainer
@@ -665,7 +665,7 @@ const RAW_ENTRIES = [
     id: 'examiner-explains-screen', name: 'WhatExaminersLookFor', contentType: 'examinerExplains',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Pre-question examiner briefing: introduces the priorities an examiner rewards before the learner begins a written task.',
-    usage: 'Canonical WhatExaminersLookFor component, routed through the legacy ChapterPlayer type examinerExplains while content migrates.',
+    usage: 'Canonical WhatExaminersLookFor component, routed by ScreenRenderer as an authored screen, type: examinerExplains, while content migrates.',
     alternative: 'GuidedAnswerCoach (full multi-stage coach); FaceTheExaminerContainer.',
     render: (fx, { onDone }) => (
       <WhatExaminersLookFor subject="History" whatExaminersLookFor={fx} onBack={onDone} onContinue={onDone} />
@@ -687,7 +687,7 @@ const RAW_ENTRIES = [
     id: 'weak-spot-recovery', name: 'WeakSpotRecovery', interaction: 'passive',
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Behavioural intervention screen shown when the tracker detects a struggling learner: names the gap and offers a targeted recovery quiz or a skip.',
-    usage: 'Shown by ChapterPlayer when a weak spot is detected mid-module; routes into RecoveryQuizPlayer.',
+    usage: 'Dormant. Designed to appear when the tracker detects a struggling learner and to route into RecoveryQuizPlayer; ChapterPlayer\'s integration was never reachable and was removed in A4 Phase 8. The component and its contract are retained, not retired.',
     alternative: 'RecoveryQuizPlayer (the quiz it launches); ProgressRecoveryCard.',
     render: (fx, { onDone }) => (
       <WeakSpotRecovery

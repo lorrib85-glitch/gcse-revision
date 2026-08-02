@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest'
 import {
   computeInitialChapterState,
   clampScreenIndex,
-  resolveFinishAction,
   getChapterGate,
   buildChapterProgressState,
   buildCompletedChapterState,
@@ -20,11 +19,11 @@ import {
 //     now real assertions against computeInitialChapterState (chapterNavigation.js).
 //   - "go/goTo screen clamping" is now real assertions against
 //     clampScreenIndex (chapterNavigation.js).
-//   - "last-screen finish decision with examiner/examinerExplains" is now
-//     real assertions against resolveFinishAction (chapterNavigation.js).
-//     handleFinish's own side effects (setShowExaminerExplains,
-//     setShowExaminer, detectWeakSpot/completeChapter, scrollToTop) still
-//     live inside ChapterPlayer's component closure and are not covered here.
+//   - "last-screen finish decision" no longer has a decision to cover. A4
+//     Phase 8 removed the module-level examinerExplains/examiner ladder — no
+//     chapter has ever defined either top-level key — and with it
+//     resolveFinishAction. handleFinish now completes the chapter
+//     unconditionally. See the closing note for where that contract is pinned.
 //   - "hook/outcomes/recall gating decisions" is now real assertions against
 //     getChapterGate (chapterNavigation.js). The gate screens' own JSX and side
 //     effects (setHookDone, setWylDone, setRecallDone, setNavTo, scrollToTop,
@@ -332,24 +331,11 @@ describe('ChapterPlayer — completed chapter reopening (src/components/layout/C
   })
 })
 
-describe('ChapterPlayer — last-screen finish decision with examiner/examinerExplains (src/components/layout/ChapterPlayer.jsx:1529-1541, resolveFinishAction)', () => {
-  it('isLast=true, chapter.examinerExplains present, showExaminerExplains=false: handleFinish shows ExaminerExplainsScreen and does not complete the chapter yet', () => {
-    const chapter = makeChapter({ examinerExplains: { statement: 'x' } })
-    expect(resolveFinishAction(chapter, { showExaminerExplains: false })).toEqual({ type: 'showExaminerExplains' })
-  })
-
-  it('isLast=true, chapter.examinerExplains present, showExaminerExplains=true (already shown once): handleFinish falls through to the examiner/complete check instead of looping back to ExaminerExplainsScreen', () => {
-    const chapter = makeChapter({ examinerExplains: { statement: 'x' } })
-    expect(resolveFinishAction(chapter, { showExaminerExplains: true })).toEqual({ type: 'completeChapter' })
-  })
-
-  it('isLast=true, no examinerExplains, chapter.examiner present: handleFinish shows FaceTheExaminer', () => {
-    const chapter = makeChapter({ examiner: { questions: [] } })
-    expect(resolveFinishAction(chapter, { showExaminerExplains: false })).toEqual({ type: 'showExaminer' })
-  })
-
-  it('isLast=true, no examinerExplains, no examiner: handleFinish calls detectWeakSpot, which completes the chapter directly', () => {
-    const chapter = makeChapter()
-    expect(resolveFinishAction(chapter, { showExaminerExplains: false })).toEqual({ type: 'completeChapter' })
-  })
-})
+// The finish contract after A4 Phase 8: continuing from the final content screen
+// completes the chapter, with no branch left to cover. The module-level fact
+// (chapterNavigation.js exports no resolveFinishAction) is asserted in
+// tests/unit/app/chapterNavigation.test.js; the runtime side — handleFinish
+// completing directly, and no deleted overlay state name returning to
+// ChapterPlayer.jsx — is asserted in
+// tests/architecture/chapter-player-private-family.test.js. Neither is repeated
+// here: this file is a migration map, not a second home for every contract.
