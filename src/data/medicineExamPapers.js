@@ -4,8 +4,22 @@
 // Ref: 1HI0/11 | Thursday 18 May 2023 | 1 hour 15 minutes | 52 marks
 
 import { SUBJECTS } from '../constants/subjects.js'
+import { FORMAT, EXAM_TYPE } from './questionBanks/questionTypes.js'
 
 const PAPER_SUBJECT = 'History'
+
+// Every question below is also exposed through `ALL_QUESTIONS`, so each must
+// satisfy the canonical question contract (docs/system/QUESTION_BANK_CONTRACT.md).
+// These fields are identical for all seven, so they are declared once here —
+// per-question `type` and `difficulty` stay on the question itself.
+const J23_BASE = Object.freeze({
+  subject: PAPER_SUBJECT,
+  course: 'Edexcel GCSE History',
+  examBoard: 'Edexcel',
+  module: 'Medicine in Britain',
+  format: FORMAT.WRITTEN,
+  source: 'Edexcel June 2023 Paper 1 (1HI0/11)',
+})
 
 // ── Sources Booklet ───────────────────────────────────────────────────────────
 
@@ -28,10 +42,12 @@ export const J23_SOURCE_B = {
 // Section A — The British sector of the Western Front, 1914–18
 
 export const J23_Q1 = {
+  ...J23_BASE,
   id: 'j23p1_q1',
   q: 'Describe two features of the problems involved in transporting wounded soldiers away from the battleground.\n\nFeature 1:\n\nFeature 2:',
   marks: 4,
-  type: 'written',
+  type: EXAM_TYPE.DESCRIBE_TWO,
+  difficulty: 2,
   commandWord: 'Describe',
   topic: 'Western Front — transport of wounded',
   topicLabel: 'Western Front 1914–18',
@@ -42,10 +58,12 @@ export const J23_Q1 = {
 }
 
 export const J23_Q2A = {
+  ...J23_BASE,
   id: 'j23p1_q2a',
   q: 'How useful are Sources A and B for an enquiry into new techniques being used on the Western Front to deal with injuries?\n\nExplain your answer, using Sources A and B and your knowledge of the historical context.',
   marks: 8,
-  type: 'written',
+  type: EXAM_TYPE.SOURCE_UTILITY,
+  difficulty: 4,
   commandWord: 'How useful',
   topic: 'Western Front — source utility',
   topicLabel: 'Western Front 1914–18',
@@ -57,10 +75,12 @@ export const J23_Q2A = {
 }
 
 export const J23_Q2B = {
+  ...J23_BASE,
   id: 'j23p1_q2b',
   q: 'How could you follow up Source A to find out more about new techniques being used on the Western Front to deal with injuries?\n\nIn your answer, you must give the question you would ask and the type of source you could use. Complete the table below:\n\nDetail in Source A that I would follow up:\n\nQuestion I would ask:\n\nWhat type of source I could use:\n\nHow this might help answer my question:',
   marks: 4,
-  type: 'written',
+  type: EXAM_TYPE.SOURCE_FOLLOW_UP,
+  difficulty: 3,
   commandWord: 'How could you follow up',
   topic: 'Western Front — source follow-up',
   topicLabel: 'Western Front 1914–18',
@@ -74,10 +94,12 @@ export const J23_Q2B = {
 // Section B — Medicine in Britain, c1250–present
 
 export const J23_Q3 = {
+  ...J23_BASE,
   id: 'j23p1_q3',
   q: 'Explain one way in which ideas about prevention of illness in the medieval period were similar to ideas about the prevention of illness in the modern period.',
   marks: 4,
-  type: 'written',
+  type: EXAM_TYPE.EXPLAIN_SIMILAR,
+  difficulty: 3,
   commandWord: 'Explain',
   topic: 'Medieval medicine — similarity with modern period',
   topicLabel: 'Medieval Medicine c1250–c1500',
@@ -88,10 +110,12 @@ export const J23_Q3 = {
 }
 
 export const J23_Q4 = {
+  ...J23_BASE,
   id: 'j23p1_q4',
   q: 'Explain why access to medical care and treatment improved in the modern period.\n\nYou may use the following in your answer:\n• hospitals\n• General Practitioners (GPs)\n\nYou must also use information of your own.',
   marks: 12,
-  type: 'written',
+  type: EXAM_TYPE.EXPLAIN_WHY,
+  difficulty: 4,
   commandWord: 'Explain why',
   topic: 'Modern medicine — access to care',
   topicLabel: 'Modern Medicine c1900–present',
@@ -102,10 +126,12 @@ export const J23_Q4 = {
 }
 
 export const J23_Q5 = {
+  ...J23_BASE,
   id: 'j23p1_q5',
   q: '\'The work of Thomas Sydenham was the key turning point in medicine in the years c1500–c1700.\'\n\nHow far do you agree? Explain your answer.\n\nYou may use the following in your answer:\n• Sydenham\'s Observationes Medicae (1676)\n• the Four Humours\n\nYou must also use information of your own.',
   marks: 16,
-  type: 'written',
+  type: EXAM_TYPE.HOW_FAR,
+  difficulty: 5,
   commandWord: 'How far do you agree',
   topic: 'c1500–c1700 — Sydenham as turning point',
   topicLabel: 'Renaissance & the Plague c1500–c1700',
@@ -117,10 +143,12 @@ export const J23_Q5 = {
 }
 
 export const J23_Q6 = {
+  ...J23_BASE,
   id: 'j23p1_q6',
   q: '\'People\'s attitudes about medicine, in the years c1700–c1900, became increasingly positive.\'\n\nHow far do you agree? Explain your answer.\n\nYou may use the following in your answer:\n• vaccination\n• infectious diseases\n\nYou must also use information of your own.',
   marks: 16,
-  type: 'written',
+  type: EXAM_TYPE.HOW_FAR,
+  difficulty: 5,
   commandWord: 'How far do you agree',
   topic: 'c1700–c1900 — attitudes to medicine',
   topicLabel: 'Surgery & Anatomy c1700–c1900',

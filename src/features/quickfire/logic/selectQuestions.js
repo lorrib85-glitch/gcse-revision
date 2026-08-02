@@ -1,6 +1,10 @@
 import { ALL_QUESTIONS } from '../../../data/questionBanks/questionRegistry.js'
 
-// TODO phase 2: replace with proficiency-adaptive selection
+// Deliberately non-adaptive: this is metadata filtering only. Proficiency-aware
+// selection (reading the mastery engine) is tracked as F2 in
+// .planning/backlog/feature-backlog.md and needs its own authorisation plus an
+// allowlist extension in tests/architecture/mastery-engine.test.js. Do not make
+// this file read mastery state until then.
 export function selectQuestions({
   subject,
   module: moduleId,

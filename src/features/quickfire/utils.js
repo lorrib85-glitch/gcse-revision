@@ -1,6 +1,7 @@
 // Shared utilities used by quickfire and topic-practice modes.
 // Keep this file free of React — pure JS only.
 import { GENERAL } from '../../constants/generalTheme.js'
+import { FORMAT } from '../../data/questionBanks/questionTypes.js'
 
 export const GRADE_COLOURS = {
   'Excellent':  { bg:'rgba(77,255,136,.08)', border:'rgba(77,255,136,.35)', text:GENERAL.success, badge:GENERAL.successSoft },
@@ -30,7 +31,8 @@ export async function gradeWithAI(question, answer, marks, markScheme) {
 // "[ ] Option text" lines in q.q — this removes those duplicate lines.
 export function cleanQuestionText(q) {
   if (!q.q) return q.q
-  const isMC = q.type === 'mc' || q.type === 'mc_multi'
+  // Rendering decision → keyed on `format`, not the assessment `type`.
+  const isMC = q.format === FORMAT.MC || q.format === FORMAT.MC_MULTI
   return q.q
     .split('\n')
     .filter(line => {

@@ -219,11 +219,9 @@ describe('Learning graph — tagged content uses only registered vocabulary', ()
     }
   })
 
-  it('question ids remain unique across ALL_QUESTIONS', () => {
-    const ids = ALL_QUESTIONS.map(q => q.id)
-    const dupes = ids.filter((id, i) => ids.indexOf(id) !== i)
-    expect(dupes).toEqual([])
-  })
+  // Question-id uniqueness is owned by tests/architecture/question-bank-schema.test.js
+  // (the question metadata contract), not by the learning graph. This suite keeps
+  // tag validity, concept registration and topic-graph checks.
 
   it('every medicine question topicId has a topic entry with valid tags', () => {
     for (const q of ALL_MEDICINE_QUESTIONS) {

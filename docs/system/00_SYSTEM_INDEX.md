@@ -136,6 +136,7 @@ when working in the named area; none of it overrides sections 1–5.
 
 | Doc | Area | Enforcement |
 |-----|------|-------------|
+| `docs/system/QUESTION_BANK_CONTRACT.md` | question metadata contract, `type` vs `format`, difficulty scale | `tests/architecture/question-bank-schema.test.js` |
 | `docs/system/LEARNING_GRAPH.md` | concept vocabulary, facet tags, tag inheritance | `tests/architecture/learning-graph.test.js` |
 | `docs/system/MASTERY_ENGINE.md` | per-concept evidence, derived mastery, consumer allowlist | `tests/architecture/mastery-engine.test.js` |
 | `docs/system/PROGRESS_SYNC_ARCHITECTURE.md` | account scoping, guest claims, storage boundary | `tests/architecture/storage-boundary.test.js` |

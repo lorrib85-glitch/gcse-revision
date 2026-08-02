@@ -6,6 +6,7 @@ import { hexToRgb } from '../../../constants/subjects.js'
 import { recordScore } from '../../../progress.js'
 import { FIGURES } from '../../../figures.js'
 import { QUESTION_BANKS_BY_TOPIC } from '../../../data/questionBanks/questionRegistry.js'
+import { FORMAT } from '../../../data/questionBanks/questionTypes.js'
 import BackButton from '../../../components/core/BackButton.jsx'
 import ContinueCTA from '../../../components/core/ContinueCTA.jsx'
 import { gradeWithAI, cleanQuestionText } from '../utils.js'
@@ -44,7 +45,8 @@ export function TopicPracticeMode({ selected, onExit }) {
   const questions = QUESTION_BANKS_BY_TOPIC[selected.topicId] || []
   const q = questions[qIdx]
   const gs = feedback ? (GRADE_STYLE[feedback.grade] || GRADE_STYLE['Developing']) : null
-  const isMC = q?.type === 'mc'
+  // Rendering decision → keyed on `format`, not the assessment `type`.
+  const isMC = q?.format === FORMAT.MC
 
   function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
   function fullResetQ() { resetQ(); setTqMcAttempts(0); setTqMcHint(false); setTqMcLocked(false) }
@@ -65,7 +67,7 @@ export function TopicPracticeMode({ selected, onExit }) {
   }
 
   function handleTqCheck() {
-    if (q.type === 'mc') {
+    if (q.format === FORMAT.MC) {
       if (!answer) { setError('Pick an option first.'); return }
       const isCorrect = answer === q.options[q.correct]
       const newAttempts = tqMcAttempts + 1

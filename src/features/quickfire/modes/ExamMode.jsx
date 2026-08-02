@@ -105,8 +105,16 @@ export function ExamMode({ mode, onExit, onOpenChapter, onOpenPulse, examAutoSta
     ]))
   }
 
+  // `type` (assessment/marking family) and `format` (learner interaction /
+  // rendering shape) are separate concepts and are both carried through —
+  // see docs/system/QUESTION_BANK_CONTRACT.md. Canonical bank questions supply
+  // both. The lazy-loaded exam banks (maths/english/sociology/chemistry) are not
+  // part of ALL_QUESTIONS yet and supply neither, so they fall back to
+  // "options present → mc, otherwise → written". The fallback fills a missing
+  // `format`; it never overwrites an assessment `type` the bank did provide.
   function normaliseExamQuestion(question, subject, topicLabel, topicId) {
     const options = question.options || null
+    const legacyShape = options ? 'mc' : 'written'
     return {
       id: question.id || question.q || Math.random().toString(36),
       subject,
@@ -116,7 +124,8 @@ export function ExamMode({ mode, onExit, onOpenChapter, onOpenPulse, examAutoSta
       extract: question.extract,
       marks: question.marks || 1,
       ms: question.ms || 'Award marks fairly for a correct answer.',
-      type: question.type || (options ? 'mc' : 'written'),
+      type: question.type || legacyShape,
+      format: question.format || legacyShape,
       options,
       correctIndex: question.correctIndex ?? question.correct,
       fig: question.fig,
@@ -171,7 +180,7 @@ export function ExamMode({ mode, onExit, onOpenChapter, onOpenPulse, examAutoSta
 
   function startMedicinePaper2023() {
     const paperQs = MEDICINE_2023_PAPER.questions.map(q => ({
-      id: q.id, q: q.q, marks: q.marks, type: q.type, ms: q.ms,
+      id: q.id, q: q.q, marks: q.marks, type: q.type, format: q.format, ms: q.ms,
       commandWord: q.commandWord, topic: q.topic, subject: q.subject,
       extract: q.extract, sectionHeader: q.sectionHeader, sectionNote: q.sectionNote,
       sourcesBooklet: q.sourcesBooklet, sourceRefs: q.sourceRefs,

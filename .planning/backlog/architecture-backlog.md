@@ -860,8 +860,15 @@ A4 is closed. The closure checklist, item by item:
 - bottom-navigation JSX outside ChapterPlayer — yes (`ChapterBottomNavigation`);
 - ChapterPlayer is primarily runtime orchestration — yes, 273 lines, ceiling 300;
 - `ScreenRenderer` remains the authored-screen router — yes, guarded;
-- all gates pass — architecture 1361/1361, unit 1173/1173, storybook 285/285,
+- all gates pass — architecture 1362/1362, unit 1169/1169, storybook 285/285,
   lint 0 errors, build green with ChapterPlayer still its own lazy chunk.
+
+*Documentation correction (2026-08-02, Phase 9): the architecture and unit
+totals above originally read 1361 and 1173. Re-running all three gates against
+the Phase 8 closure commit (`e354ad7`) measured 1362 architecture assertions
+across 47 files and 1169 unit assertions across 65 files; storybook 285/285 was
+correct. Counts only — A4's outcome and closure are unchanged, and A4 is not
+reopened.*
 
 Two things are deliberately **not** reasons to keep A4 open: the short defensive
 zero-screen fallback, and the fact that ChapterPlayer still contains JSX calls to

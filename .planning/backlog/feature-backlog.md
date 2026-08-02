@@ -9,9 +9,44 @@ Use this backlog for features that change what the learner can do, how practice 
 
 ## F1 — Phase 2A: Standardise question metadata and tags
 
-**Status:** In progress — superseded in part by the Canonical Learning Graph (architecture backlog A5)  
+**Status:** Resolved (2026-08-02, Phase 9) — tagging half delivered by the Canonical Learning Graph (architecture backlog A5), metadata half delivered by the question schema contract  
 **Priority:** High  
 **Area:** `src/data/questionBanks/`, `src/features/quickfire/logic/selectQuestions.js`, `tests/architecture/`
+
+### Resolution (2026-08-02, Phase 9)
+The remaining metadata half of F1 is now canonical and test-enforced.
+
+- `src/data/questionBanks/questionSchema.js` is the canonical contract:
+  `REQUIRED_QUESTION_FIELDS` (12), `OPTIONAL_QUESTION_FIELDS` (18) and a pure,
+  non-throwing `validateQuestion()` returning deterministic errors. It imports
+  `questionTypes.js` and nothing else, and never validates the registry on
+  import.
+- `type` and `format` are now formally distinct: `format` = learner
+  interaction/rendering, `type` = assessment/marking family. Documented in
+  `docs/system/QUESTION_BANK_CONTRACT.md`; renderer branches now key on
+  `format`.
+- `EXAM_TYPE` gained `WRITTEN: 'written'` — the only addition the audit proved
+  necessary (41 bank questions already used it unregistered). `TRUE_FALSE` and
+  `MC_MULTI` were deliberately *not* added: no canonical bank question uses
+  those formats.
+- The seven June 2023 Medicine paper questions — the only genuine exception —
+  now carry `subject`, `course`, `examBoard`, `module`, `format`, `source`,
+  a command-specific `type` and a `difficulty`. No wording, marks, mark scheme,
+  tag, source extract or choice/SPaG behaviour changed.
+- All 105 questions in `ALL_QUESTIONS` validate. Before Phase 9: 7 questions
+  missing 5 required fields each, and 48 questions carrying an unregistered
+  `type`.
+- `tests/architecture/question-bank-schema.test.js` (24 assertions) enforces the
+  contract; `tests/unit/data/questionSchema.test.js` (53 assertions) covers the
+  validator. Question-id uniqueness moved here from `learning-graph.test.js`,
+  which keeps tag validity, concept registration and topic-graph checks.
+- Runtime behaviour unchanged: `selectQuestions.js` has no callers, and
+  `normaliseExamQuestion()` keeps its `options present → mc, otherwise →
+  written` fallback for the lazy-loaded exam banks that are not yet in
+  `ALL_QUESTIONS`.
+
+Still open, but tracked elsewhere: minimal-tag audits of the Biology/Maths/
+English banks depend on their concept atoms arriving with the A5 Biology graph.
 
 ### Progress (2026-07-03)
 The tagging half of this phase was broadened into the Canonical Learning
@@ -34,6 +69,9 @@ metadata contract (required fields, difficulty 1–5, positive marks, format
 constants) as a dedicated `question-bank-schema.test.js`, and minimal-tag
 audits of the Biology/Maths/English banks (their concept atoms arrive with
 the A5 Biology graph).
+
+*(Superseded by the 2026-08-02 resolution above — the schema contract is now
+delivered; only the minimal-tag audits remain, blocked on A5.)*
 
 ### Product value
 This unlocks proper adaptive practice. Without reliable metadata, question selection can only be random or topic-level. With clean tags, the app can identify whether a learner is weak on question type, skill, period, theme, or difficulty.
@@ -171,19 +209,50 @@ Tests should verify:
 - No speculative Chemistry/Physics/Drama/Music banks.
 
 ### Acceptance criteria
-- Existing question content unchanged.
-- Existing app behaviour unchanged.
-- New schema tests pass.
-- Existing quickfire boundary tests pass.
-- Vite build passes.
+- Existing question content unchanged. ✅
+- Existing app behaviour unchanged. ✅
+- New schema tests pass. ✅
+- Existing quickfire boundary tests pass. ✅
+- Vite build passes. ✅
 
 ---
 
 ## F2 — Phase 2B: Adaptive question selection
 
-**Status:** Future backlog  
+**Status:** Future backlog — not started  
 **Priority:** High  
-**Depends on:** F1, architecture backlog A6 (Learner Mastery Engine)
+**Depends on:** F1 (✅ resolved 2026-08-02), architecture backlog A6 (Learner Mastery Engine)
+
+### Prerequisite status (2026-08-02, Phase 9)
+
+| Prerequisite | State |
+|---|---|
+| Question metadata / schema contract (F1) | ✅ Complete — all 105 questions in `ALL_QUESTIONS` validate; `difficulty` and `type` are now guaranteed present and registered |
+| Mastery record layer (A6, Phase 3A) | ✅ Exists — per-concept evidence recorded write-only by `masteryRecorder.js` |
+| Read-based adaptive selection | ❌ Not started — no selector reads mastery state. Needs its own authorisation plus an allowlist extension in `tests/architecture/mastery-engine.test.js` |
+| Question volume per subject | ⚠️ Uneven — see the coverage census below |
+
+`selectQuestions.js` remains deliberately non-adaptive: metadata filtering only.
+
+### Question bank coverage census (2026-08-02)
+
+| Subject | Module | Total | MC | Written | D1–2 | D3 | D4–5 | Adaptive readiness |
+|---|---|---|---|---|---|---|---|---|
+| History | Medicine in Britain | 31 | 8 | 23 | 14 | 7 | 10 | **Enough for a pilot** — the only module with real spread across all three difficulty bands |
+| Biology | Organisation | 26 | 14 | 12 | 22 | 2 | 2 | **Usable but thin** — volume is fine, but 85% sits at D1–2 so difficulty progression has almost nothing to climb into |
+| Biology | Building blocks | 18 | 6 | 12 | 14 | 4 | 0 | **Usable but thin** — no D4–5 questions at all |
+| Biology | Bioenergetics | 13 | 4 | 9 | 11 | 0 | 2 | **Usable but thin** — empty D3 band |
+| Biology | Infection and response | 11 | 3 | 8 | 10 | 0 | 1 | **Usable but thin** — empty D3 band |
+| Maths | Number | 3 | 3 | 0 | 3 | 0 | 0 | **Insufficient** — single difficulty band, MC only |
+| English | Language paper 1 | 3 | 3 | 0 | 3 | 0 | 0 | **Insufficient** — single difficulty band, MC only |
+| **All** | — | **105** | **41** | **64** | **77** | **13** | **15** | |
+
+Readiness is a product judgement, not a structural one — the architecture suite
+does not and must not fail a subject for having a small bank. The honest
+conclusion: **F2 is not ready globally.** A limited History (Medicine) pilot is
+defensible; Biology would exercise the machinery but has too little at D3+ for
+progression to feel real; Maths and English cannot support adaptive selection at
+all until F3 expands them.
 
 ### Progress (2026-07-04)
 The learner-knowledge half of this feature now exists: the Learner Mastery
@@ -205,9 +274,10 @@ Makes practice feel personalised rather than random. Learners should gradually s
 Use clean metadata to select questions based on proficiency, weakness, question type and difficulty.
 
 ### Do not start until
-- Existing question banks pass schema tests.
-- Tags are reliable enough to drive selection.
-- There is enough question volume for adaptive behaviour to matter.
+- Existing question banks pass schema tests. ✅ (Phase 9)
+- Tags are reliable enough to drive selection. ✅ (A5 learning graph)
+- There is enough question volume for adaptive behaviour to matter. ⚠️ History
+  (Medicine) only — see the coverage census above.
 
 ### Selection should eventually consider
 - Subject
