@@ -42,6 +42,38 @@ function injectStyles() {
   document.head.appendChild(s)
 }
 
+function clampOverlayStrength(value) {
+  const parsed = Number(value)
+  if (!Number.isFinite(parsed)) return 1
+  return Math.min(1.35, Math.max(0.65, parsed))
+}
+
+function weightedAlpha(alpha, strength) {
+  return Math.min(1, alpha * strength).toFixed(3)
+}
+
+function getSceneOverlay(scene, isFinalReveal) {
+  if (scene.overlay) return scene.overlay
+
+  const strength = clampOverlayStrength(scene.overlayStrength)
+
+  if (isFinalReveal) {
+    return `rgba(8,9,13,${weightedAlpha(0.68, strength)})`
+  }
+
+  // VisualLearning is image-led. Keep the upper image almost untouched and
+  // concentrate contrast behind the bottom-weighted copy instead of applying
+  // a heavy full-screen veil to every asset.
+  return `linear-gradient(
+    to bottom,
+    rgba(8,9,13,${weightedAlpha(0.02, strength)}) 0%,
+    rgba(8,9,13,${weightedAlpha(0.05, strength)}) 42%,
+    rgba(8,9,13,${weightedAlpha(0.18, strength)}) 58%,
+    rgba(8,9,13,${weightedAlpha(0.46, strength)}) 74%,
+    rgba(8,9,13,${weightedAlpha(0.84, strength)}) 100%
+  )`
+}
+
 export default function VisualLearning({ block, subject, onComplete }) {
   injectStyles()
 
@@ -97,6 +129,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
   if (!scenes.length) return null
 
   const isFinalReveal = !!scene.finalReveal
+  const sceneOverlay = getSceneOverlay(scene, isFinalReveal)
 
   return (
     <CinematicShell
@@ -119,19 +152,17 @@ export default function VisualLearning({ block, subject, onComplete }) {
           style={{
             position: 'absolute', inset: 0,
             backgroundImage: `url(${scene.image})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundSize: scene.imageSize || 'cover',
+            backgroundPosition: scene.imagePosition || 'center',
             animation: reduceMotion ? 'none' : `vl-bg-in ${SLIDE_MS}ms ease both`,
           }}
         />
       )}
 
-      {/* Cinematic gradient — heavy at bottom, breathes at top */}
+      {/* Image-first cinematic treatment. Contrast is concentrated behind copy. */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: isFinalReveal
-          ? 'rgba(8,9,13,0.72)'
-          : 'linear-gradient(to bottom, rgba(8,9,13,0.12) 0%, rgba(8,9,13,0.22) 30%, rgba(8,9,13,0.72) 62%, rgba(8,9,13,0.96) 100%)',
+        background: sceneOverlay,
       }} />
 
       {/* Scene content */}
@@ -207,14 +238,16 @@ export default function VisualLearning({ block, subject, onComplete }) {
             color: '#FFFFFF',
             marginBottom: 14,
             maxWidth: 380,
+            textShadow: '0 2px 26px rgba(0,0,0,0.58)',
           }}>
             {scene.headline}
           </div>
 
           <div style={{
             ...TYPE.bodyStrong,
-            color: 'rgba(245,238,225,0.62)',
+            color: 'rgba(245,238,225,0.78)',
             maxWidth: 360,
+            textShadow: '0 2px 22px rgba(0,0,0,0.62)',
           }}>
             {scene.body}
           </div>
