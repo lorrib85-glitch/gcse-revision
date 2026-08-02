@@ -10,6 +10,10 @@ export default {
   source: 'src/components/core/BackButton.jsx',
   exportName: null,
   order: 2,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'core',
   kind: 'support',
   lifecycle: 'active',

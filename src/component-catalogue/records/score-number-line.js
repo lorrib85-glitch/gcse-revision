@@ -10,6 +10,10 @@ export default {
   source: 'src/components/core/ScoreNumberLine.jsx',
   exportName: null,
   order: 19,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'core',
   kind: 'support',
   lifecycle: 'active',

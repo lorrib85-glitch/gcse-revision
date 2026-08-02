@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/NumberLineExplore.jsx',
   exportName: null,
   order: 55,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'reviewing',

@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/ExplainReveal.jsx',
   exportName: null,
   order: 35,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

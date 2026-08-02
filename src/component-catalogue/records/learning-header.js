@@ -10,6 +10,10 @@ export default {
   source: 'src/components/core/LearningHeader.jsx',
   exportName: null,
   order: 8,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'core',
   kind: 'support',
   lifecycle: 'active',

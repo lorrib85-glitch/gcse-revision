@@ -10,6 +10,10 @@ export default {
   source: 'src/components/feedback/ExamRoundDebrief.jsx',
   exportName: null,
   order: 74,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'feedback',
   kind: 'runtime',
   lifecycle: 'active',

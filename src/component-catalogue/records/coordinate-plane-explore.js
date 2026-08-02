@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/CoordinatePlaneExplore.jsx',
   exportName: null,
   order: 28,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'reviewing',

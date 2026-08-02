@@ -10,6 +10,10 @@ export default {
   source: 'src/components/layout/ChapterHookScreen.jsx',
   exportName: null,
   order: 65,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'layout',
   kind: 'reusable',
   lifecycle: 'active',

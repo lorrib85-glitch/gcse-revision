@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/WhatExaminersLookFor.jsx',
   exportName: null,
   order: 47,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

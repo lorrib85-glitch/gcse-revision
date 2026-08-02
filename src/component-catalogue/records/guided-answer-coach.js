@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/GuidedAnswerCoach.jsx',
   exportName: null,
   order: 78,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'feature',
   lifecycle: 'active',

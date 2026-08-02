@@ -10,6 +10,10 @@ export default {
   source: 'src/components/feedback/ExamQuestionFrame.jsx',
   exportName: null,
   order: 73,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'feedback',
   kind: 'reusable',
   lifecycle: 'active',

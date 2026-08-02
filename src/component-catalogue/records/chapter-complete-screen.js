@@ -10,6 +10,10 @@ export default {
   source: 'src/components/layout/ChapterCompleteScreen.jsx',
   exportName: null,
   order: 64,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'layout',
   kind: 'runtime',
   lifecycle: 'active',

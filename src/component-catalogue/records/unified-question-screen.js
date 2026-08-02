@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/UnifiedQuestionScreen.jsx',
   exportName: null,
   order: 79,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'runtime',
   lifecycle: 'active',

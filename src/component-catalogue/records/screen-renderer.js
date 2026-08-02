@@ -10,6 +10,10 @@ export default {
   source: 'src/components/layout/ScreenRenderer.jsx',
   exportName: null,
   order: 72,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'layout',
   kind: 'runtime',
   lifecycle: 'active',

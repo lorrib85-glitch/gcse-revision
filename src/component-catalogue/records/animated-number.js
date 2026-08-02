@@ -10,6 +10,10 @@ export default {
   source: 'src/components/core/AnimatedNumber.jsx',
   exportName: null,
   order: 12,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'core',
   kind: 'support',
   lifecycle: 'active',

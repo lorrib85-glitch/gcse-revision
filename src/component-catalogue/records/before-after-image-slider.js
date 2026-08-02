@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/BeforeAfterImageSlider.jsx',
   exportName: null,
   order: 82,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

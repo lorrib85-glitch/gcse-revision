@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/VisualLearning.jsx',
   exportName: null,
   order: 40,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

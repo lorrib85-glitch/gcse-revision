@@ -10,6 +10,10 @@ export default {
   source: 'src/components/core/ExitButton.jsx',
   exportName: null,
   order: 7,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'core',
   kind: 'support',
   lifecycle: 'active',

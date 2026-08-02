@@ -51,7 +51,20 @@ always produce the same bytes.
 A generated document cannot drift from its source, which is the entire point.
 The markdown is now a projection, not a second authority.
 
-## Decision 3 — internal file ownership moves into the owning record
+## Decision 3 — a record justifies its own location
+
+Most components live under `src/components/**`. A few are governed but live
+elsewhere — today exactly one, `HomeAtmosphere` in `src/features/home/Home.jsx`.
+
+Each record carries `scope: { location, reason }`, and the validator derives the
+expected location from the record's own `source` path: in-tree records must say
+`components` and carry no reason; out-of-root records must say why they are
+governed. There is no allowlist anywhere, so adding a governed feature-level
+component is one edit — the record — rather than a record plus a coordinated
+edit to an architecture test. An allowlist in the test would have been the same
+"one fact, two homes" pattern this decision exists to remove.
+
+## Decision 4 — internal file ownership moves into the owning record
 
 The `FAMILY_INTERNALS` / `FILE_INTERNALS` maps that lived in a test now live in
 each owner's `ownership` field. Every internal path must exist, must have
@@ -62,7 +75,7 @@ This closes the worst failure mode of the old design: the exclusion list was
 maintained by whoever was making the completeness test pass, not by whoever
 owned the component family.
 
-## Decision 4 — there are no locked components
+## Decision 5 — there are no locked components
 
 A rule can be constitutional; a whole component file cannot. "Locked" answered
 the wrong question — it gated *which file you touched*, not *what you changed* —
@@ -78,12 +91,20 @@ Each record now carries a **contract**:
 - `exclusivity` — nullable. Where a component is the sole implementation of an
   app-wide pattern (`back-navigation`, `primary-progression-cta`,
   `cinematic-reveal-cta`, `exit-navigation`, `chapter-progress-rail`,
-  `local-sequence-progress`), naming the prohibited alternatives.
+  `local-sequence-progress`, `save-failure-surface`), naming the prohibited
+  alternatives. `ScreenText` is deliberately `critical` *without* exclusivity:
+  `TeachScreenShell` is a second canonical screen-heading owner in the same
+  governed set, so claiming sole implementation would be false.
 - `requiresProductDecision` — the *changes* that need sign-off.
 
 The `standard` shape is deliberately empty: a component that genuinely needs an
 invariant or an exclusivity rule is `critical`, and the schema enforces that
-split rather than letting a middle tier accumulate.
+split rather than letting a middle tier accumulate. That rule cuts both ways — a
+hard rule left sitting in free-text `documentation.governanceRules` is invisible
+to tooling, indistinguishable from an ordinary note. `SaveFailureNotice`,
+`ScreenText` and `CalculationBreakdown` each carried an already-made decision in
+prose and are now structurally `critical`: their invariants were decided when
+the rule was written, not deferred to a future review.
 
 ### Evidence must be honest
 
@@ -93,7 +114,7 @@ are visual or behavioural rules that no current test asserts, so they carry
 automated enforcement that does not exist would be worse than admitting the gap:
 it would let a reviewer skip the check believing CI had it covered.
 
-## Decision 5 — the gate is on what changes, not which file is touched
+## Decision 6 — the gate is on what changes, not which file is touched
 
 Product approval is required only when a change affects a documented invariant,
 an exclusivity rule, the public API, a learner flow, or product identity.

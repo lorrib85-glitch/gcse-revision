@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/FlashcardsBlock.jsx',
   exportName: null,
   order: 81,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/TimelineChain.jsx',
   exportName: null,
   order: 62,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

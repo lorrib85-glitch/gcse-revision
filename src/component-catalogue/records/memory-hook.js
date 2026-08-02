@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/MemoryHook.jsx',
   exportName: null,
   order: 54,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

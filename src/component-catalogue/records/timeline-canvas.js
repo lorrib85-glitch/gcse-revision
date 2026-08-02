@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/TimelineCanvas.jsx',
   exportName: null,
   order: 61,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

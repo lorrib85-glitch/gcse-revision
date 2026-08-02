@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/QuoteAnalyser.jsx',
   exportName: null,
   order: 75,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/TieredQuizScreen.jsx',
   exportName: null,
   order: 80,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

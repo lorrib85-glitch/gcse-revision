@@ -10,6 +10,10 @@ export default {
   source: 'src/components/layout/ChapterOutcomeScreen.jsx',
   exportName: null,
   order: 66,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'layout',
   kind: 'runtime',
   lifecycle: 'active',

@@ -10,6 +10,10 @@ export default {
   source: 'src/components/layout/CinematicShell.jsx',
   exportName: null,
   order: 69,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'layout',
   kind: 'runtime',
   lifecycle: 'active',

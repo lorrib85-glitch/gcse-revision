@@ -93,7 +93,7 @@ Foundation components used by many others. They handle atomic UI concerns.
 **Kind:** support primitive (`support`)  
 **Lifecycle:** `active`
 
-**Purpose:** Universal answer UI for all question types (choice, connection, true/false). The single component that handles answer logic for non-timed learning activities across the product.
+**Purpose:** The shared answer interaction for block-based, non-timed learning activities — choice, connection and true/false. It owns selection, the attempt sequence, hint and reveal, and silent weakness logging for the components that delegate to it. It is not the only answer implementation in the product: the QuickFire-style question families (QuickRecallScreen, TieredQuizScreen) own their answer flow through UnifiedQuestionScreen instead.
 
 **Props:** `block`, `subject`, `onAnswer`, `onContinue`
 
@@ -103,7 +103,7 @@ Foundation components used by many others. They handle atomic UI concerns.
 
 **Contract:** critical
 
-**Why change is costly:** Every non-timed question type in the product delegates its answer flow here. A change to that flow is felt in every quiz screen at once, and the failure is silent — the screen still renders, it just teaches differently.
+**Why change is costly:** Every block-based question type delegates its answer flow here, so a change is felt across those screens at once — and the failure is silent: the screen still renders, it just teaches differently.
 
 **Invariants:**
 
@@ -113,7 +113,7 @@ Foundation components used by many others. They handle atomic UI concerns.
   - Evidence: `review` — Answer incorrectly and confirm the stem is still readable above the feedback at 390px.
 - `silent-weakness-logging` — Weakness logging is silent — no "saved to your weak spots" message ever reaches the learner.
   - Evidence: `review` — Answer incorrectly twice and confirm no persistence or tracking copy is shown.
-- `untimed-learning-only` — This component serves non-timed learning activities only. Timed exam flows do not use it and must not gain hints or retries through it.
+- `untimed-learning-only` — This component serves non-timed, block-based learning activities only. Timed exam flows do not use it and must not gain hints or retries through it.
   - Evidence: `review` — Confirm no timed exam surface imports AnswerInteraction before approving a change.
 - `parent-owns-completion` — The parent must wire onComplete. Without it the interaction locks but the surrounding screen never learns that progression is allowed.
   - Evidence: `review` — Check every call site passes a completion handler when adding a new consumer.
@@ -409,18 +409,38 @@ Evidence: `review` — Every chapter progress display must arrive through Learni
 
 **Story:** `src/components/core/SaveFailureNotice.stories.jsx`
 
-**Governance rules:**
-
-- Do not add separate hardcoded save-error alerts or window.alert anywhere. Route critical persistence through saveCritical so this one notice handles it.
-- No global success toast for normal saves.
-
 **Notes:**
 
 - Presentation only. Which saves are critical, plus dedupe and retry, live in src/lib/storage.js (saveCritical + subscribeSaveFailure) and the pure src/app/saveFailureController.js; src/app/SaveFailureHost.jsx wires bus → controller → this component.
 
-**Contract:** standard
+**Contract:** critical
 
-No invariants or exclusivity rules are recorded. Internal changes that keep the documented behaviour are ordinary development work.
+**Why change is costly:** It is the only place the product ever tells a learner that work was not saved. A second alert path anywhere would either double-report a failure or, worse, let one pass silently — and a learner who believes lost progress was saved is the most damaging state this app can reach.
+
+**Invariants:**
+
+- `never-claims-a-save-succeeded` — It reports failure only. It never states or implies that progress was saved, and there is no global success toast for normal saves.
+  - Evidence: `review` — Read every string the notice can render for any wording that implies a successful save.
+- `presentation-only` — Presentation only. Which saves are critical, plus dedupe and retry, live in src/lib/storage.js (saveCritical + subscribeSaveFailure) and the pure src/app/saveFailureController.js.
+  - Evidence: `test` — tests/unit/saveFailure/progressFailureIntegration.test.js
+- `mounted-once-at-the-root` — Mounted once via SaveFailureHost at the app root. Features never render it themselves, and it is never rendered inside a chapter.
+  - Evidence: `review` — Confirm SaveFailureHost is the only component rendering SaveFailureNotice before approving a new consumer.
+
+**Exclusivity — `save-failure-surface`:** this is the sole implementation of the pattern.
+
+Prohibited alternatives:
+
+- a hardcoded save-error alert inside a feature
+- window.alert or a native dialog used to report a failed save
+- a per-feature error banner for persistence failures
+
+Evidence: `review` — Search for alert( and any local save-error banner: critical persistence must route through saveCritical so this one notice handles it.
+
+**Requires a product decision:**
+
+- Adding a second learner-facing surface for save failures
+- Adding a global success toast for normal saves
+- Moving criticality, dedupe or retry decisions into this component
 
 ---
 
@@ -669,13 +689,23 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Usage boundary:** ScreenTitle deliberately ignores typography properties passed through style (fontFamily, fontSize, fontWeight, lineHeight, letterSpacing) so callers cannot create a second screen-title system locally. Layout and colour overrides are allowed.
 
-**Governance rules:**
+**Contract:** critical
 
-- The ScreenTitle typography-override guard is a hard rule: enforced by tests/architecture/typography-governance.test.js, which treats ScreenText.jsx and TeachScreenShell.jsx as the canonical screen-heading components.
+**Why change is costly:** A second screen-title system crept into this codebase once already, by components re-spreading TYPE.displayScreen on their own heading markup. ScreenTitle exists to make that impossible, and the guard that enforces it is a few lines of prop-stripping that a well-meaning refactor would remove without noticing.
 
-**Contract:** standard
+**Invariants:**
 
-No invariants or exclusivity rules are recorded. Internal changes that keep the documented behaviour are ordinary development work.
+- `screen-title-strips-typography-overrides` — ScreenTitle deletes fontFamily, fontSize, fontWeight, lineHeight and letterSpacing from any style passed in, so callers cannot build a second screen-title system locally. Layout and colour overrides remain allowed.
+  - Evidence: `test` — tests/architecture/typography-governance.test.js
+- `primary-heading-routes-through-display-screen` — Its primary heading spreads TYPE.displayScreen and overrides none of the five typography properties locally.
+  - Evidence: `test` — tests/architecture/typography-governance.test.js
+- `learning-components-use-the-primitive` — A learning component rendering its own primary non-cinematic heading uses ScreenTitle rather than re-spreading TYPE.displayScreen on local markup.
+  - Evidence: `test` — tests/architecture/typography-governance.test.js
+
+**Requires a product decision:**
+
+- Removing or weakening the ScreenTitle typography-override guard
+- Changing what TYPE.displayScreen owns for non-cinematic screen titles
 
 ---
 
@@ -1014,7 +1044,6 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 - reasoning is optional everywhere. Each variant derives all five explanations from its model; authored copy overrides individual fields. step.reasoning may also be supplied on a generic worked step, where it renders as the same "Why this works" panel.
 - Use operation language. "Subtract 4 from both sides", never "move the 4 across and change the sign". The plain relationship comes first, the formal term second: "Division undoes multiplication. These are inverse operations."
 - Choreography is fixed: predict → act → observe → explain → check. The learner commits to at least one decision before any final answer appears; wrong choices explain the misunderstanding and re-open immediately, with no scoring, streaks or progress tracker inside the component.
-- Scope freeze (2026-07-29): the algebra presentations are architecture complete and pedagogically reviewed — the scene sequence, the verdict/reasoning split, the concrete models and the copy were audited against a 390px and 320px render pass and signed off. Do not refactor, restyle or re-sequence the internals of src/components/learning/calculationBreakdown/ speculatively. Change them when real chapter use exposes a genuine learning problem — not to tidy the structure, shorten a file or unify a pattern. Specifically settled, not accidental: the concrete model stays on screen through each decision scene (do not reduce a choice screen back to a bare equation); the verdict panel ("What happened") is situational and the reasoning rail ("Rule to remember") is general, and they must not share a heading or repeat a sentence; a one-sided balance move breaks the balance immediately and visibly, not behind an optional reveal; and a decision scene carries one instruction, one question and the options, with no support line that restates the question or eliminates a distractor in advance. Extending it with a new validated presentation variant remains in scope.
 
 **Notes:**
 
@@ -1031,9 +1060,33 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 - **Content shape:** One problem with a clear interpretation, a defined goal, a small number of purposeful steps, an explanation of why each move helps, at least one learner-completed step and a complete final solution with a check or explanation. Avoid breaking obvious arithmetic into patronising micro-steps. Scaffolding should become lighter when stronger learner evidence makes the full support unnecessary.
 - **Rhythm role:** teaching, practice, repair.
 
-**Contract:** standard
+**Contract:** critical
 
-No invariants or exclusivity rules are recorded. Internal changes that keep the documented behaviour are ordinary development work.
+**Why change is costly:** The algebra presentations were audited against a 390px and 320px render pass and signed off on 2026-07-29. Each rule below was a deliberate outcome of that review, and each is the kind of thing a tidying refactor removes on the way to a shorter file — the component still renders, it just stops teaching why the operation is valid.
+
+**Invariants:**
+
+- `standard-walkthrough-unchanged-without-a-presentation` — A block with no presentation field (or variant: 'standard') renders the existing walkthrough unchanged. Every existing algebra, percentage, geometry, fractions and science block is untouched.
+  - Evidence: `test` — tests/unit/calculationBreakdownValidation.test.js; `story` — src/components/learning/CalculationBreakdown.stories.jsx
+- `model-stays-visible-through-each-decision` — The concrete visual model stays on screen through every decision scene. A choice screen is never reduced back to a bare equation.
+  - Evidence: `review` — Step through each presentation variant at 390px and confirm the model is still drawn on every decision scene.
+- `verdict-and-reasoning-stay-distinct` — The verdict panel ("What happened") is situational and the reasoning rail ("Rule to remember") is general. They must not share a heading or repeat a sentence.
+  - Evidence: `review` — Compare the two panels on one scene: neither heading nor sentence may be duplicated between them.
+- `one-sided-move-breaks-the-balance-visibly` — A one-sided balance move breaks the balance immediately and visibly, never behind an optional reveal.
+  - Evidence: `review` — Take the refused one-sided move in the balance variant and confirm the break renders without any further tap.
+- `decision-scene-carries-no-extra-support-line` — A decision scene carries one instruction, one question and the options — no support line that restates the question or eliminates a distractor in advance.
+  - Evidence: `review` — Read each decision scene for a fourth line of copy beyond instruction, question and options.
+- `invalid-models-are-refused-not-repaired` — calculationBreakdownValidation.js rejects inexact group splits, group counts outside 2–5, totals over 30, chains that do not solve to a whole number, no-op steps and division by zero. A rejected model falls back to the standard walkthrough — it never draws misleading groups.
+  - Evidence: `test` — tests/unit/calculationBreakdownValidation.test.js
+- `never-parses-an-equation` — Visual models receive explicit numbers. The only string input is operation, read through a closed token grammar ('÷ 3', '+ 4') that rejects anything else; left/right/resultLeft/resultRight are display strings and are never parsed.
+  - Evidence: `test` — tests/unit/calculationBreakdownValidation.test.js
+
+**Requires a product decision:**
+
+- Re-sequencing, restyling or refactoring the internals of src/components/learning/calculationBreakdown/ without a learning problem to fix
+- Changing the fixed predict → act → observe → explain → check choreography
+- Adding scoring, streaks or progress tracking inside the component
+- Registering, routing or documenting a presentation variant as a separate component
 
 ---
 
@@ -2709,6 +2762,7 @@ A component outside `src/components/**` is catalogued only when current governan
 
 **File:** `src/features/home/Home.jsx`  
 **Export:** `HomeAtmosphere` (named export)  
+**Why it is catalogued outside `src/components/`:** Governed app chrome with a standalone product contract: it is the first thing a learner sees and carries the product identity, so it is catalogued even though it lives in a feature file.  
 **Kind:** app-level feature component (`feature`)  
 **Lifecycle:** `active`
 

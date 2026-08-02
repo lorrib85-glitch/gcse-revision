@@ -10,6 +10,10 @@ export default {
   source: 'src/components/core/ScreenText.jsx',
   exportName: null,
   order: 20,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'core',
   kind: 'support',
   lifecycle: 'active',
@@ -35,17 +39,49 @@ export default {
     usageBoundary: 'ScreenTitle deliberately ignores typography properties passed through style (fontFamily, fontSize, fontWeight, lineHeight, letterSpacing) so callers cannot create a second screen-title system locally. Layout and colour overrides are allowed.',
     contractDoc: null,
     story: null,
-    governanceRules: [
-      'The ScreenTitle typography-override guard is a hard rule: enforced by tests/architecture/typography-governance.test.js, which treats ScreenText.jsx and TeachScreenShell.jsx as the canonical screen-heading components.'
-    ],
+    governanceRules: [],
     notes: []
   },
   decision: null,
   contract: {
-    criticality: 'standard',
-    rationale: null,
-    invariants: [],
+    criticality: 'critical',
+    rationale: 'A second screen-title system crept into this codebase once already, by components re-spreading TYPE.displayScreen on their own heading markup. ScreenTitle exists to make that impossible, and the guard that enforces it is a few lines of prop-stripping that a well-meaning refactor would remove without noticing.',
+    invariants: [
+      {
+        id: 'screen-title-strips-typography-overrides',
+        statement: 'ScreenTitle deletes fontFamily, fontSize, fontWeight, lineHeight and letterSpacing from any style passed in, so callers cannot build a second screen-title system locally. Layout and colour overrides remain allowed.',
+        evidence: [
+          {
+            kind: 'test',
+            reference: 'tests/architecture/typography-governance.test.js'
+          }
+        ]
+      },
+      {
+        id: 'primary-heading-routes-through-display-screen',
+        statement: 'Its primary heading spreads TYPE.displayScreen and overrides none of the five typography properties locally.',
+        evidence: [
+          {
+            kind: 'test',
+            reference: 'tests/architecture/typography-governance.test.js'
+          }
+        ]
+      },
+      {
+        id: 'learning-components-use-the-primitive',
+        statement: 'A learning component rendering its own primary non-cinematic heading uses ScreenTitle rather than re-spreading TYPE.displayScreen on local markup.',
+        evidence: [
+          {
+            kind: 'test',
+            reference: 'tests/architecture/typography-governance.test.js'
+          }
+        ]
+      }
+    ],
     exclusivity: null,
-    requiresProductDecision: []
+    requiresProductDecision: [
+      'Removing or weakening the ScreenTitle typography-override guard',
+      'Changing what TYPE.displayScreen owns for non-cinematic screen titles'
+    ]
   }
 }

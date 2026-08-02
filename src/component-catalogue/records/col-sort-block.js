@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/ColSortBlock.jsx',
   exportName: null,
   order: 46,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

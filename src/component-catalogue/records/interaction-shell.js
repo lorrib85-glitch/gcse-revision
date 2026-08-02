@@ -10,6 +10,10 @@ export default {
   source: 'src/components/layout/InteractionShell.jsx',
   exportName: null,
   order: 68,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'layout',
   kind: 'runtime',
   lifecycle: 'active',

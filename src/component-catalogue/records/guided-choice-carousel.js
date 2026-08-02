@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/GuidedChoiceCarousel.jsx',
   exportName: null,
   order: 50,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

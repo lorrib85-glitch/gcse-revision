@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/GraphView.jsx',
   exportName: null,
   order: 49,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/AcronymMemorise.jsx',
   exportName: null,
   order: 24,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

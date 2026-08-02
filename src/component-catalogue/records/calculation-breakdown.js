@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/CalculationBreakdown.jsx',
   exportName: null,
   order: 30,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'reviewing',
@@ -57,8 +61,7 @@ export default {
       'Invalid models are refused, not repaired. calculationBreakdownValidation.js rejects inexact group splits, group counts outside 2–5, totals over 30, chains that do not solve to a whole number, no-op steps and division by zero. A rejected model logs its reasons in development and falls back to the standard walkthrough — it never draws misleading groups.',
       'reasoning is optional everywhere. Each variant derives all five explanations from its model; authored copy overrides individual fields. step.reasoning may also be supplied on a generic worked step, where it renders as the same "Why this works" panel.',
       'Use operation language. "Subtract 4 from both sides", never "move the 4 across and change the sign". The plain relationship comes first, the formal term second: "Division undoes multiplication. These are inverse operations."',
-      'Choreography is fixed: predict → act → observe → explain → check. The learner commits to at least one decision before any final answer appears; wrong choices explain the misunderstanding and re-open immediately, with no scoring, streaks or progress tracker inside the component.',
-      'Scope freeze (2026-07-29): the algebra presentations are architecture complete and pedagogically reviewed — the scene sequence, the verdict/reasoning split, the concrete models and the copy were audited against a 390px and 320px render pass and signed off. Do not refactor, restyle or re-sequence the internals of src/components/learning/calculationBreakdown/ speculatively. Change them when real chapter use exposes a genuine learning problem — not to tidy the structure, shorten a file or unify a pattern. Specifically settled, not accidental: the concrete model stays on screen through each decision scene (do not reduce a choice screen back to a bare equation); the verdict panel ("What happened") is situational and the reasoning rail ("Rule to remember") is general, and they must not share a heading or repeat a sentence; a one-sided balance move breaks the balance immediately and visibly, not behind an optional reveal; and a decision scene carries one instruction, one question and the options, with no support line that restates the question or eliminates a distractor in advance. Extending it with a new validated presentation variant remains in scope.'
+      'Choreography is fixed: predict → act → observe → explain → check. The learner commits to at least one decision before any final answer appears; wrong choices explain the misunderstanding and re-open immediately, with no scoring, streaks or progress tracker inside the component.'
     ],
     notes: [
       'Optional algebra reasoning presentations. CalculationBreakdown remains one generic calculation component. block.presentation is an opt-in field that swaps the generic worked-step sequence for a scene sequence built for one specific teaching job — why an algebraic operation is valid, not just which operation to perform. These are not separate components and must not be registered, routed or documented as such; they share this component’s public API, frame, title treatment, stage surface, navigation, CTAs and accessibility behaviour.',
@@ -81,10 +84,90 @@ export default {
     note: null
   },
   contract: {
-    criticality: 'standard',
-    rationale: null,
-    invariants: [],
+    criticality: 'critical',
+    rationale: 'The algebra presentations were audited against a 390px and 320px render pass and signed off on 2026-07-29. Each rule below was a deliberate outcome of that review, and each is the kind of thing a tidying refactor removes on the way to a shorter file — the component still renders, it just stops teaching why the operation is valid.',
+    invariants: [
+      {
+        id: 'standard-walkthrough-unchanged-without-a-presentation',
+        statement: "A block with no presentation field (or variant: 'standard') renders the existing walkthrough unchanged. Every existing algebra, percentage, geometry, fractions and science block is untouched.",
+        evidence: [
+          {
+            kind: 'test',
+            reference: 'tests/unit/calculationBreakdownValidation.test.js'
+          },
+          {
+            kind: 'story',
+            reference: 'src/components/learning/CalculationBreakdown.stories.jsx'
+          }
+        ]
+      },
+      {
+        id: 'model-stays-visible-through-each-decision',
+        statement: 'The concrete visual model stays on screen through every decision scene. A choice screen is never reduced back to a bare equation.',
+        evidence: [
+          {
+            kind: 'review',
+            reference: 'Step through each presentation variant at 390px and confirm the model is still drawn on every decision scene.'
+          }
+        ]
+      },
+      {
+        id: 'verdict-and-reasoning-stay-distinct',
+        statement: 'The verdict panel ("What happened") is situational and the reasoning rail ("Rule to remember") is general. They must not share a heading or repeat a sentence.',
+        evidence: [
+          {
+            kind: 'review',
+            reference: 'Compare the two panels on one scene: neither heading nor sentence may be duplicated between them.'
+          }
+        ]
+      },
+      {
+        id: 'one-sided-move-breaks-the-balance-visibly',
+        statement: 'A one-sided balance move breaks the balance immediately and visibly, never behind an optional reveal.',
+        evidence: [
+          {
+            kind: 'review',
+            reference: 'Take the refused one-sided move in the balance variant and confirm the break renders without any further tap.'
+          }
+        ]
+      },
+      {
+        id: 'decision-scene-carries-no-extra-support-line',
+        statement: 'A decision scene carries one instruction, one question and the options — no support line that restates the question or eliminates a distractor in advance.',
+        evidence: [
+          {
+            kind: 'review',
+            reference: 'Read each decision scene for a fourth line of copy beyond instruction, question and options.'
+          }
+        ]
+      },
+      {
+        id: 'invalid-models-are-refused-not-repaired',
+        statement: 'calculationBreakdownValidation.js rejects inexact group splits, group counts outside 2–5, totals over 30, chains that do not solve to a whole number, no-op steps and division by zero. A rejected model falls back to the standard walkthrough — it never draws misleading groups.',
+        evidence: [
+          {
+            kind: 'test',
+            reference: 'tests/unit/calculationBreakdownValidation.test.js'
+          }
+        ]
+      },
+      {
+        id: 'never-parses-an-equation',
+        statement: "Visual models receive explicit numbers. The only string input is operation, read through a closed token grammar ('÷ 3', '+ 4') that rejects anything else; left/right/resultLeft/resultRight are display strings and are never parsed.",
+        evidence: [
+          {
+            kind: 'test',
+            reference: 'tests/unit/calculationBreakdownValidation.test.js'
+          }
+        ]
+      }
+    ],
     exclusivity: null,
-    requiresProductDecision: []
+    requiresProductDecision: [
+      'Re-sequencing, restyling or refactoring the internals of src/components/learning/calculationBreakdown/ without a learning problem to fix',
+      'Changing the fixed predict → act → observe → explain → check choreography',
+      'Adding scoring, streaks or progress tracking inside the component',
+      'Registering, routing or documenting a presentation variant as a separate component'
+    ]
   }
 }

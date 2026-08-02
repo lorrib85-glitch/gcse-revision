@@ -10,6 +10,10 @@ export default {
   source: 'src/components/layout/ScreenTextBlock.jsx',
   exportName: null,
   order: 70,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'layout',
   kind: 'support',
   lifecycle: 'active',

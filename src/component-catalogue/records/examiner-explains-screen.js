@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/ExaminerExplainsScreen.jsx',
   exportName: null,
   order: 48,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'support',
   lifecycle: 'parked',

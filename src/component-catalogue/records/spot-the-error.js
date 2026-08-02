@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/SpotTheError.jsx',
   exportName: null,
   order: 57,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

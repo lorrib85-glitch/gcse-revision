@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/QuickRecallScreen.jsx',
   exportName: null,
   order: 42,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

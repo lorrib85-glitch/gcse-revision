@@ -22,14 +22,15 @@ const read = rel => readFileSync(resolve(root, rel), 'utf8')
 const COMPONENT_ROOT = 'src/components'
 const CATALOGUE_ROOT = 'src/component-catalogue'
 
-// A component outside src/components/** earns a record only when current
-// governance already treats it as a governed standalone component. Ordinary
-// feature screens are not catalogued. Each entry names the export and why.
-const GOVERNED_OUT_OF_ROOT = {
-  'src/features/home/Home.jsx#HomeAtmosphere': {
-    reason: 'The Home hero atmosphere is governed app chrome with its own contract, not an ordinary feature screen.',
-  },
-}
+// Everything under src/ is production source and must not reach the build-time
+// catalogue, with three exceptions:
+//   - the catalogue itself;
+//   - src/dev/**, the Component Lab, which is build-time review tooling;
+//   - src/component-catalogue/** records, covered by the first exception.
+// Listing exclusions rather than inclusions means a new top-level runtime
+// folder is covered the day it appears, instead of the day someone remembers
+// to add it here.
+const NON_PRODUCTION_PREFIXES = [`${CATALOGUE_ROOT}/`, 'src/dev/']
 
 /**
  * Recursively list source files under `dir`, always skipping stories and tests.
@@ -169,15 +170,34 @@ describe('the catalogue is complete', () => {
     }
   })
 
-  it('represents every governed out-of-root component, and no ungoverned one', () => {
+  it('makes every out-of-root component justify itself in its own record', () => {
+    // No allowlist here on purpose: the record declares why it is governed, so
+    // adding a governed feature-level component is one edit, not two.
     const outOfRoot = records.filter(record => !record.source.startsWith(`${COMPONENT_ROOT}/`))
-    const identities = outOfRoot.map(sourceIdentity)
-    expect([...identities].sort()).toEqual(Object.keys(GOVERNED_OUT_OF_ROOT).sort())
-
-    for (const [identity, meta] of Object.entries(GOVERNED_OUT_OF_ROOT)) {
-      expect(existsSync(resolve(root, identity.split('#')[0])), identity).toBe(true)
-      expect(meta.reason.trim().length).toBeGreaterThan(40)
+    for (const record of outOfRoot) {
+      expect(record.scope.location, record.id).not.toBe('components')
+      expect(record.scope.reason?.trim().length ?? 0, record.id).toBeGreaterThan(40)
     }
+  })
+
+  it('keeps scope.location consistent with the source path', () => {
+    const inconsistent = records
+      .filter(record => record.source.startsWith(`${COMPONENT_ROOT}/`) !== (record.scope.location === 'components'))
+      .map(record => `${record.id}: ${record.source} claims scope "${record.scope.location}"`)
+    expect(inconsistent).toEqual([])
+  })
+
+  it('rejects an out-of-root record that gives no reason', () => {
+    const record = records.find(r => r.scope.location !== 'components')
+    expect(record).toBeDefined()
+    expect(validateRecord({ ...record, scope: { ...record.scope, reason: null } }))
+      .toContain('scope.reason must say why a component outside src/components/ is governed (40+ chars)')
+  })
+
+  it('rejects an in-tree record that claims to be out of root', () => {
+    const record = records.find(r => r.scope.location === 'components')
+    expect(validateRecord({ ...record, scope: { location: 'feature', reason: null } }))
+      .toContain('scope.location must be "components" for a source under src/components/')
   })
 
   it('fails when a public record is deleted', () => {
@@ -366,13 +386,31 @@ describe('the generated registry matches the catalogue', () => {
 })
 
 describe('authority boundaries hold', () => {
+  const productionFiles = listFiles('src')
+    .filter(file => !NON_PRODUCTION_PREFIXES.some(prefix => file.startsWith(prefix)))
+
+  it('scans the whole of src/, not a fixed folder list', () => {
+    // A new top-level runtime folder must be covered the day it is created.
+    // These four prove the sweep is real and correctly bounded.
+    expect(productionFiles).toContain('src/App.jsx')
+    expect(productionFiles).toContain('src/main.jsx')
+    expect(productionFiles.some(file => file.startsWith(`${CATALOGUE_ROOT}/`))).toBe(false)
+    expect(productionFiles.some(file => file.startsWith('src/dev/'))).toBe(false)
+
+    // Every top-level folder under src/ that holds source is swept, derived
+    // from the filesystem rather than from a list someone has to remember to
+    // extend. src/hooks and src/constants were both outside the original
+    // folder list; a derived sweep cannot develop that gap again.
+    const swept = new Set(productionFiles.map(file => file.split('/')[1]))
+    const unswept = readdirSync(resolve(root, 'src'))
+      .filter(name => statSync(resolve(root, 'src', name)).isDirectory())
+      .filter(name => !NON_PRODUCTION_PREFIXES.includes(`src/${name}/`))
+      .filter(name => listFiles(`src/${name}`).length > 0)
+      .filter(name => !swept.has(name))
+    expect(unswept).toEqual([])
+  })
+
   it('is never imported by production source', () => {
-    const productionFiles = [
-      ...['src/components', 'src/app', 'src/features', 'src/data', 'src/content', 'src/lib']
-        .flatMap(dir => listFiles(dir)),
-      'src/App.jsx',
-      'src/main.jsx',
-    ].filter(file => existsSync(resolve(root, file)))
 
     // Matches any specifier reaching the catalogue, however it is spelled:
     // `src/component-catalogue/...`, a relative `../../component-catalogue/...`,

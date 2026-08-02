@@ -10,11 +10,15 @@ export default {
   source: 'src/components/core/AnswerInteraction.jsx',
   exportName: null,
   order: 1,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'core',
   kind: 'support',
   lifecycle: 'active',
   lifecycleReason: null,
-  purpose: 'Universal answer UI for all question types (choice, connection, true/false). The single component that handles answer logic for non-timed learning activities across the product.',
+  purpose: 'The shared answer interaction for block-based, non-timed learning activities — choice, connection and true/false. It owns selection, the attempt sequence, hint and reveal, and silent weakness logging for the components that delegate to it. It is not the only answer implementation in the product: the QuickFire-style question families (QuickRecallScreen, TieredQuizScreen) own their answer flow through UnifiedQuestionScreen instead.',
   ownership: {
     internalDirectories: [],
     internalFiles: []
@@ -41,7 +45,7 @@ export default {
   decision: null,
   contract: {
     criticality: 'critical',
-    rationale: 'Every non-timed question type in the product delegates its answer flow here. A change to that flow is felt in every quiz screen at once, and the failure is silent — the screen still renders, it just teaches differently.',
+    rationale: 'Every block-based question type delegates its answer flow here, so a change is felt across those screens at once — and the failure is silent: the screen still renders, it just teaches differently.',
     invariants: [
       {
         id: 'two-attempt-ceiling',
@@ -75,7 +79,7 @@ export default {
       },
       {
         id: 'untimed-learning-only',
-        statement: 'This component serves non-timed learning activities only. Timed exam flows do not use it and must not gain hints or retries through it.',
+        statement: 'This component serves non-timed, block-based learning activities only. Timed exam flows do not use it and must not gain hints or retries through it.',
         evidence: [
           {
             kind: 'review',

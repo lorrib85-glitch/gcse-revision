@@ -10,6 +10,10 @@ export default {
   source: 'src/components/core/ExamPrompt.jsx',
   exportName: null,
   order: 15,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'core',
   kind: 'support',
   lifecycle: 'active',

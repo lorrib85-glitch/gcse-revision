@@ -10,6 +10,10 @@ export default {
   source: 'src/components/core/SequenceProgress.jsx',
   exportName: null,
   order: 11,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'core',
   kind: 'support',
   lifecycle: 'active',

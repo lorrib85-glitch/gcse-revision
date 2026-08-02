@@ -10,6 +10,10 @@ export default {
   source: 'src/components/feedback/RetrievalFrame.jsx',
   exportName: null,
   order: 76,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'feedback',
   kind: 'runtime',
   lifecycle: 'active',

@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/OrderedRouteTask.jsx',
   exportName: null,
   order: 52,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

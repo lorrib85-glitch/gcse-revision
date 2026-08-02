@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/FractionRatioExplore.jsx',
   exportName: null,
   order: 27,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'reviewing',

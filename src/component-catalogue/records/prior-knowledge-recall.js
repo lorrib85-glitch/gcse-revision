@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/PriorKnowledgeRecall.jsx',
   exportName: null,
   order: 43,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

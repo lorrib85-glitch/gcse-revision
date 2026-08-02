@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/Infographic.jsx',
   exportName: null,
   order: 38,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

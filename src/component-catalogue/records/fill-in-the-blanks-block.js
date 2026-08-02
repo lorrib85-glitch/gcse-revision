@@ -10,6 +10,10 @@ export default {
   source: 'src/components/learning/FillInTheBlanksBlock.jsx',
   exportName: null,
   order: 37,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

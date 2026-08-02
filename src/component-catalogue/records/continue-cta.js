@@ -10,6 +10,10 @@ export default {
   source: 'src/components/core/ContinueCTA.jsx',
   exportName: null,
   order: 5,
+  scope: {
+    location: 'components',
+    reason: null
+  },
   section: 'core',
   kind: 'support',
   lifecycle: 'active',
