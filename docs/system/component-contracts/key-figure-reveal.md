@@ -1,54 +1,95 @@
 # Contract — keyFigureReveal
 
-> **Governed by `docs/system/PATTERN_GOVERNANCE.md`.** This contract predates the 9-field format and uses the earlier 3-part subset (bar / copy standards / failure modes); it upgrades to all nine fields when next touched.
+> **Governed by `docs/system/PATTERN_GOVERNANCE.md`.**
 
 **Component:** `src/components/learning/KeyFigureReveal.jsx` · display type
-`keyFigureReveal` · functions: `introduce-figure` · interaction: `reveal`
+`keyFigureReveal` · function: `introduce-figure` · interaction: `reveal`
 
-## The bar
+## 1. Purpose
 
-The Hippocrates and Galen reveals in Episode 1
-(`src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.js`,
-stages "Hippocrates" and "Galen") are the standard. They work because:
+Introduce one historically or conceptually important person through a portrait-led, full-screen reveal that answers: **who were they, what did they contribute, and why did it matter?**
 
-- A portrait hero (`block.portrait`, ~44vh) with a significance statement
-  that frames the coming unit, not just the figure's biography —
-  Galen's `role: 'Roman doctor and writer'` and the section content that
-  follows immediately sets up why his ideas are about to matter for the
-  rest of the episode.
-- Each knowledge section carries exactly one idea, never a list: Galen's
-  four sections are "Gladiators & dissection" (how he got his practical
-  knowledge), "Theory of the four humours" (what he taught), "The
-  squealing pig" (how he proved it), "Influence & lasting legacy" (why it
-  mattered for 1,400 years) — four sections, the component's practical
-  ceiling before swipe-fatigue sets in.
-- A story detail makes the figure memorable rather than a fact list: "He
-  performed a public demonstration, cutting the vocal cord nerves of a
-  squealing pig mid-cry. The pig fell instantly silent. The crowd was
-  stunned. Galen's reputation was made." — this single scene is what a
-  learner will actually recall in the exam room, more than any date.
+The component owns Route C cinematic composition because the portrait and the learner-controlled knowledge reveal must remain one visual moment. A normal scrolling teaching shell would separate the person from the explanation.
 
-## Copy standards
+## 2. When to use
 
-- Lead with why the figure matters to the unit's dramatic question, not
-  when they were born.
-- Each section (`sections[]`) carries one idea in full sentences — 1–3
-  `lines`, not a bullet dump.
-- `takeaway` (final section) states the figure's lasting significance in
-  one sentence, tied to a real consequence, not a vague "he was
-  important."
-- Plain language around the compulsory subject vocabulary, aiming for a
-  reading age of 12; vocabulary explained on first use.
+Use when all of the following are true:
 
-## Known failure modes
+- the person is necessary to the unit's causal story or argument, not decorative biography;
+- the learner needs two to four distinct ideas about them;
+- each idea can be explained in one to three short lines;
+- a memorable image, event or consequence helps the learner retain the figure's significance.
 
-1. **CV-recitation** — sections reduced to born/died/wrote-this-book
-   lists, with no explanation of why any of it matters to the unit's
-   knowledge.
-2. **Stakeless significance** — a `role` or opening line that states
-   importance ("one of the most influential doctors in history") without
-   ever cashing that out into a stake — what changed, who was affected,
-   why it persisted.
-3. **More than 4 knowledge sections** — pushes past the point where a
-   learner will actually swipe through and read each one; content beyond
-   4 ideas needs to be cut or moved to a later screen.
+## 3. When NOT to use
+
+Do not use for:
+
+- **a single fact or quotation** — use `MemoryHook` or a normal teaching screen;
+- **a long biography or chronology** — cut to the ideas that affect the GCSE argument, or use `TimelineCanvas` when sequence is the actual learning job;
+- **comparing two people or theories** — use `TheoryCompare`;
+- **teaching a concept where the person is incidental** — use `ConceptReveal` or `TeachScreenShell`;
+- **more than four knowledge sections** — split the content or move secondary detail to another screen.
+
+## 4. Required structure
+
+Required screen order:
+
+1. full-width portrait hero (`portrait`, `name`, `role`);
+2. exactly one active knowledge card from `sections[]`;
+3. swipe/arrow navigation and section progress;
+4. `ContinueCTA` only on the final section.
+
+Each section requires `title` and one to three full-sentence `lines`. It may include one supporting `image`, one short `quote`, and a final-section `takeaway`.
+
+The knowledge card must size to its content and remain fully readable **without an internal vertical scrollbar**. The portrait is the flexible area: it yields height on shorter viewports so the card, navigation and progression control remain inside the screen. Supporting evidence images use a viewport-responsive height rather than a fixed tall crop.
+
+No eyebrow, biography list, nested card stack, separate page scroll or second primary action.
+
+## 5. Token rules
+
+- Screen title: `TYPE.displayScreen`.
+- Role: `TYPE.metadata`.
+- Card heading: `TYPE.label`.
+- Body: `TYPE.bodySmall` or `TYPE.bodyStrong` for the first non-image line.
+- Rhythm: `SPACING` tokens only.
+- Card and image corners: `RADII` tokens.
+- Touch targets, dividers and focus dimensions: `COMPONENT_SIZE`.
+- Subject identity: `SUBJECTS[subject]`; no locally invented subject palette.
+- Progression: governed `SequenceProgress` and `ContinueCTA` only.
+
+## 6. Motion rules
+
+- Card change uses the standard `MOTION.duration.standard` and `MOTION.easing.standard` slide/fade.
+- Supporting image entrance uses `MOTION.duration.slow`.
+- `prefers-reduced-motion` removes card/image animation and progress glow transitions.
+- Swipe is horizontal; left/right arrow keys provide equivalent navigation.
+
+## 7. Gold example
+
+**Runtime:** Episode 1, stages **Hippocrates** and **Galen** in
+`src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.js`.
+
+Why this is the bar:
+
+- Hippocrates moves from natural causes to Four Humours, observation and influence — each section has one job.
+- Galen uses memorable evidence, especially the squealing-pig demonstration, rather than CV-style facts.
+- Both connect the person directly to the medicine-through-time argument.
+- At mobile size, the full active card, navigation and progress remain visible together; the portrait compresses before knowledge becomes scrollable.
+
+## 8. Below-bar counterexample
+
+**“Famous scientist profile” misuse:** a birth/death/date list, five or more sections, long paragraphs and a fixed-height card that requires the learner to scroll inside it.
+
+It fails because biography replaces significance, the screen has no single memory structure, and the learner cannot see the complete idea or next action at once.
+
+## 9. Review checks
+
+- **⚙** `sections.length` is between 1 and 4.
+- **⚙** every section has a title and one to three non-empty lines.
+- **⚙** only the final section renders `ContinueCTA`.
+- **⚙** reduced-motion rules disable card and evidence-image animation.
+- **⚙** the card content wrapper does not use `overflow-y: auto` or `scroll`.
+- **👁** composed runtime render at 390px shows portrait, name/role, the complete active card and navigation without vertical scrolling.
+- **👁** repeat at a short mobile viewport (approximately 320 × 568): no clipped copy, hidden CTA, horizontal overflow or unusably small portrait.
+- **👁** one element is clearly dominant, the screen's job is understood within three seconds, and the portrait supports rather than competes with the knowledge.
+- **👁** compare against the Hippocrates/Galen gold screens and name any trade-off in portrait impact, readability or content density.
