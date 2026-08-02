@@ -18,6 +18,11 @@ APIs with isolated fixtures.
 
 ## Access
 
+> **⚠ SUPERSEDED — see "Addendum: the shipped access model (2026-08-02)" at the
+> end of this document.** The DEV-gating described in this section was never
+> shipped in this form. `src/App.jsx` reaches the lab in every build. The
+> section below is retained as the original design intent.
+
 - **Method:** `?componentReview=true` query flag, only honoured when
   `import.meta.env.DEV` is true.
 - **Insertion point:** `src/App.jsx`. When the flag is present in DEV, `App`
@@ -143,3 +148,64 @@ must not touch `localStorage` directly); browser walkthrough at 390px with
 screenshots of the index and representative previews; `localStorage` snapshot
 before/after interaction to confirm no `guest::`/`uid:` learner key changes;
 console-error check; confirm normal Home loads without the flag.
+
+---
+
+## Addendum: the shipped access model (2026-08-02)
+
+Recorded during the Phase 10 audit reconciliation. This addendum is authoritative
+where it contradicts the "Access" section above.
+
+### What actually ships
+
+`src/App.jsx` contains **no `import.meta.env.DEV` gate**. The lab is:
+
+- **reachable in every build, including production**, via either
+  `?componentReview=true` or the "Component review lab" card in the History
+  browser (`src/features/subjects/Subjects.jsx`);
+- **lazily loaded** as its own chunk — `React.lazy(() => import('./dev/componentReview/ComponentReviewLab.jsx'))`
+  behind `<Suspense>`, so a learner who never sets the flag never downloads it;
+- **rendered instead of `<LegacyApp />`**, so it still bypasses auth,
+  onboarding, tabs and bottom nav exactly as the original design required;
+- still isolated to the throwaway `devreview` storage scope, so previews cannot
+  touch real learner data.
+
+This is deliberate: the lab is an owner-facing inspection tool that needs to work
+against the deployed build, not only against a local dev server.
+
+### The cost to keep watching
+
+The emitted chunk is **`ComponentReviewLab-*.js` — 355.43 kB (105.73 kB gzip)**
+as of `pnpm build` on 2026-08-02. The 2026-07-19 backlog note recorded ~88 kB /
+26 kB gzip, so it has grown roughly fourfold as reference pages were added.
+
+That is acceptable **only while it stays lazy**. Two rules follow:
+
+1. Never import anything from `src/dev/componentReview/` from a learner-facing
+   module — that would pull the lab into the main bundle.
+2. Every new lab page grows this chunk. It is owner-facing weight, not learner
+   weight, but it is still shipped and still served.
+
+### Fonts decision — external Google Fonts retained
+
+`index.html` loads its web fonts from `fonts.googleapis.com`. **Decision: keep
+the external font link for now. Do not self-host in this phase.** Self-hosting
+means committing font binaries and taking on a licensing/asset decision, which
+belongs to a separate asset phase, not to an audit-hygiene phase.
+
+Accurately recorded offline/proxied behaviour:
+
+- In a network-restricted environment the stylesheet request fails
+  (`ERR_CONNECTION_RESET` in the console) and the browser falls back to the
+  next family in each CSS `font-family` stack, ending at the generic
+  system font. Layout still renders; only the typeface changes.
+- Nothing blocks: the link is a plain stylesheet with `display=swap`, so a
+  failed font fetch never blocks first paint or interaction.
+- The console noise is expected in that environment and is not a defect.
+
+**Separately noted, not decided here:** the `index.html` font URL currently
+requests **seven** families — Manrope, Sora, Outfit, Inter, Space Grotesk,
+Caveat and IBM Plex Serif — while `docs/system/TYPOGRAPHY_SYSTEM.md` and
+`CLAUDE.md` document only Manrope and Sora as the app's typefaces. Trimming the
+request is a typography decision, tracked as **A13** in
+`.planning/backlog/architecture-backlog.md`.

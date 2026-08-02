@@ -922,11 +922,11 @@ retrieval was re-sited:
 
 ## A8 — Component Review Lab spec drift + verification findings (2026-07-19)
 
-**Status:** Backlog
-**Priority:** Low
+**Status:** Resolved (2026-08-02, Phase 10)
+**Priority:** —
 **Area:** `docs/superpowers/specs/2026-07-13-component-review-lab-design.md`, `src/App.jsx`, `src/dev/componentReview/`
 
-### Context
+### Historical context (kept — this is why the entry existed)
 Findings from the verified build of the lab's "Buttons and progress" reference
 page (commit e9f844f): `vite build`, full architecture suite, and a Playwright
 walkthrough at 390px all passed; these observations came out of that session.
@@ -961,16 +961,55 @@ walkthrough at 390px all passed; these observations came out of that session.
   model in `src/App.jsx`.
 - Decision recorded on self-hosting Manrope/Sora vs keeping Google Fonts.
 
+### Resolution — Phase 10 (2026-08-02)
+
+Both acceptance criteria met. Nothing in `src/` changed; this was a
+documentation-truth finding and was closed as one.
+
+**Finding 1 — access model.** Re-verified against current `main`: `src/App.jsx`
+has no `import.meta.env.DEV` gate, the lab renders instead of `<LegacyApp />`
+whenever `?componentReview=true` is present, and `src/features/subjects/Subjects.jsx`
+offers the card that sets the flag. The 2026-07-13 spec's "Access" section now
+carries a SUPERSEDED banner and the spec gained an
+**"Addendum: the shipped access model (2026-08-02)"** recording what actually
+ships, why it is deliberate, and the two rules that keep it safe (never import
+`src/dev/componentReview/` from learner code; every new lab page grows the chunk).
+
+Chunk size re-measured rather than assumed: **`ComponentReviewLab-*.js` is
+355.43 kB / 105.73 kB gzip**, not the ~88 kB / 26 kB this entry recorded in July.
+It has grown roughly fourfold. Still lazy, still owner-facing, still acceptable —
+but the number in this entry was stale and is corrected here.
+
+**Finding 2 — fonts. Decision: keep the external Google Fonts link. Do not
+self-host in this phase.** Self-hosting means committing font binaries and
+taking a licensing/asset decision, which belongs to an asset phase, not to audit
+hygiene. Offline behaviour recorded accurately in the spec addendum: the
+stylesheet request fails, the browser falls back down each CSS `font-family`
+stack to the system font, and because the link is `display=swap` nothing blocks
+first paint. The console errors are expected in a proxied environment, not a
+defect.
+
+Separately discovered while checking finding 2: `index.html` requests **seven**
+font families (Manrope, Sora, Outfit, Inter, Space Grotesk, Caveat, IBM Plex
+Serif) while the typography system documents two. Split out as **A13** — it is a
+typography decision, not this entry's business.
+
+**Finding 3** (CinematicContinueCTA `position: static` in the gallery) was never
+a task and stays recorded as a sanctioned override.
+
 ---
 
 ## A9 — AreaPerimeterExplore story suite: 8 failures from ambiguous `getByText`
 
-**Status:** Backlog
-**Priority:** Medium — the suite is red on `main`, so every unrelated change has
-to re-prove it was already failing
+**Status:** Resolved (fixed in `e4503c7`; confirmed 2026-08-02, Phase 10)
+**Priority:** —
 **Area:** `src/components/learning/AreaPerimeterExplore.stories.jsx`
 
-### Context
+> **The suite is green.** Earlier wording in this entry described `main` as red.
+> That has not been true since `e4503c7`. The root cause below is kept because it
+> is the reason the story file is written the way it is — do not undo it.
+
+### Historical context
 `vitest run --project storybook` fails 8 of 19 `AreaPerimeterExplore` stories on
 `main`. Confirmed pre-existing and unrelated to the CalculationBreakdown algebra
 presentations work (96dc82f) by stashing that change and re-running: same file,
@@ -1017,6 +1056,25 @@ matcher.
 - `AreaPerimeterExplore.jsx` is unchanged — no accessibility behaviour removed.
 - A short note in the story file explaining why status queries are scoped, so
   the next person adding a story does not reintroduce the ambiguity.
+
+### Resolution — verified 2026-08-02 (Phase 10)
+
+All three criteria met. The repair landed in `e4503c7` ("Restore the full pnpm
+verify gate"); this phase re-verified it rather than trusting the record.
+
+- `pnpm test:storybook` on `main` at `bbc8d3d`: **31 files, 285 tests, 0
+  failures.**
+- The fix took the scoped-query route this entry recommended, applied once
+  instead of eight times: `AreaPerimeterExplore.stories.jsx` defines a local
+  `canvas` wrapper whose `getByText` / `getAllByText` pass
+  `ignore: 'script, style, [data-ap-status-announcement]'`, so every status
+  assertion sees the visible node only.
+- The accessibility behaviour is intact — `AreaPerimeterExplore.jsx:374–375`
+  still renders `data-ap-status-announcement` with `aria-live="polite"`. The
+  component was **not** modified, exactly as this entry required.
+
+Do not "simplify" the ignore selector out of the story file: removing it
+restores the eight ambiguous-match failures.
 
 ---
 
@@ -1093,3 +1151,316 @@ hand-off stays within the current subject and only targets an available chapter*
 Covered by 13 tests in `tests/unit/app/chapterNavigation.test.js` (fixture
 edge cases plus real-catalogue checks). Mutation-verified: deleting the
 availability filter fails 7 of them, deleting the same-subject filter fails 5.
+
+---
+
+## A11 — Stale duplicate lockfile: `package-lock.json` is still committed
+
+**Status:** Backlog
+**Priority:** Medium — cheap to fix, and the record currently says it is done
+**Area:** `package-lock.json`, `.planning/codebase/CONCERNS.md`
+
+### Finding (2026-08-02, Phase 10)
+`.planning/codebase/CONCERNS.md` — "Remediation update — 2026-07-10", *Fixed
+(second pass)* — states: *"Standardised on pnpm (`packageManager` field, CI
+migrated to `pnpm install --frozen-lockfile`, `package-lock.json` removed)."*
+
+**`package-lock.json` was not removed.** It is still tracked, 644 KB, alongside
+`pnpm-lock.yaml`. Everything else in that claim is true:
+
+- `package.json` declares `"packageManager": "pnpm@10.33.0"`;
+- `.github/workflows/ci.yml` and `verify.yml` use `pnpm install --frozen-lockfile`
+  exclusively — no `npm ci`, no `npm install`;
+- `vercel.json` builds with `vite build` and no npm-specific step.
+
+So nothing consumes `package-lock.json`. It is a stale artefact of the
+pre-standardisation state, and it is actively misleading: anyone running `npm
+install` gets a different transitive dependency graph from CI.
+
+### Why it was not fixed in Phase 10
+Phase 10's 16-file scope gate was spent on the dead loader-registry deletion and
+the audit record. This is a two-line change and should be picked up as a
+standalone minor task.
+
+### Fix
+1. `git rm package-lock.json`.
+2. Correct the CONCERNS.md remediation claim, or mark it resolved-for-real.
+3. Optionally add a one-line architecture guard asserting only `pnpm-lock.yaml`
+   exists at the repository root, so a stray `npm install` cannot silently
+   reintroduce it.
+
+### Acceptance criteria
+- Exactly one lockfile at the repository root.
+- No document claims the removal happened before it did.
+- `pnpm install --frozen-lockfile` and `pnpm verify` still pass.
+
+---
+
+## A12 — `prop-types` is an unused devDependency
+
+**Status:** Backlog
+**Priority:** Low
+**Area:** `package.json`, `pnpm-lock.yaml`
+
+### Finding (2026-08-02, Phase 10)
+`prop-types@^15.8.1` is declared in `devDependencies` and **imported by nothing**
+— zero matches for `prop-types` as an import specifier across `src/`, `tests/`,
+`.storybook/` and the root configs.
+
+The only textual hit is `eslint.config.js:51`, `'react/prop-types': 'off'` —
+that is a rule name owned by `eslint-plugin-react`, which implements prop-type
+validation itself and does **not** require the `prop-types` package. Turning the
+rule off makes the package even less relevant.
+
+Verified as part of a full dependency census: every other declared package
+resolves to a real importer, a config file, a Vite/Vitest plugin slot, an
+ESLint plugin slot or an npm script. No dependency is missing.
+
+### Adjacent finding — not the same call
+`@vitest/coverage-v8` is also referenced by no config and no script (`vitest.config.js`
+declares no `coverage` block, and no script passes `--coverage`). It is **not**
+recommended for removal: it is the provider Vitest needs the moment anyone runs
+`vitest run --coverage` ad hoc, so removing it trades a small install for a
+broken command. Classified *requires a build decision*, not *unused*.
+
+### Fix
+`pnpm remove -D prop-types`, then inspect the `pnpm-lock.yaml` diff to confirm
+only that entry and its now-unreferenced peers drop out.
+
+### Acceptance criteria
+- `prop-types` gone from `package.json`.
+- `pnpm verify` passes unchanged (all five gates).
+- No production bundle size change — it was never in the graph.
+
+---
+
+## A13 — `index.html` requests five font families the app does not use
+
+**Status:** Backlog
+**Priority:** Low
+**Area:** `index.html`, `docs/system/TYPOGRAPHY_SYSTEM.md`
+
+### Finding (2026-08-02, Phase 10)
+`index.html:10` requests **seven** families in one Google Fonts URL:
+
+> Manrope, Sora, **Outfit, Inter, Space Grotesk, Caveat, IBM Plex Serif**
+
+`CLAUDE.md` and `docs/system/TYPOGRAPHY_SYSTEM.md` both document exactly two
+typefaces — Manrope (display) and Sora (everything else). Roadmap Phase 1
+(2026-06-22) removed Outfit and IBM Plex Serif from the *documentation*; the
+*font request* was never trimmed to match.
+
+Every extra family is weight-range CSS the browser fetches on first paint and
+never uses.
+
+### Why this is not a mechanical fix
+Before trimming, confirm no stray inline `font-family` still names one of the
+five — a component quietly relying on Caveat or Space Grotesk would silently
+change appearance. That is a typography verification pass, not a hygiene edit,
+which is why Phase 10 recorded it instead of doing it.
+
+### Fix
+1. Grep `src/` for each of the five families in `font-family` declarations.
+2. Trim the `index.html` URL to the families that survive.
+3. Re-run `pnpm test:storybook` — the story suite renders real type.
+
+### Acceptance criteria
+- The font request lists only families the codebase actually declares.
+- `docs/system/TYPOGRAPHY_SYSTEM.md` and `index.html` agree.
+- No visual regression in the Storybook suite.
+
+---
+
+## A14 — Reduced-motion has one canonical hook and several private re-implementations
+
+**Status:** Backlog
+**Priority:** Medium — accessibility correctness, not tidiness
+**Area:** `src/hooks/usePrefersReducedMotion.js` and ~20 learning components
+
+### Finding (2026-08-02, Phase 10)
+A full census of `prefers-reduced-motion` / `matchMedia` / `useReducedMotion`
+found **four** distinct behavioural sources, not one:
+
+| Kind | Where | Behaviour |
+|---|---|---|
+| **Canonical hook** | `src/hooks/usePrefersReducedMotion.js` | Seeds state from `matchMedia` **and** subscribes to `change`. Used by 10 components. |
+| Third-party hook | `useReducedMotion` from `motion/react` | `TimelineCanvas`, `TimelineChain`, `FactorWeb`. Reactive. Fine — it comes with the animation library those components already use. |
+| **Private duplicate hooks** | `GuidedExamResponse.jsx:66` (`useReducedMotion`), `CinematicCarousel.jsx:102` (`usePrefersReducedMotion`), `QuoteAnalyser.jsx:351` (inline `useState` + listener) | Subscribe correctly, but **seed to `false`** and only correct inside the effect. |
+| **One-shot reads** | ~15 components, e.g. `ChapterCompleteScreen.jsx:200`, `SwipeSort.jsx:221`, `MedievalDiagnosisScene.jsx:178`, `StreakCelebrationOverlay.jsx:24`, `AnimatedNumber.jsx:10` | Read `.matches` once at init, never subscribe. Do not react to the OS setting changing mid-session. |
+
+Two concrete problems:
+
+1. **`CinematicCarousel.jsx:102` declares a local function with the exact same
+   name as the canonical hook.** Anyone reading that file reasonably assumes it
+   is the shared one. It is not.
+2. **The private hooks are not behaviourally identical to the canonical one.**
+   Seeding `false` means one render with motion enabled before the effect
+   corrects it — a real flash of animation for a learner who asked for none.
+   This is why Phase 10 did **not** consolidate them: the instruction permits
+   consolidation only when two implementations behave identically, and these do
+   not.
+
+### Explicitly not a finding
+The ~35 component-scoped `@media (prefers-reduced-motion: reduce)` CSS blocks and
+`src/globals.css:67` are an **independent accessibility fallback** and must stay.
+They keep working when JS is slow, failed or disabled. Do not remove a CSS rule
+because a JS hook covers the same case.
+
+### Fix (behavioural — needs its own phase)
+1. Point `GuidedExamResponse`, `CinematicCarousel` and `QuoteAnalyser` at
+   `usePrefersReducedMotion`, deleting the three private implementations. This
+   *changes first-render behaviour* — verify each affected screen.
+2. Decide, per one-shot call site, whether mid-session reactivity matters. Some
+   (a one-time celebration overlay) legitimately do not need it.
+3. Add an architecture guard: no file outside `src/hooks/` may declare a
+   function named `usePrefersReducedMotion`.
+
+### Acceptance criteria
+- One JS source of reduced-motion truth, or a written reason per exception.
+- No component seeds reduced-motion to `false` and animates before correcting.
+- Every existing `@media (prefers-reduced-motion: reduce)` block still present.
+
+---
+
+## A15 — `coordinate-plane-annotation-contract` has thin cold-run timeout headroom
+
+**Status:** Observed, not reproduced
+**Priority:** Low — do not act until it actually fails
+**Area:** `tests/architecture/coordinate-plane-annotation-contract.test.js`
+
+### What was investigated (2026-08-02, Phase 10)
+A cold-start timeout in this file was reported. Phase 10 tried to reproduce it
+and **could not**:
+
+- **5 cold runs of the file alone:** 90/90 passed every time. Wall 15.8–16.4 s;
+  in-test 12.0–12.5 s. Variance under 4%.
+- **5 runs of the whole `architecture` project:** 48 files / 1386 tests passed
+  every time, 14.0–14.7 s.
+- **Baseline `pnpm test:architecture`:** passed.
+
+Eleven consecutive clean runs. **Logged as observed-but-unconfirmed — not
+fixed, and not claimed to be fixed.**
+
+### The one real measurement worth keeping
+Per-test timings show the headroom is thinner than the green result suggests:
+
+| Test | Time |
+|---|---|
+| `rotate > uses only the three permitted tiers` | **2229 ms** |
+| `enlarge > uses only the three permitted tiers` | 1704 ms |
+| `rotate > declares a tier on every annotated element` | 1176 ms |
+| `midpoint > uses only the three permitted tiers` | 1041 ms |
+
+Vitest's default `testTimeout` is **5000 ms** and this config does not raise it.
+The slowest test therefore sits at ~45% of its budget. A runner roughly 2.2×
+slower than this container — a cold, contended CI box — would tip it over. That
+is a plausible mechanism for the original report.
+
+The cost is inherent to the design, not waste: `reachableStates(preset)` is built
+**once per preset at collection time** (correctly, inside `describe.each`), and the
+ten `it` blocks then each walk the full state space calling `expect` per point.
+There is no repeated setup to remove, no fake-timer misuse and no leaked handle.
+
+### If it ever fails, in this order
+1. Hoist the per-point `expect` in "uses only the three permitted tiers" to one
+   aggregate assertion over collected violations. Same contract, ~1/50th the
+   `expect` calls. This is the fix with real headroom.
+2. Only then, and only with a comment beside it recording the measured cold time,
+   raise `testTimeout` for this file alone.
+
+**Do not** raise the global timeout, delete assertions, weaken the annotation
+contract, or touch `CoordinatePlaneExplore.jsx` to make a test faster.
+
+---
+
+## A16 — Zero-consumer source files retained by decision (register, not a task)
+
+**Status:** Register — review when the owning decision changes
+**Priority:** —
+**Area:** various
+
+### Purpose
+Phase 10 built an import census over all 380 non-story files in `src/`. This
+records what has no importer **and why it stays**, so a future cleanup does not
+have to re-derive it — and does not delete something load-bearing.
+
+Twelve dead files *were* removed in Phase 10: thirteen `src/content/**/index.js`
+`EPISODE_LOADERS` registries that self-documented as being loaded by
+`src/content/moduleContentRegistry.js`, a file deleted during the chapter
+migration. Zero importers, superseded by `CHAPTER_CONTENT_LOADERS`. Everything
+below is **not** in that category.
+
+| File | Category | Why it stays |
+|---|---|---|
+| `src/components/feedback/RetrievalFrame.jsx` | **C — locked capability** | Zero importers, but LOCKED in `docs/components/LOCKED_COMPONENTS.md` and catalogued in the registry. Locked components are not retired casually. |
+| `src/components/learning/RecoveryQuizPlayer.jsx` | **B — dev/governance** | Mounted by the Component Review Lab; guarded by `chapter-player-private-family.test.js`. |
+| `src/components/learning/WeakSpotRecovery.jsx` | **B — dev/governance** | Same, plus referenced by `ExamRoundDebrief` and the mastery-engine docs. |
+| `src/features/planner/dailyPlanner.js` | **C — parked by decision** | See A17. |
+| `src/features/quickfire/modes/TopicPracticeMode.jsx` | **C — future capability** | Unrouted, but held to a live contract by `quickfire-boundaries.test.js` and `feedback-token-governance.test.js`. |
+| `src/features/quickfire/components/FormulaSheet.jsx` | **C — future capability** | Same; `quickfire-boundaries.test.js` governs it. |
+| `src/data/sociologyGroups.js`, `chemImages.js`, `mathsGroups.js`, `chemistryGroups.js`, `biologyGroups.js` | **Product decision pending** | Topic-group / diagram-path definitions whose only reader (the subject-selection landing) was deleted in Phase 6. `CLAUDE.md` already records each as "no current consumer". Whether a future browse surface wants them is a **product** call, not an architecture one — see the content/product backlog. |
+| `src/data/physicsTopics.js`, `mathsQuestions.js`, `sociologyKeyTerms.js`, `contentIndex.js` | **Product decision pending** | Authored question/vocabulary banks with no wired consumer. Deleting authored curriculum content is never an architecture decision. |
+| `src/features/quickfire/logic/selectQuestions.js` | **C — future capability** | Selection logic ahead of its consumer (F2 adaptive selection). |
+| `src/content/history/medicine/index.js` | **B — governance** | Exports `MEDICINE_EPISODES`, consumed by `content-registry.test.js`. Statically imports all 13 episodes — correct for a test, would break lazy loading if app code ever imported it. Do not import it from `src/`. |
+| `src/main.jsx` | **A — live** | Entry point, referenced from `index.html`, not by an import. |
+
+### One genuine orphan deliberately left in place
+`src/content/history/medicine/episodes/episode-05-great-plague.js` is an empty
+stub (`screenCount: 0`, `screens: []`) with **zero references anywhere** — not in
+`CHAPTER_CONTENT_LOADERS`, not in `chapters.js`, not in `medicine/index.js`,
+which imports `episode-05-great-plague-1665.js` instead. It is superseded and
+dead.
+
+It was **not** deleted, because it sits in `episodes/` and removing an episode
+file is a content decision, which Phase 10 was explicitly barred from making.
+Logged to the content/product backlog for a one-line confirmation, then deletion.
+
+---
+
+## A17 — Planner: one source, parked — keep it that way
+
+**Status:** Resolved as an audit finding; guard recommended
+**Priority:** Low
+**Area:** `src/todaysPlan.js`, `src/features/planner/dailyPlanner.js`
+
+### The duplicate-path question, settled (2026-08-02, Phase 10)
+The audit asked whether `src/dailyPlanner.js` and
+`src/features/planner/dailyPlanner.js` both still exist.
+
+**`src/dailyPlanner.js` does not exist.** There is no duplicate path. The census
+found exactly one planner engine.
+
+| | `src/todaysPlan.js` | `src/features/planner/dailyPlanner.js` |
+|---|---|---|
+| Role | **Live** Home carousel | **Parked** scheduling engine |
+| Importers | `Home.jsx` and the app shell | **None in `src/`** |
+| Tests | via Home/journey tests | `tests/unit/planner/dailyPlanner.test.js` |
+| Size | small | 1330 lines |
+| Exports | `buildTodaysPlan()` | `buildDailyPlan()`, `buildSaturdayBlocks()`, `buildSundayBlocks()`, `processPaperResults()`, … |
+
+They are **not** duplicates — one is a lightweight card builder, the other a
+duration-budgeting scheduler. `dailyPlanner.js` is Category **C: deliberately
+retained future capability**, parked by a live written decision
+(`.planning/backlog/planner-engine-decision.md`, 2026-07-05) until
+subject-selection onboarding can populate its required `userProfile.selectedSubjects`.
+
+**It must not be deleted.** It is tracked under feature backlog F4.
+
+### Recommended guard (not built in Phase 10 — scope)
+The decision doc's own rule is *"Do not create two competing planner
+source-of-truth systems."* Nothing currently enforces it. A small architecture
+test would:
+
+1. assert `src/dailyPlanner.js` does not exist (the old duplicate cannot return);
+2. assert no file in `src/` outside `src/features/planner/` imports
+   `dailyPlanner.js` — so it stays parked until F4 wires it deliberately;
+3. assert `todaysPlan.js` and `dailyPlanner.js` never import each other.
+
+Roughly 25 lines in `tests/architecture/`. Do this before F4 starts, not after.
+
+### Note for whoever picks this up
+`tests/unit/planner/dailyPlanner.test.js` accounts for **18 of the repository's
+90 lint warnings** — unused destructured imports from the parked engine. They are
+harmless and honest (the test imports the full surface it will eventually
+exercise). Do not "fix" them by deleting the imports; that hides how much of the
+engine is untested. Resolve them when F4 activates the engine.
