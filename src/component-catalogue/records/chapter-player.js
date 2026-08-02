@@ -10,10 +10,7 @@ export default {
   source: 'src/components/layout/ChapterPlayer.jsx',
   exportName: null,
   order: 71,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'layout',
   kind: 'runtime',
   lifecycle: 'active',

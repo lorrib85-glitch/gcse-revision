@@ -34,8 +34,16 @@ validator is small, explicit and tested rather than a new dependency — the rep
 had no schema library, and adding one to validate fourteen fields would have
 been a worse trade than the ~200 lines it replaces.
 
-The directory is **build-time governance data**. The learner runtime must never
-import it, and the integrity test proves it does not.
+The directory is **build-time governance data**. Production source must never
+import it, and the integrity test proves it does not by sweeping all of `src/**`
+— derived from the filesystem, so a new top-level runtime folder is covered the
+day it is created rather than the day someone remembers to list it.
+
+`src/dev/**` is inside that boundary, not outside it. The Component Lab is
+lazy-imported by `src/App.jsx` behind a query flag, so it ships as a real chunk
+of the production build; learners simply never download it. "Rarely fetched" is
+not "not bundled". When the Lab genuinely moves outside the production
+application, that can be proved and the exclusion revisited.
 
 ## Decision 2 — the human registry is generated
 
@@ -56,13 +64,19 @@ The markdown is now a projection, not a second authority.
 Most components live under `src/components/**`. A few are governed but live
 elsewhere — today exactly one, `HomeAtmosphere` in `src/features/home/Home.jsx`.
 
-Each record carries `scope: { location, reason }`, and the validator derives the
-expected location from the record's own `source` path: in-tree records must say
-`components` and carry no reason; out-of-root records must say why they are
-governed. There is no allowlist anywhere, so adding a governed feature-level
+Each record carries a single nullable `outOfRootReason`, and the validator
+derives the rest from the record's own `source` path: it must be null for
+anything under `src/components/**`, and a real justification for anything
+outside it. There is no allowlist anywhere, so adding a governed feature-level
 component is one edit — the record — rather than a record plus a coordinated
 edit to an architecture test. An allowlist in the test would have been the same
 "one fact, two homes" pattern this decision exists to remove.
+
+*Where* a component lives is not recorded, because `source` already says it, and
+its semantic role is already carried by `section` and `kind`. An earlier draft
+had `scope: { location, reason }`; the location repeated the path classification
+across 83 records and gave the validator nothing to do but confirm the
+redundancy.
 
 ## Decision 4 — internal file ownership moves into the owning record
 

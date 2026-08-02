@@ -10,10 +10,7 @@ export default {
   source: 'src/components/core/ProgressRecoveryCard.jsx',
   exportName: null,
   order: 18,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'core',
   kind: 'runtime',
   lifecycle: 'active',

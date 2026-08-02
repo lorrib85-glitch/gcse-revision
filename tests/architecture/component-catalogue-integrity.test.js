@@ -23,14 +23,19 @@ const COMPONENT_ROOT = 'src/components'
 const CATALOGUE_ROOT = 'src/component-catalogue'
 
 // Everything under src/ is production source and must not reach the build-time
-// catalogue, with three exceptions:
-//   - the catalogue itself;
-//   - src/dev/**, the Component Lab, which is build-time review tooling;
-//   - src/component-catalogue/** records, covered by the first exception.
+// catalogue. The catalogue itself is the only exclusion.
+//
+// src/dev/** is deliberately NOT excluded. The Component Lab is lazy-imported
+// by src/App.jsx behind a query flag, so it ships as a real chunk of the
+// production build — learners simply never download it. "Rarely fetched" is not
+// "not bundled", and a future Lab integration importing the catalogue would put
+// governance prose into the shipped app. When the Lab genuinely moves outside
+// the production application, that can be proved and this list revisited.
+//
 // Listing exclusions rather than inclusions means a new top-level runtime
 // folder is covered the day it appears, instead of the day someone remembers
 // to add it here.
-const NON_PRODUCTION_PREFIXES = [`${CATALOGUE_ROOT}/`, 'src/dev/']
+const NON_PRODUCTION_PREFIXES = [`${CATALOGUE_ROOT}/`]
 
 /**
  * Recursively list source files under `dir`, always skipping stories and tests.
@@ -172,32 +177,33 @@ describe('the catalogue is complete', () => {
 
   it('makes every out-of-root component justify itself in its own record', () => {
     // No allowlist here on purpose: the record declares why it is governed, so
-    // adding a governed feature-level component is one edit, not two.
+    // adding a governed feature-level component is one edit, not two. Where it
+    // lives is not repeated — `source` already says that.
     const outOfRoot = records.filter(record => !record.source.startsWith(`${COMPONENT_ROOT}/`))
+    expect(outOfRoot.length).toBeGreaterThan(0)
     for (const record of outOfRoot) {
-      expect(record.scope.location, record.id).not.toBe('components')
-      expect(record.scope.reason?.trim().length ?? 0, record.id).toBeGreaterThan(40)
+      expect(record.outOfRootReason?.trim().length ?? 0, record.id).toBeGreaterThan(40)
     }
   })
 
-  it('keeps scope.location consistent with the source path', () => {
-    const inconsistent = records
-      .filter(record => record.source.startsWith(`${COMPONENT_ROOT}/`) !== (record.scope.location === 'components'))
-      .map(record => `${record.id}: ${record.source} claims scope "${record.scope.location}"`)
-    expect(inconsistent).toEqual([])
+  it('leaves outOfRootReason null for everything in the normal home', () => {
+    const noisy = records
+      .filter(record => record.source.startsWith(`${COMPONENT_ROOT}/`) && record.outOfRootReason !== null)
+      .map(record => record.id)
+    expect(noisy).toEqual([])
   })
 
   it('rejects an out-of-root record that gives no reason', () => {
-    const record = records.find(r => r.scope.location !== 'components')
+    const record = records.find(r => r.outOfRootReason !== null)
     expect(record).toBeDefined()
-    expect(validateRecord({ ...record, scope: { ...record.scope, reason: null } }))
-      .toContain('scope.reason must say why a component outside src/components/ is governed (40+ chars)')
+    expect(validateRecord({ ...record, outOfRootReason: null }))
+      .toContain('outOfRootReason must say why a component outside src/components/ is governed (40+ chars)')
   })
 
-  it('rejects an in-tree record that claims to be out of root', () => {
-    const record = records.find(r => r.scope.location === 'components')
-    expect(validateRecord({ ...record, scope: { location: 'feature', reason: null } }))
-      .toContain('scope.location must be "components" for a source under src/components/')
+  it('rejects an in-tree record that claims an out-of-root reason', () => {
+    const record = records.find(r => r.source.startsWith(`${COMPONENT_ROOT}/`))
+    expect(validateRecord({ ...record, outOfRootReason: 'A reason long enough to pass the length check but not legitimate here.' }))
+      .toContain('outOfRootReason must be null for a component under src/components/')
   })
 
   it('fails when a public record is deleted', () => {
@@ -391,11 +397,15 @@ describe('authority boundaries hold', () => {
 
   it('scans the whole of src/, not a fixed folder list', () => {
     // A new top-level runtime folder must be covered the day it is created.
-    // These four prove the sweep is real and correctly bounded.
+    // These prove the sweep is real and correctly bounded.
     expect(productionFiles).toContain('src/App.jsx')
     expect(productionFiles).toContain('src/main.jsx')
     expect(productionFiles.some(file => file.startsWith(`${CATALOGUE_ROOT}/`))).toBe(false)
-    expect(productionFiles.some(file => file.startsWith('src/dev/'))).toBe(false)
+
+    // The Component Lab ships as a real chunk of the production build, so it is
+    // scanned like any other production source.
+    expect(productionFiles.some(file => file.startsWith('src/dev/'))).toBe(true)
+    expect(read('src/App.jsx')).toContain("import('./dev/componentReview/ComponentReviewLab.jsx')")
 
     // Every top-level folder under src/ that holds source is swept, derived
     // from the filesystem rather than from a list someone has to remember to

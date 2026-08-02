@@ -10,10 +10,7 @@ export default {
   source: 'src/components/learning/KeyFigureReveal.jsx',
   exportName: null,
   order: 41,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

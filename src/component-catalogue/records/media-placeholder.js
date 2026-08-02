@@ -10,10 +10,7 @@ export default {
   source: 'src/components/core/MediaPlaceholder.jsx',
   exportName: null,
   order: 17,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'core',
   kind: 'support',
   lifecycle: 'active',

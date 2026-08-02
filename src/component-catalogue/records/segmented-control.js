@@ -10,10 +10,7 @@ export default {
   source: 'src/components/core/SegmentedControl.jsx',
   exportName: null,
   order: 21,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'core',
   kind: 'support',
   lifecycle: 'active',

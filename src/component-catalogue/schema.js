@@ -270,52 +270,31 @@ function validateContract(errors, contract) {
   }
 }
 
-/**
- * Where a component legitimately lives. `components` is the default home;
- * anything else must justify itself in the record, so a governed out-of-root
- * component never needs a second allowlist in a test to be recognised.
- */
-export const SCOPE_LOCATIONS = ['components', 'feature']
-
 export const COMPONENT_ROOT = 'src/components/'
 
-function validateScope(errors, record) {
-  const { scope, source } = record
-
-  if (!isPlainObject(scope)) {
-    errors.push('scope must be an object')
-    return
-  }
-  if (!SCOPE_LOCATIONS.includes(scope.location)) {
-    errors.push(`scope.location must be one of ${SCOPE_LOCATIONS.join(' | ')}`)
-    return
-  }
-
-  // The source path decides the location — a record cannot claim to be
-  // in-tree while living somewhere else, or smuggle in an out-of-root
-  // component without saying why it is governed.
+/**
+ * Where a component lives is already stated by `source`, so the catalogue does
+ * not repeat it. The only genuinely new fact is *why* a component outside
+ * `src/components/**` is governed at all — that is `outOfRootReason`, and it
+ * must be null for everything in the normal home.
+ */
+function validateOutOfRootReason(errors, record) {
+  const { outOfRootReason, source } = record
   const inComponentRoot = typeof source === 'string' && source.startsWith(COMPONENT_ROOT)
 
   if (inComponentRoot) {
-    if (scope.location !== 'components') {
-      errors.push(`scope.location must be "components" for a source under ${COMPONENT_ROOT}`)
-    }
-    if (scope.reason !== null) {
-      errors.push('scope.reason must be null for a component under src/components/')
+    if (outOfRootReason !== null) {
+      errors.push(`outOfRootReason must be null for a component under ${COMPONENT_ROOT}`)
     }
     return
   }
-
-  if (scope.location === 'components') {
-    errors.push(`scope.location "components" requires a source under ${COMPONENT_ROOT}`)
-  }
-  if (!isNonEmptyString(scope.reason) || scope.reason.trim().length < 40) {
-    errors.push('scope.reason must say why a component outside src/components/ is governed (40+ chars)')
+  if (!isNonEmptyString(outOfRootReason) || outOfRootReason.trim().length < 40) {
+    errors.push(`outOfRootReason must say why a component outside ${COMPONENT_ROOT} is governed (40+ chars)`)
   }
 }
 
 const REQUIRED_KEYS = [
-  'id', 'name', 'source', 'exportName', 'order', 'scope', 'section', 'kind',
+  'id', 'name', 'source', 'exportName', 'order', 'outOfRootReason', 'section', 'kind',
   'lifecycle', 'lifecycleReason', 'purpose', 'ownership', 'documentation',
   'decision', 'contract',
 ]
@@ -367,7 +346,7 @@ export function validateRecord(record) {
     errors.push('purpose must describe what the component is (30+ chars)')
   }
 
-  validateScope(errors, record)
+  validateOutOfRootReason(errors, record)
   validateOwnership(errors, record.ownership)
   validateDocumentation(errors, record.documentation)
   validateDecision(errors, record)

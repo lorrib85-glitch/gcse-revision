@@ -10,10 +10,7 @@ export default {
   source: 'src/components/learning/BuilderBlock.jsx',
   exportName: null,
   order: 29,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

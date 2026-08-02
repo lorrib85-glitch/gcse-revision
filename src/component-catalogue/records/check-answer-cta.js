@@ -10,10 +10,7 @@ export default {
   source: 'src/components/core/CheckAnswerCTA.jsx',
   exportName: null,
   order: 6,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'core',
   kind: 'support',
   lifecycle: 'active',

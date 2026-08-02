@@ -10,10 +10,7 @@ export default {
   source: 'src/components/layout/ContentShell.jsx',
   exportName: null,
   order: 67,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'layout',
   kind: 'runtime',
   lifecycle: 'active',

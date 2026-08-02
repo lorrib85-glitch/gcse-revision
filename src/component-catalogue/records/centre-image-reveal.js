@@ -10,10 +10,7 @@ export default {
   source: 'src/components/learning/CentreImageReveal.jsx',
   exportName: null,
   order: 53,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

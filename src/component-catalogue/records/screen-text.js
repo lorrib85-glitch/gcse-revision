@@ -10,10 +10,7 @@ export default {
   source: 'src/components/core/ScreenText.jsx',
   exportName: null,
   order: 20,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'core',
   kind: 'support',
   lifecycle: 'active',

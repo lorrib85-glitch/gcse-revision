@@ -10,10 +10,7 @@ export default {
   source: 'src/components/learning/AreaPerimeterExplore.jsx',
   exportName: null,
   order: 26,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'reviewing',

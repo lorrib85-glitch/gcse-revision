@@ -10,10 +10,7 @@ export default {
   source: 'src/components/core/InlineNavigationContext.jsx',
   exportName: null,
   order: 16,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'core',
   kind: 'runtime',
   lifecycle: 'active',

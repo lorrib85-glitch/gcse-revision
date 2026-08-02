@@ -10,10 +10,7 @@ export default {
   source: 'src/components/learning/CircuitDiagram.jsx',
   exportName: null,
   order: 33,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',

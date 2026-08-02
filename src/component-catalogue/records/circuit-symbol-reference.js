@@ -10,10 +10,7 @@ export default {
   source: 'src/components/learning/CircuitSymbolReference.jsx',
   exportName: null,
   order: 83,
-  scope: {
-    location: 'components',
-    reason: null
-  },
+  outOfRootReason: null,
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'reviewing',

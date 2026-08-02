@@ -217,7 +217,9 @@ function renderRecord(record) {
   const identity = [
     bullet('File', `\`${record.source}\``),
     record.exportName ? bullet('Export', `\`${record.exportName}\` (named export)`) : null,
-    record.scope.reason ? bullet('Why it is catalogued outside `src/components/`', record.scope.reason) : null,
+    record.outOfRootReason
+      ? bullet('Why it is catalogued outside `src/components/`', record.outOfRootReason)
+      : null,
     bullet('Kind', `${KIND_LABELS[record.kind]} (\`${record.kind}\`)`),
     bullet('Lifecycle', record.lifecycleReason
       ? `\`${record.lifecycle}\` — ${record.lifecycleReason}`

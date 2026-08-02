@@ -10,10 +10,7 @@ export default {
   source: 'src/features/home/Home.jsx',
   exportName: 'HomeAtmosphere',
   order: 84,
-  scope: {
-    location: 'feature',
-    reason: 'Governed app chrome with a standalone product contract: it is the first thing a learner sees and carries the product identity, so it is catalogued even though it lives in a feature file.'
-  },
+  outOfRootReason: 'Governed app chrome with a standalone product contract: it is the first thing a learner sees and carries the product identity, so it is catalogued even though it lives in a feature file.',
   section: 'feature',
   kind: 'feature',
   lifecycle: 'active',
