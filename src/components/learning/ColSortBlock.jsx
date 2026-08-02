@@ -2,6 +2,7 @@ import { useState } from 'react'
 import ColSortBlockCore from './ColSortBlockCore.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
+import { useInlineNavigationOwner } from '../core/InlineNavigationContext.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
@@ -30,6 +31,17 @@ const FOCUS_CSS = `
     margin-bottom: 22px !important;
     animation: none !important;
     transform: none !important;
+  }
+
+  /* Standard chapter screens already own the one visible heading and intro.
+     When the sort is embedded in ContentShell, keep only the interaction and
+     its progress so the learner never sees two competing questions. */
+  .colsort-focus.is-embedded .csb-heading > :not(.csb-progress) {
+    display: none !important;
+  }
+
+  .colsort-focus.is-embedded .csb-heading {
+    margin-bottom: 18px !important;
   }
 
   .colsort-focus .csb-card-stage {
@@ -390,6 +402,8 @@ function ColSortSummary({ block, theme, total, onContinue }) {
 export default function ColSortBlock({ block, onComplete, ...props }) {
   const [sorted, setSorted] = useState(false)
   const [showSummary, setShowSummary] = useState(false)
+  const continueChapter = useInlineNavigationOwner(true)
+  const isEmbedded = Boolean(continueChapter)
   const subject = props.subject || 'Biology'
   const theme = SUBJECTS[subject] || SUBJECTS.Biology
   const columnNames = (block.columns || []).map(column => firstLine(column.label))
@@ -505,7 +519,7 @@ export default function ColSortBlock({ block, onComplete, ...props }) {
   if (showSummary) {
     return (
       <div
-        className="colsort-focus is-summary"
+        className={`colsort-focus is-summary${isEmbedded ? ' is-embedded' : ''}`}
         style={{
           '--colsort-accent': theme.accent,
           '--colsort-frame': theme.accentSecondary || theme.accent,
@@ -516,7 +530,7 @@ export default function ColSortBlock({ block, onComplete, ...props }) {
           block={resolvedBlock}
           theme={theme}
           total={items.length}
-          onContinue={onComplete}
+          onContinue={onComplete || continueChapter}
         />
       </div>
     )
@@ -524,7 +538,7 @@ export default function ColSortBlock({ block, onComplete, ...props }) {
 
   return (
     <div
-      className={`colsort-focus${sorted ? ' is-sorted' : ''}`}
+      className={`colsort-focus${sorted ? ' is-sorted' : ''}${isEmbedded ? ' is-embedded' : ''}`}
       style={{
         '--colsort-accent': theme.accent,
         '--colsort-frame': theme.accentSecondary || theme.accent,
