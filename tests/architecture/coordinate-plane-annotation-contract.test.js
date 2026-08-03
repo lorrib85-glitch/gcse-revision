@@ -59,8 +59,36 @@ function reachableStates(preset) {
   return states
 }
 
+/**
+ * Why this contract needs longer than the generic 5s per-test budget.
+ *
+ * These assertions are exhaustive by design: every effective state, focus mode,
+ * comparison rule, guide policy and focusable-point selection. That is 69,888
+ * reachable states carrying 370,800 annotated points, so a per-point assertion
+ * makes one matcher call per point — 132,300 for rotate, 95,256 for enlarge.
+ *
+ * The cost is the matcher call itself, not the data. Every scene is derived once
+ * when the suite is collected, and deriving all nine presets takes ~0.8s in
+ * total; caching it would take nothing off these assertions. Walking the very
+ * same points with `toBeDefined` costs ~1.0s for enlarge and with `toContain`
+ * ~3.6s — same loop, same points, 3.6x the time.
+ *
+ * That left the slowest assertion, `uses only the three permitted tiers`, at
+ * 44–83% of the 5s budget on an idle machine, so ordinary CPU contention tipped
+ * it over and the whole verify run became untrustworthy. Under contention it
+ * overran to 14s, which is also what proves the work is synchronous rather than
+ * a leaked handle — the runner cannot interrupt a blocking loop.
+ *
+ * So the budget is raised for this file alone rather than the coverage reduced:
+ * ~3.6x headroom over the 4.1s worst case measured across a full architecture
+ * run. It is deliberately not a global `testTimeout` — every other architecture
+ * test should still fail fast at 5s.
+ */
+const EXHAUSTIVE_ANNOTATION_TIMEOUT_MS = 15_000
+
 describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
   'annotation contract: %s',
+  { timeout: EXHAUSTIVE_ANNOTATION_TIMEOUT_MS },
   (presetId, preset) => {
     const states = reachableStates(preset)
 

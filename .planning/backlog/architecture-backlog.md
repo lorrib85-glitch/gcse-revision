@@ -1449,9 +1449,13 @@ design.
 
 ## A15 — `coordinate-plane-annotation-contract` has thin cold-run timeout headroom
 
-**Status:** Observed, not reproduced
-**Priority:** Low — do not act until it actually fails
+**Status:** ✅ Resolved (2026-08-03) — reproduced, root-caused, fixed
+**Priority:** —
 **Area:** `tests/architecture/coordinate-plane-annotation-contract.test.js`
+
+> Resolution appended at the end of this item. The Phase 10 investigation below
+> is preserved as written — it was correct about the mechanism and correct to
+> refuse to claim a fix it could not demonstrate.
 
 ### What was investigated (2026-08-02, Phase 10)
 A cold-start timeout in this file was reported. Phase 10 tried to reproduce it
@@ -1495,6 +1499,72 @@ There is no repeated setup to remove, no fake-timer misuse and no leaked handle.
 
 **Do not** raise the global timeout, delete assertions, weaken the annotation
 contract, or touch `CoordinatePlaneExplore.jsx` to make a test faster.
+
+### Resolution (2026-08-03)
+
+**It did fail, and it was reproduced on demand.** Phase 10 was right about the
+mechanism and wrong only about being unable to trigger it: the trigger is CPU
+contention, not cold start. Saturating the 4 available cores and re-running the
+file reproduces it every time:
+
+```
+× midpoint > uses only the three permitted tiers   6549 ms  → Test timed out in 5000ms
+× reflect > uses only the three permitted tiers    5804 ms  → Test timed out in 5000ms
+× rotate  > uses only the three permitted tiers   14171 ms  → Test timed out in 5000ms
+  Tests  4 failed | 86 passed (90)
+```
+
+**Confirmed cause — matcher invocation, not data production.** The state space is
+1,102 effective states → 69,888 reachable states → **370,800 annotated points**
+(132,300 rotate, 95,256 enlarge). The per-point assertion makes one matcher call
+per point. Two measurements pin the cost to the matcher itself:
+
+- Deriving *every* scene for *all nine* presets costs **~0.8 s total** (enlarge
+  0.18 s), and happens once at collection. Caching it would take **0 ms** off the
+  failing assertion — so there was no duplicate work to remove.
+- `declares a tier on every annotated element` walks the **identical** array of
+  identical points with `toBeDefined` in 997 ms; the same walk with `toContain`
+  takes 3577 ms. Same loop, same data, 3.6×.
+
+The 14171 ms overrun **past** a 5000 ms deadline also proves the work is
+synchronous CPU enumeration — a leaked handle or pending promise would be cut off
+*at* 5000 ms, not run over it. No async defect, no production defect.
+
+Measured idle-box range for the slowest assertion: **2206–4137 ms**, i.e. 44–83%
+of the 5 s budget. Phase 10's ~45% figure was accurate; the box simply had to be
+a little busier.
+
+**Fix applied — step 2, not step 1.** A file-local
+`EXHAUSTIVE_ANNOTATION_TIMEOUT_MS = 15_000`, passed as suite options to
+`describe.each` so it cascades to all nine presets (verified empirically for
+Vitest 4.1.7). ~3.6× headroom over the 4137 ms worst case. Not a global
+`testTimeout` — every other architecture test still fails fast at 5 s. No state,
+preset, focus mode, comparison rule, guide policy or assertion was changed; the
+census is identical before and after (1,102 / 69,888 / 370,800).
+
+**Why step 1 was not taken — and it remains available.** The commissioning brief
+for this repair explicitly required retaining every current annotation assertion
+unchanged and forbade combining a refactor with the timeout. Step 1 was still
+measured, and this backlog's estimate was right — it is the stronger fix:
+
+| | slowest assertion (enlarge) | whole file |
+|---|---|---|
+| timeout only (applied) | 3577 ms | 22.6 s |
+| aggregate violations (step 1, measured, **not** applied) | **4 ms** | **8.2 s** |
+
+Aggregating collected violations into one `expect(violations).toEqual([])` keeps
+identical coverage and removes the pressure outright rather than budgeting for
+it. **Recommended as a follow-up** if this file is opened again; it would also
+let the timeout constant be dropped.
+
+**Repeated-run evidence, all without retries:** 10/10 target-file runs (enlarge
+2079–2937 ms, file 16.0–18.1 s), 5/5 `pnpm test:architecture` (50 files / 1532
+tests each), 2/2 `pnpm verify` (exit 0). Test counts unchanged (1532 / 1233 /
+301). Production build byte-identical — all 522 outputs, 70 JS chunks, matching
+md5 against a clean-HEAD build. Mutation-tested: a tier of `'highlight'` injected
+into one enlarge corner (`centre (1,−1)`, reachable only under the
+`nonOriginCentre` profiles) failed the named assertion as an `AssertionError`,
+not a timeout.
 
 ---
 
