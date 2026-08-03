@@ -1,0 +1,1480 @@
+{
+  "$schema": "phase-4-component-lab/current-catalogue-coverage",
+  "capturedAtSha": "d2c0030f80730db42e0b5097319ae5292966b078",
+  "note": "Every catalogue record at the baseline SHA, with how the Component Lab represents it today and the target coverage category. Totals reconcile exactly to the catalogue population.",
+  "catalogueRecords": 84,
+  "categories": {
+    "1": "Directly previewable standalone component",
+    "2": "Previewable through a component-family owner",
+    "3": "Represented as a variant of another Lab preview",
+    "4": "Represented on a governed reference page",
+    "5": "Visual runtime/layout component that needs a preview adapter",
+    "6": "Non-visual support primitive",
+    "7": "Private family internal — must not be independently selectable",
+    "8": "Owner/runtime shell — meaningful to list, not to mount standalone",
+    "9": "Genuinely not previewable",
+    "10": "Unaccounted — requires a decision"
+  },
+  "categoryCounts": {
+    "1": 45,
+    "3": 2,
+    "4": 20,
+    "5": 7,
+    "6": 1,
+    "8": 2,
+    "9": 2,
+    "10": 5
+  },
+  "representedToday": 56,
+  "notRepresentedToday": 28,
+  "records": [
+    {
+      "id": "answer-interaction",
+      "name": "AnswerInteraction",
+      "source": "src/components/core/AnswerInteraction.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "critical",
+      "authoringTypes": [
+        "block:quiz"
+      ],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Authorable block (block:quiz) shared answer UI; reference-page render shows every answer mode — MISSING today."
+    },
+    {
+      "id": "back-button",
+      "name": "BackButton",
+      "source": "src/components/core/BackButton.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Rendered live on ButtonsAndProgressPage."
+    },
+    {
+      "id": "card-container",
+      "name": "CardContainer",
+      "source": "src/components/core/CardContainer.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Visual shared primitive; belongs on the reference page — MISSING today."
+    },
+    {
+      "id": "cinematic-continue-cta",
+      "name": "CinematicContinueCTA",
+      "source": "src/components/core/CinematicContinueCTA.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Rendered live on ButtonsAndProgressPage (sanctioned position:static override)."
+    },
+    {
+      "id": "continue-cta",
+      "name": "ContinueCTA",
+      "source": "src/components/core/ContinueCTA.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Rendered live on ButtonsAndProgressPage."
+    },
+    {
+      "id": "check-answer-cta",
+      "name": "CheckAnswerCTA",
+      "source": "src/components/core/CheckAnswerCTA.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Rendered live on ButtonsAndProgressPage."
+    },
+    {
+      "id": "exit-button",
+      "name": "ExitButton",
+      "source": "src/components/core/ExitButton.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Rendered live on ButtonsAndProgressPage."
+    },
+    {
+      "id": "learning-header",
+      "name": "LearningHeader",
+      "source": "src/components/core/LearningHeader.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Visual chapter header primitive; belongs on the reference page — MISSING today."
+    },
+    {
+      "id": "learning-progress-header",
+      "name": "LearningProgressHeader",
+      "source": "src/components/core/LearningProgressHeader.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Rendered live on ButtonsAndProgressPage."
+    },
+    {
+      "id": "save-failure-notice",
+      "name": "SaveFailureNotice",
+      "source": "src/components/core/SaveFailureNotice.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Visual app-wide notice; belongs on the reference page — MISSING today."
+    },
+    {
+      "id": "sequence-progress",
+      "name": "SequenceProgress",
+      "source": "src/components/core/SequenceProgress.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Rendered live on ButtonsAndProgressPage (dots + sash)."
+    },
+    {
+      "id": "animated-number",
+      "name": "AnimatedNumber",
+      "source": "src/components/core/AnimatedNumber.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Visual numeric primitive; belongs on the reference page — MISSING today."
+    },
+    {
+      "id": "cinematic-divider",
+      "name": "CinematicDivider",
+      "source": "src/components/core/CinematicDivider.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Rendered live on ButtonsAndProgressPage (three sizes)."
+    },
+    {
+      "id": "circular-timer",
+      "name": "CircularTimer",
+      "source": "src/components/core/CircularTimer.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Rendered live on ButtonsAndProgressPage."
+    },
+    {
+      "id": "exam-prompt",
+      "name": "ExamPrompt",
+      "source": "src/components/core/ExamPrompt.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Visual governed exam prompt; belongs on the reference page — MISSING today."
+    },
+    {
+      "id": "inline-navigation-context",
+      "name": "InlineNavigationContext",
+      "source": "src/components/core/InlineNavigationContext.jsx",
+      "section": "core",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 6,
+      "reason": "React context provider — renders no visual output of its own; nothing to preview."
+    },
+    {
+      "id": "media-placeholder",
+      "name": "MediaPlaceholder",
+      "source": "src/components/core/MediaPlaceholder.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:mediaPlaceholder"
+      ],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Authorable block (block:mediaPlaceholder) that is a reserved media slot; reference-page render is the honest preview — MISSING today."
+    },
+    {
+      "id": "progress-recovery-card",
+      "name": "ProgressRecoveryCard",
+      "source": "src/components/core/ProgressRecoveryCard.jsx",
+      "section": "core",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 5,
+      "reason": "Visual recovery card the runtime places; mountable with a fixture — MISSING today."
+    },
+    {
+      "id": "score-number-line",
+      "name": "ScoreNumberLine",
+      "source": "src/components/core/ScoreNumberLine.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Rendered live on ButtonsAndProgressPage."
+    },
+    {
+      "id": "screen-text",
+      "name": "ScreenText",
+      "source": "src/components/core/ScreenText.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Visual text primitive; belongs on the reference page — MISSING today."
+    },
+    {
+      "id": "segmented-control",
+      "name": "SegmentedControl",
+      "source": "src/components/core/SegmentedControl.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Visual shared control; belongs on the reference page — MISSING today."
+    },
+    {
+      "id": "teach-screen-shell",
+      "name": "TeachScreenShell",
+      "source": "src/components/core/TeachScreenShell.jsx",
+      "section": "core",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "opposite-qualities-reveal",
+        "acronym-memorise"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via opposite-qualities-reveal, acronym-memorise."
+    },
+    {
+      "id": "factor-web",
+      "name": "FactorWeb",
+      "source": "src/components/learning/FactorWeb.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "pending",
+      "criticality": "critical",
+      "authoringTypes": [
+        "screen:factorWeb"
+      ],
+      "labEntryIds": [
+        "factor-web"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via factor-web."
+    },
+    {
+      "id": "acronym-memorise",
+      "name": "AcronymMemorise",
+      "source": "src/components/learning/AcronymMemorise.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:acronymMemorise"
+      ],
+      "labEntryIds": [
+        "acronym-memorise"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via acronym-memorise."
+    },
+    {
+      "id": "angle-explore",
+      "name": "AngleExplore",
+      "source": "src/components/learning/AngleExplore.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "reviewing",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "angle-explore"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via angle-explore."
+    },
+    {
+      "id": "area-perimeter-explore",
+      "name": "AreaPerimeterExplore",
+      "source": "src/components/learning/AreaPerimeterExplore.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "reviewing",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "area-perimeter-explore"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via area-perimeter-explore."
+    },
+    {
+      "id": "fraction-ratio-explore",
+      "name": "FractionRatioExplore",
+      "source": "src/components/learning/FractionRatioExplore.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "reviewing",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 10,
+      "reason": "kind: reusable, lifecycle: reviewing, decision complete, no authoring type, no Lab entry. Its Maths Explore siblings are all previewed — its absence looks like an oversight, but adding it is a scope call."
+    },
+    {
+      "id": "coordinate-plane-explore",
+      "name": "CoordinatePlaneExplore",
+      "source": "src/components/learning/CoordinatePlaneExplore.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "reviewing",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "coordinate-plane-explore"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via coordinate-plane-explore."
+    },
+    {
+      "id": "builder-block",
+      "name": "BuilderBlock",
+      "source": "src/components/learning/BuilderBlock.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:builder"
+      ],
+      "labEntryIds": [
+        "builder-block",
+        "builder-block-maths",
+        "builder-block-quote"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via builder-block, builder-block-maths, builder-block-quote."
+    },
+    {
+      "id": "calculation-breakdown",
+      "name": "CalculationBreakdown",
+      "source": "src/components/learning/CalculationBreakdown.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "reviewing",
+      "decisionStatus": "complete",
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "calculation-breakdown"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via calculation-breakdown."
+    },
+    {
+      "id": "cinematic-carousel",
+      "name": "CinematicCarousel",
+      "source": "src/components/learning/CinematicCarousel.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:cinematicCarousel"
+      ],
+      "labEntryIds": [
+        "cinematic-carousel"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via cinematic-carousel."
+    },
+    {
+      "id": "cinematic-reveal-moment",
+      "name": "CinematicRevealMoment",
+      "source": "src/components/learning/CinematicRevealMoment.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:cinematic"
+      ],
+      "labEntryIds": [
+        "cinematic-reveal-moment"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via cinematic-reveal-moment."
+    },
+    {
+      "id": "circuit-diagram",
+      "name": "CircuitDiagram",
+      "source": "src/components/learning/CircuitDiagram.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "pending",
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "circuit-diagram"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via circuit-diagram."
+    },
+    {
+      "id": "concept-reveal",
+      "name": "ConceptReveal",
+      "source": "src/components/learning/ConceptReveal.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "critical",
+      "authoringTypes": [
+        "screen:conceptReveal"
+      ],
+      "labEntryIds": [
+        "concept-reveal"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via concept-reveal."
+    },
+    {
+      "id": "explain-reveal",
+      "name": "ExplainReveal",
+      "source": "src/components/learning/ExplainReveal.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:explainReveal"
+      ],
+      "labEntryIds": [
+        "explain-reveal"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via explain-reveal."
+    },
+    {
+      "id": "face-the-examiner",
+      "name": "FaceTheExaminer",
+      "source": "src/components/learning/FaceTheExaminer.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:faceExaminer"
+      ],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 10,
+      "reason": "The catalogue identity. The Lab mounts faceTheExaminer/FaceTheExaminerContainer.jsx directly, which the record claims as a private internal directory. Which identity the Lab shows is a decision."
+    },
+    {
+      "id": "fill-in-the-blanks-block",
+      "name": "FillInTheBlanksBlock",
+      "source": "src/components/learning/FillInTheBlanksBlock.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:fillblanks"
+      ],
+      "labEntryIds": [
+        "fill-in-the-blanks"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via fill-in-the-blanks."
+    },
+    {
+      "id": "infographic",
+      "name": "Infographic",
+      "source": "src/components/learning/Infographic.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:infographic"
+      ],
+      "labEntryIds": [
+        "infographic"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via infographic."
+    },
+    {
+      "id": "interactive-hotspot-image",
+      "name": "InteractiveHotspotImage",
+      "source": "src/components/learning/InteractiveHotspotImage.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:interactiveImage"
+      ],
+      "labEntryIds": [
+        "interactive-hotspot-image",
+        "interactive-hotspot-image-reveal"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via interactive-hotspot-image, interactive-hotspot-image-reveal."
+    },
+    {
+      "id": "visual-learning",
+      "name": "VisualLearning",
+      "source": "src/components/learning/VisualLearning.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:visualLearning"
+      ],
+      "labEntryIds": [
+        "visual-learning"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via visual-learning."
+    },
+    {
+      "id": "key-figure-reveal",
+      "name": "KeyFigureReveal",
+      "source": "src/components/learning/KeyFigureReveal.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:keyFigureReveal"
+      ],
+      "labEntryIds": [
+        "key-figure-reveal"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via key-figure-reveal."
+    },
+    {
+      "id": "quick-recall-screen",
+      "name": "QuickRecallScreen",
+      "source": "src/components/learning/QuickRecallScreen.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:quickRecall"
+      ],
+      "labEntryIds": [
+        "quick-recall-screen"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via quick-recall-screen."
+    },
+    {
+      "id": "prior-knowledge-recall",
+      "name": "PriorKnowledgeRecall",
+      "source": "src/components/learning/PriorKnowledgeRecall.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:priorKnowledgeRecall"
+      ],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 10,
+      "reason": "Active reusable implementing screen:priorKnowledgeRecall with 6 content uses, yet absent from the Lab. Adding it is straightforward; confirming it belongs is the decision."
+    },
+    {
+      "id": "recovery-quiz-player",
+      "name": "RecoveryQuizPlayer",
+      "source": "src/components/learning/RecoveryQuizPlayer.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 5,
+      "reason": "Visual quiz player; mountable with a fixture recovery quiz — MISSING today. NOTE: reviewManifestCore calls it an \"internal child\", which the catalogue contradicts (kind: reusable, active, decision complete)."
+    },
+    {
+      "id": "weak-spot-recovery",
+      "name": "WeakSpotRecovery",
+      "source": "src/components/learning/WeakSpotRecovery.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "weak-spot-recovery"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via weak-spot-recovery."
+    },
+    {
+      "id": "col-sort-block",
+      "name": "ColSortBlock",
+      "source": "src/components/learning/ColSortBlock.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:colsort"
+      ],
+      "labEntryIds": [
+        "col-sort-block"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via col-sort-block."
+    },
+    {
+      "id": "what-examiners-look-for",
+      "name": "WhatExaminersLookFor",
+      "source": "src/components/learning/WhatExaminersLookFor.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "examiner-explains-screen"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via examiner-explains-screen."
+    },
+    {
+      "id": "examiner-explains-screen",
+      "name": "ExaminerExplainsScreen",
+      "source": "src/components/learning/ExaminerExplainsScreen.jsx",
+      "section": "learning",
+      "kind": "support",
+      "lifecycle": "parked",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:examinerExplains"
+      ],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 9,
+      "reason": "lifecycle: parked, superseded by WhatExaminersLookFor and retained only so legacy routes do not break. Previewing a superseded component would invite authoring it."
+    },
+    {
+      "id": "graph-view",
+      "name": "GraphView",
+      "source": "src/components/learning/GraphView.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:graphView"
+      ],
+      "labEntryIds": [
+        "graph-view-scatter",
+        "graph-view-line"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via graph-view-scatter, graph-view-line."
+    },
+    {
+      "id": "guided-choice-carousel",
+      "name": "GuidedChoiceCarousel",
+      "source": "src/components/learning/GuidedChoiceCarousel.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:guidedChoiceCarousel"
+      ],
+      "labEntryIds": [
+        "guided-choice-carousel"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via guided-choice-carousel."
+    },
+    {
+      "id": "matching-task",
+      "name": "MatchingTask",
+      "source": "src/components/learning/MatchingTask.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:matchingTask"
+      ],
+      "labEntryIds": [
+        "matching-task"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via matching-task."
+    },
+    {
+      "id": "ordered-route-task",
+      "name": "OrderedRouteTask",
+      "source": "src/components/learning/OrderedRouteTask.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:orderedRouteTask"
+      ],
+      "labEntryIds": [
+        "ordered-route-task"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via ordered-route-task."
+    },
+    {
+      "id": "centre-image-reveal",
+      "name": "CentreImageReveal",
+      "source": "src/components/learning/CentreImageReveal.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "pending",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:centreImageReveal"
+      ],
+      "labEntryIds": [
+        "centre-image-reveal"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via centre-image-reveal."
+    },
+    {
+      "id": "memory-hook",
+      "name": "MemoryHook",
+      "source": "src/components/learning/MemoryHook.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:memoryHook"
+      ],
+      "labEntryIds": [
+        "memory-hook"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via memory-hook."
+    },
+    {
+      "id": "number-line-explore",
+      "name": "NumberLineExplore",
+      "source": "src/components/learning/NumberLineExplore.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "reviewing",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "number-line-explore"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via number-line-explore."
+    },
+    {
+      "id": "misconception-check",
+      "name": "MisconceptionCheck",
+      "source": "src/components/learning/MisconceptionCheck.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:misconceptionCheck",
+        "screen:misconceptionCheck"
+      ],
+      "labEntryIds": [
+        "misconception-check"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via misconception-check."
+    },
+    {
+      "id": "spot-the-error",
+      "name": "SpotTheError",
+      "source": "src/components/learning/SpotTheError.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:spotTheError"
+      ],
+      "labEntryIds": [
+        "spot-the-error"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via spot-the-error."
+    },
+    {
+      "id": "swipe-sort",
+      "name": "SwipeSort",
+      "source": "src/components/learning/SwipeSort.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:naturalSupernaturalSwipe"
+      ],
+      "labEntryIds": [
+        "swipe-sort"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via swipe-sort."
+    },
+    {
+      "id": "theory-compare",
+      "name": "TheoryCompare",
+      "source": "src/components/learning/TheoryCompare.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:theoryCompare"
+      ],
+      "labEntryIds": [
+        "theory-compare"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via theory-compare."
+    },
+    {
+      "id": "opposite-qualities-reveal",
+      "name": "OppositeQualitiesReveal",
+      "source": "src/components/learning/OppositeQualitiesReveal.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:oppositeQualitiesReveal",
+        "screen:oppositeQualitiesReveal"
+      ],
+      "labEntryIds": [
+        "opposite-qualities-reveal"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via opposite-qualities-reveal."
+    },
+    {
+      "id": "timeline-canvas",
+      "name": "TimelineCanvas",
+      "source": "src/components/learning/TimelineCanvas.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:timelineCanvas"
+      ],
+      "labEntryIds": [
+        "timeline-canvas"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via timeline-canvas."
+    },
+    {
+      "id": "timeline-chain",
+      "name": "TimelineChain",
+      "source": "src/components/learning/TimelineChain.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:timelineChain"
+      ],
+      "labEntryIds": [
+        "timeline-chain"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via timeline-chain."
+    },
+    {
+      "id": "timeline-chain-block",
+      "name": "TimelineChainBlock",
+      "source": "src/components/learning/TimelineChain.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "pending",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:timelineChain"
+      ],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 3,
+      "reason": "Block-level export of TimelineChain.jsx; belongs as a level variant of the TimelineChain preview, not a separate identity."
+    },
+    {
+      "id": "chapter-complete-screen",
+      "name": "ChapterCompleteScreen",
+      "source": "src/components/layout/ChapterCompleteScreen.jsx",
+      "section": "layout",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "chapter-complete-screen"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via chapter-complete-screen."
+    },
+    {
+      "id": "chapter-hook-screen",
+      "name": "ChapterHookScreen",
+      "source": "src/components/layout/ChapterHookScreen.jsx",
+      "section": "layout",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "chapter-hook-screen"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via chapter-hook-screen."
+    },
+    {
+      "id": "chapter-outcome-screen",
+      "name": "ChapterOutcomeScreen",
+      "source": "src/components/layout/ChapterOutcomeScreen.jsx",
+      "section": "layout",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "chapter-outcome-screen"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via chapter-outcome-screen."
+    },
+    {
+      "id": "content-shell",
+      "name": "ContentShell",
+      "source": "src/components/layout/ContentShell.jsx",
+      "section": "layout",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "opposite-qualities-reveal"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via opposite-qualities-reveal."
+    },
+    {
+      "id": "interaction-shell",
+      "name": "InteractionShell",
+      "source": "src/components/layout/InteractionShell.jsx",
+      "section": "layout",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 5,
+      "reason": "Structural shell with real visual output; needs a fixture child to mount — MISSING today."
+    },
+    {
+      "id": "cinematic-shell",
+      "name": "CinematicShell",
+      "source": "src/components/layout/CinematicShell.jsx",
+      "section": "layout",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 5,
+      "reason": "Structural shell with real visual output; needs a fixture child to mount — MISSING today."
+    },
+    {
+      "id": "screen-text-block",
+      "name": "ScreenTextBlock",
+      "source": "src/components/layout/ScreenTextBlock.jsx",
+      "section": "layout",
+      "kind": "support",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 4,
+      "reason": "Visual text block primitive; belongs on the reference page — MISSING today."
+    },
+    {
+      "id": "chapter-player",
+      "name": "ChapterPlayer",
+      "source": "src/components/layout/ChapterPlayer.jsx",
+      "section": "layout",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 8,
+      "reason": "The chapter runtime itself. Listing it is meaningful; mounting it inside the Lab would run a whole chapter lifecycle."
+    },
+    {
+      "id": "screen-renderer",
+      "name": "ScreenRenderer",
+      "source": "src/components/layout/ScreenRenderer.jsx",
+      "section": "layout",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:examtip",
+        "block:funfact",
+        "block:hotspot",
+        "block:keypoint",
+        "block:misconception",
+        "block:read",
+        "block:reveal",
+        "block:scenario",
+        "block:timeline",
+        "screen:standard"
+      ],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 8,
+      "reason": "The screen/block routing boundary; owns ten authorable types via private handlers. List the types, do not mount the router."
+    },
+    {
+      "id": "exam-question-frame",
+      "name": "ExamQuestionFrame",
+      "source": "src/components/feedback/ExamQuestionFrame.jsx",
+      "section": "feedback",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:boss"
+      ],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 10,
+      "reason": "Active reusable implementing block:boss with 61 content uses — the most-used authorable type absent from the Lab."
+    },
+    {
+      "id": "exam-round-debrief",
+      "name": "ExamRoundDebrief",
+      "source": "src/components/feedback/ExamRoundDebrief.jsx",
+      "section": "feedback",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 5,
+      "reason": "Visual end-of-round debrief; mountable with a fixture round result — MISSING today."
+    },
+    {
+      "id": "quote-analyser",
+      "name": "QuoteAnalyser",
+      "source": "src/components/learning/QuoteAnalyser.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "pending",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:quoteAnalyser"
+      ],
+      "labEntryIds": [
+        "quote-analyser"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via quote-analyser."
+    },
+    {
+      "id": "retrieval-frame",
+      "name": "RetrievalFrame",
+      "source": "src/components/feedback/RetrievalFrame.jsx",
+      "section": "feedback",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 5,
+      "reason": "Governed presentation frame for embedded retrieval questions; mountable with a fixture — MISSING today."
+    },
+    {
+      "id": "guided-exam-response",
+      "name": "GuidedExamResponse",
+      "source": "src/components/learning/GuidedExamResponse.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "complete",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:guidedExamResponse"
+      ],
+      "labEntryIds": [
+        "guided-exam-response"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via guided-exam-response."
+    },
+    {
+      "id": "guided-answer-coach",
+      "name": "GuidedAnswerCoach",
+      "source": "src/components/learning/GuidedAnswerCoach.jsx",
+      "section": "learning",
+      "kind": "feature",
+      "lifecycle": "active",
+      "decisionStatus": "not-applicable",
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 10,
+      "reason": "App-level Exams-tab feature (kind: feature, decision not-applicable) with an eight-stage flow. Whether an owner tool should mount a whole feature flow is a product call."
+    },
+    {
+      "id": "unified-question-screen",
+      "name": "UnifiedQuestionScreen",
+      "source": "src/components/learning/UnifiedQuestionScreen.jsx",
+      "section": "learning",
+      "kind": "runtime",
+      "lifecycle": "active",
+      "decisionStatus": null,
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 5,
+      "reason": "Visual single-question screen; mountable with a fixture — MISSING today. NOTE: reviewManifestCore calls it an \"internal child\", which the catalogue contradicts (kind: runtime, its own record)."
+    },
+    {
+      "id": "tiered-quiz-screen",
+      "name": "TieredQuizScreen",
+      "source": "src/components/learning/TieredQuizScreen.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "pending",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:tieredquiz"
+      ],
+      "labEntryIds": [
+        "tiered-quiz-screen"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via tiered-quiz-screen."
+    },
+    {
+      "id": "flashcards-block",
+      "name": "FlashcardsBlock",
+      "source": "src/components/learning/FlashcardsBlock.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "pending",
+      "criticality": "standard",
+      "authoringTypes": [
+        "block:flashcards"
+      ],
+      "labEntryIds": [
+        "flashcards-block"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via flashcards-block."
+    },
+    {
+      "id": "before-after-image-slider",
+      "name": "BeforeAfterImageSlider",
+      "source": "src/components/learning/BeforeAfterImageSlider.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "active",
+      "decisionStatus": "pending",
+      "criticality": "standard",
+      "authoringTypes": [
+        "screen:beforeAfterSlider"
+      ],
+      "labEntryIds": [
+        "before-after-slider"
+      ],
+      "mountedInLab": true,
+      "category": 1,
+      "reason": "Mounted in the Lab via before-after-slider."
+    },
+    {
+      "id": "circuit-symbol-reference",
+      "name": "CircuitSymbolReference",
+      "source": "src/components/learning/CircuitSymbolReference.jsx",
+      "section": "learning",
+      "kind": "reusable",
+      "lifecycle": "reviewing",
+      "decisionStatus": "pending",
+      "criticality": "standard",
+      "authoringTypes": [],
+      "labEntryIds": [
+        "circuit-diagram"
+      ],
+      "mountedInLab": true,
+      "category": 3,
+      "reason": "Previewed as the circuit-diagram \"Symbol reference\" variant; shares CircuitPrimitives with CircuitDiagram."
+    },
+    {
+      "id": "home-atmosphere",
+      "name": "HomeAtmosphere",
+      "source": "src/features/home/Home.jsx",
+      "section": "feature",
+      "kind": "feature",
+      "lifecycle": "active",
+      "decisionStatus": "not-applicable",
+      "criticality": "critical",
+      "authoringTypes": [],
+      "labEntryIds": [],
+      "mountedInLab": false,
+      "category": 9,
+      "reason": "Named export of src/features/home/Home.jsx bound to the Home hero section; its documented contract is the drifting atmosphere in situ, which a detached mount cannot represent."
+    }
+  ]
+}

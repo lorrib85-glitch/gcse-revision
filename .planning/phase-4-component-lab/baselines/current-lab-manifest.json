@@ -1,0 +1,2214 @@
+{
+  "$schema": "phase-4-component-lab/current-lab-manifest",
+  "capturedAtSha": "d2c0030f80730db42e0b5097319ae5292966b078",
+  "note": "Deterministic capture of REVIEW_ENTRIES as composed by reviewManifest.jsx at the phase-4 baseline SHA. JSX and functions are represented by the component names they mount, never serialised.",
+  "totals": {
+    "entries": 49,
+    "entriesWithVariants": 7,
+    "variants": 60,
+    "selectableUnits": 102
+  },
+  "vocabularies": {
+    "STATUS_LABELS": {
+      "unused": "Unused",
+      "routed-unused": "Routed but unused",
+      "one-off": "One-off",
+      "comparison": "Active comparison",
+      "reference": "Reference"
+    },
+    "INTERACTION_LABELS": {
+      "passive": "Passive — reads or views",
+      "reveal": "Reveal — actively explores but isn’t marked",
+      "assessed": "Assessed — gives an answer that can be right or wrong",
+      "uncategorised": "Uncategorised — genuinely unresolved",
+      "general": "General components"
+    },
+    "REVIEW_QUESTIONS": [
+      "Does this create a genuinely useful learning experience?",
+      "Is the interaction understandable without lengthy instructions?",
+      "Does it work comfortably on mobile?",
+      "Does it perform a distinct pedagogical job?",
+      "Is another existing component already better?",
+      "Could subject-specific content be moved into data to make the mechanic reusable?",
+      "Is the maintenance cost justified?"
+    ]
+  },
+  "entries": [
+    {
+      "order": 1,
+      "id": "cinematic-carousel",
+      "name": "CinematicCarousel",
+      "contentType": "cinematicCarousel",
+      "interaction": "reveal",
+      "status": "routed-unused",
+      "subject": "Biology",
+      "renderMode": "fullbleed",
+      "function": "Full-screen deep-dive carousel: one large image at a time with a sliding name + key-facts panel, for browsing a small related set.",
+      "usage": "Routed in ChapterPlayer (type: cinematicCarousel) but no content file uses it.",
+      "alternative": "InteractiveHotspotImage (reveal variant); CinematicRevealMoment (imageReveal mode).",
+      "fixture": "fixtures.base.js#cinematicCarousel",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "CinematicCarousel"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 2,
+      "id": "graph-view-scatter",
+      "name": "GraphView (scatter)",
+      "contentType": "graphView",
+      "interaction": "passive",
+      "status": "routed-unused",
+      "subject": "Maths",
+      "renderMode": "inline",
+      "function": "Embeddable SVG chart (bar/line/scatter/pie) for interpreting GCSE data inline within a content screen.",
+      "usage": "Routed in ChapterPlayer (type: graphView) but no content file uses it.",
+      "alternative": "Static figure image; MathsDiagram.",
+      "fixture": "fixtures.base.js#graphViewScatter",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "GraphView"
+        ],
+        "arity": 1
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 3,
+      "id": "graph-view-line",
+      "name": "GraphView (line)",
+      "contentType": "graphView",
+      "interaction": "passive",
+      "status": "routed-unused",
+      "subject": "Biology",
+      "renderMode": "inline",
+      "function": "Same component, line-graph mode: enzyme activity vs temperature — tests label readability and interpretation value.",
+      "usage": "Routed in ChapterPlayer (type: graphView) but no content file uses it.",
+      "alternative": "Static figure image; MathsDiagram.",
+      "fixture": "fixtures.base.js#graphViewLine",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "GraphView"
+        ],
+        "arity": 1
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 4,
+      "id": "timeline-chain",
+      "name": "TimelineChain",
+      "contentType": "timelineChain",
+      "interaction": "reveal",
+      "status": "one-off",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Horizontal scroll-snap chain of flip cards revealing a chapter’s causal sequence step by step.",
+      "usage": "Now used in Episode 2 (both plague-progression + aftermath screens, migrated from progressionTimeline).",
+      "alternative": "TimelineCanvas (scroll-snap sibling); OrderedRouteTask (ordered route).",
+      "fixture": "fixtures.base.js#timelineChain",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "TimelineChain"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 5,
+      "id": "circuit-diagram",
+      "name": "CircuitDiagram",
+      "contentType": null,
+      "interaction": "reveal",
+      "status": "unused",
+      "subject": "Physics",
+      "renderMode": "inline",
+      "function": "Configuration-driven GCSE circuit diagram. It renders exam-recognisable symbols, responsive layouts and optional physical switch interaction; page-level questions and predictions remain outside the component.",
+      "usage": "Not routed in ChapterPlayer and not referenced by content yet. Review variants now cover series, parallel, measurement, read-only and shared symbol-reference jobs.",
+      "alternative": "CircuitSymbolReference is the read-only symbol-learning sibling; no alternative connected-circuit component exists.",
+      "fixture": null,
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "CircuitDiagram"
+        ],
+        "arity": 0
+      },
+      "variantCount": 6,
+      "variants": [
+        {
+          "order": 1,
+          "id": "simple-series",
+          "label": "Simple series",
+          "description": "Core one-switch circuit: open and close the physical switch to observe the complete-circuit relationship.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CircuitDiagram"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 2,
+          "id": "two-switch-series",
+          "label": "Two switches",
+          "description": "Two independent switches share one series loop. One remaining gap keeps the whole circuit off.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CircuitDiagram"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 3,
+          "id": "parallel-branches",
+          "label": "Parallel branches",
+          "description": "Two independently switched branches prove that one lamp can stay on while the other branch is open.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CircuitDiagram"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 4,
+          "id": "measurement-circuit",
+          "label": "Measurement circuit",
+          "description": "Read-only placement diagram: ammeter in the main series loop and voltmeter connected across the resistor.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CircuitDiagram"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 5,
+          "id": "read-only",
+          "label": "Read-only",
+          "description": "The same connected-circuit renderer with interaction disabled for teaching, worked examples and exam questions.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CircuitDiagram"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 6,
+          "id": "symbol-reference",
+          "label": "Symbol reference",
+          "description": "Shared GCSE reference board built from the same governed primitives, including cell, battery, meters, sensors and semiconductor symbols.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CircuitSymbolReference"
+            ],
+            "arity": 0
+          }
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "id": "opposite-qualities-reveal",
+      "name": "OppositeQualitiesReveal",
+      "contentType": "oppositeQualitiesReveal",
+      "interaction": "reveal",
+      "status": "one-off",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Cinematic guided reveal that moves each example from a neutral centre into one of two opposing concept groups.",
+      "usage": "Used twice in Episode 1 (hot/cold and wet/dry), type: oppositeQualitiesReveal.",
+      "alternative": "SwipeSort and ColSortBlock assess classification; this component teaches the contrast first.",
+      "fixture": "fixtures.base.js#oppositeQualitiesReveal",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "ContentShell",
+          "TeachScreenShell",
+          "OppositeQualitiesReveal"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 7,
+      "id": "timeline-canvas",
+      "name": "TimelineCanvas",
+      "contentType": "timelineCanvas",
+      "interaction": "reveal",
+      "status": "one-off",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Swipe-to-pan canvas across a wide chain of cards with connectors that draw in as you pan; tap + to reveal why each step mattered.",
+      "usage": "Used in Episode 2 (Black Death), type: timelineCanvas.",
+      "alternative": "TimelineChain (scroll-snap sibling).",
+      "fixture": "fixtures.base.js#timelineCanvas",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "TimelineCanvas"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 8,
+      "id": "before-after-slider",
+      "name": "BeforeAfterImageSlider",
+      "contentType": "beforeAfterSlider",
+      "interaction": "reveal",
+      "status": "one-off",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Full-screen drag slider comparing two states of the same image.",
+      "usage": "Used in Episode 13 (Can we beat cancer?), type: beforeAfterSlider.",
+      "alternative": "TheoryCompare (side-by-side comparison).",
+      "fixture": "fixtures.base.js#beforeAfterImageSlider",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "BeforeAfterImageSlider"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 9,
+      "id": "ordered-route-task",
+      "name": "OrderedRouteTask",
+      "contentType": "orderedRouteTask",
+      "interaction": "assessed",
+      "status": "one-off",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Ordered chain: one job card at a time — tap the stage it belongs to. Accent route line + numbered nodes.",
+      "usage": "Used in Episode 14 (Western Front), type: orderedRouteTask (renamed from evacuationChainRoute).",
+      "alternative": "MatchingTask (unordered).",
+      "fixture": "fixtures.base.js#evacuationChainRoute",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "OrderedRouteTask"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 10,
+      "id": "spot-the-error",
+      "name": "SpotTheError",
+      "contentType": "spotTheError",
+      "interaction": "assessed",
+      "status": "routed-unused",
+      "subject": "Biology",
+      "renderMode": "fullbleed",
+      "function": "Diagnostic precision check: select the error in a statement, explain why it is wrong, then rewrite it correctly.",
+      "usage": "Routed in ChapterPlayer (type: spotTheError) but no content file uses it. (Brief lists it under one-off; evidence shows it is unused.)",
+      "alternative": "MisconceptionCheck (true/false trap); FaceTheExaminerContainer.",
+      "fixture": "fixtures.base.js#spotTheError",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "SpotTheError"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 11,
+      "id": "centre-image-reveal",
+      "name": "CentreImageReveal",
+      "contentType": "centreImageReveal",
+      "interaction": "assessed",
+      "status": "one-off",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Cause → prescription → reveal flow with a parchment input surface and fuzzy-match validation.",
+      "usage": "Used in Episode 1 (medieval beliefs), type: centreImageReveal (renamed from medicalTheoryPrescription).",
+      "alternative": "GuidedExamResponse (scaffolded written answer).",
+      "fixture": "fixtures.base.js#medicalTheoryPrescription",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "CentreImageReveal"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 12,
+      "id": "acronym-memorise",
+      "name": "AcronymMemorise",
+      "contentType": "acronymMemorise",
+      "interaction": "reveal",
+      "status": "one-off",
+      "subject": "Biology",
+      "renderMode": "inline",
+      "function": "Tap-to-reveal mnemonic block: each acronym letter expands to show what it stands for and why it matters (e.g. SCARF — five uses of glucose).",
+      "usage": "Used in Plant Cells & Photosynthesis (sci_bio_w1), block type: acronymMemorise. Extracted from an inline definition in ChapterPlayer into a standalone component.",
+      "alternative": "FlashcardsBlock (recall); FillInTheBlanksBlock.",
+      "fixture": "fixtures.base.js#acronymMemorise",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "TeachScreenShell",
+          "AcronymMemorise"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 13,
+      "id": "flashcards-block",
+      "name": "FlashcardsBlock",
+      "contentType": "flashcards",
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "inline",
+      "function": "Two-column tap-to-reveal prompt and answer cards for a small set of independent facts. Reveal-only: the component does not score recall or log weakness evidence.",
+      "usage": "Used across Medicine episodes 4, 7, 8 and 13, block type: flashcards. Extracted from ChapterPlayer into a standalone component so the live pattern can be reviewed and refined in the Component Lab.",
+      "alternative": "AcronymMemorise for one mnemonic set; QuickRecallScreen for objectively marked retrieval; MatchingTask when the learner must connect paired items.",
+      "fixture": "fixtures.base.js#flashcardsBlock",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "FlashcardsBlock"
+        ],
+        "arity": 1
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 14,
+      "id": "builder-block",
+      "name": "BuilderBlock — reaction",
+      "contentType": "builder",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "Biology",
+      "renderMode": "inline",
+      "function": "Reusable select-and-place builder with a reaction layout for grouped inputs and outputs.",
+      "usage": "Used in Plant Cells & Photosynthesis (sci_bio_w1), block type: builder. The same engine now supports calculations and quotations through data-driven layouts.",
+      "alternative": "FillInTheBlanksBlock (inline typed gaps); ColSortBlock.",
+      "fixture": "fixtures.js#builderBlock",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "BuilderBlock"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 15,
+      "id": "builder-block-maths",
+      "name": "BuilderBlock — Maths",
+      "contentType": "builder",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "Maths",
+      "renderMode": "inline",
+      "function": "Missing-value calculation builder with fixed mathematical notation, compact number pieces and tabular numerals.",
+      "usage": "Reusable BuilderBlock layout: equation. Demonstrates the same repair-first interaction without forcing Maths into the science reaction structure.",
+      "alternative": "FillInTheBlanksBlock for typed answers.",
+      "fixture": "fixtures.js#builderMaths",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "BuilderBlock"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 16,
+      "id": "builder-block-quote",
+      "name": "BuilderBlock — quote",
+      "contentType": "builder",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "English",
+      "renderMode": "inline",
+      "function": "Quotation reconstruction layout with preserved line breaks, inline gaps and literary serif treatment.",
+      "usage": "Reusable BuilderBlock layout: quote. Designed for short, high-value quotation recall rather than long paragraph completion.",
+      "alternative": "FillInTheBlanksBlock for ordinary prose; QuoteAnalyser for deeper analysis after recall.",
+      "fixture": "fixtures.js#builderQuote",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "BuilderBlock"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 17,
+      "id": "matching-task",
+      "name": "MatchingTask",
+      "contentType": "matchingTask",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Term-to-description card-pair matching with SVG connectors — for unordered pairings.",
+      "usage": "Widely used across History episodes (1–5), type: matchingTask.",
+      "alternative": "MatchingTask (unordered).",
+      "fixture": "fixtures.js#matchingTask",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "MatchingTask"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 18,
+      "id": "visual-learning",
+      "name": "VisualLearning",
+      "contentType": "visualLearning",
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Click-to-continue cinematic scene sequence with animated headlines.",
+      "usage": "Used across History episodes (1, 2, 3, 14), type: visualLearning.",
+      "alternative": "InteractiveHotspotImage (reveal variant); CinematicRevealMoment; ConceptReveal; TimelineChain (reveal variant).",
+      "fixture": "fixtures.base.js#visualLearning",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "VisualLearning"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 19,
+      "id": "guided-choice-carousel",
+      "name": "GuidedChoiceCarousel",
+      "contentType": "guidedChoiceCarousel",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Scrollable single-choice carousel with atmospheric option cards.",
+      "usage": "Used in Episodes 1 and 2, type: guidedChoiceCarousel.",
+      "alternative": "InteractiveHotspotImage (reveal variant); CinematicCarousel.",
+      "fixture": "fixtures.base.js#guidedChoiceCarousel",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "GuidedChoiceCarousel"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 20,
+      "id": "theory-compare",
+      "name": "TheoryCompare",
+      "contentType": "theoryCompare",
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "inline",
+      "function": "Side-by-side comparison of two approaches, people or theories: optional paired hero art, progressive comparison prompts and a final evidence-based takeaway. When no portraits are supplied the two portrait boxes render empty, ready for images in future.",
+      "usage": "Used in Episode 3 (Galen and Vesalius), Episode 2 (Black Death beliefs) and Biology cell comparisons, type: theoryCompare.",
+      "alternative": "KeyFigureReveal for one person; ColSortBlock for assessed classification; MisconceptionCheck.",
+      "fixture": "fixtures.js#theoryCompare",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "TheoryCompare"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 21,
+      "id": "misconception-check",
+      "name": "MisconceptionCheck",
+      "contentType": "misconceptionCheck",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Cinematic true/false misconception trap, one statement at a time, with a calm reveal.",
+      "usage": "Used across History episodes (1, 2, 3, 14), type: misconceptionCheck.",
+      "alternative": "SpotTheError; FaceTheExaminerContainer.",
+      "fixture": "fixtures.base.js#misconceptionCheck",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "MisconceptionCheck"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 22,
+      "id": "factor-web",
+      "name": "FactorWeb",
+      "contentType": "factorWeb",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Radial causes/factors web: explore each factor, then make a relative-importance judgement.",
+      "usage": "Used in Episode 3 (Vesalius) and now Episode 1 (migrated from ConnectionMap).",
+      "alternative": "MatchingTask (unordered pairing).",
+      "fixture": "fixtures.base.js#factorWeb",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "FactorWeb"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 23,
+      "id": "infographic",
+      "name": "Infographic",
+      "contentType": "infographic",
+      "interaction": "passive",
+      "status": "one-off",
+      "subject": "History",
+      "renderMode": "inline",
+      "function": "Canonical screen for type infographic: one teaching heading and framing line (owned by the approved TeachScreenShell) then a single governed infographic media slot (MediaPlaceholder) — either a reserved diagram or a progressive quadrant reveal.",
+      "usage": "Routed in ChapterPlayer (type: infographic) and used by Episode 1 \"Galen treated with opposites\" — the first infographic screen. Reusable across subjects for any heading + intro + infographic composition.",
+      "alternative": "Compose TeachScreenShell + MediaPlaceholder directly; MediaPlaceholder alone for a bare media slot.",
+      "fixture": "fixtures.base.js#infographic",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "Infographic"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 24,
+      "id": "interactive-hotspot-image",
+      "name": "InteractiveHotspotImage",
+      "contentType": "interactiveImage",
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Full-screen image with a two-phase intro → explore flow: tap glowing hotspots to read a label, description and extra fact for each point on the image.",
+      "usage": "Used in Episode 1 (Tap the Four Humours) and Episode 2 (the dock at Melcombe), type: interactiveImage.",
+      "alternative": "InteractiveHotspotImage reveal variant; CinematicCarousel.",
+      "fixture": "fixtures.base.js#interactiveHotspotImage",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "InteractiveHotspotImage"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 25,
+      "id": "interactive-hotspot-image-reveal",
+      "name": "InteractiveHotspotImage (reveal)",
+      "contentType": "interactiveImage",
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Reveal variant: tap a hotspot to page through multiple pieces of information (reveals), then a synthesis \"collection complete\" screen once all are explored.",
+      "usage": "Used in Episode 1 (staying well in 1400) and Episode 14 (trench conditions), type: interactiveImage + variant: reveal.",
+      "alternative": "InteractiveHotspotImage (detail variant) for single-card hotspots.",
+      "fixture": "fixtures.base.js#interactiveHotspotReveal",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "InteractiveHotspotImage"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 26,
+      "id": "cinematic-reveal-moment",
+      "name": "CinematicRevealMoment",
+      "contentType": "cinematic",
+      "interaction": "passive",
+      "status": "one-off",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Full-screen cinematic opener: a video plays (with a still-image fallback), then label, headline and body reveal line by line over a darkening frame before the Continue prompt.",
+      "usage": "Used in Episode 2 (Black Death opening), type: cinematic.",
+      "alternative": "VisualLearning (click-through scenes); ConceptReveal; CinematicCarousel.",
+      "fixture": "fixtures.base.js#cinematicRevealMoment",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "CinematicRevealMoment"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 27,
+      "id": "memory-hook",
+      "name": "MemoryHook",
+      "contentType": "memoryHook",
+      "interaction": "passive",
+      "status": "routed-unused",
+      "subject": "Biology",
+      "renderMode": "inline",
+      "function": "In-page \"make it stick\" reminder: anchors one hard idea with a memorable analogy/mnemonic. Optional thumbnail; learner can rewrite the hook in their own words (persisted via storage.js).",
+      "usage": "Routed in ChapterPlayer (type: memoryHook); available for placement within any subject page. No content file uses it yet.",
+      "alternative": "AcronymMemorise (interactive acronym drill).",
+      "fixture": "fixtures.base.js#memoryHook",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "MemoryHook"
+        ],
+        "arity": 1
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 28,
+      "id": "concept-reveal",
+      "name": "ConceptReveal",
+      "contentType": "conceptReveal",
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Tap-through atmospheric concept steps (main line + support line over background imagery).",
+      "usage": "Used across History episodes for chapter-opening concept framing.",
+      "alternative": "VisualLearning; CinematicRevealMoment.",
+      "fixture": "fixtures.base.js#conceptReveal",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "ConceptReveal"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 29,
+      "id": "explain-reveal",
+      "name": "ExplainReveal",
+      "contentType": "explainReveal",
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Progressive cause-and-effect reasoning chain, revealed one step at a time.",
+      "usage": "Used for building an explanation step by step.",
+      "alternative": "TimelineChain (causal chain, or reveal variant).",
+      "fixture": "fixtures.base.js#explainReveal",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "ExplainReveal"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 30,
+      "id": "col-sort-block",
+      "name": "ColSortBlock",
+      "contentType": "colsort",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "inline",
+      "function": "Sort items into labelled columns (change/continuity, classify) with per-item feedback.",
+      "usage": "Used in History episodes for change/continuity sorting.",
+      "alternative": "SwipeSort; MatchingTask.",
+      "fixture": "fixtures.base.js#colSort",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "ColSortBlock"
+        ],
+        "arity": 1
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 31,
+      "id": "quote-analyser",
+      "name": "QuoteAnalyser",
+      "contentType": "quoteAnalyser",
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "English",
+      "renderMode": "fullbleed",
+      "function": "Full-screen quote dissection: tap through five analysis lenses on one literary quote.",
+      "usage": "English literature quote analysis, type: quoteAnalyser.",
+      "alternative": "None — English-specific close reading.",
+      "fixture": "fixtures.js#quoteAnalyser",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "QuoteAnalyser"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 32,
+      "id": "key-figure-reveal",
+      "name": "KeyFigureReveal",
+      "contentType": "keyFigureReveal",
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Scrollable portrait-hero screen introducing a key person, with up to four knowledge sections.",
+      "usage": "Used across History episodes to introduce figures, type: keyFigureReveal.",
+      "alternative": "MedievalDiagnosisScene (scene intro); ConceptReveal.",
+      "fixture": "fixtures.base.js#keyFigureReveal",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "KeyFigureReveal"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 33,
+      "id": "face-the-examiner",
+      "name": "FaceTheExaminerContainer",
+      "contentType": "faceExaminer",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Examiner-style marking flow: guess the mark, pick the criteria, reveal the annotated answer with strong/weak/irrelevant tags, then improve the weak points and re-mark.",
+      "usage": "Routed mid-chapter as an authored screen, type: faceExaminer. The former module-level chapter.examiner overlay in ChapterPlayer was removed in A4 Phase 8 — no chapter ever defined that key.",
+      "alternative": "GuidedExamResponse (scaffolded written answer); MisconceptionCheck / SpotTheError (shorter diagnostic checks).",
+      "fixture": "fixtures.base.js#faceTheExaminer",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "FaceTheExaminerContainer"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 34,
+      "id": "guided-exam-response",
+      "name": "GuidedExamResponse",
+      "contentType": "guidedExamResponse",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Cross-subject written-response scaffold: optional opening beat, governed exam prompt, section-by-section writing support and AI marking against the supplied board-specific mark scheme.",
+      "usage": "Used in History episodes and GuidedAnswerCoach. Component Lab variants verify History, English, Biology, Maths and Sociology question structures through the same API.",
+      "alternative": "FaceTheExaminerContainer (mark-the-answer diagnostic); GuidedAnswerCoach (full multi-stage exam-technique flow).",
+      "fixture": "fixtures.js#guidedExamResponse",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "GuidedExamResponse"
+        ],
+        "arity": 2
+      },
+      "variantCount": 5,
+      "variants": [
+        {
+          "order": 1,
+          "id": "history",
+          "label": "History",
+          "description": "Edexcel explain-why response with two developed reasons and staged factual prompts.",
+          "renderMode": null,
+          "ownFixture": true,
+          "fixture": "fixtures.js#guidedExamResponse",
+          "hasOwnRender": false,
+          "render": null
+        },
+        {
+          "order": 2,
+          "id": "english",
+          "label": "English",
+          "description": "AQA literature response using an extract, interpretation, close analysis and a whole-text link.",
+          "renderMode": null,
+          "ownFixture": true,
+          "fixture": "fixtures.js#guidedExamResponseEnglish",
+          "hasOwnRender": false,
+          "render": null
+        },
+        {
+          "order": 3,
+          "id": "science",
+          "label": "Science",
+          "description": "AQA Biology required-practical response covering method, variables and a measurable end point.",
+          "renderMode": null,
+          "ownFixture": true,
+          "fixture": "fixtures.js#guidedExamResponseScience",
+          "hasOwnRender": false,
+          "render": null
+        },
+        {
+          "order": 4,
+          "id": "maths",
+          "label": "Maths",
+          "description": "AQA calculation response with working, a final answer and light method support.",
+          "renderMode": null,
+          "ownFixture": true,
+          "fixture": "fixtures.js#guidedExamResponseMaths",
+          "hasOwnRender": false,
+          "render": null
+        },
+        {
+          "order": 5,
+          "id": "sociology",
+          "label": "Sociology",
+          "description": "AQA evaluation response with supporting argument, challenge and reasoned judgement.",
+          "renderMode": null,
+          "ownFixture": true,
+          "fixture": "fixtures.js#guidedExamResponseSociology",
+          "hasOwnRender": false,
+          "render": null
+        }
+      ]
+    },
+    {
+      "order": 35,
+      "id": "buttons-and-progress",
+      "name": "Buttons and progress",
+      "contentType": null,
+      "interaction": "general",
+      "status": "reference",
+      "subject": "History",
+      "renderMode": "inline",
+      "function": "Reference page: every governed button style and progression/progress indicator rendered live, each labelled with its name.",
+      "usage": "Development reference only. Shows ContinueCTA, CinematicContinueCTA, CheckAnswerCTA, BackButton, ExitButton, the BUTTONS token tiers, cinematic-primary-action, NavArrow, LearningProgressHeader, SequenceProgress, ScoreNumberLine, CircularTimer and the pill progress bar pattern.",
+      "alternative": "docs/system/BUTTON_RADII_SYSTEM.md (the written spec these components implement).",
+      "fixture": null,
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "ButtonsAndProgressPage"
+        ],
+        "arity": 0
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 36,
+      "id": "chapter-outcome-screen",
+      "name": "ChapterOutcomeScreen",
+      "contentType": null,
+      "interaction": "passive",
+      "status": "comparison",
+      "subject": "Biology",
+      "renderMode": "fullbleed",
+      "function": "Full-screen chapter-opening outcomes reveal: chapter title, \"what you're about to uncover\" label, and staggered learning-outcome items over a subject backdrop.",
+      "usage": "Routed in ChapterPlayer as the chapter outcome screen; used across modules.",
+      "alternative": "ChapterHookScreen (true/false warm-up opener); ConceptReveal.",
+      "fixture": "fixtures.base.js#chapterOutcome",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "ChapterOutcomeScreen"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 37,
+      "id": "chapter-complete-screen",
+      "name": "ChapterCompleteScreen",
+      "contentType": null,
+      "interaction": "passive",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "End-of-chapter completion screen: animated checkmark ring, \"Complete\" headline, continue-to-next-chapter primary CTA, quick-quiz row, optional past-paper row and Return Home.",
+      "usage": "Shown as the chapter-complete overlay in LegacyApp (view: chapter-complete) at the end of every module chapter.",
+      "alternative": "ChapterOutcomeScreen (chapter opening, not completion).",
+      "fixture": "fixtures.base.js#chapterComplete",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "ChapterCompleteScreen"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 38,
+      "id": "chapter-hook-screen",
+      "name": "ChapterHookScreen",
+      "contentType": null,
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Chapter-opening true/false warm-up: a bold statement the learner judges true or false, then a reveal explaining why.",
+      "usage": "Routed in ChapterPlayer as the chapter hook opener; completes the chapter-framing trio with ChapterOutcomeScreen and ChapterCompleteScreen.",
+      "alternative": "MisconceptionCheck (multi-statement trap); ConceptReveal (passive framing).",
+      "fixture": "fixtures.base.js#chapterHook",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "ChapterHookScreen"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 39,
+      "id": "fill-in-the-blanks",
+      "name": "FillInTheBlanksBlock",
+      "contentType": "fillblanks",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "Biology",
+      "renderMode": "inline",
+      "function": "Inline typed-gap recall block: complete each sentence with the exact term, with staged hints on a wrong answer.",
+      "usage": "Routed in ChapterPlayer (type: fillblanks); used across History and Science episodes.",
+      "alternative": "BuilderBlock (select-and-place gaps); AcronymMemorise.",
+      "fixture": "fixtures.base.js#fillInTheBlanks",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "FillInTheBlanksBlock"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 40,
+      "id": "swipe-sort",
+      "name": "SwipeSort",
+      "contentType": "naturalSupernaturalSwipe",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Swipe-gesture sorting: swipe each card left or right into one of two labelled columns, with a per-item explanation on release.",
+      "usage": "Routed in ChapterPlayer (type: naturalSupernaturalSwipe); used in Episodes 2, 4 and 5.",
+      "alternative": "ColSortBlock (tap-to-column, inline); MatchingTask.",
+      "fixture": "fixtures.base.js#swipeSort",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "SwipeSort"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 41,
+      "id": "quick-recall-screen",
+      "name": "QuickRecallScreen",
+      "contentType": "quickRecall",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Rapid-fire retrieval: a short run of full-screen choice questions with immediate feedback, for end-of-chapter recall.",
+      "usage": "Routed in ChapterPlayer (type: quickRecall); used across History episodes.",
+      "alternative": "TieredQuizScreen (learner picks difficulty); UnifiedQuestionScreen (single question).",
+      "fixture": "fixtures.base.js#quickRecall",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "QuickRecallScreen"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 42,
+      "id": "examiner-explains-screen",
+      "name": "WhatExaminersLookFor",
+      "contentType": "examinerExplains",
+      "interaction": "passive",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Pre-question examiner briefing: introduces the priorities an examiner rewards before the learner begins a written task.",
+      "usage": "Canonical WhatExaminersLookFor component, routed by ScreenRenderer as an authored screen, type: examinerExplains, while content migrates.",
+      "alternative": "GuidedAnswerCoach (full multi-stage coach); FaceTheExaminerContainer.",
+      "fixture": "fixtures.base.js#examinerExplains",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "WhatExaminersLookFor"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 43,
+      "id": "tiered-quiz-screen",
+      "name": "TieredQuizScreen",
+      "contentType": "tieredquiz",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Learner picks a difficulty tier, then answers that tier’s questions — self-levelled retrieval.",
+      "usage": "Routed in ChapterPlayer (type: tieredquiz); used across Sociology and other modules.",
+      "alternative": "QuickRecallScreen (fixed single run); RecoveryQuizPlayer.",
+      "fixture": "fixtures.base.js#tieredQuiz",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "TieredQuizScreen"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 44,
+      "id": "weak-spot-recovery",
+      "name": "WeakSpotRecovery",
+      "contentType": null,
+      "interaction": "passive",
+      "status": "comparison",
+      "subject": "History",
+      "renderMode": "fullbleed",
+      "function": "Behavioural intervention screen shown when the tracker detects a struggling learner: names the gap and offers a targeted recovery quiz or a skip.",
+      "usage": "Dormant. Designed to appear when the tracker detects a struggling learner and to route into RecoveryQuizPlayer; ChapterPlayer's integration was never reachable and was removed in A4 Phase 8. The component and its contract are retained, not retired.",
+      "alternative": "RecoveryQuizPlayer (the quiz it launches); ProgressRecoveryCard.",
+      "fixture": "fixtures.base.js#weakSpotRecovery",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "WeakSpotRecovery"
+        ],
+        "arity": 2
+      },
+      "variantCount": 0,
+      "variants": []
+    },
+    {
+      "order": 45,
+      "id": "calculation-breakdown",
+      "name": "CalculationBreakdown",
+      "contentType": "calculationBreakdown",
+      "interaction": "assessed",
+      "status": "comparison",
+      "subject": "Maths",
+      "renderMode": "fullbleed",
+      "function": "Multi-step maths walkthrough: breaks one calculation into stages (understand → worked steps → learner-applied step → full solution) and checks understanding at each stage. Optional algebra presentations swap those stages for a scene sequence that explains why an operation is valid, not just which operation to perform.",
+      "usage": "New component — pending review; not yet routed in ChapterPlayer. Review variants cover the generic walkthrough and the four opt-in algebra reasoning presentations.",
+      "alternative": "GuidedExamResponse (written scaffold); GraphView (data, not procedure); FractionRatioExplore / AreaPerimeterExplore (seeing why a method works, with no staged tutoring).",
+      "fixture": "fixtures.js#calculationBreakdown",
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "CalculationBreakdown"
+        ],
+        "arity": 2
+      },
+      "variantCount": 7,
+      "variants": [
+        {
+          "order": 1,
+          "id": "standard",
+          "label": "Standard walkthrough",
+          "description": "The generic job, unchanged: interpret one calculation, choose a useful first move, follow worked transformations and complete a step. Works for algebra, percentages, geometry, fractions and science calculations alike, and is what every block without a `presentation` field renders.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CalculationBreakdown"
+            ],
+            "arity": 2
+          }
+        },
+        {
+          "order": 2,
+          "id": "algebra-why",
+          "label": "Algebra Why Lab — 3x = 18",
+          "description": "Answers the question a learner who can already \"divide by 3\" still cannot answer. Four scenes build the coefficient out of repeated addition, name the goal, make the learner commit to an inverse operation against a live subtraction misconception, then divide both sides and confirm by substitution.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CalculationBreakdown"
+            ],
+            "arity": 2
+          }
+        },
+        {
+          "order": 3,
+          "id": "inverse-machine",
+          "label": "Inverse Operation Studio — 3x + 4 = 19",
+          "description": "Teaches order of undoing, which is where multi-step equations are actually lost. The learner identifies the last action performed, chooses its inverse, watches the value move back, and replays the original forward chain as the check. The reverse path is derived from the forward operations, so content cannot state the two inconsistently.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CalculationBreakdown"
+            ],
+            "arity": 2
+          }
+        },
+        {
+          "order": 4,
+          "id": "group-split",
+          "label": "Group Split Explorer — 3x = 18",
+          "description": "Makes a coefficient concrete before it is abstract. The learner shares 18 counters into three equal groups one tap at a time — or deals them in one action — and sees \"divide by 3\" as something they have done. Counters are conserved by construction and the whole model is completable from the keyboard.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CalculationBreakdown"
+            ],
+            "arity": 2
+          }
+        },
+        {
+          "order": 5,
+          "id": "balance",
+          "label": "Balance & Solve — 3x = 18",
+          "description": "Targets the \"do it to one side\" error directly. The one-sided move is offered as a real choice, refused with an explanation, and shown as a tilt only inside an optional aside — the balance stays level through every valid transformation.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CalculationBreakdown"
+            ],
+            "arity": 2
+          }
+        },
+        {
+          "order": 6,
+          "id": "reduced-motion",
+          "label": "Reduced motion",
+          "description": "The same Algebra Why Lab sequence with every scene transition removed, so the reduced-motion path can be reviewed as a first-class state rather than assumed.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CalculationBreakdown"
+            ],
+            "arity": 2
+          }
+        },
+        {
+          "order": 7,
+          "id": "mobile-width",
+          "label": "Mobile width — 320px",
+          "description": "The narrowest supported screen, checked against the busiest presentation: eighteen 44px counter targets, three group zones and the equation all have to stay readable and contained rather than scrolling sideways.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CalculationBreakdown"
+            ],
+            "arity": 2
+          }
+        }
+      ]
+    },
+    {
+      "order": 46,
+      "id": "angle-explore",
+      "name": "AngleExplore",
+      "contentType": null,
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "Maths",
+      "renderMode": "inline",
+      "function": "Configuration-driven GCSE geometry diagram for exploring angle facts, parallel-line relationships, triangle properties and polygon angle rules. One learner-controlled value drives the SVG while page-level questions and marking remain outside the component.",
+      "usage": "New component — pending review; not yet routed in ChapterPlayer. Review variants cover core angle facts, formal parallel-line rules, triangle properties, quadrilateral and polygon angle sums, regular polygons and static jobs.",
+      "alternative": "GraphView (data charts, not angle facts); static figure image for non-interactive diagrams.",
+      "fixture": null,
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "AngleExplore"
+        ],
+        "arity": 0
+      },
+      "variantCount": 13,
+      "variants": [
+        {
+          "order": 1,
+          "id": "angle-types",
+          "label": "Angle types",
+          "description": "Drag the ray through acute, right, obtuse, straight, reflex and full-turn angles; the value and formal classification respond live.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 2,
+          "id": "straight-line",
+          "label": "Straight line",
+          "description": "Two angles share a straight line; dragging the dividing ray keeps their live sum at 180°.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 3,
+          "id": "around-point",
+          "label": "Around a point",
+          "description": "Three angles meet at a point; dragging one ray keeps the running total at 360°.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 4,
+          "id": "vertically-opposite",
+          "label": "Vertically opposite",
+          "description": "Two crossing lines make two equal pairs — equal angles share a colour, and rotating one line preserves the equality.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 5,
+          "id": "parallel-corresponding",
+          "label": "Corresponding",
+          "description": "Rotate a transversal across marked parallel lines. Matching-corner corresponding angles remain equal and share a colour.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 6,
+          "id": "parallel-alternate",
+          "label": "Alternate",
+          "description": "The equal interior angles sit on opposite sides of the transversal, using the formal AQA term alternate angles.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 7,
+          "id": "parallel-co-interior",
+          "label": "Co-interior",
+          "description": "The interior pair on the same side of the transversal changes live while its total remains 180°.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 8,
+          "id": "triangle",
+          "label": "Triangle",
+          "description": "Drag the apex of the triangle: all three interior angles update while their sum stays at 180°.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 9,
+          "id": "triangle-types",
+          "label": "Triangle types",
+          "description": "Move through scalene, isosceles, equilateral, right-angled, acute-angled and obtuse-angled triangles with governed side and angle markings.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 10,
+          "id": "quadrilateral",
+          "label": "Quadrilateral",
+          "description": "Drag one vertex to reshape the quadrilateral while all four interior angles continue to total 360°.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 11,
+          "id": "polygon-sum",
+          "label": "Polygon sum",
+          "description": "Change the number of sides and watch diagonals split the polygon into n − 2 triangles, deriving its interior-angle sum.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 12,
+          "id": "regular-polygon",
+          "label": "Regular polygon",
+          "description": "Change the number of equal sides to connect exterior angle 360° ÷ n with the matching interior angle.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 13,
+          "id": "static",
+          "label": "Static diagram",
+          "description": "The same renderer with interaction disabled at a fixed value, for teaching, worked examples and exam questions.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AngleExplore"
+            ],
+            "arity": 0
+          }
+        }
+      ]
+    },
+    {
+      "order": 47,
+      "id": "area-perimeter-explore",
+      "name": "AreaPerimeterExplore",
+      "contentType": null,
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "Maths",
+      "renderMode": "inline",
+      "function": "Configuration-driven GCSE area and perimeter diagram — the mensuration sibling of AngleExplore. Learner-controlled dimensions drive a live boundary trace, square-unit grids and decomposition visuals, so perimeter is built by tracing and adding edges while area is built by counting, rearranging or decomposing square units. Page-level prediction, marking and scoring remain outside the component.",
+      "usage": "New component — pending review; not yet routed in ChapterPlayer. Review variants cover rectangles and squares, the fixed-perimeter comparison, triangle and parallelogram formula derivation, trapezia, composite rectilinear area and perimeter, and static worked-example use.",
+      "alternative": "AngleExplore (angle facts, not mensuration); CalculationBreakdown (carrying out a method, not seeing why a formula holds); a static figure image for one-off diagrams.",
+      "fixture": null,
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "AreaPerimeterExplore"
+        ],
+        "arity": 0
+      },
+      "variantCount": 8,
+      "variants": [
+        {
+          "order": 1,
+          "id": "rectangle",
+          "label": "Rectangle",
+          "description": "Separates the two measures at their simplest: dragging width and height shows perimeter accumulating along the boundary while area fills as rows of square units. Reaching the square state marks the equal sides and names side² rather than treating it as a different shape.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AreaPerimeterExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 2,
+          "id": "fixed-perimeter",
+          "label": "Fixed perimeter",
+          "description": "Breaks the \"bigger perimeter means bigger area\" assumption. The boundary is pinned at 24 cm while the width drags the shape from 1 × 11 through to the 6 × 6 square, so the learner sees area rise and fall against an unchanging perimeter.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AreaPerimeterExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 3,
+          "id": "triangle-area",
+          "label": "Triangle area",
+          "description": "Targets the sloping-side misconception directly: the apex slides sideways, the sloping sides visibly change, and the area does not — because base and perpendicular height have not. Pairing a rotated copy into a parallelogram earns the ½ before it is stated.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AreaPerimeterExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 4,
+          "id": "parallelogram",
+          "label": "Parallelogram",
+          "description": "Shows that slant is not height. Sliding the top edge leaves the area untouched, and the triggered cut-and-slide moves the overhanging triangle across to build the equivalent rectangle, so base × perpendicular height is derived rather than asserted.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AreaPerimeterExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 5,
+          "id": "trapezium",
+          "label": "Trapezium",
+          "description": "Makes ½ × (a + b) × h emerge from a transformation: both parallel sides and the height are adjustable, and joining a rotated copy produces a parallelogram of base a + b and twice the area — the halving then has a visible cause.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AreaPerimeterExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 6,
+          "id": "composite-area",
+          "label": "Composite area",
+          "description": "Teaches that decomposition is a choice, not a rule. Two valid splits and a whole-minus-missing-corner method each reach 36 cm², so the learner judges methods by whether they account for the space rather than by matching a remembered picture.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AreaPerimeterExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 7,
+          "id": "composite-perimeter",
+          "label": "Composite perimeter",
+          "description": "Corrects the most common composite-shape error: the split line used for area stays on screen but muted and excluded, with the explicit statement that an internal line is not part of the perimeter. The two unlabelled outer lengths must be deduced from the opposite sides.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AreaPerimeterExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 8,
+          "id": "static",
+          "label": "Static worked example",
+          "description": "The non-interactive job: an accurate, on-theme diagram with fixed dimensions and no controls, for use inside teaching explanations, worked examples and exam questions where the page — not the diagram — owns the question.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "AreaPerimeterExplore"
+            ],
+            "arity": 0
+          }
+        }
+      ]
+    },
+    {
+      "order": 48,
+      "id": "coordinate-plane-explore",
+      "name": "CoordinatePlaneExplore",
+      "contentType": null,
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "Maths",
+      "renderMode": "inline",
+      "function": "Configuration-driven GCSE coordinate plane — position, quadrants, midpoints, straight-line graphs, tables of values, intersections and the four transformations on one plane with one interaction model. A three-tier annotation contract keeps only one point fully annotated. Page-level questions and marking remain outside the component.",
+      "usage": "New component — pending review; not yet routed in ChapterPlayer. Review variants cover all nine presets, a static exam figure and a cross-subject science framing.",
+      "alternative": "NumberLineExplore (one dimension); GraphView (data charts); AngleExplore (angle facts); AreaPerimeterExplore (mensuration).",
+      "fixture": null,
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "CoordinatePlaneExplore"
+        ],
+        "arity": 0
+      },
+      "variantCount": 13,
+      "variants": [
+        {
+          "order": 1,
+          "id": "plot-point",
+          "label": "Plot a point",
+          "description": "Drag a point and read its coordinate. Guide lines belong to the active point alone.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 2,
+          "id": "quadrants",
+          "label": "Quadrants",
+          "description": "The four quadrants labelled with their sign pairs, named live as the point moves.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 3,
+          "id": "midpoint",
+          "label": "Midpoint",
+          "description": "The x-values and y-values bracketed and averaged separately, so the formula is read off the picture.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 4,
+          "id": "straight-line",
+          "label": "Straight line",
+          "description": "y = mx + c with the rise/run triangle and the y-intercept marked.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 5,
+          "id": "parallel",
+          "label": "Parallel lines",
+          "description": "Equal rise/run triangles on both lines, with intercepts set independently.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 6,
+          "id": "table-of-values",
+          "label": "Table of values",
+          "description": "One point, no line; two points, a provisional dashed line; three, solid — the third coordinate confirms the rule.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 7,
+          "id": "intersection",
+          "label": "Intersection",
+          "description": "The meeting point substituted back into both equations, which is what makes it a solution.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 8,
+          "id": "translate",
+          "label": "Translate",
+          "description": "A column vector sliding every vertex by the same amount, at the model extreme.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 9,
+          "id": "reflect",
+          "label": "Reflect",
+          "description": "A diagonal mirror line with all six original and image vertices on one plane.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 10,
+          "id": "rotate",
+          "label": "Rotate",
+          "description": "A quarter turn about a non-origin centre, with the direction control on screen.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 11,
+          "id": "enlarge",
+          "label": "Enlarge",
+          "description": "Scale factor 3 about a non-origin centre, with the full ray from centre to image.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 12,
+          "id": "static-exam",
+          "label": "Static exam figure",
+          "description": "interactive={false} — no handles, no live region, but a full descriptive summary for screen readers.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 13,
+          "id": "physics-distance-time",
+          "label": "Physics distance–time",
+          "description": "Cross-subject: axis labels, units and independent scales make a usable science graph, not a recoloured Maths diagram.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "CoordinatePlaneExplore"
+            ],
+            "arity": 0
+          }
+        }
+      ]
+    },
+    {
+      "order": 49,
+      "id": "number-line-explore",
+      "name": "NumberLineExplore",
+      "contentType": null,
+      "interaction": "reveal",
+      "status": "comparison",
+      "subject": "Maths",
+      "renderMode": "inline",
+      "function": "Configuration-driven GCSE number line — the shared visual foundation for number topics, and a sibling of AngleExplore. Ordering, directed movement, rounding intervals, inequalities, bounds, multiplication patterns and estimation ranges all render on one line with one interaction model. Page-level questions and marking remain outside the component.",
+      "usage": "New component — pending review; not yet routed in ChapterPlayer. Review variants cover all seven presets plus a static job.",
+      "alternative": "AngleExplore (angle facts); AreaPerimeterExplore (mensuration); GraphView (data charts); a static figure image for non-interactive diagrams.",
+      "fixture": null,
+      "hasRender": true,
+      "render": {
+        "ok": true,
+        "mounts": [
+          "NumberLineExplore"
+        ],
+        "arity": 0
+      },
+      "variantCount": 8,
+      "variants": [
+        {
+          "order": 1,
+          "id": "order-numbers",
+          "label": "Ordering",
+          "description": "Slide one value between four pinned ones — integers, a decimal and a fraction — and watch the ordering statement re-sort. Landing on a pinned value shows the two forms sharing a point.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "NumberLineExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 2,
+          "id": "negative-movement",
+          "label": "Negative moves",
+          "description": "Addition and subtraction as directed movement: an animated arc shows the jump, and adding a negative visibly lands where subtracting does.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "NumberLineExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 3,
+          "id": "rounding-intervals",
+          "label": "Rounding",
+          "description": "The two multiples a value sits between, with the halfway point marked. Precision switches between nearest 10, whole number and 1 d.p.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "NumberLineExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 4,
+          "id": "inequality-range",
+          "label": "Inequalities",
+          "description": "Open and closed endpoints, direction, symbol and interval notation stay tied together as the endpoint moves.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "NumberLineExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 5,
+          "id": "bounds-interval",
+          "label": "Bounds",
+          "description": "The error interval of a rounded value — lower bound included, upper bound excluded, shown as a filled and an open endpoint.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "NumberLineExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 6,
+          "id": "multiply-pattern",
+          "label": "Multiplying",
+          "description": "Multiplying by a negative as repeated jumps in the opposite direction — the jumps stay the same size, only their direction flips.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "NumberLineExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 7,
+          "id": "estimate-range",
+          "label": "Estimation",
+          "description": "Estimation as a range rather than a single answer: drag an estimate and see whether it lands inside the sensible band around the exact value.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "NumberLineExplore"
+            ],
+            "arity": 0
+          }
+        },
+        {
+          "order": 8,
+          "id": "static",
+          "label": "Static diagram",
+          "description": "The same renderer with interaction disabled at fixed values, for teaching, worked examples and exam questions.",
+          "renderMode": null,
+          "ownFixture": false,
+          "fixture": "__inherits-entry__",
+          "hasOwnRender": true,
+          "render": {
+            "ok": true,
+            "mounts": [
+              "NumberLineExplore"
+            ],
+            "arity": 0
+          }
+        }
+      ]
+    }
+  ]
+}

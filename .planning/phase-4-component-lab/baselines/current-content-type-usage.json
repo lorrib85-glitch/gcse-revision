@@ -1,0 +1,213 @@
+{
+  "$schema": "phase-4-component-lab/current-content-type-usage",
+  "capturedAtSha": "d2c0030f80730db42e0b5097319ae5292966b078",
+  "note": "Deterministic count of authored screen/block types across src/content/**. Matches both authoring styles used in content files: type: 'x' and \"type\": \"x\". This is the evidence base for every usage claim in the Lab and the parity baseline for any generated usage field.",
+  "contentFilesScanned": 68,
+  "distinctTypes": 51,
+  "usage": {
+    "read": {
+      "occurrences": 261,
+      "files": 23
+    },
+    "quiz": {
+      "occurrences": 224,
+      "files": 22
+    },
+    "choice": {
+      "occurrences": 90,
+      "files": 29
+    },
+    "keypoint": {
+      "occurrences": 83,
+      "files": 22
+    },
+    "examtip": {
+      "occurrences": 62,
+      "files": 20
+    },
+    "boss": {
+      "occurrences": 61,
+      "files": 17
+    },
+    "scenario": {
+      "occurrences": 39,
+      "files": 14
+    },
+    "funfact": {
+      "occurrences": 26,
+      "files": 12
+    },
+    "colsort": {
+      "occurrences": 25,
+      "files": 11
+    },
+    "truefalse": {
+      "occurrences": 22,
+      "files": 22
+    },
+    "connection": {
+      "occurrences": 22,
+      "files": 22
+    },
+    "quickRecall": {
+      "occurrences": 21,
+      "files": 8
+    },
+    "misconceptionCheck": {
+      "occurrences": 20,
+      "files": 16
+    },
+    "fillblanks": {
+      "occurrences": 20,
+      "files": 18
+    },
+    "conceptReveal": {
+      "occurrences": 18,
+      "files": 8
+    },
+    "weak": {
+      "occurrences": 10,
+      "files": 5
+    },
+    "flashcards": {
+      "occurrences": 10,
+      "files": 7
+    },
+    "interactiveImage": {
+      "occurrences": 9,
+      "files": 5
+    },
+    "matchingTask": {
+      "occurrences": 9,
+      "files": 6
+    },
+    "examinerExplains": {
+      "occurrences": 9,
+      "files": 7
+    },
+    "tieredquiz": {
+      "occurrences": 9,
+      "files": 9
+    },
+    "timelineChain": {
+      "occurrences": 8,
+      "files": 6
+    },
+    "visualLearning": {
+      "occurrences": 8,
+      "files": 4
+    },
+    "strong": {
+      "occurrences": 8,
+      "files": 4
+    },
+    "faceExaminer": {
+      "occurrences": 6,
+      "files": 5
+    },
+    "keyFigureReveal": {
+      "occurrences": 6,
+      "files": 4
+    },
+    "naturalSupernaturalSwipe": {
+      "occurrences": 6,
+      "files": 5
+    },
+    "priorKnowledgeRecall": {
+      "occurrences": 6,
+      "files": 6
+    },
+    "theoryCompare": {
+      "occurrences": 4,
+      "files": 3
+    },
+    "guidedExamResponse": {
+      "occurrences": 4,
+      "files": 4
+    },
+    "explainReveal": {
+      "occurrences": 4,
+      "files": 3
+    },
+    "guidedChoiceCarousel": {
+      "occurrences": 3,
+      "files": 3
+    },
+    "factorWeb": {
+      "occurrences": 3,
+      "files": 3
+    },
+    "cinematic": {
+      "occurrences": 2,
+      "files": 2
+    },
+    "misconception": {
+      "occurrences": 2,
+      "files": 2
+    },
+    "oppositeQualitiesReveal": {
+      "occurrences": 2,
+      "files": 1
+    },
+    "appliedscenario": {
+      "occurrences": 2,
+      "files": 1
+    },
+    "spotTheError": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "builder": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "acronymMemorise": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "reveal": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "quoteAnalyser": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "mediaPlaceholder": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "centreImageReveal": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "irrelevant": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "infographic": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "timelineCanvas": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "timelinedrag": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "beforeAfterSlider": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "examscored": {
+      "occurrences": 1,
+      "files": 1
+    },
+    "orderedRouteTask": {
+      "occurrences": 1,
+      "files": 1
+    }
+  }
+}
