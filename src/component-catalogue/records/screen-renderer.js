@@ -73,7 +73,13 @@ export default {
         ],
         continuation: 'player',
         headerMode: 'standard',
-        handler: 'ExamTipBlock'
+        handler: 'ExamTipBlock',
+        pedagogy: {
+          functions: [
+            'exam-technique'
+          ],
+          interaction: 'passive'
+        }
       },
       {
         type: 'funfact',
@@ -91,7 +97,13 @@ export default {
         requiredAny: [],
         continuation: 'player',
         headerMode: 'standard',
-        handler: 'FunFactBlock'
+        handler: 'FunFactBlock',
+        pedagogy: {
+          functions: [
+            'hook-tension'
+          ],
+          interaction: 'passive'
+        }
       },
       {
         type: 'hotspot',
@@ -104,7 +116,13 @@ export default {
         requiredAny: [],
         continuation: 'player',
         headerMode: 'standard',
-        handler: 'HotspotBlock'
+        handler: 'HotspotBlock',
+        pedagogy: {
+          functions: [
+            'teach-mechanism'
+          ],
+          interaction: 'reveal'
+        }
       },
       {
         type: 'keypoint',
@@ -128,7 +146,13 @@ export default {
         ],
         continuation: 'player',
         headerMode: 'standard',
-        handler: 'KeypointBlock'
+        handler: 'KeypointBlock',
+        pedagogy: {
+          functions: [
+            'teach-mechanism'
+          ],
+          interaction: 'passive'
+        }
       },
       {
         type: 'misconception',
@@ -146,7 +170,13 @@ export default {
         requiredAny: [],
         continuation: 'player',
         headerMode: 'standard',
-        handler: 'MisconceptionBlock'
+        handler: 'MisconceptionBlock',
+        pedagogy: {
+          functions: [
+            'exam-technique'
+          ],
+          interaction: 'reveal'
+        }
       },
       {
         type: 'read',
@@ -164,7 +194,13 @@ export default {
         requiredAny: [],
         continuation: 'player',
         headerMode: 'standard',
-        handler: 'ReadBlock'
+        handler: 'ReadBlock',
+        pedagogy: {
+          functions: [
+            'teach-mechanism'
+          ],
+          interaction: 'passive'
+        }
       },
       {
         type: 'reveal',
@@ -186,7 +222,13 @@ export default {
         requiredAny: [],
         continuation: 'player',
         headerMode: 'standard',
-        handler: 'RevealBlock'
+        handler: 'RevealBlock',
+        pedagogy: {
+          functions: [
+            'teach-mechanism'
+          ],
+          interaction: 'reveal'
+        }
       },
       {
         type: 'scenario',
@@ -210,7 +252,13 @@ export default {
         ],
         continuation: 'player',
         headerMode: 'standard',
-        handler: 'ScenarioBlock'
+        handler: 'ScenarioBlock',
+        pedagogy: {
+          functions: [
+            'apply'
+          ],
+          interaction: 'assessed'
+        }
       },
       {
         type: 'timeline',
@@ -228,7 +276,13 @@ export default {
         requiredAny: [],
         continuation: 'player',
         headerMode: 'standard',
-        handler: 'TimelineBlock'
+        handler: 'TimelineBlock',
+        pedagogy: {
+          functions: [
+            'sequence-process'
+          ],
+          interaction: 'passive'
+        }
       },
       {
         type: 'standard',
@@ -246,7 +300,12 @@ export default {
         requiredAny: [],
         continuation: 'player',
         headerMode: 'standard',
-        handler: 'ScreenContentRenderer'
+        handler: 'ScreenContentRenderer',
+        pedagogy: null,
+        pedagogyExemption: {
+          kind: 'container-derived',
+          reason: 'The screen’s pedagogical classification is determined by its contained blocks.'
+        }
       }
     ],
     nonAuthorableHandlers: [

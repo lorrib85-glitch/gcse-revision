@@ -114,7 +114,14 @@ export default {
         ],
         continuation: 'player',
         headerMode: 'standard',
-        handler: null
+        handler: null,
+        pedagogy: {
+          functions: [
+            'retrieve',
+            'apply'
+          ],
+          interaction: 'assessed'
+        }
       }
     ]
   }

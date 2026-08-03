@@ -90,7 +90,14 @@ export default {
         ],
         continuation: 'component',
         headerMode: 'standard',
-        handler: null
+        handler: null,
+        pedagogy: {
+          functions: [
+            'hook-tension',
+            'teach-mechanism'
+          ],
+          interaction: 'reveal'
+        }
       }
     ]
   }

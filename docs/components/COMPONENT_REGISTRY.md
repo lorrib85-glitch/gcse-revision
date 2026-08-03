@@ -28,7 +28,7 @@ catalogue, not an approval list and not a learner-reachability list.
 |---|---|
 | Does this component exist, and what is it? | this file, generated from `src/component-catalogue/records/` |
 | May a chapter author use it in a `screens` array? | the **Authoring** block on the entry below, if it has one |
-| Which pedagogical function does it serve? | `src/data/componentFunctions.js` |
+| Which pedagogical function does it serve? | the Pedagogy line in the **Authoring** block below |
 | May its internals change without asking? | the **Contract** on each entry below |
 
 **Authoring authority.** A component's authorable screen and block types are
@@ -42,9 +42,18 @@ Most components have no Authoring block, and that is not an error — a runtime
 shell, a support primitive or an app-level feature is never placed by an author
 in a `screens` array.
 
-**Remaining phase boundary.** Pedagogical function tags stay in
-`src/data/componentFunctions.js` until their own migration phase, and are
-deliberately not duplicated here.
+**Pedagogy authority.** Each authoring entry's pedagogical classification
+(function tags and interaction class) is a catalogue fact, declared in the
+entry's `pedagogy` block against the vocabulary in
+`src/component-catalogue/pedagogyVocabulary.js`.
+`src/data/generated/componentPedagogyRegistry.js` is projected from those
+blocks by `pnpm pedagogy:generate`, and `src/data/componentFunctions.js` is
+a thin compatibility API over that projection. Never add a classification to
+`componentFunctions.js`; add it to the owning authoring entry and regenerate.
+
+**Remaining phase boundary.** Component Lab routing stays in
+`src/dev/componentReview/` until its own migration phase, and is deliberately
+not duplicated here.
 
 Catalogue membership is not based on learner reachability. Component Lab or
 Storybook-only components, components still under review, and
@@ -118,6 +127,7 @@ Foundation components used by many others. They handle atomic UI concerns.
   - Layout: content
   - Continuation: player-owned
   - Requires: `question`:string, `options`:array
+  - Pedagogy: retrieve · assessed
 
 **Contract:** critical
 
@@ -648,6 +658,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: content
   - Continuation: player-owned
   - Requires: `kind`:string
+  - Pedagogy: teach-mechanism · passive
 
 **Contract:** standard
 
@@ -814,6 +825,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
   - Status: `active`
   - Layout: full-screen
   - Continuation: component-owned
+  - Pedagogy: teach-comparison, apply · assessed
 
 **Decision**
 
@@ -867,6 +879,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
+  - Pedagogy: teach-mechanism · reveal
 
 **Decision**
 
@@ -1047,6 +1060,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: content
   - Continuation: component-owned
   - Requires one of: `pieces`:array, `options`:array, `items`:array
+  - Pedagogy: apply · assessed
 
 **Decision**
 
@@ -1163,6 +1177,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires: `items`:array
+  - Pedagogy: teach-mechanism · reveal
 
 **Decision**
 
@@ -1198,6 +1213,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Continuation: component-owned
   - Header: cinematic
   - Requires one of: `videoSrc`:string, `fallbackImage`:string
+  - Pedagogy: hook-tension · passive
 
 **Decision**
 
@@ -1266,6 +1282,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires: `steps`:array
+  - Pedagogy: teach-mechanism · reveal
 
 **Decision**
 
@@ -1317,6 +1334,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
+  - Pedagogy: teach-mechanism · reveal
 
 **Decision**
 
@@ -1359,6 +1377,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires: `examiner`:object
+  - Pedagogy: exam-technique · assessed
 
 **Decision**
 
@@ -1401,6 +1420,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: content
   - Continuation: player-owned
   - Requires: `sentences`:array
+  - Pedagogy: retrieve · assessed
 
 **Decision**
 
@@ -1437,6 +1457,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: content
   - Continuation: player-owned
   - Requires: `media`:object
+  - Pedagogy: teach-mechanism · passive
 
 **Decision**
 
@@ -1475,6 +1496,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires: `image`:string, `hotspots`:array
+  - Pedagogy: teach-mechanism, apply · reveal
 
 **Decision**
 
@@ -1509,6 +1531,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires one of: `scenes`:array, `steps`:array, `items`:array
+  - Pedagogy: hook-tension, teach-mechanism · reveal
 
 **Decision**
 
@@ -1546,6 +1569,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: full-screen
   - Continuation: component-owned
+  - Pedagogy: introduce-figure · reveal
 
 **Decision**
 
@@ -1580,6 +1604,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires: `questions`:array
+  - Pedagogy: retrieve · assessed
 
 **Decision**
 
@@ -1619,6 +1644,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: full-screen
   - Continuation: component-owned
+  - Pedagogy: retrieve · assessed
 
 **Decision**
 
@@ -1767,6 +1793,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: content
   - Continuation: player-owned
   - Requires: `columns`:array, `items`:array
+  - Pedagogy: classify · assessed
 
 **Decision**
 
@@ -1828,6 +1855,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: full-screen
   - Continuation: component-owned
+  - Pedagogy: exam-technique · passive
 
 **Contract:** standard
 
@@ -1859,6 +1887,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
+  - Pedagogy: teach-mechanism · passive
 
 **Decision**
 
@@ -1903,6 +1932,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires: `options`:array
+  - Pedagogy: apply · assessed
 
 **Decision**
 
@@ -1941,6 +1971,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires one of: `items`:array, `pairs`:array, `cards`:array
+  - Pedagogy: classify · assessed
 
 **Decision**
 
@@ -1986,6 +2017,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires one of: `items`:array, `steps`:array, `cards`:array, `stages`:array
+  - Pedagogy: sequence-process · assessed
 
 **Decision**
 
@@ -2027,6 +2059,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: full-screen
   - Continuation: component-owned
+  - Pedagogy: apply · assessed
 
 **Decision**
 
@@ -2073,6 +2106,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
+  - Pedagogy: teach-mechanism · passive
 
 **Decision**
 
@@ -2142,10 +2176,12 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: content
   - Continuation: component-owned
+  - Pedagogy: retrieve, exam-technique · assessed
 - **Screen type:** `misconceptionCheck` — Misconception check screen
   - Status: `derived`
   - Layout: full-screen
   - Continuation: component-owned
+  - Pedagogy: retrieve, exam-technique · assessed
 
 **Decision**
 
@@ -2193,6 +2229,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: content
   - Continuation: component-owned
+  - Pedagogy: exam-technique, apply · assessed
 
 **Decision**
 
@@ -2228,6 +2265,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: full-screen
   - Continuation: component-owned
+  - Pedagogy: classify · assessed
 
 **Decision**
 
@@ -2272,6 +2310,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
+  - Pedagogy: teach-comparison · reveal
 
 **Decision**
 
@@ -2312,10 +2351,12 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
+  - Pedagogy: teach-comparison · reveal
 - **Screen type:** `oppositeQualitiesReveal` — Opposite qualities reveal
   - Status: `active`
   - Layout: full-screen
   - Continuation: player-owned
+  - Pedagogy: teach-comparison · reveal
 
 **Decision**
 
@@ -2360,6 +2401,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires one of: `events`:array, `items`:array, `steps`:array
+  - Pedagogy: sequence-process · reveal
 
 **Decision**
 
@@ -2408,6 +2450,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires one of: `events`:array, `steps`:array, `items`:array
+  - Pedagogy: sequence-process · reveal
 
 **Decision**
 
@@ -2448,6 +2491,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
+  - Pedagogy: sequence-process · reveal
 
 **Decision**
 
@@ -2678,59 +2722,69 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Continuation: player-owned
   - Requires one of: `text`:string, `tip`:string
   - Implementation: private `ScreenRenderer` handler `ExamTipBlock`
+  - Pedagogy: exam-technique · passive
 - **Block type:** `funfact` — Fun fact
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
   - Requires: `text`:string
   - Implementation: private `ScreenRenderer` handler `FunFactBlock`
+  - Pedagogy: hook-tension · passive
 - **Block type:** `hotspot` — Hotspot block
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
   - Implementation: private `ScreenRenderer` handler `HotspotBlock`
+  - Pedagogy: teach-mechanism · reveal
 - **Block type:** `keypoint` — Key point
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
   - Requires one of: `text`:string, `points`:array
   - Implementation: private `ScreenRenderer` handler `KeypointBlock`
+  - Pedagogy: teach-mechanism · passive
 - **Block type:** `misconception` — Misconception reveal
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
   - Requires: `mistakes`:array
   - Implementation: private `ScreenRenderer` handler `MisconceptionBlock`
+  - Pedagogy: exam-technique · reveal
 - **Block type:** `read` — Read block
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
   - Requires: `text`:string
   - Implementation: private `ScreenRenderer` handler `ReadBlock`
+  - Pedagogy: teach-mechanism · passive
 - **Block type:** `reveal` — Reveal block
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
   - Requires: `prompt`:string, `answer`:string
   - Implementation: private `ScreenRenderer` handler `RevealBlock`
+  - Pedagogy: teach-mechanism · reveal
 - **Block type:** `scenario` — Scenario block
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
   - Requires one of: `scenarios`:array, `situation`:string
   - Implementation: private `ScreenRenderer` handler `ScenarioBlock`
+  - Pedagogy: apply · assessed
 - **Block type:** `timeline` — Timeline block
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
   - Requires: `events`:array
   - Implementation: private `ScreenRenderer` handler `TimelineBlock`
+  - Pedagogy: sequence-process · passive
 - **Screen type:** `standard` — Standard content screen
   - Status: `active`
   - Layout: content
   - Continuation: player-owned
   - Requires: `blocks`:array
   - Implementation: private `ScreenRenderer` handler `ScreenContentRenderer`
+  - Pedagogy: derived from contained blocks
 - **Not authorable:** `ChapterSchemaError` — Development-time schema failure surface for a malformed chapter, rendered by ChapterPlayer rather than chosen by an author.
 - **Not authorable:** `UnsupportedScreen` — Recovery surface shown when a screen type has no renderer route; it exists to report the defect, never to be authored.
 - **Not authorable:** `UnsupportedBlock` — Recovery surface shown when a block type has no renderer route; it exists to report the defect, never to be authored.
@@ -2777,6 +2831,7 @@ Question feedback and exam practice components.
   - Continuation: player-owned
   - Requires: `question`:string
   - Requires one of: `markPoints`:string, `markPoints`:array, `ms`:string, `ms`:array, `markScheme`:string, `markScheme`:array
+  - Pedagogy: retrieve, apply · assessed
 
 **Decision**
 
@@ -2850,6 +2905,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
   - Status: `active`
   - Layout: full-screen
   - Continuation: component-owned
+  - Pedagogy: teach-mechanism · reveal
 
 **Decision**
 
@@ -2939,6 +2995,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
   - Layout: full-screen
   - Continuation: component-owned
   - Requires: `exam`:object
+  - Pedagogy: exam-technique · assessed
 
 **Decision**
 
@@ -3030,6 +3087,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires: `tiers`:array
+  - Pedagogy: retrieve · assessed
 
 **Decision**
 
@@ -3068,6 +3126,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: content
   - Continuation: player-owned
   - Requires: `cards`:array
+  - Pedagogy: retrieve · reveal
 
 **Decision**
 
@@ -3102,6 +3161,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Layout: full-screen
   - Continuation: component-owned
   - Requires: `beforeSrc`:string, `afterSrc`:string
+  - Pedagogy: teach-comparison · reveal
 
 **Decision**
 
@@ -3188,9 +3248,20 @@ This is a shrinking set, not a tombstone list: a guard fails an entry the
 moment its last authored reference disappears. A retired type with no live
 content is deleted outright instead of being moved here.
 
-| Type | Level | Author instead | Current handler | Removal condition |
-|---|---|---|---|---|
-| `appliedscenario` | block | `scenario` | `LegacyUnroutedBlock` | Delete this entry once no chapter content references type "appliedscenario"; the authored screens move to "scenario" unchanged. |
-| `examscored` | block | `boss` | `LegacyUnroutedBlock` | Delete this entry once no chapter content references type "examscored"; the authored questions move to "boss" with markScheme preserved. |
-| `tieredquiz` | block | `quickRecall` | `LegacyUnroutedBlock` | Delete this entry once no chapter content references a block of type "tieredquiz"; the authored tiers move to "quickRecall" questions. |
-| `timelinedrag` | block | `orderedRouteTask` | `LegacyUnroutedBlock` | Delete this entry once no chapter content references type "timelinedrag"; the authored items move to an "orderedRouteTask" screen. |
+| Type | Level | Author instead | Current handler | Pedagogy | Removal condition |
+|---|---|---|---|---|---|
+| `appliedscenario` | block | `scenario` | `LegacyUnroutedBlock` | apply · assessed | Delete this entry once no chapter content references type "appliedscenario"; the authored screens move to "scenario" unchanged. |
+| `examscored` | block | `boss` | `LegacyUnroutedBlock` | exam-technique · assessed | Delete this entry once no chapter content references type "examscored"; the authored questions move to "boss" with markScheme preserved. |
+| `tieredquiz` | block | `quickRecall` | `LegacyUnroutedBlock` | retrieve · assessed | Delete this entry once no chapter content references a block of type "tieredquiz"; the authored tiers move to "quickRecall" questions. |
+| `timelinedrag` | block | `orderedRouteTask` | `LegacyUnroutedBlock` | sequence-process · assessed | Delete this entry once no chapter content references type "timelinedrag"; the authored items move to an "orderedRouteTask" screen. |
+
+### Non-authoring classifications
+
+Types that are deliberately not authorable but whose pedagogical
+classification a named live consumer still reads. Owned by
+`src/component-catalogue/migrations/nonAuthoringPedagogy.js` — the same
+shrinking-set discipline: each entry carries its consumer and its way out.
+
+| Type | Pedagogy | Reason | Removal condition |
+|---|---|---|---|
+| `calculationBreakdown` | sequence-process, apply · assessed | The production-bundled Component Lab derives its interaction badge for the CalculationBreakdown entry from getTypeInfo("calculationBreakdown") (reviewManifestCore.jsx); the component is catalogued and storied but has no authoring entry, so nothing else carries this fact. | Delete this entry when Phase 4 replaces the Lab manifest’s getTypeInfo dependency, or when CalculationBreakdown receives a genuine authoring entry — whichever happens first. |

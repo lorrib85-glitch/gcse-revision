@@ -12,12 +12,16 @@
 // Phase 2 moved authorable screen and block types here: a record's `authoring`
 // block is the authority for the types its component implements, and
 // `src/data/generated/componentAuthoringRegistry.js` is generated from it.
+// Phase 3 moved pedagogical classification here too: every authoring entry
+// carries a `pedagogy` block (functions + interaction), validated against
+// `pedagogyVocabulary.js`, and `src/data/generated/componentPedagogyRegistry.js`
+// is generated from those blocks plus the compatibility and non-authoring
+// registries.
 //
 // What this schema still deliberately does NOT own:
-//   - pedagogical function tags          → `src/data/componentFunctions.js`
 //   - Component Lab routing              → `src/dev/componentReview/**`
-// Those stay where they are until their own phase migrates them. Do not
-// duplicate them here.
+// That stays where it is until its own phase migrates it. Do not duplicate it
+// here.
 
 import { FUNCTION_TAGS, INTERACTION_CLASSES } from './pedagogyVocabulary.js'
 
@@ -314,14 +318,13 @@ function validateRequirement(errors, at, requirement) {
 
 const AUTHORING_ENTRY_KEYS = [
   'type', 'level', 'authoringName', 'layout', 'status', 'replacement',
-  'required', 'requiredAny', 'continuation', 'headerMode', 'handler',
+  'required', 'requiredAny', 'continuation', 'headerMode', 'handler', 'pedagogy',
 ]
 
-// Transitional (Phase 3 commit 1): `pedagogy` validates when present and
-// becomes mandatory in the injection commit, when every entry carries it.
-// `pedagogyExemption` stays optional permanently — it exists only for the
-// narrow container-derived case.
-const OPTIONAL_AUTHORING_ENTRY_KEYS = ['pedagogy', 'pedagogyExemption']
+// The one optional entry key. `pedagogyExemption` exists only for the narrow
+// container-derived case; every other key — pedagogy included — is mandatory
+// on every entry.
+const OPTIONAL_AUTHORING_ENTRY_KEYS = ['pedagogyExemption']
 
 /**
  * Pedagogical classification of one authoring entry. Every entry carries

@@ -77,7 +77,14 @@ export default {
         requiredAny: [],
         continuation: 'component',
         headerMode: 'standard',
-        handler: null
+        handler: null,
+        pedagogy: {
+          functions: [
+            'retrieve',
+            'exam-technique'
+          ],
+          interaction: 'assessed'
+        }
       },
       {
         type: 'misconceptionCheck',
@@ -90,7 +97,14 @@ export default {
         requiredAny: [],
         continuation: 'component',
         headerMode: 'standard',
-        handler: null
+        handler: null,
+        pedagogy: {
+          functions: [
+            'retrieve',
+            'exam-technique'
+          ],
+          interaction: 'assessed'
+        }
       }
     ]
   }

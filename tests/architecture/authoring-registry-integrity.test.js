@@ -306,7 +306,7 @@ describe('the human registry tells the same truth as the runtime', () => {
     expect(occurrences('## Authoring compatibility appendix')).toBe(1)
     const wrong = []
     for (const entry of AUTHORING_COMPATIBILITY) {
-      const row = `| \`${entry.type}\` | ${entry.level} | \`${entry.replacement}\` | \`${entry.currentHandler}\` | ${entry.removalCondition} |`
+      const row = `| \`${entry.type}\` | ${entry.level} | \`${entry.replacement}\` | \`${entry.currentHandler}\` | ${entry.pedagogy.functions.join(', ')} · ${entry.pedagogy.interaction} | ${entry.removalCondition} |`
       const count = occurrences(row)
       if (count !== 1) wrong.push(`${entry.type} appears ${count} times`)
     }

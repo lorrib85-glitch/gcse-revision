@@ -16,6 +16,7 @@ import { fileURLToPath } from 'url'
 
 import { loadCatalogue } from '../src/component-catalogue/loadCatalogue.js'
 import { AUTHORING_COMPATIBILITY } from '../src/component-catalogue/migrations/authoringCompatibility.js'
+import { NON_AUTHORING_PEDAGOGY } from '../src/component-catalogue/migrations/nonAuthoringPedagogy.js'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 export const OUTPUT_PATH = 'docs/components/COMPONENT_REGISTRY.md'
@@ -76,7 +77,7 @@ catalogue, not an approval list and not a learner-reachability list.
 |---|---|
 | Does this component exist, and what is it? | this file, generated from \`src/component-catalogue/records/\` |
 | May a chapter author use it in a \`screens\` array? | the **Authoring** block on the entry below, if it has one |
-| Which pedagogical function does it serve? | \`src/data/componentFunctions.js\` |
+| Which pedagogical function does it serve? | the Pedagogy line in the **Authoring** block below |
 | May its internals change without asking? | the **Contract** on each entry below |
 
 **Authoring authority.** A component's authorable screen and block types are
@@ -90,9 +91,18 @@ Most components have no Authoring block, and that is not an error — a runtime
 shell, a support primitive or an app-level feature is never placed by an author
 in a \`screens\` array.
 
-**Remaining phase boundary.** Pedagogical function tags stay in
-\`src/data/componentFunctions.js\` until their own migration phase, and are
-deliberately not duplicated here.
+**Pedagogy authority.** Each authoring entry's pedagogical classification
+(function tags and interaction class) is a catalogue fact, declared in the
+entry's \`pedagogy\` block against the vocabulary in
+\`src/component-catalogue/pedagogyVocabulary.js\`.
+\`src/data/generated/componentPedagogyRegistry.js\` is projected from those
+blocks by \`pnpm pedagogy:generate\`, and \`src/data/componentFunctions.js\` is
+a thin compatibility API over that projection. Never add a classification to
+\`componentFunctions.js\`; add it to the owning authoring entry and regenerate.
+
+**Remaining phase boundary.** Component Lab routing stays in
+\`src/dev/componentReview/\` until its own migration phase, and is deliberately
+not duplicated here.
 
 Catalogue membership is not based on learner reachability. Component Lab or
 Storybook-only components, components still under review, and
@@ -237,6 +247,9 @@ function renderAuthoring(record) {
     if (entry.handler) {
       lines.push(`  - Implementation: private \`${record.name}\` handler \`${entry.handler}\``)
     }
+    lines.push(entry.pedagogyExemption
+      ? '  - Pedagogy: derived from contained blocks'
+      : `  - Pedagogy: ${entry.pedagogy.functions.join(', ')} · ${entry.pedagogy.interaction}`)
     return lines.join('\n')
   })
 
@@ -262,6 +275,14 @@ function renderCompatibilityAppendix(entries) {
     entry.level,
     `\`${entry.replacement}\``,
     `\`${entry.currentHandler}\``,
+    `${entry.pedagogy.functions.join(', ')} · ${entry.pedagogy.interaction}`,
+    entry.removalCondition,
+  ].join(' | '))
+
+  const nonAuthoringRows = NON_AUTHORING_PEDAGOGY.map(entry => [
+    `\`${entry.type}\``,
+    `${entry.pedagogy.functions.join(', ')} · ${entry.pedagogy.interaction}`,
+    entry.reason,
     entry.removalCondition,
   ].join(' | '))
 
@@ -279,9 +300,20 @@ function renderCompatibilityAppendix(entries) {
     'moment its last authored reference disappears. A retired type with no live',
     'content is deleted outright instead of being moved here.',
     '',
-    '| Type | Level | Author instead | Current handler | Removal condition |',
-    '|---|---|---|---|---|',
+    '| Type | Level | Author instead | Current handler | Pedagogy | Removal condition |',
+    '|---|---|---|---|---|---|',
     `| ${rows.join(' |\n| ')} |`,
+    '',
+    '### Non-authoring classifications',
+    '',
+    'Types that are deliberately not authorable but whose pedagogical',
+    'classification a named live consumer still reads. Owned by',
+    '`src/component-catalogue/migrations/nonAuthoringPedagogy.js` — the same',
+    'shrinking-set discipline: each entry carries its consumer and its way out.',
+    '',
+    '| Type | Pedagogy | Reason | Removal condition |',
+    '|---|---|---|---|',
+    `| ${nonAuthoringRows.join(' |\n| ')} |`,
   ].join('\n')
 }
 

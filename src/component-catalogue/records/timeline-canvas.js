@@ -89,7 +89,13 @@ export default {
         ],
         continuation: 'component',
         headerMode: 'standard',
-        handler: null
+        handler: null,
+        pedagogy: {
+          functions: [
+            'sequence-process'
+          ],
+          interaction: 'reveal'
+        }
       }
     ]
   }

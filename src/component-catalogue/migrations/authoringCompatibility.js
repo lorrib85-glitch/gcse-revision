@@ -34,6 +34,7 @@ export const AUTHORING_COMPATIBILITY = Object.freeze([
     removalCondition: 'Delete this entry once no chapter content references type "appliedscenario"; the authored screens move to "scenario" unchanged.',
     required: [{ path: 'scenarios', kind: 'array' }],
     requiredAny: [],
+    pedagogy: Object.freeze({ functions: Object.freeze(['apply']), interaction: 'assessed' }),
   }),
   Object.freeze({
     type: 'examscored',
@@ -52,6 +53,7 @@ export const AUTHORING_COMPATIBILITY = Object.freeze([
       { path: 'markScheme', kind: 'array' },
     ],
     requiredAny: [],
+    pedagogy: Object.freeze({ functions: Object.freeze(['exam-technique']), interaction: 'assessed' }),
   }),
   Object.freeze({
     type: 'tieredquiz',
@@ -67,6 +69,7 @@ export const AUTHORING_COMPATIBILITY = Object.freeze([
     removalCondition: 'Delete this entry once no chapter content references a block of type "tieredquiz"; the authored tiers move to "quickRecall" questions.',
     required: [{ path: 'tiers', kind: 'array' }],
     requiredAny: [],
+    pedagogy: Object.freeze({ functions: Object.freeze(['retrieve']), interaction: 'assessed' }),
   }),
   Object.freeze({
     type: 'timelinedrag',
@@ -85,5 +88,6 @@ export const AUTHORING_COMPATIBILITY = Object.freeze([
       { path: 'items', kind: 'array' },
     ],
     requiredAny: [],
+    pedagogy: Object.freeze({ functions: Object.freeze(['sequence-process']), interaction: 'assessed' }),
   }),
 ])

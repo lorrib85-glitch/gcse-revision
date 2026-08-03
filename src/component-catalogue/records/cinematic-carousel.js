@@ -79,7 +79,13 @@ export default {
         requiredAny: [],
         continuation: 'component',
         headerMode: 'standard',
-        handler: null
+        handler: null,
+        pedagogy: {
+          functions: [
+            'teach-mechanism'
+          ],
+          interaction: 'reveal'
+        }
       }
     ]
   }

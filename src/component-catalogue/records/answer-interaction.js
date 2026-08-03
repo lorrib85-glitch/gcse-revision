@@ -124,7 +124,13 @@ export default {
         requiredAny: [],
         continuation: 'player',
         headerMode: 'standard',
-        handler: null
+        handler: null,
+        pedagogy: {
+          functions: [
+            'retrieve'
+          ],
+          interaction: 'assessed'
+        }
       }
     ]
   }

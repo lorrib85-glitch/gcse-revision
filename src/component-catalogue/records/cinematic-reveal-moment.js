@@ -83,7 +83,13 @@ export default {
         ],
         continuation: 'component',
         headerMode: 'cinematic',
-        handler: null
+        handler: null,
+        pedagogy: {
+          functions: [
+            'hook-tension'
+          ],
+          interaction: 'passive'
+        }
       }
     ]
   }
