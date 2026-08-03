@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
 import {
@@ -59,7 +59,7 @@ describe('governed screen registry', () => {
       }
     }
     expect(failures).toEqual([])
-    const allowedLegacyMaximums = { appliedscenario: 2, examscored: 1, tieredquiz: 9, timelinedrag: 1, visualNarrative: 0 }
+    const allowedLegacyMaximums = { appliedscenario: 2, examscored: 1, tieredquiz: 9, timelinedrag: 1 }
     for (const [type, count] of Object.entries(legacyCounts)) {
       expect(Object.hasOwn(allowedLegacyMaximums, type), 'Unexpected legacy type ' + type).toBe(true)
       expect(count, 'Legacy type ' + type + ' grew').toBeLessThanOrEqual(allowedLegacyMaximums[type])
@@ -74,6 +74,34 @@ describe('governed screen registry', () => {
     expect(player).not.toMatch(/block\.type\s*===/)
     expect(player).not.toContain('function ScreenContentRenderer')
     expect(player).not.toContain('function ReadBlock')
+  })
+
+  // The migration to `type: 'timelineChain', variant: 'reveal'` is complete and
+  // recorded in GOLD_SCREEN_REGISTER.md. The compatibility path is retired: the
+  // type is unregistered, unroutable, and the mapper no longer exists. These
+  // assertions stop it returning by accident.
+  it('leaves no trace of the retired visualNarrative compatibility path', async () => {
+    expect(SCREEN_REGISTRY.visualNarrative).toBeUndefined()
+    expect(FULL_SCREEN_RENDERER_TYPES).not.toContain('visualNarrative')
+
+    const renderer = read('src/components/layout/ScreenRenderer.jsx')
+    expect(renderer).not.toContain('visualNarrative')
+    expect(existsSync(resolve(root, 'src/data/visualNarrativeCompat.js'))).toBe(false)
+
+    // TimelineChain and its reveal variant are untouched by the retirement.
+    expect(SCREEN_REGISTRY.timelineChain?.component).toBe('TimelineChain')
+    expect(FULL_SCREEN_RENDERER_TYPES).toContain('timelineChain')
+  })
+
+  it('has no authored content left using the retired visualNarrative type', async () => {
+    const chapters = await loadAllChapters()
+    const offenders = []
+    for (const [id, chapter] of chapters) {
+      ;(chapter.screens || []).forEach((screen, index) => {
+        if (screen?.type === 'visualNarrative') offenders.push(`${id}[${index}]`)
+      })
+    }
+    expect(offenders).toEqual([])
   })
 
   it('keeps production failures recoverable and accepted data variants renderable', () => {

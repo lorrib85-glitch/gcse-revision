@@ -7,7 +7,6 @@ import {
   nextRevealCount,
   revealState,
 } from '../../src/components/learning/timelineChainReveal.js'
-import { visualNarrativeToRevealChain } from '../../src/data/visualNarrativeCompat.js'
 
 describe('normalizeRichText — structured highlight data', () => {
   it('wraps a plain string as a single non-highlighted segment', () => {
@@ -135,79 +134,11 @@ describe('reveal progression', () => {
   })
 })
 
-describe('visualNarrativeToRevealChain — legacy compatibility mapping', () => {
-  it('maps the canonical bad-air example structurally, not by hardcoded content', () => {
-    const block = visualNarrativeToRevealChain({
-      title: 'Miasma',
-      beats: [
-        { facts: [
-          'People believed disease spread through bad air.',
-          'So they tried to sweeten the air.',
-          'But the real cause was microbes.',
-        ] },
-      ],
-    })
-    expect(block.type).toBe('timelineChain')
-    expect(block.variant).toBe('reveal')
-    expect(block.steps.map(s => s.statement)).toEqual([
-      'People believed disease spread through bad air.',
-      'So they tried to sweeten the air.',
-      'But the real cause was microbes.',
-    ])
-  })
-
-  it('maps a narrative beat to one step (headline → statement, body → detail)', () => {
-    const block = visualNarrativeToRevealChain({
-      beats: [
-        { headline: 'Two dead Greeks ran medieval medicine.', body: 'Doctors looked to men dead for centuries.' },
-        { facts: ['Galen was one.', 'Hippocrates the other.'], conclusion: 'Their ideas lasted 1,000 years.' },
-      ],
-    })
-    expect(block.steps[0]).toMatchObject({
-      statement: 'Two dead Greeks ran medieval medicine.',
-      detail: 'Doctors looked to men dead for centuries.',
-    })
-    // facts of the final beat become their own steps...
-    expect(block.steps.slice(1).map(s => s.statement)).toEqual(['Galen was one.', 'Hippocrates the other.'])
-    // ...and the final beat's conclusion becomes the takeaway, not a step.
-    expect(block.takeaway).toBe('Their ideas lasted 1,000 years.')
-  })
-
-  it('folds a headline beat that carries facts into a single step with detail', () => {
-    const block = visualNarrativeToRevealChain({
-      beats: [
-        { headline: '1. Stretcher bearers', facts: ['First hands on the wounded.', 'Under fire.'] },
-      ],
-    })
-    expect(block.steps).toHaveLength(1)
-    expect(block.steps[0].statement).toBe('1. Stretcher bearers')
-    expect(block.steps[0].detail).toBe('First hands on the wounded.\nUnder fire.')
-  })
-
-  it('turns a non-final conclusion into a step and preserves a source note', () => {
-    const block = visualNarrativeToRevealChain({
-      beats: [
-        { facts: ['A fact.'], conclusion: 'Mid conclusion.', source: 'Some Journal (2023).' },
-        { headline: 'The end.' },
-      ],
-    })
-    expect(block.steps.map(s => s.statement)).toEqual(['A fact.', 'Mid conclusion.', 'The end.'])
-    expect(block.takeaway).toBeUndefined()
-    expect(block.source).toBe('Some Journal (2023).')
-  })
-
-  it('returns an empty reveal block for empty / missing beats', () => {
-    expect(visualNarrativeToRevealChain({}).steps).toEqual([])
-    expect(visualNarrativeToRevealChain({ beats: [] }).steps).toEqual([])
-  })
-})
-
 describe('reveal logic is subject-agnostic', () => {
   it('contains no hardcoded history colours or subject-specific words', () => {
     const source = normalizeRichText.toString()
       + buildRevealModel.toString()
       + revealState.toString()
-      + visualNarrativeToRevealChain.toString()
     expect(source).not.toMatch(/#[0-9a-fA-F]{6}/)
     expect(source).not.toMatch(/bronze|gold|galen|medieval|history/i)
   })

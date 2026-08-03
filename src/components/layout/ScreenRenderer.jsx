@@ -26,7 +26,6 @@ import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import CardContainer from '../core/CardContainer.jsx'
 import GuidedChoiceCarousel from '../learning/GuidedChoiceCarousel.jsx'
 import TimelineChain, { TimelineChainBlock } from '../learning/TimelineChain.jsx'
-import { visualNarrativeToRevealChain } from '../../data/visualNarrativeCompat.js'
 import TimelineCanvas from '../learning/TimelineCanvas.jsx'
 import CinematicCarousel from '../learning/CinematicCarousel.jsx'
 import TheoryCompare from '../learning/TheoryCompare.jsx'
@@ -707,7 +706,6 @@ export const FULL_SCREEN_RENDERER_TYPES = Object.freeze([
   "guidedChoiceCarousel",
   "interactiveImage",
   "centreImageReveal",
-  "visualNarrative",
   "timelineChain",
   "timelineCanvas",
   "cinematicCarousel",
@@ -1039,25 +1037,6 @@ export default function ScreenRenderer({
           screen={cur}
           selectedHealer={selectedHealer}
           onComplete={isLast ? handleFinish : () => go(1)}
-        />
-      </>
-    )
-  }
-
-  // ── Visual narrative (legacy) — mapped to the TimelineChain reveal variant ──
-  // Authored content now uses `type: 'timelineChain', variant: 'reveal'` directly.
-  // This branch stays only as a compatibility path for any persisted/legacy lesson
-  // data that still carries `type: 'visualNarrative'`; the mapping lives outside the
-  // visual component in src/data/visualNarrativeCompat.js.
-  if (cur?.type === 'visualNarrative') {
-    return (
-      <>
-        <LearningHeader {...H} visible={true} />
-        <TimelineChain
-          block={visualNarrativeToRevealChain(cur)}
-          subject={chapter.subject}
-          variant="reveal"
-          onContinue={() => isLast ? handleFinish() : go(1)}
         />
       </>
     )

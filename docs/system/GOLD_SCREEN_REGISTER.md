@@ -461,8 +461,9 @@ named findings; the rest are explicit debt, ranked below.
   was removed; its beat-based behaviour is now the `reveal` variant of
   `TimelineChain`. The six former uses (Ep1 ×2, Ep3 renaissance, Ep3
   Vesalius, Ep5, Ep14) are authored as `type: 'timelineChain', variant:
-  'reveal'`; legacy persisted `visualNarrative` blocks are mapped at render
-  time via `src/data/visualNarrativeCompat.js`.
+  'reveal'`. The migration is complete: the `visualNarrative` screen type is
+  unregistered and the `visualNarrativeCompat.js` render-time mapper has been
+  retired, so there is no remaining compatibility path to author against.
 - **Strongest render use:** the `Learning/TimelineChain — Reveal` story,
   verified at 390px (2026-07-22): each step lands one statement with the
   strongest hierarchy, optional secondary detail sits quieter beneath, the

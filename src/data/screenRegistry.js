@@ -129,12 +129,6 @@ export const SCREEN_REGISTRY = Object.freeze({
     layout: 'full',
     continuation: 'component',
   }),
-  visualNarrative: screen('Visual narrative', 'TimelineChain', {
-    layout: 'full',
-    continuation: 'component',
-    status: 'legacy',
-    replacement: 'timelineChain',
-  }),
   timelineChain: screen('Timeline chain', 'TimelineChain', {
     layout: 'full',
     continuation: 'component',
