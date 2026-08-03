@@ -1,0 +1,4626 @@
+{
+  "bio_building_blocks": {
+    "guardrails": [
+      {
+        "code": "STAGE_NO_ASSESSMENT",
+        "location": "part-2",
+        "message": "teaching stage \"part-2\" has no assessed screen",
+        "fingerprint": "STAGE_NO_ASSESSMENT:part-2"
+      },
+      {
+        "code": "STAGE_NO_ASSESSMENT",
+        "location": "part-3",
+        "message": "teaching stage \"part-3\" has no assessed screen",
+        "fingerprint": "STAGE_NO_ASSESSMENT:part-3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:3",
+        "grade": 8.751000000000001,
+        "message": "screen 3 readability grade 8.8 > 7",
+        "fingerprint": "READABILITY:screen:3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 12.365054945054943,
+        "message": "screen 4 readability grade 12.4 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:11",
+        "grade": 7.783000000000001,
+        "message": "screen 11 readability grade 7.8 > 7",
+        "fingerprint": "READABILITY:screen:11"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:11",
+      "READABILITY:screen:3",
+      "READABILITY:screen:4",
+      "STAGE_NO_ASSESSMENT:part-2",
+      "STAGE_NO_ASSESSMENT:part-3"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].title",
+        "field": "title",
+        "run": "Plant Cell",
+        "message": "\"Plant Cell\" in \"Inside a\nPlant Cell\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].hotspots[5].title",
+        "field": "title",
+        "run": "Permanent Vacuole",
+        "message": "\"Permanent Vacuole\" in \"Large Permanent Vacuole\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].hotspots[5].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].title",
+        "field": "title",
+        "run": "Animal Cell",
+        "message": "\"Animal Cell\" in \"Inside an\nAnimal Cell\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].title:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[3].hotspots[5].title:run:0",
+      "SENTENCE_CASE:screens[3].title:run:0",
+      "SENTENCE_CASE:screens[4].title:run:0"
+    ]
+  },
+  "bio_building_life": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "bio_control_systems": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "bio_disease_wars": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "bio_ecosystems_group": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "bio_genetics_evolution": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "bio_human_machine": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "english-macbeth-power-ambition": {
+    "guardrails": [
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-2",
+        "message": "stageNavigation \"part-2\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-2"
+      },
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-3",
+        "message": "stageNavigation \"part-3\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-3"
+      },
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-4",
+        "message": "stageNavigation \"part-4\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-4"
+      },
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-5",
+        "message": "stageNavigation \"part-5\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-5"
+      },
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-6",
+        "message": "stageNavigation \"part-6\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-6"
+      }
+    ],
+    "guardrailFingerprints": [
+      "STAGE_NAV_NOT_INCREASING:part-2",
+      "STAGE_NAV_NOT_INCREASING:part-3",
+      "STAGE_NAV_NOT_INCREASING:part-4",
+      "STAGE_NAV_NOT_INCREASING:part-5",
+      "STAGE_NAV_NOT_INCREASING:part-6"
+    ],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "history-medicine-accidental-miracle": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 7.369577205882354,
+        "message": "screen 0 readability grade 7.4 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:1",
+        "grade": 9.174693877551022,
+        "message": "screen 1 readability grade 9.2 > 7",
+        "fingerprint": "READABILITY:screen:1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 9.289768403639375,
+        "message": "screen 2 readability grade 9.3 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:3",
+        "grade": 9.509382940108896,
+        "message": "screen 3 readability grade 9.5 > 7",
+        "fingerprint": "READABILITY:screen:3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 7.476048916064482,
+        "message": "screen 4 readability grade 7.5 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:5",
+        "grade": 9.070838557993735,
+        "message": "screen 5 readability grade 9.1 > 7",
+        "fingerprint": "READABILITY:screen:5"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:6",
+        "grade": 10.021520935960591,
+        "message": "screen 6 readability grade 10.0 > 7",
+        "fingerprint": "READABILITY:screen:6"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:7",
+        "grade": 7.263477419354839,
+        "message": "screen 7 readability grade 7.3 > 7",
+        "fingerprint": "READABILITY:screen:7"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:8",
+        "grade": 7.379779816513761,
+        "message": "screen 8 readability grade 7.4 > 7",
+        "fingerprint": "READABILITY:screen:8"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:10",
+        "grade": 7.597258039698417,
+        "message": "screen 10 readability grade 7.6 > 7",
+        "fingerprint": "READABILITY:screen:10"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:1",
+      "READABILITY:screen:10",
+      "READABILITY:screen:2",
+      "READABILITY:screen:3",
+      "READABILITY:screen:4",
+      "READABILITY:screen:5",
+      "READABILITY:screen:6",
+      "READABILITY:screen:7",
+      "READABILITY:screen:8"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Mould That",
+        "message": "\"Mould That\" in \"The Mould That Shouldn't Matter\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "That Shouldn't",
+        "message": "\"That Shouldn't\" in \"The Mould That Shouldn't Matter\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Shouldn't Matter",
+        "message": "\"Shouldn't Matter\" in \"The Mould That Shouldn't Matter\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Infection Wins",
+        "message": "\"Infection Wins\" in \"Before Antibiotics: Infection Wins\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "Mass Production",
+        "message": "\"Mass Production\" in \"Florey, Chain and Mass Production\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "New Age",
+        "message": "\"New Age\" in \"A New Age of Treatment\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Team Effort",
+        "message": "\"Team Effort\" in \"Exam Prep: Accident or Team Effort?\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[0].label",
+        "field": "label",
+        "run": "The Problem",
+        "message": "\"The Problem\" in \"🦠 The Problem Nobody Had Solved\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[0].label",
+        "field": "label",
+        "run": "Problem Nobody",
+        "message": "\"Problem Nobody\" in \"🦠 The Problem Nobody Had Solved\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[0].label",
+        "field": "label",
+        "run": "Nobody Had",
+        "message": "\"Nobody Had\" in \"🦠 The Problem Nobody Had Solved\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[0].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[0].label",
+        "field": "label",
+        "run": "Had Solved",
+        "message": "\"Had Solved\" in \"🦠 The Problem Nobody Had Solved\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[0].label:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[1].label",
+        "field": "label",
+        "run": "Very Bad",
+        "message": "\"Very Bad\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[1].label",
+        "field": "label",
+        "run": "Bad Time",
+        "message": "\"Bad Time\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[1].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[1].label",
+        "field": "label",
+        "run": "Time To",
+        "message": "\"Time To\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[1].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[1].label",
+        "field": "label",
+        "run": "To Be",
+        "message": "\"To Be\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[1].label:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[1].label",
+        "field": "label",
+        "run": "Be Alive",
+        "message": "\"Be Alive\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[1].label:run:4"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[0].label",
+        "field": "label",
+        "run": "The Magic",
+        "message": "\"The Magic\" in \"🎯 The Magic Bullet Concept\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[0].label",
+        "field": "label",
+        "run": "Magic Bullet",
+        "message": "\"Magic Bullet\" in \"🎯 The Magic Bullet Concept\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[0].label",
+        "field": "label",
+        "run": "Bullet Concept",
+        "message": "\"Bullet Concept\" in \"🎯 The Magic Bullet Concept\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[0].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[0].label",
+        "field": "label",
+        "run": "What Fleming",
+        "message": "\"What Fleming\" in \"🧫 What Fleming Found\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[0].label",
+        "field": "label",
+        "run": "Fleming Found",
+        "message": "\"Fleming Found\" in \"🧫 What Fleming Found\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[2].label",
+        "field": "label",
+        "run": "Very Bad",
+        "message": "\"Very Bad\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[2].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[2].label",
+        "field": "label",
+        "run": "Bad Time",
+        "message": "\"Bad Time\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[2].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[2].label",
+        "field": "label",
+        "run": "Time To",
+        "message": "\"Time To\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[2].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[2].label",
+        "field": "label",
+        "run": "To Be",
+        "message": "\"To Be\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[2].label:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[2].label",
+        "field": "label",
+        "run": "Be Alive",
+        "message": "\"Be Alive\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[2].label:run:4"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[0].label",
+        "field": "label",
+        "run": "What Stopped",
+        "message": "\"What Stopped\" in \"🔬 What Stopped Fleming\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[0].label",
+        "field": "label",
+        "run": "Stopped Fleming",
+        "message": "\"Stopped Fleming\" in \"🔬 What Stopped Fleming\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[0].label",
+        "field": "label",
+        "run": "The Oxford",
+        "message": "\"The Oxford\" in \"🔬 The Oxford Team\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[0].label",
+        "field": "label",
+        "run": "Oxford Team",
+        "message": "\"Oxford Team\" in \"🔬 The Oxford Team\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[2].label",
+        "field": "label",
+        "run": "Wartime Workaround",
+        "message": "\"Wartime Workaround\" in \"💡 A Wartime Workaround\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[2].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].blocks[0].label",
+        "field": "label",
+        "run": "The Wartime",
+        "message": "\"The Wartime\" in \"⚔️ The Wartime Catalyst\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].blocks[0].label",
+        "field": "label",
+        "run": "Wartime Catalyst",
+        "message": "\"Wartime Catalyst\" in \"⚔️ The Wartime Catalyst\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].blocks[0].label",
+        "field": "label",
+        "run": "After Antibiotics",
+        "message": "\"After Antibiotics\" in \"💊 Before and After Antibiotics\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].blocks[0].label",
+        "field": "label",
+        "run": "What Was",
+        "message": "\"What Was\" in \"🏥 What Was the NHS?\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[0].label",
+        "field": "label",
+        "run": "The Source",
+        "message": "\"The Source\" in \"🔍 The Source Analysis Challenge\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[0].label",
+        "field": "label",
+        "run": "Source Analysis",
+        "message": "\"Source Analysis\" in \"🔍 The Source Analysis Challenge\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[0].label",
+        "field": "label",
+        "run": "Analysis Challenge",
+        "message": "\"Analysis Challenge\" in \"🔍 The Source Analysis Challenge\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[0].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].heading",
+        "field": "heading",
+        "run": "Final Boss",
+        "message": "\"Final Boss\" in \"⚔️ Final Boss: Why Did Penicillin Succeed?\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].heading:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].heading",
+        "field": "heading",
+        "run": "Why Did",
+        "message": "\"Why Did\" in \"⚔️ Final Boss: Why Did Penicillin Succeed?\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].heading:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].heading",
+        "field": "heading",
+        "run": "Did Penicillin",
+        "message": "\"Did Penicillin\" in \"⚔️ Final Boss: Why Did Penicillin Succeed?\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].heading:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].heading",
+        "field": "heading",
+        "run": "Penicillin Succeed",
+        "message": "\"Penicillin Succeed\" in \"⚔️ Final Boss: Why Did Penicillin Succeed?\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].heading:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].blocks[0].label",
+        "field": "label",
+        "run": "The Challenge",
+        "message": "\"The Challenge\" in \"🔥 The Challenge\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].blocks[1].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"Round 1 — Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].blocks[3].label",
+        "field": "label",
+        "run": "Boss Mode",
+        "message": "\"Boss Mode\" in \"Round 3 — Boss Mode\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[10].blocks[0].label",
+        "field": "label",
+        "run": "Why Retrieval",
+        "message": "\"Why Retrieval\" in \"🔁 Why Retrieval Works\"",
+        "fingerprint": "SENTENCE_CASE:screens[10].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[10].blocks[0].label",
+        "field": "label",
+        "run": "Retrieval Works",
+        "message": "\"Retrieval Works\" in \"🔁 Why Retrieval Works\"",
+        "fingerprint": "SENTENCE_CASE:screens[10].blocks[0].label:run:1"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[0].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[0].blocks[0].label:run:2",
+      "SENTENCE_CASE:screens[0].blocks[0].label:run:3",
+      "SENTENCE_CASE:screens[0].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[0].blocks[1].label:run:1",
+      "SENTENCE_CASE:screens[0].blocks[1].label:run:2",
+      "SENTENCE_CASE:screens[0].blocks[1].label:run:3",
+      "SENTENCE_CASE:screens[0].blocks[1].label:run:4",
+      "SENTENCE_CASE:screens[10].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[10].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[1].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[1].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[1].blocks[0].label:run:2",
+      "SENTENCE_CASE:screens[1].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[2].blocks[2].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[2].label:run:1",
+      "SENTENCE_CASE:screens[2].blocks[2].label:run:2",
+      "SENTENCE_CASE:screens[2].blocks[2].label:run:3",
+      "SENTENCE_CASE:screens[2].blocks[2].label:run:4",
+      "SENTENCE_CASE:screens[3].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[3].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[3].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[4].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[4].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[4].blocks[2].label:run:0",
+      "SENTENCE_CASE:screens[5].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[5].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[6].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[6].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[7].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[7].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[8].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[8].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[8].blocks[0].label:run:2",
+      "SENTENCE_CASE:screens[8].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[9].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[9].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[9].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[9].heading:run:0",
+      "SENTENCE_CASE:screens[9].heading:run:1",
+      "SENTENCE_CASE:screens[9].heading:run:2",
+      "SENTENCE_CASE:screens[9].heading:run:3",
+      "SENTENCE_CASE:stageNavigation[0].title:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:1",
+      "SENTENCE_CASE:stageNavigation[0].title:run:2",
+      "SENTENCE_CASE:stageNavigation[1].title:run:0",
+      "SENTENCE_CASE:stageNavigation[3].title:run:0",
+      "SENTENCE_CASE:stageNavigation[4].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:0"
+    ]
+  },
+  "history-medicine-black-death": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 8.660389915440025,
+        "message": "screen 0 readability grade 8.7 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:22",
+        "grade": 7.580545454545458,
+        "message": "screen 22 readability grade 7.6 > 7",
+        "fingerprint": "READABILITY:screen:22"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:22"
+    ],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "history-medicine-cancer": {
+    "guardrails": [
+      {
+        "code": "STAGE_NO_ASSESSMENT",
+        "location": "part-3",
+        "message": "teaching stage \"part-3\" has no assessed screen",
+        "fingerprint": "STAGE_NO_ASSESSMENT:part-3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 8.781265554298646,
+        "message": "screen 0 readability grade 8.8 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:1",
+        "grade": 7.193452380952383,
+        "message": "screen 1 readability grade 7.2 > 7",
+        "fingerprint": "READABILITY:screen:1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 7.866642857142857,
+        "message": "screen 2 readability grade 7.9 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:3",
+        "grade": 8.71444054500413,
+        "message": "screen 3 readability grade 8.7 > 7",
+        "fingerprint": "READABILITY:screen:3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:5",
+        "grade": 8.891270632201806,
+        "message": "screen 5 readability grade 8.9 > 7",
+        "fingerprint": "READABILITY:screen:5"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:6",
+        "grade": 9.788165204678364,
+        "message": "screen 6 readability grade 9.8 > 7",
+        "fingerprint": "READABILITY:screen:6"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:7",
+        "grade": 8.694237875776924,
+        "message": "screen 7 readability grade 8.7 > 7",
+        "fingerprint": "READABILITY:screen:7"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:10",
+        "grade": 10.75445425361156,
+        "message": "screen 10 readability grade 10.8 > 7",
+        "fingerprint": "READABILITY:screen:10"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:1",
+      "READABILITY:screen:10",
+      "READABILITY:screen:2",
+      "READABILITY:screen:3",
+      "READABILITY:screen:5",
+      "READABILITY:screen:6",
+      "READABILITY:screen:7",
+      "STAGE_NO_ASSESSMENT:part-3"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Disease Modern",
+        "message": "\"Disease Modern\" in \"The Disease Modern Medicine Still Fights\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Modern Medicine",
+        "message": "\"Modern Medicine\" in \"The Disease Modern Medicine Still Fights\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Medicine Still",
+        "message": "\"Medicine Still\" in \"The Disease Modern Medicine Still Fights\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Still Fights",
+        "message": "\"Still Fights\" in \"The Disease Modern Medicine Still Fights\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Makes Lung",
+        "message": "\"Makes Lung\" in \"What Makes Lung Cancer Different?\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Lung Cancer",
+        "message": "\"Lung Cancer\" in \"What Makes Lung Cancer Different?\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Cancer Different",
+        "message": "\"Cancer Different\" in \"What Makes Lung Cancer Different?\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[2].title",
+        "field": "title",
+        "run": "Cancer Earlier",
+        "message": "\"Cancer Earlier\" in \"Finding Cancer Earlier\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[2].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "Hard Cases",
+        "message": "\"Hard Cases\" in \"Treating the Hard Cases\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Lifestyle Disease",
+        "message": "\"Lifestyle Disease\" in \"Exam Prep: Lifestyle Disease and Modern Limits\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Modern Limits",
+        "message": "\"Modern Limits\" in \"Exam Prep: Lifestyle Disease and Modern Limits\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"📖 Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"📖 Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"📖 Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"📖 Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[4].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[4].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].label",
+        "field": "label",
+        "run": "Lung Cancer",
+        "message": "\"Lung Cancer\" in \"Smoking & Lung Cancer\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"📖 Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].blocks[4].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].blocks[4].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].label",
+        "field": "label",
+        "run": "Never Stopped",
+        "message": "\"Never Stopped\" in \"Government Never Stopped\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"📖 Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[1].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"Round 1 — Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].blocks[2].label",
+        "field": "label",
+        "run": "Boss Mode",
+        "message": "\"Boss Mode\" in \"Round 3 — Boss Mode\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].blocks[2].label:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[0].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[1].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[1].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[3].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[3].blocks[4].label:run:0",
+      "SENTENCE_CASE:screens[4].label:run:0",
+      "SENTENCE_CASE:screens[5].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[5].blocks[4].label:run:0",
+      "SENTENCE_CASE:screens[6].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[6].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[6].label:run:0",
+      "SENTENCE_CASE:screens[8].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[9].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[9].blocks[2].label:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:1",
+      "SENTENCE_CASE:stageNavigation[0].title:run:2",
+      "SENTENCE_CASE:stageNavigation[0].title:run:3",
+      "SENTENCE_CASE:stageNavigation[1].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:1",
+      "SENTENCE_CASE:stageNavigation[1].title:run:2",
+      "SENTENCE_CASE:stageNavigation[2].title:run:0",
+      "SENTENCE_CASE:stageNavigation[3].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:1"
+    ]
+  },
+  "history-medicine-germ-theory": {
+    "guardrails": [
+      {
+        "code": "PASSIVE_RUN",
+        "location": "screen:5",
+        "message": "3 consecutive passive screens ending at index 5",
+        "fingerprint": "PASSIVE_RUN:screen:5"
+      },
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-2",
+        "message": "stageNavigation \"part-2\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 7.494638686131385,
+        "message": "screen 2 readability grade 7.5 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:3",
+        "grade": 8.008602150537634,
+        "message": "screen 3 readability grade 8.0 > 7",
+        "fingerprint": "READABILITY:screen:3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 7.989224137931036,
+        "message": "screen 4 readability grade 8.0 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:7",
+        "grade": 8.180196078431372,
+        "message": "screen 7 readability grade 8.2 > 7",
+        "fingerprint": "READABILITY:screen:7"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:8",
+        "grade": 7.618024193548386,
+        "message": "screen 8 readability grade 7.6 > 7",
+        "fingerprint": "READABILITY:screen:8"
+      }
+    ],
+    "guardrailFingerprints": [
+      "PASSIVE_RUN:screen:5",
+      "READABILITY:screen:2",
+      "READABILITY:screen:3",
+      "READABILITY:screen:4",
+      "READABILITY:screen:7",
+      "READABILITY:screen:8",
+      "STAGE_NAV_NOT_INCREASING:part-2"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Smaller Than",
+        "message": "\"Smaller Than\" in \"Something Smaller Than Sight\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Than Sight",
+        "message": "\"Than Sight\" in \"Something Smaller Than Sight\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Germ Theory",
+        "message": "\"Germ Theory\" in \"Before Germ Theory: Bad Air Still Rules\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Bad Air",
+        "message": "\"Bad Air\" in \"Before Germ Theory: Bad Air Still Rules\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Air Still",
+        "message": "\"Air Still\" in \"Before Germ Theory: Bad Air Still Rules\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Still Rules",
+        "message": "\"Still Rules\" in \"Before Germ Theory: Bad Air Still Rules\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "Hunts Specific",
+        "message": "\"Hunts Specific\" in \"Koch Hunts Specific Killers\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "Specific Killers",
+        "message": "\"Specific Killers\" in \"Koch Hunts Specific Killers\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "Medicine's Direction",
+        "message": "\"Medicine's Direction\" in \"Changing Medicine's Direction\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "From Miasma",
+        "message": "\"From Miasma\" in \"Exam Prep: From Miasma to Microbes\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[2].label",
+        "field": "label",
+        "run": "Key Distinction",
+        "message": "\"Key Distinction\" in \"🗡️ Key Distinction\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[2].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"📖 Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"📖 Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[0].label",
+        "field": "label",
+        "run": "The Discovery",
+        "message": "\"The Discovery\" in \"🔬 The Discovery\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].sub",
+        "field": "sub",
+        "run": "Europe Now",
+        "message": "\"Europe Now\" in \"TB killed one in seven people in Europe. Now they knew what caused it.\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].sub:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[0].label",
+        "field": "label",
+        "run": "The Discovery",
+        "message": "\"The Discovery\" in \"🔬 The Discovery\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[1].label",
+        "field": "label",
+        "run": "Exam Link",
+        "message": "\"Exam Link\" in \"🗡️ Exam Link\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].blocks[0].label",
+        "field": "label",
+        "run": "The Discovery",
+        "message": "\"The Discovery\" in \"🔬 The Discovery\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].blocks[0].label",
+        "field": "label",
+        "run": "The Oops",
+        "message": "\"The Oops\" in \"🐔 The Oops\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].blocks[0].label:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[0].blocks[2].label:run:0",
+      "SENTENCE_CASE:screens[1].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[3].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[4].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[4].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[4].sub:run:0",
+      "SENTENCE_CASE:screens[5].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[6].blocks[0].label:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:1",
+      "SENTENCE_CASE:stageNavigation[1].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:1",
+      "SENTENCE_CASE:stageNavigation[1].title:run:2",
+      "SENTENCE_CASE:stageNavigation[1].title:run:3",
+      "SENTENCE_CASE:stageNavigation[3].title:run:0",
+      "SENTENCE_CASE:stageNavigation[3].title:run:1",
+      "SENTENCE_CASE:stageNavigation[4].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:0"
+    ]
+  },
+  "history-medicine-great-plague-1665": {
+    "guardrails": [
+      {
+        "code": "EXAM_PREP_NO_ASSESSMENT",
+        "location": "screen:10",
+        "message": "exam-prep teaching is not followed by assessed exam-technique practice",
+        "fingerprint": "EXAM_PREP_NO_ASSESSMENT:screen:10"
+      }
+    ],
+    "guardrailFingerprints": [
+      "EXAM_PREP_NO_ASSESSMENT:screen:10"
+    ],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "history-medicine-great-stink": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:1",
+        "grade": 7.508750000000003,
+        "message": "screen 1 readability grade 7.5 > 7",
+        "fingerprint": "READABILITY:screen:1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 7.356822784810127,
+        "message": "screen 2 readability grade 7.4 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:1",
+      "READABILITY:screen:2"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "City That",
+        "message": "\"City That\" in \"A City That Could Not Breathe\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "That Could",
+        "message": "\"That Could\" in \"A City That Could Not Breathe\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Could Not",
+        "message": "\"Could Not\" in \"A City That Could Not Breathe\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Not Breathe",
+        "message": "\"Not Breathe\" in \"A City That Could Not Breathe\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[2].title",
+        "field": "title",
+        "run": "Meets Evidence",
+        "message": "\"Meets Evidence\" in \"Miasma Meets Evidence\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[2].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "Government Finally",
+        "message": "\"Government Finally\" in \"The Government Finally Moves\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "Finally Moves",
+        "message": "\"Finally Moves\" in \"The Government Finally Moves\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "Becomes Public",
+        "message": "\"Becomes Public\" in \"Prevention Becomes Public\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Why Public",
+        "message": "\"Why Public\" in \"Exam Prep: Why Public Health Changed\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Health Changed",
+        "message": "\"Health Changed\" in \"Exam Prep: Why Public Health Changed\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"📖 Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[1].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"🗡️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[2].label",
+        "field": "label",
+        "run": "Six Ways",
+        "message": "\"Six Ways\" in \"☠️ Six Ways Cities Killed You\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[2].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[2].label",
+        "field": "label",
+        "run": "Ways Cities",
+        "message": "\"Ways Cities\" in \"☠️ Six Ways Cities Killed You\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[2].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[2].label",
+        "field": "label",
+        "run": "Cities Killed",
+        "message": "\"Cities Killed\" in \"☠️ Six Ways Cities Killed You\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[2].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[2].label",
+        "field": "label",
+        "run": "Killed You",
+        "message": "\"Killed You\" in \"☠️ Six Ways Cities Killed You\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[2].label:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"📖 Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[0].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"📖 Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[1].label",
+        "field": "label",
+        "run": "The Beer",
+        "message": "\"The Beer\" in \"🍺 The Beer Drinkers Lived\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[1].label",
+        "field": "label",
+        "run": "Beer Drinkers",
+        "message": "\"Beer Drinkers\" in \"🍺 The Beer Drinkers Lived\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[1].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[1].label",
+        "field": "label",
+        "run": "Drinkers Lived",
+        "message": "\"Drinkers Lived\" in \"🍺 The Beer Drinkers Lived\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[1].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[2].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"🗡️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[2].label:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[0].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[0].blocks[2].label:run:0",
+      "SENTENCE_CASE:screens[0].blocks[2].label:run:1",
+      "SENTENCE_CASE:screens[0].blocks[2].label:run:2",
+      "SENTENCE_CASE:screens[0].blocks[2].label:run:3",
+      "SENTENCE_CASE:screens[2].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[3].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[3].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[3].blocks[1].label:run:1",
+      "SENTENCE_CASE:screens[3].blocks[1].label:run:2",
+      "SENTENCE_CASE:screens[4].blocks[2].label:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:1",
+      "SENTENCE_CASE:stageNavigation[0].title:run:2",
+      "SENTENCE_CASE:stageNavigation[0].title:run:3",
+      "SENTENCE_CASE:stageNavigation[2].title:run:0",
+      "SENTENCE_CASE:stageNavigation[3].title:run:0",
+      "SENTENCE_CASE:stageNavigation[3].title:run:1",
+      "SENTENCE_CASE:stageNavigation[4].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:1"
+    ]
+  },
+  "history-medicine-harvey-pare-renaissance-method": {
+    "guardrails": [
+      {
+        "code": "EXAM_PREP_NO_ASSESSMENT",
+        "location": "screen:10",
+        "message": "exam-prep teaching is not followed by assessed exam-technique practice",
+        "fingerprint": "EXAM_PREP_NO_ASSESSMENT:screen:10"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 8.700993589743593,
+        "message": "screen 0 readability grade 8.7 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      }
+    ],
+    "guardrailFingerprints": [
+      "EXAM_PREP_NO_ASSESSMENT:screen:10",
+      "READABILITY:screen:0"
+    ],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "history-medicine-jenner-vaccination": {
+    "guardrails": [
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-2",
+        "message": "stageNavigation \"part-2\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-2"
+      },
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-3",
+        "message": "stageNavigation \"part-3\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-3"
+      },
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-4",
+        "message": "stageNavigation \"part-4\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-4"
+      },
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-5",
+        "message": "stageNavigation \"part-5\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-5"
+      },
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-6",
+        "message": "stageNavigation \"part-6\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-6"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 7.242822940861178,
+        "message": "screen 0 readability grade 7.2 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "STAGE_NAV_NOT_INCREASING:part-2",
+      "STAGE_NAV_NOT_INCREASING:part-3",
+      "STAGE_NAV_NOT_INCREASING:part-4",
+      "STAGE_NAV_NOT_INCREASING:part-5",
+      "STAGE_NAV_NOT_INCREASING:part-6"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "The Killer",
+        "message": "\"The Killer\" in \"Smallpox: The Killer Everyone Feared\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Killer Everyone",
+        "message": "\"Killer Everyone\" in \"Smallpox: The Killer Everyone Feared\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Everyone Feared",
+        "message": "\"Everyone Feared\" in \"Smallpox: The Killer Everyone Feared\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Risky Protection",
+        "message": "\"Risky Protection\" in \"Before Jenner: Risky Protection\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[2].title",
+        "field": "title",
+        "run": "Cowpox Clue",
+        "message": "\"Cowpox Clue\" in \"The Cowpox Clue\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[2].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "Prevention Breakthrough",
+        "message": "\"Prevention Breakthrough\" in \"A Prevention Breakthrough\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Why Vaccination",
+        "message": "\"Why Vaccination\" in \"Exam Prep: Why Vaccination Mattered\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Vaccination Mattered",
+        "message": "\"Vaccination Mattered\" in \"Exam Prep: Why Vaccination Mattered\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[0].label",
+        "field": "label",
+        "run": "What Happened",
+        "message": "\"What Happened\" in \"💉 What Happened\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[0].label:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:1",
+      "SENTENCE_CASE:stageNavigation[0].title:run:2",
+      "SENTENCE_CASE:stageNavigation[1].title:run:0",
+      "SENTENCE_CASE:stageNavigation[2].title:run:0",
+      "SENTENCE_CASE:stageNavigation[4].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:1"
+    ]
+  },
+  "history-medicine-medieval-beliefs-causes": {
+    "guardrails": [
+      {
+        "code": "STAGE_NO_ASSESSMENT",
+        "location": "part-1",
+        "message": "teaching stage \"part-1\" has no assessed screen",
+        "fingerprint": "STAGE_NO_ASSESSMENT:part-1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 7.303756613756615,
+        "message": "screen 0 readability grade 7.3 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:3",
+        "grade": 8.422857142857143,
+        "message": "screen 3 readability grade 8.4 > 7",
+        "fingerprint": "READABILITY:screen:3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:6",
+        "grade": 8.840000000000003,
+        "message": "screen 6 readability grade 8.8 > 7",
+        "fingerprint": "READABILITY:screen:6"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:8",
+        "grade": 7.723794871794869,
+        "message": "screen 8 readability grade 7.7 > 7",
+        "fingerprint": "READABILITY:screen:8"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:18",
+        "grade": 8.61695238095238,
+        "message": "screen 18 readability grade 8.6 > 7",
+        "fingerprint": "READABILITY:screen:18"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:25",
+        "grade": 8.418268398268399,
+        "message": "screen 25 readability grade 8.4 > 7",
+        "fingerprint": "READABILITY:screen:25"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:29",
+        "grade": 8.948568493150688,
+        "message": "screen 29 readability grade 8.9 > 7",
+        "fingerprint": "READABILITY:screen:29"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:32",
+        "grade": 7.596666666666668,
+        "message": "screen 32 readability grade 7.6 > 7",
+        "fingerprint": "READABILITY:screen:32"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:18",
+      "READABILITY:screen:25",
+      "READABILITY:screen:29",
+      "READABILITY:screen:3",
+      "READABILITY:screen:32",
+      "READABILITY:screen:6",
+      "READABILITY:screen:8",
+      "STAGE_NO_ASSESSMENT:part-1"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "title",
+        "field": "title",
+        "run": "I'm Following",
+        "message": "\"I'm Following\" in \"Trust me, I'm Following Jupiter\"",
+        "fingerprint": "SENTENCE_CASE:title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "title",
+        "field": "title",
+        "run": "Following Jupiter",
+        "message": "\"Following Jupiter\" in \"Trust me, I'm Following Jupiter\"",
+        "fingerprint": "SENTENCE_CASE:title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Serious Medicine",
+        "message": "\"Serious Medicine\" in \"Strange Ideas, Serious Medicine\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Made People",
+        "message": "\"Made People\" in \"What Made People Sick?\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "People Sick",
+        "message": "\"People Sick\" in \"What Made People Sick?\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[2].title",
+        "field": "title",
+        "run": "Galen Ruled",
+        "message": "\"Galen Ruled\" in \"Why Galen Ruled the Room\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[2].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "Medieval Treatment",
+        "message": "\"Medieval Treatment\" in \"The Medieval Treatment Toolkit\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "Treatment Toolkit",
+        "message": "\"Treatment Toolkit\" in \"The Medieval Treatment Toolkit\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "System Survived",
+        "message": "\"System Survived\" in \"Why the System Survived\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].label",
+        "field": "label",
+        "run": "Germ Problem",
+        "message": "\"Germ Problem\" in \"The Germ Problem\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].title",
+        "field": "title",
+        "run": "Four Humours",
+        "message": "\"Four Humours\" in \"Tap the Four Humours\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[13].label",
+        "field": "label",
+        "run": "Your Healer",
+        "message": "\"Your Healer\" in \"Choose Your Healer\"",
+        "fingerprint": "SENTENCE_CASE:screens[13].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[14].label",
+        "field": "label",
+        "run": "The Poisoned",
+        "message": "\"The Poisoned\" in \"Miasma — The Poisoned Air Theory\"",
+        "fingerprint": "SENTENCE_CASE:screens[14].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[14].label",
+        "field": "label",
+        "run": "Poisoned Air",
+        "message": "\"Poisoned Air\" in \"Miasma — The Poisoned Air Theory\"",
+        "fingerprint": "SENTENCE_CASE:screens[14].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[14].label",
+        "field": "label",
+        "run": "Air Theory",
+        "message": "\"Air Theory\" in \"Miasma — The Poisoned Air Theory\"",
+        "fingerprint": "SENTENCE_CASE:screens[14].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[15].label",
+        "field": "label",
+        "run": "Like It's",
+        "message": "\"Like It's\" in \"Diagnose Like It's 1340\"",
+        "fingerprint": "SENTENCE_CASE:screens[15].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[17].theories[1].label",
+        "field": "label",
+        "run": "Four Humours",
+        "message": "\"Four Humours\" in \"The Four Humours\"",
+        "fingerprint": "SENTENCE_CASE:screens[17].theories[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[21].label",
+        "field": "label",
+        "run": "Walk Through",
+        "message": "\"Walk Through\" in \"A Walk Through Medieval London\"",
+        "fingerprint": "SENTENCE_CASE:screens[21].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[21].label",
+        "field": "label",
+        "run": "Through Medieval",
+        "message": "\"Through Medieval\" in \"A Walk Through Medieval London\"",
+        "fingerprint": "SENTENCE_CASE:screens[21].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[21].label",
+        "field": "label",
+        "run": "Medieval London",
+        "message": "\"Medieval London\" in \"A Walk Through Medieval London\"",
+        "fingerprint": "SENTENCE_CASE:screens[21].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[21].hotspots[2].title",
+        "field": "title",
+        "run": "Lazar House",
+        "message": "\"Lazar House\" in \"The Lazar House\"",
+        "fingerprint": "SENTENCE_CASE:screens[21].hotspots[2].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[24].label",
+        "field": "label",
+        "run": "Natural Causes",
+        "message": "\"Natural Causes\" in \"Supernatural vs Natural Causes\"",
+        "fingerprint": "SENTENCE_CASE:screens[24].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[26].heading",
+        "field": "heading",
+        "run": "Medieval Logic",
+        "message": "\"Medieval Logic\" in \"Fill the Medieval Logic Gap\"",
+        "fingerprint": "SENTENCE_CASE:screens[26].heading:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[26].heading",
+        "field": "heading",
+        "run": "Logic Gap",
+        "message": "\"Logic Gap\" in \"Fill the Medieval Logic Gap\"",
+        "fingerprint": "SENTENCE_CASE:screens[26].heading:run:1"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[13].label:run:0",
+      "SENTENCE_CASE:screens[14].label:run:0",
+      "SENTENCE_CASE:screens[14].label:run:1",
+      "SENTENCE_CASE:screens[14].label:run:2",
+      "SENTENCE_CASE:screens[15].label:run:0",
+      "SENTENCE_CASE:screens[17].theories[1].label:run:0",
+      "SENTENCE_CASE:screens[1].label:run:0",
+      "SENTENCE_CASE:screens[21].hotspots[2].title:run:0",
+      "SENTENCE_CASE:screens[21].label:run:0",
+      "SENTENCE_CASE:screens[21].label:run:1",
+      "SENTENCE_CASE:screens[21].label:run:2",
+      "SENTENCE_CASE:screens[24].label:run:0",
+      "SENTENCE_CASE:screens[26].heading:run:0",
+      "SENTENCE_CASE:screens[26].heading:run:1",
+      "SENTENCE_CASE:screens[4].title:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:1",
+      "SENTENCE_CASE:stageNavigation[2].title:run:0",
+      "SENTENCE_CASE:stageNavigation[3].title:run:0",
+      "SENTENCE_CASE:stageNavigation[3].title:run:1",
+      "SENTENCE_CASE:stageNavigation[4].title:run:0",
+      "SENTENCE_CASE:title:run:0",
+      "SENTENCE_CASE:title:run:1"
+    ]
+  },
+  "history-medicine-modern-medicine": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 9.913234693877548,
+        "message": "screen 0 readability grade 9.9 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:1",
+        "grade": 9.662604651162791,
+        "message": "screen 1 readability grade 9.7 > 7",
+        "fingerprint": "READABILITY:screen:1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 11.610189995190002,
+        "message": "screen 2 readability grade 11.6 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:3",
+        "grade": 9.79217372134039,
+        "message": "screen 3 readability grade 9.8 > 7",
+        "fingerprint": "READABILITY:screen:3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 10.58479674796748,
+        "message": "screen 4 readability grade 10.6 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:5",
+        "grade": 12.244631751227498,
+        "message": "screen 5 readability grade 12.2 > 7",
+        "fingerprint": "READABILITY:screen:5"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:6",
+        "grade": 8.845030621172352,
+        "message": "screen 6 readability grade 8.8 > 7",
+        "fingerprint": "READABILITY:screen:6"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:7",
+        "grade": 7.058449883449885,
+        "message": "screen 7 readability grade 7.1 > 7",
+        "fingerprint": "READABILITY:screen:7"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:8",
+        "grade": 8.896494652547286,
+        "message": "screen 8 readability grade 8.9 > 7",
+        "fingerprint": "READABILITY:screen:8"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:1",
+      "READABILITY:screen:2",
+      "READABILITY:screen:3",
+      "READABILITY:screen:4",
+      "READABILITY:screen:5",
+      "READABILITY:screen:6",
+      "READABILITY:screen:7",
+      "READABILITY:screen:8"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Starts Looking",
+        "message": "\"Starts Looking\" in \"Medicine Starts Looking Inside\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Looking Inside",
+        "message": "\"Looking Inside\" in \"Medicine Starts Looking Inside\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Gets Powerful",
+        "message": "\"Gets Powerful\" in \"Diagnosis Gets Powerful\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[2].title",
+        "field": "title",
+        "run": "Becomes High-Tech",
+        "message": "\"Becomes High-Tech\" in \"Treatment Becomes High-Tech\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[2].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "Changes Access",
+        "message": "\"Changes Access\" in \"The NHS Changes Access\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "With New",
+        "message": "\"With New\" in \"Progress With New Problems\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "New Problems",
+        "message": "\"New Problems\" in \"Progress With New Problems\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Modern Medicine's",
+        "message": "\"Modern Medicine's\" in \"Exam Prep: Modern Medicine's Big Leap\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Medicine's Big",
+        "message": "\"Medicine's Big\" in \"Exam Prep: Modern Medicine's Big Leap\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Big Leap",
+        "message": "\"Big Leap\" in \"Exam Prep: Modern Medicine's Big Leap\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[0].label",
+        "field": "label",
+        "run": "From Guesswork",
+        "message": "\"From Guesswork\" in \"🔬 From Guesswork to Precision\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[3].label",
+        "field": "label",
+        "run": "An Accidental",
+        "message": "\"An Accidental\" in \"🧬 MRI: An Accidental Revolution\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[3].label",
+        "field": "label",
+        "run": "Accidental Revolution",
+        "message": "\"Accidental Revolution\" in \"🧬 MRI: An Accidental Revolution\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[3].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[0].label",
+        "field": "label",
+        "run": "From Impossible",
+        "message": "\"From Impossible\" in \"🏥 From Impossible to Routine\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[0].label",
+        "field": "label",
+        "run": "The Revolution",
+        "message": "\"The Revolution\" in \"🔪 The Revolution in Surgical Technique\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[0].label",
+        "field": "label",
+        "run": "Surgical Technique",
+        "message": "\"Surgical Technique\" in \"🔪 The Revolution in Surgical Technique\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[0].label",
+        "field": "label",
+        "run": "Why It",
+        "message": "\"Why It\" in \"🧬 What DNA Is and Why It Matters\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[0].label",
+        "field": "label",
+        "run": "It Matters",
+        "message": "\"It Matters\" in \"🧬 What DNA Is and Why It Matters\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[0].label",
+        "field": "label",
+        "run": "New Power",
+        "message": "\"New Power\" in \"⚖️ New Power, New Questions\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[0].label",
+        "field": "label",
+        "run": "New Questions",
+        "message": "\"New Questions\" in \"⚖️ New Power, New Questions\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].label",
+        "field": "label",
+        "run": "Changed Most",
+        "message": "\"Changed Most\" in \"What Changed Most?\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].blocks[0].label",
+        "field": "label",
+        "run": "Linked Factors",
+        "message": "\"Linked Factors\" in \"🔗 Linked Factors — Not Single Causes\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].blocks[0].label",
+        "field": "label",
+        "run": "Not Single",
+        "message": "\"Not Single\" in \"🔗 Linked Factors — Not Single Causes\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].blocks[0].label",
+        "field": "label",
+        "run": "Single Causes",
+        "message": "\"Single Causes\" in \"🔗 Linked Factors — Not Single Causes\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].blocks[0].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].blocks[0].label",
+        "field": "label",
+        "run": "Reading Modern",
+        "message": "\"Reading Modern\" in \"🔍 Reading Modern Sources\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].blocks[0].label",
+        "field": "label",
+        "run": "Modern Sources",
+        "message": "\"Modern Sources\" in \"🔍 Reading Modern Sources\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].heading",
+        "field": "heading",
+        "run": "Final Boss",
+        "message": "\"Final Boss\" in \"⚔️ Final Boss: How Modern Is Modern Medicine?\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].heading:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].heading",
+        "field": "heading",
+        "run": "How Modern",
+        "message": "\"How Modern\" in \"⚔️ Final Boss: How Modern Is Modern Medicine?\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].heading:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].heading",
+        "field": "heading",
+        "run": "Modern Is",
+        "message": "\"Modern Is\" in \"⚔️ Final Boss: How Modern Is Modern Medicine?\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].heading:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].heading",
+        "field": "heading",
+        "run": "Is Modern",
+        "message": "\"Is Modern\" in \"⚔️ Final Boss: How Modern Is Modern Medicine?\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].heading:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].heading",
+        "field": "heading",
+        "run": "Modern Medicine",
+        "message": "\"Modern Medicine\" in \"⚔️ Final Boss: How Modern Is Modern Medicine?\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].heading:run:4"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].blocks[0].label",
+        "field": "label",
+        "run": "The Challenge",
+        "message": "\"The Challenge\" in \"🔥 The Challenge\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].blocks[1].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"Round 1 — Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].blocks[3].label",
+        "field": "label",
+        "run": "Boss Mode",
+        "message": "\"Boss Mode\" in \"Round 3 — Boss Mode\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[0].label",
+        "field": "label",
+        "run": "The Final",
+        "message": "\"The Final\" in \"🔁 The Final Test\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[0].label",
+        "field": "label",
+        "run": "Final Test",
+        "message": "\"Final Test\" in \"🔁 The Final Test\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[0].label:run:1"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[0].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[0].blocks[3].label:run:1",
+      "SENTENCE_CASE:screens[1].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[1].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[3].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[3].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[4].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[4].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[4].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[5].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[5].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[5].blocks[0].label:run:2",
+      "SENTENCE_CASE:screens[5].label:run:0",
+      "SENTENCE_CASE:screens[6].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[6].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[6].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[7].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[7].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[7].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[7].heading:run:0",
+      "SENTENCE_CASE:screens[7].heading:run:1",
+      "SENTENCE_CASE:screens[7].heading:run:2",
+      "SENTENCE_CASE:screens[7].heading:run:3",
+      "SENTENCE_CASE:screens[7].heading:run:4",
+      "SENTENCE_CASE:screens[8].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[8].blocks[0].label:run:1",
+      "SENTENCE_CASE:stageNavigation[0].title:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:1",
+      "SENTENCE_CASE:stageNavigation[1].title:run:0",
+      "SENTENCE_CASE:stageNavigation[2].title:run:0",
+      "SENTENCE_CASE:stageNavigation[3].title:run:0",
+      "SENTENCE_CASE:stageNavigation[4].title:run:0",
+      "SENTENCE_CASE:stageNavigation[4].title:run:1",
+      "SENTENCE_CASE:stageNavigation[5].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:1",
+      "SENTENCE_CASE:stageNavigation[5].title:run:2"
+    ]
+  },
+  "history-medicine-nightingale": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "history-medicine-renaissance-medicine": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 8.497802443280982,
+        "message": "screen 0 readability grade 8.5 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:1",
+        "grade": 7.322724719101121,
+        "message": "screen 1 readability grade 7.3 > 7",
+        "fingerprint": "READABILITY:screen:1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 7.21952136752137,
+        "message": "screen 4 readability grade 7.2 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:6",
+        "grade": 7.997142857142858,
+        "message": "screen 6 readability grade 8.0 > 7",
+        "fingerprint": "READABILITY:screen:6"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:9",
+        "grade": 10.275599315068494,
+        "message": "screen 9 readability grade 10.3 > 7",
+        "fingerprint": "READABILITY:screen:9"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:10",
+        "grade": 7.460898989898993,
+        "message": "screen 10 readability grade 7.5 > 7",
+        "fingerprint": "READABILITY:screen:10"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:13",
+        "grade": 8.605371287128712,
+        "message": "screen 13 readability grade 8.6 > 7",
+        "fingerprint": "READABILITY:screen:13"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:14",
+        "grade": 7.037131882202303,
+        "message": "screen 14 readability grade 7.0 > 7",
+        "fingerprint": "READABILITY:screen:14"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:15",
+        "grade": 7.146203703703705,
+        "message": "screen 15 readability grade 7.1 > 7",
+        "fingerprint": "READABILITY:screen:15"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:1",
+      "READABILITY:screen:10",
+      "READABILITY:screen:13",
+      "READABILITY:screen:14",
+      "READABILITY:screen:15",
+      "READABILITY:screen:4",
+      "READABILITY:screen:6",
+      "READABILITY:screen:9"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Certainties Start",
+        "message": "\"Certainties Start\" in \"Old Certainties Start to Crack\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Renaissance Mindset",
+        "message": "\"Renaissance Mindset\" in \"The Renaissance Mindset Shift\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Mindset Shift",
+        "message": "\"Mindset Shift\" in \"The Renaissance Mindset Shift\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "Without Revolution",
+        "message": "\"Without Revolution\" in \"Doubt Without Revolution\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Why Did",
+        "message": "\"Why Did\" in \"Exam Prep: Why Did Ideas Begin to Change?\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Did Ideas",
+        "message": "\"Did Ideas\" in \"Exam Prep: Why Did Ideas Begin to Change?\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Ideas Begin",
+        "message": "\"Ideas Begin\" in \"Exam Prep: Why Did Ideas Begin to Change?\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:2"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:stageNavigation[0].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:1",
+      "SENTENCE_CASE:stageNavigation[4].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:1",
+      "SENTENCE_CASE:stageNavigation[5].title:run:2"
+    ]
+  },
+  "history-medicine-surgery-anaesthetics": {
+    "guardrails": [
+      {
+        "code": "PASSIVE_RUN",
+        "location": "screen:4",
+        "message": "3 consecutive passive screens ending at index 4",
+        "fingerprint": "PASSIVE_RUN:screen:4"
+      },
+      {
+        "code": "STAGE_NAV_NOT_INCREASING",
+        "location": "part-5",
+        "message": "stageNavigation \"part-5\" screenIndex not strictly increasing",
+        "fingerprint": "STAGE_NAV_NOT_INCREASING:part-5"
+      },
+      {
+        "code": "STAGE_NO_ASSESSMENT",
+        "location": "part-1",
+        "message": "teaching stage \"part-1\" has no assessed screen",
+        "fingerprint": "STAGE_NO_ASSESSMENT:part-1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:1",
+        "grade": 9.0463202247191,
+        "message": "screen 1 readability grade 9.0 > 7",
+        "fingerprint": "READABILITY:screen:1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:3",
+        "grade": 10.064073647871119,
+        "message": "screen 3 readability grade 10.1 > 7",
+        "fingerprint": "READABILITY:screen:3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 8.681587301587303,
+        "message": "screen 4 readability grade 8.7 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:6",
+        "grade": 8.381184882533201,
+        "message": "screen 6 readability grade 8.4 > 7",
+        "fingerprint": "READABILITY:screen:6"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:7",
+        "grade": 9.023655913978494,
+        "message": "screen 7 readability grade 9.0 > 7",
+        "fingerprint": "READABILITY:screen:7"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:8",
+        "grade": 8.671428571428574,
+        "message": "screen 8 readability grade 8.7 > 7",
+        "fingerprint": "READABILITY:screen:8"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:9",
+        "grade": 9.198563218390802,
+        "message": "screen 9 readability grade 9.2 > 7",
+        "fingerprint": "READABILITY:screen:9"
+      }
+    ],
+    "guardrailFingerprints": [
+      "PASSIVE_RUN:screen:4",
+      "READABILITY:screen:1",
+      "READABILITY:screen:3",
+      "READABILITY:screen:4",
+      "READABILITY:screen:6",
+      "READABILITY:screen:7",
+      "READABILITY:screen:8",
+      "READABILITY:screen:9",
+      "STAGE_NAV_NOT_INCREASING:part-5",
+      "STAGE_NO_ASSESSMENT:part-1"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Three Enemies",
+        "message": "\"Three Enemies\" in \"The Three Enemies of Surgery\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "The Patient's",
+        "message": "\"The Patient's\" in \"Pain: The Patient's Nightmare\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Patient's Nightmare",
+        "message": "\"Patient's Nightmare\" in \"Pain: The Patient's Nightmare\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[2].title",
+        "field": "title",
+        "run": "The Invisible",
+        "message": "\"The Invisible\" in \"Infection: The Invisible Killer\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[2].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[2].title",
+        "field": "title",
+        "run": "Invisible Killer",
+        "message": "\"Invisible Killer\" in \"Infection: The Invisible Killer\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[2].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "Better Technique",
+        "message": "\"Better Technique\" in \"Blood Loss and Better Technique\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "Last Resort",
+        "message": "\"Last Resort\" in \"From Last Resort to Real Treatment\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "Real Treatment",
+        "message": "\"Real Treatment\" in \"From Last Resort to Real Treatment\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Why Surgery",
+        "message": "\"Why Surgery\" in \"Exam Prep: Why Surgery Improved\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Surgery Improved",
+        "message": "\"Surgery Improved\" in \"Exam Prep: Why Surgery Improved\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[2].label",
+        "field": "label",
+        "run": "Gross Fact",
+        "message": "\"Gross Fact\" in \"🤢 Gross Fact\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[2].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[0].label",
+        "field": "label",
+        "run": "Exam Trap",
+        "message": "\"Exam Trap\" in \"🗡️ Exam Trap\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[0].label",
+        "field": "label",
+        "run": "The Discovery",
+        "message": "\"The Discovery\" in \"🔬 The Discovery\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[1].label",
+        "field": "label",
+        "run": "Why It",
+        "message": "\"Why It\" in \"😂 Why It Was Ignored\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[1].label",
+        "field": "label",
+        "run": "It Was",
+        "message": "\"It Was\" in \"😂 Why It Was Ignored\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[1].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[1].label",
+        "field": "label",
+        "run": "Was Ignored",
+        "message": "\"Was Ignored\" in \"😂 Why It Was Ignored\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[1].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[0].label",
+        "field": "label",
+        "run": "The Discovery",
+        "message": "\"The Discovery\" in \"🔬 The Discovery\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[0].label",
+        "field": "label",
+        "run": "The Discovery",
+        "message": "\"The Discovery\" in \"🔬 The Discovery\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[1].label",
+        "field": "label",
+        "run": "The Dinner",
+        "message": "\"The Dinner\" in \"🍽️ The Dinner Party Method\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[1].label",
+        "field": "label",
+        "run": "Dinner Party",
+        "message": "\"Dinner Party\" in \"🍽️ The Dinner Party Method\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[1].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[1].label",
+        "field": "label",
+        "run": "Party Method",
+        "message": "\"Party Method\" in \"🍽️ The Dinner Party Method\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[1].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].blocks[0].label",
+        "field": "label",
+        "run": "What Happened",
+        "message": "\"What Happened\" in \"⚠️ What Happened\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].blocks[1].label",
+        "field": "label",
+        "run": "Exam Insight",
+        "message": "\"Exam Insight\" in \"🗡️ Exam Insight\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].blocks[0].label",
+        "field": "label",
+        "run": "The Improvement",
+        "message": "\"The Improvement\" in \"🔬 The Improvement\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].blocks[0].label",
+        "field": "label",
+        "run": "The Endorsement",
+        "message": "\"The Endorsement\" in \"👑 The Endorsement\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].blocks[1].label",
+        "field": "label",
+        "run": "Exam Factor",
+        "message": "\"Exam Factor\" in \"🗡️ Exam Factor\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[1].label",
+        "field": "label",
+        "run": "Horrible Histories",
+        "message": "\"Horrible Histories\" in \"🤢 Horrible Histories Moment\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[1].label",
+        "field": "label",
+        "run": "Histories Moment",
+        "message": "\"Histories Moment\" in \"🤢 Horrible Histories Moment\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[1].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].blocks[1].label",
+        "field": "label",
+        "run": "Exam Sentence",
+        "message": "\"Exam Sentence\" in \"🗡️ Exam Sentence\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].blocks[1].label:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[0].blocks[2].label:run:0",
+      "SENTENCE_CASE:screens[1].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[1].label:run:1",
+      "SENTENCE_CASE:screens[2].blocks[1].label:run:2",
+      "SENTENCE_CASE:screens[3].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[4].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[4].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[4].blocks[1].label:run:1",
+      "SENTENCE_CASE:screens[4].blocks[1].label:run:2",
+      "SENTENCE_CASE:screens[5].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[5].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[6].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[7].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[7].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[8].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[8].blocks[1].label:run:1",
+      "SENTENCE_CASE:screens[9].blocks[1].label:run:0",
+      "SENTENCE_CASE:stageNavigation[0].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:1",
+      "SENTENCE_CASE:stageNavigation[2].title:run:0",
+      "SENTENCE_CASE:stageNavigation[2].title:run:1",
+      "SENTENCE_CASE:stageNavigation[3].title:run:0",
+      "SENTENCE_CASE:stageNavigation[4].title:run:0",
+      "SENTENCE_CASE:stageNavigation[4].title:run:1",
+      "SENTENCE_CASE:stageNavigation[5].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:1"
+    ]
+  },
+  "history-medicine-surgery-revolution": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:1",
+        "grade": 9.615216201423099,
+        "message": "screen 1 readability grade 9.6 > 7",
+        "fingerprint": "READABILITY:screen:1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:3",
+        "grade": 8.040563855421688,
+        "message": "screen 3 readability grade 8.0 > 7",
+        "fingerprint": "READABILITY:screen:3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 7.445635873784195,
+        "message": "screen 4 readability grade 7.4 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:5",
+        "grade": 8.467657710280378,
+        "message": "screen 5 readability grade 8.5 > 7",
+        "fingerprint": "READABILITY:screen:5"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:9",
+        "grade": 8.119393939393941,
+        "message": "screen 9 readability grade 8.1 > 7",
+        "fingerprint": "READABILITY:screen:9"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:1",
+      "READABILITY:screen:3",
+      "READABILITY:screen:4",
+      "READABILITY:screen:5",
+      "READABILITY:screen:9"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Three Enemies",
+        "message": "\"Three Enemies\" in \"The Three Enemies of Surgery\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "The Patient's",
+        "message": "\"The Patient's\" in \"Pain: The Patient's Nightmare\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Patient's Nightmare",
+        "message": "\"Patient's Nightmare\" in \"Pain: The Patient's Nightmare\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[2].title",
+        "field": "title",
+        "run": "The Invisible",
+        "message": "\"The Invisible\" in \"Infection: The Invisible Killer\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[2].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[2].title",
+        "field": "title",
+        "run": "Invisible Killer",
+        "message": "\"Invisible Killer\" in \"Infection: The Invisible Killer\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[2].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "Better Technique",
+        "message": "\"Better Technique\" in \"Blood Loss and Better Technique\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "Last Resort",
+        "message": "\"Last Resort\" in \"From Last Resort to Real Treatment\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "Real Treatment",
+        "message": "\"Real Treatment\" in \"From Last Resort to Real Treatment\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Why Surgery",
+        "message": "\"Why Surgery\" in \"Exam Prep: Why Surgery Improved\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Surgery Improved",
+        "message": "\"Surgery Improved\" in \"Exam Prep: Why Surgery Improved\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[0].label",
+        "field": "label",
+        "run": "The Fastest",
+        "message": "\"The Fastest\" in \"🔪 Robert Liston: The Fastest Knife in the West End\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[0].label",
+        "field": "label",
+        "run": "Fastest Knife",
+        "message": "\"Fastest Knife\" in \"🔪 Robert Liston: The Fastest Knife in the West End\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[1].label",
+        "field": "label",
+        "run": "Very Bad",
+        "message": "\"Very Bad\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[1].label",
+        "field": "label",
+        "run": "Bad Time",
+        "message": "\"Bad Time\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[1].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[1].label",
+        "field": "label",
+        "run": "Time To",
+        "message": "\"Time To\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[1].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[1].label",
+        "field": "label",
+        "run": "To Be",
+        "message": "\"To Be\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[1].label:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[1].label",
+        "field": "label",
+        "run": "Be Alive",
+        "message": "\"Be Alive\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[1].label:run:4"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].blocks[4].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].blocks[4].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[0].label",
+        "field": "label",
+        "run": "The Transformation",
+        "message": "\"The Transformation\" in \"😴 The Transformation\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[1].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[1].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].label",
+        "field": "label",
+        "run": "Real Killer",
+        "message": "\"Real Killer\" in \"The Real Killer\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[0].label",
+        "field": "label",
+        "run": "What Was",
+        "message": "\"What Was\" in \"🦠 What Was Killing Patients?\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[0].label",
+        "field": "label",
+        "run": "Was Killing",
+        "message": "\"Was Killing\" in \"🦠 What Was Killing Patients?\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[0].label",
+        "field": "label",
+        "run": "Killing Patients",
+        "message": "\"Killing Patients\" in \"🦠 What Was Killing Patients?\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[0].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[2].label",
+        "field": "label",
+        "run": "Very Bad",
+        "message": "\"Very Bad\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[2].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[2].label",
+        "field": "label",
+        "run": "Bad Time",
+        "message": "\"Bad Time\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[2].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[2].label",
+        "field": "label",
+        "run": "Time To",
+        "message": "\"Time To\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[2].label:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[2].label",
+        "field": "label",
+        "run": "To Be",
+        "message": "\"To Be\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[2].label:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].blocks[2].label",
+        "field": "label",
+        "run": "Be Alive",
+        "message": "\"Be Alive\" in \"☠️ Very Bad Time To Be Alive\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].blocks[2].label:run:4"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[0].label",
+        "field": "label",
+        "run": "What Lister",
+        "message": "\"What Lister\" in \"🧴 What Lister Did\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[0].label",
+        "field": "label",
+        "run": "Lister Did",
+        "message": "\"Lister Did\" in \"🧴 What Lister Did\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[0].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].blocks[3].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[0].label",
+        "field": "label",
+        "run": "From Antiseptic",
+        "message": "\"From Antiseptic\" in \"🏥 From Antiseptic to Aseptic\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[5].blocks[1].label",
+        "field": "label",
+        "run": "Blood Transfusions",
+        "message": "\"Blood Transfusions\" in \"🩸 Blood Transfusions\"",
+        "fingerprint": "SENTENCE_CASE:screens[5].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].blocks[0].label",
+        "field": "label",
+        "run": "Historical Source",
+        "message": "\"Historical Source\" in \"🔍 How to Analyse a Historical Source\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].blocks[2].label",
+        "field": "label",
+        "run": "Exam Assassin",
+        "message": "\"Exam Assassin\" in \"⚔️ Exam Assassin\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].blocks[2].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].heading",
+        "field": "heading",
+        "run": "Final Boss",
+        "message": "\"Final Boss\" in \"⚔️ Final Boss: Could This Patient Survive?\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].heading:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].heading",
+        "field": "heading",
+        "run": "Could This",
+        "message": "\"Could This\" in \"⚔️ Final Boss: Could This Patient Survive?\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].heading:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].heading",
+        "field": "heading",
+        "run": "This Patient",
+        "message": "\"This Patient\" in \"⚔️ Final Boss: Could This Patient Survive?\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].heading:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].heading",
+        "field": "heading",
+        "run": "Patient Survive",
+        "message": "\"Patient Survive\" in \"⚔️ Final Boss: Could This Patient Survive?\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].heading:run:3"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[0].label",
+        "field": "label",
+        "run": "The Scenario",
+        "message": "\"The Scenario\" in \"🔥 The Scenario\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[1].label",
+        "field": "label",
+        "run": "Core Knowledge",
+        "message": "\"Core Knowledge\" in \"Round 1 — Core Knowledge\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[3].label",
+        "field": "label",
+        "run": "Boss Mode",
+        "message": "\"Boss Mode\" in \"Round 3 — Boss Mode\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].blocks[0].label",
+        "field": "label",
+        "run": "Why This",
+        "message": "\"Why This\" in \"🔁 Why This Matters\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[9].blocks[0].label",
+        "field": "label",
+        "run": "This Matters",
+        "message": "\"This Matters\" in \"🔁 Why This Matters\"",
+        "fingerprint": "SENTENCE_CASE:screens[9].blocks[0].label:run:1"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[0].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[0].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[0].blocks[1].label:run:1",
+      "SENTENCE_CASE:screens[0].blocks[1].label:run:2",
+      "SENTENCE_CASE:screens[0].blocks[1].label:run:3",
+      "SENTENCE_CASE:screens[0].blocks[1].label:run:4",
+      "SENTENCE_CASE:screens[0].blocks[4].label:run:0",
+      "SENTENCE_CASE:screens[1].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[1].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[2].blocks[0].label:run:2",
+      "SENTENCE_CASE:screens[2].blocks[2].label:run:0",
+      "SENTENCE_CASE:screens[2].blocks[2].label:run:1",
+      "SENTENCE_CASE:screens[2].blocks[2].label:run:2",
+      "SENTENCE_CASE:screens[2].blocks[2].label:run:3",
+      "SENTENCE_CASE:screens[2].blocks[2].label:run:4",
+      "SENTENCE_CASE:screens[2].label:run:0",
+      "SENTENCE_CASE:screens[3].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[3].blocks[0].label:run:1",
+      "SENTENCE_CASE:screens[3].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[4].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[5].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[6].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[6].blocks[2].label:run:0",
+      "SENTENCE_CASE:screens[8].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[8].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[8].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[8].heading:run:0",
+      "SENTENCE_CASE:screens[8].heading:run:1",
+      "SENTENCE_CASE:screens[8].heading:run:2",
+      "SENTENCE_CASE:screens[8].heading:run:3",
+      "SENTENCE_CASE:screens[9].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[9].blocks[0].label:run:1",
+      "SENTENCE_CASE:stageNavigation[0].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:1",
+      "SENTENCE_CASE:stageNavigation[2].title:run:0",
+      "SENTENCE_CASE:stageNavigation[2].title:run:1",
+      "SENTENCE_CASE:stageNavigation[3].title:run:0",
+      "SENTENCE_CASE:stageNavigation[4].title:run:0",
+      "SENTENCE_CASE:stageNavigation[4].title:run:1",
+      "SENTENCE_CASE:stageNavigation[5].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:1"
+    ]
+  },
+  "history-medicine-vesalius-beginning-doubt": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "history-medicine-western-front": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 9.172136181575436,
+        "message": "screen 0 readability grade 9.2 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 7.731856751824818,
+        "message": "screen 2 readability grade 7.7 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:6",
+        "grade": 7.7883333333333375,
+        "message": "screen 6 readability grade 7.8 > 7",
+        "fingerprint": "READABILITY:screen:6"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:2",
+      "READABILITY:screen:6"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[0].title",
+        "field": "title",
+        "run": "Under Fire",
+        "message": "\"Under Fire\" in \"Medicine Under Fire\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Front Was",
+        "message": "\"Front Was\" in \"Why the Western Front Was So Deadly\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "Was So",
+        "message": "\"Was So\" in \"Why the Western Front Was So Deadly\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[1].title",
+        "field": "title",
+        "run": "So Deadly",
+        "message": "\"So Deadly\" in \"Why the Western Front Was So Deadly\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[1].title:run:2"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[3].title",
+        "field": "title",
+        "run": "New Methods",
+        "message": "\"New Methods\" in \"New Problems, New Methods\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[3].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "Speeds Up",
+        "message": "\"Speeds Up\" in \"War Speeds Up Medicine\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[4].title",
+        "field": "title",
+        "run": "Up Medicine",
+        "message": "\"Up Medicine\" in \"War Speeds Up Medicine\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[4].title:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Historic Environment",
+        "message": "\"Historic Environment\" in \"Exam Prep: Historic Environment Mastery\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "stageNavigation[5].title",
+        "field": "title",
+        "run": "Environment Mastery",
+        "message": "\"Environment Mastery\" in \"Exam Prep: Historic Environment Mastery\"",
+        "fingerprint": "SENTENCE_CASE:stageNavigation[5].title:run:1"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:stageNavigation[0].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:0",
+      "SENTENCE_CASE:stageNavigation[1].title:run:1",
+      "SENTENCE_CASE:stageNavigation[1].title:run:2",
+      "SENTENCE_CASE:stageNavigation[3].title:run:0",
+      "SENTENCE_CASE:stageNavigation[4].title:run:0",
+      "SENTENCE_CASE:stageNavigation[4].title:run:1",
+      "SENTENCE_CASE:stageNavigation[5].title:run:0",
+      "SENTENCE_CASE:stageNavigation[5].title:run:1"
+    ]
+  },
+  "math1": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:9",
+        "grade": 7.0395424836601315,
+        "message": "screen 9 readability grade 7.0 > 7",
+        "fingerprint": "READABILITY:screen:9"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:11",
+        "grade": 7.794894578313251,
+        "message": "screen 11 readability grade 7.8 > 7",
+        "fingerprint": "READABILITY:screen:11"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:11",
+      "READABILITY:screen:9"
+    ],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "math2": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 7.077096774193549,
+        "message": "screen 0 readability grade 7.1 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:5",
+        "grade": 7.400313862249348,
+        "message": "screen 5 readability grade 7.4 > 7",
+        "fingerprint": "READABILITY:screen:5"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:8",
+        "grade": 7.0390000000000015,
+        "message": "screen 8 readability grade 7.0 > 7",
+        "fingerprint": "READABILITY:screen:8"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:13",
+        "grade": 8.450435741864315,
+        "message": "screen 13 readability grade 8.5 > 7",
+        "fingerprint": "READABILITY:screen:13"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:13",
+      "READABILITY:screen:5",
+      "READABILITY:screen:8"
+    ],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "math3": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 7.046666666666667,
+        "message": "screen 0 readability grade 7.0 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:13",
+        "grade": 7.580357142857146,
+        "message": "screen 13 readability grade 7.6 > 7",
+        "fingerprint": "READABILITY:screen:13"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:13"
+    ],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "math4": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 8.912868217054267,
+        "message": "screen 0 readability grade 8.9 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 9.577004878048783,
+        "message": "screen 2 readability grade 9.6 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 7.638567164179104,
+        "message": "screen 4 readability grade 7.6 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:5",
+        "grade": 9.111679571173319,
+        "message": "screen 5 readability grade 9.1 > 7",
+        "fingerprint": "READABILITY:screen:5"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:7",
+        "grade": 11.175482758620692,
+        "message": "screen 7 readability grade 11.2 > 7",
+        "fingerprint": "READABILITY:screen:7"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:10",
+        "grade": 7.448901639344264,
+        "message": "screen 10 readability grade 7.4 > 7",
+        "fingerprint": "READABILITY:screen:10"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:12",
+        "grade": 8.076589537223342,
+        "message": "screen 12 readability grade 8.1 > 7",
+        "fingerprint": "READABILITY:screen:12"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:10",
+      "READABILITY:screen:12",
+      "READABILITY:screen:2",
+      "READABILITY:screen:4",
+      "READABILITY:screen:5",
+      "READABILITY:screen:7"
+    ],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "math5": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 7.206577266922096,
+        "message": "screen 4 readability grade 7.2 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:4"
+    ],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "math6": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "math7": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "math8": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 7.161197339246122,
+        "message": "screen 2 readability grade 7.2 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 7.937894736842107,
+        "message": "screen 4 readability grade 7.9 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:6",
+        "grade": 7.145,
+        "message": "screen 6 readability grade 7.1 > 7",
+        "fingerprint": "READABILITY:screen:6"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:9",
+        "grade": 8.722857142857148,
+        "message": "screen 9 readability grade 8.7 > 7",
+        "fingerprint": "READABILITY:screen:9"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:13",
+        "grade": 9.560728385313862,
+        "message": "screen 13 readability grade 9.6 > 7",
+        "fingerprint": "READABILITY:screen:13"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:13",
+      "READABILITY:screen:2",
+      "READABILITY:screen:4",
+      "READABILITY:screen:6",
+      "READABILITY:screen:9"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].sub",
+        "field": "sub",
+        "run": "Check HCFnumerator",
+        "message": "\"Check HCFnumerator\" in \"Stopping too early costs the A mark. Check HCF(numerator, denominator) = 1.\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].sub:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[3].sub:run:0"
+    ]
+  },
+  "sci_bio_w1": {
+    "guardrails": [
+      {
+        "code": "STAGE_NO_ASSESSMENT",
+        "location": "part-1",
+        "message": "teaching stage \"part-1\" has no assessed screen",
+        "fingerprint": "STAGE_NO_ASSESSMENT:part-1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 8.751000000000001,
+        "message": "screen 0 readability grade 8.8 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "STAGE_NO_ASSESSMENT:part-1"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].title",
+        "field": "title",
+        "run": "Plant Cell",
+        "message": "\"Plant Cell\" in \"Inside a\nPlant Cell\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].hotspots[5].title",
+        "field": "title",
+        "run": "Permanent Vacuole",
+        "message": "\"Permanent Vacuole\" in \"Large Permanent Vacuole\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].hotspots[5].title:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[0].hotspots[5].title:run:0",
+      "SENTENCE_CASE:screens[0].title:run:0"
+    ]
+  },
+  "soc1": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 9.776602641056424,
+        "message": "screen 0 readability grade 9.8 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:1",
+        "grade": 8.107958833619211,
+        "message": "screen 1 readability grade 8.1 > 7",
+        "fingerprint": "READABILITY:screen:1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:5",
+        "grade": 8.993024761288236,
+        "message": "screen 5 readability grade 9.0 > 7",
+        "fingerprint": "READABILITY:screen:5"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:6",
+        "grade": 8.527254901960784,
+        "message": "screen 6 readability grade 8.5 > 7",
+        "fingerprint": "READABILITY:screen:6"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:7",
+        "grade": 11.62172279231103,
+        "message": "screen 7 readability grade 11.6 > 7",
+        "fingerprint": "READABILITY:screen:7"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:8",
+        "grade": 7.070000000000004,
+        "message": "screen 8 readability grade 7.1 > 7",
+        "fingerprint": "READABILITY:screen:8"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:9",
+        "grade": 10.123184601924759,
+        "message": "screen 9 readability grade 10.1 > 7",
+        "fingerprint": "READABILITY:screen:9"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:10",
+        "grade": 8.183716608594658,
+        "message": "screen 10 readability grade 8.2 > 7",
+        "fingerprint": "READABILITY:screen:10"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:11",
+        "grade": 8.287120989971267,
+        "message": "screen 11 readability grade 8.3 > 7",
+        "fingerprint": "READABILITY:screen:11"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:1",
+      "READABILITY:screen:10",
+      "READABILITY:screen:11",
+      "READABILITY:screen:5",
+      "READABILITY:screen:6",
+      "READABILITY:screen:7",
+      "READABILITY:screen:8",
+      "READABILITY:screen:9"
+    ],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "soc2": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 7.658745837957827,
+        "message": "screen 2 readability grade 7.7 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:3",
+        "grade": 9.410667447306796,
+        "message": "screen 3 readability grade 9.4 > 7",
+        "fingerprint": "READABILITY:screen:3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:5",
+        "grade": 7.522366412213742,
+        "message": "screen 5 readability grade 7.5 > 7",
+        "fingerprint": "READABILITY:screen:5"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:7",
+        "grade": 9.116274671052633,
+        "message": "screen 7 readability grade 9.1 > 7",
+        "fingerprint": "READABILITY:screen:7"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:8",
+        "grade": 7.60638888888889,
+        "message": "screen 8 readability grade 7.6 > 7",
+        "fingerprint": "READABILITY:screen:8"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:9",
+        "grade": 9.852125435540074,
+        "message": "screen 9 readability grade 9.9 > 7",
+        "fingerprint": "READABILITY:screen:9"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:10",
+        "grade": 9.629465754888347,
+        "message": "screen 10 readability grade 9.6 > 7",
+        "fingerprint": "READABILITY:screen:10"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:11",
+        "grade": 8.371340579710147,
+        "message": "screen 11 readability grade 8.4 > 7",
+        "fingerprint": "READABILITY:screen:11"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:12",
+        "grade": 7.228745696015743,
+        "message": "screen 12 readability grade 7.2 > 7",
+        "fingerprint": "READABILITY:screen:12"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:13",
+        "grade": 9.162976076555026,
+        "message": "screen 13 readability grade 9.2 > 7",
+        "fingerprint": "READABILITY:screen:13"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:14",
+        "grade": 8.03067556952082,
+        "message": "screen 14 readability grade 8.0 > 7",
+        "fingerprint": "READABILITY:screen:14"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:15",
+        "grade": 10.046938775510206,
+        "message": "screen 15 readability grade 10.0 > 7",
+        "fingerprint": "READABILITY:screen:15"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:10",
+      "READABILITY:screen:11",
+      "READABILITY:screen:12",
+      "READABILITY:screen:13",
+      "READABILITY:screen:14",
+      "READABILITY:screen:15",
+      "READABILITY:screen:2",
+      "READABILITY:screen:3",
+      "READABILITY:screen:5",
+      "READABILITY:screen:7",
+      "READABILITY:screen:8",
+      "READABILITY:screen:9"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].label",
+        "field": "label",
+        "run": "You'll Learn",
+        "message": "\"You'll Learn\" in \"What You'll Learn\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[3].label",
+        "field": "label",
+        "run": "Big Divide",
+        "message": "\"Big Divide\" in \"The Big Divide\"",
+        "fingerprint": "SENTENCE_CASE:screens[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].sub",
+        "field": "sub",
+        "run": "Functionalism He",
+        "message": "\"Functionalism He\" in \"The founder of Functionalism. He saw society as a system — and studied it scientifically.\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].sub:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[11].label",
+        "field": "label",
+        "run": "Would Agree",
+        "message": "\"Would Agree\" in \"Who Would Agree?\"",
+        "fingerprint": "SENTENCE_CASE:screens[11].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[11].heading",
+        "field": "heading",
+        "run": "Durkheim Apply",
+        "message": "\"Durkheim Apply\" in \"Marx or Durkheim? Apply both theories.\"",
+        "fingerprint": "SENTENCE_CASE:screens[11].heading:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[13].label",
+        "field": "label",
+        "run": "Fire Retrieval",
+        "message": "\"Fire Retrieval\" in \"Quick Fire Retrieval\"",
+        "fingerprint": "SENTENCE_CASE:screens[13].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[16].blocks[1].label",
+        "field": "label",
+        "run": "Rapid Fire",
+        "message": "\"Rapid Fire\" in \"Round 1 — Rapid Fire\"",
+        "fingerprint": "SENTENCE_CASE:screens[16].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[16].blocks[3].label",
+        "field": "label",
+        "run": "Scenario Analysis",
+        "message": "\"Scenario Analysis\" in \"Round 3 — Scenario Analysis\"",
+        "fingerprint": "SENTENCE_CASE:screens[16].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[16].blocks[4].label",
+        "field": "label",
+        "run": "Boss Mode",
+        "message": "\"Boss Mode\" in \"Round 4 — Boss Mode\"",
+        "fingerprint": "SENTENCE_CASE:screens[16].blocks[4].label:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[11].heading:run:0",
+      "SENTENCE_CASE:screens[11].label:run:0",
+      "SENTENCE_CASE:screens[13].label:run:0",
+      "SENTENCE_CASE:screens[16].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[16].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[16].blocks[4].label:run:0",
+      "SENTENCE_CASE:screens[2].label:run:0",
+      "SENTENCE_CASE:screens[3].label:run:0",
+      "SENTENCE_CASE:screens[8].sub:run:0"
+    ]
+  },
+  "soc3": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 13.102413793103452,
+        "message": "screen 0 readability grade 13.1 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:1",
+        "grade": 9.367550330033009,
+        "message": "screen 1 readability grade 9.4 > 7",
+        "fingerprint": "READABILITY:screen:1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 11.439412844036696,
+        "message": "screen 2 readability grade 11.4 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 10.22361403508772,
+        "message": "screen 4 readability grade 10.2 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:5",
+        "grade": 9.579018658686852,
+        "message": "screen 5 readability grade 9.6 > 7",
+        "fingerprint": "READABILITY:screen:5"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:6",
+        "grade": 8.939020965382742,
+        "message": "screen 6 readability grade 8.9 > 7",
+        "fingerprint": "READABILITY:screen:6"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:7",
+        "grade": 8.927368421052634,
+        "message": "screen 7 readability grade 8.9 > 7",
+        "fingerprint": "READABILITY:screen:7"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:8",
+        "grade": 9.475205479452054,
+        "message": "screen 8 readability grade 9.5 > 7",
+        "fingerprint": "READABILITY:screen:8"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:9",
+        "grade": 8.21915018793921,
+        "message": "screen 9 readability grade 8.2 > 7",
+        "fingerprint": "READABILITY:screen:9"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:10",
+        "grade": 9.155583011583012,
+        "message": "screen 10 readability grade 9.2 > 7",
+        "fingerprint": "READABILITY:screen:10"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:1",
+      "READABILITY:screen:10",
+      "READABILITY:screen:2",
+      "READABILITY:screen:4",
+      "READABILITY:screen:5",
+      "READABILITY:screen:6",
+      "READABILITY:screen:7",
+      "READABILITY:screen:8",
+      "READABILITY:screen:9"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "title",
+        "field": "title",
+        "run": "Life Chances",
+        "message": "\"Life Chances\" in \"Feminism, Power & Life Chances\"",
+        "fingerprint": "SENTENCE_CASE:title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].label",
+        "field": "label",
+        "run": "Is Feminism",
+        "message": "\"Is Feminism\" in \"What Is Feminism?\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[6].label",
+        "field": "label",
+        "run": "Has Status",
+        "message": "\"Has Status\" in \"Who Has Status?\"",
+        "fingerprint": "SENTENCE_CASE:screens[6].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[7].label",
+        "field": "label",
+        "run": "Would Agree",
+        "message": "\"Would Agree\" in \"Who Would Agree?\"",
+        "fingerprint": "SENTENCE_CASE:screens[7].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].label",
+        "field": "label",
+        "run": "Fire Retrieval",
+        "message": "\"Fire Retrieval\" in \"Quick Fire Retrieval\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[11].blocks[1].label",
+        "field": "label",
+        "run": "Rapid Fire",
+        "message": "\"Rapid Fire\" in \"Round 1 — Rapid Fire Definitions\"",
+        "fingerprint": "SENTENCE_CASE:screens[11].blocks[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[11].blocks[1].label",
+        "field": "label",
+        "run": "Fire Definitions",
+        "message": "\"Fire Definitions\" in \"Round 1 — Rapid Fire Definitions\"",
+        "fingerprint": "SENTENCE_CASE:screens[11].blocks[1].label:run:1"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[11].blocks[3].label",
+        "field": "label",
+        "run": "Scenario Analysis",
+        "message": "\"Scenario Analysis\" in \"Round 3 — Scenario Analysis\"",
+        "fingerprint": "SENTENCE_CASE:screens[11].blocks[3].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[11].blocks[4].label",
+        "field": "label",
+        "run": "Power Showdown",
+        "message": "\"Power Showdown\" in \"Round 4 — Power Showdown\"",
+        "fingerprint": "SENTENCE_CASE:screens[11].blocks[4].label:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[0].label:run:0",
+      "SENTENCE_CASE:screens[11].blocks[1].label:run:0",
+      "SENTENCE_CASE:screens[11].blocks[1].label:run:1",
+      "SENTENCE_CASE:screens[11].blocks[3].label:run:0",
+      "SENTENCE_CASE:screens[11].blocks[4].label:run:0",
+      "SENTENCE_CASE:screens[6].label:run:0",
+      "SENTENCE_CASE:screens[7].label:run:0",
+      "SENTENCE_CASE:screens[8].label:run:0",
+      "SENTENCE_CASE:title:run:0"
+    ]
+  },
+  "soc4": {
+    "guardrails": [
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 10.455176946410518,
+        "message": "screen 0 readability grade 10.5 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:1",
+        "grade": 7.837255366395265,
+        "message": "screen 1 readability grade 7.8 > 7",
+        "fingerprint": "READABILITY:screen:1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 10.275982478097625,
+        "message": "screen 2 readability grade 10.3 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:3",
+        "grade": 11.730814406229722,
+        "message": "screen 3 readability grade 11.7 > 7",
+        "fingerprint": "READABILITY:screen:3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 10.3767085694051,
+        "message": "screen 4 readability grade 10.4 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:5",
+        "grade": 10.049914917753831,
+        "message": "screen 5 readability grade 10.0 > 7",
+        "fingerprint": "READABILITY:screen:5"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:7",
+        "grade": 8.996470588235297,
+        "message": "screen 7 readability grade 9.0 > 7",
+        "fingerprint": "READABILITY:screen:7"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:8",
+        "grade": 10.700410699965634,
+        "message": "screen 8 readability grade 10.7 > 7",
+        "fingerprint": "READABILITY:screen:8"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:10",
+        "grade": 11.872307589702551,
+        "message": "screen 10 readability grade 11.9 > 7",
+        "fingerprint": "READABILITY:screen:10"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:11",
+        "grade": 8.241153294194394,
+        "message": "screen 11 readability grade 8.2 > 7",
+        "fingerprint": "READABILITY:screen:11"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:1",
+      "READABILITY:screen:10",
+      "READABILITY:screen:11",
+      "READABILITY:screen:2",
+      "READABILITY:screen:3",
+      "READABILITY:screen:4",
+      "READABILITY:screen:5",
+      "READABILITY:screen:7",
+      "READABILITY:screen:8"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].heading",
+        "field": "heading",
+        "run": "New Right",
+        "message": "\"New Right\" in \"The New Right: family breakdown and the welfare state.\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].heading:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[0].label",
+        "field": "label",
+        "run": "New Right",
+        "message": "\"New Right\" in \"The New Right perspective\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[4].blocks[1].heading",
+        "field": "heading",
+        "run": "New Right",
+        "message": "\"New Right\" in \"Key New Right ideas\"",
+        "fingerprint": "SENTENCE_CASE:screens[4].blocks[1].heading:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[0].tiers[1].label",
+        "field": "label",
+        "run": "Apply It",
+        "message": "\"Apply It\" in \"🟡 Round 2 — Apply It\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[0].tiers[1].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[8].blocks[0].tiers[2].label",
+        "field": "label",
+        "run": "Exam Ready",
+        "message": "\"Exam Ready\" in \"🔴 Round 3 — Exam Ready\"",
+        "fingerprint": "SENTENCE_CASE:screens[8].blocks[0].tiers[2].label:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[4].blocks[0].label:run:0",
+      "SENTENCE_CASE:screens[4].blocks[1].heading:run:0",
+      "SENTENCE_CASE:screens[4].heading:run:0",
+      "SENTENCE_CASE:screens[8].blocks[0].tiers[1].label:run:0",
+      "SENTENCE_CASE:screens[8].blocks[0].tiers[2].label:run:0"
+    ]
+  },
+  "soc6": {
+    "guardrails": [
+      {
+        "code": "STAGE_NO_ASSESSMENT",
+        "location": "part-1",
+        "message": "teaching stage \"part-1\" has no assessed screen",
+        "fingerprint": "STAGE_NO_ASSESSMENT:part-1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:0",
+        "grade": 8.781285714285715,
+        "message": "screen 0 readability grade 8.8 > 7",
+        "fingerprint": "READABILITY:screen:0"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:1",
+        "grade": 9.18506329113924,
+        "message": "screen 1 readability grade 9.2 > 7",
+        "fingerprint": "READABILITY:screen:1"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:2",
+        "grade": 10.960044674586253,
+        "message": "screen 2 readability grade 11.0 > 7",
+        "fingerprint": "READABILITY:screen:2"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:3",
+        "grade": 9.004210743801654,
+        "message": "screen 3 readability grade 9.0 > 7",
+        "fingerprint": "READABILITY:screen:3"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:4",
+        "grade": 11.044394957983197,
+        "message": "screen 4 readability grade 11.0 > 7",
+        "fingerprint": "READABILITY:screen:4"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:5",
+        "grade": 9.287248112470714,
+        "message": "screen 5 readability grade 9.3 > 7",
+        "fingerprint": "READABILITY:screen:5"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:6",
+        "grade": 8.78919413919414,
+        "message": "screen 6 readability grade 8.8 > 7",
+        "fingerprint": "READABILITY:screen:6"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:7",
+        "grade": 8.824779527559055,
+        "message": "screen 7 readability grade 8.8 > 7",
+        "fingerprint": "READABILITY:screen:7"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:8",
+        "grade": 13.966666666666665,
+        "message": "screen 8 readability grade 14.0 > 7",
+        "fingerprint": "READABILITY:screen:8"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:9",
+        "grade": 8.918936924167259,
+        "message": "screen 9 readability grade 8.9 > 7",
+        "fingerprint": "READABILITY:screen:9"
+      },
+      {
+        "code": "READABILITY",
+        "location": "screen:11",
+        "grade": 7.072714285714287,
+        "message": "screen 11 readability grade 7.1 > 7",
+        "fingerprint": "READABILITY:screen:11"
+      }
+    ],
+    "guardrailFingerprints": [
+      "READABILITY:screen:0",
+      "READABILITY:screen:1",
+      "READABILITY:screen:11",
+      "READABILITY:screen:2",
+      "READABILITY:screen:3",
+      "READABILITY:screen:4",
+      "READABILITY:screen:5",
+      "READABILITY:screen:6",
+      "READABILITY:screen:7",
+      "READABILITY:screen:8",
+      "READABILITY:screen:9",
+      "STAGE_NO_ASSESSMENT:part-1"
+    ],
+    "sentenceCase": [
+      {
+        "code": "SENTENCE_CASE",
+        "location": "title",
+        "field": "title",
+        "run": "Theory Battles",
+        "message": "\"Theory Battles\" in \"Family Researchers & Theory Battles\"",
+        "fingerprint": "SENTENCE_CASE:title:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[0].label",
+        "field": "label",
+        "run": "Three Sociologists",
+        "message": "\"Three Sociologists\" in \"The Three Sociologists\"",
+        "fingerprint": "SENTENCE_CASE:screens[0].label:run:0"
+      },
+      {
+        "code": "SENTENCE_CASE",
+        "location": "screens[2].label",
+        "field": "label",
+        "run": "The Roles",
+        "message": "\"The Roles\" in \"Parsons — The Roles\"",
+        "fingerprint": "SENTENCE_CASE:screens[2].label:run:0"
+      }
+    ],
+    "sentenceCaseFingerprints": [
+      "SENTENCE_CASE:screens[0].label:run:0",
+      "SENTENCE_CASE:screens[2].label:run:0",
+      "SENTENCE_CASE:title:run:0"
+    ]
+  },
+  "spain-new-world-1": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "spain-new-world-10": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "spain-new-world-2": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "spain-new-world-3": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "spain-new-world-4": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "spain-new-world-5": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "spain-new-world-6": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "spain-new-world-7": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "spain-new-world-8": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "spain-new-world-9": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-americas-war": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-brown-v-board": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-guerrilla-war": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-how-much-changed": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-i-have-a-dream": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-long-way-out": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-malcolm-x": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-rosa-parks": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-segregation": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-sit-ins": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-war-comes-home": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  },
+  "usa-why-vietnam": {
+    "guardrails": [],
+    "guardrailFingerprints": [],
+    "sentenceCase": [],
+    "sentenceCaseFingerprints": []
+  }
+}

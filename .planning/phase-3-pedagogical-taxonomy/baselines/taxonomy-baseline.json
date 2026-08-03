@@ -1,0 +1,868 @@
+{
+  "FUNCTION_TAGS": [
+    "hook-tension",
+    "introduce-figure",
+    "teach-mechanism",
+    "teach-comparison",
+    "apply",
+    "classify",
+    "sequence-process",
+    "retrieve",
+    "exam-technique"
+  ],
+  "SCREEN_TYPE_FUNCTIONS": {
+    "read": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "passive"
+    },
+    "keypoint": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "passive"
+    },
+    "funfact": {
+      "functions": [
+        "hook-tension"
+      ],
+      "interaction": "passive"
+    },
+    "examtip": {
+      "functions": [
+        "exam-technique"
+      ],
+      "interaction": "passive"
+    },
+    "cinematic": {
+      "functions": [
+        "hook-tension"
+      ],
+      "interaction": "passive"
+    },
+    "examinerExplains": {
+      "functions": [
+        "exam-technique"
+      ],
+      "interaction": "passive"
+    },
+    "memoryHook": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "passive"
+    },
+    "mediaPlaceholder": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "passive"
+    },
+    "infographic": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "passive"
+    },
+    "calculationBreakdown": {
+      "functions": [
+        "sequence-process",
+        "apply"
+      ],
+      "interaction": "assessed"
+    },
+    "conceptReveal": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "reveal"
+    },
+    "visualLearning": {
+      "functions": [
+        "hook-tension",
+        "teach-mechanism"
+      ],
+      "interaction": "reveal"
+    },
+    "explainReveal": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "reveal"
+    },
+    "keyFigureReveal": {
+      "functions": [
+        "introduce-figure"
+      ],
+      "interaction": "reveal"
+    },
+    "theoryCompare": {
+      "functions": [
+        "teach-comparison"
+      ],
+      "interaction": "reveal"
+    },
+    "oppositeQualitiesReveal": {
+      "functions": [
+        "teach-comparison"
+      ],
+      "interaction": "reveal"
+    },
+    "timelineCanvas": {
+      "functions": [
+        "sequence-process"
+      ],
+      "interaction": "reveal"
+    },
+    "timelineChain": {
+      "functions": [
+        "sequence-process"
+      ],
+      "interaction": "reveal"
+    },
+    "beforeAfterSlider": {
+      "functions": [
+        "teach-comparison"
+      ],
+      "interaction": "reveal"
+    },
+    "flashcards": {
+      "functions": [
+        "retrieve"
+      ],
+      "interaction": "reveal"
+    },
+    "reveal": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "reveal"
+    },
+    "cinematicCarousel": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "reveal"
+    },
+    "graphView": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "passive"
+    },
+    "misconception": {
+      "functions": [
+        "exam-technique"
+      ],
+      "interaction": "reveal"
+    },
+    "acronymMemorise": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "reveal"
+    },
+    "quoteAnalyser": {
+      "functions": [
+        "teach-mechanism"
+      ],
+      "interaction": "reveal"
+    },
+    "quiz": {
+      "functions": [
+        "retrieve"
+      ],
+      "interaction": "assessed"
+    },
+    "choice": {
+      "functions": [
+        "retrieve"
+      ],
+      "interaction": "assessed"
+    },
+    "truefalse": {
+      "functions": [
+        "retrieve"
+      ],
+      "interaction": "assessed"
+    },
+    "connection": {
+      "functions": [
+        "retrieve"
+      ],
+      "interaction": "assessed"
+    },
+    "fillblanks": {
+      "functions": [
+        "retrieve"
+      ],
+      "interaction": "assessed"
+    },
+    "tieredquiz": {
+      "functions": [
+        "retrieve"
+      ],
+      "interaction": "assessed"
+    },
+    "quickRecall": {
+      "functions": [
+        "retrieve"
+      ],
+      "interaction": "assessed"
+    },
+    "priorKnowledgeRecall": {
+      "functions": [
+        "retrieve"
+      ],
+      "interaction": "assessed"
+    },
+    "boss": {
+      "functions": [
+        "retrieve",
+        "apply"
+      ],
+      "interaction": "assessed"
+    },
+    "colsort": {
+      "functions": [
+        "classify"
+      ],
+      "interaction": "assessed"
+    },
+    "naturalSupernaturalSwipe": {
+      "functions": [
+        "classify"
+      ],
+      "interaction": "assessed"
+    },
+    "matchingTask": {
+      "functions": [
+        "classify"
+      ],
+      "interaction": "assessed"
+    },
+    "misconceptionCheck": {
+      "functions": [
+        "retrieve",
+        "exam-technique"
+      ],
+      "interaction": "assessed"
+    },
+    "centreImageReveal": {
+      "functions": [
+        "apply"
+      ],
+      "interaction": "assessed"
+    },
+    "appliedscenario": {
+      "functions": [
+        "apply"
+      ],
+      "interaction": "assessed"
+    },
+    "guidedChoiceCarousel": {
+      "functions": [
+        "apply"
+      ],
+      "interaction": "assessed"
+    },
+    "interactiveImage": {
+      "functions": [
+        "teach-mechanism",
+        "apply"
+      ],
+      "interaction": "reveal"
+    },
+    "orderedRouteTask": {
+      "functions": [
+        "sequence-process"
+      ],
+      "interaction": "assessed"
+    },
+    "timelinedrag": {
+      "functions": [
+        "sequence-process"
+      ],
+      "interaction": "assessed"
+    },
+    "factorWeb": {
+      "functions": [
+        "teach-comparison",
+        "apply"
+      ],
+      "interaction": "assessed"
+    },
+    "faceExaminer": {
+      "functions": [
+        "exam-technique"
+      ],
+      "interaction": "assessed"
+    },
+    "guidedExamResponse": {
+      "functions": [
+        "exam-technique"
+      ],
+      "interaction": "assessed"
+    },
+    "examscored": {
+      "functions": [
+        "exam-technique"
+      ],
+      "interaction": "assessed"
+    },
+    "spotTheError": {
+      "functions": [
+        "exam-technique",
+        "apply"
+      ],
+      "interaction": "assessed"
+    },
+    "builder": {
+      "functions": [
+        "apply"
+      ],
+      "interaction": "assessed"
+    },
+    "scenario": {
+      "functions": [
+        "apply"
+      ],
+      "interaction": "assessed"
+    }
+  },
+  "helperOutputs": {
+    "read": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "passive"
+      },
+      "isPassive": true,
+      "isAssessed": false
+    },
+    "keypoint": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "passive"
+      },
+      "isPassive": true,
+      "isAssessed": false
+    },
+    "funfact": {
+      "getTypeInfo": {
+        "functions": [
+          "hook-tension"
+        ],
+        "interaction": "passive"
+      },
+      "isPassive": true,
+      "isAssessed": false
+    },
+    "examtip": {
+      "getTypeInfo": {
+        "functions": [
+          "exam-technique"
+        ],
+        "interaction": "passive"
+      },
+      "isPassive": true,
+      "isAssessed": false
+    },
+    "cinematic": {
+      "getTypeInfo": {
+        "functions": [
+          "hook-tension"
+        ],
+        "interaction": "passive"
+      },
+      "isPassive": true,
+      "isAssessed": false
+    },
+    "examinerExplains": {
+      "getTypeInfo": {
+        "functions": [
+          "exam-technique"
+        ],
+        "interaction": "passive"
+      },
+      "isPassive": true,
+      "isAssessed": false
+    },
+    "memoryHook": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "passive"
+      },
+      "isPassive": true,
+      "isAssessed": false
+    },
+    "mediaPlaceholder": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "passive"
+      },
+      "isPassive": true,
+      "isAssessed": false
+    },
+    "infographic": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "passive"
+      },
+      "isPassive": true,
+      "isAssessed": false
+    },
+    "calculationBreakdown": {
+      "getTypeInfo": {
+        "functions": [
+          "sequence-process",
+          "apply"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "conceptReveal": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "visualLearning": {
+      "getTypeInfo": {
+        "functions": [
+          "hook-tension",
+          "teach-mechanism"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "explainReveal": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "keyFigureReveal": {
+      "getTypeInfo": {
+        "functions": [
+          "introduce-figure"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "theoryCompare": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-comparison"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "oppositeQualitiesReveal": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-comparison"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "timelineCanvas": {
+      "getTypeInfo": {
+        "functions": [
+          "sequence-process"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "timelineChain": {
+      "getTypeInfo": {
+        "functions": [
+          "sequence-process"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "beforeAfterSlider": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-comparison"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "flashcards": {
+      "getTypeInfo": {
+        "functions": [
+          "retrieve"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "reveal": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "cinematicCarousel": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "graphView": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "passive"
+      },
+      "isPassive": true,
+      "isAssessed": false
+    },
+    "misconception": {
+      "getTypeInfo": {
+        "functions": [
+          "exam-technique"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "acronymMemorise": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "quoteAnalyser": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "quiz": {
+      "getTypeInfo": {
+        "functions": [
+          "retrieve"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "choice": {
+      "getTypeInfo": {
+        "functions": [
+          "retrieve"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "truefalse": {
+      "getTypeInfo": {
+        "functions": [
+          "retrieve"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "connection": {
+      "getTypeInfo": {
+        "functions": [
+          "retrieve"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "fillblanks": {
+      "getTypeInfo": {
+        "functions": [
+          "retrieve"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "tieredquiz": {
+      "getTypeInfo": {
+        "functions": [
+          "retrieve"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "quickRecall": {
+      "getTypeInfo": {
+        "functions": [
+          "retrieve"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "priorKnowledgeRecall": {
+      "getTypeInfo": {
+        "functions": [
+          "retrieve"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "boss": {
+      "getTypeInfo": {
+        "functions": [
+          "retrieve",
+          "apply"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "colsort": {
+      "getTypeInfo": {
+        "functions": [
+          "classify"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "naturalSupernaturalSwipe": {
+      "getTypeInfo": {
+        "functions": [
+          "classify"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "matchingTask": {
+      "getTypeInfo": {
+        "functions": [
+          "classify"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "misconceptionCheck": {
+      "getTypeInfo": {
+        "functions": [
+          "retrieve",
+          "exam-technique"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "centreImageReveal": {
+      "getTypeInfo": {
+        "functions": [
+          "apply"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "appliedscenario": {
+      "getTypeInfo": {
+        "functions": [
+          "apply"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "guidedChoiceCarousel": {
+      "getTypeInfo": {
+        "functions": [
+          "apply"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "interactiveImage": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-mechanism",
+          "apply"
+        ],
+        "interaction": "reveal"
+      },
+      "isPassive": false,
+      "isAssessed": false
+    },
+    "orderedRouteTask": {
+      "getTypeInfo": {
+        "functions": [
+          "sequence-process"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "timelinedrag": {
+      "getTypeInfo": {
+        "functions": [
+          "sequence-process"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "factorWeb": {
+      "getTypeInfo": {
+        "functions": [
+          "teach-comparison",
+          "apply"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "faceExaminer": {
+      "getTypeInfo": {
+        "functions": [
+          "exam-technique"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "guidedExamResponse": {
+      "getTypeInfo": {
+        "functions": [
+          "exam-technique"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "examscored": {
+      "getTypeInfo": {
+        "functions": [
+          "exam-technique"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "spotTheError": {
+      "getTypeInfo": {
+        "functions": [
+          "exam-technique",
+          "apply"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "builder": {
+      "getTypeInfo": {
+        "functions": [
+          "apply"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    },
+    "scenario": {
+      "getTypeInfo": {
+        "functions": [
+          "apply"
+        ],
+        "interaction": "assessed"
+      },
+      "isPassive": false,
+      "isAssessed": true
+    }
+  },
+  "unknownTypeBehaviour": {
+    "getTypeInfo": null,
+    "isPassive": false,
+    "isAssessed": false
+  }
+}
