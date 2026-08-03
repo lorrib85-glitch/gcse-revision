@@ -190,9 +190,10 @@ dimensions, each reported separately — **never averaged**:
    sufficient for the exam question, not just term recognition?
 3. **Retrieval** — every taught fact retrieved or applied later? Wrong
    answers feed `unifiedWeaknessTracker.js`? Spacing across the episode?
-4. **Interactions** — right function tag for the content shape
-   (`src/data/componentFunctions.js`)? Execution meets each component's
-   contract?
+4. **Interactions** — right function tag for the content shape (the Pedagogy
+   line on the component's authoring entry in
+   `docs/components/COMPONENT_REGISTRY.md`, authored in its catalogue record)?
+   Execution meets each component's contract?
 5. **Exam preparation** — lands the exam payoff; mark-scheme thinking and
    examiner traps present and specific?
 6. **Emotional engagement** — stakes, tension, payoff; would a 15-year-old

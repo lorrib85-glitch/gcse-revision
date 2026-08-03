@@ -111,7 +111,7 @@ The single home for every catalogue-level component fact: identity, source path,
 
 `docs/components/COMPONENT_REGISTRY.md` is generated from the records by `pnpm catalogue:generate` and must never be hand-edited; `pnpm catalogue:check` fails if it drifts. Integrity is enforced by `tests/architecture/component-catalogue-integrity.test.js`.
 
-The authorable screen/block contract is a catalogue fact: each record's `authoring` block declares the types its component implements, and `src/data/generated/componentAuthoringRegistry.js` is projected from those blocks plus `src/component-catalogue/migrations/authoringCompatibility.js`. `src/data/screenRegistry.js` re-exports that projection and owns only the handwritten helpers. The machine-readable pedagogical taxonomy is still deliberately not duplicated in the catalogue: it stays in `src/data/componentFunctions.js` until its own migration phase.
+The authorable screen/block contract is a catalogue fact: each record's `authoring` block declares the types its component implements, and `src/data/generated/componentAuthoringRegistry.js` is projected from those blocks plus `src/component-catalogue/migrations/authoringCompatibility.js`. `src/data/screenRegistry.js` re-exports that projection and owns only the handwritten helpers. The machine-readable pedagogical taxonomy is also a catalogue fact: each authoring entry's `pedagogy` block is projected into `src/data/generated/componentPedagogyRegistry.js`, and `src/data/componentFunctions.js` is a thin compatibility API over that projection.
 
 ---
 

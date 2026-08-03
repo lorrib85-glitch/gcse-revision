@@ -135,9 +135,17 @@ lifecycle, selection guidance and contract. One record per public component.
   component implements live in
   `src/component-catalogue/migrations/authoringCompatibility.js`, which is a
   shrinking set: a guard fails an entry once its last authored use disappears.
-- Pedagogical function tags (`src/data/componentFunctions.js`) and Component Lab
-  routing (`src/dev/componentReview/`) stay where they are until their own
-  migration phase. Do not copy those facts into the catalogue.
+- **Pedagogical classification is a catalogue fact.** Every authoring entry
+  carries a `pedagogy` block (function tags + interaction class), validated
+  against `src/component-catalogue/pedagogyVocabulary.js`;
+  `src/data/generated/componentPedagogyRegistry.js` is generated from those
+  blocks by `pnpm pedagogy:generate`, and `src/data/componentFunctions.js` is a
+  thin compatibility API over it (`getTypeInfo`/`isPassive`/`isAssessed`
+  preserved, plus level-aware `getScreenTypeInfo`/`getBlockTypeInfo`). **Never
+  add a classification to `componentFunctions.js`** — add it to the owning
+  authoring entry and regenerate. `pnpm pedagogy:check` fails on drift.
+- Component Lab routing (`src/dev/componentReview/`) stays where it is until
+  its own migration phase. Do not copy those facts into the catalogue.
 - `src/component-catalogue/**` is build-time governance data. The learner
   runtime must never import it.
 
