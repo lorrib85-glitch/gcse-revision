@@ -207,12 +207,23 @@ for the one family where the risk was real.
 
 | Question | Answer |
 |---|---|
-| Does it exist in the catalogue? | 84 / 84 |
-| Should it appear in the Lab index? | 81 — all except `InlineNavigationContext` (cat 6), `HomeAtmosphere` and `ExaminerExplainsScreen` (cat 9) |
-| Can it be mounted as an independent interactive preview? | 72 — excludes cats 6, 8, 9 and the two `ChapterPlayer`/`ScreenRenderer` shells |
+| Does it exist in the catalogue? | **84 / 84** |
+| Should it be reachable in the Lab at all? | **81** — all except `InlineNavigationContext` (cat 6), `HomeAtmosphere` and `ExaminerExplainsScreen` (cat 9) |
+| Can it be mounted as an **independent** interactive preview? | **58** |
+
+The third number is much smaller than the second, and that gap is the point:
+
+| | Count |
+|---|---|
+| Independently mountable (cats 1, 3, 5, and 4 of the 5 cat-10 records) | 58 |
+| Reachable only inside a shared reference page (cat 4) | 20 |
+| Listed but not mountable (`ChapterPlayer`, `ScreenRenderer`, `GuidedAnswerCoach`) | 3 |
+| Deliberately absent (cats 6 and 9) | 3 |
+| **TOTAL** | **84** |
 
 These are not the same question, and the current Lab conflates them: it lists
-only what it can mount.
+only what it can mount, so the other 26 records are invisible rather than
+explained.
 
 ### Current representation
 

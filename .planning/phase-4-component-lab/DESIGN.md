@@ -142,9 +142,11 @@ current Lab conflates:
 
 | State | Count | Behaviour |
 |---|---|---|
-| Mountable preview | 72 | Listed and openable |
-| Listed, not mountable | 9 | Listed with its facts and a stated reason; no preview frame |
+| Independently mountable preview | 58 | Its own row, openable |
+| Reachable inside a reference page | 20 | Rendered live on a governed reference page (see D5) |
+| Listed, not mountable | 3 | `ChapterPlayer`, `ScreenRenderer`, `GuidedAnswerCoach` — facts and a stated reason, no preview frame |
 | Deliberately absent | 3 | `InlineNavigationContext`, `HomeAtmosphere`, `ExaminerExplainsScreen` |
+| **TOTAL** | **84** | |
 
 New adapters needed, in priority order (census evidence in brackets):
 
