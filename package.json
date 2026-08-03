@@ -18,7 +18,9 @@
     "catalogue:check": "node scripts/generate-component-catalogue.mjs --check",
     "authoring:generate": "node scripts/generate-authoring-registry.mjs",
     "authoring:check": "node scripts/generate-authoring-registry.mjs --check",
-    "verify": "pnpm catalogue:check && pnpm authoring:check && pnpm test:architecture && pnpm lint && pnpm test:unit && pnpm test:storybook && pnpm build",
+    "pedagogy:generate": "node scripts/generate-pedagogy-registry.mjs",
+    "pedagogy:check": "node scripts/generate-pedagogy-registry.mjs --check",
+    "verify": "pnpm catalogue:check && pnpm authoring:check && pnpm pedagogy:check && pnpm test:architecture && pnpm lint && pnpm test:unit && pnpm test:storybook && pnpm build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
