@@ -1449,13 +1449,15 @@ design.
 
 ## A15 — `coordinate-plane-annotation-contract` has thin cold-run timeout headroom
 
-**Status:** ✅ Resolved (2026-08-03) — reproduced, root-caused, fixed
+**Status:** ✅ Closed (2026-08-03) — observed → reproduced → stabilised → cause removed
 **Priority:** —
 **Area:** `tests/architecture/coordinate-plane-annotation-contract.test.js`
 
-> Resolution appended at the end of this item. The Phase 10 investigation below
-> is preserved as written — it was correct about the mechanism and correct to
-> refuse to claim a fix it could not demonstrate.
+> Resolved in two commits, both recorded at the end of this item: a timeout that
+> made the suite trustworthy, then the aggregation that made the timeout
+> unnecessary and removed it. The Phase 10 investigation below is preserved as
+> written — it was correct about the mechanism, correct to refuse to claim a fix
+> it could not demonstrate, and correct about which fix would eventually win.
 
 ### What was investigated (2026-08-02, Phase 10)
 A cold-start timeout in this file was reported. Phase 10 tried to reproduce it
@@ -1542,20 +1544,10 @@ Vitest 4.1.7). ~3.6× headroom over the 4137 ms worst case. Not a global
 preset, focus mode, comparison rule, guide policy or assertion was changed; the
 census is identical before and after (1,102 / 69,888 / 370,800).
 
-**Why step 1 was not taken — and it remains available.** The commissioning brief
-for this repair explicitly required retaining every current annotation assertion
-unchanged and forbade combining a refactor with the timeout. Step 1 was still
-measured, and this backlog's estimate was right — it is the stronger fix:
-
-| | slowest assertion (enlarge) | whole file |
-|---|---|---|
-| timeout only (applied) | 3577 ms | 22.6 s |
-| aggregate violations (step 1, measured, **not** applied) | **4 ms** | **8.2 s** |
-
-Aggregating collected violations into one `expect(violations).toEqual([])` keeps
-identical coverage and removes the pressure outright rather than budgeting for
-it. **Recommended as a follow-up** if this file is opened again; it would also
-let the timeout constant be dropped.
+**Why step 1 was deferred, not skipped.** The commissioning brief for that repair
+required retaining every annotation assertion unchanged and forbade combining a
+refactor with the timeout. Step 1 was measured anyway, and this backlog's
+estimate was right — it is the stronger fix, and it was carried out next (below).
 
 **Repeated-run evidence, all without retries:** 10/10 target-file runs (enlarge
 2079–2937 ms, file 16.0–18.1 s), 5/5 `pnpm test:architecture` (50 files / 1532
@@ -1565,6 +1557,45 @@ md5 against a clean-HEAD build. Mutation-tested: a tier of `'highlight'` injecte
 into one enlarge corner (`centre (1,−1)`, reachable only under the
 `nonOriginCentre` profiles) failed the named assertion as an `AssertionError`,
 not a timeout.
+
+### Closed — matcher bottleneck removed, timeout deleted (2026-08-03)
+
+Step 1 of the plan above, applied to **both** tier contracts. Each now walks the
+identical state space with a plain predicate, counts every violation, keeps the
+first `MAX_VIOLATION_EXAMPLES` (20) as diagnostics, and makes one assertion. The
+count keeps rising after the cap, so detection stays exhaustive and the reported
+total is the real one. Diagnostics name the preset, point id, actual tier and the
+state identity (activeId, resolved and requested guide policy, comparison rule,
+choices, selection) — a reproduction, not just a location.
+
+`EXHAUSTIVE_ANNOTATION_TIMEOUT_MS` and the suite-level `{ timeout }` are **gone**;
+the file is back on Vitest's normal 5 s budget with no replacement timeout,
+retries or CI exception.
+
+| | missing-tier | permitted-tier | whole file | architecture project |
+|---|---|---|---|---|
+| before (enlarge / rotate) | 1124 / 1774 ms | 3922 / 4414 ms | 24.6 s | 27.8 s |
+| after (enlarge / rotate) | **5 / 8 ms** | **6 / 9 ms** | **5.0–6.0 s** | **9.7–10.8 s** |
+
+Slowest test anywhere in the file is now 440–581 ms — ~9× headroom under 5 s.
+
+Coverage identical: 1,102 effective / 69,888 reachable / 370,800 points, same
+presets, focus modes, comparison rules, guide policies and selections, all ten
+named tests retained. Both tier contracts kept separate — a missing tier and an
+unrecognised tier are different defects.
+
+Mutation-tested twice on one enlarge corner (`centre (1,−1)`): `tier:'highlight'`
+failed only *uses only the three permitted tiers*; `tier: undefined` failed
+*declares a tier on every annotated element* under its own name (and the
+permitted-tier test too, as expected). Both reported 672 offending points with 20
+shown and "…and 652 more" — proving the cap bounds display, not detection. Both
+`AssertionError`, neither a timeout; both reverted byte-exact.
+
+10/10 target-file runs, 5/5 `pnpm test:architecture`, 2/2 `pnpm verify`, no
+retries. Test counts unchanged (1532 / 1233 / 301). Production build byte-identical
+across all 522 outputs.
+
+**A15 is closed. No remaining follow-up.**
 
 ---
 

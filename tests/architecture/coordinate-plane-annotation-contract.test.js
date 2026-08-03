@@ -59,36 +59,71 @@ function reachableStates(preset) {
   return states
 }
 
+// How many offending points a failure message names before it summarises the
+// rest. A contract this wide fails in bulk — one wrong tier in a shared helper
+// is tens of thousands of points — and printing all of them buries the signal.
+const MAX_VIOLATION_EXAMPLES = 20
+
 /**
- * Why this contract needs longer than the generic 5s per-test budget.
+ * The state a point was annotated in, as a one-line identity.
  *
- * These assertions are exhaustive by design: every effective state, focus mode,
- * comparison rule, guide policy and focusable-point selection. That is 69,888
- * reachable states carrying 370,800 annotated points, so a per-point assertion
- * makes one matcher call per point — 132,300 for rotate, 95,256 for enlarge.
- *
- * The cost is the matcher call itself, not the data. Every scene is derived once
- * when the suite is collected, and deriving all nine presets takes ~0.8s in
- * total; caching it would take nothing off these assertions. Walking the very
- * same points with `toBeDefined` costs ~1.0s for enlarge and with `toContain`
- * ~3.6s — same loop, same points, 3.6x the time.
- *
- * That left the slowest assertion, `uses only the three permitted tiers`, at
- * 44–83% of the 5s budget on an idle machine, so ordinary CPU contention tipped
- * it over and the whole verify run became untrustworthy. Under contention it
- * overran to 14s, which is also what proves the work is synchronous rather than
- * a leaked handle — the runner cannot interrupt a blocking loop.
- *
- * So the budget is raised for this file alone rather than the coverage reduced:
- * ~3.6x headroom over the 4.1s worst case measured across a full architecture
- * run. It is deliberately not a global `testTimeout` — every other architecture
- * test should still fail fast at 5s.
+ * A bare point id is not enough to reproduce a tier defect: the same point is
+ * annotated differently depending on what is selected, which guide policy is in
+ * force and which options are chosen. This is what turns a failure into a
+ * reproduction.
  */
-const EXHAUSTIVE_ANNOTATION_TIMEOUT_MS = 15_000
+function stateIdentity({ context, requested, selectedId }) {
+  return [
+    `activeId=${context.activeId}`,
+    `showGuides=${context.showGuides} (requested ${requested})`,
+    `comparisonRule=${String(context.comparisonRule)}`,
+    `choices=${JSON.stringify(context.choices)}`,
+    selectedId ? `selected=${selectedId}` : null,
+  ].filter(Boolean).join(' ')
+}
+
+/**
+ * Every point failing `isValid`, counted in full and described in part.
+ *
+ * The two tier contracts walk 370,800 annotated points between them. Asserting
+ * per point made one matcher call each, which cost seconds per preset and left
+ * the suite timing out under load — the matcher call was the expense, not the
+ * scenes, which are derived once at collection. Detect with a plain predicate
+ * and assert once instead.
+ *
+ * Detection is still exhaustive: `count` keeps rising after the example cap, so
+ * the reported total is the real one and nothing stops being checked.
+ */
+function collectViolations(states, isValid, describePoint) {
+  let count = 0
+  const examples = []
+
+  for (const state of states) {
+    for (const point of state.scene.points) {
+      if (isValid(point)) continue
+
+      count += 1
+      if (examples.length < MAX_VIOLATION_EXAMPLES) {
+        examples.push(`${describePoint(point)} — ${stateIdentity(state)}`)
+      }
+    }
+  }
+  return { count, examples }
+}
+
+function violationReport(summary, { count, examples }) {
+  if (count === 0) return summary
+
+  const omitted = count - examples.length
+  return [
+    `${summary}: ${count} offending point(s)`,
+    ...examples.map(example => `  ${example}`),
+    ...(omitted > 0 ? [`  …and ${omitted} more`] : []),
+  ].join('\n')
+}
 
 describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
   'annotation contract: %s',
-  { timeout: EXHAUSTIVE_ANNOTATION_TIMEOUT_MS },
   (presetId, preset) => {
     const states = reachableStates(preset)
 
@@ -96,23 +131,37 @@ describe.each(Object.entries(COORDINATE_PLANE_PRESETS))(
       expect(states.length).toBeGreaterThan(0)
     })
 
+    // Kept as two contracts, not one. A point with no tier at all and a point
+    // with a tier outside the permitted three are different defects: the first
+    // is a missing annotation, the second an unrecognised one, and collapsing
+    // them would report the wrong thing for whichever fired.
     it('declares a tier on every annotated element', () => {
-      for (const { scene } of states) {
-        for (const point of scene.points) {
-          expect(
-            point.tier,
-            `${presetId} point "${point.id}" carries annotation without a tier`,
-          ).toBeDefined()
-        }
-      }
+      const violations = collectViolations(
+        states,
+        point => point.tier !== undefined,
+        point => `${presetId} point "${point.id}" carries annotation without a tier`,
+      )
+
+      expect(
+        violations.count,
+        violationReport(`${presetId} has points annotated without a tier`, violations),
+      ).toBe(0)
     })
 
     it('uses only the three permitted tiers', () => {
-      for (const { scene } of states) {
-        for (const point of scene.points) {
-          expect(TIERS, `${presetId} point "${point.id}"`).toContain(point.tier)
-        }
-      }
+      const violations = collectViolations(
+        states,
+        point => TIERS.includes(point.tier),
+        point => `${presetId} point "${point.id}" has tier ${JSON.stringify(point.tier)}`,
+      )
+
+      expect(
+        violations.count,
+        violationReport(
+          `${presetId} uses tiers outside ${JSON.stringify(TIERS)}`,
+          violations,
+        ),
+      ).toBe(0)
     })
 
     it('keeps exactly one element active under the default policy', () => {
