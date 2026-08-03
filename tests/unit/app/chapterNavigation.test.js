@@ -142,12 +142,12 @@ describe('isFullScreenVideoScreen', () => {
     expect(isFullScreenVideoScreen({ type: 'cinematic' })).toBe(true)
   })
 
-  it('returns true for type "cinematicReveal"', () => {
-    expect(isFullScreenVideoScreen({ type: 'cinematicReveal' })).toBe(true)
-  })
-
-  it('returns true for type "video"', () => {
-    expect(isFullScreenVideoScreen({ type: 'video' })).toBe(true)
+  // `cinematicReveal` and `video` were placeholder entries that existed only to
+  // keep this predicate returning true for three names. They are retired, so
+  // the cinematic header treatment now belongs to `cinematic` alone.
+  it('returns false for the retired cinematicReveal and video types', () => {
+    expect(isFullScreenVideoScreen({ type: 'cinematicReveal' })).toBe(false)
+    expect(isFullScreenVideoScreen({ type: 'video' })).toBe(false)
   })
 
   it('returns false when screen is undefined', () => {

@@ -185,16 +185,6 @@ export const SCREEN_REGISTRY = Object.freeze({
       { path: 'fallbackImage', kind: 'string' },
     ]],
   }),
-  cinematicReveal: screen('Cinematic reveal (legacy)', 'ScreenContentRenderer', {
-    status: 'legacy',
-    replacement: 'cinematic',
-    headerMode: 'cinematic',
-  }),
-  video: screen('Video screen (legacy)', 'ScreenContentRenderer', {
-    status: 'legacy',
-    replacement: 'cinematic',
-    headerMode: 'cinematic',
-  }),
   factorWeb: screen('Factor web', 'FactorWeb', {
     layout: 'full',
     continuation: 'component',
