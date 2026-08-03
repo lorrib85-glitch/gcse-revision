@@ -4,7 +4,7 @@ Only genuine unresolved questions. Mechanical choices settled by the phase
 brief (per-entry pedagogy, compatibility-entry ownership, separate namespaces,
 parity-first migration) are not re-opened here.
 
-**Status: D1 and D2 APPROVED (implementation authorised from `57efba8`).**
+**Status: D1 and D2 APPROVED and IMPLEMENTED.**
 D3 and D4 remain deferred as recorded — every current classification migrates
 byte-identically, including the four compatibility notices, centreImageReveal,
 guidedChoiceCarousel and factorWeb as `assessed`.
@@ -101,6 +101,13 @@ Consequence either way: quality parity is unaffected today (zero uses), but
 future content using `hotspot`/`timeline` would flip from
 accidentally-non-passive to their true class. That is the point of covering
 them.
+
+## Open debt after Phase 3
+
+D3 and D4 below survived the flip unchanged, exactly as settled. Both are now
+cheap to act on: `scripts/verify-pedagogy-parity.mjs` produces a full
+quality-output diff for any classification change, so each correction can
+arrive with its behavioural consequence attached.
 
 ## D3 — legacy compatibility types classified `assessed` *(non-blocking, deferred)*
 

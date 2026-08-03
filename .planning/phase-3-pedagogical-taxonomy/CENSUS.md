@@ -1,7 +1,15 @@
 # Phase 3 — pedagogical taxonomy census
 
 Starting SHA: `5fd92ff08830d02221d44e68a1561aa3c98b78a7`.
-Planning only — no source, taxonomy, content or generated file changed.
+
+**Status: EXECUTED.** D1 and D2 were approved and the authority flip landed in
+six commits from `57efba8`. Both parity layers passed: the taxonomy identical
+for all 49 retained types with exactly the three approved removals and two
+approved additions, and the quality output byte-identical for all 60 chapters.
+`tests/architecture/content-quality.test.js` passes unmodified. D3 and D4
+remain open debt, recorded in `DECISIONS.md`.
+
+The census below is the pre-flip record, kept as written.
 All usage counts are runtime truth: every count comes from loading all 60
 registered chapters through `CHAPTER_CONTENT_LOADERS`, not from grep.
 
