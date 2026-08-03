@@ -72,10 +72,3 @@ export const BLOCK_REGISTRY = Object.freeze({
   timelineChain: Object.freeze({ authoringName: 'Timeline chain block', component: 'TimelineChainBlock', level: 'block', layout: 'content', status: 'active', replacement: null, required: [], requiredAny: [], continuation: 'player', headerMode: 'standard' }),
   timelinedrag: Object.freeze({ authoringName: 'Timeline drag (legacy)', component: 'LegacyUnroutedBlock', level: 'block', layout: 'content', status: 'legacy', replacement: 'orderedRouteTask', required: [{path: 'people', kind: 'array'}, {path: 'items', kind: 'array'}], requiredAny: [], continuation: 'player', headerMode: 'standard' }),
 })
-
-export const LEGACY_BLOCK_TYPES = Object.freeze({
-  appliedscenario: 'scenario',
-  examscored: 'boss',
-  tieredquiz: 'quickRecall',
-  timelinedrag: 'orderedRouteTask',
-})

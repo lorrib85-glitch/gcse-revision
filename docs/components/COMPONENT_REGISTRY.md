@@ -27,14 +27,24 @@ catalogue, not an approval list and not a learner-reachability list.
 | Question | Answered by |
 |---|---|
 | Does this component exist, and what is it? | this file, generated from `src/component-catalogue/records/` |
-| May a chapter author use it in a `screens` array? | `src/data/screenRegistry.js` |
+| May a chapter author use it in a `screens` array? | the **Authoring** block on the entry below, if it has one |
 | Which pedagogical function does it serve? | `src/data/componentFunctions.js` |
 | May its internals change without asking? | the **Contract** on each entry below |
 
-**Phase boundary.** Runtime authoring types and pedagogical projections are
-deliberately *not* duplicated here. Screen types, block types and function tags
-stay in `screenRegistry.js` and `componentFunctions.js` until a later migration
-phase moves them into the catalogue. Absence of a screen type is not an error.
+**Authoring authority.** A component's authorable screen and block types are
+catalogue facts, declared in its record's `authoring` block and shown below.
+`src/data/generated/componentAuthoringRegistry.js` is projected from those
+declarations by `pnpm authoring:generate`, and `src/data/screenRegistry.js`
+re-exports that projection and adds the handwritten helpers. Never add an entry
+to `screenRegistry.js`; add it to the owning record and regenerate.
+
+Most components have no Authoring block, and that is not an error — a runtime
+shell, a support primitive or an app-level feature is never placed by an author
+in a `screens` array.
+
+**Remaining phase boundary.** Pedagogical function tags stay in
+`src/data/componentFunctions.js` until their own migration phase, and are
+deliberately not duplicated here.
 
 Catalogue membership is not based on learner reachability. Component Lab or
 Storybook-only components, components still under review, and
@@ -100,6 +110,14 @@ Foundation components used by many others. They handle atomic UI concerns.
 **Notes:**
 
 - 2026-07-05, explicit sign-off, scoped: the hardcoded feedback colour literals (#4DFF88 correct-answer highlight, #C8D0E8 hint/feedback body text) and copy ("Hint — think about this", "Correct — ", "Not quite — the answer was: ") were migrated to the canonical GENERAL.feedbackCorrect / GENERAL.feedbackHint / GENERAL.feedbackText tokens as part of an app-wide answer-feedback consolidation shared with UnifiedQuestionScreen. Scoped strictly to colour, copy and token usage inside the existing hint and feedback blocks — no answer-logic, reveal-timing or API change.
+
+**Authoring**
+
+- **Block type:** `quiz` — Quiz
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `question`:string, `options`:array
 
 **Contract:** critical
 
@@ -623,6 +641,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Story:** `src/components/core/MediaPlaceholder.stories.jsx`
 
+**Authoring**
+
+- **Block type:** `mediaPlaceholder` — Media placeholder
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `kind`:string
+
 **Contract:** standard
 
 No invariants or exclusivity rules are recorded. Internal changes that keep the documented behaviour are ordinary development work.
@@ -782,6 +808,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 **Story:** `src/components/learning/FactorWeb.stories.jsx`
 
+**Authoring**
+
+- **Screen type:** `factorWeb` — Factor web
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+
 **Decision**
 
 - *Pending* — The registry entry has never carried a five-field Decision block; the boundary against TheoryCompare and the causal-chain components is a pedagogical judgement current source, stories and the factor-web contract do not settle.
@@ -827,6 +860,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Governance rules:**
 
 - The self-test is useful retrieval practice, but it is not scored evidence of mastery. Opening every item only shows that the learner checked the answers; it does not prove that they recalled them correctly. Do not feed completion of AcronymMemorise into the weakness tracker as a correct result.
+
+**Authoring**
+
+- **Block type:** `acronymMemorise` — Acronym memorise
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
 
 **Decision**
 
@@ -1000,6 +1040,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Dependencies:** `SUBJECTS`, `GENERAL`, `BUTTONS`, `COMPONENT_SIZE`, `SPACING`, `RADII`, `TYPE`, `ContinueCTA`, `ScreenBody`, `ScreenTitle`
 
+**Authoring**
+
+- **Block type:** `builder` — Builder block
+  - Status: `active`
+  - Layout: content
+  - Continuation: component-owned
+  - Requires one of: `pieces`:array, `options`:array, `items`:array
+
 **Decision**
 
 - **Use when:** The learner benefits from rebuilding a known structure while choosing from a finite bank of supplied pieces. Choose it for concise chemical reactions, equations, missing mathematical terms, high-value quotations, definitions or process statements where each piece has one defensible position.
@@ -1108,6 +1156,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Story:** `src/components/learning/CinematicCarousel.stories.jsx`
 
+**Authoring**
+
+- **Screen type:** `cinematicCarousel` — Cinematic carousel
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires: `items`:array
+
 **Decision**
 
 - **Use when:** The learner needs to explore a small related collection in which every item deserves its own image, name and focused set of facts. Choose it when viewing each item separately helps the learner notice or understand its individual features.
@@ -1133,6 +1189,15 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Props:** `block`, `subject`, `onContinue`, `onBack`
 
 **Dependencies:** `SUBJECTS`, `MOTION`, `CinematicContinueCTA`
+
+**Authoring**
+
+- **Screen type:** `cinematic` — Cinematic reveal moment
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Header: cinematic
+  - Requires one of: `videoSrc`:string, `fallbackImage`:string
 
 **Decision**
 
@@ -1194,6 +1259,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Contract doc:** `docs/system/CONCEPT_REVEAL_CONTRACT.md`
 
+**Authoring**
+
+- **Screen type:** `conceptReveal` — Concept reveal
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires: `steps`:array
+
 **Decision**
 
 - **Use when:** The learner needs a clear, memorable introduction to one important new concept before its details, examples or applications are developed. Choose it when the next section depends on the learner first grasping a single central idea.
@@ -1238,6 +1311,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Dependencies:** `SUBJECTS`, `MOTION`
 
+**Authoring**
+
+- **Block type:** `explainReveal` — Explain reveal
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+
 **Decision**
 
 - **Use when:** The learner needs to understand a short reasoning chain in which one idea leads directly to the next, such as belief → action → consequence or cause → mechanism → effect. Choose it when the important learning is the logic connecting the steps, not merely remembering their order.
@@ -1271,6 +1351,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Owns these private internals:**
 
 - `src/components/learning/faceTheExaminer` (directory) — Phase components of the FaceTheExaminer flow (intro, main, marking, verdict, done) plus its container. FaceTheExaminer.jsx is the compatibility export authors use; the phases are never placed individually.
+
+**Authoring**
+
+- **Screen type:** `faceExaminer` — Face the examiner
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires: `examiner`:object
 
 **Decision**
 
@@ -1306,6 +1394,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - Guided construction family rule — choose according to what the learner must produce: select supplied pieces and rebuild an exact structure → BuilderBlock; generate and type one missing answer from context → FillInTheBlanksBlock; understand and execute a connected procedural method → CalculationBreakdown. These form a graduated support pathway but are not interchangeable. Do not supply choices when independent recall is the learning goal, and do not reduce a multi-step method to disconnected missing-value questions.
 
+**Authoring**
+
+- **Block type:** `fillblanks` — Fill in the blanks
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `sentences`:array
+
 **Decision**
 
 - **Use when:** The surrounding sentence gives a useful retrieval cue, but the learner should independently generate and type one missing word, phrase or numerical value. Choose it for precise scientific terminology, a missing historical fact, a quotation fragment, a formula value or one essential word that changes a definition’s meaning.
@@ -1333,6 +1429,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Dependencies:** `TeachScreenShell`, `MediaPlaceholder`
 
 **Story:** `src/components/learning/Infographic.stories.jsx`
+
+**Authoring**
+
+- **Screen type:** `infographic` — Infographic
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `media`:object
 
 **Decision**
 
@@ -1364,6 +1468,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - Absorbed the former InteractiveCollectionExplorer.
 
+**Authoring**
+
+- **Screen type:** `interactiveImage` — Interactive hotspot image
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires: `image`:string, `hotspots`:array
+
 **Decision**
 
 - **Use when:** The learner needs to explore several meaningful locations within one shared image, diagram, source or object. Choose it when understanding depends on connecting each piece of information to where it appears physically, such as parts of a cell, features of a building, evidence within a historical source or structures within an organ.
@@ -1389,6 +1501,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Props:** `block`, `subject`, `onComplete`
 
 **Dependencies:** `SequenceProgress`, `SUBJECTS`, `CinematicShell`, `TYPE`, `GENERAL`, `usePrefersReducedMotion`
+
+**Authoring**
+
+- **Screen type:** `visualLearning` — Visual learning sequence
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires one of: `scenes`:array, `steps`:array, `items`:array
 
 **Decision**
 
@@ -1420,6 +1540,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - Opening family rhythm rule — choose one clear opening treatment per learning job: one concept → ConceptReveal; one emotionally significant moment → CinematicRevealMoment; one important person → KeyFigureReveal; one related visual collection → CinematicCarousel. Do not stack these components simply because they are cinematic. After the opening beat, move promptly into explanation, exploration, practice or retrieval. CinematicRevealMoment should be the rarest of the four because it carries the least teaching content by itself. ChapterHookScreen is also tagged cinematic; when used, it fulfils the chapter’s one cinematic-moment requirement.
 
+**Authoring**
+
+- **Screen type:** `keyFigureReveal` — Key figure reveal
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+
 **Decision**
 
 - **Use when:** One person is important enough to organise the learner’s understanding of the topic, and the learner needs to know who they were, what they contributed and why they mattered. Choose it when the figure is a meaningful conceptual anchor rather than simply a name that appears in the specification.
@@ -1445,6 +1572,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Props:** `subject`, `chapterNum`, `chapterTitle`, `questions`, `onBack`, `onContinue`, `renderHeader`
 
 **Dependencies:** `UnifiedQuestionScreen`, `unifiedWeaknessTracker`, `SequenceProgress`
+
+**Authoring**
+
+- **Screen type:** `quickRecall` — Quick recall
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires: `questions`:array
 
 **Decision**
 
@@ -1477,6 +1612,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Notes:**
 
 - Retrieval family rule — choose according to what the learner must do: generate earlier knowledge without options → PriorKnowledgeRecall; answer several short prompted questions → QuickRecallScreen; recognise and correct a known false belief → MisconceptionCheck; make one curiosity-building prediction before new teaching → ChapterHookScreen; present an embedded ordinary retrieval question consistently → RetrievalFrame, selected by implementation rather than by the content author. Do not use true/false interaction as a generic visual pattern, and do not place substantial question-led components back-to-back.
+
+**Authoring**
+
+- **Screen type:** `priorKnowledgeRecall` — Prior knowledge recall
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
 
 **Decision**
 
@@ -1618,6 +1760,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - `src/components/learning/ColSortBlockCore.jsx` (file) — The implementation of ColSortBlock, split out for file size only. ColSortBlock is the documented entry point and its sole importer.
 
+**Authoring**
+
+- **Block type:** `colsort` — Column sort
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `columns`:array, `items`:array
+
 **Decision**
 
 - **Use when:** The learner needs to place several short statements, examples or concepts into clearly labelled categories and benefit from seeing the completed groups together.
@@ -1672,6 +1822,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Usage boundary:** Legacy compatibility only. Do not select or author it as a separate learning component; new code and content must use WhatExaminersLookFor. It is catalogued here because the file still exists — not because it is an available choice.
 
+**Authoring**
+
+- **Screen type:** `examinerExplains` — What examiners look for
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+
 **Contract:** standard
 
 No invariants or exclusivity rules are recorded. Internal changes that keep the documented behaviour are ordinary development work.
@@ -1695,6 +1852,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `TYPE`, `CardContainer`
 
 **Story:** `src/components/learning/GraphView.stories.jsx`
+
+**Authoring**
+
+- **Block type:** `graphView` — Graph view
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
 
 **Decision**
 
@@ -1732,6 +1896,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - Do not offer fake agency. A selection must alter the subsequent perspective, example, wording or route in a way the learner can notice. If every option produces the same experience, use a reveal or comparison component instead.
 
+**Authoring**
+
+- **Screen type:** `guidedChoiceCarousel` — Guided choice carousel
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires: `options`:array
+
 **Decision**
 
 - **Use when:** The learner should adopt one of several plausible roles, perspectives, cases or routes and that choice will create a meaningful change in what follows. Choose it when browsing the alternatives first helps the learner understand their differences and the selected option gives the next teaching or scenario a clearer personal point of view.
@@ -1761,6 +1933,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Data shape:** `{ pairs: [{ id, term, answer, weakGroup }], backgroundImage }`
 
 **Dependencies:** `MOTION`, `unifiedWeaknessTracker`
+
+**Authoring**
+
+- **Screen type:** `matchingTask` — Matching task
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires one of: `items`:array, `pairs`:array, `cards`:array
 
 **Decision**
 
@@ -1799,6 +1979,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 - Interaction: jobs are shuffled and presented one at a time; tap a stage row (a real button, keyboard-focusable) to place. The first wrong attempt per job logs a weakness; a clean first-attempt placement logs a correct answer. After the final placement the rebuilt chain stays on screen with completionText, then the governed ContinueCTA reveals — completion is learner-controlled, never automatic.
 - Renamed from EvacuationChainRoute.
 
+**Authoring**
+
+- **Screen type:** `orderedRouteTask` — Ordered route task
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires one of: `items`:array, `steps`:array, `cards`:array, `stages`:array
+
 **Decision**
 
 - **Use when:** The learner has already been taught a process or sequence and now needs to recall where each known event, action or stage belongs in the correct order.
@@ -1832,6 +2020,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Notes:**
 
 - Renamed from MedicalTheoryPrescription; internals unchanged.
+
+**Authoring**
+
+- **Screen type:** `centreImageReveal` — Centre image reveal
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
 
 **Decision**
 
@@ -1871,6 +2066,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Notes:**
 
 - Memory and self-testing family rule — choose according to the structure of the memory aid: one difficult idea anchored by an analogy or association → MemoryHook; one related set encoded through initial letters → AcronymMemorise; objectively marked recall → QuickRecallScreen; one-to-one relationships the learner must connect → MatchingTask. Memory aids must reduce cognitive load; do not force every topic into a mnemonic merely to create variety. The normal maximum of two uses of the same component per chapter still applies.
+
+**Authoring**
+
+- **Block type:** `memoryHook` — Memory hook
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
 
 **Decision**
 
@@ -1934,6 +2136,17 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `BUTTONS`, `ContinueCTA`, `unifiedWeaknessTracker`
 
+**Authoring**
+
+- **Block type:** `misconceptionCheck` — Misconception check
+  - Status: `active`
+  - Layout: content
+  - Continuation: component-owned
+- **Screen type:** `misconceptionCheck` — Misconception check screen
+  - Status: `derived`
+  - Layout: full-screen
+  - Continuation: component-owned
+
 **Decision**
 
 - **Use when:** The learner needs to confront a specific, common false belief that is likely to damage later understanding or cost marks in an exam. Choose it when recognising and correcting the misconception is more important than testing an ordinary isolated fact.
@@ -1974,6 +2187,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - Scoring logic lives in src/components/learning/spotTheErrorScoring.js (pure, unit-tested).
 
+**Authoring**
+
+- **Block type:** `spotTheError` — Spot the error
+  - Status: `active`
+  - Layout: content
+  - Continuation: component-owned
+
 **Decision**
 
 - **Use when:** One precise error within an otherwise plausible statement, calculation or exam response provides a valuable opportunity to practise identifying the problem, explaining its effect and repairing it accurately. Choose it when correction requires genuine subject understanding rather than simple recognition.
@@ -2001,6 +2221,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Props:** `block`, `subject`, `onComplete`
 
 **Dependencies:** `SUBJECTS`, `MOTION`
+
+**Authoring**
+
+- **Screen type:** `naturalSupernaturalSwipe` — Natural or supernatural swipe sort
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
 
 **Decision**
 
@@ -2039,6 +2266,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 - Accessibility expectations: portraits carry meaningful imageAlt; each comparison cell exposes its person’s name to screen readers via a visually-hidden prefix so the relationship survives colour- and position-only cues; progression uses the governed ContinueCTA (keyboard-operable, visible focus); focus moves to the takeaway when it reveals; motion respects prefers-reduced-motion; DOM reading order is prompt → left → right → explanation.
 - Galen / Vesalius example (Episode 3, "The beginning of doubt"): compares Galen (animal dissection) and Vesalius (human dissection) across method, evidence-building, anatomical conclusions (jaw, ribs, breastbone) and impact, closing on "Vesalius did not prove that everything Galen believed was wrong. He proved that old ideas should be checked against evidence."
 
+**Authoring**
+
+- **Block type:** `theoryCompare` — Theory compare
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+
 **Decision**
 
 - **Use when:** Two approaches, people or models need developed parallel comparison.
@@ -2071,6 +2305,17 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - Accessibility expectations: the final DOM groups every item under its concept label; movement is decorative and not the only carrier of meaning; reduced motion renders the complete grouped state.
 - Architecture guarded by tests/architecture/oppositeQualitiesRevealArchitecture.test.js.
+
+**Authoring**
+
+- **Block type:** `oppositeQualitiesReveal` — Opposite qualities reveal
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+- **Screen type:** `oppositeQualitiesReveal` — Opposite qualities reveal
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: player-owned
 
 **Decision**
 
@@ -2107,6 +2352,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Notes:**
 
 - Architecture guarded by tests/architecture/timeline-canvas.architecture.test.js.
+
+**Authoring**
+
+- **Screen type:** `timelineCanvas` — Timeline canvas
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires one of: `events`:array, `items`:array, `steps`:array
 
 **Decision**
 
@@ -2148,6 +2401,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - VisualNarrativeScreen is retired and must not be recreated, restored, registered, refined or locked. Its progressive numbered-reveal behaviour is owned solely by this component’s reveal variant. New progressive narrative or statement-sequence screens must use the reveal variant; interactive ordering and causal-chain screens continue to use the default interactive variant. The migration is complete and the compatibility path is retired: type: 'visualNarrative' is no longer a registered screen type and src/data/visualNarrativeCompat.js has been deleted, so content carrying that type now fails validation as an unregistered type. Do not reintroduce the type, the mapper or a replacement for either. Any older per-module architecture or planning doc that still lists VisualNarrativeScreen under "suggested components", or shows a visualNarrative screen in a built module, is superseded by this rule.
 
+**Authoring**
+
+- **Screen type:** `timelineChain` — Timeline chain
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires one of: `events`:array, `steps`:array, `items`:array
+
 **Decision**
 
 - **Use when:** The learner needs to understand or explore a meaningful sequence of distinct events, stages or developments where the order or causal connection matters. Use the interactive variant when each stage is worth exploring individually. Use the reveal variant for a shorter, calmer narrative that unfolds one linked statement at a time.
@@ -2180,6 +2441,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
 
 **Usage boundary:** A named export alongside TimelineChain, not a separate file. Choose it when the chain belongs inside a composed content screen rather than owning the screen.
+
+**Authoring**
+
+- **Block type:** `timelineChain` — Timeline chain block
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
 
 **Decision**
 
@@ -2402,6 +2670,73 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Usage boundary:** Not an authoring choice. Authors select entries from screenRegistry.js, never ScreenRenderer directly.
 
+**Authoring**
+
+- **Block type:** `examtip` — Exam tip
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires one of: `text`:string, `tip`:string
+  - Implementation: private `ScreenRenderer` handler `ExamTipBlock`
+- **Block type:** `funfact` — Fun fact
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `text`:string
+  - Implementation: private `ScreenRenderer` handler `FunFactBlock`
+- **Block type:** `hotspot` — Hotspot block
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Implementation: private `ScreenRenderer` handler `HotspotBlock`
+- **Block type:** `keypoint` — Key point
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires one of: `text`:string, `points`:array
+  - Implementation: private `ScreenRenderer` handler `KeypointBlock`
+- **Block type:** `misconception` — Misconception reveal
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `mistakes`:array
+  - Implementation: private `ScreenRenderer` handler `MisconceptionBlock`
+- **Block type:** `read` — Read block
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `text`:string
+  - Implementation: private `ScreenRenderer` handler `ReadBlock`
+- **Block type:** `reveal` — Reveal block
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `prompt`:string, `answer`:string
+  - Implementation: private `ScreenRenderer` handler `RevealBlock`
+- **Block type:** `scenario` — Scenario block
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires one of: `scenarios`:array, `situation`:string
+  - Implementation: private `ScreenRenderer` handler `ScenarioBlock`
+- **Block type:** `timeline` — Timeline block
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `events`:array
+  - Implementation: private `ScreenRenderer` handler `TimelineBlock`
+- **Screen type:** `standard` — Standard content screen
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `blocks`:array
+  - Implementation: private `ScreenRenderer` handler `ScreenContentRenderer`
+- **Not authorable:** `ChapterSchemaError` — Development-time schema failure surface for a malformed chapter, rendered by ChapterPlayer rather than chosen by an author.
+- **Not authorable:** `UnsupportedScreen` — Recovery surface shown when a screen type has no renderer route; it exists to report the defect, never to be authored.
+- **Not authorable:** `UnsupportedBlock` — Recovery surface shown when a block type has no renderer route; it exists to report the defect, never to be authored.
+- **Not authorable:** `LegacyUnroutedBlock` — Notice rendered in place of a retired block type that authored content still references; the compatibility registry governs which types reach it.
+- **Not authorable:** `ScreenContentRenderer` — Named export implementing the standard content layout, already declared as the handler of the standard screen type.
+
 **Contract:** standard
 
 No invariants or exclusivity rules are recorded. Internal changes that keep the documented behaviour are ordinary development work.
@@ -2433,6 +2768,15 @@ Question feedback and exam practice components.
 **Notes:**
 
 - Exam practice and examiner feedback family rule — choose according to the learner’s stage: clarify what earns marks before writing → WhatExaminersLookFor; construct and submit an independent response → ExamQuestionFrame; judge, annotate and improve a prepared response → FaceTheExaminer. These may form a sequence but should not automatically be stacked around every exam question. GuidedExamResponse remains the alternative when the learner needs support during construction rather than before or after it.
+
+**Authoring**
+
+- **Block type:** `boss` — Exam question frame
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `question`:string
+  - Requires one of: `markPoints`:string, `markPoints`:array, `ms`:string, `ms`:array, `markScheme`:string, `markScheme`:array
 
 **Decision**
 
@@ -2499,6 +2843,13 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Notes:**
 
 - Animation: word-by-word quote reveal via staggered opacity transitions; card entrance via the qa-card-in CSS keyframe; seen-tick pop via qa-tick-pop; expanded overlay via qa-slide-up.
+
+**Authoring**
+
+- **Screen type:** `quoteAnalyser` — Quote analyser
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
 
 **Decision**
 
@@ -2580,6 +2931,14 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **Usage boundary:** Support during construction. Used both as an authorable chapter screen and, with embedded, as the worked-example and write stages inside GuidedAnswerCoach.
 
 **Story:** `src/components/learning/GuidedExamResponse.stories.jsx`
+
+**Authoring**
+
+- **Screen type:** `guidedExamResponse` — Guided exam response
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires: `exam`:object
 
 **Decision**
 
@@ -2664,6 +3023,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Usage boundary:** Graduated difficulty within one topic. Do not use it as a generic quiz chain — see the anti-patterns list in CLAUDE.md.
 
+**Authoring**
+
+- **Screen type:** `tieredquiz` — Tiered quiz
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires: `tiers`:array
+
 **Decision**
 
 - *Pending* — Pending product review. Choosing between this and QuickRecallScreen or RecoveryQuizPlayer is a pedagogical judgement that current source, stories and contracts do not settle.
@@ -2694,6 +3061,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - Extracted from ChapterPlayer so the existing runtime pattern could be reviewed in the Component Lab without maintaining a second implementation.
 
+**Authoring**
+
+- **Block type:** `flashcards` — Flashcards
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `cards`:array
+
 **Decision**
 
 - *Pending* — Pending product review — its relationship to AcronymMemorise, MemoryHook and the scored retrieval components is a product judgement, and the memory and self-testing family rule does not yet cover it.
@@ -2719,6 +3094,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Usage boundary:** Two images of the same subject where the change between them is the GCSE point. Not a general image viewer, and not a way to show two unrelated images.
 
 **Story:** `src/components/learning/BeforeAfterImageSlider.stories.jsx`
+
+**Authoring**
+
+- **Screen type:** `beforeAfterSlider` — Before and after image slider
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires: `beforeSrc`:string, `afterSrc`:string
 
 **Decision**
 
@@ -2791,3 +3174,23 @@ A component outside `src/components/**` is catalogued only when current governan
 
 - Removing or renaming the component, or removing its call site in Home
 - Altering the wave, gradient or animation structure
+
+---
+
+## Authoring compatibility appendix
+
+Legacy types that authored content still references but no component
+implements. They are owned by
+`src/component-catalogue/migrations/authoringCompatibility.js`, not by any
+record above, and they render a notice rather than an interaction.
+
+This is a shrinking set, not a tombstone list: a guard fails an entry the
+moment its last authored reference disappears. A retired type with no live
+content is deleted outright instead of being moved here.
+
+| Type | Level | Author instead | Current handler | Removal condition |
+|---|---|---|---|---|
+| `appliedscenario` | block | `scenario` | `LegacyUnroutedBlock` | Delete this entry once no chapter content references type "appliedscenario"; the authored screens move to "scenario" unchanged. |
+| `examscored` | block | `boss` | `LegacyUnroutedBlock` | Delete this entry once no chapter content references type "examscored"; the authored questions move to "boss" with markScheme preserved. |
+| `tieredquiz` | block | `quickRecall` | `LegacyUnroutedBlock` | Delete this entry once no chapter content references a block of type "tieredquiz"; the authored tiers move to "quickRecall" questions. |
+| `timelinedrag` | block | `orderedRouteTask` | `LegacyUnroutedBlock` | Delete this entry once no chapter content references type "timelinedrag"; the authored items move to an "orderedRouteTask" screen. |

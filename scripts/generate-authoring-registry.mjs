@@ -116,9 +116,6 @@ function renderMap(name, map) {
 
 export function renderRegistry(records) {
   const { screens, blocks } = projectRegistries(records)
-  const legacyBlocks = Object.entries(blocks)
-    .filter(([, definition]) => definition.status === 'legacy')
-    .map(([type, definition]) => `  ${type}: '${definition.replacement}',`)
 
   return `// GENERATED FILE — DO NOT EDIT.
 //
@@ -137,10 +134,6 @@ export function renderRegistry(records) {
 ${renderMap('SCREEN_REGISTRY', screens)}
 
 ${renderMap('BLOCK_REGISTRY', blocks)}
-
-export const LEGACY_BLOCK_TYPES = Object.freeze({
-${legacyBlocks.join('\n')}
-})
 `
 }
 

@@ -283,6 +283,56 @@ describe('compatibility entries are the only legacy-unrouted entries', () => {
   })
 })
 
+describe('the human registry tells the same truth as the runtime', () => {
+  // Derived entirely from the catalogue and the compatibility registry — no
+  // hardcoded list of types. Adding an authoring entry and forgetting to
+  // regenerate, or a generator that silently drops one, both fail here.
+  const registryDoc = read('docs/components/COMPONENT_REGISTRY.md')
+
+  const occurrences = needle => registryDoc.split(needle).length - 1
+
+  it('renders every catalogue authoring entry exactly once', () => {
+    const wrong = []
+    for (const { entry } of entries) {
+      const label = entry.level === 'screen' ? 'Screen' : 'Block'
+      const line = `- **${label} type:** \`${entry.type}\` — ${entry.authoringName}`
+      const count = occurrences(line)
+      if (count !== 1) wrong.push(`${entry.level}:${entry.type} appears ${count} times`)
+    }
+    expect(wrong).toEqual([])
+  })
+
+  it('renders every compatibility entry exactly once, in the appendix', () => {
+    expect(occurrences('## Authoring compatibility appendix')).toBe(1)
+    const wrong = []
+    for (const entry of AUTHORING_COMPATIBILITY) {
+      const row = `| \`${entry.type}\` | ${entry.level} | \`${entry.replacement}\` | \`${entry.currentHandler}\` | ${entry.removalCondition} |`
+      const count = occurrences(row)
+      if (count !== 1) wrong.push(`${entry.type} appears ${count} times`)
+    }
+    expect(wrong).toEqual([])
+  })
+
+  it('never shows a compatibility type as an authoring entry on a record', () => {
+    // The appendix and the per-record blocks are different populations. A
+    // legacy type leaking into a record's Authoring block would mean a
+    // component had quietly adopted a type nothing implements.
+    for (const entry of AUTHORING_COMPATIBILITY) {
+      const label = entry.level === 'screen' ? 'Screen' : 'Block'
+      expect(occurrences(`- **${label} type:** \`${entry.type}\` — ${entry.authoringName}`), entry.type).toBe(0)
+    }
+  })
+
+  it('no longer claims authoring authority lives in screenRegistry.js', () => {
+    expect(registryDoc).not.toContain('stay in `screenRegistry.js`')
+    expect(registryDoc).not.toContain('until a later migration')
+    expect(registryDoc).toContain('the **Authoring** block on the entry below')
+    expect(registryDoc).toContain('src/data/generated/componentAuthoringRegistry.js')
+    // The one projection that genuinely has not moved is still declared.
+    expect(registryDoc).toContain('src/data/componentFunctions.js')
+  })
+})
+
 describe('the projection is the runtime authority', () => {
   it('is what screenRegistry.js re-exports', () => {
     expect(SCREEN_REGISTRY).toEqual(screens)

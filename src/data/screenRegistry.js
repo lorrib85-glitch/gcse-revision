@@ -12,10 +12,9 @@
 import {
   SCREEN_REGISTRY,
   BLOCK_REGISTRY,
-  LEGACY_BLOCK_TYPES,
 } from './generated/componentAuthoringRegistry.js'
 
-export { SCREEN_REGISTRY, BLOCK_REGISTRY, LEGACY_BLOCK_TYPES }
+export { SCREEN_REGISTRY, BLOCK_REGISTRY }
 
 export function getScreenType(screenDefinition) {
   return screenDefinition?.type || 'standard'

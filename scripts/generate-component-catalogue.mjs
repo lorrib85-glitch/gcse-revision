@@ -15,6 +15,7 @@ import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 
 import { loadCatalogue } from '../src/component-catalogue/loadCatalogue.js'
+import { AUTHORING_COMPATIBILITY } from '../src/component-catalogue/migrations/authoringCompatibility.js'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 export const OUTPUT_PATH = 'docs/components/COMPONENT_REGISTRY.md'
@@ -74,14 +75,24 @@ catalogue, not an approval list and not a learner-reachability list.
 | Question | Answered by |
 |---|---|
 | Does this component exist, and what is it? | this file, generated from \`src/component-catalogue/records/\` |
-| May a chapter author use it in a \`screens\` array? | \`src/data/screenRegistry.js\` |
+| May a chapter author use it in a \`screens\` array? | the **Authoring** block on the entry below, if it has one |
 | Which pedagogical function does it serve? | \`src/data/componentFunctions.js\` |
 | May its internals change without asking? | the **Contract** on each entry below |
 
-**Phase boundary.** Runtime authoring types and pedagogical projections are
-deliberately *not* duplicated here. Screen types, block types and function tags
-stay in \`screenRegistry.js\` and \`componentFunctions.js\` until a later migration
-phase moves them into the catalogue. Absence of a screen type is not an error.
+**Authoring authority.** A component's authorable screen and block types are
+catalogue facts, declared in its record's \`authoring\` block and shown below.
+\`src/data/generated/componentAuthoringRegistry.js\` is projected from those
+declarations by \`pnpm authoring:generate\`, and \`src/data/screenRegistry.js\`
+re-exports that projection and adds the handwritten helpers. Never add an entry
+to \`screenRegistry.js\`; add it to the owning record and regenerate.
+
+Most components have no Authoring block, and that is not an error — a runtime
+shell, a support primitive or an app-level feature is never placed by an author
+in a \`screens\` array.
+
+**Remaining phase boundary.** Pedagogical function tags stay in
+\`src/data/componentFunctions.js\` until their own migration phase, and are
+deliberately not duplicated here.
 
 Catalogue membership is not based on learner reachability. Component Lab or
 Storybook-only components, components still under review, and
@@ -194,6 +205,86 @@ function renderDecision(decision) {
   return lines.join('\n')
 }
 
+const describeRequirement = requirement => `\`${requirement.path}\`:${requirement.kind}`
+
+const CONTINUATION_LABELS = {
+  component: 'component-owned',
+  player: 'player-owned',
+}
+
+/**
+ * The Authoring block: what a chapter author may write, and what implements it.
+ *
+ * `handler` is stated rather than hidden. A block type implemented by a private
+ * function inside the record's own source is a real authoring type, and saying
+ * so is more useful to a reader than pretending it is a standalone component.
+ */
+function renderAuthoring(record) {
+  if (!record.authoring) return null
+
+  const sections = record.authoring.entries.map(entry => {
+    const lines = [`- **${entry.level === 'screen' ? 'Screen' : 'Block'} type:** \`${entry.type}\` — ${entry.authoringName}`]
+    lines.push(`  - Status: \`${entry.status}\``)
+    lines.push(`  - Layout: ${entry.layout === 'full' ? 'full-screen' : 'content'}`)
+    lines.push(`  - Continuation: ${CONTINUATION_LABELS[entry.continuation]}`)
+    if (entry.headerMode !== 'standard') lines.push(`  - Header: ${entry.headerMode}`)
+    if (entry.required.length) {
+      lines.push(`  - Requires: ${entry.required.map(describeRequirement).join(', ')}`)
+    }
+    for (const alternatives of entry.requiredAny) {
+      lines.push(`  - Requires one of: ${alternatives.map(describeRequirement).join(', ')}`)
+    }
+    if (entry.handler) {
+      lines.push(`  - Implementation: private \`${record.name}\` handler \`${entry.handler}\``)
+    }
+    return lines.join('\n')
+  })
+
+  const nonAuthorable = record.authoring.nonAuthorableHandlers ?? []
+  if (nonAuthorable.length) {
+    sections.push(nonAuthorable
+      .map(handler => `- **Not authorable:** \`${handler.name}\` — ${handler.reason}`)
+      .join('\n'))
+  }
+
+  return ['**Authoring**', '', sections.join('\n')].join('\n')
+}
+
+/**
+ * The compatibility appendix: legacy types no component implements, which
+ * authored content still references. Rendered from the same registry the
+ * runtime projection reads, so the document cannot describe a set that no
+ * longer exists.
+ */
+function renderCompatibilityAppendix(entries) {
+  const rows = entries.map(entry => [
+    `\`${entry.type}\``,
+    entry.level,
+    `\`${entry.replacement}\``,
+    `\`${entry.currentHandler}\``,
+    entry.removalCondition,
+  ].join(' | '))
+
+  return [
+    '---',
+    '',
+    '## Authoring compatibility appendix',
+    '',
+    'Legacy types that authored content still references but no component',
+    'implements. They are owned by',
+    '`src/component-catalogue/migrations/authoringCompatibility.js`, not by any',
+    'record above, and they render a notice rather than an interaction.',
+    '',
+    'This is a shrinking set, not a tombstone list: a guard fails an entry the',
+    'moment its last authored reference disappears. A retired type with no live',
+    'content is deleted outright instead of being moved here.',
+    '',
+    '| Type | Level | Author instead | Current handler | Removal condition |',
+    '|---|---|---|---|---|',
+    `| ${rows.join(' |\n| ')} |`,
+  ].join('\n')
+}
+
 function renderOwnership(ownership) {
   const entries = [
     ...ownership.internalDirectories.map(entry => ({ ...entry, label: 'directory' })),
@@ -248,6 +339,9 @@ function renderRecord(record) {
     blocks.push(['**Notes:**', '', renderList(doc.notes)].join('\n'))
   }
 
+  const authoring = renderAuthoring(record)
+  if (authoring) blocks.push(authoring)
+
   const decision = renderDecision(record.decision)
   if (decision) blocks.push(decision)
 
@@ -273,6 +367,8 @@ export function renderCatalogue(records) {
     }
     parts.push(['---', '', renderRecord(record)].join('\n'))
   }
+
+  parts.push(renderCompatibilityAppendix(AUTHORING_COMPATIBILITY))
 
   return `${parts.join('\n\n')}\n`
 }
