@@ -1,6 +1,7 @@
 # Phase 3 — implementation plan
 
-Executes only after D1 and D2 are answered. Every commit leaves `pnpm verify`
+D1 and D2 are approved (see DECISIONS.md); execution authorised from
+`57efba8`. Every commit leaves `pnpm verify`
 green; each is independently revertable (`git revert`), which is the rollback
 mechanism throughout — no commit depends on an unmerged sibling.
 
@@ -8,7 +9,7 @@ mechanism throughout — no commit depends on an unmerged sibling.
 
 **Add**
 - `src/component-catalogue/pedagogyVocabulary.js` — the nine tags, authored
-- `src/component-catalogue/migrations/nonAuthoringPedagogy.js` — D1-dependent
+- `src/component-catalogue/migrations/nonAuthoringPedagogy.js` — sole entry `calculationBreakdown` (D1 approved)
 - `scripts/generate-pedagogy-registry.mjs` — generator (`--check` mode like the others)
 - `src/data/generated/componentPedagogyRegistry.js` — generated
 - `tests/architecture/pedagogy-registry-integrity.test.js` — guard suite

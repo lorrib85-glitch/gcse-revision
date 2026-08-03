@@ -4,10 +4,35 @@ Only genuine unresolved questions. Mechanical choices settled by the phase
 brief (per-entry pedagogy, compatibility-entry ownership, separate namespaces,
 parity-first migration) are not re-opened here.
 
-**D1 and D2 block implementation** — they determine what the generated
-projection contains. **D3 and D4 do not block** — settled policy is that every
-current classification migrates byte-identically and these return for review
-afterwards; they are recorded so they are not lost.
+**Status: D1 and D2 APPROVED (implementation authorised from `57efba8`).**
+D3 and D4 remain deferred as recorded — every current classification migrates
+byte-identically, including the four compatibility notices, centreImageReveal,
+guidedChoiceCarousel and factorWeb as `assessed`.
+
+Approved outcomes:
+
+- **D1:** `choice`, `truefalse`, `connection` removed from the component
+  taxonomy as an approved taxonomy-parity exception — the parity harness must
+  assert these are the ONLY removed keys. The nested question-item types and
+  all chapter content using them are untouched; they remain valid question
+  data, they simply never belonged in the screen/block component taxonomy.
+  `calculationBreakdown` retained as the sole member of
+  `src/component-catalogue/migrations/nonAuthoringPedagogy.js` with its
+  current pedagogy unchanged ({ functions: ['sequence-process', 'apply'],
+  interaction: 'assessed' }), a reason naming the Lab's
+  getTypeInfo-derived interaction badge, and a removal condition of Phase 4
+  replacing that dependency or a genuine authoring entry — whichever first.
+  Shrinking-set governance applies: no additional non-authoring entry without
+  an explicit decision, reason and removal condition.
+- **D2:** `hotspot` → { functions: ['teach-mechanism'], interaction: 'reveal' };
+  `timeline` → { functions: ['sequence-process'], interaction: 'passive' };
+  `standard` → `pedagogy: null` with the narrow structured exemption
+  `pedagogyExemption: { kind: 'container-derived', reason: … }` — no generic
+  boolean, exemption valid only on a screen entry that structurally requires a
+  blocks array, exempt entries omitted from the generated maps so
+  getTypeInfo('standard') stays null and isPassive/isAssessed('standard') stay
+  false, and the human registry renders "Pedagogy: derived from contained
+  blocks".
 
 ---
 

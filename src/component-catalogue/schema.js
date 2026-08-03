@@ -19,6 +19,8 @@
 // Those stay where they are until their own phase migrates them. Do not
 // duplicate them here.
 
+import { FUNCTION_TAGS, INTERACTION_CLASSES } from './pedagogyVocabulary.js'
+
 export const SECTIONS = ['core', 'learning', 'feedback', 'layout', 'feature', 'support']
 
 // `reusable`         — an author picks this against other learning components.
@@ -315,6 +317,75 @@ const AUTHORING_ENTRY_KEYS = [
   'required', 'requiredAny', 'continuation', 'headerMode', 'handler',
 ]
 
+// Transitional (Phase 3 commit 1): `pedagogy` validates when present and
+// becomes mandatory in the injection commit, when every entry carries it.
+// `pedagogyExemption` stays optional permanently — it exists only for the
+// narrow container-derived case.
+const OPTIONAL_AUTHORING_ENTRY_KEYS = ['pedagogy', 'pedagogyExemption']
+
+/**
+ * Pedagogical classification of one authoring entry. Every entry carries
+ * exactly one — the only escape is the container-derived exemption below,
+ * for an entry whose classification genuinely comes from the authoring
+ * entries it contains (the entry must structurally require a `blocks` array
+ * to qualify, so the exemption cannot spread to ordinary types).
+ */
+function validatePedagogy(errors, at, entry) {
+  const { pedagogy, pedagogyExemption } = entry
+
+  if (pedagogyExemption !== undefined) {
+    if (!isPlainObject(pedagogyExemption)) {
+      errors.push(`${at}.pedagogyExemption must be an object when present`)
+      return
+    }
+    for (const key of Object.keys(pedagogyExemption)) {
+      if (key !== 'kind' && key !== 'reason') errors.push(`${at}.pedagogyExemption has unknown key "${key}"`)
+    }
+    if (pedagogyExemption.kind !== 'container-derived') {
+      errors.push(`${at}.pedagogyExemption.kind must be "container-derived" — no other exemption kind is governed`)
+    }
+    if (!isNonEmptyString(pedagogyExemption.reason) || pedagogyExemption.reason.trim().length < 30) {
+      errors.push(`${at}.pedagogyExemption.reason must say why classification is delegated (30+ chars)`)
+    }
+    if (pedagogy !== null) {
+      errors.push(`${at} carries a pedagogyExemption, so pedagogy must be null`)
+    }
+    const requiresBlocks = (entry.required ?? []).some(
+      requirement => requirement?.path === 'blocks' && requirement?.kind === 'array',
+    )
+    if (entry.level !== 'screen' || !requiresBlocks) {
+      errors.push(`${at}.pedagogyExemption is only valid on a screen entry that requires a blocks array — this entry does not delegate to contained entries`)
+    }
+    return
+  }
+
+  if (pedagogy === undefined) return // required-ness is enforced by the presence of the key in AUTHORING_ENTRY_KEYS
+  if (pedagogy === null) {
+    errors.push(`${at}.pedagogy may be null only with a container-derived pedagogyExemption`)
+    return
+  }
+  if (!isPlainObject(pedagogy)) {
+    errors.push(`${at}.pedagogy must be an object`)
+    return
+  }
+  for (const key of Object.keys(pedagogy)) {
+    if (key !== 'functions' && key !== 'interaction') errors.push(`${at}.pedagogy has unknown key "${key}"`)
+  }
+  if (!Array.isArray(pedagogy.functions) || pedagogy.functions.length === 0) {
+    errors.push(`${at}.pedagogy.functions must name at least one function tag`)
+  } else {
+    const seen = new Set()
+    for (const fn of pedagogy.functions) {
+      if (!FUNCTION_TAGS.includes(fn)) errors.push(`${at}.pedagogy.functions "${fn}" is not in the canonical vocabulary`)
+      if (seen.has(fn)) errors.push(`${at}.pedagogy.functions duplicates "${fn}"`)
+      seen.add(fn)
+    }
+  }
+  if (!INTERACTION_CLASSES.includes(pedagogy.interaction)) {
+    errors.push(`${at}.pedagogy.interaction must be one of ${INTERACTION_CLASSES.join(' | ')}`)
+  }
+}
+
 function validateAuthoringEntry(errors, at, entry) {
   if (!isPlainObject(entry)) {
     errors.push(`${at} must be an object`)
@@ -324,8 +395,11 @@ function validateAuthoringEntry(errors, at, entry) {
     if (!(key in entry)) errors.push(`${at} is missing required key "${key}"`)
   }
   for (const key of Object.keys(entry)) {
-    if (!AUTHORING_ENTRY_KEYS.includes(key)) errors.push(`${at} has unknown key "${key}"`)
+    if (!AUTHORING_ENTRY_KEYS.includes(key) && !OPTIONAL_AUTHORING_ENTRY_KEYS.includes(key)) {
+      errors.push(`${at} has unknown key "${key}"`)
+    }
   }
+  validatePedagogy(errors, at, entry)
 
   if (!isNonEmptyString(entry.type) || !TYPE_NAME.test(entry.type)) {
     errors.push(`${at}.type must be the camelCase type authors write`)

@@ -34,6 +34,13 @@ alike. Validation added to `validateAuthoringEntry`:
 - `interaction`: one of the three classes
 - a record with `authoring: null` may not carry pedagogy anywhere (no orphan
   facts on non-authorable records)
+- **container-derived exemption (approved D2 shape):** `pedagogy: null` is
+  legal only alongside `pedagogyExemption: { kind: 'container-derived',
+  reason: <30+ chars> }`, and only on a screen entry that structurally
+  requires a `blocks` array — the single governed escape, not a generic
+  boolean. Exempt entries are omitted from every generated map, so
+  `getTypeInfo('standard')` remains null and both helpers remain false; the
+  human registry renders "Pedagogy: derived from contained blocks"
 
 ### Vocabulary
 
@@ -51,12 +58,16 @@ classifications migrate unchanged; their meaningfulness is D3, deferred).
 
 ### Non-authoring classifications
 
-Pending D1. If approved, a third authored surface carries them:
+**Approved (D1).** A third authored surface carries exactly one entry:
 `src/component-catalogue/migrations/nonAuthoringPedagogy.js`, one entry per
 type with `type`, `pedagogy`, `reason`, `removalCondition` — mirroring the
-compatibility registry's shrinking-set discipline. Expected content: exactly
-`calculationBreakdown` (whose removal condition is Phase 4 giving the Lab a
-manual interaction or an authoring route).
+compatibility registry's shrinking-set discipline. Content: exactly
+`calculationBreakdown`, pedagogy unchanged
+({ functions: ['sequence-process', 'apply'], interaction: 'assessed' }),
+removal on Phase 4 replacing the Lab's getTypeInfo dependency or a genuine
+authoring entry — whichever first. `choice`, `truefalse` and `connection` are
+dropped as the approved parity exceptions (question-item data in content is
+untouched).
 
 ## Generated artifact
 
