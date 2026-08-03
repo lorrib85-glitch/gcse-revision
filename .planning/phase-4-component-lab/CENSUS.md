@@ -4,18 +4,36 @@ Baseline SHA: `d2c0030f80730db42e0b5097319ae5292966b078`
 Method: every number below was measured at that SHA, not estimated. The tooling
 used is described per census; the machine-readable output is under `baselines/`.
 
+> ### ⚠️ Census 3's coverage target is SUPERSEDED
+>
+> The product definition has been clarified: **the Component Lab is the
+> chapter-building component library.** Every item in it must be a genuine
+> selectable chapter authoring choice.
+>
+> The earlier direction — "all 84 catalogue records accounted for in the Lab" —
+> is withdrawn. Census 3's *data* stands (it is the record of the catalogue
+> population and how the Lab relates to it), but its **target** does not.
+>
+> **Census 7 is now the governing coverage census.** It measures the Lab against
+> the live chapter-authoring surface and classifies every Lab item A / B / C.
+
 **Headline numbers**
 
 | Fact | Value |
 |---|---|
-| Catalogue records | 84 |
+| **Live chapter-authoring entries** | **51** |
+| **— covered by a Lab selection** | **34** |
+| **— missing from the Lab** | **17** |
+| **Lab entries: A / B / C** | **38 / 6 / 5** |
 | Lab entries | 49 |
 | Lab preview variants | 60 |
 | Selectable preview units (entries + variants) | 102 |
-| Catalogue records represented in the Lab today | 56 |
-| Catalogue records not represented today | 28 |
+| Catalogue records | 84 |
 | Lab entries with no catalogue record | 2 |
 | Lab chunk (raw / gzip) | 356.16 kB / 105.76 kB |
+
+The first four rows are the governing numbers (Census 7). The catalogue-record
+figures below them describe the catalogue population, not a Lab target.
 
 ---
 
@@ -177,6 +195,9 @@ is one entry covering both `CircuitDiagram` and `CircuitSymbolReference`.
 ---
 
 ## Census 3 — catalogue-to-Lab coverage
+
+> **Superseded as a target.** Retained as the record of the catalogue population
+> and the Lab's relationship to it. The Lab's coverage contract is now Census 7.
 
 Full per-record table: `baselines/current-catalogue-coverage.json`.
 
@@ -448,6 +469,149 @@ These belong in the handwritten adapter layer, not the catalogue.
 
 ---
 
+## Census 7 — chapter-authoring reclassification (governing)
+
+Machine-readable: `baselines/current-authoring-coverage.json`.
+
+Measures the Lab against the **live chapter-authoring surface**: every authoring
+entry in the catalogue whose status is not `legacy` — 50 `active` plus 1
+`derived`. Legacy types (`appliedscenario`, `examscored`) live in
+`authoringCompatibility.js`, are routed to a `LegacyUnroutedBlock` notice, and
+are deliberately excluded.
+
+### The two directions of the rule
+
+| Direction | Result |
+|---|---|
+| Every Lab item maps to a real authoring entry | **38 of 49** do. 11 do not |
+| Every active authoring entry is selectable in the Lab | **34 of 51** are. **17 are not** |
+
+**A third of the live authoring surface has no Lab selection**, and the gap is
+worst exactly where it matters most.
+
+### Classification of all 49 current Lab items
+
+| Class | Count | Meaning |
+|---|---|---|
+| **A — already chapter-authorable** | 38 | Keep; bind to its level-aware authoring key |
+| **B — should become chapter-authorable** | 6 | Keep in the intended population; needs a genuine authoring entry, content contract and renderer route |
+| **C — not a chapter-building choice** | 5 | Remove from the Lab; rehome on a separate owner surface |
+
+#### Category B — 6 items (need a real authoring route)
+
+| Item | Why it belongs in the Lab |
+|---|---|
+| `CalculationBreakdown` | Product mandate. Contract already implemented and validated — see §CalculationBreakdown below |
+| `AngleExplore` | Maths chapters need a placeable angle figure; the page owns the question, the component owns the diagram |
+| `AreaPerimeterExplore` | Mensuration sibling, same authoring shape |
+| `CoordinatePlaneExplore` | Coordinate/graph figure, same authoring shape |
+| `NumberLineExplore` | Number-line figure, same authoring shape |
+| `CircuitDiagram` (+ `CircuitSymbolReference`) | Physics chapters need a placeable circuit figure; none exists |
+
+All six are currently previews with **no authoring route** — precisely what the
+new rule forbids. None may remain in the final Lab without a genuine entry.
+
+#### Category C — 5 items (remove from the Lab)
+
+| Item | Evidence it is not an authoring choice | Proposed home |
+|---|---|---|
+| `Buttons and progress` | A Lab-local reference page, not a component | Design-system reference |
+| `ChapterOutcomeScreen` | Runtime places it from chapter metadata (`outcomes`); never in a `screens` array | Runtime-component reference |
+| `ChapterCompleteScreen` | Rendered by `LegacyApp` as the chapter-complete overlay | Runtime-component reference |
+| `ChapterHookScreen` | Runtime places it from chapter hook metadata | Runtime-component reference |
+| `WeakSpotRecovery` | Dormant; its `ChapterPlayer` integration was removed in A4 Phase 8 and it is never authored | Runtime-component reference |
+
+The three chapter-framing screens are real, active, well-formed components — they
+are simply **placed by the runtime, not selected by an author**. That is what
+makes them category C, not their quality.
+
+### The 17 missing authoring entries
+
+Ordered by measured content usage:
+
+| Authoring key | Owning record | Handler | Content uses |
+|---|---|---|---|
+| `block:read` | ScreenRenderer | `ReadBlock` | **261** |
+| `block:quiz` | AnswerInteraction | — | **224** |
+| `block:keypoint` | ScreenRenderer | `KeypointBlock` | 83 |
+| `block:examtip` | ScreenRenderer | `ExamTipBlock` | 62 |
+| `block:boss` | ExamQuestionFrame | — | 61 |
+| `block:scenario` | ScreenRenderer | `ScenarioBlock` | 39 |
+| `block:funfact` | ScreenRenderer | `FunFactBlock` | 26 |
+| `block:misconceptionCheck` | MisconceptionCheck | — | 20 |
+| `block:timelineChain` | TimelineChainBlock | — | 8 |
+| `screen:priorKnowledgeRecall` | PriorKnowledgeRecall | — | 6 |
+| `block:oppositeQualitiesReveal` | OppositeQualitiesReveal | — | 2 |
+| `block:misconception` | ScreenRenderer | `MisconceptionBlock` | 2 |
+| `block:mediaPlaceholder` | MediaPlaceholder | — | 1 |
+| `block:reveal` | ScreenRenderer | `RevealBlock` | 1 |
+| `block:hotspot` | ScreenRenderer | `HotspotBlock` | 0 |
+| `block:timeline` | ScreenRenderer | `TimelineBlock` | 0 |
+| `screen:standard` | ScreenRenderer | `ScreenContentRenderer` | 0 |
+
+**The single largest finding of this census.** The two most-used authorable types
+in the entire codebase — `block:read` (261 uses) and `block:quiz` (224 uses) —
+have no Lab presence at all. An author building a chapter cannot see the two
+things they will place most often.
+
+Ten of the seventeen are the `ScreenRenderer` private-handler block types. They
+are genuine authoring types — the schema explicitly sanctions this ("real
+authoring types whose implementation is deliberately not a standalone reusable
+component") — and the Lab has simply never covered them because it was organised
+by *component file*, not by *authoring entry*. That is the structural reason for
+the projection-unit change in `DESIGN.md`.
+
+`screen:standard` is a special case: it is the container screen that holds a
+`blocks` array, carries a `container-derived` pedagogy exemption, and has 0
+direct `type: 'standard'` uses because it is the default. It is still a genuine
+authoring choice.
+
+### Two authoring-entry ownership defects
+
+1. **`screen:examinerExplains` sits on the deprecated record.** The entry belongs
+   to `ExaminerExplainsScreen` (`lifecycle: parked`), while the canonical
+   `WhatExaminersLookFor` record has `authoring: null`. `ExaminerExplainsScreen.jsx`
+   is a bare re-export of `WhatExaminersLookFor.jsx`, and `ScreenRenderer.jsx:1062`
+   renders the alias. Behaviour is correct; ownership is inverted. The entry
+   should move to the canonical record.
+2. **`screen:faceExaminer` is the mirror image.** The entry correctly sits on the
+   canonical `FaceTheExaminer` record, but the *Lab* imports the private internal
+   `faceTheExaminer/FaceTheExaminerContainer.jsx` (Census 2).
+
+Both are catalogue-level corrections, not Lab corrections.
+
+### Usage-scan caveat
+
+The content scan counts every `type:` key occurrence. Verified by inspection that
+`read` and `quiz` are top-level entries in a screen's `blocks` array (e.g.
+`src/content/maths/foundations/episodes/math3.js:111,116`), so their counts are
+block-level. Nested question types inside a `quiz` block (`choice`, `truefalse`)
+are *not* registered authoring types and are excluded from the authoring
+coverage figures.
+
+### CalculationBreakdown — investigated authoring shape
+
+Evidence from `src/components/learning/CalculationBreakdown.jsx` (793 lines) and
+`calculationBreakdown/calculationBreakdownValidation.js`:
+
+- Renders inside `InteractionShell` with its own `ScreenTitle` → **full-screen**.
+- All content arrives through a single `block` prop:
+  `{ title, goalPrompt, problem, understand, steps, solution, presentation,
+  backgroundImage, backgroundOpacity }`.
+- `block.presentation.variant` ∈ `standard | algebraWhy | inverseMachine |
+  groupSplit | balance`, already frozen as `CALCULATION_VARIANTS`.
+- `resolveCalculationPresentation(block)` **already validates** the model,
+  returns structured errors, and refuses rather than approximates — falling back
+  to the standard walkthrough with a dev-only `console.error`.
+- Explicit limits already encoded: `GROUP_MODEL_LIMITS`, `MACHINE_LIMITS`,
+  `BALANCE_LIMITS`.
+- Takes `onContinue` and renders its own CTAs → **component-owned continuation**.
+
+So the component is not missing a contract — it is missing only a **registered
+authoring entry and a renderer route**. The recommendation is in `DESIGN.md` §6.
+
+---
+
 ## Evidence appendix — how each number was produced
 
 | Number | Method |
@@ -460,3 +624,6 @@ These belong in the handwritten adapter layer, not the catalogue.
 | Chunk sizes | `./node_modules/.bin/vite build` at the baseline SHA |
 | Leakage check | grep of built `dist/assets/index-*.js` for Lab-only strings |
 | Chunk sharing | Parsed `from"./…"` specifiers out of the built chunks |
+| 51 live authoring entries | Catalogue authoring blocks, `status !== 'legacy'` |
+| A/B/C classification | Explicit Lab-entry → authoring-key binding, asserted against the live entry set so a bad binding throws |
+| 17 missing entries | Set difference between live authoring keys and keys bound to a Lab item |

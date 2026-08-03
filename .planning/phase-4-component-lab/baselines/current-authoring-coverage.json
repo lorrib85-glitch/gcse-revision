@@ -1,0 +1,1028 @@
+{
+  "$schema": "phase-4-component-lab/current-authoring-coverage",
+  "capturedAtSha": "d2c0030f80730db42e0b5097319ae5292966b078",
+  "note": "The Component Lab measured against the LIVE CHAPTER AUTHORING SURFACE, per the clarified product rule that the Lab is the chapter-building component library. This supersedes current-catalogue-coverage.json as the Lab coverage contract; that file remains valid as the catalogue-population record.",
+  "liveAuthoringEntries": 51,
+  "coveredByLab": 34,
+  "missingFromLab": 17,
+  "labEntries": 49,
+  "classification": {
+    "A": 38,
+    "B": 6,
+    "C": 5
+  },
+  "classificationKey": {
+    "A": "Already chapter-authorable — keep, bound to its level-aware authoring key",
+    "B": "Should become chapter-authorable — keep in the intended population, needs a genuine authoring entry, content contract and renderer route in Phase 4",
+    "C": "Not a chapter-building choice — remove from the Lab, rehome on a separate owner surface"
+  },
+  "labItems": [
+    {
+      "id": "cinematic-carousel",
+      "name": "CinematicCarousel",
+      "classification": "A",
+      "authoringKey": "screen:cinematicCarousel",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "graph-view-scatter",
+      "name": "GraphView (scatter)",
+      "classification": "A",
+      "authoringKey": "block:graphView",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "graph-view-line",
+      "name": "GraphView (line)",
+      "classification": "A",
+      "authoringKey": "block:graphView",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "timeline-chain",
+      "name": "TimelineChain",
+      "classification": "A",
+      "authoringKey": "screen:timelineChain",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "circuit-diagram",
+      "name": "CircuitDiagram",
+      "classification": "B",
+      "authoringKey": null,
+      "reason": "Physics chapters have a genuine need to place a circuit figure; no authoring type exists yet."
+    },
+    {
+      "id": "opposite-qualities-reveal",
+      "name": "OppositeQualitiesReveal",
+      "classification": "A",
+      "authoringKey": "screen:oppositeQualitiesReveal",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "timeline-canvas",
+      "name": "TimelineCanvas",
+      "classification": "A",
+      "authoringKey": "screen:timelineCanvas",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "before-after-slider",
+      "name": "BeforeAfterImageSlider",
+      "classification": "A",
+      "authoringKey": "screen:beforeAfterSlider",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "ordered-route-task",
+      "name": "OrderedRouteTask",
+      "classification": "A",
+      "authoringKey": "screen:orderedRouteTask",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "spot-the-error",
+      "name": "SpotTheError",
+      "classification": "A",
+      "authoringKey": "block:spotTheError",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "centre-image-reveal",
+      "name": "CentreImageReveal",
+      "classification": "A",
+      "authoringKey": "screen:centreImageReveal",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "acronym-memorise",
+      "name": "AcronymMemorise",
+      "classification": "A",
+      "authoringKey": "block:acronymMemorise",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "flashcards-block",
+      "name": "FlashcardsBlock",
+      "classification": "A",
+      "authoringKey": "block:flashcards",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "builder-block",
+      "name": "BuilderBlock — reaction",
+      "classification": "A",
+      "authoringKey": "block:builder",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "builder-block-maths",
+      "name": "BuilderBlock — Maths",
+      "classification": "A",
+      "authoringKey": "block:builder",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "builder-block-quote",
+      "name": "BuilderBlock — quote",
+      "classification": "A",
+      "authoringKey": "block:builder",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "matching-task",
+      "name": "MatchingTask",
+      "classification": "A",
+      "authoringKey": "screen:matchingTask",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "visual-learning",
+      "name": "VisualLearning",
+      "classification": "A",
+      "authoringKey": "screen:visualLearning",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "guided-choice-carousel",
+      "name": "GuidedChoiceCarousel",
+      "classification": "A",
+      "authoringKey": "screen:guidedChoiceCarousel",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "theory-compare",
+      "name": "TheoryCompare",
+      "classification": "A",
+      "authoringKey": "block:theoryCompare",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "misconception-check",
+      "name": "MisconceptionCheck",
+      "classification": "A",
+      "authoringKey": "screen:misconceptionCheck",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "factor-web",
+      "name": "FactorWeb",
+      "classification": "A",
+      "authoringKey": "screen:factorWeb",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "infographic",
+      "name": "Infographic",
+      "classification": "A",
+      "authoringKey": "screen:infographic",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "interactive-hotspot-image",
+      "name": "InteractiveHotspotImage",
+      "classification": "A",
+      "authoringKey": "screen:interactiveImage",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "interactive-hotspot-image-reveal",
+      "name": "InteractiveHotspotImage (reveal)",
+      "classification": "A",
+      "authoringKey": "screen:interactiveImage",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "cinematic-reveal-moment",
+      "name": "CinematicRevealMoment",
+      "classification": "A",
+      "authoringKey": "screen:cinematic",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "memory-hook",
+      "name": "MemoryHook",
+      "classification": "A",
+      "authoringKey": "block:memoryHook",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "concept-reveal",
+      "name": "ConceptReveal",
+      "classification": "A",
+      "authoringKey": "screen:conceptReveal",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "explain-reveal",
+      "name": "ExplainReveal",
+      "classification": "A",
+      "authoringKey": "block:explainReveal",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "col-sort-block",
+      "name": "ColSortBlock",
+      "classification": "A",
+      "authoringKey": "block:colsort",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "quote-analyser",
+      "name": "QuoteAnalyser",
+      "classification": "A",
+      "authoringKey": "screen:quoteAnalyser",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "key-figure-reveal",
+      "name": "KeyFigureReveal",
+      "classification": "A",
+      "authoringKey": "screen:keyFigureReveal",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "face-the-examiner",
+      "name": "FaceTheExaminerContainer",
+      "classification": "A",
+      "authoringKey": "screen:faceExaminer",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "guided-exam-response",
+      "name": "GuidedExamResponse",
+      "classification": "A",
+      "authoringKey": "screen:guidedExamResponse",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "buttons-and-progress",
+      "name": "Buttons and progress",
+      "classification": "C",
+      "authoringKey": null,
+      "reason": "Design-system reference page. Not a component and not authorable; product direction is to move it out."
+    },
+    {
+      "id": "chapter-outcome-screen",
+      "name": "ChapterOutcomeScreen",
+      "classification": "C",
+      "authoringKey": null,
+      "reason": "Runtime places it from chapter metadata (outcomes); never appears in a screens array."
+    },
+    {
+      "id": "chapter-complete-screen",
+      "name": "ChapterCompleteScreen",
+      "classification": "C",
+      "authoringKey": null,
+      "reason": "Rendered by LegacyApp as the chapter-complete overlay; never authored."
+    },
+    {
+      "id": "chapter-hook-screen",
+      "name": "ChapterHookScreen",
+      "classification": "C",
+      "authoringKey": null,
+      "reason": "Runtime places it from chapter hook metadata; never authored as a screen."
+    },
+    {
+      "id": "fill-in-the-blanks",
+      "name": "FillInTheBlanksBlock",
+      "classification": "A",
+      "authoringKey": "block:fillblanks",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "swipe-sort",
+      "name": "SwipeSort",
+      "classification": "A",
+      "authoringKey": "screen:naturalSupernaturalSwipe",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "quick-recall-screen",
+      "name": "QuickRecallScreen",
+      "classification": "A",
+      "authoringKey": "screen:quickRecall",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "examiner-explains-screen",
+      "name": "WhatExaminersLookFor",
+      "classification": "A",
+      "authoringKey": "screen:examinerExplains",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "tiered-quiz-screen",
+      "name": "TieredQuizScreen",
+      "classification": "A",
+      "authoringKey": "screen:tieredquiz",
+      "reason": "Already bound to a live authoring entry."
+    },
+    {
+      "id": "weak-spot-recovery",
+      "name": "WeakSpotRecovery",
+      "classification": "C",
+      "authoringKey": null,
+      "reason": "Dormant behavioural intervention; ChapterPlayer integration was removed and it is never authored."
+    },
+    {
+      "id": "calculation-breakdown",
+      "name": "CalculationBreakdown",
+      "classification": "B",
+      "authoringKey": null,
+      "reason": "Product mandate: intended to be selectable for chapter building. Full contract already implemented and validated."
+    },
+    {
+      "id": "angle-explore",
+      "name": "AngleExplore",
+      "classification": "B",
+      "authoringKey": null,
+      "reason": "Maths chapters need a placeable angle figure; page owns the question, component owns the diagram."
+    },
+    {
+      "id": "area-perimeter-explore",
+      "name": "AreaPerimeterExplore",
+      "classification": "B",
+      "authoringKey": null,
+      "reason": "Mensuration sibling of AngleExplore, same authoring shape."
+    },
+    {
+      "id": "coordinate-plane-explore",
+      "name": "CoordinatePlaneExplore",
+      "classification": "B",
+      "authoringKey": null,
+      "reason": "Coordinate/graph figure, same authoring shape."
+    },
+    {
+      "id": "number-line-explore",
+      "name": "NumberLineExplore",
+      "classification": "B",
+      "authoringKey": null,
+      "reason": "Number-line figure, same authoring shape."
+    }
+  ],
+  "missingAuthoringEntries": [
+    {
+      "key": "block:read",
+      "level": "block",
+      "type": "read",
+      "owningRecord": "ScreenRenderer",
+      "recordId": "screen-renderer",
+      "handler": "ReadBlock",
+      "layout": "content",
+      "authoringName": "Read block",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "passive"
+      },
+      "contentUses": 261
+    },
+    {
+      "key": "block:quiz",
+      "level": "block",
+      "type": "quiz",
+      "owningRecord": "AnswerInteraction",
+      "recordId": "answer-interaction",
+      "handler": null,
+      "layout": "content",
+      "authoringName": "Quiz",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "retrieve"
+        ],
+        "interaction": "assessed"
+      },
+      "contentUses": 224
+    },
+    {
+      "key": "block:keypoint",
+      "level": "block",
+      "type": "keypoint",
+      "owningRecord": "ScreenRenderer",
+      "recordId": "screen-renderer",
+      "handler": "KeypointBlock",
+      "layout": "content",
+      "authoringName": "Key point",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "passive"
+      },
+      "contentUses": 83
+    },
+    {
+      "key": "block:examtip",
+      "level": "block",
+      "type": "examtip",
+      "owningRecord": "ScreenRenderer",
+      "recordId": "screen-renderer",
+      "handler": "ExamTipBlock",
+      "layout": "content",
+      "authoringName": "Exam tip",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "exam-technique"
+        ],
+        "interaction": "passive"
+      },
+      "contentUses": 62
+    },
+    {
+      "key": "block:boss",
+      "level": "block",
+      "type": "boss",
+      "owningRecord": "ExamQuestionFrame",
+      "recordId": "exam-question-frame",
+      "handler": null,
+      "layout": "content",
+      "authoringName": "Exam question frame",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "retrieve",
+          "apply"
+        ],
+        "interaction": "assessed"
+      },
+      "contentUses": 61
+    },
+    {
+      "key": "block:scenario",
+      "level": "block",
+      "type": "scenario",
+      "owningRecord": "ScreenRenderer",
+      "recordId": "screen-renderer",
+      "handler": "ScenarioBlock",
+      "layout": "content",
+      "authoringName": "Scenario block",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "apply"
+        ],
+        "interaction": "assessed"
+      },
+      "contentUses": 39
+    },
+    {
+      "key": "block:funfact",
+      "level": "block",
+      "type": "funfact",
+      "owningRecord": "ScreenRenderer",
+      "recordId": "screen-renderer",
+      "handler": "FunFactBlock",
+      "layout": "content",
+      "authoringName": "Fun fact",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "hook-tension"
+        ],
+        "interaction": "passive"
+      },
+      "contentUses": 26
+    },
+    {
+      "key": "block:misconceptionCheck",
+      "level": "block",
+      "type": "misconceptionCheck",
+      "owningRecord": "MisconceptionCheck",
+      "recordId": "misconception-check",
+      "handler": null,
+      "layout": "content",
+      "authoringName": "Misconception check",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "retrieve",
+          "exam-technique"
+        ],
+        "interaction": "assessed"
+      },
+      "contentUses": 20
+    },
+    {
+      "key": "block:timelineChain",
+      "level": "block",
+      "type": "timelineChain",
+      "owningRecord": "TimelineChainBlock",
+      "recordId": "timeline-chain-block",
+      "handler": null,
+      "layout": "content",
+      "authoringName": "Timeline chain block",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "sequence-process"
+        ],
+        "interaction": "reveal"
+      },
+      "contentUses": 8
+    },
+    {
+      "key": "screen:priorKnowledgeRecall",
+      "level": "screen",
+      "type": "priorKnowledgeRecall",
+      "owningRecord": "PriorKnowledgeRecall",
+      "recordId": "prior-knowledge-recall",
+      "handler": null,
+      "layout": "full",
+      "authoringName": "Prior knowledge recall",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "retrieve"
+        ],
+        "interaction": "assessed"
+      },
+      "contentUses": 6
+    },
+    {
+      "key": "block:oppositeQualitiesReveal",
+      "level": "block",
+      "type": "oppositeQualitiesReveal",
+      "owningRecord": "OppositeQualitiesReveal",
+      "recordId": "opposite-qualities-reveal",
+      "handler": null,
+      "layout": "content",
+      "authoringName": "Opposite qualities reveal",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "teach-comparison"
+        ],
+        "interaction": "reveal"
+      },
+      "contentUses": 2
+    },
+    {
+      "key": "block:misconception",
+      "level": "block",
+      "type": "misconception",
+      "owningRecord": "ScreenRenderer",
+      "recordId": "screen-renderer",
+      "handler": "MisconceptionBlock",
+      "layout": "content",
+      "authoringName": "Misconception reveal",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "exam-technique"
+        ],
+        "interaction": "reveal"
+      },
+      "contentUses": 2
+    },
+    {
+      "key": "block:mediaPlaceholder",
+      "level": "block",
+      "type": "mediaPlaceholder",
+      "owningRecord": "MediaPlaceholder",
+      "recordId": "media-placeholder",
+      "handler": null,
+      "layout": "content",
+      "authoringName": "Media placeholder",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "passive"
+      },
+      "contentUses": 1
+    },
+    {
+      "key": "block:reveal",
+      "level": "block",
+      "type": "reveal",
+      "owningRecord": "ScreenRenderer",
+      "recordId": "screen-renderer",
+      "handler": "RevealBlock",
+      "layout": "content",
+      "authoringName": "Reveal block",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "reveal"
+      },
+      "contentUses": 1
+    },
+    {
+      "key": "block:hotspot",
+      "level": "block",
+      "type": "hotspot",
+      "owningRecord": "ScreenRenderer",
+      "recordId": "screen-renderer",
+      "handler": "HotspotBlock",
+      "layout": "content",
+      "authoringName": "Hotspot block",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "teach-mechanism"
+        ],
+        "interaction": "reveal"
+      },
+      "contentUses": 0
+    },
+    {
+      "key": "block:timeline",
+      "level": "block",
+      "type": "timeline",
+      "owningRecord": "ScreenRenderer",
+      "recordId": "screen-renderer",
+      "handler": "TimelineBlock",
+      "layout": "content",
+      "authoringName": "Timeline block",
+      "status": "active",
+      "pedagogy": {
+        "functions": [
+          "sequence-process"
+        ],
+        "interaction": "passive"
+      },
+      "contentUses": 0
+    },
+    {
+      "key": "screen:standard",
+      "level": "screen",
+      "type": "standard",
+      "owningRecord": "ScreenRenderer",
+      "recordId": "screen-renderer",
+      "handler": "ScreenContentRenderer",
+      "layout": "content",
+      "authoringName": "Standard content screen",
+      "status": "active",
+      "pedagogy": null,
+      "contentUses": 0
+    }
+  ],
+  "liveAuthoringEntryIndex": [
+    {
+      "key": "block:acronymMemorise",
+      "owningRecord": "AcronymMemorise",
+      "handler": null,
+      "status": "active",
+      "contentUses": 1
+    },
+    {
+      "key": "block:boss",
+      "owningRecord": "ExamQuestionFrame",
+      "handler": null,
+      "status": "active",
+      "contentUses": 61
+    },
+    {
+      "key": "block:builder",
+      "owningRecord": "BuilderBlock",
+      "handler": null,
+      "status": "active",
+      "contentUses": 1
+    },
+    {
+      "key": "block:colsort",
+      "owningRecord": "ColSortBlock",
+      "handler": null,
+      "status": "active",
+      "contentUses": 25
+    },
+    {
+      "key": "block:examtip",
+      "owningRecord": "ScreenRenderer",
+      "handler": "ExamTipBlock",
+      "status": "active",
+      "contentUses": 62
+    },
+    {
+      "key": "block:explainReveal",
+      "owningRecord": "ExplainReveal",
+      "handler": null,
+      "status": "active",
+      "contentUses": 4
+    },
+    {
+      "key": "block:fillblanks",
+      "owningRecord": "FillInTheBlanksBlock",
+      "handler": null,
+      "status": "active",
+      "contentUses": 20
+    },
+    {
+      "key": "block:flashcards",
+      "owningRecord": "FlashcardsBlock",
+      "handler": null,
+      "status": "active",
+      "contentUses": 10
+    },
+    {
+      "key": "block:funfact",
+      "owningRecord": "ScreenRenderer",
+      "handler": "FunFactBlock",
+      "status": "active",
+      "contentUses": 26
+    },
+    {
+      "key": "block:graphView",
+      "owningRecord": "GraphView",
+      "handler": null,
+      "status": "active",
+      "contentUses": 0
+    },
+    {
+      "key": "block:hotspot",
+      "owningRecord": "ScreenRenderer",
+      "handler": "HotspotBlock",
+      "status": "active",
+      "contentUses": 0
+    },
+    {
+      "key": "block:keypoint",
+      "owningRecord": "ScreenRenderer",
+      "handler": "KeypointBlock",
+      "status": "active",
+      "contentUses": 83
+    },
+    {
+      "key": "block:mediaPlaceholder",
+      "owningRecord": "MediaPlaceholder",
+      "handler": null,
+      "status": "active",
+      "contentUses": 1
+    },
+    {
+      "key": "block:memoryHook",
+      "owningRecord": "MemoryHook",
+      "handler": null,
+      "status": "active",
+      "contentUses": 0
+    },
+    {
+      "key": "block:misconception",
+      "owningRecord": "ScreenRenderer",
+      "handler": "MisconceptionBlock",
+      "status": "active",
+      "contentUses": 2
+    },
+    {
+      "key": "block:misconceptionCheck",
+      "owningRecord": "MisconceptionCheck",
+      "handler": null,
+      "status": "active",
+      "contentUses": 20
+    },
+    {
+      "key": "block:oppositeQualitiesReveal",
+      "owningRecord": "OppositeQualitiesReveal",
+      "handler": null,
+      "status": "active",
+      "contentUses": 2
+    },
+    {
+      "key": "block:quiz",
+      "owningRecord": "AnswerInteraction",
+      "handler": null,
+      "status": "active",
+      "contentUses": 224
+    },
+    {
+      "key": "block:read",
+      "owningRecord": "ScreenRenderer",
+      "handler": "ReadBlock",
+      "status": "active",
+      "contentUses": 261
+    },
+    {
+      "key": "block:reveal",
+      "owningRecord": "ScreenRenderer",
+      "handler": "RevealBlock",
+      "status": "active",
+      "contentUses": 1
+    },
+    {
+      "key": "block:scenario",
+      "owningRecord": "ScreenRenderer",
+      "handler": "ScenarioBlock",
+      "status": "active",
+      "contentUses": 39
+    },
+    {
+      "key": "block:spotTheError",
+      "owningRecord": "SpotTheError",
+      "handler": null,
+      "status": "active",
+      "contentUses": 1
+    },
+    {
+      "key": "block:theoryCompare",
+      "owningRecord": "TheoryCompare",
+      "handler": null,
+      "status": "active",
+      "contentUses": 4
+    },
+    {
+      "key": "block:timeline",
+      "owningRecord": "ScreenRenderer",
+      "handler": "TimelineBlock",
+      "status": "active",
+      "contentUses": 0
+    },
+    {
+      "key": "block:timelineChain",
+      "owningRecord": "TimelineChainBlock",
+      "handler": null,
+      "status": "active",
+      "contentUses": 8
+    },
+    {
+      "key": "screen:beforeAfterSlider",
+      "owningRecord": "BeforeAfterImageSlider",
+      "handler": null,
+      "status": "active",
+      "contentUses": 1
+    },
+    {
+      "key": "screen:centreImageReveal",
+      "owningRecord": "CentreImageReveal",
+      "handler": null,
+      "status": "active",
+      "contentUses": 1
+    },
+    {
+      "key": "screen:cinematic",
+      "owningRecord": "CinematicRevealMoment",
+      "handler": null,
+      "status": "active",
+      "contentUses": 2
+    },
+    {
+      "key": "screen:cinematicCarousel",
+      "owningRecord": "CinematicCarousel",
+      "handler": null,
+      "status": "active",
+      "contentUses": 0
+    },
+    {
+      "key": "screen:conceptReveal",
+      "owningRecord": "ConceptReveal",
+      "handler": null,
+      "status": "active",
+      "contentUses": 18
+    },
+    {
+      "key": "screen:examinerExplains",
+      "owningRecord": "ExaminerExplainsScreen",
+      "handler": null,
+      "status": "active",
+      "contentUses": 9
+    },
+    {
+      "key": "screen:faceExaminer",
+      "owningRecord": "FaceTheExaminer",
+      "handler": null,
+      "status": "active",
+      "contentUses": 6
+    },
+    {
+      "key": "screen:factorWeb",
+      "owningRecord": "FactorWeb",
+      "handler": null,
+      "status": "active",
+      "contentUses": 3
+    },
+    {
+      "key": "screen:guidedChoiceCarousel",
+      "owningRecord": "GuidedChoiceCarousel",
+      "handler": null,
+      "status": "active",
+      "contentUses": 3
+    },
+    {
+      "key": "screen:guidedExamResponse",
+      "owningRecord": "GuidedExamResponse",
+      "handler": null,
+      "status": "active",
+      "contentUses": 4
+    },
+    {
+      "key": "screen:infographic",
+      "owningRecord": "Infographic",
+      "handler": null,
+      "status": "active",
+      "contentUses": 1
+    },
+    {
+      "key": "screen:interactiveImage",
+      "owningRecord": "InteractiveHotspotImage",
+      "handler": null,
+      "status": "active",
+      "contentUses": 9
+    },
+    {
+      "key": "screen:keyFigureReveal",
+      "owningRecord": "KeyFigureReveal",
+      "handler": null,
+      "status": "active",
+      "contentUses": 6
+    },
+    {
+      "key": "screen:matchingTask",
+      "owningRecord": "MatchingTask",
+      "handler": null,
+      "status": "active",
+      "contentUses": 9
+    },
+    {
+      "key": "screen:misconceptionCheck",
+      "owningRecord": "MisconceptionCheck",
+      "handler": null,
+      "status": "derived",
+      "contentUses": 20
+    },
+    {
+      "key": "screen:naturalSupernaturalSwipe",
+      "owningRecord": "SwipeSort",
+      "handler": null,
+      "status": "active",
+      "contentUses": 6
+    },
+    {
+      "key": "screen:oppositeQualitiesReveal",
+      "owningRecord": "OppositeQualitiesReveal",
+      "handler": null,
+      "status": "active",
+      "contentUses": 2
+    },
+    {
+      "key": "screen:orderedRouteTask",
+      "owningRecord": "OrderedRouteTask",
+      "handler": null,
+      "status": "active",
+      "contentUses": 1
+    },
+    {
+      "key": "screen:priorKnowledgeRecall",
+      "owningRecord": "PriorKnowledgeRecall",
+      "handler": null,
+      "status": "active",
+      "contentUses": 6
+    },
+    {
+      "key": "screen:quickRecall",
+      "owningRecord": "QuickRecallScreen",
+      "handler": null,
+      "status": "active",
+      "contentUses": 21
+    },
+    {
+      "key": "screen:quoteAnalyser",
+      "owningRecord": "QuoteAnalyser",
+      "handler": null,
+      "status": "active",
+      "contentUses": 1
+    },
+    {
+      "key": "screen:standard",
+      "owningRecord": "ScreenRenderer",
+      "handler": "ScreenContentRenderer",
+      "status": "active",
+      "contentUses": 0
+    },
+    {
+      "key": "screen:tieredquiz",
+      "owningRecord": "TieredQuizScreen",
+      "handler": null,
+      "status": "active",
+      "contentUses": 9
+    },
+    {
+      "key": "screen:timelineCanvas",
+      "owningRecord": "TimelineCanvas",
+      "handler": null,
+      "status": "active",
+      "contentUses": 1
+    },
+    {
+      "key": "screen:timelineChain",
+      "owningRecord": "TimelineChain",
+      "handler": null,
+      "status": "active",
+      "contentUses": 8
+    },
+    {
+      "key": "screen:visualLearning",
+      "owningRecord": "VisualLearning",
+      "handler": null,
+      "status": "active",
+      "contentUses": 8
+    }
+  ]
+}
