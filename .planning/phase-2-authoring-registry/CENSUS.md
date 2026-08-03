@@ -162,10 +162,15 @@ component) and are the correct population for
    scoped list of repaired chapters — a different set, for a different job, on a
    different population. Only `appliedscenario` and `examscored` appear in both,
    and there is no contradiction because that test covers `TARGET_IDS` only
-   while the registry cap is global. It was left alone.
-   `LEGACY_BLOCK_TYPES` therefore still has no consumer. It is re-exported as
-   specified, and is now generated rather than hand-derived, but nothing reads
-   it.
+   while the registry cap is global. It was left alone, and was never a consumer
+   of `LEGACY_BLOCK_TYPES`.
+
+   **Final outcome:** with no consumer anywhere in the codebase, the export was
+   **removed during the Phase 2 seal** — from the generator, the generated
+   projection and the `screenRegistry.js` import and re-export. Legacy `status`
+   and `replacement` remain on every generated registry definition, so the same
+   information is still available where the runtime already reads it. No
+   separate derived export remains.
 5. **`status: 'derived'` is load-bearing** and correctly excluded from the
    full-screen list — the integrity contract must special-case it, not treat it
    as an unrouted defect.
