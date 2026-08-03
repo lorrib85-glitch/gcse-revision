@@ -55,7 +55,6 @@ export const SCREEN_REGISTRY = Object.freeze({
   infographic: screen('Infographic', 'Infographic', {
     required: [{ path: 'media', kind: 'object' }],
   }),
-  choiceReveal: screen('Choice reveal', 'ChoiceRevealScreen', { layout: 'full' }),
   quickRecall: screen('Quick recall', 'QuickRecallScreen', {
     layout: 'full',
     continuation: 'component',

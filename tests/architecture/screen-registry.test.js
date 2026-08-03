@@ -141,9 +141,22 @@ describe('governed screen registry', () => {
       .toContain('onTextRevealStart={() => setCinematicHeaderVisible(true)}')
   })
 
+  // choiceReveal named ChoiceRevealScreen, a component that has never existed in
+  // this repository — the name was invented when the registry was created, to
+  // satisfy the rule that an entry must name a component. Its route was inline
+  // JSX, it had no authored use, and it declared player-owned continuation while
+  // rendering its own ContinueCTA, so ChapterPlayer would have shown a second
+  // Continue button beside it.
+  it('leaves no trace of the retired choiceReveal type', () => {
+    expect(SCREEN_REGISTRY.choiceReveal).toBeUndefined()
+    expect(FULL_SCREEN_RENDERER_TYPES).not.toContain('choiceReveal')
+    expect(read('src/components/layout/ScreenRenderer.jsx')).not.toContain('choiceReveal')
+    expect(read('src/components/layout/ScreenRenderer.jsx')).not.toContain('ChoiceRevealScreen')
+  })
+
   it('has no authored content left using any retired screen type', async () => {
     const chapters = await loadAllChapters()
-    const retired = ['visualNarrative', 'cinematicReveal', 'video']
+    const retired = ['visualNarrative', 'cinematicReveal', 'video', 'choiceReveal']
     const offenders = []
     for (const [id, chapter] of chapters) {
       ;(chapter.screens || []).forEach((screen, index) => {

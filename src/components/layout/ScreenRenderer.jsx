@@ -13,7 +13,6 @@ import TieredQuizScreen from '../learning/TieredQuizScreen.jsx'
 import CinematicRevealMoment from '../learning/CinematicRevealMoment.jsx'
 import ConceptReveal from '../learning/ConceptReveal.jsx'
 import LearningHeader from '../core/LearningHeader.jsx'
-import ContinueCTA from '../core/ContinueCTA.jsx'
 import FaceTheExaminer from '../learning/FaceTheExaminer.jsx'
 import GuidedExamResponse from '../learning/GuidedExamResponse.jsx'
 import InteractiveHotspotImage from '../learning/InteractiveHotspotImage.jsx'
@@ -693,7 +692,6 @@ export function ScreenContentRenderer({ screen, subject, onScreenComplete }) {
 
 
 export const FULL_SCREEN_RENDERER_TYPES = Object.freeze([
-  "choiceReveal",
   "quickRecall",
   "tieredquiz",
   "faceExaminer",
@@ -795,43 +793,6 @@ export default function ScreenRenderer({
   if (definition.status !== 'derived' && !FULL_SCREEN_RENDERER_TYPES.includes(authoredType)) {
     return <UnsupportedScreen screen={cur} chapter={chapter} definition={definition} />
   }
-  // ── Choice-reveal interstitial — brief narrative after carousel selection ─
-  if (cur?.type === 'choiceReveal') {
-    const goToNext = () => {
-      if (cur.nextId) {
-        const targetIdx = chapter.screens.findIndex(s => s.id === cur.nextId)
-        if (targetIdx >= 0) { setScreen(targetIdx); setAnimKey(k => k + 1); scrollToTop(); return }
-      }
-      isLast ? handleFinish() : go(1)
-    }
-    return (
-      <>
-      <div style={{ position: 'fixed', inset: 0, background: GENERAL.backgroundApp, display: 'flex', flexDirection: 'column', zIndex: 60 }}>
-        <LearningHeader {...H} visible={true} />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '0 24px 48px' }}>
-          <div style={{ maxWidth: 480, margin: '0 auto', width: '100%' }}>
-            {(cur.paragraphs || []).map((p, i) => (
-              <p key={i} style={{
-                ...(i === 0 ? TYPE.displaySection : TYPE.body),
-                fontSize: i === 0 ? 'clamp(1.2rem, 4.5vw, 1.5rem)' : 'clamp(.88rem, 3vw, 1rem)',
-                color: i === 0 ? '#F5F7FB' : 'rgba(245,237,216,.62)',
-                margin: i === 0 ? '0 0 16px' : '0 0 10px',
-                animation: `crSlideIn 380ms cubic-bezier(.16,1,.3,1) ${i * 80}ms both`,
-              }}>{p}</p>
-            ))}
-            <ContinueCTA
-              onClick={goToNext}
-              accent={subjectColor}
-              style={{ marginTop: 28 }}
-            />
-          </div>
-        </div>
-        <style>{`@keyframes crSlideIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }`}</style>
-      </div>
-      </>
-    )
-  }
-
   // ── Full-screen QuickRecallScreen as in-content screen ────────────────────
   if (cur?.type === 'quickRecall') {
     return (
