@@ -393,12 +393,66 @@ lands across several internal commits, but the authority moves exactly once.
 
 ---
 
-## 7. Open — awaiting your decisions
+## 7. Decisions
 
-1. `choiceReveal` — **delete** (recommended) or extract a real component?
-2. Renderer-owned blocks — **(b) renderer-owned family** (recommended) or
-   (a) extract nine components?
-3. `visualNarrative` / `cinematicReveal` / `video` — **delete** (recommended) or
-   carry as compatibility entries despite zero live usage?
+### Decision 1 — `choiceReveal`: **SETTLED — delete the type**
 
-Implementation does not start until these are answered.
+Remove the authoring entry, the `FULL_SCREEN_RENDERER_TYPES` entry and the
+inline `ScreenRenderer` branch. No compatibility entry, no new component.
+
+The four evidence findings are retained above and must survive the deletion as
+the permanent record of why it went (§4, Decision 1):
+`ChoiceRevealScreen` has never existed; `choiceReveal` has zero authored uses;
+no compatibility requirement depends on it; its continuation behaviour is
+self-contradictory.
+
+Guards required by this decision:
+- no authored content in `src/content/**` uses the removed type;
+- no stale reference to it remains in the registry projection, in
+  `ScreenRenderer.jsx`, or in `FULL_SCREEN_RENDERER_TYPES`.
+
+### Decision 2 — renderer-owned blocks: **SETTLED — renderer-owned family**
+
+`ScreenRenderer`'s catalogue record owns the nine authoring entries as an
+explicit renderer-owned family. The authoring type is real; its handler is
+private to `ScreenRenderer`; it is not a standalone reusable component; and it
+requires no fake catalogue record or invented source file.
+
+No extraction is performed for catalogue symmetry, and no mixed model is used —
+usage counts do not decide ownership. Implementation stays private for this
+migration; extraction happens later only when reuse, testing isolation or
+product design gives a genuine reason.
+
+Each renderer-owned entry retains: `type`, `authoringName`, `level`, `layout`,
+`status`, `replacement`, `required`, `requiredAny`, `continuation`,
+`headerMode`, **and the current private handler identity**.
+
+Validation required by this decision:
+- every renderer-owned authoring entry names a private handler that actually
+  exists in `ScreenRenderer.jsx`;
+- every governed private handler is represented by exactly one authoring entry,
+  or is explicitly marked non-authorable;
+- no standalone component record claims ownership of the same implementation;
+- the generated runtime projection preserves the current registry values
+  exactly;
+- zero authored uses alone never silently retire an active type.
+
+### Decision 3 — **PAUSED and split**
+
+Not to be taken as one group. See
+[`DECISION-3-CINEMATIC.md`](./DECISION-3-CINEMATIC.md) for the focused
+comparison.
+
+- **3a — `cinematicReveal` + `video`:** recommendation is to retire both, on
+  stronger evidence than originally offered — they were never a route to
+  `CinematicRevealMoment`, share none of `cinematic`'s data shape, and their
+  `headerMode: 'cinematic'` + `layout: 'content'` combination permanently hides
+  the learning header. Awaiting your call.
+- **3b — `visualNarrative`:** recommendation is now to **defer it to a later
+  phase** and project it unchanged. It is the sole runtime entry point into
+  `visualNarrativeCompat.js`, and CLAUDE.md plus the `TimelineChain` record both
+  state that the legacy data shape is still supported — a constitutional
+  question that does not belong in a mechanical authority flip. Awaiting your
+  call.
+
+Implementation does not start until 3a and 3b are answered.
