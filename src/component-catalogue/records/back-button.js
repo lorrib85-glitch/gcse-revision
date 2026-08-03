@@ -82,5 +82,6 @@ export default {
       'Adding a text label',
       'Allowing a competing back-navigation implementation anywhere in the app'
     ]
-  }
+  },
+  authoring: null
 }

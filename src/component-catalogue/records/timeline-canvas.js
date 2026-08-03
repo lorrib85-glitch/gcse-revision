@@ -60,5 +60,37 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'timelineCanvas',
+        level: 'screen',
+        authoringName: 'Timeline canvas',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [
+          [
+            {
+              path: 'events',
+              kind: 'array'
+            },
+            {
+              path: 'items',
+              kind: 'array'
+            },
+            {
+              path: 'steps',
+              kind: 'array'
+            }
+          ]
+        ],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

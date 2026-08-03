@@ -68,5 +68,31 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'beforeAfterSlider',
+        level: 'screen',
+        authoringName: 'Before and after image slider',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'beforeSrc',
+            kind: 'string'
+          },
+          {
+            path: 'afterSrc',
+            kind: 'string'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

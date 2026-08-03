@@ -50,5 +50,27 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'mediaPlaceholder',
+        level: 'block',
+        authoringName: 'Media placeholder',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'kind',
+            kind: 'string'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

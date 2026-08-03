@@ -102,5 +102,6 @@ export default {
       'Adding a global success toast for normal saves',
       'Moving criticality, dedupe or retry decisions into this component'
     ]
-  }
+  },
+  authoring: null
 }

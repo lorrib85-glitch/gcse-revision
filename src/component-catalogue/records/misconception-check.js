@@ -63,5 +63,35 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'misconceptionCheck',
+        level: 'block',
+        authoringName: 'Misconception check',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      },
+      {
+        type: 'misconceptionCheck',
+        level: 'screen',
+        authoringName: 'Misconception check screen',
+        layout: 'full',
+        status: 'derived',
+        replacement: null,
+        required: [],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

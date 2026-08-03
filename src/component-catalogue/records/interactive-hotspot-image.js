@@ -68,5 +68,31 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'interactiveImage',
+        level: 'screen',
+        authoringName: 'Interactive hotspot image',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'image',
+            kind: 'string'
+          },
+          {
+            path: 'hotspots',
+            kind: 'array'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

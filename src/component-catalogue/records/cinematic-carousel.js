@@ -60,5 +60,27 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'cinematicCarousel',
+        level: 'screen',
+        authoringName: 'Cinematic carousel',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'items',
+            kind: 'array'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

@@ -425,12 +425,30 @@ describe('authority boundaries hold', () => {
     // Matches any specifier reaching the catalogue, however it is spelled:
     // `src/component-catalogue/...`, a relative `../../component-catalogue/...`,
     // a bare side-effect import, and dynamic `import()`.
+    //
+    // Deliberately scoped to import specifiers rather than any mention of the
+    // path. Phase 2 made the catalogue the authority for authoring entries, so
+    // runtime files legitimately *name* it when explaining where their contents
+    // come from — src/data/screenRegistry.js says the entries are owned by
+    // src/component-catalogue/records/**, and that provenance is worth stating.
+    // A comment ships no code; an import ships the whole governance tree. The
+    // boundary this guard exists to defend is the second one.
     const reachesCatalogue = /(?:from\s*|import\s*\(?\s*)['"][^'"]*component-catalogue\//
-    const importers = productionFiles.filter(file => {
-      const source = read(file)
-      return reachesCatalogue.test(source) || source.includes(`${CATALOGUE_ROOT}/`)
-    })
+    const importers = productionFiles.filter(file => reachesCatalogue.test(read(file)))
     expect(importers).toEqual([])
+  })
+
+  it('keeps the generated authoring projection free of any catalogue import', () => {
+    // The projection is the runtime's side of the boundary: generated *from*
+    // build-time governance data, but carrying none of it and importing none of
+    // it. If the generator ever emitted a re-export instead of literal values,
+    // this is what would catch it.
+    const projection = read('src/data/generated/componentAuthoringRegistry.js')
+    expect(projection).not.toMatch(/(?:from\s*|import\s*\(?\s*)['"]/)
+    expect(projection).toContain('GENERATED FILE — DO NOT EDIT')
+    for (const prose of ['criticality', 'invariant', 'removalCondition', 'useWhen', 'rhythmRole']) {
+      expect(projection, prose).not.toContain(prose)
+    }
   })
 
   it('no longer ships a separate locked-component document', () => {

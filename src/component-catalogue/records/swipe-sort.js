@@ -57,5 +57,22 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'naturalSupernaturalSwipe',
+        level: 'screen',
+        authoringName: 'Natural or supernatural swipe sort',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

@@ -66,5 +66,37 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'builder',
+        level: 'block',
+        authoringName: 'Builder block',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [
+          [
+            {
+              path: 'pieces',
+              kind: 'array'
+            },
+            {
+              path: 'options',
+              kind: 'array'
+            },
+            {
+              path: 'items',
+              kind: 'array'
+            }
+          ]
+        ],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

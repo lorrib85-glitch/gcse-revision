@@ -85,5 +85,6 @@ export default {
       'Adding answer logic instead of delegating to AnswerInteraction',
       'Changing the cinematic framing approach'
     ]
-  }
+  },
+  authoring: null
 }

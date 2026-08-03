@@ -166,5 +166,6 @@ export default {
       'Adding scoring, streaks or progress tracking inside the component',
       'Registering, routing or documenting a presentation variant as a separate component'
     ]
-  }
+  },
+  authoring: null
 }

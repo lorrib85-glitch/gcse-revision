@@ -84,5 +84,6 @@ export default {
       'Changing typography, spacing or colour logic',
       'Allowing an inline cinematic "Continue →" implementation'
     ]
-  }
+  },
+  authoring: null
 }

@@ -54,5 +54,35 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'oppositeQualitiesReveal',
+        level: 'block',
+        authoringName: 'Opposite qualities reveal',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null
+      },
+      {
+        type: 'oppositeQualitiesReveal',
+        level: 'screen',
+        authoringName: 'Opposite qualities reveal',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

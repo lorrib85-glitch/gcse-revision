@@ -62,5 +62,31 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'colsort',
+        level: 'block',
+        authoringName: 'Column sort',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'columns',
+            kind: 'array'
+          },
+          {
+            path: 'items',
+            kind: 'array'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

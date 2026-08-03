@@ -100,5 +100,6 @@ export default {
       'Changing height, radius, font or colour logic',
       'Allowing an inline progression-button implementation'
     ]
-  }
+  },
+  authoring: null
 }

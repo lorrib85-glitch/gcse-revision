@@ -107,5 +107,6 @@ export default {
       'Adding a new variant',
       'Allowing a local ProgressDots or one-off carousel-dot implementation'
     ]
-  }
+  },
+  authoring: null
 }

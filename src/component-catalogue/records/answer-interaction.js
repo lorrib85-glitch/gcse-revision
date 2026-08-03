@@ -101,5 +101,31 @@ export default {
       'Adding a new answer type',
       'Changing the public API (block, subject, onAnswer, onContinue)'
     ]
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'quiz',
+        level: 'block',
+        authoringName: 'Quiz',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'question',
+            kind: 'string'
+          },
+          {
+            path: 'options',
+            kind: 'array'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

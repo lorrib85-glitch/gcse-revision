@@ -71,5 +71,27 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'guidedExamResponse',
+        level: 'screen',
+        authoringName: 'Guided exam response',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'exam',
+            kind: 'object'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

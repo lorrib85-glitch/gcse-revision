@@ -68,5 +68,22 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'priorKnowledgeRecall',
+        level: 'screen',
+        authoringName: 'Prior knowledge recall',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

@@ -82,5 +82,6 @@ export default {
       'Adding interaction logic to a display-only component',
       'Allowing an inline progress-bar implementation for chapter screens'
     ]
-  }
+  },
+  authoring: null
 }

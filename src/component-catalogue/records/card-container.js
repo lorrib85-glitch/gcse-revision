@@ -79,5 +79,6 @@ export default {
       'Changing glow behaviour',
       'Altering background image treatment'
     ]
-  }
+  },
+  authoring: null
 }

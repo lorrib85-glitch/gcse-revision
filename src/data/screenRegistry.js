@@ -1,314 +1,21 @@
 // Governed chapter screen registry.
 //
-// This is the authoring/runtime contract for chapter screen and nested block
-// types. Component rendering lives in ScreenRenderer.jsx, while this file stays
+// The authoring contract for chapter screen and nested block types. The entries
+// themselves are no longer authored here: they are owned by the component
+// catalogue (`src/component-catalogue/records/**` plus the compatibility
+// registry) and projected into `generated/componentAuthoringRegistry.js`.
+//
+// What lives here is the handwritten behaviour that reads them — resolution,
+// continuation ownership, header mode and chapter validation. This file stays
 // pure so chapter content can be validated in architecture tests and scripts.
 
-const COMPONENT_REGISTRY = 'docs/components/COMPONENT_REGISTRY.md'
+import {
+  SCREEN_REGISTRY,
+  BLOCK_REGISTRY,
+  LEGACY_BLOCK_TYPES,
+} from './generated/componentAuthoringRegistry.js'
 
-function entry({
-  authoringName,
-  component,
-  level,
-  layout = 'content',
-  status = 'active',
-  replacement = null,
-  contract = COMPONENT_REGISTRY,
-  required = [],
-  requiredAny = [],
-  continuation = 'player',
-  headerMode = 'standard',
-}) {
-  return Object.freeze({
-    authoringName,
-    component,
-    level,
-    layout,
-    status,
-    replacement,
-    contract,
-    required,
-    requiredAny,
-    continuation,
-    headerMode,
-  })
-}
-
-const screen = (authoringName, component, options = {}) => entry({
-  authoringName,
-  component,
-  level: 'screen',
-  ...options,
-})
-
-const block = (authoringName, component, options = {}) => entry({
-  authoringName,
-  component,
-  level: 'block',
-  ...options,
-})
-
-export const SCREEN_REGISTRY = Object.freeze({
-  standard: screen('Standard content screen', 'ScreenContentRenderer', {
-    required: [{ path: 'blocks', kind: 'array' }],
-  }),
-  infographic: screen('Infographic', 'Infographic', {
-    required: [{ path: 'media', kind: 'object' }],
-  }),
-  quickRecall: screen('Quick recall', 'QuickRecallScreen', {
-    layout: 'full',
-    continuation: 'component',
-    required: [{ path: 'questions', kind: 'array' }],
-  }),
-  tieredquiz: screen('Tiered quiz', 'TieredQuizScreen', {
-    layout: 'full',
-    continuation: 'component',
-    required: [{ path: 'tiers', kind: 'array' }],
-  }),
-  faceExaminer: screen('Face the examiner', 'FaceTheExaminer', {
-    layout: 'full',
-    continuation: 'component',
-    required: [{ path: 'examiner', kind: 'object' }],
-  }),
-  guidedExamResponse: screen('Guided exam response', 'GuidedExamResponse', {
-    layout: 'full',
-    continuation: 'component',
-    required: [{ path: 'exam', kind: 'object' }],
-  }),
-  naturalSupernaturalSwipe: screen('Natural or supernatural swipe sort', 'SwipeSort', {
-    layout: 'full',
-    continuation: 'component',
-  }),
-  orderedRouteTask: screen('Ordered route task', 'OrderedRouteTask', {
-    layout: 'full',
-    continuation: 'component',
-    requiredAny: [[
-      { path: 'items', kind: 'array' },
-      { path: 'steps', kind: 'array' },
-      { path: 'cards', kind: 'array' },
-      { path: 'stages', kind: 'array' },
-    ]],
-  }),
-  matchingTask: screen('Matching task', 'MatchingTask', {
-    layout: 'full',
-    continuation: 'component',
-    requiredAny: [[
-      { path: 'items', kind: 'array' },
-      { path: 'pairs', kind: 'array' },
-      { path: 'cards', kind: 'array' },
-    ]],
-  }),
-  visualLearning: screen('Visual learning sequence', 'VisualLearning', {
-    layout: 'full',
-    continuation: 'component',
-    requiredAny: [[
-      { path: 'scenes', kind: 'array' },
-      { path: 'steps', kind: 'array' },
-      { path: 'items', kind: 'array' },
-    ]],
-  }),
-  keyFigureReveal: screen('Key figure reveal', 'KeyFigureReveal', {
-    layout: 'full',
-    continuation: 'component',
-  }),
-  guidedChoiceCarousel: screen('Guided choice carousel', 'GuidedChoiceCarousel', {
-    layout: 'full',
-    continuation: 'component',
-    required: [{ path: 'options', kind: 'array' }],
-  }),
-  interactiveImage: screen('Interactive hotspot image', 'InteractiveHotspotImage', {
-    layout: 'full',
-    continuation: 'component',
-    required: [
-      { path: 'image', kind: 'string' },
-      { path: 'hotspots', kind: 'array' },
-    ],
-  }),
-  centreImageReveal: screen('Centre image reveal', 'CentreImageReveal', {
-    layout: 'full',
-    continuation: 'component',
-  }),
-  timelineChain: screen('Timeline chain', 'TimelineChain', {
-    layout: 'full',
-    continuation: 'component',
-    requiredAny: [[
-      { path: 'events', kind: 'array' },
-      { path: 'steps', kind: 'array' },
-      { path: 'items', kind: 'array' },
-    ]],
-  }),
-  timelineCanvas: screen('Timeline canvas', 'TimelineCanvas', {
-    layout: 'full',
-    continuation: 'component',
-    requiredAny: [[
-      { path: 'events', kind: 'array' },
-      { path: 'items', kind: 'array' },
-      { path: 'steps', kind: 'array' },
-    ]],
-  }),
-  cinematicCarousel: screen('Cinematic carousel', 'CinematicCarousel', {
-    layout: 'full',
-    continuation: 'component',
-    required: [{ path: 'items', kind: 'array' }],
-  }),
-  oppositeQualitiesReveal: screen('Opposite qualities reveal', 'OppositeQualitiesReveal', {
-    layout: 'full',
-  }),
-  examinerExplains: screen('What examiners look for', 'ExaminerExplainsScreen', {
-    layout: 'full',
-    continuation: 'component',
-  }),
-  priorKnowledgeRecall: screen('Prior knowledge recall', 'PriorKnowledgeRecall', {
-    layout: 'full',
-    continuation: 'component',
-  }),
-  conceptReveal: screen('Concept reveal', 'ConceptReveal', {
-    layout: 'full',
-    continuation: 'component',
-    required: [{ path: 'steps', kind: 'array' }],
-  }),
-  beforeAfterSlider: screen('Before and after image slider', 'BeforeAfterImageSlider', {
-    layout: 'full',
-    continuation: 'component',
-    required: [
-      { path: 'beforeSrc', kind: 'string' },
-      { path: 'afterSrc', kind: 'string' },
-    ],
-  }),
-  cinematic: screen('Cinematic reveal moment', 'CinematicRevealMoment', {
-    layout: 'full',
-    continuation: 'component',
-    headerMode: 'cinematic',
-    requiredAny: [[
-      { path: 'videoSrc', kind: 'string' },
-      { path: 'fallbackImage', kind: 'string' },
-    ]],
-  }),
-  factorWeb: screen('Factor web', 'FactorWeb', {
-    layout: 'full',
-    continuation: 'component',
-  }),
-  quoteAnalyser: screen('Quote analyser', 'QuoteAnalyser', {
-    layout: 'full',
-    continuation: 'component',
-  }),
-  misconceptionCheck: screen('Misconception check screen', 'MisconceptionCheck', {
-    layout: 'full',
-    status: 'derived',
-    continuation: 'component',
-  }),
-})
-
-export const BLOCK_REGISTRY = Object.freeze({
-  read: block('Read block', 'ReadBlock', { required: [{ path: 'text', kind: 'string' }] }),
-  keypoint: block('Key point', 'KeypointBlock', {
-    requiredAny: [[
-      { path: 'text', kind: 'string' },
-      { path: 'points', kind: 'array' },
-    ]],
-  }),
-  funfact: block('Fun fact', 'FunFactBlock', { required: [{ path: 'text', kind: 'string' }] }),
-  examtip: block('Exam tip', 'ExamTipBlock', {
-    requiredAny: [[
-      { path: 'text', kind: 'string' },
-      { path: 'tip', kind: 'string' },
-    ]],
-  }),
-  timeline: block('Timeline block', 'TimelineBlock', { required: [{ path: 'events', kind: 'array' }] }),
-  reveal: block('Reveal block', 'RevealBlock', {
-    required: [
-      { path: 'prompt', kind: 'string' },
-      { path: 'answer', kind: 'string' },
-    ],
-  }),
-  quiz: block('Quiz', 'AnswerInteraction', {
-    required: [
-      { path: 'question', kind: 'string' },
-      { path: 'options', kind: 'array' },
-    ],
-  }),
-  flashcards: block('Flashcards', 'FlashcardsBlock', { required: [{ path: 'cards', kind: 'array' }] }),
-  hotspot: block('Hotspot block', 'HotspotBlock'),
-  misconception: block('Misconception reveal', 'MisconceptionBlock', { required: [{ path: 'mistakes', kind: 'array' }] }),
-  acronymMemorise: block('Acronym memorise', 'AcronymMemorise'),
-  memoryHook: block('Memory hook', 'MemoryHook'),
-  builder: block('Builder block', 'BuilderBlock', {
-    continuation: 'component',
-    requiredAny: [[
-      { path: 'pieces', kind: 'array' },
-      { path: 'options', kind: 'array' },
-      { path: 'items', kind: 'array' },
-    ]],
-  }),
-  scenario: block('Scenario block', 'ScenarioBlock', {
-    requiredAny: [[
-      { path: 'scenarios', kind: 'array' },
-      { path: 'situation', kind: 'string' },
-    ]],
-  }),
-  boss: block('Exam question frame', 'ExamQuestionFrame', {
-    required: [{ path: 'question', kind: 'string' }],
-    requiredAny: [[
-      { path: 'markPoints', kind: 'string' },
-      { path: 'markPoints', kind: 'array' },
-      { path: 'ms', kind: 'string' },
-      { path: 'ms', kind: 'array' },
-      { path: 'markScheme', kind: 'string' },
-      { path: 'markScheme', kind: 'array' },
-    ]],
-  }),
-  explainReveal: block('Explain reveal', 'ExplainReveal'),
-  mediaPlaceholder: block('Media placeholder', 'MediaPlaceholder', { required: [{ path: 'kind', kind: 'string' }] }),
-  fillblanks: block('Fill in the blanks', 'FillInTheBlanksBlock', { required: [{ path: 'sentences', kind: 'array' }] }),
-  theoryCompare: block('Theory compare', 'TheoryCompare'),
-  oppositeQualitiesReveal: block('Opposite qualities reveal', 'OppositeQualitiesReveal'),
-  graphView: block('Graph view', 'GraphView'),
-  timelineChain: block('Timeline chain block', 'TimelineChainBlock'),
-  colsort: block('Column sort', 'ColSortBlock', {
-    required: [
-      { path: 'columns', kind: 'array' },
-      { path: 'items', kind: 'array' },
-    ],
-  }),
-  spotTheError: block('Spot the error', 'SpotTheError', { continuation: 'component' }),
-  misconceptionCheck: block('Misconception check', 'MisconceptionCheck', { continuation: 'component' }),
-
-  // Existing extracted chapters contain these names, but ChapterPlayer never
-  // routed them. They stay registered so the migration is explicit and CI can
-  // prevent growth; new content must use the named replacement instead.
-  appliedscenario: block('Applied scenario (legacy)', 'LegacyUnroutedBlock', {
-    status: 'legacy',
-    replacement: 'scenario',
-    required: [{ path: 'scenarios', kind: 'array' }],
-  }),
-  examscored: block('Exam scored response (legacy)', 'LegacyUnroutedBlock', {
-    status: 'legacy',
-    replacement: 'boss',
-    required: [
-      { path: 'question', kind: 'string' },
-      { path: 'markScheme', kind: 'array' },
-    ],
-  }),
-  tieredquiz: block('Tiered quiz block (legacy)', 'LegacyUnroutedBlock', {
-    status: 'legacy',
-    replacement: 'quickRecall',
-    required: [{ path: 'tiers', kind: 'array' }],
-  }),
-  timelinedrag: block('Timeline drag (legacy)', 'LegacyUnroutedBlock', {
-    status: 'legacy',
-    replacement: 'orderedRouteTask',
-    required: [
-      { path: 'people', kind: 'array' },
-      { path: 'items', kind: 'array' },
-    ],
-  }),
-})
-
-export const LEGACY_BLOCK_TYPES = Object.freeze(
-  Object.fromEntries(Object.entries(BLOCK_REGISTRY)
-    .filter(([, definition]) => definition.status === 'legacy')
-    .map(([type, definition]) => [type, definition.replacement])),
-)
+export { SCREEN_REGISTRY, BLOCK_REGISTRY, LEGACY_BLOCK_TYPES }
 
 export function getScreenType(screenDefinition) {
   return screenDefinition?.type || 'standard'
@@ -419,7 +126,7 @@ export function validateChapterDefinition(chapter) {
       errors.push({
         code: 'UNREGISTERED_SCREEN_TYPE',
         location: screenLocation,
-        message: `${screenLocation} uses unregistered screen type "${type}". Add it to src/data/screenRegistry.js before authoring it.`,
+        message: `${screenLocation} uses unregistered screen type "${type}". Add an authoring entry to the owning component catalogue record before authoring it.`,
       })
     } else {
       validateRequirements(screenDefinition, definition, screenLocation, errors)
@@ -449,7 +156,7 @@ export function validateChapterDefinition(chapter) {
         errors.push({
           code: 'UNREGISTERED_BLOCK_TYPE',
           location: blockLocation,
-          message: `${blockLocation} uses unregistered block type "${blockType || '<missing>'}". Add it to src/data/screenRegistry.js before authoring it.`,
+          message: `${blockLocation} uses unregistered block type "${blockType || '<missing>'}". Add an authoring entry to the owning component catalogue record before authoring it.`,
         })
         return
       }

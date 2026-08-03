@@ -154,10 +154,18 @@ component) and are the correct population for
    preserved-field list omits it; I read that as deliberate and propose dropping
    it (the owning record path is derivable, and `COMPONENT_REGISTRY.md` is
    itself generated).
-4. **`LEGACY_BLOCK_TYPES` has zero consumers.** `extracted-chapter-contract.test.js:34`
-   hardcodes its own duplicate `Set` of the same four names. Re-exporting it
-   as you specified is right, but it should also be *consumed* by that test in
-   this phase, or the export stays dead and the duplicate stays free to drift.
+4. **`LEGACY_BLOCK_TYPES` has zero consumers.**
+   ~~`extracted-chapter-contract.test.js:34` hardcodes its own duplicate `Set`
+   of the same four names.~~ **Corrected during implementation:** that is *not*
+   a duplicate. It is a nine-name set of unregistered pre-registry block names
+   (`flipcards`, `bidmas`, `tfcheckpoint`, …) that must be wholly absent from a
+   scoped list of repaired chapters — a different set, for a different job, on a
+   different population. Only `appliedscenario` and `examscored` appear in both,
+   and there is no contradiction because that test covers `TARGET_IDS` only
+   while the registry cap is global. It was left alone.
+   `LEGACY_BLOCK_TYPES` therefore still has no consumer. It is re-exported as
+   specified, and is now generated rather than hand-derived, but nothing reads
+   it.
 5. **`status: 'derived'` is load-bearing** and correctly excluded from the
    full-screen list — the integrity contract must special-case it, not treat it
    as an unrouted defect.

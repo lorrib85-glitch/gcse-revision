@@ -58,5 +58,33 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'cinematic',
+        level: 'screen',
+        authoringName: 'Cinematic reveal moment',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [
+          [
+            {
+              path: 'videoSrc',
+              kind: 'string'
+            },
+            {
+              path: 'fallbackImage',
+              kind: 'string'
+            }
+          ]
+        ],
+        continuation: 'component',
+        headerMode: 'cinematic',
+        handler: null
+      }
+    ]
   }
 }

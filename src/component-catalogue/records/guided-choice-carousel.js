@@ -72,5 +72,27 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'guidedChoiceCarousel',
+        level: 'screen',
+        authoringName: 'Guided choice carousel',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'options',
+            kind: 'array'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

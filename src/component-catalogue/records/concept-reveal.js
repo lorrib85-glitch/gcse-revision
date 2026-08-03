@@ -103,5 +103,27 @@ export default {
       'Changing the reveal choreography documented in docs/system/CONCEPT_REVEAL_CONTRACT.md',
       'Adding a local progress indicator or a second progression affordance'
     ]
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'conceptReveal',
+        level: 'screen',
+        authoringName: 'Concept reveal',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'steps',
+            kind: 'array'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

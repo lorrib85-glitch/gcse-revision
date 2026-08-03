@@ -70,5 +70,22 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'spotTheError',
+        level: 'block',
+        authoringName: 'Spot the error',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

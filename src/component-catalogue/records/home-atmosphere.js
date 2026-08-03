@@ -73,5 +73,6 @@ export default {
       'Removing or renaming the component, or removing its call site in Home',
       'Altering the wave, gradient or animation structure'
     ]
-  }
+  },
+  authoring: null
 }

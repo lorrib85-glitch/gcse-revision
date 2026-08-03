@@ -70,5 +70,37 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'timelineChain',
+        level: 'screen',
+        authoringName: 'Timeline chain',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [
+          [
+            {
+              path: 'events',
+              kind: 'array'
+            },
+            {
+              path: 'steps',
+              kind: 'array'
+            },
+            {
+              path: 'items',
+              kind: 'array'
+            }
+          ]
+        ],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

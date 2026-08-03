@@ -68,5 +68,54 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'boss',
+        level: 'block',
+        authoringName: 'Exam question frame',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'question',
+            kind: 'string'
+          }
+        ],
+        requiredAny: [
+          [
+            {
+              path: 'markPoints',
+              kind: 'string'
+            },
+            {
+              path: 'markPoints',
+              kind: 'array'
+            },
+            {
+              path: 'ms',
+              kind: 'string'
+            },
+            {
+              path: 'ms',
+              kind: 'array'
+            },
+            {
+              path: 'markScheme',
+              kind: 'string'
+            },
+            {
+              path: 'markScheme',
+              kind: 'array'
+            }
+          ]
+        ],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

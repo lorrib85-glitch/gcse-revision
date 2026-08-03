@@ -54,5 +54,27 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'flashcards',
+        level: 'block',
+        authoringName: 'Flashcards',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'cards',
+            kind: 'array'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

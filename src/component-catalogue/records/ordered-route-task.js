@@ -66,5 +66,41 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'orderedRouteTask',
+        level: 'screen',
+        authoringName: 'Ordered route task',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [
+          [
+            {
+              path: 'items',
+              kind: 'array'
+            },
+            {
+              path: 'steps',
+              kind: 'array'
+            },
+            {
+              path: 'cards',
+              kind: 'array'
+            },
+            {
+              path: 'stages',
+              kind: 'array'
+            }
+          ]
+        ],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

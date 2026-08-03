@@ -61,5 +61,37 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'visualLearning',
+        level: 'screen',
+        authoringName: 'Visual learning sequence',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [
+          [
+            {
+              path: 'scenes',
+              kind: 'array'
+            },
+            {
+              path: 'steps',
+              kind: 'array'
+            },
+            {
+              path: 'items',
+              kind: 'array'
+            }
+          ]
+        ],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

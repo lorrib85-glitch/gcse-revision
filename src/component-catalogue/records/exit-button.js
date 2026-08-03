@@ -80,5 +80,6 @@ export default {
       'Changing size, icon, or opacity and press behaviour',
       'Allowing an inline exit-button implementation'
     ]
-  }
+  },
+  authoring: null
 }

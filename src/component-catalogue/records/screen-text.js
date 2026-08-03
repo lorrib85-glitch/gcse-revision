@@ -80,5 +80,6 @@ export default {
       'Removing or weakening the ScreenTitle typography-override guard',
       'Changing what TYPE.displayScreen owns for non-cinematic screen titles'
     ]
-  }
+  },
+  authoring: null
 }

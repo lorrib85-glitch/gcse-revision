@@ -102,5 +102,22 @@ export default {
       'Redesigning the component geometry, heading route, connector style, centre focal treatment, progress affordance or progression controls',
       'Reintroducing centre dots, eyebrows, numeric local progress, emoji factor identity or runtime clamping'
     ]
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'factorWeb',
+        level: 'screen',
+        authoringName: 'Factor web',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

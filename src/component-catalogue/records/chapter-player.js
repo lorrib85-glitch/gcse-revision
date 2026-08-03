@@ -58,5 +58,6 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
-  }
+  },
+  authoring: null
 }

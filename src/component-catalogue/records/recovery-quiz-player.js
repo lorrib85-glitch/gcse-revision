@@ -103,5 +103,6 @@ export default {
       'Changing the public API',
       'Declaring a weakness repaired on any basis other than the documented success threshold'
     ]
-  }
+  },
+  authoring: null
 }

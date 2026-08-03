@@ -104,5 +104,6 @@ export default {
       'Marking a weakness resolved from this screen',
       'Changing the component API or block shape'
     ]
-  }
+  },
+  authoring: null
 }

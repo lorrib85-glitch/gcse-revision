@@ -125,11 +125,19 @@ lifecycle, selection guidance and contract. One record per public component.
 - **Inspect a component's record before creating or changing that component.**
   This applies to developers and AI tools alike. If you change what the
   catalogue says, change the record and regenerate.
-- Runtime authoring and pedagogical projections stay where they are until a
-  later migration phase: authorable screen and block types in
-  `src/data/screenRegistry.js`, function tags in `src/data/componentFunctions.js`,
-  Component Lab routing in `src/dev/componentReview/`. Do not copy those facts
-  into the catalogue.
+- **Authorable screen and block types are catalogue facts.** A record's
+  `authoring` block declares the types its component implements;
+  `src/data/generated/componentAuthoringRegistry.js` is generated from those
+  blocks by `pnpm authoring:generate`, and `src/data/screenRegistry.js` re-exports
+  it and adds the handwritten helpers. **Never hand-edit the generated file, and
+  never add an entry to `screenRegistry.js`** — add it to the owning record and
+  regenerate. `pnpm authoring:check` fails on drift. Legacy types that no
+  component implements live in
+  `src/component-catalogue/migrations/authoringCompatibility.js`, which is a
+  shrinking set: a guard fails an entry once its last authored use disappears.
+- Pedagogical function tags (`src/data/componentFunctions.js`) and Component Lab
+  routing (`src/dev/componentReview/`) stay where they are until their own
+  migration phase. Do not copy those facts into the catalogue.
 - `src/component-catalogue/**` is build-time governance data. The learner
   runtime must never import it.
 

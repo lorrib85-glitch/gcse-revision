@@ -3,15 +3,11 @@ import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
 import {
-  BLOCK_REGISTRY,
   SCREEN_REGISTRY,
   isCinematicHeaderScreen,
   validateChapterDefinition,
 } from '../../src/data/screenRegistry.js'
-import {
-  BLOCK_RENDERER_TYPES,
-  FULL_SCREEN_RENDERER_TYPES,
-} from '../../src/components/layout/ScreenRenderer.jsx'
+import { FULL_SCREEN_RENDERER_TYPES } from '../../src/components/layout/ScreenRenderer.jsx'
 
 const root = resolve(process.cwd())
 const read = path => readFileSync(resolve(root, path), 'utf8')
@@ -21,30 +17,6 @@ async function loadAllChapters() {
 }
 
 describe('governed screen registry', () => {
-  it('every registry entry links authoring, component and contract metadata', () => {
-    for (const [type, definition] of [...Object.entries(SCREEN_REGISTRY), ...Object.entries(BLOCK_REGISTRY)]) {
-      expect(definition.authoringName, type).toBeTruthy()
-      expect(definition.component, type).toBeTruthy()
-      expect(definition.contract, type).toContain('COMPONENT_REGISTRY.md')
-    }
-  })
-
-  it('every active block contract has a ScreenRenderer implementation', () => {
-    const activeTypes = Object.entries(BLOCK_REGISTRY)
-      .filter(([, definition]) => definition.status === 'active')
-      .map(([type]) => type)
-      .sort()
-    expect([...BLOCK_RENDERER_TYPES].sort()).toEqual(activeTypes)
-  })
-
-  it('every authored full-screen route has a ScreenRenderer implementation', () => {
-    const fullTypes = Object.entries(SCREEN_REGISTRY)
-      .filter(([, definition]) => definition.layout === 'full' && definition.status !== 'derived')
-      .map(([type]) => type)
-      .sort()
-    expect([...FULL_SCREEN_RENDERER_TYPES].sort()).toEqual(fullTypes)
-  })
-
   it('all registered chapter content passes schema validation', async () => {
     const chapters = await loadAllChapters()
     const failures = []

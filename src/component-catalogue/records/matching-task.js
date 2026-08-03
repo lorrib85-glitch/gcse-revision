@@ -57,5 +57,37 @@ export default {
     invariants: [],
     exclusivity: null,
     requiresProductDecision: []
+  },
+  authoring: {
+    entries: [
+      {
+        type: 'matchingTask',
+        level: 'screen',
+        authoringName: 'Matching task',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [
+          [
+            {
+              path: 'items',
+              kind: 'array'
+            },
+            {
+              path: 'pairs',
+              kind: 'array'
+            },
+            {
+              path: 'cards',
+              kind: 'array'
+            }
+          ]
+        ],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null
+      }
+    ]
   }
 }

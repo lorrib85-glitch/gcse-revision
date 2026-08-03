@@ -9,12 +9,15 @@
 // under `records/`. `docs/components/COMPONENT_REGISTRY.md` is generated from
 // those records and must not be hand-edited.
 //
-// What this schema deliberately does NOT own (Phase 1 boundary):
-//   - authorable screen and block types  → `src/data/screenRegistry.js`
+// Phase 2 moved authorable screen and block types here: a record's `authoring`
+// block is the authority for the types its component implements, and
+// `src/data/generated/componentAuthoringRegistry.js` is generated from it.
+//
+// What this schema still deliberately does NOT own:
 //   - pedagogical function tags          → `src/data/componentFunctions.js`
 //   - Component Lab routing              → `src/dev/componentReview/**`
-// Those stay where they are until the runtime-projection phase migrates them.
-// Do not duplicate them here.
+// Those stay where they are until their own phase migrates them. Do not
+// duplicate them here.
 
 export const SECTIONS = ['core', 'learning', 'feedback', 'layout', 'feature', 'support']
 
@@ -270,6 +273,161 @@ function validateContract(errors, contract) {
   }
 }
 
+// ─── Authoring entries ─────────────────────────────────────────────────────
+//
+// An authoring entry says: this type may appear in a chapter `screens` array,
+// and this component implements it. The runtime projection is generated from
+// these; `src/data/screenRegistry.js` no longer authors them.
+//
+// `handler` is the honest part. Most entries leave it null, meaning the
+// record's own component implements the type. A non-null handler names a
+// function *private to the record's own source file* — the nine block types
+// implemented inside ScreenRenderer.jsx are real authoring types whose
+// implementation is deliberately not a standalone reusable component. Naming
+// the private handler is truthful; inventing a component record for it is not.
+
+export const AUTHORING_LEVELS = ['screen', 'block']
+export const AUTHORING_STATUSES = ['active', 'derived', 'legacy']
+export const AUTHORING_LAYOUTS = ['content', 'full']
+export const AUTHORING_CONTINUATIONS = ['player', 'component']
+export const AUTHORING_HEADER_MODES = ['standard', 'cinematic']
+export const REQUIREMENT_KINDS = ['array', 'object', 'string', 'number']
+
+const TYPE_NAME = /^[a-zA-Z][a-zA-Z0-9]*$/
+const HANDLER_NAME = /^[A-Z][A-Za-z0-9]*$/
+
+function validateRequirement(errors, at, requirement) {
+  if (!isPlainObject(requirement)) {
+    errors.push(`${at} must be an object`)
+    return
+  }
+  if (!isNonEmptyString(requirement.path)) errors.push(`${at}.path must be a non-empty string`)
+  if (!REQUIREMENT_KINDS.includes(requirement.kind)) {
+    errors.push(`${at}.kind must be one of ${REQUIREMENT_KINDS.join(' | ')}`)
+  }
+  for (const key of Object.keys(requirement)) {
+    if (key !== 'path' && key !== 'kind') errors.push(`${at} has unknown key "${key}"`)
+  }
+}
+
+const AUTHORING_ENTRY_KEYS = [
+  'type', 'level', 'authoringName', 'layout', 'status', 'replacement',
+  'required', 'requiredAny', 'continuation', 'headerMode', 'handler',
+]
+
+function validateAuthoringEntry(errors, at, entry) {
+  if (!isPlainObject(entry)) {
+    errors.push(`${at} must be an object`)
+    return
+  }
+  for (const key of AUTHORING_ENTRY_KEYS) {
+    if (!(key in entry)) errors.push(`${at} is missing required key "${key}"`)
+  }
+  for (const key of Object.keys(entry)) {
+    if (!AUTHORING_ENTRY_KEYS.includes(key)) errors.push(`${at} has unknown key "${key}"`)
+  }
+
+  if (!isNonEmptyString(entry.type) || !TYPE_NAME.test(entry.type)) {
+    errors.push(`${at}.type must be the camelCase type authors write`)
+  }
+  if (!AUTHORING_LEVELS.includes(entry.level)) {
+    errors.push(`${at}.level must be one of ${AUTHORING_LEVELS.join(' | ')}`)
+  }
+  if (!isNonEmptyString(entry.authoringName)) {
+    errors.push(`${at}.authoringName must be the canonical name an author reads`)
+  }
+  if (!AUTHORING_LAYOUTS.includes(entry.layout)) {
+    errors.push(`${at}.layout must be one of ${AUTHORING_LAYOUTS.join(' | ')}`)
+  }
+  if (!AUTHORING_STATUSES.includes(entry.status)) {
+    errors.push(`${at}.status must be one of ${AUTHORING_STATUSES.join(' | ')}`)
+  }
+  if (!AUTHORING_CONTINUATIONS.includes(entry.continuation)) {
+    errors.push(`${at}.continuation must be one of ${AUTHORING_CONTINUATIONS.join(' | ')}`)
+  }
+  if (!AUTHORING_HEADER_MODES.includes(entry.headerMode)) {
+    errors.push(`${at}.headerMode must be one of ${AUTHORING_HEADER_MODES.join(' | ')}`)
+  }
+
+  // A legacy entry has to say what to author instead; nothing else may.
+  if (entry.status === 'legacy') {
+    if (!isNonEmptyString(entry.replacement)) {
+      errors.push(`${at}.replacement must name the type to author instead when status is "legacy"`)
+    }
+  } else if (entry.replacement !== null) {
+    errors.push(`${at}.replacement must be null unless status is "legacy"`)
+  }
+
+  if (entry.handler !== null && !HANDLER_NAME.test(entry.handler ?? '')) {
+    errors.push(`${at}.handler must be null or the PascalCase name of a handler private to this record's source`)
+  }
+
+  for (const key of ['required', 'requiredAny']) {
+    if (!Array.isArray(entry[key])) {
+      errors.push(`${at}.${key} must be an array`)
+      continue
+    }
+    entry[key].forEach((item, i) => {
+      if (key === 'required') {
+        validateRequirement(errors, `${at}.required[${i}]`, item)
+        return
+      }
+      if (!Array.isArray(item) || item.length === 0) {
+        errors.push(`${at}.requiredAny[${i}] must be a non-empty array of alternatives`)
+        return
+      }
+      item.forEach((alt, j) => validateRequirement(errors, `${at}.requiredAny[${i}][${j}]`, alt))
+    })
+  }
+}
+
+function validateAuthoring(errors, record) {
+  const { authoring } = record
+  if (authoring === null) return
+
+  if (!isPlainObject(authoring)) {
+    errors.push('authoring must be an object or null')
+    return
+  }
+  for (const key of Object.keys(authoring)) {
+    if (key !== 'entries' && key !== 'nonAuthorableHandlers') {
+      errors.push(`authoring has unknown key "${key}"`)
+    }
+  }
+  if (!Array.isArray(authoring.entries) || authoring.entries.length === 0) {
+    errors.push('authoring.entries must be a non-empty array (use authoring: null instead)')
+    return
+  }
+  authoring.entries.forEach((entry, i) =>
+    validateAuthoringEntry(errors, `authoring.entries[${i}]`, entry))
+
+  const seen = new Set()
+  for (const entry of authoring.entries) {
+    const key = `${entry.level}:${entry.type}`
+    if (seen.has(key)) errors.push(`authoring.entries declares ${key} twice in one record`)
+    seen.add(key)
+  }
+
+  // Only a record that owns private handlers may declare which of them are
+  // deliberately not authorable — it is the same file's internal surface.
+  const nonAuthorable = authoring.nonAuthorableHandlers ?? []
+  if (!Array.isArray(nonAuthorable)) {
+    errors.push('authoring.nonAuthorableHandlers must be an array')
+    return
+  }
+  nonAuthorable.forEach((item, i) => {
+    const at = `authoring.nonAuthorableHandlers[${i}]`
+    if (!isPlainObject(item)) {
+      errors.push(`${at} must be an object`)
+      return
+    }
+    if (!HANDLER_NAME.test(item.name ?? '')) errors.push(`${at}.name must be a PascalCase handler name`)
+    if (!isNonEmptyString(item.reason) || item.reason.trim().length < 30) {
+      errors.push(`${at}.reason must say why the handler is not authorable (30+ chars)`)
+    }
+  })
+}
+
 export const COMPONENT_ROOT = 'src/components/'
 
 /**
@@ -296,7 +454,7 @@ function validateOutOfRootReason(errors, record) {
 const REQUIRED_KEYS = [
   'id', 'name', 'source', 'exportName', 'order', 'outOfRootReason', 'section', 'kind',
   'lifecycle', 'lifecycleReason', 'purpose', 'ownership', 'documentation',
-  'decision', 'contract',
+  'decision', 'contract', 'authoring',
 ]
 
 /**
@@ -351,6 +509,7 @@ export function validateRecord(record) {
   validateDocumentation(errors, record.documentation)
   validateDecision(errors, record)
   validateContract(errors, record.contract)
+  validateAuthoring(errors, record)
 
   return errors
 }
