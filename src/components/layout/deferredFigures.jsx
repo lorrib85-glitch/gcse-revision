@@ -54,15 +54,9 @@ export const LazyNumberLineExplore = lazy(loadNumberLineExplore)
 export const LazyCircuitDiagram = lazy(loadCircuitDiagram)
 export const LazyCircuitSymbolReference = lazy(loadCircuitSymbolReference)
 
-/** Authoring type → the lazy component that renders it. */
-export const DEFERRED_FIGURE_COMPONENTS = Object.freeze({
-  angleFigure: LazyAngleExplore,
-  areaPerimeterFigure: LazyAreaPerimeterExplore,
-  coordinatePlaneFigure: LazyCoordinatePlaneExplore,
-  numberLineFigure: LazyNumberLineExplore,
-  circuitDiagram: LazyCircuitDiagram,
-  circuitSymbolReference: LazyCircuitSymbolReference,
-})
+// The authoring-type → lazy-component map lives in
+// `deferredFigureComponentMap.js`, not here. This file exports components only,
+// which is what lets fast refresh work on it during development.
 
 // 4:3 matches the working area the figure engines draw into closely enough that
 // the arriving diagram settles into roughly the space already held. Expressed

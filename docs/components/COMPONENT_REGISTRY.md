@@ -2782,6 +2782,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - `src/components/layout/deferredFigures.jsx` (file) — Routing machinery, not an author choice: the lazy wrappers, per-block Suspense boundary and reserved-height fallback that let ScreenRenderer load the six figure renderers on demand. A learner never meets it as a component and an author never selects it.
 - `src/components/layout/deferredFigureLoaders.js` (file) — The stable per-component dynamic-import thunks behind those routes, kept free of React so the app shell can preload a chapter’s figures without pulling in the rendering layer. Implementation detail of the same routing boundary.
+- `src/components/layout/deferredFigureComponentMap.js` (file) — The authoring-type to lazy-component map for those routes, split out so the rendering module exports components only and keeps fast refresh. Read by the architecture guard rather than by the runtime, and part of the same private routing machinery.
 
 **Authoring**
 

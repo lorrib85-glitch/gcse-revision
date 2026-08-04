@@ -8,7 +8,7 @@ import {
   DEFERRED_FIGURE_LOADER_TYPES,
   loadersCoverScannedTypes,
 } from '../../src/components/layout/deferredFigureLoaders.js'
-import { DEFERRED_FIGURE_COMPONENTS } from '../../src/components/layout/deferredFigures.jsx'
+import { DEFERRED_FIGURE_COMPONENTS } from '../../src/components/layout/deferredFigureComponentMap.js'
 import { BLOCK_RENDERER_TYPES } from '../../src/components/layout/ScreenRenderer.jsx'
 import { validateChapterDefinition, formatChapterSchemaIssues } from '../../src/data/screenRegistry.js'
 import { LAB_ADAPTERS } from '../../src/dev/componentReview/labAdapters.jsx'

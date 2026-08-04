@@ -405,12 +405,37 @@ Seven applied to the real files, each caught by a named assertion, all reverted
 
 ### Gates
 
-`pnpm verify` green: four generator checks clean, **1829** architecture tests,
-**1243** unit tests, **304** Storybook browser tests, lint 0 errors, build
-succeeds. Lint warnings 90 → **91**: one `react-refresh/only-export-components`
-on `deferredFigures.jsx`, which exports the six lazy components alongside the
-map that makes "one lazy renderer per type" assertable from source.
+`pnpm verify` green: four generator checks clean, **1831** architecture tests,
+**1243** unit tests, **304** Storybook browser tests, lint **0 errors and 90
+warnings** — the baseline — and the build succeeds.
 
 The Phase 4 authoring architecture is untouched: 57 ↔ 57 coverage, adapters,
 authoring types, generated projection, System reference, both access flags,
 catalogue records, pedagogy and chapter content all unchanged.
+
+---
+
+## Step 11 — Seal (executed)
+
+The closure briefly cost one lint warning: `deferredFigures.jsx` exported the
+six lazy components *and* `DEFERRED_FIGURE_COMPONENTS`, and a file that exports
+a component alongside a constant loses fast refresh for everything in it.
+
+Fixed by moving, not by silencing — no `eslint-disable`, no rule change. The map
+now lives in `src/components/layout/deferredFigureComponentMap.js`, which
+imports the six lazy components and exports the frozen authoring-type map the
+architecture guard reads. `deferredFigures.jsx` is left exporting components
+only: the six `Lazy*` renderers, `FigurePlaceholder` and `DeferredFigure`. The
+new module is owned as a private internal of the `ScreenRenderer` record, like
+the two files beside it.
+
+**Nothing else moved, and the evidence is unusually direct:**
+
+| Claim | Evidence |
+|---|---|
+| `ScreenRenderer` unchanged | `git diff` on it is empty — it still imports the six lazy components by name |
+| Loader, scanner, preload unchanged | `git diff` on `deferredFigureLoaders.js`, `deferredFigureTypes.js` and `LegacyApp.jsx` is empty |
+| Suspense and error boundary unchanged | The only diff in `deferredFigures.jsx` is the removed map, replaced by a comment |
+| Bundle unchanged | Every chunk **including its content hash** is identical before and after. The map is imported only by the test, so it is never bundled |
+| Mutations still effective | All seven re-run against the real files, each caught by the same named assertion, all reverted clean |
+| Lint back to baseline | 91 → **90** warnings, 0 errors; all four deferred-loading files lint clean |
