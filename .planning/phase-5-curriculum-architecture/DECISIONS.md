@@ -1,14 +1,19 @@
 # Phase 5A — decisions
 
-Two lists. **Settled** decisions are made, with the evidence that made them, and
-are not reopened during implementation. **Open** decisions are genuinely
-unresolved: each names what would settle it, who decides, and what the
-implementation does in the meantime.
+Three lists. **Settled** decisions are made, with the evidence that made them,
+and are not reopened during implementation. **Settled by the product owner**
+holds the five that Phase 5A could not decide on its own and that were closed
+before Stage 0 began. **Open** decisions are genuinely unresolved: each names
+what would settle it, who decides, and what the implementation does meanwhile.
 
 An open decision is not a gap in the design. It is a place where the design
 deliberately does not decide something it has no authority or evidence to
 decide — and every one of them is arranged so that deciding it later is a data
 edit, not a redesign.
+
+**Status:** 13 architectural decisions settled in Phase 5A · 5 product decisions
+settled before Stage 0 (OD-1, OD-4, OD-5, OD-7, OD-8) · 5 still open (OD-2,
+OD-3, OD-6, OD-9, OD-10).
 
 ---
 
@@ -151,30 +156,127 @@ and the omission is deliberate rather than an oversight.
 
 ---
 
+## Settled by the product owner (closed before Stage 0)
+
+These five carry their original `OD-` identifiers because the rest of the
+Phase 5A documents reference them by number. They are settled decisions, not
+open ones, and are listed separately only so the record of *when* they closed
+survives.
+
+### OD-1 — Historical `'English'` progress rows stay exactly as they are — **SETTLED**
+
+**Decision.** Option (b). Rows carrying the persisted subject value `'English'`:
+
+- remain stored exactly as they are — **no historical row is ever rewritten**;
+- remain visible in historical activity wherever they are surfaced today;
+- are treated as **legacy / unattributed**;
+- contribute to **neither** `english-language` nor `english-literature` current
+  subject averages;
+- are recognisable to the read layer through `legacyProgressNames` on the
+  canonical subject records.
+
+A later implementation must make this treatment **explicit** — a named legacy
+bucket, not rows that quietly vanish from a total that no longer adds up.
+
+**Rationale.** There is no reliable mechanical way to decide whether an old row
+represented Language or Literature. Guessing would fabricate learner data, and
+fabricated progress is worse than absent progress.
+
+**Consumed by:** Stage 2 (subject records carry `legacyProgressNames`) and
+Stage 5 (the read layer). Not Stage 0 or Stage 1.
+
+### OD-4 — `soc1`–`soc3` move to `sociology-aqa-key-concepts` — **SETTLED**
+
+**Decision.** In the future canonical records:
+
+| Chapter | Module |
+|---|---|
+| `soc1`, `soc2`, `soc3` | `sociology-aqa-key-concepts` |
+| `soc4`, `soc6` | `sociology-aqa-families` |
+
+**Rationale.** `soc1` teaches culture, norms, values and socialisation; `soc2`
+teaches sociological approaches; `soc3` teaches feminism, power and life-chance
+concepts. These are cross-course foundations rather than substantive Families
+content, and the split supports reuse across both AQA Sociology papers.
+
+**Scope.** This concerns **future canonical records only**. Nothing moves in the
+current runtime catalogue: `MODULES` keeps all five chapters in `soc_family`
+until Stage 4, and no learner sees a change before Stage 5.
+
+**Consumed by:** Stage 2. The census classification is updated now so Stage 2
+executes a settled mapping rather than a provisional one.
+
+### OD-5 — `history-medicine-nightingale` stays a distinct chapter — **SETTLED**
+
+**Decision.** Option (a). It remains its own chapter in the Medicine module and
+keeps `status: 'planned'` until its content is built. It is **not** absorbed
+into `history-medicine-great-stink`.
+
+**Rationale.** Nightingale, nursing and hospital reform form a coherent Edexcel
+Medicine development with enough factual content, causation, significance and
+exam relevance to justify a separate learner journey. Great Stink and
+public-health reform are related but are not the same curriculum unit.
+
+**The broken recovery route is a separate defect.** A-20 records that
+`TAG_CHAPTER_MAP` routes `'nightingale'` to Great Stink and lands on screen 0
+because Great Stink carries no matching screen tag. That is a routing bug to fix
+on its own terms; it is not an argument for collapsing a curriculum unit.
+
+**Consumed by:** Stage 2.
+
+### OD-7 — No Drama or Music records during Stages 0 or 1 — **SETTLED**
+
+**Decision.** Option (b). Do not create Drama or Music subject, specification,
+pathway or module records during Stage 0 or Stage 1. `MODELS.md` §8–9 remain
+**architecture proofs only**. Real records are created when the first module for
+each qualification is ready to be planned or built.
+
+**Rationale.** The models have already done their job by proving the
+architecture holds for practical and written assessment. Records for
+qualifications with no content would make the catalogue's first commits mostly
+fiction, which is the discipline `DESIGN.md` §8 sets out.
+
+**Consumed by:** Stage 1 — nine specifications are authored, not eleven.
+
+### OD-8 — The browser is derived from configured study pathways — **SETTLED**
+
+**Decision.** This **refines** the proposed default. The browser is derived
+neither directly from the existence of Subject records nor from a manual
+`browsable` field. A canonical subject is shown when **both** hold:
+
+1. it is covered by at least one **non-retired catalogue Study pathway** that is
+   included in the app's navigation configuration; **and**
+2. that pathway reaches at least one **non-retired Module** for that subject.
+
+Both `active` and `planned` modules are eligible:
+
+- an **active** module can show available or planned chapters;
+- a **planned** module can support a subject-level coming-soon experience;
+- **retired** modules never make a subject visible.
+
+**Consequences.**
+
+- Chemistry and Physics may remain visible through planned Science modules
+  before they contain a single available chapter — which is exactly today's
+  behaviour, preserved.
+- Drama and Music remain absent, because OD-7 creates no records for them.
+- Combined Science can expose Biology, Chemistry and Physics from one
+  specification and one pathway **without** assigning that specification to a
+  single Subject — the relational model (D-2) doing real work.
+- **No `subject.browsable` field is added.** Visibility is derived, never
+  authored.
+- **Stage 5 must preserve the current seven visible subjects** during the
+  authority transfer.
+- Later changes to the configured pathways or to module statuses may
+  deliberately change that list. That is the point: the list becomes a
+  consequence of the curriculum, not a literal someone edits.
+
+**Consumed by:** Stage 5. The schema constraint it creates — no `browsable`
+field, ever — is enforced from Stage 0.
+
+---
+
 ## Open
-
-### OD-1 — How historical `'English'` progress rows are attributed after the subject split
-
-**The problem.** `recordScore({ subject })` writes display strings into
-`gcse_scores`, and the weakness tracker stores them too (A-19). Existing rows say
-`'English'`. After D-3 there are two subjects, and no mechanical rule can decide
-which one a historical row belonged to — the only built English chapter is
-Literature, but Exam Mode rows could be either.
-
-**Options.** (a) attribute all historical rows to `english-literature`, since
-that is the only built content; (b) attribute to neither, report them as legacy,
-exclude from per-subject averages; (c) rewrite rows using each row's `source`
-field.
-
-**Proposed default: (b).** It is the only option that does not fabricate an
-attribution, and the cost is bounded — a learner sees historical English scores
-in their history but not in their current per-subject average.
-
-**Who decides:** product. **Settles by:** a decision on whether a slightly
-lossy history is preferable to a guessed one.
-**Meanwhile:** the subject record carries `legacyProgressNames`, so nothing is
-lost and any of the three options remains implementable. No persisted row is
-rewritten in any case.
 
 ### OD-2 — Whether canonical subject ids replace display strings in new progress writes
 
@@ -210,39 +312,6 @@ explicitly out of scope for a planning phase.
 questions all carry a resolvable subject.
 **Meanwhile:** recorded as a known defect (A-19), unfixed.
 
-### OD-4 — Whether `soc1`–`soc3` move out of the Families module
-
-**The problem.** A-7. `soc_family` is titled "Sociology of the Family" and three
-of its five chapters are key concepts and sociological approaches that run across
-both AQA papers. `MODELS.md` §7 proposes splitting them into
-`sociology-aqa-key-concepts`.
-
-**Why it is open rather than settled.** It is a **curriculum judgement**, not an
-architectural one. The architecture expresses either arrangement equally well —
-the difference is which module a chapter ref sits in. Deciding it requires
-knowing how the content is actually taught, which is the user's call.
-
-**Who decides:** the user (curriculum owner). **Settles by:** a look at the three
-chapters against the AQA 8192 content list.
-**Meanwhile:** the census records the proposed split with its reasoning, and the
-migration keeps all five in one module until the decision is made. Changing it
-later is one edit to two module records.
-
-### OD-5 — Whether `history-medicine-nightingale` stays a chapter or is absorbed
-
-**The problem.** It is the one Medicine stub (0 screens) sitting inside otherwise
-complete content, and `TAG_CHAPTER_MAP` already routes the `'nightingale'`
-weakness tag to `history-medicine-great-stink` — so the recovery system treats a
-different chapter as the Nightingale destination. (Great Stink has no
-`nightingale` screen tag, so that route lands on screen 0; see A-20.)
-
-**Options.** (a) build it as its own chapter; (b) absorb it into
-`history-medicine-great-stink` and retire the id via the alias map.
-
-**Who decides:** the user (curriculum owner). **Settles by:** a content decision.
-**Meanwhile:** it becomes `status: 'planned'` like every other stub. Option (b)
-remains available at no extra cost because D-8's alias mechanism already exists.
-
 ### OD-6 — Whether the three deferred relationship fields are ever needed
 
 `moduleRef.availabilityOverride`, `chapterRef.required`,
@@ -252,46 +321,6 @@ remains available at no extra cost because D-8's alias mechanism already exists.
 tier but not another, or a genuinely optional chapter. **Meanwhile:** they do not
 exist. Adding a field to a relationship record later is additive and needs no
 migration, which is precisely why deferring them is safe.
-
-### OD-7 — Whether `Drama` and `Music` subject records are created now or when content starts
-
-**The problem.** Both are target qualifications with theme keys and no curriculum
-(A-16). `MODELS.md` §8–9 model their specifications to prove the architecture,
-but creating `status: 'planned'` records for them means shipping two subjects a
-learner cannot reach.
-
-**Options.** (a) create both now as `planned`, hidden from the browser by status;
-(b) create them when their first module is built, and keep §8–9 as
-architecture-proof documents only.
-
-**Proposed default: (b).** The models have already done their job by proving the
-architecture in this document; records for eleven qualifications when nine have
-no content would make the catalogue's first commit mostly fiction. This is the
-same discipline as `DESIGN.md` §8.
-
-**Who decides:** engineering, at Stage 2. **Settles by:** deciding how much of
-the target scope the first catalogue commit should contain.
-
-### OD-8 — Which subjects the learner browser shows, and on what rule
-
-**The problem.** `SUBJECT_NAMES` is a hardcoded literal of seven with no test
-(`CENSUS.md` §2.1). Chemistry and Physics are in it with no module; Drama and
-Music are out of it despite being target qualifications. After the migration the
-list is derived — but from what rule?
-
-**Options.** (a) subjects with at least one `active` module; (b) subjects with at
-least one `available` chapter; (c) an explicit `browsable` flag on the subject
-record.
-
-**Proposed default: (a)**, because it preserves today's behaviour for Chemistry
-and Physics via `planned` modules and needs no new field. But this is a
-**learner-facing behaviour decision**, and getting it wrong silently removes
-subjects from the browser.
-
-**Who decides:** product. **Settles by:** confirming the coming-soon experience
-for a subject with no content.
-**Meanwhile:** the projection preserves the current seven exactly, whatever the
-rule turns out to be — Stage 4 is explicitly a no-visible-change stage.
 
 ### OD-9 — Verification of every specification code, paper structure and timing
 

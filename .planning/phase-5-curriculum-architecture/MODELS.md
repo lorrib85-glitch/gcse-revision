@@ -427,9 +427,10 @@ three of which are not Families:
 | `soc4` Family and households | Families | `sociology-aqa-families` |
 | `soc6` Family researchers and theory battles | Families | `sociology-aqa-families` |
 
-The split is proposed, not settled — see OD-4. It is recorded here because the
-architecture must be able to express it either way, and it can: the difference
-is which module a chapter ref sits in.
+The split is **settled** (OD-4), closed by the curriculum owner before Stage 0.
+The architecture expresses either arrangement equally well — the difference is
+only which module a chapter ref sits in — so settling it changed the target
+mapping, not the design.
 
 **The six existing AQA Sociology exam papers** (`ref: '8192/1'`, A-14) become the
 first real link from an exam paper to a specification paper record. That link

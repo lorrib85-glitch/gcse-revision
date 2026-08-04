@@ -23,8 +23,8 @@ Stage 6  Old authored files and drift tests deleted    cleanup
 ```
 
 Stages 0–4 are all **behaviour-preserving**. The first learner-visible change is
-Stage 5, and it is the only stage that needs a product decision (OD-8) before it
-can ship.
+Stage 5. Its governing product decision (OD-8) is now settled, so it is gated on
+Stages 2–4 rather than on a pending decision.
 
 Each stage lands independently, keeps `pnpm verify` green, and can be reverted
 without touching the one before it.
@@ -66,8 +66,9 @@ the first commit rather than retrofitted.
 no content (`DESIGN.md` §8). Requirements are authored per specification only
 when that specification's content is being built.
 
-**Open decision consumed here:** OD-7 — whether Drama and Music get records now.
-Proposed default is *not yet*.
+**Settled decision applied here:** OD-7 — Drama and Music get **no** records in
+Stage 0 or Stage 1. Nine specifications are authored, not eleven; `MODELS.md`
+§8–9 stay architecture proofs.
 
 ---
 
@@ -97,9 +98,13 @@ Module *splits* (A-1, A-7) change which module a chapter belongs to, so the
 split, and the splitting modules get explicit expected orders. That is the one
 place Stage 2 changes a fact, and it is stated rather than absorbed.
 
-**Open decision consumed here:** OD-4 — whether `soc1`–`soc3` move. Until the
-user decides, all five Sociology chapters stay in one module and the split is a
-later two-record edit.
+**Settled decision applied here:** OD-4 — `soc1`–`soc3` move to
+`sociology-aqa-key-concepts`; `soc4` and `soc6` stay in `sociology-aqa-families`.
+Stage 2 authors the split directly. Nothing moves in the current runtime
+catalogue, so `MODULES` keeps all five in `soc_family` until Stage 4.
+
+**Settled decision applied here:** OD-5 — `history-medicine-nightingale` stays a
+distinct `planned` chapter in the Medicine module and is not absorbed.
 
 **Still no runtime change.** Nothing imports these records.
 
@@ -173,15 +178,18 @@ order, with the same progress.
 
 ## Stage 5 — navigation moves off the hardcoded literals
 
-The first stage a learner could notice. Gated on **OD-8** (the rule for which
-subjects the browser shows).
+The first stage a learner could notice. **OD-8 is settled**: a subject is shown
+when a non-retired catalogue study pathway in the navigation configuration
+reaches at least one non-retired module for that subject. Both `active` and
+`planned` modules qualify; `retired` never does. No `browsable` field exists.
+Stage 5 must preserve the current seven visible subjects.
 
 **Lands:** `src/data/generated/curriculum/navigation.js`, and `Subjects.jsx`
 reading it instead of eight hardcoded literals:
 
 | Retired from `Subjects.jsx` | Replaced by |
 |---|---|
-| `SUBJECT_NAMES` (7 hardcoded, untested) | subjects with at least one `active` module (OD-8) |
+| `SUBJECT_NAMES` (7 hardcoded, untested) | subjects reached by a configured non-retired pathway through a non-retired module, `active` or `planned` (OD-8) |
 | `SUBJECT_DISPLAY_TITLES` | subject record `title` — retires `History: 'Medicine through time'` |
 | `SUBJECT_DESCRIPTIONS` | subject record |
 | `SUBJECT_HEADER_IMGS`, `SUBJECT_TOPIC_IMAGES` | subject record presentation |
@@ -243,7 +251,7 @@ Not touched before this stage.
 
 **No stage can lose learner progress.** Chapter progress keys are untouched at
 every stage (D-8), and subject-string progress is read-compatible via
-`legacyProgressNames` (OD-1, OD-2). That property is what the staging exists to
+`legacyProgressNames` (OD-1 settled, OD-2 open). That property is what the staging exists to
 protect.
 
 ---
@@ -275,6 +283,7 @@ involve production behaviour:
 10. The migration is staged, reversible and behaviour-preserving until an
     explicitly gated stage — this document. ✅
 11. Genuine unresolved decisions are documented with an owner and a default —
-    10 of them, `DECISIONS.md`. ✅
+    `DECISIONS.md`. Ten at the close of Phase 5A; five were settled by the
+    product owner before Stage 0, five remain open. ✅
 12. No production behaviour, authored content, learner-facing UI, progress
     storage, component routing or generated runtime registry changed. ✅

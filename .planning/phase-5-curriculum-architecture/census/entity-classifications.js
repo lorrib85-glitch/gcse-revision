@@ -79,7 +79,7 @@ put('module:hist_medicine', 'module', 'history-edexcel-medicine-britain (+ histo
   'Splits. Fourteen thematic-study chapters stay as the Medicine module; `history-medicine-western-front` moves to its own historic-environment module referenced by the same pathway. The current single array cannot express that the two are assessed differently in Paper 1.')
 
 put('module:soc_family', 'module', 'sociology-aqa-families (+ sociology-aqa-key-concepts)',
-  'Splits. Title says "Sociology of the Family" but only soc4 and soc6 are Families; soc1–soc3 are key concepts and sociological approaches that run across both papers. See open decision OD-4.')
+  'Splits. Title says "Sociology of the Family" but only soc4 and soc6 are Families; soc1–soc3 are key concepts and sociological approaches that run across both papers. The split is SETTLED (OD-4).')
 
 put('module:maths_core', 'module', 'maths-aqa-number',
   'Renames in scope, not in membership. Titled "GCSE Maths" but every chapter is AQA Number content, so the record currently claims a whole subject and delivers one content domain. The module record takes the honest scope; the subject is expressed by the subject reference.')
@@ -148,7 +148,7 @@ chapterAndLoader(['soc4', 'soc6'], 'sociology-aqa-families',
   'Content-source binding; the content directory `src/content/sociology/families/` already matches the proposed module.')
 
 chapterAndLoader(['soc1', 'soc2', 'soc3'], 'sociology-aqa-key-concepts',
-  'Key-concepts / approaches chapter, not Families content, despite sitting in the `soc_family` module and the `sociology/families/` content directory. Built content. See open decision OD-4.',
+  'Key-concepts / approaches chapter, not Families content, despite sitting in the `soc_family` module and the `sociology/families/` content directory. Built content. The move is SETTLED (OD-4): these are cross-course foundations, not substantive Families content, and the split supports reuse across both AQA Sociology papers.',
   'Content-source binding whose directory (`sociology/families/`) disagrees with the chapter\'s subject matter. The directory move is deferred: it is a file move with no learner-facing effect and must not be smuggled into a planning phase.')
 
 chapterAndLoader(['math1', 'math2', 'math3', 'math4', 'math5', 'math6', 'math7', 'math8'],

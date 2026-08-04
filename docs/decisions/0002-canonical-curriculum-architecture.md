@@ -1,6 +1,6 @@
 # 0002 — One canonical curriculum architecture
 
-**Status:** accepted (design); not implemented
+**Status:** accepted (design); product decisions closed; implementation in progress (Stages 0–1)
 **Scope:** curriculum governance — subjects, specifications, study pathways, modules, chapters
 **Supersedes at implementation time:** `docs/system/CONTENT_HIERARCHY.md`
 **Evidence:** `.planning/phase-5-curriculum-architecture/`
@@ -212,12 +212,57 @@ wrong subject) and A-10 (20 dead map entries) are one-line fixes and are left
 alone. A planning commit that quietly fixes things is a migration hiding inside
 a planning commit.
 
-**It does not decide ten things it has no authority to decide.** Whether
-`soc1`–`soc3` leave the Families module, how historical `'English'` progress rows
-are attributed, which rule governs browsable subjects, and seven more are
+**It does not decide ten things it has no authority to decide.** They are
 recorded in `DECISIONS.md` with an owner, a proposed default and what the
 implementation does meanwhile. Each is arranged so that deciding it later is a
-data edit, not a redesign.
+data edit, not a redesign. Five have since been closed by the product owner —
+see Decision 11 — and five remain open (OD-2, OD-3, OD-6, OD-9, OD-10).
+
+## Decision 11 — the five product decisions, closed before implementation
+
+Added after the design was accepted and before curriculum migration Stage 0.
+None of them changed the architecture; each settled a question the architecture
+was deliberately built to answer either way.
+
+**OD-1 — historical `'English'` progress rows stay exactly as stored.** They are
+never rewritten, remain visible in historical activity, are treated as legacy and
+unattributed, and contribute to neither `english-language` nor
+`english-literature` averages. `legacyProgressNames` on the subject records is how
+the read layer recognises them, and the treatment must be made **explicit** rather
+than letting rows silently disappear from a total that no longer adds up. There is
+no reliable mechanical way to tell whether an old row was Language or Literature,
+and guessing would fabricate learner data.
+
+**OD-4 — `soc1`–`soc3` move to `sociology-aqa-key-concepts`;** `soc4` and `soc6`
+stay in `sociology-aqa-families`. Culture, norms, values and socialisation;
+sociological approaches; feminism, power and life chances — these are
+cross-course foundations rather than substantive Families content, and the split
+supports reuse across both AQA Sociology papers. Future canonical records only:
+nothing moves in the current runtime catalogue.
+
+**OD-5 — `history-medicine-nightingale` stays a distinct chapter**, `planned`
+until built, and is not absorbed into `history-medicine-great-stink`. Nightingale,
+nursing and hospital reform form a coherent Edexcel Medicine development with
+enough factual content, causation, significance and exam relevance to justify a
+separate learner journey. A-20's broken recovery route is a routing defect to fix
+on its own terms, not an argument for collapsing a curriculum unit.
+
+**OD-7 — no Drama or Music records in Stage 0 or Stage 1.** Their worked examples
+stay architecture proofs. Real records arrive when the first module for each
+qualification is ready to be planned or built.
+
+**OD-8 — the browser is derived from configured study pathways.** A subject is
+shown when a non-retired catalogue study pathway included in the navigation
+configuration reaches at least one non-retired module for that subject. Both
+`active` and `planned` modules qualify — an active module can show available or
+planned chapters, a planned module can carry a subject-level coming-soon
+experience — and retired modules never make a subject visible. This refines the
+Phase 5A default (`at least one active module`) and matters because it lets
+Combined Science expose Biology, Chemistry and Physics from one specification
+without assigning that specification to a single subject. **No
+`subject.browsable` field is added**: visibility is derived, never authored, and
+the schema forbids the field from Stage 0 onwards. Stage 5 must preserve the
+current seven visible subjects during the authority transfer.
 
 ## Consequences
 

@@ -710,7 +710,10 @@ mechanical mapping can resolve for existing rows. Policy:
   guessed at;
 - no persisted row is rewritten.
 
-This is settled in `DECISIONS.md` as OD-1 through OD-3.
+OD-1 is settled in `DECISIONS.md`: historical `'English'` rows are kept
+exactly as stored, stay visible in historical activity, count towards neither
+new subject, and must be surfaced as an explicit legacy bucket rather than
+silently dropped. OD-2 and OD-3 remain open.
 
 ---
 

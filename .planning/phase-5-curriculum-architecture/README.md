@@ -15,7 +15,7 @@ Baseline SHA: `9dc4e875a146fbe4ea44992fb31bc5a81023e765` (`main`).
 | [`CENSUS.md`](CENSUS.md) | The evidence. Baseline counts, verification status, the authority and duplication matrix, and 20 recorded anomalies. |
 | [`DESIGN.md`](DESIGN.md) | The design. Domain boundary, the relational upper model, entity definitions, ID rules, the ownership table, catalogue boundaries. |
 | [`MODELS.md`](MODELS.md) | Eleven target qualifications modelled in the entity shapes — architecture tests written as documents. |
-| [`DECISIONS.md`](DECISIONS.md) | 13 settled decisions with their evidence; 10 genuinely open ones with an owner, a default and what happens meanwhile. |
+| [`DECISIONS.md`](DECISIONS.md) | 13 architectural decisions settled in Phase 5A; 5 product decisions settled before Stage 0 (OD-1, OD-4, OD-5, OD-7, OD-8); 5 still open with an owner, a default and what happens meanwhile. |
 | [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md) | The six-stage compatibility migration. Nothing in it runs in this phase. |
 | [`../../docs/decisions/0002-canonical-curriculum-architecture.md`](../../docs/decisions/0002-canonical-curriculum-architecture.md) | The ADR. |
 

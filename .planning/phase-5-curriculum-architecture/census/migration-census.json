@@ -197,7 +197,7 @@
       },
       "classification": "module",
       "target": "sociology-aqa-families (+ sociology-aqa-key-concepts)",
-      "note": "Splits. Title says \"Sociology of the Family\" but only soc4 and soc6 are Families; soc1–soc3 are key concepts and sociological approaches that run across both papers. See open decision OD-4."
+      "note": "Splits. Title says \"Sociology of the Family\" but only soc4 and soc6 are Families; soc1–soc3 are key concepts and sociological approaches that run across both papers. The split is SETTLED (OD-4)."
     },
     {
       "key": "module:maths_core",
@@ -860,7 +860,7 @@
       },
       "classification": "chapter",
       "target": "sociology-aqa-key-concepts",
-      "note": "Key-concepts / approaches chapter, not Families content, despite sitting in the `soc_family` module and the `sociology/families/` content directory. Built content. See open decision OD-4."
+      "note": "Key-concepts / approaches chapter, not Families content, despite sitting in the `soc_family` module and the `sociology/families/` content directory. Built content. The move is SETTLED (OD-4): these are cross-course foundations, not substantive Families content, and the split supports reuse across both AQA Sociology papers."
     },
     {
       "key": "chapter:soc2",
@@ -877,7 +877,7 @@
       },
       "classification": "chapter",
       "target": "sociology-aqa-key-concepts",
-      "note": "Key-concepts / approaches chapter, not Families content, despite sitting in the `soc_family` module and the `sociology/families/` content directory. Built content. See open decision OD-4."
+      "note": "Key-concepts / approaches chapter, not Families content, despite sitting in the `soc_family` module and the `sociology/families/` content directory. Built content. The move is SETTLED (OD-4): these are cross-course foundations, not substantive Families content, and the split supports reuse across both AQA Sociology papers."
     },
     {
       "key": "chapter:soc3",
@@ -894,7 +894,7 @@
       },
       "classification": "chapter",
       "target": "sociology-aqa-key-concepts",
-      "note": "Key-concepts / approaches chapter, not Families content, despite sitting in the `soc_family` module and the `sociology/families/` content directory. Built content. See open decision OD-4."
+      "note": "Key-concepts / approaches chapter, not Families content, despite sitting in the `soc_family` module and the `sociology/families/` content directory. Built content. The move is SETTLED (OD-4): these are cross-course foundations, not substantive Families content, and the split supports reuse across both AQA Sociology papers."
     },
     {
       "key": "chapter:soc4",
