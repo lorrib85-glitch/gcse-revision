@@ -576,6 +576,9 @@ export default function GuidedChoiceCarousel({
                 position: 'fixed',
                 inset: 0,
                 zIndex: 1100,
+                height: '100dvh',
+                display: 'flex',
+                flexDirection: 'column',
                 background: GENERAL.backgroundApp,
                 overflow: 'hidden',
                 cursor: 'default',
@@ -617,15 +620,21 @@ export default function GuidedChoiceCarousel({
                 pointerEvents: 'none',
               }} />
 
-              <div style={{ position: 'relative', zIndex: 5, minHeight: '100dvh' }}>
+              <div style={{
+                position: 'relative',
+                zIndex: 5,
+                flex: '1 1 auto',
+                minHeight: 0,
+                display: 'flex',
+                flexDirection: 'column',
+              }}>
                 <div style={{
-                  position: 'absolute',
-                  top: '26%',
-                  left: 28,
-                  right: 28,
-                  maxHeight: 'calc(100dvh - 180px)',
+                  flex: '1 1 auto',
+                  minHeight: 0,
                   overflowY: 'auto',
-                  paddingBottom: 112,
+                  overscrollBehavior: 'contain',
+                  boxSizing: 'border-box',
+                  padding: `clamp(${SPACING.cinematic * 2}px, 26dvh, ${SPACING.cinematic * 5}px) ${SPACING.standard + SPACING.micro}px ${SPACING.compact}px`,
                   WebkitOverflowScrolling: 'touch',
                 }}>
                   <div style={{
@@ -669,11 +678,19 @@ export default function GuidedChoiceCarousel({
                 </div>
               </div>
 
-              <CinematicContinueCTA
-                onClick={() => onContinue(selectedOption.nextScreenId, selectedOption)}
-                accent={accent}
-                animation={reduceMotion ? 'none' : 'crm-fade 700ms ease 900ms both, crm-pulse 2.8s ease-in-out 1600ms infinite'}
-              />
+              <div style={{
+                position: 'relative',
+                zIndex: 6,
+                flexShrink: 0,
+                padding: `${SPACING.micro}px ${SPACING.standard + SPACING.micro}px calc(${SPACING.separation}px + env(safe-area-inset-bottom, 0px))`,
+              }}>
+                <CinematicContinueCTA
+                  layout="inline"
+                  onClick={() => onContinue(selectedOption.nextScreenId, selectedOption)}
+                  accent={accent}
+                  animation={reduceMotion ? 'none' : 'crm-fade 700ms ease 900ms both, crm-pulse 2.8s ease-in-out 1600ms infinite'}
+                />
+              </div>
             </div>
           </>
         )
