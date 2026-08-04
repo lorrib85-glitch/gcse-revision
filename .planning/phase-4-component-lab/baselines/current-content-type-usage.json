@@ -209,5 +209,16 @@
       "occurrences": 1,
       "files": 1
     }
+  },
+  "supersededBy": {
+    "scanner": "scripts/scan-content-type-usage.mjs",
+    "reason": "This file is a regex count of every `type:` key occurrence. It cannot distinguish a screen type from a block type, it counted nested question shapes that are not authoring types, and it missed three uses authored in the other quoting style. The structural scan imports every content module and walks its screens array instead, which makes all three problems go away by construction.",
+    "correctionsFound": [
+      "timelineChain: this file reports 8 uses and the census attributed them to block:timelineChain. The structural scan finds 10 SCREEN uses and 0 block uses.",
+      "misconceptionCheck: 20 here; the structural scan finds 21, all at block level and none at screen level — which is the measurement behind D0.",
+      "standard: absent here because it is the default screen type and rarely written. The structural scan counts it as the type the runtime resolves, at 279 uses across 29 files.",
+      "choice / truefalse / connection: counted here, and excluded by the structural scan because they are nested question shapes, not registered authoring types."
+    ],
+    "retainedBecause": "It is the record of what the regex evidence said, and of what it got wrong. tests/architecture/content-type-usage-scan.test.js asserts the three regression cases this file missed — spotTheError, builder and acronymMemorise, one use each."
   }
 }

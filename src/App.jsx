@@ -11,19 +11,34 @@ import SaveFailureHost from './app/SaveFailureHost.jsx'
 // docs/superpowers/specs/2026-07-13-component-review-lab-design.md.
 const ComponentReviewLab = lazy(() => import('./dev/componentReview/ComponentReviewLab.jsx'))
 
-function useComponentReviewFlag() {
+// System reference (?systemReference=true) — the sibling owner surface holding
+// runtime-placed screens and design-system patterns: real, previewable, and
+// deliberately not chapter authoring choices, so they are not in the Lab. It is
+// its own lazy chunk on its own flag; adding it changes nothing about how the
+// Lab above is reached.
+const SystemReference = lazy(() => import('./dev/systemReference/SystemReference.jsx'))
+
+function ownerFlag(name) {
   if (typeof window === 'undefined') return false
-  return new URLSearchParams(window.location.search).get('componentReview') === 'true'
+  return new URLSearchParams(window.location.search).get(name) === 'true'
 }
 
 export default function App() {
-  // When the flag is present, render the lab INSTEAD of the learner app so it
-  // bypasses auth, onboarding, tabs and bottom-nav entirely and is never a
-  // child of the learner tree.
-  if (useComponentReviewFlag()) {
+  // When an owner flag is present, render that surface INSTEAD of the learner
+  // app so it bypasses auth, onboarding, tabs and bottom-nav entirely and is
+  // never a child of the learner tree.
+  if (ownerFlag('componentReview')) {
     return (
       <Suspense fallback={null}>
         <ComponentReviewLab />
+      </Suspense>
+    )
+  }
+
+  if (ownerFlag('systemReference')) {
+    return (
+      <Suspense fallback={null}>
+        <SystemReference />
       </Suspense>
     )
   }

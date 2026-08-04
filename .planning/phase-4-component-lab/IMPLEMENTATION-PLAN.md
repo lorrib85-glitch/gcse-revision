@@ -230,3 +230,97 @@ app-replacement, exit behaviour, URL structure or learner reachability.
 | Generated usage churns on content commits | Accepted under D1; the content workflow gains an explicit regenerate step |
 | Fixture rename breaks Storybook | `fixtures.base.js` export names frozen |
 | New sibling surface drifts into the Lab's access model | System reference has its own flag and shell; the Lab's access assertions are kept and extended |
+
+---
+
+## Executed — measured results
+
+Every figure below was produced by a green run, not estimated.
+
+### The coverage contract
+
+| | Target | Measured |
+|---|---|---|
+| Projection rows | 58 | **58** |
+| Active authoring entries | 57 | **57** |
+| — selectable in the Lab | 57 | **57** |
+| — missing | 0 | **0** |
+| Lab selections with no active entry | 0 | **0** |
+| Derived routes accounted for | 1 | **1** |
+| Derived routes selectable | 0 | **0** |
+| Legacy entries in the projection | 0 | **0** |
+| Category C items in the Lab | 0 | **0** |
+| Category C items on System reference | 5 | **5** |
+| Selections with a validator-accepted minimal chapter shape | 57 | **57** |
+| Total preview units (selections + modes + variants + presentations) | — | **114** |
+
+Machine-readable: `baselines/current-authoring-coverage.json`, key
+`measuredAfterPhase4`, plus the full `finalSelections` list.
+
+### Nothing was dropped
+
+`tests/architecture/component-lab-preview-preservation.test.js` maps all 49
+pre-Phase-4 entries and all 60 variants to a stated destination — `lab`,
+`variant` or `system` — and asserts it. "Deleted" is not a destination, and the
+mapping is checked for both over- and under-coverage, so a future change that
+quietly removes a preview fails with its name.
+
+One variant was promoted rather than preserved in place:
+`circuit-diagram/symbol-reference` mounted a different component through a
+variant slot, and is now `block:circuitSymbolReference`, a selection of its own.
+
+### Mutation testing
+
+Nine mutations applied to the real files, each run against the real guard, each
+reverted (`git status` clean afterwards):
+
+| # | Mutation | Caught by |
+|---|---|---|
+| 1 | remove a Lab adapter | *leaves no active entry without an adapter* |
+| 2 | add an active authoring entry with no adapter | `lab:check` drift, then the coverage guard |
+| 3 | bind an adapter to a legacy entry | *binds no adapter to a missing, legacy or derived entry* |
+| 4 | bind an adapter to a derived-only entry | *binds no adapter to a missing, legacy or derived entry* |
+| 5 | bind an adapter to an unknown key | same |
+| 6 | add a Lab selection with no authoring entry | same |
+| 7 | diverge a generated usage count | `lab:check` drift |
+| 8a | import a private handler directly | *importing a private handler into the Lab fails this assertion* |
+| 8b | remove a ScreenRenderer fixture route | *…satisfies all ten requirements* |
+
+8a initially escaped: the first guard matched `import { X } from` only, so
+`import ScreenRenderer, { ReadBlock } from` slipped past. The guard now extracts
+the import clause first and searches it second, and asserts all three forms —
+bare named, default-plus-named and aliased.
+
+### Runtime, at 390px
+
+Both surfaces driven in a real browser at 390 × 844:
+
+- Lab index lists **57** rows and says "57 choices"; no category C item appears.
+- `block:read` — the most-used authoring type — previews through the real
+  `ScreenRenderer`, showing `ScreenRenderer · ReadBlock`, `text (string)` and
+  "261 uses across 23 files", all read from the projection.
+- `block:misconceptionCheck` offers its derived screen route as a labelled
+  runtime presentation, not as a second index row.
+- `screen:calculationBreakdown` shows all five authoring modes and both preview
+  variants.
+- System reference lists and renders all five category C items.
+- The learner app still loads normally with no flag set.
+
+No uncaught JS exceptions. (The `ERR_CONNECTION_RESET` console lines are the
+sandbox's blocked font requests, documented in `scripts/screenshot.mjs`.)
+
+### Gates
+
+`pnpm verify` green end to end: `catalogue:check`, `authoring:check`,
+`pedagogy:check` and `lab:check` all clean; **1718** architecture tests,
+**1227** unit tests, **301** Storybook browser tests; lint 0 errors (90
+warnings, unchanged from the baseline); build succeeds.
+
+### Bundle
+
+Measured and reported, not budgeted — see `baselines/current-bundle-baseline.md`.
+The one number worth reading: routing the six figure blocks moves **+167 kB raw
+/ +47 kB gzip** out of the Lab-only chunk and into the chapter-runtime chunk,
+because a runtime that can render a type must be able to load it. That is a real
+cost to learners and is recorded with its two options; choosing between them is
+a separate decision.

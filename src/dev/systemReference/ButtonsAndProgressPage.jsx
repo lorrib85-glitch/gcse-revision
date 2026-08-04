@@ -1,9 +1,16 @@
-// ─── Component Review Lab — Buttons, components and progress reference page ───
+// ─── System reference — buttons, components and progress ─────────────────────
 //
-// DEVELOPMENT-ONLY. One page rendering governed button styles, small reusable
-// UI components and progression/progress indicators live, each labelled with
-// its name. Companion to docs/system/BUTTON_RADII_SYSTEM.md — this shows the
-// real components, the doc states the law. Nothing here is learner-facing.
+// OWNER TOOL. One page rendering governed button styles, small reusable UI
+// components and progression/progress indicators live, each labelled with its
+// name. Companion to docs/system/BUTTON_RADII_SYSTEM.md — this shows the real
+// components, the doc states the law.
+//
+// It moved here from the Component Lab in Phase 4, unchanged. It was never a
+// chapter-building choice: a learner never meets a "buttons page" and an author
+// never authors one, so it belongs on the reference surface beside the other
+// runtime and design-system items rather than in the library of things an
+// author picks. Learners never open either surface, but both ship in every
+// build as lazily-loaded owner chunks.
 
 import { useState } from 'react'
 import ContinueCTA from '../../components/core/ContinueCTA.jsx'

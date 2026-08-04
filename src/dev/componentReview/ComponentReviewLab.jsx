@@ -1,82 +1,87 @@
-// ─── Component Review Lab ────────────────────────────────────────────────────
+// ─── Component Lab ───────────────────────────────────────────────────────────
 //
-// DEVELOPMENT-ONLY inspection environment. Reached only via ?componentReview=true
-// in a DEV build (see src/App.jsx gate); never part of learner navigation and
-// tree-shaken out of production.
+// The chapter-building component library. Every item in it is a genuine
+// selectable chapter authoring choice: one row per ACTIVE authoring entry,
+// keyed `screen:<type>` / `block:<type>`, which is what an author writes.
 //
-// Purpose: view currently unused / orphaned / one-off learning components at a
-// realistic ~390px mobile size with realistic GCSE fixtures, alongside a small
-// factual review panel — to support a later keep / repurpose / merge / delete
-// decision. It changes no production content and writes no learner data.
+// OWNER TOOL, SHIPPED IN EVERY BUILD. Reached via ?componentReview=true or the
+// "Component review lab" card in the History browser. src/App.jsx lazy-imports
+// it, so it is its own chunk that learners never download — which is not the
+// same thing as being excluded from the production build. It changes no
+// production content and writes no learner data.
+//
+// Three layers, and this file is the third:
+//   1. src/data/generated/componentLabRegistry.js — every catalogue fact,
+//      generated: name, contract, pedagogy, guidance, lifecycle, usage.
+//   2. labAdapters.jsx — every preview fact, handwritten: JSX, fixtures,
+//      render callbacks, modes and variants.
+//   3. this shell — joins them by authoring key and authors nothing itself.
+//
+// The join is the enforcement point and it runs both ways: an adapter with no
+// active projection row, or an active row with no adapter, fails
+// tests/architecture/component-lab-authoring-coverage.test.js. There is no
+// allowlist, and there is nothing here for a stale hand-written claim to hide
+// in — the two the Phase 4 census found were both in prose this file no longer
+// carries.
+//
+// Runtime and design-system components an author never selects are NOT here.
+// They live on the System reference surface (?systemReference=true).
 //
 // Learner-state isolation: on mount it switches the storage active scope to an
 // isolated 'devreview' namespace, so any component that logs a weakness on
 // answer (SpotTheError, MisconceptionCheck, OrderedRouteTask, MatchingTask)
-// writes to devreview::… keys — never guest::/uid:… learner data,
-// and never anything that syncs to the cloud. The previous scope is restored on
-// unmount.
+// writes to devreview::… keys — never guest::/uid:… learner data, and never
+// anything that syncs to the cloud. The previous scope is restored on unmount.
 
-import { Component, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getActiveScope, setActiveScope } from '../../lib/storage.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
-import { REVIEW_ENTRIES, REVIEW_QUESTIONS, STATUS_LABELS, INTERACTION_LABELS } from './reviewManifest.jsx'
+import { COMPONENT_LAB_REGISTRY } from '../../data/generated/componentLabRegistry.js'
+import { LAB_ADAPTERS, REVIEW_QUESTIONS } from './labAdapters.jsx'
+import { PreviewModeTabs, PreviewSurface } from '../labShell.jsx'
+import { ctrlBtn, exitToApp, mono } from '../labShellTokens.js'
 
 const DEV_REVIEW_SCOPE = 'devreview'
 
+// ─── Selections ──────────────────────────────────────────────────────────────
+//
+// One selection per active projection row joined to its adapter. Derived rows
+// are deliberately absent: a derived route is the runtime presenting a choice
+// the author already made, so it appears as a presentation inside its source
+// selection rather than as a row of its own.
+const SELECTIONS = Object.values(COMPONENT_LAB_REGISTRY)
+  .filter(row => row.status === 'active' && LAB_ADAPTERS[row.key])
+  .map(row => ({ ...row, adapter: LAB_ADAPTERS[row.key] }))
+
+const INTERACTION_LABELS = {
+  passive: 'Passive — reads or views',
+  reveal: 'Reveal — actively explores but isn’t marked',
+  assessed: 'Assessed — gives an answer that can be right or wrong',
+  container: 'Container — classified by the blocks it holds',
+}
+
+const groupOf = selection => selection.pedagogy?.interaction ?? 'container'
+
+// Filters are predicates over generated facts, never over a stored label. The
+// two stale statuses the census found — "routed but unused" on a type with a
+// real use, "one-off" on a type used eight times — were stored values that had
+// gone out of date. A predicate cannot go out of date.
 const FILTERS = [
-  { id: 'all',           label: 'All' },
-  { id: 'unused',        label: 'Unused' },
-  { id: 'one-off',       label: 'One-off' },
-  { id: 'comparison',    label: 'Comparison' },
+  { id: 'all', label: 'All', match: () => true },
+  { id: 'screens', label: 'Screens', match: s => s.level === 'screen' },
+  { id: 'blocks', label: 'Blocks', match: s => s.level === 'block' },
+  { id: 'unused', label: 'Unused', match: s => s.contentUsage.occurrences === 0 },
+  { id: 'one-off', label: 'One-off', match: s => s.contentUsage.occurrences === 1 },
+  { id: 'reviewing', label: 'Reviewing', match: s => s.lifecycle === 'reviewing' },
+  { id: 'pending', label: 'Decision pending', match: s => s.decisionStatus === 'pending' },
 ]
 
-// Which manifest statuses each filter matches.
-function matchesFilter(entry, filterId) {
-  if (filterId === 'all') return true
-  if (filterId === 'unused') return entry.status === 'unused' || entry.status === 'routed-unused'
-  if (filterId === 'one-off') return entry.status === 'one-off'
-  if (filterId === 'comparison') return entry.status === 'comparison'
-  return true
-}
-
-const mono = { fontFamily: "'Sora', sans-serif" }
-const FULLBLEED_PREVIEW_WIDTH = 390
-const FULLBLEED_PREVIEW_SCALE = 0.78
-
-// Full-bleed preview display modes. 'actual' renders the virtual 390px screen at
-// scale(1) inside a vertically scrollable frame — the trustworthy mode for
-// comparing typography across components. 'fit' keeps the scaled-down whole-screen
-// overview so a full interaction can be inspected at once. Dev-tool only; the
-// production component is never altered to compensate for preview scaling.
-const PREVIEW_MODES = [
-  { id: 'actual', label: 'Actual size' },
-  { id: 'fit',    label: 'Fit screen' },
-]
-
-// Leave the lab by dropping the ?componentReview flag and reloading into the
-// normal learner app. Used from the index header so production users (the app
-// owner) are never trapped in the lab.
-function exitToApp() {
-  if (typeof window === 'undefined') return
-  window.location.assign(window.location.pathname)
-}
-
-function StatusChip({ status }) {
-  const tone = {
-    'unused':        GENERAL.error,
-    'routed-unused': GENERAL.coral,
-    'one-off':       GENERAL.teal,
-    'comparison':    GENERAL.slate,
-  }[status] || GENERAL.slate
-  return (
-    <span style={{
-      ...mono, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
-      color: tone, border: `1px solid ${tone}`, borderRadius: 6, padding: '2px 7px', whiteSpace: 'nowrap',
-    }}>
-      {STATUS_LABELS[status] || status}
-    </span>
-  )
+const describeUsage = usage => {
+  if (usage.occurrences === 0) return 'Not used by any content file yet'
+  const uses = usage.occurrences === 1 ? '1 use' : `${usage.occurrences} uses`
+  const files = usage.files === 1 ? '1 file' : `${usage.files} files`
+  return `${uses} across ${files}`
 }
 
 export default function ComponentReviewLab() {
@@ -88,11 +93,11 @@ export default function ComponentReviewLab() {
   }, [])
 
   const [filter, setFilter] = useState('all')
-  const [activeId, setActiveId] = useState(null)   // null = index view
-  const [previewKey, setPreviewKey] = useState(0)  // bump to reset/replay a preview
+  const [activeKey, setActiveKey] = useState(null)   // null = index view
+  const [previewKey, setPreviewKey] = useState(0)    // bump to reset/replay a preview
   const [questionsOpen, setQuestionsOpen] = useState(false)
-  // Full-bleed display mode lives here (not in PreviewView) so it survives moving
-  // between components — PreviewView remounts per entry and must not reset it.
+  // Full-bleed display mode lives here (not in PreviewView) so it survives
+  // moving between selections — PreviewView remounts per selection.
   const [previewMode, setPreviewMode] = useState('actual')
   const [vw, setVw] = useState(typeof window !== 'undefined' ? window.innerWidth : 0)
 
@@ -102,37 +107,35 @@ export default function ComponentReviewLab() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const filtered = useMemo(
-    () => REVIEW_ENTRIES.filter(e => matchesFilter(e, filter)),
-    [filter]
-  )
+  const filtered = useMemo(() => {
+    const predicate = FILTERS.find(f => f.id === filter)?.match ?? (() => true)
+    return SELECTIONS.filter(predicate)
+  }, [filter])
 
-  const activeIndex = filtered.findIndex(e => e.id === activeId)
+  const activeIndex = filtered.findIndex(s => s.key === activeKey)
   const active = activeIndex >= 0 ? filtered[activeIndex] : null
 
-  function openEntry(id) {
-    setActiveId(id)
+  function openSelection(key) {
+    setActiveKey(key)
     setPreviewKey(k => k + 1)
     setQuestionsOpen(false)
   }
-  function goToIndex() { setActiveId(null) }
   function step(delta) {
     if (activeIndex < 0) return
-    const next = (activeIndex + delta + filtered.length) % filtered.length
-    openEntry(filtered[next].id)
+    openSelection(filtered[(activeIndex + delta + filtered.length) % filtered.length].key)
   }
 
-  // If the active entry falls out of the current filter, drop back to index.
+  // If the open selection falls out of the current filter, drop back to index.
   useEffect(() => {
-    if (activeId && activeIndex < 0) setActiveId(null)
-  }, [activeId, activeIndex])
+    if (activeKey && activeIndex < 0) setActiveKey(null)
+  }, [activeKey, activeIndex])
 
   return (
     <div style={{ minHeight: '100vh', background: GENERAL.backgroundApp, color: GENERAL.softWhite }}>
       {active ? (
         <PreviewView
-          key={active.id}
-          entry={active}
+          key={active.key}
+          selection={active}
           previewKey={previewKey}
           position={`${activeIndex + 1} / ${filtered.length}`}
           vw={vw}
@@ -140,18 +143,13 @@ export default function ComponentReviewLab() {
           onToggleQuestions={() => setQuestionsOpen(o => !o)}
           previewMode={previewMode}
           onPreviewMode={setPreviewMode}
-          onBack={goToIndex}
+          onBack={() => setActiveKey(null)}
           onPrev={() => step(-1)}
           onNext={() => step(1)}
           onReset={() => setPreviewKey(k => k + 1)}
         />
       ) : (
-        <IndexView
-          filtered={filtered}
-          filter={filter}
-          onFilter={setFilter}
-          onOpen={openEntry}
-        />
+        <IndexView filtered={filtered} filter={filter} onFilter={setFilter} onOpen={openSelection} />
       )}
     </div>
   )
@@ -159,20 +157,21 @@ export default function ComponentReviewLab() {
 
 // ─── Index view ──────────────────────────────────────────────────────────────
 function IndexView({ filtered, filter, onFilter, onOpen }) {
-  const groups = ['passive', 'reveal', 'assessed', 'uncategorised', 'general']
+  const groups = ['passive', 'reveal', 'assessed', 'container']
   return (
     <div style={{ maxWidth: 420, margin: '0 auto', padding: '20px 16px 64px' }}>
       <header style={{ marginBottom: 18 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
           <div style={{ ...mono, fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: GENERAL.teal }}>
-            Development tool
+            Owner tool
           </div>
           <button onClick={exitToApp} style={{ ...ctrlBtn, flexShrink: 0 }}>Exit to app ✕</button>
         </div>
-        <h1 style={{ ...mono, fontSize: 22, fontWeight: 700, margin: '4px 0 6px' }}>Component review lab</h1>
+        <h1 style={{ ...mono, fontSize: 22, fontWeight: 700, margin: '4px 0 6px' }}>Component lab</h1>
         <p style={{ ...mono, fontSize: 13, lineHeight: 1.5, color: GENERAL.slate, margin: 0 }}>
-          Inspect unused, orphaned and one-off learning components with realistic GCSE fixtures.
-          Nothing here changes production content or learner data.
+          Every screen and block type you can author into a chapter, with realistic GCSE
+          fixtures at ~390px. {SELECTIONS.length} choices. Nothing here changes production
+          content or learner data.
         </p>
       </header>
 
@@ -194,7 +193,7 @@ function IndexView({ filtered, filter, onFilter, onOpen }) {
       </div>
 
       {groups.map(group => {
-        const rows = filtered.filter(e => (e.interaction ?? 'uncategorised') === group)
+        const rows = filtered.filter(s => groupOf(s) === group)
         if (!rows.length) return null
         return (
           <section key={group} style={{ marginBottom: 24 }}>
@@ -202,25 +201,32 @@ function IndexView({ filtered, filter, onFilter, onOpen }) {
               {INTERACTION_LABELS[group]}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {rows.map(entry => (
-                <button key={entry.id} onClick={() => onOpen(entry.id)} style={{
-                  ...mono, textAlign: 'left', cursor: 'pointer',
-                  background: GENERAL.backgroundSurface, border: `1px solid ${GENERAL.line.soft}`,
-                  borderRadius: 12, padding: '13px 14px', color: GENERAL.softWhite,
-                  borderLeft: `3px solid ${(SUBJECTS[entry.subject] || SUBJECTS.History).accent}`,
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 5 }}>
-                    <span style={{ fontSize: 15, fontWeight: 700 }}>{entry.name}</span>
-                    <StatusChip status={entry.status} />
-                  </div>
-                  <div style={{ fontSize: 12.5, lineHeight: 1.45, color: GENERAL.slate }}>{entry.function}</div>
-                  {entry.variants?.length > 1 && (
-                    <div style={{ fontSize: 11, color: (SUBJECTS[entry.subject] || SUBJECTS.History).accent, marginTop: 7 }}>
-                      {entry.variants.length} preview variants
+              {rows.map(selection => {
+                const accent = (SUBJECTS[selection.adapter.subject] || SUBJECTS.History).accent
+                const extras = (selection.adapter.modes?.length ?? 0)
+                  + (selection.adapter.variants?.length ?? 0)
+                return (
+                  <button key={selection.key} onClick={() => onOpen(selection.key)} style={{
+                    ...mono, textAlign: 'left', cursor: 'pointer',
+                    background: GENERAL.backgroundSurface, border: `1px solid ${GENERAL.line.soft}`,
+                    borderRadius: 12, padding: '13px 14px', color: GENERAL.softWhite,
+                    borderLeft: `3px solid ${accent}`,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 5 }}>
+                      <span style={{ fontSize: 15, fontWeight: 700 }}>{selection.authoringName}</span>
+                      <LevelChip level={selection.level} />
                     </div>
-                  )}
-                </button>
-              ))}
+                    <code style={{ fontSize: 11.5, color: accent, display: 'block', marginBottom: 6 }}>{selection.key}</code>
+                    {selection.bestUsedFor && (
+                      <div style={{ fontSize: 12.5, lineHeight: 1.45, color: GENERAL.slate }}>{selection.bestUsedFor}</div>
+                    )}
+                    <div style={{ fontSize: 11, color: GENERAL.slate, marginTop: 7, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                      <span>{describeUsage(selection.contentUsage)}</span>
+                      {extras > 1 && <span style={{ color: accent }}>{extras} previews</span>}
+                    </div>
+                  </button>
+                )
+              })}
             </div>
           </section>
         )
@@ -229,29 +235,49 @@ function IndexView({ filtered, filter, onFilter, onOpen }) {
   )
 }
 
-// ─── Preview view ────────────────────────────────────────────────────────────
-function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQuestions, previewMode, onPreviewMode, onBack, onPrev, onNext, onReset }) {
-  const accent = (SUBJECTS[entry.subject] || SUBJECTS.History).accent
-  const variants = entry.variants ?? []
-  const [activeVariantId, setActiveVariantId] = useState(variants[0]?.id ?? null)
-  const [renderError, setRenderError] = useState(null)
-  const activeVariant = variants.find(variant => variant.id === activeVariantId) ?? null
-  // Only full-bleed previews are scaled, so the display toggle only applies to them.
-  const isFullbleed = (activeVariant?.renderMode ?? entry.renderMode) === 'fullbleed'
+function LevelChip({ level }) {
+  const tone = level === 'screen' ? GENERAL.teal : GENERAL.slate
+  return (
+    <span style={{
+      ...mono, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
+      color: tone, border: `1px solid ${tone}`, borderRadius: 6, padding: '2px 7px', whiteSpace: 'nowrap',
+    }}>
+      {level}
+    </span>
+  )
+}
 
-  // Fresh error state per component / variant / replay.
-  useEffect(() => { setRenderError(null) }, [entry.id, activeVariantId, previewKey])
+// ─── Preview view ────────────────────────────────────────────────────────────
+function PreviewView({ selection, previewKey, position, vw, questionsOpen, onToggleQuestions, previewMode, onPreviewMode, onBack, onPrev, onNext, onReset }) {
+  const { adapter } = selection
+  const accent = (SUBJECTS[adapter.subject] || SUBJECTS.History).accent
+
+  // Modes, variants and presentations are all previews of one selection; the
+  // difference is what they mean, not how they render. Modes are authoring
+  // choices inside one contract, variants change no content, and a
+  // presentation is a derived runtime route the author does not write.
+  const previews = useMemo(() => [
+    ...(adapter.modes ?? []).map(mode => ({ ...mode, kind: 'mode' })),
+    ...(adapter.variants ?? []).map(variant => ({ ...variant, kind: 'variant' })),
+    ...(adapter.presentations ?? []).map(presentation => ({
+      ...presentation,
+      id: presentation.key,
+      label: COMPONENT_LAB_REGISTRY[presentation.key]?.authoringName ?? presentation.key,
+      kind: 'presentation',
+    })),
+  ], [adapter])
+
+  const [activePreviewId, setActivePreviewId] = useState(previews[0]?.id ?? null)
+  const [renderError, setRenderError] = useState(null)
+  const activePreview = previews.find(preview => preview.id === activePreviewId) ?? null
+  const isFullbleed = (activePreview?.renderMode ?? adapter.renderMode) === 'fullbleed'
+
+  useEffect(() => { setRenderError(null) }, [selection.key, activePreviewId, previewKey])
 
   const onDone = () => {}  // previews never advance a real flow
 
-  function chooseVariant(id) {
-    setActiveVariantId(id)
-    setRenderError(null)
-  }
-
   return (
     <div style={{ maxWidth: 420, margin: '0 auto', paddingBottom: 0 }}>
-      {/* Control bar */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
         display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px',
@@ -265,19 +291,28 @@ function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQ
         <span style={{ ...mono, marginLeft: 'auto', fontSize: 11, color: GENERAL.slate }}>{position}</span>
       </div>
 
-      {/* Review information panel */}
+      {/* Authoring panel. Every value here is read from the generated
+          projection — the shell states no fact of its own. */}
       <div style={{ padding: '14px 14px 0' }}>
         <div style={{
           background: GENERAL.backgroundSurface, border: `1px solid ${GENERAL.line.soft}`,
           borderLeft: `3px solid ${accent}`, borderRadius: 12, padding: '14px 15px',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 10 }}>
-            <span style={{ ...mono, fontSize: 17, fontWeight: 700 }}>{entry.name}</span>
-            <StatusChip status={entry.status} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 4 }}>
+            <span style={{ ...mono, fontSize: 17, fontWeight: 700 }}>{selection.authoringName}</span>
+            <LevelChip level={selection.level} />
           </div>
-          <Field label="Pedagogical function" value={entry.function} />
-          <Field label="Current known usage" value={entry.usage} />
-          <Field label="Closest alternative" value={entry.alternative} />
+          <code style={{ ...mono, fontSize: 12, color: accent, display: 'block', marginBottom: 12 }}>{selection.key}</code>
+
+          <Field label="Component" value={`${selection.componentName}${selection.handler ? ` · ${selection.handler}` : ''}`} />
+          <Field label="Required data" value={describeContract(selection)} />
+          <Field label="Pedagogy" value={describePedagogy(selection)} />
+          <Field label="Continuation" value={selection.continuation === 'component' ? 'Component owns its own Continue' : 'Player owns the Continue'} />
+          <Field label="Content usage" value={describeUsage(selection.contentUsage)} />
+          {selection.useWhen && <Field label="Use when" value={selection.useWhen} />}
+          {selection.doNotUseWhen && <Field label="Do not use when" value={selection.doNotUseWhen} />}
+          {selection.chooseInstead && <Field label="Choose instead" value={selection.chooseInstead} />}
+          <Field label="Lifecycle" value={`${selection.lifecycle} · contract ${selection.criticality}${selection.decisionStatus ? ` · decision ${selection.decisionStatus}` : ''}`} />
 
           <button onClick={onToggleQuestions} style={{
             ...mono, fontSize: 12, fontWeight: 600, cursor: 'pointer', marginTop: 4,
@@ -287,47 +322,48 @@ function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQ
           </button>
           {questionsOpen && (
             <ol style={{ ...mono, fontSize: 12.5, lineHeight: 1.55, color: GENERAL.slate, margin: '8px 0 2px', paddingLeft: 18 }}>
-              {REVIEW_QUESTIONS.map((q, i) => <li key={i} style={{ marginBottom: 4 }}>{q}</li>)}
+              {REVIEW_QUESTIONS.map((question, i) => <li key={i} style={{ marginBottom: 4 }}>{question}</li>)}
             </ol>
           )}
         </div>
 
-        {variants.length > 0 && (
+        {previews.length > 0 && (
           <div style={{ marginTop: 12 }}>
             <div style={{ ...mono, fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: GENERAL.slate, margin: '0 2px 7px' }}>
-              Preview variant
+              {previewGroupLabel(previews)}
             </div>
-            <div role="tablist" aria-label={`${entry.name} preview variants`} style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
-              {variants.map(variant => {
-                const selected = variant.id === activeVariantId
+            <div role="tablist" aria-label={`${selection.authoringName} previews`} style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
+              {previews.map(preview => {
+                const selected = preview.id === activePreviewId
                 return (
                   <button
-                    key={variant.id}
+                    key={preview.id}
                     type="button"
                     role="tab"
                     aria-selected={selected}
-                    onClick={() => chooseVariant(variant.id)}
+                    onClick={() => { setActivePreviewId(preview.id); setRenderError(null) }}
                     style={{
-                      ...mono,
-                      fontSize: 11.5,
-                      fontWeight: 650,
-                      cursor: 'pointer',
-                      minHeight: 34,
-                      padding: '6px 10px',
-                      borderRadius: 8,
+                      ...mono, fontSize: 11.5, fontWeight: 650, cursor: 'pointer',
+                      minHeight: 34, padding: '6px 10px', borderRadius: 8,
                       border: `1px solid ${selected ? accent : GENERAL.line.strong}`,
                       background: selected ? `${accent}1F` : GENERAL.backgroundSurface,
                       color: selected ? accent : GENERAL.slate,
                     }}
                   >
-                    {variant.label}
+                    {preview.label}
                   </button>
                 )
               })}
             </div>
-            {activeVariant?.description && (
+            {activePreview?.kind === 'presentation' && (
+              <p style={{ ...mono, fontSize: 11, lineHeight: 1.45, color: GENERAL.coral, margin: '7px 2px 0' }}>
+                Derived runtime route ({activePreview.id}) — the author writes {selection.key} and the
+                runtime presents it this way. It is not a separate authoring choice.
+              </p>
+            )}
+            {activePreview?.description && (
               <p style={{ ...mono, fontSize: 11.5, lineHeight: 1.45, color: GENERAL.slate, margin: '7px 2px 0' }}>
-                {activeVariant.description}
+                {activePreview.description}
               </p>
             )}
           </div>
@@ -343,29 +379,7 @@ function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQ
             <div style={{ ...mono, fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: GENERAL.slate, marginBottom: 7 }}>
               Preview display
             </div>
-            <div role="tablist" aria-label="Preview display mode" style={{ display: 'flex', gap: 7 }}>
-              {PREVIEW_MODES.map(mode => {
-                const selected = mode.id === previewMode
-                return (
-                  <button
-                    key={mode.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={selected}
-                    onClick={() => onPreviewMode(mode.id)}
-                    style={{
-                      ...mono, fontSize: 11.5, fontWeight: 650, cursor: 'pointer',
-                      minHeight: 34, padding: '6px 12px', borderRadius: 8,
-                      border: `1px solid ${selected ? accent : GENERAL.line.strong}`,
-                      background: selected ? `${accent}1F` : GENERAL.backgroundSurface,
-                      color: selected ? accent : GENERAL.slate,
-                    }}
-                  >
-                    {mode.label}
-                  </button>
-                )
-              })}
-            </div>
+            <PreviewModeTabs previewMode={previewMode} onPreviewMode={onPreviewMode} accent={accent} />
             <p style={{ ...mono, fontSize: 11.5, lineHeight: 1.45, color: GENERAL.slate, margin: '7px 0 0' }}>
               {previewMode === 'actual'
                 ? 'Real 390px screen at 100% — scroll the frame to see the whole screen. Use this to compare typography.'
@@ -375,11 +389,10 @@ function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQ
         )}
       </div>
 
-      {/* Live component preview */}
       <PreviewFrame
-        key={`${previewKey}:${activeVariantId ?? 'default'}`}
-        entry={entry}
-        variant={activeVariant}
+        key={`${previewKey}:${activePreviewId ?? 'default'}`}
+        selection={selection}
+        preview={activePreview}
         previewMode={previewMode}
         onDone={onDone}
         onError={setRenderError}
@@ -388,6 +401,28 @@ function PreviewView({ entry, previewKey, position, vw, questionsOpen, onToggleQ
       />
     </div>
   )
+}
+
+const previewGroupLabel = previews => {
+  const kinds = new Set(previews.map(preview => preview.kind))
+  if (kinds.has('mode')) return 'Authoring mode'
+  if (kinds.size === 1 && kinds.has('presentation')) return 'Runtime presentation'
+  return 'Preview variant'
+}
+
+function describeContract(selection) {
+  const required = selection.required.map(requirement => `${requirement.path} (${requirement.kind})`)
+  const anyOf = selection.requiredAny.map(alternatives =>
+    `one of ${alternatives.map(alternative => `${alternative.path} (${alternative.kind})`).join(' / ')}`)
+  const parts = [...required, ...anyOf]
+  return parts.length ? parts.join('; ') : 'None — the type is complete without authored data'
+}
+
+function describePedagogy(selection) {
+  if (!selection.pedagogy) {
+    return `${selection.pedagogyExemption ?? 'unclassified'} — taken from the blocks it holds`
+  }
+  return `${selection.pedagogy.functions.join(', ')} · ${selection.pedagogy.interaction}`
 }
 
 function Field({ label, value }) {
@@ -399,97 +434,23 @@ function Field({ label, value }) {
   )
 }
 
-// A small class error boundary so a single broken component can't blank the lab.
-class RenderBoundary extends Component {
-  constructor(props) { super(props); this.state = { err: null } }
-  static getDerivedStateFromError(err) { return { err: err.message || String(err) } }
-  componentDidCatch(err) { this.props.onError?.(err.message || String(err)) }
-  componentDidUpdate(prev) { if (prev.resetKey !== this.props.resetKey && this.state.err) this.setState({ err: null }) }
-  render() {
-    if (this.state.err) {
-      return (
-        <div style={{ ...mono, padding: 20, color: GENERAL.error, fontSize: 13, lineHeight: 1.5 }}>
-          <b>Component threw while rendering:</b>
-          <pre style={{ whiteSpace: 'pre-wrap', marginTop: 8, color: GENERAL.slate, fontSize: 12 }}>{this.state.err}</pre>
-        </div>
-      )
-    }
-    return this.props.children
-  }
-}
+function PreviewFrame({ selection, preview, previewMode, onDone, onError, accent }) {
+  const { adapter } = selection
+  const renderMode = preview?.renderMode ?? adapter.renderMode
+  const render = preview?.render ?? adapter.render
+  const fixture = Object.prototype.hasOwnProperty.call(preview ?? {}, 'fixture')
+    ? preview.fixture
+    : adapter.fixture
 
-function PreviewFrame({ entry, variant, previewMode, onDone, onError, accent }) {
-  const renderMode = variant?.renderMode ?? entry.renderMode
-  const render = variant?.render ?? entry.render
-  const fixture = Object.prototype.hasOwnProperty.call(variant ?? {}, 'fixture')
-    ? variant.fixture
-    : entry.fixture
-  const fullbleed = renderMode === 'fullbleed'
-  const resetKey = `${entry.id}:${variant?.id ?? 'default'}`
-
-  // Full-screen components still lay themselves out at a genuine 390px mobile
-  // viewport and 100dvh height, in both display modes.
-  //  • 'fit'    scales the complete virtual screen down to 78% so bottom sheets,
-  //             progress and Continue stay visible together in a short frame.
-  //  • 'actual' keeps the screen at scale(1) and lets the frame scroll vertically,
-  //             so title/intro typography reads at its true 390px size.
-  // Either way a transform + contain on the inner box establishes a containing
-  // block for the component's position:fixed shell, so its 100dvh layout is
-  // captured before any scaling — the production component is never touched.
-  if (fullbleed) {
-    const actual = previewMode === 'actual'
-    const scale = actual ? 1 : FULLBLEED_PREVIEW_SCALE
-    return (
-      <div
-        data-review-preview-mode={actual ? 'actual' : 'fit'}
-        data-review-viewport-width={FULLBLEED_PREVIEW_WIDTH}
-        data-review-viewport-scale={scale}
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '78dvh',
-          marginTop: 12,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
-          border: `1px solid ${GENERAL.line.soft}`,
-          borderTop: `2px solid ${accent}`,
-          overflowX: 'hidden',
-          overflowY: actual ? 'auto' : 'hidden',
-          background: '#000',
-        }}
-      >
-        <div style={{
-          position: 'relative',
-          width: FULLBLEED_PREVIEW_WIDTH,
-          height: '100dvh',
-          flex: '0 0 auto',
-          transform: `scale(${scale})`,
-          transformOrigin: 'top center',
-          contain: 'layout paint size',
-          overflow: 'hidden',
-        }}>
-          <RenderBoundary onError={onError} resetKey={resetKey}>
-            {render(fixture, { onDone })}
-          </RenderBoundary>
-        </div>
-      </div>
-    )
-  }
-
-  // Inline blocks flow directly in the normal content column. The lab must not
-  // add a second card treatment around components that already own their frame.
   return (
-    <div style={{ padding: '14px 14px 48px', overflowX: 'auto' }}>
-      <RenderBoundary onError={onError} resetKey={resetKey}>
-        {render(fixture, { onDone })}
-      </RenderBoundary>
-    </div>
+    <PreviewSurface
+      fullbleed={renderMode === 'fullbleed'}
+      previewMode={previewMode}
+      accent={accent}
+      resetKey={`${selection.key}:${preview?.id ?? 'default'}`}
+      onError={onError}
+    >
+      {render(fixture, { onDone })}
+    </PreviewSurface>
   )
-}
-
-const ctrlBtn = {
-  ...mono, fontSize: 12, fontWeight: 600, cursor: 'pointer',
-  background: 'transparent', color: GENERAL.softWhite,
-  border: `1px solid ${GENERAL.line.strong}`, borderRadius: 8, padding: '5px 10px',
 }

@@ -100,7 +100,9 @@ describe('the chapterPlayer family is a ChapterPlayer-only internal', () => {
     for (const surface of [
       'src/data/screenRegistry.js',
       'src/data/componentFunctions.js',
-      'src/dev/componentReview/reviewManifestCore.jsx',
+      'src/dev/componentReview/labAdapters.jsx',
+      'src/dev/componentReview/labScreenRendererAdapters.jsx',
+      'src/data/generated/componentLabRegistry.js',
     ]) {
       const source = read(surface)
       expect(source, `${surface} must not offer ChapterGateLayer to authors`).not.toContain('ChapterGateLayer')

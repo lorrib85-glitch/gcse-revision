@@ -32,9 +32,19 @@ const LEGACY_TOKEN_CENSUS = {
     success: 1, successSoft: 2, error: 2, errorSoft: 0,
     why: 'Cat 3 — GRADE_COLOURS performance bands. A band summarises how well a whole answer scored; it is neither binary answer feedback nor system state, and stays on these tokens by review.',
   },
-  'src/dev/componentReview/ComponentReviewLab.jsx': {
-    success: 0, successSoft: 0, error: 2, errorSoft: 0,
-    why: 'Cat 2 — dev-only lab: "unused" status chip and the render error boundary. Not a learner surface.',
+  // Phase 4 note: ComponentReviewLab.jsx held two Cat 2 uses — the "unused"
+  // status chip and the render error boundary. The chip is gone (status is now
+  // a predicate over generated facts, not a coloured stored label) and the
+  // boundary moved into the shared owner-surface shell. The Lab's allowance is
+  // removed rather than zeroed, for the same reason as the Phase 6 entries
+  // below it: a zero-value entry would licence the tokens straight back in.
+  'src/dev/labShell.jsx': {
+    success: 0, successSoft: 0, error: 1, errorSoft: 0,
+    why: 'Cat 2 — the owner-surface render error boundary: a component threw while previewing. Not learner-facing, and not answer feedback.',
+  },
+  'src/dev/systemReference/SystemReference.jsx': {
+    success: 0, successSoft: 0, error: 1, errorSoft: 0,
+    why: 'Cat 2 — the same preview render failure, surfaced above the frame on the System reference surface. Not learner-facing.',
   },
   'src/components/learning/QuoteAnalyser.jsx': {
     success: 0, successSoft: 0, error: 0, errorSoft: 1,

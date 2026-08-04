@@ -1105,5 +1105,476 @@
     "from": "screen:misconceptionCheck (derived)",
     "to": "block:misconceptionCheck (active)",
     "effect": "A correction, not new coverage: active covered 33 → 34 and active missing 17 → 16, with no adapter added. The remaining 16 are the new adapters Phase 4 writes."
-  }
+  },
+  "measuredAfterPhase4": {
+    "capturedBy": "tests/architecture/component-lab-authoring-coverage.test.js and pnpm lab:check, both green",
+    "projectionRows": 58,
+    "activeAuthoringEntries": 57,
+    "derivedRoutes": 1,
+    "selectableLabChoices": 57,
+    "activeMissingFromLab": 0,
+    "labSelectionsWithNoActiveEntry": 0,
+    "categoryCItemsInLab": 0,
+    "categoryCItemsOnSystemReference": 5,
+    "totalPreviewUnits": 114,
+    "selectionsWithValidMinimalChapterShape": 57
+  },
+  "finalSelections": [
+    {
+      "key": "block:acronymMemorise",
+      "component": "AcronymMemorise",
+      "handler": null,
+      "owningRecord": "acronym-memorise",
+      "previews": 1,
+      "contentUses": 1
+    },
+    {
+      "key": "block:angleFigure",
+      "component": "AngleExplore",
+      "handler": null,
+      "owningRecord": "angle-explore",
+      "previews": 13,
+      "contentUses": 0
+    },
+    {
+      "key": "block:areaPerimeterFigure",
+      "component": "AreaPerimeterExplore",
+      "handler": null,
+      "owningRecord": "area-perimeter-explore",
+      "previews": 8,
+      "contentUses": 0
+    },
+    {
+      "key": "block:boss",
+      "component": "ExamQuestionFrame",
+      "handler": null,
+      "owningRecord": "exam-question-frame",
+      "previews": 1,
+      "contentUses": 61
+    },
+    {
+      "key": "block:builder",
+      "component": "BuilderBlock",
+      "handler": null,
+      "owningRecord": "builder-block",
+      "previews": 3,
+      "contentUses": 1
+    },
+    {
+      "key": "block:circuitDiagram",
+      "component": "CircuitDiagram",
+      "handler": null,
+      "owningRecord": "circuit-diagram",
+      "previews": 5,
+      "contentUses": 0
+    },
+    {
+      "key": "block:circuitSymbolReference",
+      "component": "CircuitSymbolReference",
+      "handler": null,
+      "owningRecord": "circuit-symbol-reference",
+      "previews": 1,
+      "contentUses": 0
+    },
+    {
+      "key": "block:colsort",
+      "component": "ColSortBlock",
+      "handler": null,
+      "owningRecord": "col-sort-block",
+      "previews": 1,
+      "contentUses": 26
+    },
+    {
+      "key": "block:coordinatePlaneFigure",
+      "component": "CoordinatePlaneExplore",
+      "handler": null,
+      "owningRecord": "coordinate-plane-explore",
+      "previews": 13,
+      "contentUses": 0
+    },
+    {
+      "key": "block:examtip",
+      "component": "ScreenRenderer",
+      "handler": "ExamTipBlock",
+      "owningRecord": "screen-renderer",
+      "previews": 1,
+      "contentUses": 62
+    },
+    {
+      "key": "block:explainReveal",
+      "component": "ExplainReveal",
+      "handler": null,
+      "owningRecord": "explain-reveal",
+      "previews": 1,
+      "contentUses": 5
+    },
+    {
+      "key": "block:fillblanks",
+      "component": "FillInTheBlanksBlock",
+      "handler": null,
+      "owningRecord": "fill-in-the-blanks-block",
+      "previews": 1,
+      "contentUses": 21
+    },
+    {
+      "key": "block:flashcards",
+      "component": "FlashcardsBlock",
+      "handler": null,
+      "owningRecord": "flashcards-block",
+      "previews": 1,
+      "contentUses": 10
+    },
+    {
+      "key": "block:funfact",
+      "component": "ScreenRenderer",
+      "handler": "FunFactBlock",
+      "owningRecord": "screen-renderer",
+      "previews": 1,
+      "contentUses": 26
+    },
+    {
+      "key": "block:graphView",
+      "component": "GraphView",
+      "handler": null,
+      "owningRecord": "graph-view",
+      "previews": 2,
+      "contentUses": 0
+    },
+    {
+      "key": "block:hotspot",
+      "component": "ScreenRenderer",
+      "handler": "HotspotBlock",
+      "owningRecord": "screen-renderer",
+      "previews": 1,
+      "contentUses": 0
+    },
+    {
+      "key": "block:keypoint",
+      "component": "ScreenRenderer",
+      "handler": "KeypointBlock",
+      "owningRecord": "screen-renderer",
+      "previews": 1,
+      "contentUses": 83
+    },
+    {
+      "key": "block:mediaPlaceholder",
+      "component": "MediaPlaceholder",
+      "handler": null,
+      "owningRecord": "media-placeholder",
+      "previews": 2,
+      "contentUses": 1
+    },
+    {
+      "key": "block:memoryHook",
+      "component": "MemoryHook",
+      "handler": null,
+      "owningRecord": "memory-hook",
+      "previews": 1,
+      "contentUses": 0
+    },
+    {
+      "key": "block:misconception",
+      "component": "ScreenRenderer",
+      "handler": "MisconceptionBlock",
+      "owningRecord": "screen-renderer",
+      "previews": 1,
+      "contentUses": 2
+    },
+    {
+      "key": "block:misconceptionCheck",
+      "component": "MisconceptionCheck",
+      "handler": null,
+      "owningRecord": "misconception-check",
+      "previews": 1,
+      "contentUses": 21
+    },
+    {
+      "key": "block:numberLineFigure",
+      "component": "NumberLineExplore",
+      "handler": null,
+      "owningRecord": "number-line-explore",
+      "previews": 8,
+      "contentUses": 0
+    },
+    {
+      "key": "block:oppositeQualitiesReveal",
+      "component": "OppositeQualitiesReveal",
+      "handler": null,
+      "owningRecord": "opposite-qualities-reveal",
+      "previews": 1,
+      "contentUses": 2
+    },
+    {
+      "key": "block:quiz",
+      "component": "AnswerInteraction",
+      "handler": null,
+      "owningRecord": "answer-interaction",
+      "previews": 1,
+      "contentUses": 224
+    },
+    {
+      "key": "block:read",
+      "component": "ScreenRenderer",
+      "handler": "ReadBlock",
+      "owningRecord": "screen-renderer",
+      "previews": 1,
+      "contentUses": 261
+    },
+    {
+      "key": "block:reveal",
+      "component": "ScreenRenderer",
+      "handler": "RevealBlock",
+      "owningRecord": "screen-renderer",
+      "previews": 1,
+      "contentUses": 1
+    },
+    {
+      "key": "block:scenario",
+      "component": "ScreenRenderer",
+      "handler": "ScenarioBlock",
+      "owningRecord": "screen-renderer",
+      "previews": 1,
+      "contentUses": 39
+    },
+    {
+      "key": "block:spotTheError",
+      "component": "SpotTheError",
+      "handler": null,
+      "owningRecord": "spot-the-error",
+      "previews": 1,
+      "contentUses": 1
+    },
+    {
+      "key": "block:theoryCompare",
+      "component": "TheoryCompare",
+      "handler": null,
+      "owningRecord": "theory-compare",
+      "previews": 1,
+      "contentUses": 4
+    },
+    {
+      "key": "block:timeline",
+      "component": "ScreenRenderer",
+      "handler": "TimelineBlock",
+      "owningRecord": "screen-renderer",
+      "previews": 1,
+      "contentUses": 0
+    },
+    {
+      "key": "block:timelineChain",
+      "component": "TimelineChainBlock",
+      "handler": null,
+      "owningRecord": "timeline-chain-block",
+      "previews": 1,
+      "contentUses": 0
+    },
+    {
+      "key": "screen:beforeAfterSlider",
+      "component": "BeforeAfterImageSlider",
+      "handler": null,
+      "owningRecord": "before-after-image-slider",
+      "previews": 1,
+      "contentUses": 1
+    },
+    {
+      "key": "screen:calculationBreakdown",
+      "component": "CalculationBreakdown",
+      "handler": null,
+      "owningRecord": "calculation-breakdown",
+      "previews": 7,
+      "contentUses": 0
+    },
+    {
+      "key": "screen:centreImageReveal",
+      "component": "CentreImageReveal",
+      "handler": null,
+      "owningRecord": "centre-image-reveal",
+      "previews": 1,
+      "contentUses": 2
+    },
+    {
+      "key": "screen:cinematic",
+      "component": "CinematicRevealMoment",
+      "handler": null,
+      "owningRecord": "cinematic-reveal-moment",
+      "previews": 1,
+      "contentUses": 2
+    },
+    {
+      "key": "screen:cinematicCarousel",
+      "component": "CinematicCarousel",
+      "handler": null,
+      "owningRecord": "cinematic-carousel",
+      "previews": 1,
+      "contentUses": 0
+    },
+    {
+      "key": "screen:conceptReveal",
+      "component": "ConceptReveal",
+      "handler": null,
+      "owningRecord": "concept-reveal",
+      "previews": 1,
+      "contentUses": 22
+    },
+    {
+      "key": "screen:examinerExplains",
+      "component": "WhatExaminersLookFor",
+      "handler": null,
+      "owningRecord": "what-examiners-look-for",
+      "previews": 1,
+      "contentUses": 10
+    },
+    {
+      "key": "screen:faceExaminer",
+      "component": "FaceTheExaminer",
+      "handler": null,
+      "owningRecord": "face-the-examiner",
+      "previews": 1,
+      "contentUses": 7
+    },
+    {
+      "key": "screen:factorWeb",
+      "component": "FactorWeb",
+      "handler": null,
+      "owningRecord": "factor-web",
+      "previews": 1,
+      "contentUses": 4
+    },
+    {
+      "key": "screen:guidedChoiceCarousel",
+      "component": "GuidedChoiceCarousel",
+      "handler": null,
+      "owningRecord": "guided-choice-carousel",
+      "previews": 1,
+      "contentUses": 4
+    },
+    {
+      "key": "screen:guidedExamResponse",
+      "component": "GuidedExamResponse",
+      "handler": null,
+      "owningRecord": "guided-exam-response",
+      "previews": 5,
+      "contentUses": 5
+    },
+    {
+      "key": "screen:infographic",
+      "component": "Infographic",
+      "handler": null,
+      "owningRecord": "infographic",
+      "previews": 1,
+      "contentUses": 1
+    },
+    {
+      "key": "screen:interactiveImage",
+      "component": "InteractiveHotspotImage",
+      "handler": null,
+      "owningRecord": "interactive-hotspot-image",
+      "previews": 2,
+      "contentUses": 13
+    },
+    {
+      "key": "screen:keyFigureReveal",
+      "component": "KeyFigureReveal",
+      "handler": null,
+      "owningRecord": "key-figure-reveal",
+      "previews": 1,
+      "contentUses": 8
+    },
+    {
+      "key": "screen:matchingTask",
+      "component": "MatchingTask",
+      "handler": null,
+      "owningRecord": "matching-task",
+      "previews": 1,
+      "contentUses": 11
+    },
+    {
+      "key": "screen:naturalSupernaturalSwipe",
+      "component": "SwipeSort",
+      "handler": null,
+      "owningRecord": "swipe-sort",
+      "previews": 1,
+      "contentUses": 7
+    },
+    {
+      "key": "screen:oppositeQualitiesReveal",
+      "component": "OppositeQualitiesReveal",
+      "handler": null,
+      "owningRecord": "opposite-qualities-reveal",
+      "previews": 1,
+      "contentUses": 2
+    },
+    {
+      "key": "screen:orderedRouteTask",
+      "component": "OrderedRouteTask",
+      "handler": null,
+      "owningRecord": "ordered-route-task",
+      "previews": 1,
+      "contentUses": 1
+    },
+    {
+      "key": "screen:priorKnowledgeRecall",
+      "component": "PriorKnowledgeRecall",
+      "handler": null,
+      "owningRecord": "prior-knowledge-recall",
+      "previews": 1,
+      "contentUses": 6
+    },
+    {
+      "key": "screen:quickRecall",
+      "component": "QuickRecallScreen",
+      "handler": null,
+      "owningRecord": "quick-recall-screen",
+      "previews": 1,
+      "contentUses": 25
+    },
+    {
+      "key": "screen:quoteAnalyser",
+      "component": "QuoteAnalyser",
+      "handler": null,
+      "owningRecord": "quote-analyser",
+      "previews": 1,
+      "contentUses": 1
+    },
+    {
+      "key": "screen:standard",
+      "component": "ScreenRenderer",
+      "handler": "ScreenContentRenderer",
+      "owningRecord": "screen-renderer",
+      "previews": 1,
+      "contentUses": 279
+    },
+    {
+      "key": "screen:tieredquiz",
+      "component": "TieredQuizScreen",
+      "handler": null,
+      "owningRecord": "tiered-quiz-screen",
+      "previews": 1,
+      "contentUses": 0
+    },
+    {
+      "key": "screen:timelineCanvas",
+      "component": "TimelineCanvas",
+      "handler": null,
+      "owningRecord": "timeline-canvas",
+      "previews": 1,
+      "contentUses": 1
+    },
+    {
+      "key": "screen:timelineChain",
+      "component": "TimelineChain",
+      "handler": null,
+      "owningRecord": "timeline-chain",
+      "previews": 1,
+      "contentUses": 10
+    },
+    {
+      "key": "screen:visualLearning",
+      "component": "VisualLearning",
+      "handler": null,
+      "owningRecord": "visual-learning",
+      "previews": 1,
+      "contentUses": 9
+    }
+  ]
 }

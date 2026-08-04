@@ -73,3 +73,78 @@ different component reached through a variant slot.
 
 No option is chosen here. The census records evidence; DESIGN.md states which is
 in scope for Phase 4.
+
+---
+
+# Measured again after Phase 4
+
+Same method: `./node_modules/.bin/vite build`, at the Phase 4 implementation
+commit. Reported, not budgeted — no target was set.
+
+## The two owner chunks
+
+| Chunk | Raw | Gzip | Was |
+|---|---|---|---|
+| `assets/ComponentReviewLab-<hash>.js` | **156.43 kB** | **41.29 kB** | 356.16 kB / 105.76 kB |
+| `assets/labShell-<hash>.js` (shared shell) | 36.29 kB | 14.14 kB | — (new) |
+| `assets/SystemReference-<hash>.js` | 15.77 kB | 5.33 kB | — (new) |
+
+Both surfaces are still lazily imported from `src/App.jsx`, each behind its own
+query flag, so a learner who sets neither downloads neither.
+
+The Lab's own chunk roughly halved, but that number on its own is misleading —
+most of the reduction is code that **moved** rather than code that disappeared.
+The measurement below is the honest one.
+
+## The chapter-runtime cost of making seven components authorable
+
+Routing the six figure blocks (`angleFigure`, `areaPerimeterFigure`,
+`coordinatePlaneFigure`, `numberLineFigure`, `circuitDiagram`,
+`circuitSymbolReference`) means `ScreenRenderer` now imports those components —
+so they moved out of the Lab-only chunk and into the chapter-runtime chunk that
+`ChapterPlayer` also loads.
+
+Measured directly, by building twice with only that difference:
+
+| Build | `ScreenRenderer-<hash>.js` | `ComponentReviewLab-<hash>.js` |
+|---|---|---|
+| Figures routed (shipped) | **808.49 kB / 226.85 kB gz** | 156.43 kB / 41.29 kB gz |
+| Figures Lab-only (control) | 641.17 kB / 179.37 kB gz | 323.39 kB / 89.53 kB gz |
+| **Delta** | **+167 kB / +47 kB gz** | −167 kB / −48 kB gz |
+
+**This is a real cost to learners, not an accounting artefact.** A learner
+opening any chapter now downloads the four Maths figure engines and the two
+circuit components, even in a chapter that uses none of them, because
+`ScreenRenderer`'s block-renderer map is resolved synchronously.
+
+It is the direct consequence of the D2 decision: a runtime that can render a
+type has to be able to load it, and these six types are now authorable. It is
+recorded here rather than mitigated because the mitigation is a product call,
+not a mechanical one:
+
+- **Option A — accept.** ~47 kB gz on the chapter path, once, cached.
+- **Option B — `React.lazy()` the six figure block renderers** behind a
+  `Suspense` boundary inside `ScreenRenderer`. Removes the cost from chapters
+  that do not use a figure, but introduces a loading state into the inline
+  content column, which is a visible-rhythm decision the learning-experience
+  principles own.
+
+**Not chosen here.** Phase 4 measures it; choosing B is a separate decision.
+
+## Leakage into the learner entry — still none
+
+Grep of the built learner entry (`assets/index-<hash>.js`):
+
+| String | In learner entry |
+|---|---|
+| `COMPONENT_LAB_REGISTRY` | 0 |
+| `owningRecordId` | 0 |
+| `chapter-building` | 0 |
+| `Runtime-placed screens` | 0 |
+| `devreview` | 0 |
+| `Component lab` / `System reference` | 0 |
+
+The one `authoringName` hit in the learner entry is
+`componentAuthoringRegistry.js` — the runtime authoring projection the chapter
+validator reads — not Lab governance data. No `useWhen`, `contentUsage`,
+`bestUsedFor` or `owningRecordId` reaches the learner entry.

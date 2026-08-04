@@ -212,6 +212,10 @@ Before handing back to Stage C:
 
 ## Verify (mechanical floor, still not approval)
 
+- **`pnpm lab:generate`, and commit the regenerated projection.** The Component
+  Lab projection carries measured per-type content usage, so adding, removing
+  or moving a screen or block changes it. Skipping this ships a stale
+  projection and `pnpm lab:check` fails the build.
 - `vitest run tests/architecture` green (includes the content-quality floor —
   never add a chapter to a grandfather allowlist to get green).
 - `./node_modules/.bin/vite build` green.
