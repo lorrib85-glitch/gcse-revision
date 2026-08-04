@@ -19,7 +19,7 @@ const FIGURE_PRESETS = {
   'four-humours': {
     cardVariant: 'parchment',
     cardBackground: DEFAULT_PARCHMENT,
-    portraitHeight: `calc(52vh - ${SPACING.compact}px)`,
+    portraitHeight: '46dvh',
     portraitPosition: 'center 18%',
     portraitScrim: 'strongBottom',
     portraitFilter: 'brightness(1.07) saturate(1.02)',
@@ -27,7 +27,7 @@ const FIGURE_PRESETS = {
   hippocrates: {
     cardVariant: 'parchment',
     cardBackground: DEFAULT_PARCHMENT,
-    portraitHeight: `calc(52vh - ${SPACING.compact}px)`,
+    portraitHeight: '46dvh',
     portraitPosition: 'center 18%',
     portraitScrim: 'strongBottom',
     portraitFilter: 'brightness(1.07) saturate(1.02)',
@@ -225,7 +225,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         position: 'relative',
         minHeight: PORTRAIT_MIN_HEIGHT,
         overflow: 'hidden',
-        flex: `1 1 ${portraitHeight}`,
+        flex: `0 1 ${portraitHeight}`,
       }}>
         <img
           src={block.portrait}
@@ -276,7 +276,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         onTouchEnd={handleTouchEnd}
         onTouchCancel={() => { touchRef.current = null }}
         style={{
-          flex: '0 0 auto',
+          flex: '1 1 auto',
           minHeight: 0,
           position: 'relative',
           paddingLeft: SPACING.standard,
@@ -299,7 +299,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           className="kfr-card"
           aria-live="polite"
           style={{
-            flex: '0 0 auto',
+            flex: '1 0 auto',
             minHeight: 0,
             borderRadius: RADII.medium,
             padding: SPACING.compact,
