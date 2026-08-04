@@ -1,0 +1,2576 @@
+{
+  "$schema": "phase-5a-migration-census/1",
+  "about": "Every curriculum-bearing entity in the repository, with its proposed classification in the canonical curriculum ontology. Generated — regenerate with .planning/phase-5-curriculum-architecture/scripts/generate-migration-census.mjs",
+  "classificationValues": [
+    "subject",
+    "specification",
+    "study-pathway",
+    "module",
+    "chapter",
+    "concept",
+    "facet",
+    "presentation-only",
+    "compatibility-only",
+    "retired-hidden",
+    "unresolved"
+  ],
+  "totals": {
+    "entities": 171,
+    "byKind": {
+      "browser-placeholder": 12,
+      "browser-series-tab": 6,
+      "chapter": 60,
+      "chapter-loader": 60,
+      "chapter-series": 4,
+      "concept-collection": 2,
+      "course-node": 7,
+      "curriculum-facet-tag": 4,
+      "module": 7,
+      "theme-key": 9
+    },
+    "byClassification": {
+      "chapter": 59,
+      "compatibility-only": 64,
+      "concept": 9,
+      "facet": 4,
+      "module": 7,
+      "presentation-only": 27,
+      "retired-hidden": 1
+    }
+  },
+  "entities": [
+    {
+      "key": "theme-key:Biology",
+      "kind": "theme-key",
+      "id": "Biology",
+      "facts": {
+        "hasBrowserAccentPair": true,
+        "chaptersUsingIt": 8,
+        "modulesUsingIt": 1,
+        "inLearnerBrowser": true
+      },
+      "classification": "presentation-only",
+      "target": "src/constants/subjects.js (unchanged)",
+      "note": "Visual identity only. It happens to share a spelling with one academic subject today, but the migration stops treating that coincidence as identity: curriculum records reference a subject id, and the theme is resolved from the subject record."
+    },
+    {
+      "key": "theme-key:Chemistry",
+      "kind": "theme-key",
+      "id": "Chemistry",
+      "facts": {
+        "hasBrowserAccentPair": true,
+        "chaptersUsingIt": 0,
+        "modulesUsingIt": 0,
+        "inLearnerBrowser": true
+      },
+      "classification": "presentation-only",
+      "target": "src/constants/subjects.js (unchanged)",
+      "note": "Visual identity only. It happens to share a spelling with one academic subject today, but the migration stops treating that coincidence as identity: curriculum records reference a subject id, and the theme is resolved from the subject record."
+    },
+    {
+      "key": "theme-key:Drama",
+      "kind": "theme-key",
+      "id": "Drama",
+      "facts": {
+        "hasBrowserAccentPair": false,
+        "chaptersUsingIt": 0,
+        "modulesUsingIt": 0,
+        "inLearnerBrowser": false
+      },
+      "classification": "presentation-only",
+      "target": "src/constants/subjects.js (unchanged)",
+      "note": "Palette with no chapters, no module, no browser entry and no learner-reachable surface. It is branding held in advance, and must not be read as evidence that the subject exists in the curriculum."
+    },
+    {
+      "key": "theme-key:English",
+      "kind": "theme-key",
+      "id": "English",
+      "facts": {
+        "hasBrowserAccentPair": true,
+        "chaptersUsingIt": 1,
+        "modulesUsingIt": 1,
+        "inLearnerBrowser": true
+      },
+      "classification": "presentation-only",
+      "target": "src/constants/subjects.js (unchanged)",
+      "note": "One theme serving two academic subjects (English Language, English Literature). This is the clearest proof that a theme key is not a subject: it must keep serving both after the split."
+    },
+    {
+      "key": "theme-key:History",
+      "kind": "theme-key",
+      "id": "History",
+      "facts": {
+        "hasBrowserAccentPair": true,
+        "chaptersUsingIt": 38,
+        "modulesUsingIt": 3,
+        "inLearnerBrowser": true
+      },
+      "classification": "presentation-only",
+      "target": "src/constants/subjects.js (unchanged)",
+      "note": "Visual identity only. It happens to share a spelling with one academic subject today, but the migration stops treating that coincidence as identity: curriculum records reference a subject id, and the theme is resolved from the subject record."
+    },
+    {
+      "key": "theme-key:Maths",
+      "kind": "theme-key",
+      "id": "Maths",
+      "facts": {
+        "hasBrowserAccentPair": true,
+        "chaptersUsingIt": 8,
+        "modulesUsingIt": 1,
+        "inLearnerBrowser": true
+      },
+      "classification": "presentation-only",
+      "target": "src/constants/subjects.js (unchanged)",
+      "note": "Visual identity only. It happens to share a spelling with one academic subject today, but the migration stops treating that coincidence as identity: curriculum records reference a subject id, and the theme is resolved from the subject record."
+    },
+    {
+      "key": "theme-key:Music",
+      "kind": "theme-key",
+      "id": "Music",
+      "facts": {
+        "hasBrowserAccentPair": false,
+        "chaptersUsingIt": 0,
+        "modulesUsingIt": 0,
+        "inLearnerBrowser": false
+      },
+      "classification": "presentation-only",
+      "target": "src/constants/subjects.js (unchanged)",
+      "note": "Palette with no chapters, no module, no browser entry and no learner-reachable surface. It is branding held in advance, and must not be read as evidence that the subject exists in the curriculum."
+    },
+    {
+      "key": "theme-key:Physics",
+      "kind": "theme-key",
+      "id": "Physics",
+      "facts": {
+        "hasBrowserAccentPair": true,
+        "chaptersUsingIt": 0,
+        "modulesUsingIt": 0,
+        "inLearnerBrowser": true
+      },
+      "classification": "presentation-only",
+      "target": "src/constants/subjects.js (unchanged)",
+      "note": "Visual identity only. It happens to share a spelling with one academic subject today, but the migration stops treating that coincidence as identity: curriculum records reference a subject id, and the theme is resolved from the subject record."
+    },
+    {
+      "key": "theme-key:Sociology",
+      "kind": "theme-key",
+      "id": "Sociology",
+      "facts": {
+        "hasBrowserAccentPair": true,
+        "chaptersUsingIt": 5,
+        "modulesUsingIt": 1,
+        "inLearnerBrowser": true
+      },
+      "classification": "presentation-only",
+      "target": "src/constants/subjects.js (unchanged)",
+      "note": "Visual identity only. It happens to share a spelling with one academic subject today, but the migration stops treating that coincidence as identity: curriculum records reference a subject id, and the theme is resolved from the subject record."
+    },
+    {
+      "key": "module:hist_medicine",
+      "kind": "module",
+      "id": "hist_medicine",
+      "facts": {
+        "title": "Medicine Through Time",
+        "subject": "History",
+        "chapterCount": 15,
+        "availableChapterCount": 14,
+        "distinctSeriesValues": [
+          "medicine"
+        ]
+      },
+      "classification": "module",
+      "target": "history-edexcel-medicine-britain (+ history-edexcel-western-front)",
+      "note": "Splits. Fourteen thematic-study chapters stay as the Medicine module; `history-medicine-western-front` moves to its own historic-environment module referenced by the same pathway. The current single array cannot express that the two are assessed differently in Paper 1."
+    },
+    {
+      "key": "module:soc_family",
+      "kind": "module",
+      "id": "soc_family",
+      "facts": {
+        "title": "Sociology of the Family",
+        "subject": "Sociology",
+        "chapterCount": 5,
+        "availableChapterCount": 5,
+        "distinctSeriesValues": [
+          null
+        ]
+      },
+      "classification": "module",
+      "target": "sociology-aqa-families (+ sociology-aqa-key-concepts)",
+      "note": "Splits. Title says \"Sociology of the Family\" but only soc4 and soc6 are Families; soc1–soc3 are key concepts and sociological approaches that run across both papers. See open decision OD-4."
+    },
+    {
+      "key": "module:maths_core",
+      "kind": "module",
+      "id": "maths_core",
+      "facts": {
+        "title": "GCSE Maths",
+        "subject": "Maths",
+        "chapterCount": 8,
+        "availableChapterCount": 8,
+        "distinctSeriesValues": [
+          null
+        ]
+      },
+      "classification": "module",
+      "target": "maths-aqa-number",
+      "note": "Renames in scope, not in membership. Titled \"GCSE Maths\" but every chapter is AQA Number content, so the record currently claims a whole subject and delivers one content domain. The module record takes the honest scope; the subject is expressed by the subject reference."
+    },
+    {
+      "key": "module:bio_core",
+      "kind": "module",
+      "id": "bio_core",
+      "facts": {
+        "title": "GCSE Biology",
+        "subject": "Biology",
+        "chapterCount": 8,
+        "availableChapterCount": 2,
+        "distinctSeriesValues": [
+          null
+        ]
+      },
+      "classification": "module",
+      "target": "six AQA Biology topic modules",
+      "note": "Splits. Titled \"GCSE Biology\" but its chapters already live in six per-topic content directories (cell-biology, organisation, infection-and-response, homeostasis, inheritance-variation-evolution, ecology). The directory tree already carries the real module grain; MODULES does not."
+    },
+    {
+      "key": "module:eng_macbeth",
+      "kind": "module",
+      "id": "eng_macbeth",
+      "facts": {
+        "title": "Macbeth",
+        "subject": "English",
+        "chapterCount": 1,
+        "availableChapterCount": 1,
+        "distinctSeriesValues": [
+          "macbeth"
+        ]
+      },
+      "classification": "module",
+      "target": "english-lit-aqa-macbeth",
+      "note": "Correct scope already — one set text is one module. It becomes a text module referenced by an English Literature pathway through a selection group, which is what makes swapping the Shakespeare text a pathway edit rather than a module rewrite."
+    },
+    {
+      "key": "module:hist_spain_new_world",
+      "kind": "module",
+      "id": "hist_spain_new_world",
+      "facts": {
+        "title": "Spain and the New World, c1490–c1555",
+        "subject": "History",
+        "chapterCount": 10,
+        "availableChapterCount": 0,
+        "distinctSeriesValues": [
+          "spain-new-world"
+        ]
+      },
+      "classification": "module",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Correct scope already — one Edexcel period-study option is one module."
+    },
+    {
+      "key": "module:hist_usa",
+      "kind": "module",
+      "id": "hist_usa",
+      "facts": {
+        "title": "The USA, 1954–75: conflict at home and abroad",
+        "subject": "History",
+        "chapterCount": 12,
+        "availableChapterCount": 0,
+        "distinctSeriesValues": [
+          "usa"
+        ]
+      },
+      "classification": "module",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Correct scope already — one Edexcel modern-depth-study option is one module."
+    },
+    {
+      "key": "chapter:bio_building_blocks",
+      "kind": "chapter",
+      "id": "bio_building_blocks",
+      "facts": {
+        "subject": "Biology",
+        "series": null,
+        "number": 1,
+        "availability": "available",
+        "parentModuleId": "bio_core",
+        "declaredScreenCount": 14,
+        "actualScreenCount": 14
+      },
+      "classification": "chapter",
+      "target": "biology-aqa-cell-biology",
+      "note": "Built AQA Cell Biology chapter. `sci_bio_w1` also collides on number 2 with `bio_building_life` — evidence that `chapter.number` is display metadata, not identity (DESIGN.md §5.5)."
+    },
+    {
+      "key": "chapter:bio_building_life",
+      "kind": "chapter",
+      "id": "bio_building_life",
+      "facts": {
+        "subject": "Biology",
+        "series": null,
+        "number": 2,
+        "availability": "comingSoon",
+        "parentModuleId": "bio_core",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "biology-aqa-cell-biology",
+      "note": "Unbuilt stub whose loader sits in `biology/organisation/` but whose title and subtitle (\"Cells, Microscopes & Division\") are Cell Biology. Anomaly A-6: the proposed module follows the subject matter, not the directory."
+    },
+    {
+      "key": "chapter:bio_control_systems",
+      "kind": "chapter",
+      "id": "bio_control_systems",
+      "facts": {
+        "subject": "Biology",
+        "series": null,
+        "number": 5,
+        "availability": "comingSoon",
+        "parentModuleId": "bio_core",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "biology-aqa-homeostasis",
+      "note": "Unbuilt stub. Homeostasis and response content; loader directory agrees."
+    },
+    {
+      "key": "chapter:bio_disease_wars",
+      "kind": "chapter",
+      "id": "bio_disease_wars",
+      "facts": {
+        "subject": "Biology",
+        "series": null,
+        "number": 4,
+        "availability": "comingSoon",
+        "parentModuleId": "bio_core",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "biology-aqa-infection-and-response",
+      "note": "Unbuilt stub. Infection and response content; loader directory agrees."
+    },
+    {
+      "key": "chapter:bio_ecosystems_group",
+      "kind": "chapter",
+      "id": "bio_ecosystems_group",
+      "facts": {
+        "subject": "Biology",
+        "series": null,
+        "number": 7,
+        "availability": "comingSoon",
+        "parentModuleId": "bio_core",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "biology-aqa-ecology",
+      "note": "Unbuilt stub. Ecology content; loader directory agrees."
+    },
+    {
+      "key": "chapter:bio_genetics_evolution",
+      "kind": "chapter",
+      "id": "bio_genetics_evolution",
+      "facts": {
+        "subject": "Biology",
+        "series": null,
+        "number": 6,
+        "availability": "comingSoon",
+        "parentModuleId": "bio_core",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "biology-aqa-inheritance-variation-evolution",
+      "note": "Unbuilt stub. Inheritance, variation and evolution content; loader directory agrees."
+    },
+    {
+      "key": "chapter:bio_human_machine",
+      "kind": "chapter",
+      "id": "bio_human_machine",
+      "facts": {
+        "subject": "Biology",
+        "series": null,
+        "number": 3,
+        "availability": "comingSoon",
+        "parentModuleId": "bio_core",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "biology-aqa-organisation",
+      "note": "Unbuilt stub. Organisation content (organs, digestion, circulation); loader directory agrees."
+    },
+    {
+      "key": "chapter:english-macbeth-power-ambition",
+      "kind": "chapter",
+      "id": "english-macbeth-power-ambition",
+      "facts": {
+        "subject": "English",
+        "series": "macbeth",
+        "number": 1,
+        "availability": "available",
+        "parentModuleId": "eng_macbeth",
+        "declaredScreenCount": 1,
+        "actualScreenCount": 1
+      },
+      "classification": "chapter",
+      "target": "english-lit-aqa-macbeth",
+      "note": "Built Macbeth chapter (1 screen). Its subject becomes `english-literature`, not the shared `English` theme key — the first entity the English split actually moves."
+    },
+    {
+      "key": "chapter:history-medicine-accidental-miracle",
+      "kind": "chapter",
+      "id": "history-medicine-accidental-miracle",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 11,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 11,
+        "actualScreenCount": 11
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-black-death",
+      "kind": "chapter",
+      "id": "history-medicine-black-death",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 2,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 24,
+        "actualScreenCount": 24
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-cancer",
+      "kind": "chapter",
+      "id": "history-medicine-cancer",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 13,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 11,
+        "actualScreenCount": 11
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-germ-theory",
+      "kind": "chapter",
+      "id": "history-medicine-germ-theory",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 7,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 10,
+        "actualScreenCount": 10
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-great-plague-1665",
+      "kind": "chapter",
+      "id": "history-medicine-great-plague-1665",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 5,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 11,
+        "actualScreenCount": 11
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-great-stink",
+      "kind": "chapter",
+      "id": "history-medicine-great-stink",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 8,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 7,
+        "actualScreenCount": 7
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-harvey-pare-renaissance-method",
+      "kind": "chapter",
+      "id": "history-medicine-harvey-pare-renaissance-method",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 4,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 11,
+        "actualScreenCount": 11
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-jenner-vaccination",
+      "kind": "chapter",
+      "id": "history-medicine-jenner-vaccination",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 6,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 1,
+        "actualScreenCount": 1
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-medieval-beliefs-causes",
+      "kind": "chapter",
+      "id": "history-medicine-medieval-beliefs-causes",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 1,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 34,
+        "actualScreenCount": 34
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-modern-medicine",
+      "kind": "chapter",
+      "id": "history-medicine-modern-medicine",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 12,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 9,
+        "actualScreenCount": 9
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-nightingale",
+      "kind": "chapter",
+      "id": "history-medicine-nightingale",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 10,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-renaissance-medicine",
+      "kind": "chapter",
+      "id": "history-medicine-renaissance-medicine",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 3,
+        "availability": "hidden",
+        "parentModuleId": null,
+        "declaredScreenCount": 16,
+        "actualScreenCount": 16
+      },
+      "classification": "retired-hidden",
+      "target": null,
+      "note": "Superseded legacy bundle, explicitly `availability: \"hidden\"`, and a duplicate of number 3 with `history-medicine-vesalius-beginning-doubt`. It exists only so its progress key stays readable. It gets no curriculum record; its id is registered as a progress alias instead."
+    },
+    {
+      "key": "chapter:history-medicine-surgery-anaesthetics",
+      "kind": "chapter",
+      "id": "history-medicine-surgery-anaesthetics",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 4,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 11,
+        "actualScreenCount": 11
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-surgery-revolution",
+      "kind": "chapter",
+      "id": "history-medicine-surgery-revolution",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 9,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 10,
+        "actualScreenCount": 10
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-vesalius-beginning-doubt",
+      "kind": "chapter",
+      "id": "history-medicine-vesalius-beginning-doubt",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 3,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 12,
+        "actualScreenCount": 12
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Thematic-study chapter. Identity and id are preserved verbatim; its position moves from array order in MODULES to an explicit position on the module-chapter relationship."
+    },
+    {
+      "key": "chapter:history-medicine-western-front",
+      "kind": "chapter",
+      "id": "history-medicine-western-front",
+      "facts": {
+        "subject": "History",
+        "series": "medicine",
+        "number": 14,
+        "availability": "available",
+        "parentModuleId": "hist_medicine",
+        "declaredScreenCount": 19,
+        "actualScreenCount": 19
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-western-front",
+      "note": "Moves module. It is the historic environment of Edexcel Paper 1 — assessed by the two source questions, not by the thematic-study questions — so it belongs to a historic-environment module, not to chapter position 15 of Medicine."
+    },
+    {
+      "key": "chapter:math1",
+      "kind": "chapter",
+      "id": "math1",
+      "facts": {
+        "subject": "Maths",
+        "series": null,
+        "number": 1,
+        "availability": "available",
+        "parentModuleId": "maths_core",
+        "declaredScreenCount": 13,
+        "actualScreenCount": 13
+      },
+      "classification": "chapter",
+      "target": "maths-aqa-number",
+      "note": "AQA Number chapter. Built content. Tier is deliberately NOT recorded on the chapter: these are Foundation-and-Higher content, and tier belongs to the pathway that references the module (see DESIGN.md §5.1)."
+    },
+    {
+      "key": "chapter:math2",
+      "kind": "chapter",
+      "id": "math2",
+      "facts": {
+        "subject": "Maths",
+        "series": null,
+        "number": 2,
+        "availability": "available",
+        "parentModuleId": "maths_core",
+        "declaredScreenCount": 14,
+        "actualScreenCount": 14
+      },
+      "classification": "chapter",
+      "target": "maths-aqa-number",
+      "note": "AQA Number chapter. Built content. Tier is deliberately NOT recorded on the chapter: these are Foundation-and-Higher content, and tier belongs to the pathway that references the module (see DESIGN.md §5.1)."
+    },
+    {
+      "key": "chapter:math3",
+      "kind": "chapter",
+      "id": "math3",
+      "facts": {
+        "subject": "Maths",
+        "series": null,
+        "number": 3,
+        "availability": "available",
+        "parentModuleId": "maths_core",
+        "declaredScreenCount": 14,
+        "actualScreenCount": 14
+      },
+      "classification": "chapter",
+      "target": "maths-aqa-number",
+      "note": "AQA Number chapter. Built content. Tier is deliberately NOT recorded on the chapter: these are Foundation-and-Higher content, and tier belongs to the pathway that references the module (see DESIGN.md §5.1)."
+    },
+    {
+      "key": "chapter:math4",
+      "kind": "chapter",
+      "id": "math4",
+      "facts": {
+        "subject": "Maths",
+        "series": null,
+        "number": 4,
+        "availability": "available",
+        "parentModuleId": "maths_core",
+        "declaredScreenCount": 13,
+        "actualScreenCount": 13
+      },
+      "classification": "chapter",
+      "target": "maths-aqa-number",
+      "note": "AQA Number chapter. Built content. Tier is deliberately NOT recorded on the chapter: these are Foundation-and-Higher content, and tier belongs to the pathway that references the module (see DESIGN.md §5.1)."
+    },
+    {
+      "key": "chapter:math5",
+      "kind": "chapter",
+      "id": "math5",
+      "facts": {
+        "subject": "Maths",
+        "series": null,
+        "number": 5,
+        "availability": "available",
+        "parentModuleId": "maths_core",
+        "declaredScreenCount": 15,
+        "actualScreenCount": 15
+      },
+      "classification": "chapter",
+      "target": "maths-aqa-number",
+      "note": "AQA Number chapter. Built content. Tier is deliberately NOT recorded on the chapter: these are Foundation-and-Higher content, and tier belongs to the pathway that references the module (see DESIGN.md §5.1)."
+    },
+    {
+      "key": "chapter:math6",
+      "kind": "chapter",
+      "id": "math6",
+      "facts": {
+        "subject": "Maths",
+        "series": null,
+        "number": 6,
+        "availability": "available",
+        "parentModuleId": "maths_core",
+        "declaredScreenCount": 14,
+        "actualScreenCount": 14
+      },
+      "classification": "chapter",
+      "target": "maths-aqa-number",
+      "note": "AQA Number chapter. Built content. Tier is deliberately NOT recorded on the chapter: these are Foundation-and-Higher content, and tier belongs to the pathway that references the module (see DESIGN.md §5.1)."
+    },
+    {
+      "key": "chapter:math7",
+      "kind": "chapter",
+      "id": "math7",
+      "facts": {
+        "subject": "Maths",
+        "series": null,
+        "number": 7,
+        "availability": "available",
+        "parentModuleId": "maths_core",
+        "declaredScreenCount": 14,
+        "actualScreenCount": 14
+      },
+      "classification": "chapter",
+      "target": "maths-aqa-number",
+      "note": "AQA Number chapter. Built content. Tier is deliberately NOT recorded on the chapter: these are Foundation-and-Higher content, and tier belongs to the pathway that references the module (see DESIGN.md §5.1)."
+    },
+    {
+      "key": "chapter:math8",
+      "kind": "chapter",
+      "id": "math8",
+      "facts": {
+        "subject": "Maths",
+        "series": null,
+        "number": 8,
+        "availability": "available",
+        "parentModuleId": "maths_core",
+        "declaredScreenCount": 14,
+        "actualScreenCount": 14
+      },
+      "classification": "chapter",
+      "target": "maths-aqa-number",
+      "note": "AQA Number chapter. Built content. Tier is deliberately NOT recorded on the chapter: these are Foundation-and-Higher content, and tier belongs to the pathway that references the module (see DESIGN.md §5.1)."
+    },
+    {
+      "key": "chapter:sci_bio_w1",
+      "kind": "chapter",
+      "id": "sci_bio_w1",
+      "facts": {
+        "subject": "Biology",
+        "series": null,
+        "number": 2,
+        "availability": "available",
+        "parentModuleId": "bio_core",
+        "declaredScreenCount": 9,
+        "actualScreenCount": 9
+      },
+      "classification": "chapter",
+      "target": "biology-aqa-cell-biology",
+      "note": "Built AQA Cell Biology chapter. `sci_bio_w1` also collides on number 2 with `bio_building_life` — evidence that `chapter.number` is display metadata, not identity (DESIGN.md §5.5)."
+    },
+    {
+      "key": "chapter:soc1",
+      "kind": "chapter",
+      "id": "soc1",
+      "facts": {
+        "subject": "Sociology",
+        "series": null,
+        "number": 1,
+        "availability": "available",
+        "parentModuleId": "soc_family",
+        "declaredScreenCount": 12,
+        "actualScreenCount": 12
+      },
+      "classification": "chapter",
+      "target": "sociology-aqa-key-concepts",
+      "note": "Key-concepts / approaches chapter, not Families content, despite sitting in the `soc_family` module and the `sociology/families/` content directory. Built content. See open decision OD-4."
+    },
+    {
+      "key": "chapter:soc2",
+      "kind": "chapter",
+      "id": "soc2",
+      "facts": {
+        "subject": "Sociology",
+        "series": null,
+        "number": 2,
+        "availability": "available",
+        "parentModuleId": "soc_family",
+        "declaredScreenCount": 17,
+        "actualScreenCount": 17
+      },
+      "classification": "chapter",
+      "target": "sociology-aqa-key-concepts",
+      "note": "Key-concepts / approaches chapter, not Families content, despite sitting in the `soc_family` module and the `sociology/families/` content directory. Built content. See open decision OD-4."
+    },
+    {
+      "key": "chapter:soc3",
+      "kind": "chapter",
+      "id": "soc3",
+      "facts": {
+        "subject": "Sociology",
+        "series": null,
+        "number": 3,
+        "availability": "available",
+        "parentModuleId": "soc_family",
+        "declaredScreenCount": 12,
+        "actualScreenCount": 12
+      },
+      "classification": "chapter",
+      "target": "sociology-aqa-key-concepts",
+      "note": "Key-concepts / approaches chapter, not Families content, despite sitting in the `soc_family` module and the `sociology/families/` content directory. Built content. See open decision OD-4."
+    },
+    {
+      "key": "chapter:soc4",
+      "kind": "chapter",
+      "id": "soc4",
+      "facts": {
+        "subject": "Sociology",
+        "series": null,
+        "number": 4,
+        "availability": "available",
+        "parentModuleId": "soc_family",
+        "declaredScreenCount": 12,
+        "actualScreenCount": 12
+      },
+      "classification": "chapter",
+      "target": "sociology-aqa-families",
+      "note": "Families chapter — AQA Sociology Paper 1 Section A. Built content. Id preserved."
+    },
+    {
+      "key": "chapter:soc6",
+      "kind": "chapter",
+      "id": "soc6",
+      "facts": {
+        "subject": "Sociology",
+        "series": null,
+        "number": 6,
+        "availability": "available",
+        "parentModuleId": "soc_family",
+        "declaredScreenCount": 12,
+        "actualScreenCount": 12
+      },
+      "classification": "chapter",
+      "target": "sociology-aqa-families",
+      "note": "Families chapter — AQA Sociology Paper 1 Section A. Built content. Id preserved."
+    },
+    {
+      "key": "chapter:spain-new-world-1",
+      "kind": "chapter",
+      "id": "spain-new-world-1",
+      "facts": {
+        "subject": "History",
+        "series": "spain-new-world",
+        "number": 1,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_spain_new_world",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). It is a real planned chapter with a reserved id, so it becomes a chapter record with `status: planned` rather than a presentation placeholder."
+    },
+    {
+      "key": "chapter:spain-new-world-10",
+      "kind": "chapter",
+      "id": "spain-new-world-10",
+      "facts": {
+        "subject": "History",
+        "series": "spain-new-world",
+        "number": 10,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_spain_new_world",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). It is a real planned chapter with a reserved id, so it becomes a chapter record with `status: planned` rather than a presentation placeholder."
+    },
+    {
+      "key": "chapter:spain-new-world-2",
+      "kind": "chapter",
+      "id": "spain-new-world-2",
+      "facts": {
+        "subject": "History",
+        "series": "spain-new-world",
+        "number": 2,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_spain_new_world",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). It is a real planned chapter with a reserved id, so it becomes a chapter record with `status: planned` rather than a presentation placeholder."
+    },
+    {
+      "key": "chapter:spain-new-world-3",
+      "kind": "chapter",
+      "id": "spain-new-world-3",
+      "facts": {
+        "subject": "History",
+        "series": "spain-new-world",
+        "number": 3,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_spain_new_world",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). It is a real planned chapter with a reserved id, so it becomes a chapter record with `status: planned` rather than a presentation placeholder."
+    },
+    {
+      "key": "chapter:spain-new-world-4",
+      "kind": "chapter",
+      "id": "spain-new-world-4",
+      "facts": {
+        "subject": "History",
+        "series": "spain-new-world",
+        "number": 4,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_spain_new_world",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). It is a real planned chapter with a reserved id, so it becomes a chapter record with `status: planned` rather than a presentation placeholder."
+    },
+    {
+      "key": "chapter:spain-new-world-5",
+      "kind": "chapter",
+      "id": "spain-new-world-5",
+      "facts": {
+        "subject": "History",
+        "series": "spain-new-world",
+        "number": 5,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_spain_new_world",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). It is a real planned chapter with a reserved id, so it becomes a chapter record with `status: planned` rather than a presentation placeholder."
+    },
+    {
+      "key": "chapter:spain-new-world-6",
+      "kind": "chapter",
+      "id": "spain-new-world-6",
+      "facts": {
+        "subject": "History",
+        "series": "spain-new-world",
+        "number": 6,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_spain_new_world",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). It is a real planned chapter with a reserved id, so it becomes a chapter record with `status: planned` rather than a presentation placeholder."
+    },
+    {
+      "key": "chapter:spain-new-world-7",
+      "kind": "chapter",
+      "id": "spain-new-world-7",
+      "facts": {
+        "subject": "History",
+        "series": "spain-new-world",
+        "number": 7,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_spain_new_world",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). It is a real planned chapter with a reserved id, so it becomes a chapter record with `status: planned` rather than a presentation placeholder."
+    },
+    {
+      "key": "chapter:spain-new-world-8",
+      "kind": "chapter",
+      "id": "spain-new-world-8",
+      "facts": {
+        "subject": "History",
+        "series": "spain-new-world",
+        "number": 8,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_spain_new_world",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). It is a real planned chapter with a reserved id, so it becomes a chapter record with `status: planned` rather than a presentation placeholder."
+    },
+    {
+      "key": "chapter:spain-new-world-9",
+      "kind": "chapter",
+      "id": "spain-new-world-9",
+      "facts": {
+        "subject": "History",
+        "series": "spain-new-world",
+        "number": 9,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_spain_new_world",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). It is a real planned chapter with a reserved id, so it becomes a chapter record with `status: planned` rather than a presentation placeholder."
+    },
+    {
+      "key": "chapter:usa-americas-war",
+      "kind": "chapter",
+      "id": "usa-americas-war",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 9,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter:usa-brown-v-board",
+      "kind": "chapter",
+      "id": "usa-brown-v-board",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 2,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter:usa-guerrilla-war",
+      "kind": "chapter",
+      "id": "usa-guerrilla-war",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 10,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter:usa-how-much-changed",
+      "kind": "chapter",
+      "id": "usa-how-much-changed",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 7,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter:usa-i-have-a-dream",
+      "kind": "chapter",
+      "id": "usa-i-have-a-dream",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 5,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter:usa-long-way-out",
+      "kind": "chapter",
+      "id": "usa-long-way-out",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 12,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter:usa-malcolm-x",
+      "kind": "chapter",
+      "id": "usa-malcolm-x",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 6,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter:usa-rosa-parks",
+      "kind": "chapter",
+      "id": "usa-rosa-parks",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 3,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter:usa-segregation",
+      "kind": "chapter",
+      "id": "usa-segregation",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 1,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter:usa-sit-ins",
+      "kind": "chapter",
+      "id": "usa-sit-ins",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 4,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter:usa-war-comes-home",
+      "kind": "chapter",
+      "id": "usa-war-comes-home",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 11,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter:usa-why-vietnam",
+      "kind": "chapter",
+      "id": "usa-why-vietnam",
+      "facts": {
+        "subject": "History",
+        "series": "usa",
+        "number": 8,
+        "availability": "comingSoon",
+        "parentModuleId": "hist_usa",
+        "declaredScreenCount": 0,
+        "actualScreenCount": 0
+      },
+      "classification": "chapter",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Unbuilt stub (0 screens, derived `comingSoon`). Becomes a chapter record with `status: planned`."
+    },
+    {
+      "key": "chapter-loader:bio_building_blocks",
+      "kind": "chapter-loader",
+      "id": "bio_building_blocks",
+      "facts": {
+        "contentPath": "src/content/biology/cell-biology/episodes/bio_building_blocks.js",
+        "screens": 14,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "biology-aqa-cell-biology",
+      "note": "Content-source binding under `src/content/biology/cell-biology/`, which already matches the proposed module."
+    },
+    {
+      "key": "chapter-loader:bio_building_life",
+      "kind": "chapter-loader",
+      "id": "bio_building_life",
+      "facts": {
+        "contentPath": "src/content/biology/organisation/episodes/bio_building_life.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "biology-aqa-cell-biology",
+      "note": "Loader for unbuilt content in a directory that disagrees with the chapter's subject matter. Resolved when the chapter is built, not by a planning-phase file move."
+    },
+    {
+      "key": "chapter-loader:bio_control_systems",
+      "kind": "chapter-loader",
+      "id": "bio_control_systems",
+      "facts": {
+        "contentPath": "src/content/biology/homeostasis/episodes/bio_control_systems.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "biology-aqa-homeostasis",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`."
+    },
+    {
+      "key": "chapter-loader:bio_disease_wars",
+      "kind": "chapter-loader",
+      "id": "bio_disease_wars",
+      "facts": {
+        "contentPath": "src/content/biology/infection-and-response/episodes/bio_disease_wars.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "biology-aqa-infection-and-response",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`."
+    },
+    {
+      "key": "chapter-loader:bio_ecosystems_group",
+      "kind": "chapter-loader",
+      "id": "bio_ecosystems_group",
+      "facts": {
+        "contentPath": "src/content/biology/ecology/episodes/bio_ecosystems_group.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "biology-aqa-ecology",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`."
+    },
+    {
+      "key": "chapter-loader:bio_genetics_evolution",
+      "kind": "chapter-loader",
+      "id": "bio_genetics_evolution",
+      "facts": {
+        "contentPath": "src/content/biology/inheritance-variation-evolution/episodes/bio_genetics_evolution.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "biology-aqa-inheritance-variation-evolution",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`."
+    },
+    {
+      "key": "chapter-loader:bio_human_machine",
+      "kind": "chapter-loader",
+      "id": "bio_human_machine",
+      "facts": {
+        "contentPath": "src/content/biology/organisation/episodes/bio_human_machine.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "biology-aqa-organisation",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`."
+    },
+    {
+      "key": "chapter-loader:english-macbeth-power-ambition",
+      "kind": "chapter-loader",
+      "id": "english-macbeth-power-ambition",
+      "facts": {
+        "contentPath": "src/content/english/macbeth/episodes/english-macbeth-power-ambition.js",
+        "screens": 1,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "english-lit-aqa-macbeth",
+      "note": "Content-source binding under `src/content/english/macbeth/`, which already matches the proposed module."
+    },
+    {
+      "key": "chapter-loader:history-medicine-accidental-miracle",
+      "kind": "chapter-loader",
+      "id": "history-medicine-accidental-miracle",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-11-accidental-miracle.js",
+        "screens": 11,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-black-death",
+      "kind": "chapter-loader",
+      "id": "history-medicine-black-death",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-02-black-death.js",
+        "screens": 24,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-cancer",
+      "kind": "chapter-loader",
+      "id": "history-medicine-cancer",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-13-can-we-beat-cancer.js",
+        "screens": 11,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-germ-theory",
+      "kind": "chapter-loader",
+      "id": "history-medicine-germ-theory",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-07-germ-theory.js",
+        "screens": 10,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-great-plague-1665",
+      "kind": "chapter-loader",
+      "id": "history-medicine-great-plague-1665",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-05-great-plague-1665.js",
+        "screens": 11,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-great-stink",
+      "kind": "chapter-loader",
+      "id": "history-medicine-great-stink",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-08-great-stink.js",
+        "screens": 7,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-harvey-pare-renaissance-method",
+      "kind": "chapter-loader",
+      "id": "history-medicine-harvey-pare-renaissance-method",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-04-harvey-pare-renaissance-method.js",
+        "screens": 11,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-jenner-vaccination",
+      "kind": "chapter-loader",
+      "id": "history-medicine-jenner-vaccination",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-06-jenner-vaccination.js",
+        "screens": 1,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-medieval-beliefs-causes",
+      "kind": "chapter-loader",
+      "id": "history-medicine-medieval-beliefs-causes",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.runtime.js",
+        "screens": 34,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-modern-medicine",
+      "kind": "chapter-loader",
+      "id": "history-medicine-modern-medicine",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-12-when-medicine-became-magic.js",
+        "screens": 9,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-nightingale",
+      "kind": "chapter-loader",
+      "id": "history-medicine-nightingale",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-10-nightingale.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-renaissance-medicine",
+      "kind": "chapter-loader",
+      "id": "history-medicine-renaissance-medicine",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-03-renaissance-medicine.js",
+        "screens": 16,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": null,
+      "note": "Loader for a hidden superseded bundle. Retained for the migration window only, and named explicitly in the retirement list so it is removed deliberately rather than forgotten."
+    },
+    {
+      "key": "chapter-loader:history-medicine-surgery-anaesthetics",
+      "kind": "chapter-loader",
+      "id": "history-medicine-surgery-anaesthetics",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-04-surgery-anaesthetics.js",
+        "screens": 11,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-surgery-revolution",
+      "kind": "chapter-loader",
+      "id": "history-medicine-surgery-revolution",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-09-surgery-revolution.js",
+        "screens": 10,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-vesalius-beginning-doubt",
+      "kind": "chapter-loader",
+      "id": "history-medicine-vesalius-beginning-doubt",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-03-vesalius-beginning-doubt.js",
+        "screens": 12,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-medicine-britain",
+      "note": "Content-source binding. Becomes a generated entry in the chapter loader registry, projected from the chapter record's content path rather than hand-maintained alongside it."
+    },
+    {
+      "key": "chapter-loader:history-medicine-western-front",
+      "kind": "chapter-loader",
+      "id": "history-medicine-western-front",
+      "facts": {
+        "contentPath": "src/content/history/medicine/episodes/episode-14-western-front.js",
+        "screens": 19,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-western-front",
+      "note": "Content-source binding; follows its chapter into the historic-environment module. The loader path itself does not need to move."
+    },
+    {
+      "key": "chapter-loader:math1",
+      "kind": "chapter-loader",
+      "id": "math1",
+      "facts": {
+        "contentPath": "src/content/maths/foundations/episodes/math1.js",
+        "screens": 13,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "maths-aqa-number",
+      "note": "Content-source binding under `src/content/maths/foundations/`. The directory name says \"foundations\" in the everyday sense, not the Foundation tier — a naming collision recorded as anomaly A-11."
+    },
+    {
+      "key": "chapter-loader:math2",
+      "kind": "chapter-loader",
+      "id": "math2",
+      "facts": {
+        "contentPath": "src/content/maths/foundations/episodes/math2.js",
+        "screens": 14,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "maths-aqa-number",
+      "note": "Content-source binding under `src/content/maths/foundations/`. The directory name says \"foundations\" in the everyday sense, not the Foundation tier — a naming collision recorded as anomaly A-11."
+    },
+    {
+      "key": "chapter-loader:math3",
+      "kind": "chapter-loader",
+      "id": "math3",
+      "facts": {
+        "contentPath": "src/content/maths/foundations/episodes/math3.js",
+        "screens": 14,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "maths-aqa-number",
+      "note": "Content-source binding under `src/content/maths/foundations/`. The directory name says \"foundations\" in the everyday sense, not the Foundation tier — a naming collision recorded as anomaly A-11."
+    },
+    {
+      "key": "chapter-loader:math4",
+      "kind": "chapter-loader",
+      "id": "math4",
+      "facts": {
+        "contentPath": "src/content/maths/foundations/episodes/math4.js",
+        "screens": 13,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "maths-aqa-number",
+      "note": "Content-source binding under `src/content/maths/foundations/`. The directory name says \"foundations\" in the everyday sense, not the Foundation tier — a naming collision recorded as anomaly A-11."
+    },
+    {
+      "key": "chapter-loader:math5",
+      "kind": "chapter-loader",
+      "id": "math5",
+      "facts": {
+        "contentPath": "src/content/maths/foundations/episodes/math5.js",
+        "screens": 15,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "maths-aqa-number",
+      "note": "Content-source binding under `src/content/maths/foundations/`. The directory name says \"foundations\" in the everyday sense, not the Foundation tier — a naming collision recorded as anomaly A-11."
+    },
+    {
+      "key": "chapter-loader:math6",
+      "kind": "chapter-loader",
+      "id": "math6",
+      "facts": {
+        "contentPath": "src/content/maths/foundations/episodes/math6.js",
+        "screens": 14,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "maths-aqa-number",
+      "note": "Content-source binding under `src/content/maths/foundations/`. The directory name says \"foundations\" in the everyday sense, not the Foundation tier — a naming collision recorded as anomaly A-11."
+    },
+    {
+      "key": "chapter-loader:math7",
+      "kind": "chapter-loader",
+      "id": "math7",
+      "facts": {
+        "contentPath": "src/content/maths/foundations/episodes/math7.js",
+        "screens": 14,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "maths-aqa-number",
+      "note": "Content-source binding under `src/content/maths/foundations/`. The directory name says \"foundations\" in the everyday sense, not the Foundation tier — a naming collision recorded as anomaly A-11."
+    },
+    {
+      "key": "chapter-loader:math8",
+      "kind": "chapter-loader",
+      "id": "math8",
+      "facts": {
+        "contentPath": "src/content/maths/foundations/episodes/math8.js",
+        "screens": 14,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "maths-aqa-number",
+      "note": "Content-source binding under `src/content/maths/foundations/`. The directory name says \"foundations\" in the everyday sense, not the Foundation tier — a naming collision recorded as anomaly A-11."
+    },
+    {
+      "key": "chapter-loader:sci_bio_w1",
+      "kind": "chapter-loader",
+      "id": "sci_bio_w1",
+      "facts": {
+        "contentPath": "src/content/biology/cell-biology/episodes/sci_bio_w1.js",
+        "screens": 9,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "biology-aqa-cell-biology",
+      "note": "Content-source binding under `src/content/biology/cell-biology/`, which already matches the proposed module."
+    },
+    {
+      "key": "chapter-loader:soc1",
+      "kind": "chapter-loader",
+      "id": "soc1",
+      "facts": {
+        "contentPath": "src/content/sociology/families/episodes/soc1.js",
+        "screens": 12,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "sociology-aqa-key-concepts",
+      "note": "Content-source binding whose directory (`sociology/families/`) disagrees with the chapter's subject matter. The directory move is deferred: it is a file move with no learner-facing effect and must not be smuggled into a planning phase."
+    },
+    {
+      "key": "chapter-loader:soc2",
+      "kind": "chapter-loader",
+      "id": "soc2",
+      "facts": {
+        "contentPath": "src/content/sociology/families/episodes/soc2.js",
+        "screens": 17,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "sociology-aqa-key-concepts",
+      "note": "Content-source binding whose directory (`sociology/families/`) disagrees with the chapter's subject matter. The directory move is deferred: it is a file move with no learner-facing effect and must not be smuggled into a planning phase."
+    },
+    {
+      "key": "chapter-loader:soc3",
+      "kind": "chapter-loader",
+      "id": "soc3",
+      "facts": {
+        "contentPath": "src/content/sociology/families/episodes/soc3.js",
+        "screens": 12,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "sociology-aqa-key-concepts",
+      "note": "Content-source binding whose directory (`sociology/families/`) disagrees with the chapter's subject matter. The directory move is deferred: it is a file move with no learner-facing effect and must not be smuggled into a planning phase."
+    },
+    {
+      "key": "chapter-loader:soc4",
+      "kind": "chapter-loader",
+      "id": "soc4",
+      "facts": {
+        "contentPath": "src/content/sociology/families/episodes/soc4.js",
+        "screens": 12,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "sociology-aqa-families",
+      "note": "Content-source binding; the content directory `src/content/sociology/families/` already matches the proposed module."
+    },
+    {
+      "key": "chapter-loader:soc6",
+      "kind": "chapter-loader",
+      "id": "soc6",
+      "facts": {
+        "contentPath": "src/content/sociology/families/episodes/soc6.js",
+        "screens": 12,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "sociology-aqa-families",
+      "note": "Content-source binding; the content directory `src/content/sociology/families/` already matches the proposed module."
+    },
+    {
+      "key": "chapter-loader:spain-new-world-1",
+      "kind": "chapter-loader",
+      "id": "spain-new-world-1",
+      "facts": {
+        "contentPath": "src/content/history/spain-new-world/episodes/spain-new-world-1.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`. Under the generated registry a planned chapter with no content file emits no loader entry at all, which removes this whole category."
+    },
+    {
+      "key": "chapter-loader:spain-new-world-10",
+      "kind": "chapter-loader",
+      "id": "spain-new-world-10",
+      "facts": {
+        "contentPath": "src/content/history/spain-new-world/episodes/spain-new-world-10.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`. Under the generated registry a planned chapter with no content file emits no loader entry at all, which removes this whole category."
+    },
+    {
+      "key": "chapter-loader:spain-new-world-2",
+      "kind": "chapter-loader",
+      "id": "spain-new-world-2",
+      "facts": {
+        "contentPath": "src/content/history/spain-new-world/episodes/spain-new-world-2.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`. Under the generated registry a planned chapter with no content file emits no loader entry at all, which removes this whole category."
+    },
+    {
+      "key": "chapter-loader:spain-new-world-3",
+      "kind": "chapter-loader",
+      "id": "spain-new-world-3",
+      "facts": {
+        "contentPath": "src/content/history/spain-new-world/episodes/spain-new-world-3.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`. Under the generated registry a planned chapter with no content file emits no loader entry at all, which removes this whole category."
+    },
+    {
+      "key": "chapter-loader:spain-new-world-4",
+      "kind": "chapter-loader",
+      "id": "spain-new-world-4",
+      "facts": {
+        "contentPath": "src/content/history/spain-new-world/episodes/spain-new-world-4.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`. Under the generated registry a planned chapter with no content file emits no loader entry at all, which removes this whole category."
+    },
+    {
+      "key": "chapter-loader:spain-new-world-5",
+      "kind": "chapter-loader",
+      "id": "spain-new-world-5",
+      "facts": {
+        "contentPath": "src/content/history/spain-new-world/episodes/spain-new-world-5.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`. Under the generated registry a planned chapter with no content file emits no loader entry at all, which removes this whole category."
+    },
+    {
+      "key": "chapter-loader:spain-new-world-6",
+      "kind": "chapter-loader",
+      "id": "spain-new-world-6",
+      "facts": {
+        "contentPath": "src/content/history/spain-new-world/episodes/spain-new-world-6.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`. Under the generated registry a planned chapter with no content file emits no loader entry at all, which removes this whole category."
+    },
+    {
+      "key": "chapter-loader:spain-new-world-7",
+      "kind": "chapter-loader",
+      "id": "spain-new-world-7",
+      "facts": {
+        "contentPath": "src/content/history/spain-new-world/episodes/spain-new-world-7.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`. Under the generated registry a planned chapter with no content file emits no loader entry at all, which removes this whole category."
+    },
+    {
+      "key": "chapter-loader:spain-new-world-8",
+      "kind": "chapter-loader",
+      "id": "spain-new-world-8",
+      "facts": {
+        "contentPath": "src/content/history/spain-new-world/episodes/spain-new-world-8.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`. Under the generated registry a planned chapter with no content file emits no loader entry at all, which removes this whole category."
+    },
+    {
+      "key": "chapter-loader:spain-new-world-9",
+      "kind": "chapter-loader",
+      "id": "spain-new-world-9",
+      "facts": {
+        "contentPath": "src/content/history/spain-new-world/episodes/spain-new-world-9.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-spain-new-world",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`. Under the generated registry a planned chapter with no content file emits no loader entry at all, which removes this whole category."
+    },
+    {
+      "key": "chapter-loader:usa-americas-war",
+      "kind": "chapter-loader",
+      "id": "usa-americas-war",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-americas-war.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-loader:usa-brown-v-board",
+      "kind": "chapter-loader",
+      "id": "usa-brown-v-board",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-brown-v-board.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-loader:usa-guerrilla-war",
+      "kind": "chapter-loader",
+      "id": "usa-guerrilla-war",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-guerrilla-war.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-loader:usa-how-much-changed",
+      "kind": "chapter-loader",
+      "id": "usa-how-much-changed",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-how-much-changed.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-loader:usa-i-have-a-dream",
+      "kind": "chapter-loader",
+      "id": "usa-i-have-a-dream",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-i-have-a-dream.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-loader:usa-long-way-out",
+      "kind": "chapter-loader",
+      "id": "usa-long-way-out",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-long-way-out.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-loader:usa-malcolm-x",
+      "kind": "chapter-loader",
+      "id": "usa-malcolm-x",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-malcolm-x.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-loader:usa-rosa-parks",
+      "kind": "chapter-loader",
+      "id": "usa-rosa-parks",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-rosa-parks.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-loader:usa-segregation",
+      "kind": "chapter-loader",
+      "id": "usa-segregation",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-segregation.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-loader:usa-sit-ins",
+      "kind": "chapter-loader",
+      "id": "usa-sit-ins",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-sit-ins.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-loader:usa-war-comes-home",
+      "kind": "chapter-loader",
+      "id": "usa-war-comes-home",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-war-comes-home.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-loader:usa-why-vietnam",
+      "kind": "chapter-loader",
+      "id": "usa-why-vietnam",
+      "facts": {
+        "contentPath": "src/content/history/usa/episodes/usa-why-vietnam.js",
+        "screens": 0,
+        "hasChapterMetadata": true
+      },
+      "classification": "compatibility-only",
+      "target": "history-edexcel-usa-conflict",
+      "note": "Loader for unbuilt content — resolves to `{ screens: [] }`; the generated registry emits nothing for a planned chapter."
+    },
+    {
+      "key": "chapter-series:macbeth",
+      "kind": "chapter-series",
+      "id": "macbeth",
+      "facts": {
+        "chapters": 1,
+        "subjects": [
+          "English"
+        ]
+      },
+      "classification": "compatibility-only",
+      "target": "derived from the chapter→module relationship",
+      "note": "Same as the History series values, plus it is the only one whose value is a set text rather than a specification option — which is exactly the level confusion the module entity removes."
+    },
+    {
+      "key": "chapter-series:medicine",
+      "kind": "chapter-series",
+      "id": "medicine",
+      "facts": {
+        "chapters": 16,
+        "subjects": [
+          "History"
+        ]
+      },
+      "classification": "compatibility-only",
+      "target": "derived from the chapter→module relationship",
+      "note": "A module grouping wearing a presentation name. Once a chapter record names its module, the browser tab is derived from the module and `series` carries no fact of its own."
+    },
+    {
+      "key": "chapter-series:spain-new-world",
+      "kind": "chapter-series",
+      "id": "spain-new-world",
+      "facts": {
+        "chapters": 10,
+        "subjects": [
+          "History"
+        ]
+      },
+      "classification": "compatibility-only",
+      "target": "derived from the chapter→module relationship",
+      "note": "A module grouping wearing a presentation name. Once a chapter record names its module, the browser tab is derived from the module and `series` carries no fact of its own."
+    },
+    {
+      "key": "chapter-series:usa",
+      "kind": "chapter-series",
+      "id": "usa",
+      "facts": {
+        "chapters": 12,
+        "subjects": [
+          "History"
+        ]
+      },
+      "classification": "compatibility-only",
+      "target": "derived from the chapter→module relationship",
+      "note": "A module grouping wearing a presentation name. Once a chapter record names its module, the browser tab is derived from the module and `series` carries no fact of its own."
+    },
+    {
+      "key": "browser-placeholder:cs_chemistry",
+      "kind": "browser-placeholder",
+      "id": "cs_chemistry",
+      "facts": {
+        "subject": "Chemistry",
+        "title": "Content coming soon",
+        "series": null,
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "generated empty-state",
+      "note": "Not authored anywhere: it is synthesised by `getSubjectChapterList`'s default branch for any subject with no modules. It is a rendering fallback, and after the migration the browser derives the empty state from \"this subject has no available modules\" rather than fabricating a card id."
+    },
+    {
+      "key": "browser-placeholder:cs_forces",
+      "kind": "browser-placeholder",
+      "id": "cs_forces",
+      "facts": {
+        "subject": "Physics",
+        "title": "Forces & Motion",
+        "series": null,
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "planned Physics modules",
+      "note": "Coming-soon card whose subtitle already names AQA Physics topic numbers (\"AQA Physics · Topic 5 & 6\"), so it is a module-sized promise rendered as a chapter card. It becomes a planned module, not a planned chapter."
+    },
+    {
+      "key": "browser-placeholder:cs_energy",
+      "kind": "browser-placeholder",
+      "id": "cs_energy",
+      "facts": {
+        "subject": "Physics",
+        "title": "Energy",
+        "series": null,
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "planned Physics modules",
+      "note": "Coming-soon card whose subtitle already names AQA Physics topic numbers (\"AQA Physics · Topic 5 & 6\"), so it is a module-sized promise rendered as a chapter card. It becomes a planned module, not a planned chapter."
+    },
+    {
+      "key": "browser-placeholder:cs_waves",
+      "kind": "browser-placeholder",
+      "id": "cs_waves",
+      "facts": {
+        "subject": "Physics",
+        "title": "Waves & Electricity",
+        "series": null,
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "planned Physics modules",
+      "note": "Coming-soon card whose subtitle already names AQA Physics topic numbers (\"AQA Physics · Topic 5 & 6\"), so it is a module-sized promise rendered as a chapter card. It becomes a planned module, not a planned chapter."
+    },
+    {
+      "key": "browser-placeholder:cs_space",
+      "kind": "browser-placeholder",
+      "id": "cs_space",
+      "facts": {
+        "subject": "Physics",
+        "title": "Space",
+        "series": null,
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "planned Physics modules",
+      "note": "Coming-soon card whose subtitle already names AQA Physics topic numbers (\"AQA Physics · Topic 5 & 6\"), so it is a module-sized promise rendered as a chapter card. It becomes a planned module, not a planned chapter."
+    },
+    {
+      "key": "browser-placeholder:cs_matter",
+      "kind": "browser-placeholder",
+      "id": "cs_matter",
+      "facts": {
+        "subject": "Physics",
+        "title": "Matter & Particles",
+        "series": null,
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "planned Physics modules",
+      "note": "Coming-soon card whose subtitle already names AQA Physics topic numbers (\"AQA Physics · Topic 5 & 6\"), so it is a module-sized promise rendered as a chapter card. It becomes a planned module, not a planned chapter."
+    },
+    {
+      "key": "browser-placeholder:cs_macbeth_2",
+      "kind": "browser-placeholder",
+      "id": "cs_macbeth_2",
+      "facts": {
+        "subject": "English",
+        "title": "Out, damned spot",
+        "series": "macbeth",
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "chapter records with status: planned",
+      "note": "Coming-soon card with a real authored title and subtitle but no chapter record, no loader and no progress. It is a designed future chapter held outside the catalogue, so it becomes a planned chapter record and the placeholder array disappears."
+    },
+    {
+      "key": "browser-placeholder:cs_macbeth_3",
+      "kind": "browser-placeholder",
+      "id": "cs_macbeth_3",
+      "facts": {
+        "subject": "English",
+        "title": "Double, double, toil and trouble",
+        "series": "macbeth",
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "chapter records with status: planned",
+      "note": "Coming-soon card with a real authored title and subtitle but no chapter record, no loader and no progress. It is a designed future chapter held outside the catalogue, so it becomes a planned chapter record and the placeholder array disappears."
+    },
+    {
+      "key": "browser-placeholder:cs_macbeth_4",
+      "kind": "browser-placeholder",
+      "id": "cs_macbeth_4",
+      "facts": {
+        "subject": "English",
+        "title": "Fair is foul, foul is fair",
+        "series": "macbeth",
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "chapter records with status: planned",
+      "note": "Coming-soon card with a real authored title and subtitle but no chapter record, no loader and no progress. It is a designed future chapter held outside the catalogue, so it becomes a planned chapter record and the placeholder array disappears."
+    },
+    {
+      "key": "browser-placeholder:cs_inspector_1",
+      "kind": "browser-placeholder",
+      "id": "cs_inspector_1",
+      "facts": {
+        "subject": "English",
+        "title": "We are members of one body",
+        "series": "inspector",
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "chapter records with status: planned under english-lit-aqa-inspector-calls",
+      "note": "Coming-soon card for An Inspector Calls — a set text with no module, no chapters and no content directory. It becomes a planned module with planned chapters, which is what makes the second Literature text selectable rather than hardcoded."
+    },
+    {
+      "key": "browser-placeholder:cs_inspector_2",
+      "kind": "browser-placeholder",
+      "id": "cs_inspector_2",
+      "facts": {
+        "subject": "English",
+        "title": "I accept no blame",
+        "series": "inspector",
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "chapter records with status: planned under english-lit-aqa-inspector-calls",
+      "note": "Coming-soon card for An Inspector Calls — a set text with no module, no chapters and no content directory. It becomes a planned module with planned chapters, which is what makes the second Literature text selectable rather than hardcoded."
+    },
+    {
+      "key": "browser-placeholder:cs_inspector_3",
+      "kind": "browser-placeholder",
+      "id": "cs_inspector_3",
+      "facts": {
+        "subject": "English",
+        "title": "Fire, blood and anguish",
+        "series": "inspector",
+        "hasChapterMetadata": false,
+        "hasLoader": false
+      },
+      "classification": "presentation-only",
+      "target": "chapter records with status: planned under english-lit-aqa-inspector-calls",
+      "note": "Coming-soon card for An Inspector Calls — a set text with no module, no chapters and no content directory. It becomes a planned module with planned chapters, which is what makes the second Literature text selectable rather than hardcoded."
+    },
+    {
+      "key": "browser-series-tab:history/medicine",
+      "kind": "browser-series-tab",
+      "id": "history/medicine",
+      "facts": {
+        "subject": "History",
+        "title": "Medicine through time",
+        "markedComingSoon": false,
+        "backingChapters": 16
+      },
+      "classification": "presentation-only",
+      "target": "derived from module records",
+      "note": "Hardcoded tab that duplicates a module's title and hero image in a React file. Becomes a projection of the module record."
+    },
+    {
+      "key": "browser-series-tab:history/spain-new-world",
+      "kind": "browser-series-tab",
+      "id": "history/spain-new-world",
+      "facts": {
+        "subject": "History",
+        "title": "Spain and the new world",
+        "markedComingSoon": false,
+        "backingChapters": 10
+      },
+      "classification": "presentation-only",
+      "target": "derived from module records",
+      "note": "Hardcoded tab that duplicates a module's title and hero image in a React file. Becomes a projection of the module record."
+    },
+    {
+      "key": "browser-series-tab:history/elizabethan",
+      "kind": "browser-series-tab",
+      "id": "history/elizabethan",
+      "facts": {
+        "subject": "History",
+        "title": "Elizabethan England",
+        "markedComingSoon": true,
+        "backingChapters": 0
+      },
+      "classification": "presentation-only",
+      "target": "planned module history-edexcel-early-elizabethan",
+      "note": "A tab with no module, no chapters and no `series` value anywhere in CHAPTERS — selecting it renders an empty list. It is a curriculum intention that exists only as UI. Becomes a planned module record."
+    },
+    {
+      "key": "browser-series-tab:history/usa",
+      "kind": "browser-series-tab",
+      "id": "history/usa",
+      "facts": {
+        "subject": "History",
+        "title": "USA: conflict at home and abroad",
+        "markedComingSoon": false,
+        "backingChapters": 12
+      },
+      "classification": "presentation-only",
+      "target": "derived from module records",
+      "note": "Hardcoded tab that duplicates a module's title and hero image in a React file. Becomes a projection of the module record."
+    },
+    {
+      "key": "browser-series-tab:english/macbeth",
+      "kind": "browser-series-tab",
+      "id": "english/macbeth",
+      "facts": {
+        "subject": "English",
+        "title": "Macbeth",
+        "markedComingSoon": false,
+        "backingChapters": 1
+      },
+      "classification": "presentation-only",
+      "target": "derived from module records",
+      "note": "Hardcoded tab duplicating the Macbeth module. Its `headerImage` currently points at the History Medicine hero image — anomaly A-9."
+    },
+    {
+      "key": "browser-series-tab:english/inspector",
+      "kind": "browser-series-tab",
+      "id": "english/inspector",
+      "facts": {
+        "subject": "English",
+        "title": "An Inspector Calls",
+        "markedComingSoon": true,
+        "backingChapters": 0
+      },
+      "classification": "presentation-only",
+      "target": "planned module english-lit-aqa-inspector-calls",
+      "note": "Tab for a set text with no module and no chapters, backed only by the `cs_inspector_*` placeholders. Its `headerImage` points at a Sociology image — anomaly A-9."
+    },
+    {
+      "key": "course-node:biology:bioenergetics",
+      "kind": "course-node",
+      "id": "biology:bioenergetics",
+      "facts": {
+        "label": "Biology — Bioenergetics",
+        "atomsUnderIt": 0
+      },
+      "classification": "concept",
+      "target": "concept namespace only",
+      "note": "Named \"course\" but sized like an AQA Biology topic — i.e. a module. It has no knowledge atoms and exists to make an already-live question-bank tag legal. Keeps its spelling as a namespace; the curriculum level it implies moves to a module record."
+    },
+    {
+      "key": "course-node:biology:building-blocks",
+      "kind": "course-node",
+      "id": "biology:building-blocks",
+      "facts": {
+        "label": "Biology — Building blocks of life",
+        "atomsUnderIt": 0
+      },
+      "classification": "concept",
+      "target": "concept namespace only",
+      "note": "Named \"course\" but sized like an AQA Biology topic — i.e. a module. It has no knowledge atoms and exists to make an already-live question-bank tag legal. Keeps its spelling as a namespace; the curriculum level it implies moves to a module record."
+    },
+    {
+      "key": "course-node:biology:infection-response",
+      "kind": "course-node",
+      "id": "biology:infection-response",
+      "facts": {
+        "label": "Biology — Infection and response",
+        "atomsUnderIt": 0
+      },
+      "classification": "concept",
+      "target": "concept namespace only",
+      "note": "Named \"course\" but sized like an AQA Biology topic — i.e. a module. It has no knowledge atoms and exists to make an already-live question-bank tag legal. Keeps its spelling as a namespace; the curriculum level it implies moves to a module record."
+    },
+    {
+      "key": "course-node:biology:organisation",
+      "kind": "course-node",
+      "id": "biology:organisation",
+      "facts": {
+        "label": "Biology — Organisation",
+        "atomsUnderIt": 0
+      },
+      "classification": "concept",
+      "target": "concept namespace only",
+      "note": "Named \"course\" but sized like an AQA Biology topic — i.e. a module. It has no knowledge atoms and exists to make an already-live question-bank tag legal. Keeps its spelling as a namespace; the curriculum level it implies moves to a module record."
+    },
+    {
+      "key": "course-node:english:language-paper-1",
+      "kind": "course-node",
+      "id": "english:language-paper-1",
+      "facts": {
+        "label": "English Language — Paper 1",
+        "atomsUnderIt": 0
+      },
+      "classification": "concept",
+      "target": "concept namespace only",
+      "note": "Named \"course\" but sized like an exam PAPER — the sharpest instance of the level confusion. Under the canonical ontology a paper is a specification-owned structure, not a concept namespace and not a course."
+    },
+    {
+      "key": "course-node:history:medicine",
+      "kind": "course-node",
+      "id": "history:medicine",
+      "facts": {
+        "label": "Medicine in Britain, c1250–present",
+        "atomsUnderIt": 80
+      },
+      "classification": "concept",
+      "target": "concept namespace; module link via the module record",
+      "note": "Sits at specification-option level and is the only course node with knowledge atoms under it (80 of the registry's 87 concepts). Its id stays as a concept namespace, but it stops implying curriculum membership — that becomes a link from the module record to the concept prefix."
+    },
+    {
+      "key": "course-node:maths:number",
+      "kind": "course-node",
+      "id": "maths:number",
+      "facts": {
+        "label": "Maths — Number",
+        "atomsUnderIt": 0
+      },
+      "classification": "concept",
+      "target": "concept namespace only",
+      "note": "Named \"course\" but sized like one AQA content domain. Same shape as the Biology nodes: a namespace placeholder with no atoms."
+    },
+    {
+      "key": "concept-collection:courseNodes.js",
+      "kind": "concept-collection",
+      "id": "courseNodes.js",
+      "facts": {
+        "coursePrefixes": [
+          "biology:bioenergetics",
+          "biology:building-blocks",
+          "biology:infection-response",
+          "biology:organisation",
+          "english:language-paper-1",
+          "maths:number"
+        ]
+      },
+      "classification": "concept",
+      "target": "unchanged for now; superseded by module records",
+      "note": "Six placeholder namespaces standing in for subjects with no designed graph. It exists to keep live question-bank tags legal. As each subject gains a real concept collection and its module records, entries leave this file; it is not a permanent level in the ontology."
+    },
+    {
+      "key": "concept-collection:historyMedicine.js",
+      "kind": "concept-collection",
+      "id": "historyMedicine.js",
+      "facts": {
+        "coursePrefixes": [
+          "history:medicine"
+        ]
+      },
+      "classification": "concept",
+      "target": "unchanged",
+      "note": "A real designed knowledge graph for one specification option: 80 atoms plus topic groupings and a legacy screen-tag bridge. It is the model the other subjects have not yet reached, and the migration leaves it alone."
+    },
+    {
+      "key": "curriculum-facet-tag:course:medicine",
+      "kind": "curriculum-facet-tag",
+      "id": "course:medicine",
+      "facts": {
+        "usedBy": [
+          "chapter"
+        ]
+      },
+      "classification": "facet",
+      "target": "derived from the module reference",
+      "note": "The only `course:` value in the whole app, and it names a specification option. Under the canonical model this fact is carried by a chapter's module and that module's specification link, so the tag becomes derivable rather than authored."
+    },
+    {
+      "key": "curriculum-facet-tag:examboard:edexcel",
+      "kind": "curriculum-facet-tag",
+      "id": "examboard:edexcel",
+      "facts": {
+        "usedBy": [
+          "chapter",
+          "exam-paper"
+        ]
+      },
+      "classification": "facet",
+      "target": "derived from the specification record",
+      "note": "The only `examboard:` value in use. Board is a property of a specification, so once a chapter resolves to a specification the tag is a projection. Authoring it per chapter is what lets a chapter disagree with its own module."
+    },
+    {
+      "key": "curriculum-facet-tag:paper:medicine",
+      "kind": "curriculum-facet-tag",
+      "id": "paper:medicine",
+      "facts": {
+        "usedBy": [
+          "exam-paper"
+        ]
+      },
+      "classification": "facet",
+      "target": "derived from the specification record",
+      "note": "Names a subject option, not a paper — Edexcel 1HI0 Paper 1 carries both Medicine and the Western Front. It becomes a real paper reference owned by the specification."
+    },
+    {
+      "key": "curriculum-facet-tag:tier:gcse",
+      "kind": "curriculum-facet-tag",
+      "id": "tier:gcse",
+      "facts": {
+        "usedBy": [
+          "exam-paper"
+        ]
+      },
+      "classification": "facet",
+      "target": "derived from the study pathway",
+      "note": "Uses the `tier:` namespace to record a qualification level, not a tier. The vocabulary already reserves `tier:foundation` / `tier:higher`, so this value is the odd one out; qualification belongs to the specification and tier belongs to the pathway."
+    }
+  ]
+}
