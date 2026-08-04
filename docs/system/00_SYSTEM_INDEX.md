@@ -39,6 +39,14 @@ The canonical structural contract for `Subject → Module → Chapter → Screen
 
 ---
 
+### 1c.0. Curriculum Catalogue
+
+`docs/system/CURRICULUM_CATALOGUE.md`
+
+The build-time boundary for curriculum governance: boards, subjects, specifications, study pathways, modules and chapters authored once in `src/curriculum-catalogue/records/`, with generated projections as the only thing the runtime may read. **Migration in progress** — no production code consumes it yet, and `CONTENT_HIERARCHY.md` above remains the governing document for the current runtime hierarchy. Read before adding a curriculum record or changing the catalogue boundary.
+
+---
+
 ### 1c.1. Governed Screen Registry
 
 `docs/system/SCREEN_REGISTRY.md`

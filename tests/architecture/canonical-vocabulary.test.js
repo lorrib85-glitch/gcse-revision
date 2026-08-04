@@ -80,9 +80,26 @@ const BAN_LIST_TESTS = new Set([
   'tests/architecture/chapter-runtime-contract.test.js',
 ])
 
-function offenders(files, pattern, { allow = new Set() } = {}) {
+// Exception 4 — the curriculum catalogue's relationship records.
+//
+// `{ moduleId, position }` on a study pathway is the canonical parent-module
+// relationship (ADR-0002 Decision 5). The rule below is about ROUTING payloads:
+// a learner is routed to a chapter, never to a module, and that stays true —
+// the catalogue routes nobody. It is build-time governance data with no runtime
+// consumer, and its module records are parent-module surfaces in exactly the
+// sense Exception 3 already recognises.
+//
+// A prefix rather than a file list, so Stage 2's module and pathway records are
+// covered the day they land instead of the day someone remembers to add them.
+const CURRICULUM_CATALOGUE_PREFIXES = [
+  'src/curriculum-catalogue/',
+  'tests/architecture/curriculum-catalogue-integrity.test.js',
+]
+
+function offenders(files, pattern, { allow = new Set(), allowPrefixes = [] } = {}) {
   return files
     .filter(path => !allow.has(path))
+    .filter(path => !allowPrefixes.some(prefix => path.startsWith(prefix)))
     .filter(path => pattern.test(read(path)))
 }
 
@@ -192,8 +209,20 @@ describe('canonical vocabulary — payload and route semantics', () => {
     // The property-assignment form only. `moduleIdx`, `moduleIds` and a
     // getModuleById(moduleId) parameter are genuine parent-module code.
     const pattern = /\bmoduleId\s*:/
-    expect(offenders(PRODUCTION_FILES, pattern, { allow: PARENT_MODULE_FILES })).toEqual([])
-    expect(offenders(TEST_FILES, pattern, { allow: BAN_LIST_TESTS })).toEqual([])
+    const allowPrefixes = CURRICULUM_CATALOGUE_PREFIXES
+    expect(offenders(PRODUCTION_FILES, pattern, { allow: PARENT_MODULE_FILES, allowPrefixes })).toEqual([])
+    expect(offenders(TEST_FILES, pattern, { allow: BAN_LIST_TESTS, allowPrefixes })).toEqual([])
+  })
+
+  it('still bans moduleId: everywhere the exceptions do not reach', () => {
+    // The exception is narrow by construction: it names the curriculum
+    // catalogue and nothing else, so the routing rule keeps its force.
+    const pattern = /\bmoduleId\s*:/
+    const unguarded = PRODUCTION_FILES
+      .filter(path => !CURRICULUM_CATALOGUE_PREFIXES.some(prefix => path.startsWith(prefix)))
+      .filter(path => !PARENT_MODULE_FILES.has(path))
+    expect(unguarded.length).toBeGreaterThan(50)
+    expect(offenders(unguarded, pattern)).toEqual([])
   })
 
   it('offers ?chapter= as the only direct developer route', () => {
