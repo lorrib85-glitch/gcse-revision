@@ -18,7 +18,16 @@ export default {
   purpose: 'The sole runtime boundary mapping registered screen and block types to approved components. FULL_SCREEN_RENDERER_TYPES and BLOCK_RENDERER_TYPES are proved equal to the active entries of SCREEN_REGISTRY / BLOCK_REGISTRY by tests/architecture/screen-registry.test.js.',
   ownership: {
     internalDirectories: [],
-    internalFiles: []
+    internalFiles: [
+      {
+        path: 'src/components/layout/deferredFigures.jsx',
+        reason: 'Routing machinery, not an author choice: the lazy wrappers, per-block Suspense boundary and reserved-height fallback that let ScreenRenderer load the six figure renderers on demand. A learner never meets it as a component and an author never selects it.'
+      },
+      {
+        path: 'src/components/layout/deferredFigureLoaders.js',
+        reason: 'The stable per-component dynamic-import thunks behind those routes, kept free of React so the app shell can preload a chapter’s figures without pulling in the rendering layer. Implementation detail of the same routing boundary.'
+      }
+    ]
   },
   documentation: {
     bestUsedFor: null,

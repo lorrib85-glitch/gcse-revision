@@ -38,12 +38,21 @@ import MisconceptionCheck from '../learning/MisconceptionCheck.jsx'
 // catalogue does.
 import WhatExaminersLookFor from '../learning/WhatExaminersLookFor.jsx'
 import CalculationBreakdown from '../learning/CalculationBreakdown.jsx'
-import AngleExplore from '../learning/AngleExplore.jsx'
-import AreaPerimeterExplore from '../learning/AreaPerimeterExplore.jsx'
-import CoordinatePlaneExplore from '../learning/CoordinatePlaneExplore.jsx'
-import NumberLineExplore from '../learning/NumberLineExplore.jsx'
-import CircuitDiagram from '../learning/CircuitDiagram.jsx'
-import CircuitSymbolReference from '../learning/CircuitSymbolReference.jsx'
+// The six figure renderers are subject-specific drawing engines, loaded on
+// demand rather than imported here: a History chapter should not download a
+// coordinate-plane engine to render a paragraph. The runtime preloads the ones
+// a chapter actually contains as soon as its definition resolves, so the
+// fallback below is an exception path, not the normal experience. See
+// deferredFigures.jsx.
+import {
+  DeferredFigure,
+  LazyAngleExplore,
+  LazyAreaPerimeterExplore,
+  LazyCircuitDiagram,
+  LazyCircuitSymbolReference,
+  LazyCoordinatePlaneExplore,
+  LazyNumberLineExplore,
+} from './deferredFigures.jsx'
 import SwipeSort from '../learning/SwipeSort.jsx'
 import OppositeQualitiesReveal from '../learning/OppositeQualitiesReveal.jsx'
 import VisualLearning from '../learning/VisualLearning.jsx'
@@ -630,75 +639,92 @@ const BLOCK_RENDERERS = Object.freeze({
   spotTheError: ({ block, subject, onScreenComplete }) => <SpotTheError block={block} subject={subject} onContinue={onScreenComplete} />,
   misconceptionCheck: ({ block, subject, onScreenComplete }) => <MisconceptionCheck block={block} subject={subject} onContinue={onScreenComplete} />,
   // ── Placeable figures ───────────────────────────────────────────────────
-  // Six separate types, six separate routes. They share a prop vocabulary
-  // (preset / value / interactive / label) but not an identity: an author
-  // places an angle diagram or a number line, never a "figure" with a
-  // discriminator. The page owns the question and the marking in every case.
+  // Six separate types, six separate routes, six separate downloads. They share
+  // a prop vocabulary (preset / value / interactive / label) but not an
+  // identity: an author places an angle diagram or a number line, never a
+  // "figure" with a discriminator. The page owns the question and the marking
+  // in every case.
+  //
+  // Each route mounts its lazy component inside its own DeferredFigure
+  // boundary, so a figure still arriving suspends only its own block and a
+  // figure that never arrives costs the learner that diagram and nothing else.
   angleFigure: ({ block, subject }) => (
-    <AngleExplore
-      preset={block.preset}
-      value={block.value}
-      defaultValue={block.defaultValue}
-      interactive={block.interactive}
-      label={block.label}
-      showStatus={block.showStatus}
-      subject={subject}
-    />
+    <DeferredFigure>
+      <LazyAngleExplore
+        preset={block.preset}
+        value={block.value}
+        defaultValue={block.defaultValue}
+        interactive={block.interactive}
+        label={block.label}
+        showStatus={block.showStatus}
+        subject={subject}
+      />
+    </DeferredFigure>
   ),
   areaPerimeterFigure: ({ block, subject }) => (
-    <AreaPerimeterExplore
-      preset={block.preset}
-      focus={block.focus}
-      value={block.value}
-      defaultValue={block.defaultValue}
-      interactive={block.interactive}
-      label={block.label}
-      showStatus={block.showStatus}
-      subject={subject}
-    />
+    <DeferredFigure>
+      <LazyAreaPerimeterExplore
+        preset={block.preset}
+        focus={block.focus}
+        value={block.value}
+        defaultValue={block.defaultValue}
+        interactive={block.interactive}
+        label={block.label}
+        showStatus={block.showStatus}
+        subject={subject}
+      />
+    </DeferredFigure>
   ),
   coordinatePlaneFigure: ({ block, subject }) => (
-    <CoordinatePlaneExplore
-      preset={block.preset}
-      focus={block.focus}
-      comparisonRule={block.comparisonRule}
-      value={block.value}
-      defaultValue={block.defaultValue}
-      interactive={block.interactive}
-      showGuides={block.showGuides}
-      difficultyCapabilities={block.difficultyCapabilities}
-      xAxis={block.xAxis}
-      yAxis={block.yAxis}
-      grid={block.grid}
-      label={block.label}
-      showStatus={block.showStatus}
-      subject={subject}
-    />
+    <DeferredFigure>
+      <LazyCoordinatePlaneExplore
+        preset={block.preset}
+        focus={block.focus}
+        comparisonRule={block.comparisonRule}
+        value={block.value}
+        defaultValue={block.defaultValue}
+        interactive={block.interactive}
+        showGuides={block.showGuides}
+        difficultyCapabilities={block.difficultyCapabilities}
+        xAxis={block.xAxis}
+        yAxis={block.yAxis}
+        grid={block.grid}
+        label={block.label}
+        showStatus={block.showStatus}
+        subject={subject}
+      />
+    </DeferredFigure>
   ),
   numberLineFigure: ({ block, subject }) => (
-    <NumberLineExplore
-      preset={block.preset}
-      value={block.value}
-      defaultValue={block.defaultValue}
-      options={block.options}
-      interactive={block.interactive}
-      label={block.label}
-      showStatus={block.showStatus}
-      subject={subject}
-    />
+    <DeferredFigure>
+      <LazyNumberLineExplore
+        preset={block.preset}
+        value={block.value}
+        defaultValue={block.defaultValue}
+        options={block.options}
+        interactive={block.interactive}
+        label={block.label}
+        showStatus={block.showStatus}
+        subject={subject}
+      />
+    </DeferredFigure>
   ),
   circuitDiagram: ({ block }) => (
-    <CircuitDiagram
-      preset={block.preset}
-      closed={block.closed}
-      defaultClosed={block.defaultClosed}
-      interactive={block.interactive}
-      label={block.label}
-      showStatus={block.showStatus}
-    />
+    <DeferredFigure>
+      <LazyCircuitDiagram
+        preset={block.preset}
+        closed={block.closed}
+        defaultClosed={block.defaultClosed}
+        interactive={block.interactive}
+        label={block.label}
+        showStatus={block.showStatus}
+      />
+    </DeferredFigure>
   ),
   circuitSymbolReference: ({ block }) => (
-    <CircuitSymbolReference title={block.title} description={block.description} />
+    <DeferredFigure>
+      <LazyCircuitSymbolReference title={block.title} description={block.description} />
+    </DeferredFigure>
   ),
 })
 

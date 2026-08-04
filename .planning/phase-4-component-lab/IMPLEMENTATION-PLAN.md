@@ -312,9 +312,14 @@ sandbox's blocked font requests, documented in `scripts/screenshot.mjs`.)
 ### Gates
 
 `pnpm verify` green end to end: `catalogue:check`, `authoring:check`,
-`pedagogy:check` and `lab:check` all clean; **1718** architecture tests,
+`pedagogy:check` and `lab:check` all clean; **1779** architecture tests,
 **1227** unit tests, **301** Storybook browser tests; lint 0 errors (90
 warnings, unchanged from the baseline); build succeeds.
+
+> **Corrected.** This line first read 1718, which was the count at the point the
+> commit message was drafted — before the preview-preservation guard was added.
+> The successful `pnpm verify` run printed **1779**. The number here is now the
+> one the passing command actually printed.
 
 ### Bundle
 
@@ -324,3 +329,88 @@ The one number worth reading: routing the six figure blocks moves **+167 kB raw
 because a runtime that can render a type must be able to load it. That is a real
 cost to learners and is recorded with its two options; choosing between them is
 a separate decision.
+
+---
+
+## Step 10 — Bundle closure (executed)
+
+The one cost Phase 4 recorded rather than fixed — the six figure renderers
+sitting synchronously in the chapter-runtime chunk — is now removed, without
+introducing a loading interruption during normal progression.
+
+**Neither of the two options as written.** Accepting the cost was rejected on
+the numbers (all six types have zero content uses, so every learner paid
+47 kB gzip for engines no chapter renders, and each future engine would have
+joined the same list). Plain `React.lazy` was rejected on the experience (a
+spinner arriving mid-sequence, with a layout jump behind it). What shipped is
+deferred loading **plus chapter-aware preloading**: the runtime starts the
+downloads for exactly the types a chapter contains the moment its definition
+resolves, screens ahead of where they are needed.
+
+| Piece | Where |
+|---|---|
+| Six stable per-component loaders, one dynamic import each | `src/components/layout/deferredFigureLoaders.js` |
+| Pure structural scanner over `screens[].blocks[]` | `src/data/deferredFigureTypes.js` |
+| Preload at chapter resolution, not awaited | `LegacyApp.loadChapterContent` |
+| `lazy()` routes, per-block Suspense, error boundary, reserved frame | `src/components/layout/deferredFigures.jsx` |
+
+Both new files are owned as private internals of the `ScreenRenderer` record —
+routing machinery, not author choices.
+
+### Measured
+
+| Chapter-runtime chunk | Raw | Gzip |
+|---|---|---|
+| Synchronous (Phase 4 as shipped) | 808.49 kB | 226.85 kB |
+| Deferred (this closure) | **642.19 kB** | **179.72 kB** |
+| Pre-route control | 641.17 kB | 179.37 kB |
+
+−166.30 kB raw / −47.13 kB gzip, landing +1.02 kB / +0.35 kB above the control —
+the wrapper itself, not variance. Six separate figure chunks, 4.10 kB to
+48.89 kB. Learner entry +1.71 kB raw for the scanner and the six thunks; no
+figure engine reaches the entry or the chapter-runtime chunk.
+
+### Verified in a real browser, on the production bundle
+
+| Case | Figure chunks requested |
+|---|---|
+| History chapter, no figure blocks | none of the six |
+| Maths chapter with one `angleFigure` | `AngleExplore` only |
+| Same, with that chunk aborted | chapter opened, no page errors |
+
+The two figure cases needed a chapter that contains one, so a single block was
+added to `math3` for the measurement and reverted — the same technique as the
+control build. No content is committed.
+
+Render-time states are covered deterministically in
+`src/components/layout/deferredFigures.stories.jsx`: a module that never
+resolves shows the reserved "Diagram loading" frame at real height inside the
+content column, and a module that rejects is caught by the boundary and shows
+"Diagram unavailable" while the surrounding screen carries on.
+
+### Mutations
+
+Seven applied to the real files, each caught by a named assertion, all reverted
+(`git status` clean):
+
+| # | Mutation | Caught by |
+|---|---|---|
+| 1 | restore one static figure import | *angleFigure → AngleExplore.jsx is not statically imported* |
+| 2 | remove one loader | *covers the scanned set in both directions* |
+| 3 | remove one type from the scanner map | *keeps one dynamic import per figure, not one merged chunk* |
+| 4 | scanner returns duplicate types | *a scanner that returns duplicates fails this assertion* |
+| 5 | scanner preloads an unused figure | *a scanner that preloads an unused figure fails this assertion* |
+| 6 | remove one Suspense boundary | *circuitSymbolReference is wrapped in DeferredFigure* |
+| 7 | drop the chapter-aware preload call | *calls the preloader from the one place chapter content resolves* |
+
+### Gates
+
+`pnpm verify` green: four generator checks clean, **1829** architecture tests,
+**1243** unit tests, **304** Storybook browser tests, lint 0 errors, build
+succeeds. Lint warnings 90 → **91**: one `react-refresh/only-export-components`
+on `deferredFigures.jsx`, which exports the six lazy components alongside the
+map that makes "one lazy renderer per type" assertable from source.
+
+The Phase 4 authoring architecture is untouched: 57 ↔ 57 coverage, adapters,
+authoring types, generated projection, System reference, both access flags,
+catalogue records, pedagogy and chapter content all unchanged.

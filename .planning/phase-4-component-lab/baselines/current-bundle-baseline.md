@@ -129,7 +129,7 @@ not a mechanical one:
   content column, which is a visible-rhythm decision the learning-experience
   principles own.
 
-**Not chosen here.** Phase 4 measures it; choosing B is a separate decision.
+**RESOLVED — see the closure section below.** Neither option as written: B was chosen for the download and rejected for the loading interruption, so the shipped answer is B plus chapter-aware preloading.
 
 ## Leakage into the learner entry — still none
 
@@ -148,3 +148,114 @@ The one `authoringName` hit in the learner entry is
 `componentAuthoringRegistry.js` — the runtime authoring projection the chapter
 validator reads — not Lab governance data. No `useWhen`, `contentUsage`,
 `bestUsedFor` or `owningRecordId` reaches the learner entry.
+
+---
+
+# Phase 4 bundle closure — the resolved strategy
+
+The two-option decision above is settled, and the answer is neither option as
+written.
+
+**Option A (accept) was rejected on the numbers.** All six figure types have
+zero content uses today, so every learner opening any chapter was paying
+47 kB gzip for engines no chapter renders. That is also the wrong scaling rule:
+each future subject-specific engine would have joined the same synchronous
+import list, turning the chapter runtime into a download-everything bundle.
+
+**Option B as written (plain `React.lazy`) was rejected on the experience.**
+Waiting until the figure enters the render tree and then showing a spinner
+trades a download for an interruption in the middle of a teaching sequence,
+with a layout jump when the diagram lands.
+
+**Shipped: deferred loading plus chapter-aware preloading.**
+
+- Six stable per-component loaders in
+  `src/components/layout/deferredFigureLoaders.js` — one dynamic import each,
+  deliberately not one merged figures chunk.
+- A pure scanner, `collectDeferredFigureTypes` in
+  `src/data/deferredFigureTypes.js`, walks a resolved chapter's
+  `screens[].blocks[]` and returns the distinct deferred types it contains.
+- `LegacyApp`'s `loadChapterContent` fires the loaders for exactly those types
+  the moment the chapter definition resolves — not when the learner reaches the
+  screen. Both the idle prefetch of the likely next chapter and the open path
+  funnel through there, so a prefetched chapter arrives with its figures warm.
+  Nothing awaits it; the chapter opens exactly as before.
+- Each route has its own Suspense boundary and error boundary, falling back to a
+  static reserved-height frame — no spinner, no percentage, no error styling,
+  and nothing that animates.
+
+Because the preload and the `lazy()` render share one thunk, the module is
+downloaded once however it is reached first.
+
+## Measured — production build
+
+| Chunk | Raw | Gzip |
+|---|---|---|
+| `ScreenRenderer-<hash>.js` (chapter runtime) | **642.19 kB** | **179.72 kB** |
+| `index-<hash>.js` (learner entry) | 946.35 kB | 241.28 kB |
+| `CoordinatePlaneExplore-<hash>.js` | 48.89 kB | 16.10 kB |
+| `AreaPerimeterExplore-<hash>.js` | 28.85 kB | 9.68 kB |
+| `NumberLineExplore-<hash>.js` | 26.28 kB | 9.07 kB |
+| `AngleExplore-<hash>.js` | 24.42 kB | 7.95 kB |
+| `CircuitDiagram-<hash>.js` | 22.55 kB | 5.68 kB |
+| `CircuitSymbolReference-<hash>.js` | 4.10 kB | 1.63 kB |
+| `ComponentReviewLab-<hash>.js` | 156.75 kB | 41.41 kB |
+| `SystemReference-<hash>.js` | 15.77 kB | 5.33 kB |
+| `labShell-<hash>.js` | 36.29 kB | 14.13 kB |
+
+### The chapter-runtime path is back at the control position
+
+| Chapter runtime | Raw | Gzip |
+|---|---|---|
+| Synchronous imports (Phase 4 as shipped) | 808.49 kB | 226.85 kB |
+| Deferred (this closure) | **642.19 kB** | **179.72 kB** |
+| Pre-route control, recorded above | 641.17 kB | 179.37 kB |
+
+**−166.30 kB raw / −47.13 kB gzip**, landing **+1.02 kB raw / +0.35 kB gzip**
+above the control. That residue is not bundler variance — it is the
+`deferredFigures.jsx` wrapper itself: six `lazy()` bindings, one Suspense
+boundary, one error boundary and the reserved frame. About a third of a
+kilobyte to stop shipping forty-seven.
+
+The learner entry grew **+1.71 kB raw / +0.59 kB gzip** (944.64 → 946.35), which
+is the scanner plus the six import thunks. No figure engine reaches it:
+`anglePresets`, `coordinatePlanePresets`, `circuitPresets` and
+`AREA_PERIMETER_PRESETS` are all absent from the entry *and* from the
+chapter-runtime chunk. The only figure strings left in the chapter runtime are
+the six route keys in the block-renderer map.
+
+## Verified in a real browser, against the production bundle
+
+Served from `dist` and driven through the real learner path — guest sign-in,
+onboarding, Subjects, open a chapter — with every request to a figure chunk
+recorded:
+
+| Case | Figure chunks requested |
+|---|---|
+| History chapter, no figure blocks | **none of the six** |
+| Maths chapter containing one `angleFigure` | **`AngleExplore` only** |
+| Same chapter with the `AngleExplore` chunk aborted | request attempted; chapter opened, no page errors |
+
+The one-figure and aborted cases needed a chapter that actually contains a
+figure, so a single `angleFigure` block was added to `math3` for the
+measurement and reverted immediately afterwards — the same technique as the
+control build above. No content is committed.
+
+The render-time states are covered deterministically rather than by walking a
+chapter, in `src/components/layout/deferredFigures.stories.jsx` (real browser,
+`pnpm test:storybook`):
+
+- a module that never resolves → the reserved frame, labelled "Diagram
+  loading", holding real height inside the content column, `role="status"` and
+  no alert;
+- a module that rejects → the boundary catches it, the frame stays as "Diagram
+  unavailable", and the surrounding screen is untouched. Without that boundary
+  the rejection would take the whole chapter tree down.
+
+## What did not change
+
+The Component Lab still imports its six previews directly. It is an owner chunk
+the learner never downloads, and deferring is about the learner runtime only.
+The 57 ↔ 57 coverage contract, the adapters, the authoring types, the generated
+projection, System reference, both access flags, the catalogue records, the
+pedagogy and all chapter content are untouched.

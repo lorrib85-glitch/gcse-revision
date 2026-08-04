@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { CHAPTER_CONTENT_LOADERS } from '../content/chapterContentRegistry.js'
+import { collectDeferredFigureTypes } from '../data/deferredFigureTypes.js'
+import { preloadDeferredFigures } from '../components/layout/deferredFigureLoaders.js'
 import { CHAPTERS } from '../chapters.js'
 import { useAuth } from '../auth/useAuth.js'
 import { getProgress, recordActivity, getChapterState as safeGetChapterState, saveChapterState, getContinueChapter } from '../progress.js'
@@ -93,7 +95,23 @@ async function loadChapterContent(chapter) {
   const loader = CHAPTER_CONTENT_LOADERS[chapter.id]
   if (!loader) return null
   const content = await loader()
-  if (content) _chapterContentCache[chapter.id] = content
+  if (content) {
+    _chapterContentCache[chapter.id] = content
+    // Chapter-aware figure preload. The six figure renderers are loaded on
+    // demand so a chapter that uses none downloads none — but waiting until the
+    // learner reaches a diagram would trade a download for a visible pause
+    // mid-lesson, which is a worse deal. The moment the chapter definition
+    // exists we know exactly which figures it contains, so we start those
+    // downloads now, screens ahead of where they are needed.
+    //
+    // This is the only place it has to go: both the idle prefetch of the likely
+    // next chapter and the open-a-chapter path funnel through here, so a
+    // prefetched chapter arrives with its figures already warm.
+    //
+    // Deliberately not awaited. Nothing blocks on it and the chapter opens
+    // exactly as before — it is a background hint, not a second loading gate.
+    preloadDeferredFigures(collectDeferredFigureTypes(content))
+  }
   return content
 }
 
