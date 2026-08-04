@@ -167,5 +167,47 @@ export default {
       'Registering, routing or documenting a presentation variant as a separate component'
     ]
   },
-  authoring: null
+  authoring: {
+    entries: [
+      {
+        // One authoring type, five selectable authoring modes. All five
+        // presentations share this envelope, this renderer route and one
+        // validation entry point (resolveCalculationPresentation), so they are
+        // one contract — registering a presentation as its own type is
+        // explicitly refused by this record's contract.
+        type: 'calculationBreakdown',
+        level: 'screen',
+        authoringName: 'Calculation breakdown',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        // The standard walkthrough needs `steps`; a visual model needs
+        // `presentation` and ignores them. "One of" is exactly what the
+        // component accepts, so it is exactly what the contract states.
+        requiredAny: [
+          [
+            {
+              path: 'steps',
+              kind: 'array'
+            },
+            {
+              path: 'presentation',
+              kind: 'object'
+            }
+          ]
+        ],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null,
+        pedagogy: {
+          functions: [
+            'sequence-process',
+            'apply'
+          ],
+          interaction: 'assessed'
+        }
+      }
+    ]
+  }
 }

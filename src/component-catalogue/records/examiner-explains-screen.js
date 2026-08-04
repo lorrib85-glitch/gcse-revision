@@ -26,7 +26,7 @@ export default {
     dataShape: null,
     dependencies: [],
     usedBy: [],
-    usageBoundary: 'Legacy compatibility only. Do not select or author it as a separate learning component; new code and content must use WhatExaminersLookFor. It is catalogued here because the file still exists — not because it is an available choice.',
+    usageBoundary: 'Legacy compatibility only. Do not select or author it as a separate learning component; new code and content must use WhatExaminersLookFor. It is catalogued here because the file still exists — not because it is an available choice. The screen:examinerExplains authoring entry moved to the canonical WhatExaminersLookFor record in Phase 4: a parked alias must not own a live authoring entry, or the Lab shows a deprecated component as an author choice.',
     contractDoc: null,
     story: null,
     governanceRules: [],
@@ -40,27 +40,5 @@ export default {
     exclusivity: null,
     requiresProductDecision: []
   },
-  authoring: {
-    entries: [
-      {
-        type: 'examinerExplains',
-        level: 'screen',
-        authoringName: 'What examiners look for',
-        layout: 'full',
-        status: 'active',
-        replacement: null,
-        required: [],
-        requiredAny: [],
-        continuation: 'component',
-        headerMode: 'standard',
-        handler: null,
-        pedagogy: {
-          functions: [
-            'exam-technique'
-          ],
-          interaction: 'passive'
-        }
-      }
-    ]
-  }
+  authoring: null
 }

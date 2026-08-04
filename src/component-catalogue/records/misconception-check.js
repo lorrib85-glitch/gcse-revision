@@ -93,6 +93,7 @@ export default {
         layout: 'full',
         status: 'derived',
         replacement: null,
+        derivedFrom: 'block:misconceptionCheck',
         required: [],
         requiredAny: [],
         continuation: 'component',

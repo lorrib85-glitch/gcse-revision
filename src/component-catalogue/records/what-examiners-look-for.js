@@ -71,5 +71,27 @@ export default {
     exclusivity: null,
     requiresProductDecision: []
   },
-  authoring: null
+  authoring: {
+    entries: [
+      {
+        type: 'examinerExplains',
+        level: 'screen',
+        authoringName: 'What examiners look for',
+        layout: 'full',
+        status: 'active',
+        replacement: null,
+        required: [],
+        requiredAny: [],
+        continuation: 'component',
+        headerMode: 'standard',
+        handler: null,
+        pedagogy: {
+          functions: [
+            'exam-technique'
+          ],
+          interaction: 'passive'
+        }
+      }
+    ]
+  }
 }

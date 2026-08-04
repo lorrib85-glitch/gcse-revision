@@ -32,7 +32,18 @@ import GraphView from '../learning/GraphView.jsx'
 import ColSortBlock from '../learning/ColSortBlock.jsx'
 import SpotTheError from '../learning/SpotTheError.jsx'
 import MisconceptionCheck from '../learning/MisconceptionCheck.jsx'
-import ExaminerExplainsScreen from '../learning/ExaminerExplainsScreen.jsx'
+// The canonical component, not the parked ExaminerExplainsScreen alias that
+// re-exports it. Phase 4 moved the screen:examinerExplains authoring entry to
+// the WhatExaminersLookFor record, so the route names the same identity the
+// catalogue does.
+import WhatExaminersLookFor from '../learning/WhatExaminersLookFor.jsx'
+import CalculationBreakdown from '../learning/CalculationBreakdown.jsx'
+import AngleExplore from '../learning/AngleExplore.jsx'
+import AreaPerimeterExplore from '../learning/AreaPerimeterExplore.jsx'
+import CoordinatePlaneExplore from '../learning/CoordinatePlaneExplore.jsx'
+import NumberLineExplore from '../learning/NumberLineExplore.jsx'
+import CircuitDiagram from '../learning/CircuitDiagram.jsx'
+import CircuitSymbolReference from '../learning/CircuitSymbolReference.jsx'
 import SwipeSort from '../learning/SwipeSort.jsx'
 import OppositeQualitiesReveal from '../learning/OppositeQualitiesReveal.jsx'
 import VisualLearning from '../learning/VisualLearning.jsx'
@@ -618,6 +629,77 @@ const BLOCK_RENDERERS = Object.freeze({
   colsort: ({ block, subject }) => <ColSortBlock block={block} subject={subject} />,
   spotTheError: ({ block, subject, onScreenComplete }) => <SpotTheError block={block} subject={subject} onContinue={onScreenComplete} />,
   misconceptionCheck: ({ block, subject, onScreenComplete }) => <MisconceptionCheck block={block} subject={subject} onContinue={onScreenComplete} />,
+  // ── Placeable figures ───────────────────────────────────────────────────
+  // Six separate types, six separate routes. They share a prop vocabulary
+  // (preset / value / interactive / label) but not an identity: an author
+  // places an angle diagram or a number line, never a "figure" with a
+  // discriminator. The page owns the question and the marking in every case.
+  angleFigure: ({ block, subject }) => (
+    <AngleExplore
+      preset={block.preset}
+      value={block.value}
+      defaultValue={block.defaultValue}
+      interactive={block.interactive}
+      label={block.label}
+      showStatus={block.showStatus}
+      subject={subject}
+    />
+  ),
+  areaPerimeterFigure: ({ block, subject }) => (
+    <AreaPerimeterExplore
+      preset={block.preset}
+      focus={block.focus}
+      value={block.value}
+      defaultValue={block.defaultValue}
+      interactive={block.interactive}
+      label={block.label}
+      showStatus={block.showStatus}
+      subject={subject}
+    />
+  ),
+  coordinatePlaneFigure: ({ block, subject }) => (
+    <CoordinatePlaneExplore
+      preset={block.preset}
+      focus={block.focus}
+      comparisonRule={block.comparisonRule}
+      value={block.value}
+      defaultValue={block.defaultValue}
+      interactive={block.interactive}
+      showGuides={block.showGuides}
+      difficultyCapabilities={block.difficultyCapabilities}
+      xAxis={block.xAxis}
+      yAxis={block.yAxis}
+      grid={block.grid}
+      label={block.label}
+      showStatus={block.showStatus}
+      subject={subject}
+    />
+  ),
+  numberLineFigure: ({ block, subject }) => (
+    <NumberLineExplore
+      preset={block.preset}
+      value={block.value}
+      defaultValue={block.defaultValue}
+      options={block.options}
+      interactive={block.interactive}
+      label={block.label}
+      showStatus={block.showStatus}
+      subject={subject}
+    />
+  ),
+  circuitDiagram: ({ block }) => (
+    <CircuitDiagram
+      preset={block.preset}
+      closed={block.closed}
+      defaultClosed={block.defaultClosed}
+      interactive={block.interactive}
+      label={block.label}
+      showStatus={block.showStatus}
+    />
+  ),
+  circuitSymbolReference: ({ block }) => (
+    <CircuitSymbolReference title={block.title} description={block.description} />
+  ),
 })
 
 export const BLOCK_RENDERER_TYPES = Object.freeze(Object.keys(BLOCK_RENDERERS))
@@ -714,7 +796,8 @@ export const FULL_SCREEN_RENDERER_TYPES = Object.freeze([
   "beforeAfterSlider",
   "cinematic",
   "factorWeb",
-  "quoteAnalyser"
+  "quoteAnalyser",
+  "calculationBreakdown"
 ])
 
 export function ChapterSchemaError({ chapter, errors, onBack }) {
@@ -1059,7 +1142,7 @@ export default function ScreenRenderer({
     return (
       <>
         <LearningHeader {...H} visible={true} />
-        <ExaminerExplainsScreen
+        <WhatExaminersLookFor
           subject={chapter.subject}
           examinerExplains={explainData}
           label={cur.label}
@@ -1165,6 +1248,23 @@ export default function ScreenRenderer({
           block={cur}
           subject={chapter.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
+        />
+      </>
+    )
+  }
+
+  // ── Calculation breakdown — full-screen staged method walkthrough ──────────
+  // One route for all five presentations: the presentation is chosen inside
+  // the block by `presentation.variant`, and the component owns its own title,
+  // stage sequence and continuation.
+  if (cur?.type === 'calculationBreakdown') {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <CalculationBreakdown
+          block={cur}
+          subject={chapter.subject}
+          onContinue={isLast ? handleFinish : () => go(1)}
         />
       </>
     )

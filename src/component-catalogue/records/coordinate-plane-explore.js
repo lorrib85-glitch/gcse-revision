@@ -14,7 +14,7 @@ export default {
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'reviewing',
-  lifecycleReason: 'Built and catalogued, but not yet routed for chapter authoring — pending component review.',
+  lifecycleReason: "Routed for chapter authoring in Phase 4 as block:coordinatePlaneFigure; the component itself is still under review, which is what keeps this lifecycle at reviewing.",
   purpose: 'Configuration-driven GCSE coordinate plane — the coordinate-geometry sibling of AngleExplore, AreaPerimeterExplore, FractionRatioExplore and NumberLineExplore. One visual grammar runs through every preset: one plane (every preset shares an axis system, tick treatment and grid density), points that carry their coordinates (a named point is drawn with its coordinate chip — reading a coordinate is never a separate mode), and a rule made visible as geometry (across-then-up guides, the rise/run triangle, the mirror line, the centre of rotation, the rays from a centre of enlargement). That third clause is why transformations live here rather than in a separate component: a reflection is a rule that moves coordinates, and the coordinate movement is the teaching mechanism, not a finished diagram. Nine registered presets — plotPoint, midpoint, straightLine, tableOfValues, intersection, translate, reflect, rotate, enlarge — plus a compatible-preset-object escape hatch. A three-tier annotation contract governs density: active geometry (full coordinate chip, guide lines and rule geometry), related geometry (compact label only) and context geometry (visible but unannotated), with only one point active by default. Option selections live in the value model, so value/defaultValue/onChange carry the complete state and a static exam figure can specify a reflection in y = x or an enlargement by −1. Capabilities constrain state rather than hiding controls, and controls that cannot affect the current state are absent rather than inert. Axis placement is resolved per axis, so positive-only x against signed y renders correctly. interactive={false} gives a static teaching or exam figure that still carries a descriptive <desc> of the actual figure state. Respects prefers-reduced-motion (and a reducedMotion prop override).',
   ownership: {
     internalDirectories: [
@@ -46,7 +46,7 @@ export default {
       'label',
       'showStatus'
     ],
-    dataShape: null,
+    dataShape: "{ type: 'coordinatePlaneFigure', preset: 'plotPoint' | 'midpoint' | 'straightLine' | 'tableOfValues' | 'intersection' | 'translate' | 'reflect' | 'rotate' | 'enlarge', focus?, comparisonRule?, value?, defaultValue?, interactive?, showGuides?, difficultyCapabilities?, xAxis?, yAxis?, grid?, label?, showStatus? }",
     dependencies: [
       'SUBJECTS',
       'GENERAL (via coordinatePlane/coordinatePlaneVisualRoles.js semantic roles)',
@@ -89,5 +89,35 @@ export default {
     exclusivity: null,
     requiresProductDecision: []
   },
-  authoring: null
+  authoring: {
+    entries: [
+      {
+        // Its own public authoring type, not a mode of an invented figure
+        // router. Authors write the type they mean;
+        // it carries axis, capability and guide options no other figure has.
+        type: 'coordinatePlaneFigure',
+        level: 'block',
+        authoringName: 'Coordinate plane figure',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'preset',
+            kind: 'string'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null,
+        pedagogy: {
+          functions: [
+            'teach-mechanism'
+          ],
+          interaction: 'reveal'
+        }
+      }
+    ]
+  }
 }

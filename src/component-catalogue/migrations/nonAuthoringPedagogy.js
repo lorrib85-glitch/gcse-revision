@@ -11,15 +11,19 @@
 // deleted. Adding an entry requires an explicit decision — never add one to
 // park a classification that has nowhere better to live, and never add one
 // for a type with no live consumer.
+//
+// **The set is now empty, and that is the discipline finishing rather than a
+// gap.** Its one entry classified `calculationBreakdown` while the component
+// was catalogued and storied but had no authoring entry. Phase 4 gave
+// CalculationBreakdown a genuine `screen:calculationBreakdown` entry carrying
+// that exact classification, and this entry was deleted only afterwards, once
+// the projection read the fact from the record instead.
+//
+// The generator enforces that order in one direction only: `projectPedagogy`
+// throws the moment a non-authoring type collides with an authoring entry, so
+// the shim cannot outlive its replacement — and because the classification
+// moved before the deletion, no observable value changed. Keep the file: it is
+// where the next genuinely non-authorable classification has to argue its
+// case, and the rules above are the argument it must survive.
 
-export const NON_AUTHORING_PEDAGOGY = Object.freeze([
-  Object.freeze({
-    type: 'calculationBreakdown',
-    pedagogy: Object.freeze({
-      functions: Object.freeze(['sequence-process', 'apply']),
-      interaction: 'assessed',
-    }),
-    reason: 'The production-bundled Component Lab derives its interaction badge for the CalculationBreakdown entry from getTypeInfo("calculationBreakdown") (reviewManifestCore.jsx); the component is catalogued and storied but has no authoring entry, so nothing else carries this fact.',
-    removalCondition: 'Delete this entry when Phase 4 replaces the Lab manifest’s getTypeInfo dependency, or when CalculationBreakdown receives a genuine authoring entry — whichever happens first.',
-  }),
-])
+export const NON_AUTHORING_PEDAGOGY = Object.freeze([])

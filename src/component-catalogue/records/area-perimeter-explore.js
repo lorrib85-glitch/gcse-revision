@@ -14,7 +14,7 @@ export default {
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'reviewing',
-  lifecycleReason: 'Built and catalogued, but not yet routed for chapter authoring — pending component review.',
+  lifecycleReason: "Routed for chapter authoring in Phase 4 as block:areaPerimeterFigure; the component itself is still under review, which is what keeps this lifecycle at reviewing.",
   purpose: 'Configuration-driven GCSE area and perimeter diagram — the mensuration sibling of AngleExplore, and deliberately separate from it (AngleExplore stays focused on angle relationships). Shapes render as inline SVG in model space (whole centimetres mapped to pixels, never measured back from pixels); learner-controlled dimensions drive a live boundary trace, unit-square grids, decomposition pieces and a stable result → calculation → explanation status area. Six registered presets — rectangle (drag width and height independently, snapping to whole numbers, with a square state that marks equal sides and names side²), fixedPerimeterRectangle (perimeter pinned at 24 cm while area rises to a maximum at the square), triangleArea (slide the apex with the perpendicular height fixed; pair a rotated copy to earn ½ × base × perpendicular height), parallelogramArea (slant does not change area; a triggered cut-and-slide builds the equivalent rectangle), trapeziumArea (duplicate and rotate into a parallelogram of base a + b to derive ½ × (a + b) × h), compositeShape (L-shape with two valid decomposition splits plus a whole-minus-missing-corner method, and a perimeter mode that excludes internal lines and deduces missing outer lengths) — plus a compatible-preset-object escape hatch. focus selects perimeter, area or compare where the preset supports more than one. interactive={false} turns any preset into a static teaching or exam diagram. Drag handles are keyboard-operable role="slider" elements (arrow keys / Home / End) with ≥44px hit targets that never overlap in any reachable state; discrete choices (decomposition method, formula reveal) are real buttons, never disguised sliders. Respects prefers-reduced-motion (and a reducedMotion prop override).',
   ownership: {
     internalDirectories: [
@@ -44,7 +44,7 @@ export default {
       'label',
       'showStatus'
     ],
-    dataShape: null,
+    dataShape: "{ type: 'areaPerimeterFigure', preset: 'rectangle' | 'fixedPerimeterRectangle' | 'triangleArea' | 'parallelogramArea' | 'trapeziumArea' | 'compositeShape', focus?: 'area' | 'perimeter' | 'compare', value?, defaultValue?, interactive?, label?, showStatus? }",
     dependencies: [
       'SUBJECTS',
       'GENERAL (via areaPerimeter/areaPerimeterVisualRoles.js semantic roles)',
@@ -81,5 +81,35 @@ export default {
     exclusivity: null,
     requiresProductDecision: []
   },
-  authoring: null
+  authoring: {
+    entries: [
+      {
+        // Its own public authoring type, not a mode of an invented figure
+        // router. Authors write the type they mean;
+        // mensuration is not angle work, and the presets do not interchange.
+        type: 'areaPerimeterFigure',
+        level: 'block',
+        authoringName: 'Area and perimeter figure',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'preset',
+            kind: 'string'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null,
+        pedagogy: {
+          functions: [
+            'teach-mechanism'
+          ],
+          interaction: 'reveal'
+        }
+      }
+    ]
+  }
 }

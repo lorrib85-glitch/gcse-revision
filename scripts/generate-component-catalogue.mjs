@@ -311,9 +311,16 @@ function renderCompatibilityAppendix(entries) {
     '`src/component-catalogue/migrations/nonAuthoringPedagogy.js` — the same',
     'shrinking-set discipline: each entry carries its consumer and its way out.',
     '',
-    '| Type | Pedagogy | Reason | Removal condition |',
-    '|---|---|---|---|',
-    `| ${nonAuthoringRows.join(' |\n| ')} |`,
+    // An empty set renders as a sentence, not an empty table row. The set
+    // reaching zero is the intended end state, so the document has to be able
+    // to say so.
+    ...(nonAuthoringRows.length === 0
+      ? ['None. Every classification is owned by an authoring entry.']
+      : [
+        '| Type | Pedagogy | Reason | Removal condition |',
+        '|---|---|---|---|',
+        `| ${nonAuthoringRows.join(' |\n| ')} |`,
+      ]),
   ].join('\n')
 }
 

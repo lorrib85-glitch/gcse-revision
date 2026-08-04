@@ -106,9 +106,14 @@ approval), `/content-create` (implement confirmed briefs),
 
 ## Verification
 
+- **`pnpm lab:generate`, and commit the result** — the Component Lab projection
+  carries measured content usage per authoring key. Adding, removing or moving
+  a screen or block changes those counts, so a content change that skips this
+  ships a stale projection and `pnpm lab:check` fails the build.
 - `vite build` passes
 - `vitest run tests/architecture` — catches `screenCount` mismatches,
-  missing `screenTags`, broken module boundaries, storage violations
+  missing `screenTags`, broken module boundaries, storage violations, and Lab
+  projection drift
 - Module opens, progresses, and completes without errors
 - No missing `recoveryQuizId` tags
 - `/verify` in the running app

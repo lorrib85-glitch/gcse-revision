@@ -17,11 +17,29 @@ used is described per census; the machine-readable output is under `baselines/`.
 > **Census 7 is now the governing coverage census.** It measures the Lab against
 > the live chapter-authoring surface and classifies every Lab item A / B / C.
 
-**Headline numbers**
+> ### ⚠️ Two corrections applied after this census
+>
+> **1. The "51 live entries" target counted a derived route as a selectable
+> choice.** 51 is 50 `active` plus 1 `derived` (`screen:misconceptionCheck`).
+> A derived route is the runtime presenting an existing choice at another
+> level, not a second thing to author. The coverage contract counts **active**
+> entries only; the derived route is accounted for as a presentation. See D0 in
+> `DECISIONS.md`. Corrected basis: **50 active, 33 covered, 17 missing** →
+> target **57** once Phase 4's seven new types land.
+>
+> **2. The regex usage evidence is wrong about levels.** Census 6 and 7 counted
+> `type:` occurrences, which cannot distinguish a screen from a block. The
+> structural scan (`scripts/scan-content-type-usage.mjs`) shows
+> `timelineChain` is **10 screen uses and 0 block uses**, not 8 block uses, and
+> `misconceptionCheck` is **21 block uses and 0 screen uses**. Every other
+> figure in Census 7 is confirmed. The scan supersedes the regex; the regex
+> baseline is retained as the record of what it got wrong.
+
+**Headline numbers** *(as measured; see the corrections above)*
 
 | Fact | Value |
 |---|---|
-| **Live chapter-authoring entries** | **51** |
+| **Live chapter-authoring entries** | **51** (50 active + 1 derived) |
 | **— covered by a Lab selection** | **34** |
 | **— missing from the Lab** | **17** |
 | **Lab entries: A / B / C** | **38 / 6 / 5** |

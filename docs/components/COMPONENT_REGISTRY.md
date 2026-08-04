@@ -899,13 +899,15 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **File:** `src/components/learning/AngleExplore.jsx`  
 **Kind:** author-selectable component (`reusable`)  
-**Lifecycle:** `reviewing` — Built and catalogued, but not yet routed for chapter authoring — pending component review.
+**Lifecycle:** `reviewing` — Routed for chapter authoring in Phase 4 as block:angleFigure; the component itself is still under review, which is what keeps this lifecycle at reviewing.
 
 **Purpose:** Configuration-driven GCSE angle diagram — the Maths sibling of CircuitDiagram. Shapes and angles render as inline SVG; one learner-controlled value (a draggable ray, or a triangle’s draggable apex) drives live sector values, angle classifications and an angle-fact status line. Five registered presets — angleTypes (drag a ray, watch the value and its acute/right/obtuse/straight/reflex classification), straightLine (two angles summing to 180°), aroundPoint (three angles summing to 360°), verticallyOpposite (equal pairs sharing a colour), triangle (drag the apex, interior angles always total 180°) — plus a compatible-preset-object escape hatch. interactive={false} turns any preset into a static teaching or exam diagram at a fixed value. The drag handle is a keyboard-operable role="slider" (arrow keys / Home / End) with a ≥44px hit target; right angles render the GCSE square marker; values magnetise to 90°/180°/270°. Respects prefers-reduced-motion (and a reducedMotion prop override).
 
 **Best used for:** Teaching and exploring AQA Foundation angle facts where seeing the relationship respond to movement is the point — angle types, angles on a straight line, angles around a point, vertically opposite angles, angles in a triangle. Page-level questions, predictions and marking stay outside the component (compose it like CircuitDiagram).
 
 **Props:** `preset (name or preset object, defaults to angleTypes)`, `value (controlled)`, `defaultValue`, `onChange`, `interactive`, `disabled`, `subject (defaults to Maths)`, `reducedMotion`, `label`, `showStatus`
+
+**Data shape:** `{ type: 'angleFigure', preset: 'angleTypes' | 'straightLine' | 'aroundPoint' | 'verticallyOpposite' | 'parallelLines' | 'parallelAlternate' | 'parallelCoInterior' | 'triangle' | 'triangleTypes' | 'quadrilateral' | 'polygonSum' | 'regularPolygon', value?, defaultValue?, interactive?, label?, showStatus? }`
 
 **Dependencies:** `SUBJECTS`, `GENERAL (via angle/angleVisualRoles.js semantic roles)`, `TYPE`, `SPACING`, `MOTION (injected animation CSS via ensureStyles(), same pattern as CircuitDiagram/GraphView)`, `pure geometry in angle/angleGeometry.js`, `presets in angle/anglePresets.js`
 
@@ -914,6 +916,15 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Owns these private internals:**
 
 - `src/components/learning/angle` (directory) — Pure angle geometry, preset definitions and semantic colour roles rendered only through AngleExplore. Not separately selectable, and deliberately not an authoring choice.
+
+**Authoring**
+
+- **Block type:** `angleFigure` — Angle figure
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `preset`:string
+  - Pedagogy: teach-mechanism · reveal
 
 **Decision**
 
@@ -933,13 +944,15 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **File:** `src/components/learning/AreaPerimeterExplore.jsx`  
 **Kind:** author-selectable component (`reusable`)  
-**Lifecycle:** `reviewing` — Built and catalogued, but not yet routed for chapter authoring — pending component review.
+**Lifecycle:** `reviewing` — Routed for chapter authoring in Phase 4 as block:areaPerimeterFigure; the component itself is still under review, which is what keeps this lifecycle at reviewing.
 
 **Purpose:** Configuration-driven GCSE area and perimeter diagram — the mensuration sibling of AngleExplore, and deliberately separate from it (AngleExplore stays focused on angle relationships). Shapes render as inline SVG in model space (whole centimetres mapped to pixels, never measured back from pixels); learner-controlled dimensions drive a live boundary trace, unit-square grids, decomposition pieces and a stable result → calculation → explanation status area. Six registered presets — rectangle (drag width and height independently, snapping to whole numbers, with a square state that marks equal sides and names side²), fixedPerimeterRectangle (perimeter pinned at 24 cm while area rises to a maximum at the square), triangleArea (slide the apex with the perpendicular height fixed; pair a rotated copy to earn ½ × base × perpendicular height), parallelogramArea (slant does not change area; a triggered cut-and-slide builds the equivalent rectangle), trapeziumArea (duplicate and rotate into a parallelogram of base a + b to derive ½ × (a + b) × h), compositeShape (L-shape with two valid decomposition splits plus a whole-minus-missing-corner method, and a perimeter mode that excludes internal lines and deduces missing outer lengths) — plus a compatible-preset-object escape hatch. focus selects perimeter, area or compare where the preset supports more than one. interactive={false} turns any preset into a static teaching or exam diagram. Drag handles are keyboard-operable role="slider" elements (arrow keys / Home / End) with ≥44px hit targets that never overlap in any reachable state; discrete choices (decomposition method, formula reveal) are real buttons, never disguised sliders. Respects prefers-reduced-motion (and a reducedMotion prop override).
 
 **Best used for:** Teaching the conceptual difference between perimeter and area, and deriving AQA Foundation area formulae from visual reasoning — rectangles and squares, triangles, parallelograms, trapezia, quadrilaterals and composite rectilinear shapes. Use it when seeing the reasoning is the point: perimeter accumulating as edges are traced, area accumulating as square units are counted or rearranged, or the two measures changing differently as one dimension moves. Prediction questions, marking, hints, scores and weakness tracking stay outside the component (compose it like AngleExplore/CircuitDiagram).
 
 **Props:** `preset (name or preset object, defaults to rectangle)`, `focus (perimeter | area | compare)`, `value (controlled dimensions object)`, `defaultValue`, `onChange`, `interactive`, `disabled`, `subject (defaults to Maths)`, `reducedMotion`, `label`, `showStatus`
+
+**Data shape:** `{ type: 'areaPerimeterFigure', preset: 'rectangle' | 'fixedPerimeterRectangle' | 'triangleArea' | 'parallelogramArea' | 'trapeziumArea' | 'compositeShape', focus?: 'area' | 'perimeter' | 'compare', value?, defaultValue?, interactive?, label?, showStatus? }`
 
 **Dependencies:** `SUBJECTS`, `GENERAL (via areaPerimeter/areaPerimeterVisualRoles.js semantic roles)`, `TYPE`, `SPACING`, `RADII`, `MOTION (injected animation CSS via ensureStyles())`, `neutral shared geometry in geometry/shapeGeometry.js (also used by angle/)`, `presets in areaPerimeter/areaPerimeterPresets.js`
 
@@ -949,6 +962,15 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - `src/components/learning/areaPerimeter` (directory) — Mensuration presets, pure geometry and semantic colour roles rendered only through AreaPerimeterExplore. Not separately selectable, and deliberately not an authoring choice.
 - `src/components/learning/geometry` (directory) — Neutral shared shape geometry helpers used by the angle, area/perimeter, number-line and coordinate-plane families. Pure maths with no rendering and no learning behaviour of its own; owned here because AreaPerimeterExplore is its primary consumer.
+
+**Authoring**
+
+- **Block type:** `areaPerimeterFigure` — Area and perimeter figure
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `preset`:string
+  - Pedagogy: teach-mechanism · reveal
 
 **Decision**
 
@@ -1002,13 +1024,15 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **File:** `src/components/learning/CoordinatePlaneExplore.jsx`  
 **Kind:** author-selectable component (`reusable`)  
-**Lifecycle:** `reviewing` — Built and catalogued, but not yet routed for chapter authoring — pending component review.
+**Lifecycle:** `reviewing` — Routed for chapter authoring in Phase 4 as block:coordinatePlaneFigure; the component itself is still under review, which is what keeps this lifecycle at reviewing.
 
 **Purpose:** Configuration-driven GCSE coordinate plane — the coordinate-geometry sibling of AngleExplore, AreaPerimeterExplore, FractionRatioExplore and NumberLineExplore. One visual grammar runs through every preset: one plane (every preset shares an axis system, tick treatment and grid density), points that carry their coordinates (a named point is drawn with its coordinate chip — reading a coordinate is never a separate mode), and a rule made visible as geometry (across-then-up guides, the rise/run triangle, the mirror line, the centre of rotation, the rays from a centre of enlargement). That third clause is why transformations live here rather than in a separate component: a reflection is a rule that moves coordinates, and the coordinate movement is the teaching mechanism, not a finished diagram. Nine registered presets — plotPoint, midpoint, straightLine, tableOfValues, intersection, translate, reflect, rotate, enlarge — plus a compatible-preset-object escape hatch. A three-tier annotation contract governs density: active geometry (full coordinate chip, guide lines and rule geometry), related geometry (compact label only) and context geometry (visible but unannotated), with only one point active by default. Option selections live in the value model, so value/defaultValue/onChange carry the complete state and a static exam figure can specify a reflection in y = x or an enlargement by −1. Capabilities constrain state rather than hiding controls, and controls that cannot affect the current state are absent rather than inert. Axis placement is resolved per axis, so positive-only x against signed y renders correctly. interactive={false} gives a static teaching or exam figure that still carries a descriptive <desc> of the actual figure state. Respects prefers-reduced-motion (and a reducedMotion prop override).
 
 **Best used for:** Coordinates and quadrants, midpoints, straight-line graphs and y = mx + c, tables of values, parallel and perpendicular gradients, solving simultaneous equations graphically, and all four transformations. Because axis labels, units and independent scales are part of the plane API, it also serves science graphs — subject="Physics" with xAxis={{ label: 'Time', unit: 's', min: 0, max: 20 }} gives a usable distance–time frame, not merely a recoloured Maths diagram. Questions, predictions, marking, scores and weakness tracking stay outside the component.
 
 **Props:** `preset (name or preset object, defaults to plotPoint)`, `focus`, `comparisonRule`, `value (controlled values object)`, `defaultValue`, `onChange`, `interactive`, `disabled`, `showGuides ('active' | 'all' | 'none')`, `difficultyCapabilities`, `xAxis`, `yAxis`, `grid`, `subject`, `reducedMotion`, `label`, `showStatus`
+
+**Data shape:** `{ type: 'coordinatePlaneFigure', preset: 'plotPoint' | 'midpoint' | 'straightLine' | 'tableOfValues' | 'intersection' | 'translate' | 'reflect' | 'rotate' | 'enlarge', focus?, comparisonRule?, value?, defaultValue?, interactive?, showGuides?, difficultyCapabilities?, xAxis?, yAxis?, grid?, label?, showStatus? }`
 
 **Dependencies:** `SUBJECTS`, `GENERAL (via coordinatePlane/coordinatePlaneVisualRoles.js semantic roles)`, `TYPE`, `SPACING`, `COMPONENT_SIZE`, `RADII`, `MOTION (injected animation CSS via ensureStyles())`, `pure maths in coordinatePlane/coordinatePlaneMath.js`, `geometry and model-space clipping in coordinatePlane/coordinatePlaneGeometry.js`, `shared label placement in coordinatePlane/pointLabelLayout.js`, `capability and option resolution in coordinatePlane/presets/optionState.js`
 
@@ -1022,6 +1046,15 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 - Enforced by tests/architecture/coordinate-plane-{annotation-contract,control-reachability,visible-bounds}.test.js over the shared state space in tests/support/coordinatePlaneStateSpace.js.
 - Known design debt: where both axes cross, a plotted point may cover an internal axis number. The coordinate chip still supplies the exact value, so nothing is unreadable, but relocating all axis numbering to the plot edges is a graph-system design decision rather than a safe renderer patch. Revisit when the wider graph system is next reviewed.
+
+**Authoring**
+
+- **Block type:** `coordinatePlaneFigure` — Coordinate plane figure
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `preset`:string
+  - Pedagogy: teach-mechanism · reveal
 
 **Decision**
 
@@ -1113,6 +1146,15 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 - Shape: presentation: { variant: 'standard' | 'algebraWhy' | 'inverseMachine' | 'groupSplit' | 'balance', model: { per-variant }, reasoning?: { goal?, structure?, inverse?, equality?, check? } }.
 - algebraWhy builds a coefficient from repeated addition, names the goal, forces a decision against a live subtraction misconception, then divides both sides and checks by substitution — model { variable, coefficient, total, solution? }. inverseMachine treats multi-step equations as actions undone in reverse order, with the reverse chain derived from the forward operations and never authored — model { variable, operations: [{ type, value }], result }. groupSplit makes a coefficient concrete by sharing the total into equal groups by tap, keyboard or one split action — model { variable, groupCount, total, solution? }. balance shows why the same operation goes on both sides; the one-sided move is offered, refused and explained — model { states: [{ left, right, operation, resultLeft, resultRight, misconception? }] }.
 - Where the code lives: src/components/learning/calculationBreakdown/ — calculationBreakdownMath.js (pure operation maths), calculationBreakdownValidation.js (model validation and fallback), calculationBreakdownVisualRoles.js (semantic colour roles), calculationBreakdownParts.jsx / calculationBreakdownControls.jsx / calculationBreakdownFigures.jsx (shared display pieces), CalculationVisualModel.jsx (the scene runner) and one file per variant. Maths never lives in JSX; variant rendering is a lookup table, not a switch.
+
+**Authoring**
+
+- **Screen type:** `calculationBreakdown` — Calculation breakdown
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Requires one of: `steps`:array, `presentation`:object
+  - Pedagogy: sequence-process, apply · assessed
 
 **Decision**
 
@@ -1233,11 +1275,13 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **File:** `src/components/learning/CircuitDiagram.jsx`  
 **Kind:** author-selectable component (`reusable`)  
-**Lifecycle:** `active`
+**Lifecycle:** `active` — Routed for chapter authoring in Phase 4 as block:circuitDiagram.
 
 **Purpose:** Renders a GCSE Physics simple series circuit (battery, wire loop, bulb, switch) as inline SVG primitives — not a static image. Open versus closed is driven by a single closed prop: when closed the switch arm bridges both contacts, an animated cyan current overlay flows around the loop, and the bulb glows warm amber; when open the arm is raised, the current overlay is hidden, and the bulb is dim. Restrained Physics blue/cyan glow only; the moving current animation is disabled under prefers-reduced-motion.
 
 **Props:** `closed (boolean)`
+
+**Data shape:** `{ type: 'circuitDiagram', preset: 'simpleSeries' | 'twoSwitchSeries' | 'parallelBranches' | 'measurementCircuit', closed?, defaultClosed?, interactive?, label?, showStatus? }`
 
 **Dependencies:** `SUBJECTS (Physics palette)`, `injects animation/glow CSS classes once via an ensureStyles() <style> block (same pattern as GraphView)`, `circuit/CircuitPrimitives.jsx`, `circuit/circuitVisualRoles.js`
 
@@ -1250,6 +1294,15 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Notes:**
 
 - Guarded by tests/architecture/circuitDiagramGovernance.test.js and tests/architecture/circuitSwitchAffordance.test.js.
+
+**Authoring**
+
+- **Block type:** `circuitDiagram` — Circuit diagram
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `preset`:string
+  - Pedagogy: teach-mechanism · reveal
 
 **Decision**
 
@@ -1825,6 +1878,14 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Dependencies:** `CinematicShell`, `BackButton`, `ContinueCTA`, `ScreenTitle`, `SUBJECTS`, `SUBJECT_BACKDROPS`, `GENERAL`, `TYPE`, `SPACING`, `MOTION`
 
+**Authoring**
+
+- **Screen type:** `examinerExplains` — What examiners look for
+  - Status: `active`
+  - Layout: full-screen
+  - Continuation: component-owned
+  - Pedagogy: exam-technique · passive
+
 **Decision**
 
 - **Use when:** The learner is about to attempt an exam question and needs a concise reminder of the specific behaviours the examiner rewards, such as selecting precise evidence, explaining a link, analysing a method or supporting a judgement.
@@ -1847,15 +1908,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Purpose:** A re-export of WhatExaminersLookFor. It exists so existing routes and authored content referencing the legacy examinerExplains screen type do not break during migration.
 
-**Usage boundary:** Legacy compatibility only. Do not select or author it as a separate learning component; new code and content must use WhatExaminersLookFor. It is catalogued here because the file still exists — not because it is an available choice.
-
-**Authoring**
-
-- **Screen type:** `examinerExplains` — What examiners look for
-  - Status: `active`
-  - Layout: full-screen
-  - Continuation: component-owned
-  - Pedagogy: exam-technique · passive
+**Usage boundary:** Legacy compatibility only. Do not select or author it as a separate learning component; new code and content must use WhatExaminersLookFor. It is catalogued here because the file still exists — not because it is an available choice. The screen:examinerExplains authoring entry moved to the canonical WhatExaminersLookFor record in Phase 4: a parked alias must not own a live authoring entry, or the Lab shows a deprecated component as an author choice.
 
 **Contract:** standard
 
@@ -2126,13 +2179,15 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **File:** `src/components/learning/NumberLineExplore.jsx`  
 **Kind:** author-selectable component (`reusable`)  
-**Lifecycle:** `reviewing` — Built and catalogued, but not yet routed for chapter authoring — pending component review.
+**Lifecycle:** `reviewing` — Routed for chapter authoring in Phase 4 as block:numberLineFigure; the component itself is still under review, which is what keeps this lifecycle at reviewing.
 
 **Purpose:** Configuration-driven GCSE number line — the shared visual foundation for number topics, and a sibling of AngleExplore and AreaPerimeterExplore. One line, one interaction model and one status voice cover what would otherwise be six near-identical single-purpose diagrams. The line, its shaded intervals, movement arcs and endpoints render as inline SVG in model space (values are never measured back from pixels); learner-controlled values drive a live status line. Seven registered presets — orderNumbers, negativeMovement, roundingIntervals, inequalityRange, boundsInterval, multiplyPattern, estimateRange — plus a compatible-preset-object escape hatch. interactive={false} turns any preset into a static teaching or exam diagram at fixed values. Draggable markers are keyboard-operable role="slider" elements (arrow keys / Home / End) with ≥44px hit targets; discrete choices (open/closed, direction, precision, jump size) are real buttons, never disguised sliders. Filled markers include an endpoint, open markers exclude it, and a line marker denotes a fixed reference another marker may legitimately sit on. Respects prefers-reduced-motion (and a reducedMotion prop override) — the arc’s draw-in becomes an instantly finished arc.
 
 **Best used for:** Teaching AQA Foundation number topics where position, direction and size are the point — place value, ordering integers/decimals/fractions, negative numbers, addition and subtraction as movement, multiplication patterns with negatives, rounding, estimation ranges, inequalities, upper and lower bounds, and scale reading. Use it when seeing where a number lives is the lesson. Questions, predictions, marking, scoring and weakness tracking stay outside the component.
 
 **Props:** `preset (name or preset object, defaults to orderNumbers)`, `value (controlled values object)`, `defaultValue`, `options (initial discrete choices)`, `onChange`, `interactive`, `disabled`, `subject (defaults to Maths)`, `reducedMotion`, `label`, `showStatus`
+
+**Data shape:** `{ type: 'numberLineFigure', preset: 'orderNumbers' | 'negativeMovement' | 'roundingIntervals' | 'inequalityRange' | 'boundsInterval' | 'multiplyPattern' | 'estimateRange', value?, defaultValue?, options?, interactive?, label?, showStatus? }`
 
 **Dependencies:** `SUBJECTS`, `GENERAL (via numberLine/numberLineVisualRoles.js semantic roles)`, `TYPE`, `SPACING`, `RADII`, `MOTION (injected animation CSS via ensureStyles())`, `pure maths in numberLine/numberLineGeometry.js (which re-exports the neutral geometry/shapeGeometry.js helpers)`, `presets in numberLine/numberLinePresets.js`
 
@@ -2141,6 +2196,15 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Owns these private internals:**
 
 - `src/components/learning/numberLine` (directory) — Number-line presets, pure model-space maths and semantic colour roles rendered only through NumberLineExplore. Not separately selectable, and deliberately not an authoring choice.
+
+**Authoring**
+
+- **Block type:** `numberLineFigure` — Number line figure
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Requires: `preset`:string
+  - Pedagogy: teach-mechanism · reveal
 
 **Decision**
 
@@ -3177,13 +3241,23 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **File:** `src/components/learning/CircuitSymbolReference.jsx`  
 **Kind:** author-selectable component (`reusable`)  
-**Lifecycle:** `reviewing` — Component Lab and Storybook only at present — reached from src/dev/componentReview/reviewManifestCore.jsx and CircuitDiagram.stories.jsx, with no authorable screen type. That is a status, not a defect: it is catalogued so it is not rebuilt, and it stays unrouted until a chapter genuinely needs a symbol reference.
+**Lifecycle:** `reviewing` — Routed for chapter authoring in Phase 4 as block:circuitSymbolReference; the component itself is still under review, which is what keeps this lifecycle at reviewing.
 
 **Purpose:** A reference sheet of the GCSE Physics circuit symbols, drawn from the shared circuit/CircuitPrimitives.jsx set so the symbols match those used in live CircuitDiagram figures exactly. The symbol shape is the exam convention; colour is only used to show state inside interactive diagrams.
 
 **Props:** `title (default 'GCSE circuit symbols')`, `description`
 
+**Data shape:** `{ type: 'circuitSymbolReference', title?, description? } — the board is complete in itself, so it requires no authored data. Both fields have component defaults and override the heading and standfirst only.`
+
 **Dependencies:** `circuit/CircuitPrimitives.jsx`, `circuit/circuitVisualRoles.js`, `GENERAL`
+
+**Authoring**
+
+- **Block type:** `circuitSymbolReference` — Circuit symbol reference
+  - Status: `active`
+  - Layout: content
+  - Continuation: player-owned
+  - Pedagogy: teach-mechanism · passive
 
 **Decision**
 
@@ -3262,6 +3336,4 @@ classification a named live consumer still reads. Owned by
 `src/component-catalogue/migrations/nonAuthoringPedagogy.js` — the same
 shrinking-set discipline: each entry carries its consumer and its way out.
 
-| Type | Pedagogy | Reason | Removal condition |
-|---|---|---|---|
-| `calculationBreakdown` | sequence-process, apply · assessed | The production-bundled Component Lab derives its interaction badge for the CalculationBreakdown entry from getTypeInfo("calculationBreakdown") (reviewManifestCore.jsx); the component is catalogued and storied but has no authoring entry, so nothing else carries this fact. | Delete this entry when Phase 4 replaces the Lab manifest’s getTypeInfo dependency, or when CalculationBreakdown receives a genuine authoring entry — whichever happens first. |
+None. Every classification is owned by an authoring entry.

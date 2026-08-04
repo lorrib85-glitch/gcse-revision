@@ -14,7 +14,7 @@ export default {
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'active',
-  lifecycleReason: null,
+  lifecycleReason: "Routed for chapter authoring in Phase 4 as block:circuitDiagram.",
   purpose: 'Renders a GCSE Physics simple series circuit (battery, wire loop, bulb, switch) as inline SVG primitives — not a static image. Open versus closed is driven by a single closed prop: when closed the switch arm bridges both contacts, an animated cyan current overlay flows around the loop, and the bulb glows warm amber; when open the arm is raised, the current overlay is hidden, and the bulb is dim. Restrained Physics blue/cyan glow only; the moving current animation is disabled under prefers-reduced-motion.',
   ownership: {
     internalDirectories: [
@@ -30,7 +30,7 @@ export default {
     props: [
       'closed (boolean)'
     ],
-    dataShape: null,
+    dataShape: "{ type: 'circuitDiagram', preset: 'simpleSeries' | 'twoSwitchSeries' | 'parallelBranches' | 'measurementCircuit', closed?, defaultClosed?, interactive?, label?, showStatus? }",
     dependencies: [
       'SUBJECTS (Physics palette)',
       'injects animation/glow CSS classes once via an ensureStyles() <style> block (same pattern as GraphView)',
@@ -62,5 +62,36 @@ export default {
     exclusivity: null,
     requiresProductDecision: []
   },
-  authoring: null
+  authoring: {
+    entries: [
+      {
+        // Its own public authoring type, not a mode of an invented figure
+        // router. Authors write the type they mean;
+        // a connected circuit and a symbol board are different author
+        // choices, not presets of each other.
+        type: 'circuitDiagram',
+        level: 'block',
+        authoringName: 'Circuit diagram',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'preset',
+            kind: 'string'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null,
+        pedagogy: {
+          functions: [
+            'teach-mechanism'
+          ],
+          interaction: 'reveal'
+        }
+      }
+    ]
+  }
 }

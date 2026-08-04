@@ -144,8 +144,27 @@ lifecycle, selection guidance and contract. One record per public component.
   preserved, plus level-aware `getScreenTypeInfo`/`getBlockTypeInfo`). **Never
   add a classification to `componentFunctions.js`** — add it to the owning
   authoring entry and regenerate. `pnpm pedagogy:check` fails on drift.
-- Component Lab routing (`src/dev/componentReview/`) stays where it is until
-  its own migration phase. Do not copy those facts into the catalogue.
+- **The Component Lab is the chapter-building component library, and its
+  population is a catalogue fact.** `src/data/generated/componentLabRegistry.js`
+  is generated from the same authoring entries by `pnpm lab:generate`; one row
+  per non-legacy entry, keyed `screen:<type>` / `block:<type>`. Coverage is
+  enforced in both directions: every **active** entry has exactly one Lab
+  selection, and every Lab selection resolves to an active entry. A `derived`
+  route (the runtime presenting an existing choice at another level) is shown
+  as a presentation of its source, never as a second selection — binding an
+  adapter to one is a build failure. `src/dev/componentReview/` holds only the
+  handwritten preview adapters: JSX, fixtures, render callbacks and preview
+  variants. It must not restate a name, usage figure, alternative, lifecycle or
+  pedagogy the catalogue owns. `pnpm lab:check` fails on drift.
+- **Content usage is generated and drift-checked.** The Lab projection carries
+  measured `contentUsage` per authoring key, produced by
+  `scripts/scan-content-type-usage.mjs`, which imports every module under
+  `src/content/**` and walks its `screens` array structurally — so screen and
+  block levels are distinguished and nested question shapes are excluded by
+  construction. **Authoring or editing chapter content that adds, removes or
+  moves a screen or block changes those counts: run `pnpm lab:generate` and
+  commit the regenerated projection in the same change.** `pnpm verify` fails
+  otherwise. Never compute usage at Lab runtime.
 - `src/component-catalogue/**` is build-time governance data. The learner
   runtime must never import it.
 
@@ -367,6 +386,17 @@ pnpm catalogue:generate
 
 # Fail if the generated registry has drifted from the catalogue records
 pnpm catalogue:check
+
+# Regenerate the Component Lab projection — REQUIRED after any content change
+# that adds, removes or moves a screen or block, because it carries measured
+# content usage
+pnpm lab:generate
+
+# Fail if the Lab projection has drifted from the catalogue or from content
+pnpm lab:check
+
+# Every generator check, lint, all three test projects and the build
+pnpm verify
 ```
 
 ## Educational design rules

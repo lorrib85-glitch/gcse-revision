@@ -321,10 +321,38 @@ const AUTHORING_ENTRY_KEYS = [
   'required', 'requiredAny', 'continuation', 'headerMode', 'handler', 'pedagogy',
 ]
 
-// The one optional entry key. `pedagogyExemption` exists only for the narrow
-// container-derived case; every other key — pedagogy included — is mandatory
-// on every entry.
-const OPTIONAL_AUTHORING_ENTRY_KEYS = ['pedagogyExemption']
+// Optional entry keys. `pedagogyExemption` exists only for the narrow
+// container-derived case; `derivedFrom` only for a derived route. Every other
+// key — pedagogy included — is mandatory on every entry.
+const OPTIONAL_AUTHORING_ENTRY_KEYS = ['pedagogyExemption', 'derivedFrom']
+
+const AUTHORING_KEY = /^(screen|block):[a-zA-Z][a-zA-Z0-9]*$/
+
+/**
+ * A derived entry is a route the runtime resolves on the author's behalf: the
+ * author writes one type and the runtime presents it at another level. It is
+ * not a second thing to choose, so it must name the active entry it derives
+ * from. That link is what stops a derived route being offered as an
+ * independent authoring choice — the Lab renders it as a presentation of its
+ * source, never as its own selection.
+ */
+function validateDerivedFrom(errors, at, entry) {
+  const { derivedFrom, status } = entry
+
+  if (status === 'derived') {
+    if (!isNonEmptyString(derivedFrom) || !AUTHORING_KEY.test(derivedFrom)) {
+      errors.push(`${at}.derivedFrom must name the active entry this route derives from, as "level:type"`)
+      return
+    }
+    if (derivedFrom === `${entry.level}:${entry.type}`) {
+      errors.push(`${at}.derivedFrom must name a different entry — a route cannot derive from itself`)
+    }
+    return
+  }
+  if (derivedFrom !== undefined) {
+    errors.push(`${at}.derivedFrom is only valid when status is "derived"`)
+  }
+}
 
 /**
  * Pedagogical classification of one authoring entry. Every entry carries
@@ -403,6 +431,7 @@ function validateAuthoringEntry(errors, at, entry) {
     }
   }
   validatePedagogy(errors, at, entry)
+  validateDerivedFrom(errors, at, entry)
 
   if (!isNonEmptyString(entry.type) || !TYPE_NAME.test(entry.type)) {
     errors.push(`${at}.type must be the camelCase type authors write`)

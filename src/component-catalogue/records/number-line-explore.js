@@ -14,7 +14,7 @@ export default {
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'reviewing',
-  lifecycleReason: 'Built and catalogued, but not yet routed for chapter authoring — pending component review.',
+  lifecycleReason: "Routed for chapter authoring in Phase 4 as block:numberLineFigure; the component itself is still under review, which is what keeps this lifecycle at reviewing.",
   purpose: 'Configuration-driven GCSE number line — the shared visual foundation for number topics, and a sibling of AngleExplore and AreaPerimeterExplore. One line, one interaction model and one status voice cover what would otherwise be six near-identical single-purpose diagrams. The line, its shaded intervals, movement arcs and endpoints render as inline SVG in model space (values are never measured back from pixels); learner-controlled values drive a live status line. Seven registered presets — orderNumbers, negativeMovement, roundingIntervals, inequalityRange, boundsInterval, multiplyPattern, estimateRange — plus a compatible-preset-object escape hatch. interactive={false} turns any preset into a static teaching or exam diagram at fixed values. Draggable markers are keyboard-operable role="slider" elements (arrow keys / Home / End) with ≥44px hit targets; discrete choices (open/closed, direction, precision, jump size) are real buttons, never disguised sliders. Filled markers include an endpoint, open markers exclude it, and a line marker denotes a fixed reference another marker may legitimately sit on. Respects prefers-reduced-motion (and a reducedMotion prop override) — the arc’s draw-in becomes an instantly finished arc.',
   ownership: {
     internalDirectories: [
@@ -40,7 +40,7 @@ export default {
       'label',
       'showStatus'
     ],
-    dataShape: null,
+    dataShape: "{ type: 'numberLineFigure', preset: 'orderNumbers' | 'negativeMovement' | 'roundingIntervals' | 'inequalityRange' | 'boundsInterval' | 'multiplyPattern' | 'estimateRange', value?, defaultValue?, options?, interactive?, label?, showStatus? }",
     dependencies: [
       'SUBJECTS',
       'GENERAL (via numberLine/numberLineVisualRoles.js semantic roles)',
@@ -77,5 +77,35 @@ export default {
     exclusivity: null,
     requiresProductDecision: []
   },
-  authoring: null
+  authoring: {
+    entries: [
+      {
+        // Its own public authoring type, not a mode of an invented figure
+        // router. Authors write the type they mean;
+        // one dimension is a different teaching object from a plane.
+        type: 'numberLineFigure',
+        level: 'block',
+        authoringName: 'Number line figure',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'preset',
+            kind: 'string'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null,
+        pedagogy: {
+          functions: [
+            'teach-mechanism'
+          ],
+          interaction: 'reveal'
+        }
+      }
+    ]
+  }
 }

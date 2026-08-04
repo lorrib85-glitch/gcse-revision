@@ -127,6 +127,12 @@ files.
 
 ## Verification
 
+- **`pnpm lab:generate`, and commit the result**, whenever the build added,
+  removed or moved chapter screens or blocks, or changed a record's `authoring`
+  entries — the Component Lab projection carries both, and `pnpm lab:check`
+  fails on drift. A new authoring type also needs a Lab adapter in the same
+  change: the bidirectional coverage guard fails an active entry with no
+  selection.
 - `vite build` passes
 - `vitest run tests/architecture` — always; module metadata changes are
   frequent in big builds

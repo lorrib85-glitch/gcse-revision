@@ -46,8 +46,12 @@ const fact = pedagogy => ({
  * levels must carry deep-equal facts, and generation FAILS on the first
  * divergence. That day, the flat view's consumers move to the level-aware
  * helpers — a deliberate migration, never a silent precedence pick.
+ *
+ * `nonAuthoring` is injectable so the collision guard can be exercised
+ * directly. Generation always uses the real registry; only the guard's own
+ * test passes a different one.
  */
-export function projectPedagogy(records) {
+export function projectPedagogy(records, nonAuthoring = NON_AUTHORING_PEDAGOGY) {
   const screens = {}
   const blocks = {}
 
@@ -72,7 +76,7 @@ export function projectPedagogy(records) {
     }
     flat[type] = value
   }
-  for (const entry of NON_AUTHORING_PEDAGOGY) {
+  for (const entry of nonAuthoring) {
     if (flat[entry.type]) throw new Error(`non-authoring type "${entry.type}" collides with an authoring entry`)
     flat[entry.type] = fact(entry.pedagogy)
   }

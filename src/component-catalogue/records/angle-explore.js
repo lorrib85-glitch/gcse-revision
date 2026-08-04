@@ -14,7 +14,7 @@ export default {
   section: 'learning',
   kind: 'reusable',
   lifecycle: 'reviewing',
-  lifecycleReason: 'Built and catalogued, but not yet routed for chapter authoring — pending component review.',
+  lifecycleReason: "Routed for chapter authoring in Phase 4 as block:angleFigure; the component itself is still under review, which is what keeps this lifecycle at reviewing.",
   purpose: 'Configuration-driven GCSE angle diagram — the Maths sibling of CircuitDiagram. Shapes and angles render as inline SVG; one learner-controlled value (a draggable ray, or a triangle’s draggable apex) drives live sector values, angle classifications and an angle-fact status line. Five registered presets — angleTypes (drag a ray, watch the value and its acute/right/obtuse/straight/reflex classification), straightLine (two angles summing to 180°), aroundPoint (three angles summing to 360°), verticallyOpposite (equal pairs sharing a colour), triangle (drag the apex, interior angles always total 180°) — plus a compatible-preset-object escape hatch. interactive={false} turns any preset into a static teaching or exam diagram at a fixed value. The drag handle is a keyboard-operable role="slider" (arrow keys / Home / End) with a ≥44px hit target; right angles render the GCSE square marker; values magnetise to 90°/180°/270°. Respects prefers-reduced-motion (and a reducedMotion prop override).',
   ownership: {
     internalDirectories: [
@@ -39,7 +39,7 @@ export default {
       'label',
       'showStatus'
     ],
-    dataShape: null,
+    dataShape: "{ type: 'angleFigure', preset: 'angleTypes' | 'straightLine' | 'aroundPoint' | 'verticallyOpposite' | 'parallelLines' | 'parallelAlternate' | 'parallelCoInterior' | 'triangle' | 'triangleTypes' | 'quadrilateral' | 'polygonSum' | 'regularPolygon', value?, defaultValue?, interactive?, label?, showStatus? }",
     dependencies: [
       'SUBJECTS',
       'GENERAL (via angle/angleVisualRoles.js semantic roles)',
@@ -75,5 +75,35 @@ export default {
     exclusivity: null,
     requiresProductDecision: []
   },
-  authoring: null
+  authoring: {
+    entries: [
+      {
+        // Its own public authoring type, not a mode of an invented figure
+        // router. Authors write the type they mean;
+        // the four Maths figure families share props, not an identity.
+        type: 'angleFigure',
+        level: 'block',
+        authoringName: 'Angle figure',
+        layout: 'content',
+        status: 'active',
+        replacement: null,
+        required: [
+          {
+            path: 'preset',
+            kind: 'string'
+          }
+        ],
+        requiredAny: [],
+        continuation: 'player',
+        headerMode: 'standard',
+        handler: null,
+        pedagogy: {
+          functions: [
+            'teach-mechanism'
+          ],
+          interaction: 'reveal'
+        }
+      }
+    ]
+  }
 }

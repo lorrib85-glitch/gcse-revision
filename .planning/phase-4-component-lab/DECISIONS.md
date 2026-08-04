@@ -1,192 +1,268 @@
-# Phase 4 — open decisions
+# Phase 4 — decisions
 
-Revised for the clarified product rule: **the Component Lab is the
-chapter-building component library.**
+**All five decisions are settled.** They were taken together with one
+correction to the coverage arithmetic, and this file now records the answers
+rather than the options. The options tables are kept because a settled decision
+is only readable if the alternatives it beat are still visible.
 
-Only genuinely unresolved product/architecture questions are listed. Anything
-the census settled with evidence is in `CENSUS.md`; anything the design settles
-is in `DESIGN.md` and is not reopened here.
+Governing product rule, unchanged: **the Component Lab is the chapter-building
+component library.**
 
-> **Superseded from the previous version.** Old D2 ("how much new coverage?") and
-> D3 ("should non-mountable records appear in the index?") are gone. The product
-> rule answers both: coverage is 100% of the live authoring surface, and
-> non-authorable items do not appear at all. Old D4 (`GuidedAnswerCoach`) is
-> settled — it has no authoring entry, so it is category C and leaves the Lab.
-> Old D5 (reference page organisation) is folded into the wider D3 below.
+> **Superseded from the previous version.** Old D2 ("how much new coverage?")
+> and D3 ("should non-mountable records appear in the index?") are gone. The
+> product rule answers both. Old D4 (`GuidedAnswerCoach`) is settled — it has
+> no authoring entry, so it is category C. Old D5 (reference page organisation)
+> is folded into D3 below.
 
 ---
 
-## D1 — Does generated content usage participate in drift checking?
+## D0 — the derived-entry correction (settled first, because it re-bases D1–D5)
 
-*(Carried forward unchanged — still open, still blocking.)*
+**The defect.** The census counted 51 "live" authoring entries and made that
+the coverage target. 51 is 50 `active` plus 1 `derived`, and treating them
+alike would have turned a derived route into a public authoring option.
 
-**The problem.** `DESIGN.md` puts `contentUsage` into the generated Lab
-projection, because that is the only way to stop usage prose going stale — the
-census found two provably wrong claims. But the established generator pattern
-pairs `x:generate` with `x:check`, which **fails the build on drift**. Content
-usage changes whenever anyone authors a screen, so drift-checking it breaks CI on
-ordinary content commits.
+**A derived route is not a separate selectable authoring choice.** It is the
+runtime presenting an existing choice at a different level. `ScreenRenderer`
+resolves `screen:misconceptionCheck` itself, from the presence of a
+`block:misconceptionCheck` in a screen's `blocks` array — no author ever writes
+`type: 'misconceptionCheck'` at screen level, and the measured content usage
+confirms it: **21 block uses, 0 screen uses.**
 
-**Options.**
+**Settled.**
 
-| | Approach | Cost |
+- `block:misconceptionCheck` is the selectable authoring entry.
+- `screen:misconceptionCheck` stays `status: 'derived'` and is represented in
+  the Lab as the **runtime presentation** of that one choice — a presentation
+  row under it, never a second index selection.
+- The direct authoring coverage contract counts **active entries only**.
+- Derived routes are still fully accounted for: the schema gained a
+  `derivedFrom` key, mandatory on a derived entry and forbidden on any other,
+  naming the active entry the route derives from. A derived route with no
+  source, or an adapter bound to a derived route, is a build failure.
+
+Direct authoring of `screen:misconceptionCheck` is not proven, so it does not
+become a second selection. If it is ever proven, the change is one edit —
+flip the status to `active`, drop `derivedFrom`, add an adapter — and the
+guards will then *require* the second row.
+
+### The corrected arithmetic
+
+| | Before Phase 4 | After Phase 4 |
 |---|---|---|
-| A | Drift-check usage like every other generated fact | Adds a regenerate step to the content workflow; a forgotten regenerate fails CI on a content PR |
-| B | Catalogue-derived fields drift-checked; `contentUsage` generated but **excluded** from the check | Usage can lag — as a number, not as prose |
-| C | Compute usage at runtime from a small content-type index | No drift possible; costs a runtime scan and a new index |
+| Active authoring entries | 50 | **57** |
+| Derived routes | 1 | 1 |
+| Legacy entries (excluded) | 4 | 4 |
+| Active entries selectable in the Lab | 33 | **57** |
+| Active entries missing from the Lab | 17 | **0** |
+| Lab selections with no active authoring entry | 11 | **0** |
+| Category C items in the Lab | 5 | **0** |
 
-**Recommendation: B.** Usage is the one field whose truth lives outside the
-catalogue and changes on a different cadence. A usage count a week old is still
-far better than prose a year old.
+The seven new active entries are the seven new authoring types below (D2 and
+CalculationBreakdown). 33 + 7 + 17 = 57, with no remainder.
 
-**Why it needs a decision:** it changes the contract of `pnpm lab:check` and
-touches the content authoring workflow.
-
----
-
-## D2 — One `block:mathsFigure` type, or four separate types?
-
-**The problem.** Four category B items — `AngleExplore`, `AreaPerimeterExplore`,
-`CoordinatePlaneExplore`, `NumberLineExplore` — share one interaction model, one
-governed boundary ("page-level questions and marking remain outside the
-component"), and one prop shape (`preset`, `value`, `interactive`, `focus`). They
-differ in what they draw.
-
-They currently carry **42 preview variants between them** (13 + 8 + 13 + 8), so
-whichever way this goes, the Lab shows a lot of modes.
-
-**Options.**
-
-| | Approach | Consequence |
-|---|---|---|
-| A | One `block:mathsFigure` with a `figure` discriminator (`angle` / `areaPerimeter` / `coordinatePlane` / `numberLine`) | One authoring type, four modes. Authors learn one contract. Needs a router block that dispatches to the four components |
-| B | Four types: `block:angleFigure`, `block:areaPerimeterFigure`, `block:coordinateFigure`, `block:numberLineFigure` | Each component owns its own entry and contract directly. No router. Four types for one idea |
-| C | One type per *topic area* — e.g. `block:geometryFigure` (angle + areaPerimeter) and `block:numberFigure` (numberLine + coordinatePlane) | Splits on curriculum rather than on mechanism; hardest to defend |
-
-**Recommendation: A.** The four components already behave as one family with a
-shared boundary; a single contract with a discriminator matches how an author
-actually thinks ("place a Maths figure, choose which"). It also keeps the
-`preset` vocabulary in one validated place.
-
-**But this is genuinely a product call**, because it decides what an author types
-into a chapter file for the rest of the project's life, and A requires a new
-dispatching block that does not exist today.
-
-The same question applies in miniature to `CircuitDiagram` +
-`CircuitSymbolReference`: one `block:circuitFigure` with the symbol board as a
-preset (recommended), or two types.
+The superseded target was "51". The correct target is **57 selectable choices
+resolving to 57 active entries**, with one derived route accounted for as a
+presentation and four legacy entries excluded.
 
 ---
 
-## D3 — Where do the category C items go?
+## D1 — content usage participates in drift checking
 
-**The problem.** Five items leave the Lab and need a home. `DESIGN.md` names two
-destinations — "design-system reference" and "runtime-component reference" —
-without saying whether either is a new surface.
+**Chosen: option A.** `contentUsage` is committed in the generated Lab
+projection and fully checked by `pnpm lab:generate`, `pnpm lab:check` and
+`pnpm verify`.
 
-Three homes already exist and may absorb this with no new UI:
-`docs/components/COMPONENT_REGISTRY.md` (generated), Storybook (already
-configured), and the existing `ButtonsAndProgressPage.jsx` (already written and
-working).
+| | Approach | Cost | |
+|---|---|---|---|
+| **A** | **Drift-check usage like every other generated fact** | **Adds a regenerate step to the content workflow** | **chosen** |
+| B | `contentUsage` generated but excluded from the check | Usage can lag — as a number, not as prose | rejected |
+| C | Compute usage at runtime from a content-type index | No drift possible; costs a runtime scan and a new index | rejected |
 
-**Options.**
+**Why A beat the earlier recommendation of B.** B optimises for never failing
+a content PR, which is the wrong thing to optimise. A number that is allowed to
+lag is a number nobody can cite, and the census found two provably wrong usage
+claims that had been readable and wrong for months. The regenerate step is one
+command, and the failure it causes is a correct failure: the projection really
+has gone stale.
 
-| | Approach | Consequence |
-|---|---|---|
-| A | A second owner surface beside the Lab (`?designSystem=true`), reusing `ButtonsAndProgressPage` and adding a runtime-component page | Keeps the live-render value; costs a second shell and a second route |
-| B | Storybook absorbs everything — the four runtime screens get stories; the buttons page becomes a Storybook docs page | No new app surface; but Storybook is a dev-only tool and the owner uses the Lab on a phone, which is the whole reason the Lab exists |
-| C | Keep `ButtonsAndProgressPage` reachable at its own flag, and let the four runtime screens live only in the generated registry (no live preview) | Cheapest; loses live preview of four real screens |
+Usage is never computed at Lab runtime. The Lab reads a committed fact.
 
-**Recommendation: A**, scoped small: one additional flag, the existing buttons
-page moved across unchanged, and the four runtime screens added to it as a second
-section. The owner keeps the 390px live-render capability that motivated the Lab,
-and the chapter-building Lab stays clean.
+**Workflow consequence, now part of the governed chapter/content pipeline:** a
+content change that changes component usage must run `pnpm lab:generate` and
+commit the result. Recorded in `CLAUDE.md` and in the Lane C and Lane E
+workflow files.
 
-**Why it needs a decision:** it creates a second owner-facing surface, which is a
-product-surface change rather than a refactor — and the settled boundaries park
-Lab *access*, so adding a sibling route needs explicit approval.
+**The scanner does not grep.** Every content module under `src/content/**` is
+imported and its `screens` array walked structurally, which is the only way to
+satisfy "distinguish screen and block levels". A regex over `type:` cannot tell
+a screen from a block, and the previous regex evidence was wrong about exactly
+that: it attributed all 8 `timelineChain` uses to the block level, when the
+structural walk shows **10 screen uses and 0 block uses**. Nested question
+shapes (`choice`, `truefalse`, `connection`) are excluded structurally rather
+than by an exclusion list, because they never appear in a `blocks` array.
 
----
-
-## D4 — Do the ten `ScreenRenderer` block types get previews in Phase 4?
-
-**The problem.** Ten of the seventeen missing authoring entries are implemented
-by private handlers inside `ScreenRenderer.jsx` (`ReadBlock`, `KeypointBlock`,
-`ExamTipBlock`, `ScenarioBlock`, `FunFactBlock`, `MisconceptionBlock`,
-`RevealBlock`, `HotspotBlock`, `TimelineBlock`, `ScreenContentRenderer`). They
-include the two most-used authorable types in the codebase — `block:read` (261
-uses) and `block:keypoint` (83).
-
-They are genuine authoring types; the schema explicitly sanctions handler-backed
-entries. But they have no importable component: previewing them means either
-mounting `ScreenRenderer` with a one-block fixture screen, or exporting the
-handlers.
-
-**Options.**
-
-| | Approach | Consequence |
-|---|---|---|
-| A | Preview through `ScreenRenderer` with a minimal one-block screen fixture | Honest — it renders exactly what an author gets, through the real router. Needs the Lab to mount `ScreenRenderer`, which `DESIGN.md` otherwise excludes as infrastructure |
-| B | Export the ten handlers as named exports and mount them directly | Simpler adapters; but promotes ten deliberately private handlers to public API, which the schema's `handler` design exists to avoid |
-| C | Defer all ten to a follow-up phase | Phase 4 ships a Lab that still omits the most-used authoring types — failing coverage contract 2 on day one |
-
-**Recommendation: A.** It is the only option that is both honest and
-boundary-preserving: the Lab mounts the router as a *rendering mechanism* for a
-one-block fixture, which is not the same as listing `ScreenRenderer` as a
-selectable item. Requirement 10 in `DESIGN.md` §8 already demands a minimal valid
-content shape per selection, so the fixture exists anyway — option A simply
-renders it.
-
-**Why it needs a decision:** it is the difference between Phase 4 achieving
-100% authoring coverage and achieving 65% of it, and it touches how the Lab
-relates to `ScreenRenderer`.
+Regression coverage retained: `spotTheError`, `builder` and `acronymMemorise`
+each report exactly 1 use — the three the naive regex missed.
 
 ---
 
-## D5 — Do the two authoring-entry ownership defects get fixed in Phase 4?
+## D2 — six separate public authoring types for the Maths and circuit figures
 
-**The problem.** Census 7 found two inversions:
+**Chosen: option B, extended to the circuit pair.**
 
-1. `screen:examinerExplains` sits on `ExaminerExplainsScreen` (`lifecycle:
-   parked`, a bare re-export) while the canonical `WhatExaminersLookFor` record
-   has `authoring: null`.
-2. `screen:faceExaminer` correctly sits on the canonical `FaceTheExaminer`
-   record, but the Lab imports the private internal
-   `faceTheExaminer/FaceTheExaminerContainer.jsx`.
+| | Approach | Consequence | |
+|---|---|---|---|
+| A | One `block:mathsFigure` with a `figure` discriminator | One contract; needs a dispatching block that does not exist | rejected |
+| **B** | **A type per component** | **Each component owns its own entry and contract. No router** | **chosen** |
+| C | One type per topic area | Splits on curriculum rather than mechanism | rejected |
 
-(2) is unambiguously a Phase 4 fix — it is a Lab import, and the public export
-behaves identically.
+Six genuine authoring entries and six renderer routes:
 
-(1) is a **catalogue** change: moving an authoring entry between records. It is
-correct, but it touches the migration status of a parked component and may be
-part of a separate deprecation.
+| Authoring key | Component | Interaction | Required |
+|---|---|---|---|
+| `block:angleFigure` | `AngleExplore` | reveal | `preset` |
+| `block:areaPerimeterFigure` | `AreaPerimeterExplore` | reveal | `preset` |
+| `block:coordinatePlaneFigure` | `CoordinatePlaneExplore` | reveal | `preset` |
+| `block:numberLineFigure` | `NumberLineExplore` | reveal | `preset` |
+| `block:circuitDiagram` | `CircuitDiagram` | reveal | `preset` |
+| `block:circuitSymbolReference` | `CircuitSymbolReference` | passive | — |
 
-**Options.**
+**Why B beat the earlier recommendation of A.** A shared prop vocabulary is not
+a shared identity. The four Maths components take `preset`, `value` and
+`interactive` in common, but their preset vocabularies do not interchange, and
+`CoordinatePlaneExplore` alone carries axis configuration, difficulty
+capabilities and guide resolution. Hiding four component identities behind a
+discriminator would have made the author's choice less legible, not more, and
+would have required inventing a dispatching block purely to serve the
+abstraction. An author places an angle diagram or a number line — never a
+"figure" plus a discriminator.
 
-- **A. Fix both in Phase 4.** The projection is keyed by authoring entry, so an
-  entry owned by a parked record produces a row pointing at a deprecated
-  component — visible wrongness in the new Lab.
-- **B. Fix (2) only**, and raise (1) as a catalogue-hygiene item.
+`CircuitDiagram` and `CircuitSymbolReference` get separate types for the same
+reason, and a sharper one: a connected circuit is an interactive `reveal`, a
+symbol board is a `passive` read-only reference. They differ in interaction
+class, so they cannot be presets of one another.
 
-**Recommendation: A.** The projection makes the defect user-visible, so leaving
-it means shipping a Lab row that names a parked component. The move is
-mechanical: relocate the entry, regenerate, confirm the projection is unchanged
-apart from `owningRecordId`.
+Shared validation lives in common schema helpers. Each public type has its own
+authoring name, contract, renderer route, pedagogy, interaction class,
+continuation behaviour, Lab fixture and minimal valid chapter shape.
 
-**Why it needs a decision:** it changes catalogue records, and the parked record
-may be scheduled for removal under a different plan.
+`block:circuitSymbolReference` requires no authored data, and that is the
+honest contract rather than a gap: the board is complete in itself, and its two
+props override the heading and standfirst only. No field was invented to make
+the row look fuller.
+
+---
+
+## D3 — a separate System reference owner surface
+
+**Chosen: option A.** A sibling owner-facing surface called **System
+reference**, reached at `?systemReference=true`.
+
+| | Approach | Consequence | |
+|---|---|---|---|
+| **A** | **A second owner surface beside the Lab** | **Keeps the live-render value; costs a second shell and route** | **chosen** |
+| B | Storybook absorbs everything | No new app surface, but the owner reviews on a phone | rejected |
+| C | Registry-only, no live preview | Cheapest; loses live preview of four real screens | rejected |
+
+It holds the whole category C population — `Buttons and progress`,
+`ChapterHookScreen`, `ChapterOutcomeScreen`, `ChapterCompleteScreen`,
+`WeakSpotRecovery` — plus any further runtime or design-system item found
+during implementation that is not a selectable chapter component choice.
+
+**This is not the Component Lab.** It has its own owner flag, its own shell and
+its own lazily-loaded chunk. It reuses the Lab's shell primitives and stays
+mobile-first.
+
+**No category C item remains in the Component Lab** as disabled, catalogue-only
+or non-previewable. Every one keeps a live preview — on the other surface.
+Nothing is deleted: `ButtonsAndProgressPage.jsx` moves across unchanged.
+
+**The existing Lab access model is untouched.** `?componentReview=true`, the
+History-browser entry card, the auth bypass, the exit behaviour, the storage
+scope isolation and learner navigation all behave exactly as before. Approval
+to add a sibling surface is not approval to redesign the existing one.
+
+---
+
+## D4 — handler-backed entries are previewed through ScreenRenderer
+
+**Chosen: option A.** All ten `ScreenRenderer`-owned private-handler entries
+are represented by mounting `ScreenRenderer` with a minimal, valid, one-block
+fixture screen.
+
+| | Approach | Consequence | |
+|---|---|---|---|
+| **A** | **Preview through `ScreenRenderer` with a one-block fixture** | **Renders exactly what an author gets, through the real router** | **chosen** |
+| B | Export the ten handlers and mount them directly | Promotes ten deliberately private handlers to public API | rejected |
+| C | Defer all ten | Ships a Lab missing the two most-used authoring types | rejected |
+
+The private handlers are **not** exported and **no** fake component record is
+created for any of them. Each Lab selection is keyed by its own authoring key —
+`block:read`, `block:keypoint`, `block:examtip`, `block:scenario`,
+`block:funfact`, `block:misconception`, `block:reveal`, `block:hotspot`,
+`block:timeline`, `screen:standard` — and `ScreenRenderer` is only the
+rendering mechanism. It never appears as a selectable Lab item.
+
+Every fixture is a valid minimal content shape that passes the same chapter
+validation as authored content — asserted per selection, not per family.
+
+---
+
+## D5 — both ownership defects are fixed
+
+**Chosen: option A.**
+
+1. **`screen:examinerExplains` moved to the canonical record.** The entry now
+   sits on `WhatExaminersLookFor`, not on the parked `ExaminerExplainsScreen`
+   alias. The authoring contract is byte-identical; the only change anywhere in
+   the regenerated projection is the component identity
+   (`ExaminerExplainsScreen` → `WhatExaminersLookFor`), and `ScreenRenderer`
+   now mounts the canonical component rather than its bare re-export. The
+   parked alias keeps its record and its file for compatibility — it simply no
+   longer owns a live authoring entry.
+
+2. **The Lab imports the public `FaceTheExaminer`.** The adapter binds to
+   `src/components/learning/FaceTheExaminer.jsx`, never to the private family
+   container `faceTheExaminer/FaceTheExaminerContainer.jsx`.
+
+---
+
+## The shim handover, and why the order held
+
+`NON_AUTHORING_PEDAGOGY`'s `calculationBreakdown` entry was removed **after**
+the genuine authoring entry existed, never before. The order was not merely
+followed — it was *enforced*, by a guard that already existed:
+`projectPedagogy` throws when a non-authoring type collides with an authoring
+entry. Adding the entry made generation fail until the shim was deleted, so the
+shim could not outlive its replacement, and deleting it could not lose the
+classification.
+
+Evidence, from the regenerated projection:
+
+- the flat `calculationBreakdown` pedagogy line is **byte-identical** before
+  and after — `functions: ['sequence-process', 'apply'], interaction: 'assessed'`;
+- the whole pedagogy projection diff is **additions only** — no existing value
+  changed;
+- the whole authoring projection diff is additions plus **exactly one** rewritten
+  line, the sanctioned D5 component-identity change.
+
+`CalculationBreakdown` keeps everything: component, record, contract,
+invariants, fixtures, Lab preview and all five presentations. The five
+presentations are selectable authoring **modes** within the one type;
+`reduced-motion` and `mobile-width` remain preview **variants**, because they
+change no content.
 
 ---
 
 ## Explicitly not reopened
 
-- **A8** — resolved. Phase 4 corrects only the false source comments catalogued
-  in Census 1; no access or runtime behaviour changes.
-- **Pedagogy authority** — complete. Phase 4 consumes it. D3/D4 from Phase 3
-  remain deferred.
-- **Lab access and location** — parked. D3 above proposes a *sibling* surface,
-  which is why it is flagged as needing approval rather than assumed.
+- **A8** — Phase 4 corrects only the false source comments catalogued in Census
+  1; no access or runtime behaviour changes.
+- **Pedagogy authority** — complete. Phase 4 consumes it.
+- **Lab access and location** — parked, and stays parked. D3 adds a sibling
+  surface; it changes nothing about the Lab's own access.
 - **Storybook config** — untouched.
-- **Code splitting** — options recorded in the bundle baseline; no change in scope.
-- **`CalculationBreakdown`'s retention** — settled by product mandate. It is
-  category B, keeps everything, and gains a genuine authoring entry.
+- **Code splitting** — no change in scope beyond keeping both owner surfaces
+  lazy.
+- **`CalculationBreakdown`'s retention** — settled by product mandate.

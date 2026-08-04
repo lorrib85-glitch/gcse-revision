@@ -1,230 +1,183 @@
 # Phase 4 — implementation plan
 
-Revised for the clarified product rule: **the Component Lab is the
-chapter-building component library.**
+Rewritten for the settled decisions. **D0–D5 in `DECISIONS.md` are answered;
+nothing here is blocked.** The governing product rule is unchanged: the
+Component Lab is the chapter-building component library.
 
-Baseline SHA: `d2c0030f80730db42e0b5097319ae5292966b078`.
-Nothing here is executed. Execution requires an explicit request, and the user
-has directed that this corrected planning is reviewed first.
-
-**Blocked on:** D1, D2, D3 and D4 in `DECISIONS.md`. D2 decides what authoring
-types the B items get. D3 decides where category C items go. D4 decides whether
-Phase 4 reaches 100% authoring coverage or 65%. D1 shapes the generator.
+Baseline SHA: `552b899654fbc83f3d4483eed9182fb95626ac45`.
 
 Lane: **E — Big Build**. Pipeline: `brainstorming` → `writing-plans` →
 `subagent-driven-development`, with `verification-before-completion` before any
 completion claim.
 
-> **Superseded.** The previous sequence built a record-keyed projection and
-> deleted the `calculationBreakdown` pedagogy shim at Step 6. Both are wrong
-> under the clarified rule: the projection unit is the authoring entry, and the
-> shim is removed only *after* a genuine authoring entry exists.
+> **Superseded twice, in place.** The first sequence built a record-keyed
+> projection and deleted the `calculationBreakdown` pedagogy shim early. The
+> second targeted 51 entries and recommended a `block:mathsFigure` dispatcher.
+> Both are withdrawn: the projection unit is the *active* authoring entry, the
+> target is **57**, each figure component gets its own public type, and the
+> shim is removed only after a genuine entry exists.
+
+The target: **57 selectable Lab choices resolving to 57 active authoring
+entries**, one derived route accounted for as a presentation, four legacy
+entries excluded.
 
 ---
 
-## Step 0 — Parity harness (before any change)
+## Step 1 — Content usage scanner (D1)
 
-Unchanged from the previous plan and still first.
+`scripts/scan-content-type-usage.mjs`.
 
-1. Commit the capture script that produced `baselines/current-lab-manifest.json`
-   as a repo script.
-2. Add `tests/architecture/component-lab-parity.test.js` asserting the capture
-   matches the baseline.
+Structural, not regex: every module under `src/content/**` is imported and its
+`screens` array walked, so screen and block levels are distinguished and nested
+question shapes are excluded by construction.
 
-Phase 4 deliberately changes the Lab's population, so parity is not a
-"nothing changed" test — it is the instrument that makes **every** change show up
-as a reviewed baseline diff. No entry may move silently.
+- A screen's type is `screen.type` or `standard` when omitted — the type the
+  runtime resolves, and therefore the one the author chose.
+- Files are globbed and sorted; keys are sorted; no clock, environment or
+  absolute path.
+- Regression: `spotTheError`, `builder` and `acronymMemorise` each report
+  exactly 1 use.
 
-**Exit:** passes at the baseline SHA; fails on any entry, variant, fixture or
-mounted-component change.
-
----
-
-## Step 1 — Content usage scanner
-
-`scripts/scanContentTypeUsage.mjs`.
-
-- Must match both `type: 'x'` and `"type": "x"`.
-- Regression test: `spotTheError`, `builder`, `acronymMemorise` each report
-  exactly 1 use — the three the naive regex missed.
-- Counts only registered authoring types; nested question types (`choice`,
-  `truefalse`) are excluded.
-- Output must equal `baselines/current-content-type-usage.json`.
-
-**Exit:** output byte-identical to the baseline.
+**Exit:** deterministic across runs; the three regression cases hold; the level
+split is real (`timelineChain` = 10 screen / 0 block, correcting the regex
+evidence).
 
 ---
 
-## Step 2 — Authoring-keyed Lab projection
+## Step 2 — Catalogue entries and ownership (D2, D5)
 
-`scripts/generate-lab-registry.mjs` → `src/data/generated/componentLabRegistry.js`,
-wired as `pnpm lab:generate` / `pnpm lab:check`.
+Seven new authoring entries, each on its own owning record, each naming its
+actual public component:
 
-**One row per live authoring entry**, keyed `level:type` (`DESIGN.md` §2). Rows
-are emitted only for `status !== 'legacy'`. A record with `authoring: null`
-produces no row — this is how infrastructure is excluded structurally.
+`screen:calculationBreakdown`, `block:angleFigure`,
+`block:areaPerimeterFigure`, `block:coordinatePlaneFigure`,
+`block:numberLineFigure`, `block:circuitDiagram`,
+`block:circuitSymbolReference`.
 
-Guards:
-- Generated-file header; hand-edits fail `lab:check`.
-- No JSX, no functions, no React.
-- Extend `component-catalogue-integrity.test.js` to prove the Lab never imports
-  `src/component-catalogue/**` or `loadCatalogue()`.
+Plus:
 
-**Exit:** `pnpm lab:generate && pnpm lab:check` clean; 51 rows; Lab untouched, so
-parity still passes.
+- `derivedFrom` added to the schema — mandatory on a `derived` entry, forbidden
+  elsewhere, and set to `block:misconceptionCheck` on the derived screen route
+  (D0);
+- `screen:examinerExplains` moved from the parked `ExaminerExplainsScreen`
+  record to the canonical `WhatExaminersLookFor` record (D5.1).
 
----
-
-## Step 3 — Adapter layer keyed by authoring key
-
-Restructure `src/dev/componentReview/` so every adapter carries an
-`authoringKey`. Preserve every existing render adapter, fixture and variant
-verbatim — this step moves code, it does not rewrite previews.
-
-Constraints:
-- `fixtures.base.js` export names are **frozen** —
-  `GuidedExamResponse.stories.jsx` imports from it (Census 1). Breaking that
-  breaks Storybook, which is out of scope.
-- Delete the "internal child" comment at `reviewManifestCore.jsx:64-68`; it
-  contradicts the catalogue for `UnifiedQuestionScreen` and `RecoveryQuizPlayer`.
-
-The 11 routeless items (B and C) are tagged but not yet bound — they have no key
-to bind to until Steps 5 and 6.
-
-**Exit:** parity passes unchanged.
+**Exit:** 57 active + 1 derived entries load and validate.
 
 ---
 
-## Step 4 — Bidirectional join guard
+## Step 3 — Renderer routes and the shim handover
 
-Add `tests/architecture/component-lab-authoring-coverage.test.js` enforcing
-coverage contract 2:
+Routes for all seven new types in `ScreenRenderer`, and the canonical
+`WhatExaminersLookFor` import in place of the parked alias.
 
-- every adapter's `authoringKey` resolves to a live projection row;
-- every live projection row has an adapter;
-- no adapter references a record with `authoring: null`.
-
-**This test is expected to FAIL when written** — 17 rows have no adapter and 11
-adapters have no key. That failure is the specification for Steps 5–7. Do not
-weaken it to pass; make the code satisfy it.
-
-**Exit:** the test exists, fails with exactly 17 + 11 named violations, and those
-counts match `baselines/current-authoring-coverage.json`.
-
----
-
-## Step 5 — Category C removal (`DESIGN.md` §5, home per D3)
-
-Remove from the Lab: `buttons-and-progress`, `chapter-outcome-screen`,
-`chapter-complete-screen`, `chapter-hook-screen`, `weak-spot-recovery`.
-
-Rehome per D3 (recommended: a sibling owner surface reusing
-`ButtonsAndProgressPage.jsx` unchanged, plus a runtime-screen section).
-
-**Nothing is deleted.** `ButtonsAndProgressPage.jsx` moves; the four runtime
-components keep their catalogue records and gain a preview on the new surface.
-No component is shown as disabled or catalogue-only in the Lab.
-
-**Exit:** 11 routeless adapters → 6; parity diff shows exactly five removals.
-
----
-
-## Step 6 — Category B authoring entries (per D2)
-
-For each of the six B items: a genuine authoring entry on the owning record, a
-content contract (`required` / `requiredAny`), a `ScreenRenderer` route, and a
-minimal valid chapter content shape.
-
-### 6a — CalculationBreakdown (`DESIGN.md` §6)
-
-Spec is fully worked: `screen:calculationBreakdown`, layout `full`, continuation
-`component`, `headerMode` `standard`,
-`requiredAny: [[steps:array, presentation:object]]`, pedagogy
-`['sequence-process','apply'] / assessed`.
-
-**Shim removal order is mandatory — one atomic commit:**
+**The handover order is mandatory, and it is enforced rather than trusted:**
 
 1. Add the authoring entry carrying the pedagogy block.
 2. Add the `ScreenRenderer` route.
-3. `pnpm authoring:generate`, `pnpm pedagogy:generate`.
-4. **Then** delete the `calculationBreakdown` entry from `NON_AUTHORING_PEDAGOGY`.
-5. Regenerate and assert `componentPedagogyRegistry.js` is **unchanged** for
-   `calculationBreakdown` — proof the classification moved cleanly from shim to
-   entry.
+3. Regenerate — which **fails**, because `projectPedagogy` refuses to hold the
+   same classification twice. That failure is the proof the entry now carries
+   the fact.
+4. Only then delete the `calculationBreakdown` entry from
+   `NON_AUTHORING_PEDAGOGY`.
+5. Regenerate and prove no observable value changed.
 
-Do not remove the pedagogy classification first. Do not delete, retire or hide
-the component, its record, contracts, previews, or any of the five presentations
-(`standard`, `algebraWhy`, `inverseMachine`, `groupSplit`, `balance`). All five
-become selectable authoring **modes**; `reduced-motion` and `mobile-width` stay
-**variants**.
+**Exit evidence:** the flat `calculationBreakdown` pedagogy line is
+byte-identical before and after; the pedagogy diff is additions only; the
+authoring diff is additions plus exactly one rewritten line — the sanctioned
+component-identity change.
 
-### 6b — Maths figures and circuit figure (per D2)
-
-Recommended: `block:mathsFigure` with a `figure` discriminator, and
-`block:circuitFigure` with the symbol board as a preset. Option A requires a
-dispatching block that does not exist today.
-
-**Any B item whose entry is not delivered leaves the Lab** rather than remaining
-a routeless preview.
-
-**Exit:** 6 routeless adapters → 0; `authoring:check` and `pedagogy:check` clean;
-step-5 no-diff assertion passes.
+Nothing about `CalculationBreakdown` is deleted or hidden: component, record,
+contract, invariants, fixtures, Lab preview and all five presentations survive.
 
 ---
 
-## Step 7 — The 17 missing authoring entries
+## Step 4 — Authoring-keyed Lab projection
 
-Adapters + minimal valid content shapes for every uncovered live entry, in
-measured-usage order: `block:read` (261), `block:quiz` (224), `block:keypoint`
-(83), `block:examtip` (62), `block:boss` (61), `block:scenario` (39),
-`block:funfact` (26), `block:misconceptionCheck` (20), `block:timelineChain` (8),
-`screen:priorKnowledgeRecall` (6), `block:oppositeQualitiesReveal` (2),
-`block:misconception` (2), `block:mediaPlaceholder` (1), `block:reveal` (1),
-`block:hotspot` (0), `block:timeline` (0), `screen:standard` (0).
+`scripts/generate-lab-registry.mjs` → `src/data/generated/componentLabRegistry.js`,
+wired as `pnpm lab:generate` / `pnpm lab:check` and added to `pnpm verify`.
 
-Ten are `ScreenRenderer` handler types — **preview mechanism decided by D4**
-(recommended: mount `ScreenRenderer` with a one-block fixture screen, so the
-preview is what an author actually gets and the handlers stay private).
+One row per non-legacy authoring entry, keyed `level:type`. A record with
+`authoring: null` produces no row — that is how infrastructure is excluded
+structurally rather than by a list.
 
-Also in this step (per D5): fix the two ownership defects — bind
-`face-the-examiner` to the public `FaceTheExaminer.jsx`, and move
-`screen:examinerExplains` from the parked `ExaminerExplainsScreen` record to the
-canonical `WhatExaminersLookFor` record.
+Serialisable generated facts only: authoring key, owning record id, component
+identity, authoring name, level, layout, status, `derivedFrom`, required /
+requiredAny, continuation, header mode, pedagogy, Decision guidance, lifecycle,
+contract criticality, and drift-checked content usage (D1).
 
-**Exit:** Step 4's guard **passes** — 100% coverage in both directions.
+Guards: generated-file header; no JSX, functions or React; no catalogue import;
+deterministic bytes.
+
+**Exit:** `lab:generate && lab:check` clean; 58 rows (57 active + 1 derived).
 
 ---
 
-## Step 8 — Modes and variants; shell reads generated facts
+## Step 5 — Adapter layer keyed by authoring key
 
-- Collapse: `GraphView` ×2 → one row, two variants; `InteractiveHotspotImage` ×2
-  → one row, two variants; `BuilderBlock` ×3 → one row, three variants.
-- Expand: `misconceptionCheck`, `oppositeQualitiesReveal`, `timelineChain` each
-  become **two rows** (screen and block levels).
-- Shell renders name, contract, usage, pedagogy and lifecycle from the
-  projection; adapters supply only previews.
-- Delete the `getTypeInfo` import and `reviewManifestCore.jsx:949`.
-- Delete `status`, `STATUS_LABELS`, `matchesFilter`; implement the filter model
-  in `DESIGN.md` §9; drop the dead `uncategorised` label.
+`src/dev/componentReview/` restructured so every adapter carries an
+`authoringKey`. Every existing render adapter, fixture and variant is preserved
+verbatim — this step moves code, it does not rewrite previews.
 
-**Exit:** no handwritten `name` / `function` / `usage` / `alternative` / `status`
-remains; both stale claims are gone because nothing hand-writes them.
-
----
-
-## Step 9 — Authoring-completeness proof
-
-Assert all ten requirements in `DESIGN.md` §8 for every Lab selection. The
-sharpest is **requirement 10**: each selection ships a minimal content shape that
-the real chapter validator accepts — a route guard plus a validator round-trip
-per type.
-
-**Exit:** every selection satisfies all ten; failures name the type and the
-missing requirement.
+- `fixtures.base.js` export names are **frozen**; `GuidedExamResponse.stories.jsx`
+  imports from it.
+- Adapters carry only React imports, JSX, fixtures, render callbacks, subject
+  and example palette, render framing, controlled state, authoring-mode
+  examples and preview-only variants. No canonical name, usage prose,
+  alternatives, lifecycle, authorability or pedagogy — the shell reads those
+  from the projection.
+- The ten handler-backed types mount `ScreenRenderer` with a minimal valid
+  one-block fixture (D4). No handler is exported.
+- Collapse into variants: `GraphView` ×2 → 1, `InteractiveHotspotImage` ×2 → 1,
+  `BuilderBlock` ×3 → 1.
+- Expand into separate rows: `timelineChain` and `oppositeQualitiesReveal`, each
+  screen **and** block.
+- `misconceptionCheck` binds to the **block** entry; the derived screen route
+  renders as a presentation beneath it.
+- `face-the-examiner` binds to the public `FaceTheExaminer.jsx` (D5.2).
 
 ---
 
-## Step 10 — Source-comment corrections
+## Step 6 — System reference (D3)
+
+`?systemReference=true`, its own lazy chunk, holding the five category C items:
+`ButtonsAndProgressPage` (moved unchanged) plus live previews of
+`ChapterHookScreen`, `ChapterOutcomeScreen`, `ChapterCompleteScreen` and
+`WeakSpotRecovery`.
+
+No category C item stays in the Lab as disabled, catalogue-only or
+non-previewable. Nothing is deleted. The Lab's own access model is untouched.
+
+---
+
+## Step 7 — Bidirectional coverage guard, mutation-tested
+
+`tests/architecture/component-lab-authoring-coverage.test.js`:
+
+- every adapter's `authoringKey` resolves to an **active** projection row;
+- every **active** projection row has exactly one adapter;
+- no adapter binds a legacy, derived-only or unknown key;
+- every derived row names an active `derivedFrom` that has an adapter;
+- every selection ships a minimal content shape the real chapter validator
+  accepts;
+- every selection resolves through a real renderer route.
+
+Eight mutations, each failing a **named** assertion and reverting cleanly:
+
+| # | Mutation |
+|---|---|
+| 1 | remove a Lab adapter |
+| 2 | add an active authoring entry with no adapter |
+| 3 | bind an adapter to a legacy entry |
+| 4 | bind an adapter to a derived-only entry |
+| 5 | bind an adapter to an unknown key |
+| 6 | add a Lab selection with no authoring entry |
+| 7 | diverge a generated usage count |
+| 8 | import a private handler directly / remove a ScreenRenderer fixture route |
+
+---
+
+## Step 8 — Source-comment corrections
 
 Correct the four false production-boundary claims (Census 1), matching the
 already accurate `src/App.jsx:5-11`.
@@ -234,23 +187,22 @@ app-replacement, exit behaviour, URL structure or learner reachability.
 
 ---
 
-## Step 11 — Verification
+## Step 9 — Verification
 
 | Check | Evidence |
 |---|---|
-| Coverage contract 2 | Step 4's guard passes: 100% both directions |
-| Authoring completeness | Step 9 passes for every selection |
-| Shim handover | `componentPedagogyRegistry.js` unchanged for `calculationBreakdown` across Step 6a |
-| CalculationBreakdown intact | Component, record, contracts and all five presentations still present and previewable |
-| Parity | Every baseline diff reviewed and attributable to a named step |
+| Coverage contract 2 | Step 7's guard passes: 100% both directions over 57 active entries |
+| Derived route | Accounted for, not selectable; mutation 4 proves it |
+| Authoring completeness | All ten requirements per selection |
+| Shim handover | Pedagogy line byte-identical; diffs additions-only |
+| CalculationBreakdown intact | Component, record, contract and all five presentations present and previewable |
+| Category C | All five previewable in System reference, none in the Lab |
+| Private handlers | Still private; no new export |
+| Usage | Current and drift-checked |
 | Generators | `catalogue:check`, `authoring:check`, `pedagogy:check`, `lab:check` clean |
-| Architecture | full `vitest run tests/architecture` |
-| Build | `./node_modules/.bin/vite build` succeeds |
-| Bundle | Lab chunk re-measured against 356.16 kB / 105.76 kB; delta reported, not budgeted |
-| No leakage | learner entry chunk still free of Lab-only strings |
-| Runtime | Lab opened at ~390px; one selection exercised per interaction class; the new C-item surface opens |
-| Learner app | still loads normally without the flag |
-| Catalogue contract 1 | all 84 records still in the generated registry; `catalogue:check` clean |
+| Bundle | Lab and System reference both lazy owner chunks; learner entry free of catalogue and Lab governance data |
+| Access | `?componentReview=true`, entry card, auth bypass, exit and learner navigation unchanged |
+| Full gate | `pnpm verify` passes |
 
 ---
 
@@ -258,10 +210,10 @@ app-replacement, exit behaviour, URL structure or learner reachability.
 
 | Baseline | Status |
 |---|---|
-| `current-authoring-coverage.json` | **Governing.** The Lab coverage contract. Regenerated at Step 11; target is 0 missing, 0 routeless |
-| `current-catalogue-coverage.json` | **Demoted, retained.** Records the catalogue population and the pre-Phase-4 relationship. No longer a Lab target |
-| `current-lab-manifest.json` | Parity instrument, unchanged in role |
-| `current-content-type-usage.json` | Evidence base for usage; regression fixture for Step 1 |
+| `current-authoring-coverage.json` | **Governing.** Regenerated at Step 9 against active entries; target 0 missing, 0 routeless |
+| `current-catalogue-coverage.json` | **Demoted, retained.** The catalogue-population record. Not a Lab target |
+| `current-lab-manifest.json` | The pre-Phase-4 Lab population, retained as the preservation baseline |
+| `current-content-type-usage.json` | **Superseded by the structural scan**, retained as the prior regex evidence and the record of what it got wrong |
 | `current-bundle-baseline.md` | Bundle comparison point |
 
 ---
@@ -270,11 +222,11 @@ app-replacement, exit behaviour, URL structure or learner reachability.
 
 | Risk | Mitigation |
 |---|---|
-| A preview is silently dropped | Step 0 parity harness before any change; every removal is a reviewed diff |
-| Pedagogy classification lost when the shim goes | Step 6a's mandatory order plus the no-diff assertion at step 5 |
-| A fake authoring type gets registered to keep an item | `DESIGN.md` §11; Step 6 requires a renderer route and a validator-accepted content shape, which a fake type cannot produce |
-| The ten handler types get previewed by exporting private handlers | D4 recommends the router-with-fixture route precisely to avoid this |
-| Generated usage churns on content commits | D1 — recommendation excludes usage from drift checking |
-| Fixture rename breaks Storybook | Step 3 constraint: `fixtures.base.js` export names frozen |
-| Category C removal loses a useful preview | Step 5 rehomes rather than deletes; D3 picks the surface |
-| New sibling surface exceeds the parked access boundary | D3 flags it as needing explicit approval, not assumed |
+| A preview is silently dropped | Every removal is a reviewed diff against the retained Lab manifest baseline |
+| Pedagogy classification lost when the shim goes | Enforced by the generator's collision guard, plus the byte-identity evidence in Step 3 |
+| A fake authoring type gets registered to keep an item | Step 7 requires a renderer route and a validator-accepted content shape, which a fake type cannot produce |
+| A derived route becomes a public option | `derivedFrom` in the schema plus mutation 4 |
+| The ten handler types get previewed by exporting private handlers | D4's fixture route, plus mutation 8 |
+| Generated usage churns on content commits | Accepted under D1; the content workflow gains an explicit regenerate step |
+| Fixture rename breaks Storybook | `fixtures.base.js` export names frozen |
+| New sibling surface drifts into the Lab's access model | System reference has its own flag and shell; the Lab's access assertions are kept and extended |

@@ -18,20 +18,38 @@ a measured figure there.
 
 ## 1. The governing rule, enforced in both directions
 
-1. **Every Lab item maps to at least one live registered authoring entry** that
+1. **Every Lab selection resolves to an active registered authoring entry** that
    chapter content can actually use.
 2. **Every active chapter authoring entry is selectable in the Lab** as an item
    or an authoring mode.
 
-A preview with no authoring route is a defect. An authoring route with no Lab
-selection is equally a defect. Both are build failures, not warnings.
+A preview with no authoring route is a defect. An active authoring route with no
+Lab selection is equally a defect. Both are build failures, not warnings.
 
 **No fake authoring entries.** A type is never registered to keep an engineering
 or design-system item in the Lab. If an item is not a chapter choice, it leaves
 the Lab.
 
-Today: 38 of 49 Lab items satisfy direction 1; **34 of 51** authoring entries
-satisfy direction 2.
+### The unit of coverage is an *active* entry
+
+`status` is part of the contract, not decoration:
+
+| Status | In the projection? | Selectable in the Lab? |
+|---|---|---|
+| `active` | yes | **yes — exactly one selection each** |
+| `derived` | yes, carrying `derivedFrom` | **no** — shown as a presentation of its source |
+| `legacy` | no | no |
+
+A **derived** route is the runtime presenting an existing choice at another
+level; the author writes one type and gets both. It is accounted for, and it is
+visible in the Lab — as a presentation row beneath the active choice it derives
+from — but it is never a second thing to pick. Binding an adapter to a derived
+entry is a build failure, in both directions: it would inflate the count of
+independently selectable choices and quietly publish a route no author writes.
+
+Today: 38 of 49 Lab items satisfy direction 1; **33 of 50 active** authoring
+entries satisfy direction 2. Phase 4 takes both to 100%, over **57 active**
+entries once the seven new types land.
 
 ---
 
@@ -56,11 +74,15 @@ Rows are emitted **only** for authoring entries whose status is not `legacy`.
 A catalogue record with `authoring: null` produces no row — which is precisely
 how infrastructure is excluded structurally rather than by a list.
 
+A row's `status` decides whether it is a *selection*: `active` rows require an
+adapter, `derived` rows forbid one and carry `derivedFrom`.
+
 | Field | Source |
 |---|---|
 | `key`, `level`, `type` | authoring entry |
 | `authoringName` | authoring entry |
 | `status` | authoring entry (`active` / `derived`) |
+| `derivedFrom` | authoring entry — the active key a derived route presents, null otherwise |
 | `layout`, `continuation`, `headerMode` | authoring entry |
 | `required`, `requiredAny` | authoring entry — the content contract |
 | `pedagogy` (`functions`, `interaction`) | authoring entry |
@@ -132,12 +154,19 @@ Applied to the current duplicates:
 | `graph-view-scatter` + `graph-view-line` | One `block:graphView` row, two variants (same contract, `chartType` differs) |
 | `interactive-hotspot-image` + `-reveal` | One `screen:interactiveImage` row, two variants |
 | `builder-block` ×3 | One `block:builder` row, three variants (`layout` differs, contract identical) |
-| `misconception-check` (one entry) | **Two rows** — `screen:misconceptionCheck` and `block:misconceptionCheck` are different levels with different contracts |
-| `opposite-qualities-reveal` (one entry) | **Two rows** — screen and block levels |
-| `timeline-chain` (one entry) | **Two rows** — `screen:timelineChain` and `block:timelineChain` |
+| `misconception-check` (one entry) | **One row** — `block:misconceptionCheck`, with `screen:misconceptionCheck` shown beneath it as a derived runtime presentation |
+| `opposite-qualities-reveal` (one entry) | **Two rows** — screen and block levels, both `active` |
+| `timeline-chain` (one entry) | **Two rows** — `screen:timelineChain` and `block:timelineChain`, both `active` |
 
 Note the direction of travel runs both ways: six entries collapse into three, and
-three entries expand into six. The Lab gets *more* honest, not simply smaller.
+two entries expand into four. The Lab gets *more* honest, not simply smaller.
+
+`misconceptionCheck` is the one case where the census's instinct was wrong. Its
+two entries are not two authoring levels with different contracts: the screen
+entry is `status: 'derived'`, resolved by `ScreenRenderer` from the presence of
+a `block:misconceptionCheck`. Measured usage settles it — 21 block uses, 0
+screen uses. So it stays one selection with one presentation, and direct
+authoring of the screen shape would have to be proven before it became two.
 
 ---
 
@@ -146,21 +175,25 @@ three entries expand into six. The Lab gets *more* honest, not simply smaller.
 Six Lab items are previews with no authoring route. Each needs a genuine entry,
 content contract and renderer route **before** it may appear in the final Lab.
 
-| Item | Recommended key | Level | Rationale |
-|---|---|---|---|
-| `CalculationBreakdown` | `screen:calculationBreakdown` | screen | Full-screen, owns its own continuation — see §6 |
-| `AngleExplore` | `block:mathsFigure` (mode `angle`) | block | Inline figure; the page owns the question |
-| `AreaPerimeterExplore` | `block:mathsFigure` (mode `areaPerimeter`) | block | Same interaction model and boundary |
-| `CoordinatePlaneExplore` | `block:mathsFigure` (mode `coordinatePlane`) | block | Same |
-| `NumberLineExplore` | `block:mathsFigure` (mode `numberLine`) | block | Same |
-| `CircuitDiagram` + `CircuitSymbolReference` | `block:circuitFigure` | block | Inline Physics figure; symbol board is a preset of the same primitives |
+**Settled by D2: seven new authoring types, one per component.**
 
-The four Maths Explore components share one interaction model, one governed
-boundary ("page-level questions and marking remain outside the component") and
-one prop shape (`preset`, `value`, `interactive`, `focus`). **Whether they become
-one `block:mathsFigure` type with a discriminator or four separate types is a
-genuine product decision — D2 in `DECISIONS.md`.** The table above states the
-recommendation, not a settled answer.
+| Item | Authoring key | Level | Interaction | Required |
+|---|---|---|---|---|
+| `CalculationBreakdown` | `screen:calculationBreakdown` | screen | assessed | one of `steps` / `presentation` — see §6 |
+| `AngleExplore` | `block:angleFigure` | block | reveal | `preset` |
+| `AreaPerimeterExplore` | `block:areaPerimeterFigure` | block | reveal | `preset` |
+| `CoordinatePlaneExplore` | `block:coordinatePlaneFigure` | block | reveal | `preset` |
+| `NumberLineExplore` | `block:numberLineFigure` | block | reveal | `preset` |
+| `CircuitDiagram` | `block:circuitDiagram` | block | reveal | `preset` |
+| `CircuitSymbolReference` | `block:circuitSymbolReference` | block | passive | — |
+
+There is **no** `block:mathsFigure` dispatcher and no `block:circuitFigure`. A
+shared prop vocabulary is not a shared identity: the preset vocabularies do not
+interchange, `CoordinatePlaneExplore` alone carries axis, capability and guide
+configuration, and the circuit pair differ in interaction class — one is an
+interactive reveal, the other a read-only board. Common validation lives in
+shared schema helpers; each public type owns its own name, contract, route,
+pedagogy, continuation, fixture and minimal chapter shape.
 
 If a B item's authoring entry is not delivered in Phase 4, **it leaves the Lab**
 until it is. It does not remain as a routeless preview.
@@ -173,13 +206,16 @@ Five items are not chapter-building choices. They are removed from the Lab and
 rehomed. **None is shown as disabled, catalogue-only or non-previewable in the
 chapter-building Lab.**
 
-| Item | New home |
+**Settled by D3: they move to System reference**, a sibling owner surface at
+`?systemReference=true` with its own flag, shell and lazy chunk.
+
+| Item | Section of System reference |
 |---|---|
-| `Buttons and progress` (page) | **Design-system reference** — a separate owner surface |
-| `ChapterOutcomeScreen` | **Runtime-component reference** |
-| `ChapterCompleteScreen` | **Runtime-component reference** |
-| `ChapterHookScreen` | **Runtime-component reference** |
-| `WeakSpotRecovery` | **Runtime-component reference** |
+| `Buttons and progress` (page) | Design-system reference |
+| `ChapterOutcomeScreen` | Runtime-placed screens |
+| `ChapterCompleteScreen` | Runtime-placed screens |
+| `ChapterHookScreen` | Runtime-placed screens |
+| `WeakSpotRecovery` | Runtime-placed screens |
 
 The three chapter-framing screens and `WeakSpotRecovery` are active, well-formed
 components. They are category C because the **runtime places them** — from
@@ -191,9 +227,10 @@ primitives (`ContinueCTA`, `BackButton`, `SequenceProgress`, …) go with it. Th
 Phase-3-era idea of adding ten *more* primitives to the Lab is withdrawn — they
 were never chapter choices.
 
-**The shape and location of these two reference surfaces is D3 in
-`DECISIONS.md`.** The census records that `docs/components/COMPONENT_REGISTRY.md`
-and Storybook already exist and may absorb some of this without new UI.
+System reference is **not** the Component Lab, and adding it changes nothing
+about the Lab's own access: `?componentReview=true`, the History-browser entry
+card, the auth bypass, the exit behaviour, the storage-scope isolation and
+learner navigation are all untouched.
 
 ---
 
@@ -264,20 +301,25 @@ stays complete. **This is not a Lab contract.**
 
 ### Contract 2 — Component Lab coverage (new, enforced)
 
-- **100%** of live authoring entries are selectable in the Lab.
-- **100%** of Lab selections resolve to live authoring entries.
-- **Zero** infrastructure, private internals, raw token examples or
-  non-authorable features in the Lab.
+- **100%** of *active* authoring entries are selectable in the Lab.
+- **100%** of Lab selections resolve to *active* authoring entries.
+- **Zero** infrastructure, private internals, raw token examples,
+  derived-only routes or non-authorable features as Lab selections.
 
-Populations after reclassification:
+Populations after reclassification (D0's corrected arithmetic):
 
 | | Now | Target |
 |---|---|---|
-| Live authoring entries | 51 | 51 + 2 new (B items, per D2) |
-| — selectable in the Lab | 34 | all |
-| — missing | 17 | 0 |
-| Lab items with no authoring route | 11 | 0 |
-| Category C items in the Lab | 5 | 0 |
+| Active authoring entries | 50 | **57** (50 + 7 new types) |
+| — selectable in the Lab | 33 | **57** |
+| — missing | 17 | **0** |
+| Derived routes | 1 | 1 — accounted for, never selectable |
+| Legacy entries | 4 | 4 — excluded |
+| Lab selections with no active authoring entry | 11 | **0** |
+| Category C items in the Lab | 5 | **0** |
+
+33 + 7 + 17 = 57, with no remainder. The superseded "51" counted the derived
+route as a selectable choice.
 
 ---
 
@@ -334,7 +376,9 @@ budget is set.
 ## 11. What this design refuses to do
 
 - Register a fake authoring type to keep an item in the Lab.
+- Turn a derived route into a public authoring option.
 - Keep a preview that has no authoring route.
+- Export a private `ScreenRenderer` handler to make it previewable.
 - Show infrastructure in the chapter-building Lab as disabled or catalogue-only.
 - Put JSX, fixtures or React imports into catalogue records or generated data.
 - Let the Lab restate any fact the catalogue owns.

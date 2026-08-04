@@ -222,13 +222,29 @@ describe('the projection contains exactly what the authored surfaces own', () =>
 })
 
 describe('non-authoring classifications are a governed shrinking set', () => {
+  // The set is empty as of Phase 4 — `calculationBreakdown` was its only entry
+  // and now carries its classification on a genuine authoring entry. Empty is
+  // the intended end state, so the count is deliberately not asserted; what is
+  // asserted is that any entry which reappears still pays the full price.
   it('names a live consumer and a way out for every entry', () => {
-    expect(NON_AUTHORING_PEDAGOGY.length).toBeGreaterThan(0)
     for (const entry of NON_AUTHORING_PEDAGOGY) {
       expect(entry.reason?.trim().length ?? 0, entry.type).toBeGreaterThan(40)
       expect(entry.removalCondition?.trim().length ?? 0, entry.type).toBeGreaterThan(40)
       expect(entry.pedagogy.functions.length, entry.type).toBeGreaterThan(0)
     }
+  })
+
+  it('keeps the shim out once its classification has an authoring entry', () => {
+    // The forcing function that made the Phase 4 handover safe, kept live: the
+    // generator refuses to hold the same classification twice, so a
+    // re-introduced shim fails generation instead of silently shadowing the
+    // record it was meant to hand over to.
+    const authoredType = entries.find(({ entry }) => entry.type === 'calculationBreakdown')
+    expect(authoredType, 'calculationBreakdown must own its own authoring entry').toBeDefined()
+    expect(() => projectPedagogy(records, [{
+      type: 'calculationBreakdown',
+      pedagogy: { functions: ['sequence-process', 'apply'], interaction: 'assessed' },
+    }])).toThrow(/collides with an authoring entry/)
   })
 
   it('holds no type that already has an authoring entry', () => {
