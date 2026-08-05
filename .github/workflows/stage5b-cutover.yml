@@ -1,0 +1,610 @@
+name: Stage 5B subject-browser cutover
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stage5b-cutover-main
+  cancel-in-progress: false
+
+jobs:
+  cutover-and-verify:
+    if: contains(github.event.head_commit.message, 'Bootstrap Stage 5B subject-browser cutover')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Replace the legacy browser catalogue with the generated adapter
+        run: |
+          cat > src/features/subjects/subjectCatalogue.js <<'EOF'
+          // Subject-browser runtime adapter.
+          //
+          // Stage 5B makes the generated navigation projection authoritative for
+          // destination order, browser copy, sections and cards. This module keeps
+          // the UI isolated from the raw generated shape and joins openable cards to
+          // their runtime Chapter records so existing progress and opening behaviour
+          // remain unchanged.
+
+          import { CHAPTERS } from '../../chapters.js'
+          import {
+            NAVIGATION_ENTRIES,
+            getNavigationEntryForDisplayName,
+          } from '../../data/generated/curriculum/navigation.js'
+
+          const chapterById = new Map(CHAPTERS.map(chapter => [chapter.id, chapter]))
+
+          function adaptCard(card, series = null) {
+            const runtimeChapter = card.kind === 'chapter'
+              ? chapterById.get(card.chapterId)
+              : null
+
+            return {
+              ...(runtimeChapter ?? {}),
+              id: card.id,
+              chapterId: card.chapterId ?? null,
+              moduleId: card.moduleId ?? null,
+              navigationKind: card.kind,
+              title: card.title,
+              subtitle: card.subtitle,
+              number: card.number,
+              series,
+              headerImage: card.headerImage ?? card.heroImage ?? runtimeChapter?.headerImage ?? null,
+              comingSoon: !card.openable,
+              openable: card.openable,
+              canonical: card.canonical,
+            }
+          }
+
+          function adaptSubjectState(entry) {
+            return {
+              id: `${entry.id}:coming-soon`,
+              chapterId: null,
+              moduleId: null,
+              navigationKind: 'state',
+              title: entry.comingSoon.title,
+              subtitle: entry.comingSoon.subtitle,
+              number: 1,
+              series: null,
+              headerImage: entry.heroImage,
+              comingSoon: true,
+              openable: false,
+              canonical: null,
+            }
+          }
+
+          export const SUBJECT_NAVIGATION_NAMES = NAVIGATION_ENTRIES.map(entry => entry.label)
+
+          export function getSubjectNavigationEntry(subjectName) {
+            const entry = getNavigationEntryForDisplayName(subjectName)
+            if (!entry) return null
+
+            const series = entry.sections?.map(section => ({
+              id: section.id,
+              title: section.title,
+              short: section.shortLabel,
+              headerImage: section.heroImage,
+              comingSoon: section.comingSoon,
+            })) ?? []
+
+            const items = entry.sections
+              ? entry.sections.flatMap(section => section.cards.map(card => adaptCard(card, section.id)))
+              : entry.comingSoon
+                ? [adaptSubjectState(entry)]
+                : entry.cards.map(card => adaptCard(card))
+
+            return {
+              ...entry,
+              series,
+              items,
+            }
+          }
+
+          export function getSubjectChapterList(subjectName) {
+            return getSubjectNavigationEntry(subjectName)?.items ?? []
+          }
+          EOF
+
+      - name: Switch Subjects onto Browser Entry presentation
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('src/features/subjects/Subjects.jsx')
+          source = path.read_text()
+
+          source = source.replace(
+              "import { CHAPTERS, getChapterAvailability, CHAPTER_AVAILABILITY } from '../../chapters.js'",
+              "import { CHAPTERS } from '../../chapters.js'",
+          )
+          source = source.replace(
+              "import { getSubjectChapterList } from './subjectCatalogue.js'",
+              "import { getSubjectNavigationEntry, getSubjectChapterList, SUBJECT_NAVIGATION_NAMES } from './subjectCatalogue.js'",
+          )
+
+          source, count = re.subn(
+              r"const SUBJECT_HEADER_IMGS = \{.*?\nfunction SubjectBrowser",
+              "function SubjectBrowser",
+              source,
+              count=1,
+              flags=re.S,
+          )
+          assert count == 1, 'failed to remove duplicated browser presentation constants'
+
+          replacement = '''function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
+            const navigationEntry = getSubjectNavigationEntry(subjectName)
+            const sand         = SUBJECTS[subjectName]?.subjectBrowserAccent || SUBJECTS.History.subjectBrowserAccent
+            const bronze       = SUBJECTS[subjectName]?.subjectBrowserAccentDark || SUBJECTS.History.subjectBrowserAccentDark
+            const accent       = sand
+            const accentRgb    = hexToRgb(sand)
+            const headerImg    = navigationEntry?.heroImage || '/images/history/_shared/medicine-through-time.webp'
+            const displayTitle = navigationEntry?.title || subjectName
+            const displayDesc  = navigationEntry?.description || ''
+            const series       = navigationEntry?.series ?? []
+
+            const isHistory = subjectName === 'History'
+            const isEnglish = subjectName === 'English'
+            const hasSeries = series.length > 0
+            const [activeSeries, setActiveSeries] = useState(() => series[0] ?? null)
+
+            // Generated navigation owns visible cards and their openability. The
+            // adapter joins openable cards to runtime Chapters so the existing
+            // progress keys and ChapterPlayer contract remain unchanged.'''
+
+          source, count = re.subn(
+              r"function SubjectBrowser\(\{ subjectName, onBack, onOpenChapter \}\) \{\n  const sand.*?\n  // Canonical availability: hidden stubs drop out before numbering so they can\n  // never shift a visible chapter's position; coming-soon stubs show but never\n  // open \(guarded in handleCardClick / openChapterPlayer\)\.",
+              replacement,
+              source,
+              count=1,
+              flags=re.S,
+          )
+          assert count == 1, 'failed to replace SubjectBrowser authority block'
+
+          replacement = '''  const allItems = getSubjectChapterList(subjectName).map(item => {
+            const number = item.number
+            if (!item.openable) return { ...item, number, status: 'coming_soon', pct: 0 }
+
+            const chapterId = item.chapterId || item.id
+            const s = safeGetChapterState(chapterId)
+            const screen = s.screen || 0
+            const hasStarted = (s.hookDone && s.wylDone) || screen > 0
+            const total = item.screenCount || 1
+            // `completed` sticks once a chapter is finished — reviewing it afterwards moves `screen`
+            // back down, but it must never read as anything other than 'completed' again.
+            const pct = s.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
+            const status = s.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
+            return { ...item, number, status, pct }
+          })
+
+            const items = (hasSeries && activeSeries)
+              ? allItems.filter(item => item.series === activeSeries.id)
+              : allItems'''
+
+          source, count = re.subn(
+              r"  const allItems = getSubjectChapterList\(subjectName\).*?\n\n  const defaultSeries = isHistory \? 'medicine' : 'macbeth'\n  const items = \(hasSeries && activeSeries\)\n    \? allItems\.filter\(m => \(m\.series \|\| defaultSeries\) === activeSeries\.id\)\n    : allItems",
+              replacement,
+              source,
+              count=1,
+              flags=re.S,
+          )
+          assert count == 1, 'failed to replace browser card transformation'
+
+          source = source.replace(
+              "          {(isHistory ? HISTORY_SERIES : ENGLISH_SERIES).map(s => {",
+              "          {series.map(s => {",
+          )
+
+          old = '''  function handleCardClick(item) {
+            if (item.status === 'coming_soon') return
+            const realChapter = CHAPTERS.find(chapter => chapter.id === item.id)
+            if (realChapter && onOpenChapter) onOpenChapter(realChapter)
+          }'''
+          new = '''  function handleCardClick(item) {
+            if (item.status === 'coming_soon' || !item.openable || item.navigationKind !== 'chapter') return
+            const realChapter = CHAPTERS.find(chapter => chapter.id === (item.chapterId || item.id))
+            if (realChapter && onOpenChapter) onOpenChapter(realChapter)
+          }'''
+          assert old in source, 'failed to find card click boundary'
+          source = source.replace(old, new)
+
+          source = source.replace(
+              "const SUBJECT_NAMES = ['History', 'Biology', 'Chemistry', 'Physics', 'Maths', 'English', 'Sociology']",
+              "const SUBJECT_NAMES = SUBJECT_NAVIGATION_NAMES",
+          )
+
+          for forbidden in ('SUBJECT_HEADER_IMGS', 'SUBJECT_DISPLAY_TITLES', 'SUBJECT_DESCRIPTIONS', 'HISTORY_SERIES', 'ENGLISH_SERIES'):
+              assert forbidden not in source, f'stale duplicated browser authority remains: {forbidden}'
+
+          path.write_text(source)
+          PY
+
+      - name: Replace legacy browser tests with adapter contract tests
+        run: |
+          cat > tests/unit/subjects/subjectCatalogue.test.js <<'EOF'
+          import { describe, expect, it } from 'vitest'
+
+          import { CHAPTERS, CHAPTER_AVAILABILITY, getChapterAvailability } from '../../../src/chapters.js'
+          import { NAVIGATION_ENTRIES } from '../../../src/data/generated/curriculum/navigation.js'
+          import {
+            SUBJECT_NAVIGATION_NAMES,
+            getSubjectChapterList,
+            getSubjectNavigationEntry,
+          } from '../../../src/features/subjects/subjectCatalogue.js'
+
+          const ids = list => list.map(entry => entry.id)
+
+          describe('Stage 5B subject-browser adapter', () => {
+            it('takes the seven destination names and order from generated navigation', () => {
+              expect(SUBJECT_NAVIGATION_NAMES).toEqual([
+                'History', 'Biology', 'Chemistry', 'Physics', 'Maths', 'English', 'Sociology',
+              ])
+              expect(SUBJECT_NAVIGATION_NAMES).toEqual(NAVIGATION_ENTRIES.map(entry => entry.label))
+            })
+
+            it('passes Browser Entry presentation through without a second copy', () => {
+              for (const projected of NAVIGATION_ENTRIES) {
+                const adapted = getSubjectNavigationEntry(projected.label)
+                expect({
+                  id: adapted.id,
+                  title: adapted.title,
+                  description: adapted.description,
+                  heroImage: adapted.heroImage,
+                  themeKey: adapted.themeKey,
+                }).toEqual({
+                  id: projected.id,
+                  title: projected.title,
+                  description: projected.description,
+                  heroImage: projected.heroImage,
+                  themeKey: projected.themeKey,
+                })
+              }
+            })
+
+            it('adapts History and English sections into the existing series contract', () => {
+              expect(getSubjectNavigationEntry('History').series.map(series => series.id)).toEqual([
+                'medicine', 'spain-new-world', 'elizabethan', 'usa',
+              ])
+              expect(getSubjectNavigationEntry('English').series.map(series => series.id)).toEqual([
+                'macbeth', 'inspector',
+              ])
+              expect(getSubjectNavigationEntry('History').series.find(series => series.id === 'elizabethan').comingSoon).toBe(true)
+              expect(getSubjectNavigationEntry('English').series.find(series => series.id === 'inspector').comingSoon).toBe(true)
+            })
+
+            it('preserves current Maths and Biology card order', () => {
+              expect(ids(getSubjectChapterList('Maths'))).toEqual([
+                'math1', 'math2', 'math3', 'math4', 'math5', 'math6', 'math7', 'math8',
+              ])
+              expect(ids(getSubjectChapterList('Biology')).slice(0, 2)).toEqual([
+                'bio_building_blocks', 'sci_bio_w1',
+              ])
+            })
+
+            it('uses semantic English Chapter identities instead of cs placeholders', () => {
+              expect(ids(getSubjectChapterList('English'))).toEqual([
+                'english-macbeth-power-ambition',
+                'english-macbeth-guilt-consequence',
+                'english-macbeth-witches-fate',
+                'english-macbeth-appearance-reality',
+                'english-inspector-calls-social-message',
+                'english-inspector-calls-responsibility-denial',
+                'english-inspector-calls-consequences-resolution',
+              ])
+            })
+
+            it('keeps Physics as five non-openable canonical Module cards', () => {
+              const physics = getSubjectChapterList('Physics')
+              expect(ids(physics)).toEqual([
+                'physics-aqa-forces-motion',
+                'physics-aqa-energy',
+                'physics-aqa-waves-electricity',
+                'physics-aqa-space',
+                'physics-aqa-matter-particles',
+              ])
+              expect(physics.every(card => card.navigationKind === 'module' && !card.openable)).toBe(true)
+            })
+
+            it('represents Chemistry as a subject state rather than a fake Chapter', () => {
+              const chemistry = getSubjectChapterList('Chemistry')
+              expect(chemistry).toHaveLength(1)
+              expect(chemistry[0]).toEqual(expect.objectContaining({
+                id: 'chemistry:coming-soon',
+                navigationKind: 'state',
+                title: 'Content coming soon',
+                subtitle: 'Chemistry',
+                openable: false,
+                comingSoon: true,
+              }))
+              expect(chemistry[0].chapterId).toBeNull()
+            })
+
+            it('joins every openable card to the same available runtime Chapter', () => {
+              const runtimeById = new Map(CHAPTERS.map(chapter => [chapter.id, chapter]))
+              const cards = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
+              const openable = cards.filter(card => card.openable)
+              expect(openable).toHaveLength(30)
+              for (const card of openable) {
+                const runtime = runtimeById.get(card.chapterId)
+                expect(runtime, card.id).toBeTruthy()
+                expect(getChapterAvailability(runtime), card.id).toBe(CHAPTER_AVAILABILITY.AVAILABLE)
+                expect(card.screenCount, card.id).toBe(runtime.screenCount)
+              }
+            })
+
+            it('keeps all planned, Module and state cards non-openable', () => {
+              const cards = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
+              expect(cards.filter(card => !card.openable)).toHaveLength(41)
+              expect(cards.filter(card => !card.openable).every(card => card.comingSoon)).toBe(true)
+            })
+
+            it('surfaces 70 canonical cards plus one subject state and no cs identity', () => {
+              const cards = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
+              expect(cards).toHaveLength(71)
+              expect(cards.filter(card => card.navigationKind !== 'state')).toHaveLength(70)
+              expect(cards.filter(card => card.navigationKind === 'state')).toHaveLength(1)
+              expect(cards.some(card => card.id.startsWith('cs_'))).toBe(false)
+            })
+
+            it('surfaces no hidden runtime Chapter', () => {
+              const cards = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
+              const hidden = cards.filter(card => card.chapterId)
+                .filter(card => getChapterAvailability(card) === CHAPTER_AVAILABILITY.HIDDEN)
+              expect(hidden).toEqual([])
+            })
+
+            it('returns null or an empty list for an unknown destination', () => {
+              expect(getSubjectNavigationEntry('Drama')).toBeNull()
+              expect(getSubjectChapterList('Drama')).toEqual([])
+            })
+          })
+          EOF
+
+      - name: Update Stage 5B architecture gates
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('tests/architecture/curriculum-navigation.test.js')
+          source = path.read_text()
+          source = source.replace(
+              "import { getSubjectChapterList } from '../../src/features/subjects/subjectCatalogue.js'",
+              "import { getSubjectChapterList, getSubjectNavigationEntry } from '../../src/features/subjects/subjectCatalogue.js'",
+          )
+
+          source, count = re.subn(
+              r"\nfunction currentBrowserCards\(label\) \{.*?\n\}\n",
+              "\n",
+              source,
+              count=1,
+              flags=re.S,
+          )
+          assert count == 1, 'failed to remove the pre-cutover browser helper'
+
+          replacement = '''  it('adapts the generated projection into the existing browser contract', () => {
+            for (const entry of NAVIGATION_ENTRIES) {
+              const browserEntry = getSubjectNavigationEntry(entry.label)
+              expect(browserEntry).toEqual(expect.objectContaining({
+                id: entry.id,
+                label: entry.label,
+                title: entry.title,
+                description: entry.description,
+                heroImage: entry.heroImage,
+              }))
+
+              const adapted = getSubjectChapterList(entry.label)
+              if (entry.comingSoon) {
+                expect(adapted).toEqual([
+                  expect.objectContaining({
+                    navigationKind: 'state',
+                    title: entry.comingSoon.title,
+                    subtitle: entry.comingSoon.subtitle,
+                    openable: false,
+                  }),
+                ])
+                continue
+              }
+
+              const seriesByCard = new Map((entry.sections ?? []).flatMap(section =>
+                section.cards.map(card => [card.id, section.id])))
+              const projected = flattenNavigationCards(entry).map(card => ({
+                id: card.id,
+                title: card.title,
+                subtitle: card.subtitle,
+                number: card.number,
+                series: seriesByCard.get(card.id) ?? null,
+                navigationKind: card.kind,
+                openable: card.openable,
+                comingSoon: !card.openable,
+              }))
+              expect(adapted.map(card => ({
+                id: card.id,
+                title: card.title,
+                subtitle: card.subtitle,
+                number: card.number,
+                series: card.series,
+                navigationKind: card.navigationKind,
+                openable: card.openable,
+                comingSoon: card.comingSoon,
+              }))).toEqual(projected)
+            }
+          })'''
+
+          source, count = re.subn(
+              r"  it\('reproduces current browser copy and status while replacing placeholder identities', \(\) => \{.*?\n  \}\)",
+              replacement,
+              source,
+              count=1,
+              flags=re.S,
+          )
+          assert count == 1, 'failed to replace pre-cutover parity test'
+
+          replacement = '''  it('keeps generator inputs pure and reaches production through one browser adapter', () => {
+            expect(assertInputPurity()).toEqual([])
+            const productionFiles = filesUnder('src', ['.js', '.jsx'])
+            const generatedImport = /(?:from\\s*|import\\s*\\(\\s*)['\"][^'\"]*generated\\/curriculum\\/navigation\\.js['\"]/
+            const generatedImporters = productionFiles
+              .filter(path => generatedImport.test(readFileSync(resolve(ROOT, path), 'utf8')))
+              .sort()
+            expect(generatedImporters).toEqual(['src/features/subjects/subjectCatalogue.js'])
+
+            const subjectsSource = readFileSync(resolve(ROOT, 'src/features/subjects/Subjects.jsx'), 'utf8')
+            expect(subjectsSource).toContain("from './subjectCatalogue.js'")
+            expect(subjectsSource).not.toContain('generated/curriculum/navigation.js')
+
+            const adapterImport = /from\\s*['\"][^'\"]*subjectCatalogue\\.js['\"]/
+            const adapterConsumers = productionFiles
+              .filter(path => path !== 'src/features/subjects/subjectCatalogue.js')
+              .filter(path => adapterImport.test(readFileSync(resolve(ROOT, path), 'utf8')))
+              .sort()
+            expect(adapterConsumers).toEqual(['src/features/subjects/Subjects.jsx'])
+          })
+          })'''
+
+          source, count = re.subn(
+              r"  it\('reads no browser, compatibility, fixture or planning source and stays inert', \(\) => \{.*?\n  \}\)\n\}\)\s*$",
+              replacement,
+              source,
+              count=1,
+              flags=re.S,
+          )
+          assert count == 1, 'failed to replace inert Stage 5A import gate'
+
+          source = source.replace(
+              "describe('Stage 5A canonical subject-browser navigation', () => {",
+              "describe('Stage 5B canonical subject-browser navigation', () => {",
+          )
+          path.write_text(source)
+          PY
+
+      - name: Update generated-navigation lifecycle documentation
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          generator = Path('scripts/generate-curriculum-navigation.mjs')
+          source = generator.read_text()
+          source = source.replace(
+              '// Stage 5A: renders an inert browser projection from canonical curriculum\n// records plus the isolated browser-entry configuration.',
+              '// Stage 5B: renders the load-bearing browser projection from canonical\n// curriculum records plus the isolated browser-entry configuration.',
+          )
+          source = source.replace(
+              '// The generated runtime file is imported by nothing until Stage 5B. This\n// generator never reads the current subject browser, the runtime compatibility',
+              '// Production reaches the generated runtime file only through the subject\n// browser adapter. This generator never reads the browser UI, runtime compatibility',
+          )
+          source = source.replace(
+              "  '// Stage 5A: this file is deliberately imported by nothing. Stage 5B switches',\n  '// the subject browser onto it after the frozen browser contract passes.',",
+              "  '// Stage 5B: consumed through src/features/subjects/subjectCatalogue.js.',\n  '// Production components must not import this generated file directly.',",
+          )
+          source = source.replace(
+              "    'Stage 5A keeps it inert: no production file imports the generated projection.',",
+              "    'Stage 5B makes it load-bearing through `src/features/subjects/subjectCatalogue.js`.',",
+          )
+          generator.write_text(source)
+
+          readme = Path('src/curriculum-catalogue/navigation/README.md')
+          source = readme.read_text()
+          source = source.replace(
+              '- It is **never imported by production source**. Only\n  `scripts/generate-curriculum-navigation.mjs` reads it; production will read\n  the generated projection after Stage 5B.',
+              '- The configuration itself is **never imported by production source**. Only\n  `scripts/generate-curriculum-navigation.mjs` reads it; production reads the\n  generated projection through the subject-browser adapter.',
+          )
+          source = source.replace(
+              'Stage 5A keeps `src/data/generated/curriculum/navigation.js` inert and imported\nby nothing. Stage 5B is the separate learner-visible authority switch.',
+              'Stage 5B is complete: `src/data/generated/curriculum/navigation.js` is\nload-bearing through `src/features/subjects/subjectCatalogue.js`. UI components\nmust use that adapter rather than importing generated output directly.',
+          )
+          readme.write_text(source)
+          PY
+
+      - name: Regenerate navigation outputs
+        run: pnpm curriculum:navigation:generate
+
+      - name: Verify complete repository
+        run: pnpm verify
+
+      - name: Mobile runtime smoke at 390px
+        run: |
+          pnpm vite --host 127.0.0.1 > /tmp/stage5b-vite.log 2>&1 &
+          VITE_PID=$!
+          trap 'kill $VITE_PID || true' EXIT
+          for attempt in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:5173 >/dev/null; then break; fi
+            sleep 1
+          done
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright'
+
+          const browser = await chromium.launch({ headless: true })
+          const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
+          const pageErrors = []
+          page.on('pageerror', error => pageErrors.push(error.message))
+
+          await page.goto('http://127.0.0.1:5173', { waitUntil: 'networkidle' })
+          await page.getByRole('button', { name: 'Subjects' }).click()
+          await page.getByText('Your subjects', { exact: true }).waitFor()
+
+          const destinations = [
+            ['History', 'Medicine through time'],
+            ['Biology', 'AQA Biology'],
+            ['Chemistry', 'AQA Chemistry'],
+            ['Physics', 'AQA Physics'],
+            ['Maths', 'AQA Mathematics'],
+            ['English', 'Macbeth'],
+            ['Sociology', 'AQA Sociology'],
+          ]
+
+          for (const [label, hero] of destinations) {
+            await page.getByRole('button', { name: new RegExp(`^${label}`) }).first().click()
+            await page.getByText(hero, { exact: true }).first().waitFor()
+            await page.getByRole('button', { name: 'Go back' }).click()
+            await page.getByText('Your subjects', { exact: true }).waitFor()
+          }
+
+          if (pageErrors.length) throw new Error(`runtime page errors: ${pageErrors.join(' | ')}`)
+          await browser.close()
+          NODE
+
+      - name: Commit Stage 5B and remove this one-use workflow
+        run: |
+          rm .github/workflows/stage5b-cutover.yml
+          git config user.name "OpenAI"
+          git config user.email "noreply@openai.com"
+          git add \
+            src/features/subjects/Subjects.jsx \
+            src/features/subjects/subjectCatalogue.js \
+            src/curriculum-catalogue/navigation/README.md \
+            src/data/generated/curriculum/navigation.js \
+            scripts/generate-curriculum-navigation.mjs \
+            docs/curriculum/NAVIGATION_MAP.md \
+            tests/unit/subjects/subjectCatalogue.test.js \
+            tests/architecture/curriculum-navigation.test.js \
+            .github/workflows/stage5b-cutover.yml
+          git commit -m "Switch subject browser to canonical navigation"
+          git push origin HEAD:main
