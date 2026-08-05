@@ -43,7 +43,15 @@ The canonical structural contract for `Subject → Module → Chapter → Screen
 
 `docs/system/CURRICULUM_CATALOGUE.md`
 
-The build-time boundary for curriculum governance: boards, subjects, specifications, study pathways, modules and chapters authored once in `src/curriculum-catalogue/records/`, with generated projections as the only thing the runtime may read. **Migration in progress** — no production code consumes it yet, and `CONTENT_HIERARCHY.md` above remains the governing document for the current runtime hierarchy. Read before adding a curriculum record or changing the catalogue boundary.
+The build-time boundary for curriculum governance: the six curriculum entity types — boards, subjects, specifications, study pathways, modules and chapters — authored once in `src/curriculum-catalogue/records/`, with generated projections as the only thing the runtime may read. **Migration in progress** — no production code consumes it yet, and `CONTENT_HIERARCHY.md` above remains the governing document for the current runtime hierarchy. Read before adding a curriculum record or changing the catalogue boundary.
+
+---
+
+### 1c.0a. Runtime Compatibility Projection
+
+`docs/system/CURRICULUM_RUNTIME_COMPATIBILITY.md`
+
+The field-authority audit for `MODULES`, `CHAPTERS` and `CHAPTER_CONTENT_LOADERS`: which output fields are canonical, which are derived from records or content, and which are non-derivable legacy facts held temporarily in `src/curriculum-catalogue/compatibility/`. Also states the seven legacy module aggregations, the hidden Renaissance row, the excluded English chapters, and the stage that deletes each compatibility field. **Temporary** — retired across Stages 5 and 6. Read before touching the compatibility layer or the generated curriculum projections.
 
 ---
 

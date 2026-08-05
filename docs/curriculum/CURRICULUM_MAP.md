@@ -10,8 +10,7 @@ Boards, specifications, papers and assessment objectives live in
 
 **8** subjects · **14** study pathways · **36** modules · **65** chapters (**30** available, **35** planned)
 
-**60** content bindings — 59 on chapters plus 1 legacy, which is every entry in the runtime
-loader registry.
+**60** content bindings — 59 on chapters plus the one compatibility binding, which is every entry in the runtime loader registry.
 
 **No runtime projection exists yet.** This document and the specification catalogue
 are build-time documentation. `MODULES`, `CHAPTERS` and `CHAPTER_CONTENT_LOADERS`
@@ -524,13 +523,14 @@ would imply learner data that cannot exist.
 
 ### Content the runtime loads for an id that is not a chapter
 
-Read from the `legacyContentBindings` records, not restated here — the reason an id
-is excluded is a catalogue fact, and a documentation script is the wrong place to
-keep the only copy of it.
+Read from `src/curriculum-catalogue/compatibility/runtime-v1.js`, not restated here —
+the reason an id is excluded is a recorded fact, and a documentation script is the
+wrong place to keep the only copy of it. It is compatibility data rather than a
+curriculum record: there are six entity types and this is not a seventh.
 
 - **`history-medicine-renaissance-medicine`** → `src/content/history/medicine/episodes/episode-03-renaissance-medicine.js`
   Superseded by `history-medicine-vesalius-beginning-doubt`.
-  The superseded Renaissance bundle. Hidden from every learner surface and replaced by a narrower chapter, but its id is still a live progress destination — LEGACY_CHAPTER_ID_MAP folds `mod2` onto it — and its loader entry still exists. It gets a binding rather than a retired chapter record, because a retired chapter record would put it back in the catalogue as a chapter, which is exactly what it is not.
+  The superseded Renaissance bundle. Hidden from every learner surface and replaced by a narrower chapter, but its id is still a live progress destination — LEGACY_CHAPTER_ID_MAP folds `mod2` onto it — and its loader entry still exists. It is compatibility data rather than a retired chapter record, because a retired chapter record would put it back in the catalogue as a chapter, which is exactly what it is not.
 
 Preserved is not the same as given a record. Every other current chapter id is
 carried verbatim, including the ones that break the naming rules (`soc1`, `math1`,

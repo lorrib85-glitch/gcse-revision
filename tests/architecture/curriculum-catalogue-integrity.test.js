@@ -20,11 +20,11 @@ import {
   validateStudyPathway,
   validateModule,
   validateChapter,
-  validateLegacyContentBinding,
   checkSerialisable,
   weightingScopes,
   resolveWeighting,
 } from '../../src/curriculum-catalogue/schema.js'
+import { loadCompatibility } from '../../src/curriculum-catalogue/compatibility/index.js'
 import {
   renderCatalogue,
   renderCurriculumMap,
@@ -97,7 +97,6 @@ describe('curriculum catalogue loads', () => {
     const declared = LAYOUT.map(entry => entry.path)
     expect(declared).toEqual([
       'boards.js', 'subjects.js', 'specifications', 'pathways', 'modules', 'chapters',
-      'legacyContentBindings.js',
     ])
     const loaderSource = read(`${CURRICULUM_ROOT}/loadCatalogue.js`)
     expect(loaderSource).toMatch(/readdirSync/)
@@ -1390,8 +1389,11 @@ describe('Stage 2 authored curriculum', () => {
   })
 
   it('excludes the hidden Renaissance bundle while keeping its progress reachable', async () => {
-    const { chapters, legacyContentBindings } = await loadCatalogue()
-    const [binding] = legacyContentBindings
+    const { chapters } = await loadCatalogue()
+    // The bundle is compatibility data, not a seventh entity type — see
+    // tests/architecture/curriculum-compatibility.test.js.
+    const { hiddenChapter } = loadCompatibility()
+    const binding = { id: hiddenChapter.row.id, contentPath: hiddenChapter.contentPath }
     expect(binding.id).toBe('history-medicine-renaissance-medicine')
     expect(chapters.some(chapter => chapter.id === binding.id)).toBe(false)
     // Excluded from the catalogue as a chapter, still whole in the runtime and
@@ -1572,15 +1574,16 @@ describe('chapter content bindings', () => {
   })
 
   it('reproduces every one of the 60 runtime loader entries', async () => {
-    const { chapters, legacyContentBindings } = await loadCatalogue()
+    const { chapters } = await loadCatalogue()
     const paths = loaderPaths()
     const reproduced = new Map()
     for (const chapter of chapters) {
       if (chapter.contentPath !== null) reproduced.set(chapter.id, chapter.contentPath)
     }
-    // The hidden legacy loader has no chapter record and is reproduced from its
-    // binding — the reason the binding record type exists at all.
-    for (const binding of legacyContentBindings) reproduced.set(binding.id, binding.contentPath)
+    // The hidden legacy loader has no chapter record. It is reproduced from the
+    // compatibility projection — the reason that projection exists at all.
+    const { hiddenChapter } = loadCompatibility()
+    reproduced.set(hiddenChapter.row.id, hiddenChapter.contentPath)
 
     expect(reproduced.size).toBe(Object.keys(paths).length)
     expect(reproduced.size).toBe(60)
@@ -1633,10 +1636,10 @@ describe('chapter content bindings', () => {
   })
 
   it('binds each content path to exactly one owner', async () => {
-    const { chapters, legacyContentBindings } = await loadCatalogue()
+    const { chapters } = await loadCatalogue()
     const all = [
       ...chapters.filter(chapter => chapter.contentPath !== null).map(chapter => chapter.contentPath),
-      ...legacyContentBindings.map(binding => binding.contentPath),
+      loadCompatibility().hiddenChapter.contentPath,
     ]
     expect(new Set(all).size).toBe(all.length)
     // And the guard fires: two records claiming one file is a registry that
@@ -1647,42 +1650,15 @@ describe('chapter content bindings', () => {
         { id: 'a', status: 'planned', contentPath: 'src/content/x.js', requirementIds: [], conceptIds: [] },
         { id: 'b', status: 'planned', contentPath: 'src/content/x.js', requirementIds: [], conceptIds: [] },
       ],
-      legacyContentBindings: [],
     })
     expect(problems.join(' ')).toMatch(/is bound by both "a" and "b"/)
   })
 
-  it('rejects a legacy binding that competes with a chapter record', async () => {
-    const chapter = {
-      id: 'soc4', status: 'available', contentPath: 'src/content/sociology/families/episodes/soc4.js',
-      requirementIds: [], conceptIds: [],
-    }
-    const problems = checkIntegrity({
-      boards: [], subjects: [], specifications: [], pathways: [], modules: [],
-      chapters: [chapter],
-      legacyContentBindings: [{ id: 'soc4', contentPath: 'src/content/other.js', supersededBy: null, reason: 'x' }],
-    })
-    expect(problems.join(' ')).toMatch(/also has a chapter record/)
-  })
-
-  it('validates the binding record itself', async () => {
-    const { legacyContentBindings } = await loadCatalogue()
-    expect(legacyContentBindings).toHaveLength(1)
-    expect(validateLegacyContentBinding(legacyContentBindings[0])).toEqual([])
-    const [binding] = legacyContentBindings
-    expect(validateLegacyContentBinding({ ...binding, contentPath: null }).join(' '))
-      .toMatch(/a binding with no path binds nothing/)
-    expect(validateLegacyContentBinding({ ...binding, reason: '' }).join(' '))
-      .toMatch(/must say why this id is not a chapter/)
-    expect(validateLegacyContentBinding({ ...binding, status: 'retired' }).join(' '))
-      .toMatch(/legacyContentBinding\.status is not a known field/)
-    // A superseded id must be superseded by something that still exists.
-    const problems = checkIntegrity({
-      boards: [], subjects: [], specifications: [], pathways: [], modules: [], chapters: [],
-      legacyContentBindings: [{ ...binding, supersededBy: 'nothing-like-this' }],
-    })
-    expect(problems.join(' ')).toMatch(/superseded by "nothing-like-this", which has no chapter record/)
-  })
+  // The two tests that used to live here — "rejects a legacy binding that
+  // competes with a chapter record" and "validates the binding record itself" —
+  // moved to tests/architecture/curriculum-compatibility.test.js with the fact
+  // they guard. A binding was never a seventh curriculum entity; it is
+  // compatibility data, and its validation belongs with the rest of it.
 })
 
 // ─── Science paper mappings ────────────────────────────────────────────────

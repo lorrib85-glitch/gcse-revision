@@ -41,10 +41,12 @@ export const LAYOUT = [
   { type: 'studyPathway', collection: 'pathways', shape: 'perFile', path: 'pathways' },
   { type: 'module', collection: 'modules', shape: 'perFile', path: 'modules' },
   { type: 'chapter', collection: 'chapters', shape: 'nested', path: 'chapters' },
-  // Content the runtime still loads for an id that is not a chapter. One record
-  // today, read together with nothing else, so a grouped file rather than a
-  // directory of one.
-  { type: 'legacyContentBinding', collection: 'legacyContentBindings', shape: 'grouped', path: 'legacyContentBindings.js' },
+  // There are six entity types and there is no seventh. Content the runtime
+  // still loads for an id that is not a chapter used to sit here as
+  // `legacyContentBindings`; it was never curriculum, it was scaffolding for
+  // the pre-cutover runtime interface, and it now lives in
+  // `../compatibility/runtime-v1.js` where it is deleted with the rest of that
+  // scaffolding rather than surviving as an entity type.
 ]
 
 /** All `.js` files under `dir`, relative to it, sorted so load order never

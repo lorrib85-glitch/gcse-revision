@@ -923,42 +923,24 @@ export function referenceIsLive(referrerStatus, targetStatus) {
   return RETIRED_STATUSES.includes(referrerStatus)
 }
 
-const LEGACY_BINDING_KEYS = ['id', 'contentPath', 'supersededBy', 'reason']
+// A content file the runtime still loads for an id the curriculum does not own
+// as a chapter is NOT a record type. There is exactly one today — the hidden
+// `history-medicine-renaissance-medicine` bundle — and it is compatibility
+// data, validated by `compatibility/index.js`. Giving it a validator here would
+// make it a seventh entity type by the back door.
 
 /**
- * A content file the runtime still loads for an id the curriculum no longer
- * owns as a chapter.
+ * The six curriculum entity types. There is no seventh.
  *
- * There is exactly one today: `history-medicine-renaissance-medicine`, the
- * superseded hidden bundle. It has a live loader entry and a live progress
- * key (`LEGACY_CHAPTER_ID_MAP.mod2` resolves to it) but deliberately no chapter
- * record — it is not a chapter, and giving it a `retired` chapter record would
- * put it back in the catalogue as one.
- *
- * Without this record the loader registry could not be reproduced from the
- * catalogue, and the missing entry would have to live in a documentation
- * script — a compatibility-critical fact in the one place nothing enforces it.
- * A binding is not a chapter: it has no module, no order, no status and no
- * learner surface. It says only "this path is still loaded, and here is why".
+ * Compatibility data — the facts that exist only to reproduce the pre-cutover
+ * runtime interface — is deliberately absent. It lives in
+ * `compatibility/runtime-v1.js`, is validated by `compatibility/index.js`, and
+ * is deleted at Stage 5/6. Counting it here would make the scaffolding part of
+ * the structure it exists to hold up.
  */
-export function validateLegacyContentBinding(record) {
-  const errors = []
-  if (!isPlainObject(record)) return ['legacy content binding must be an object']
-  checkKeys(errors, 'legacyContentBinding', record, LEGACY_BINDING_KEYS)
-
-  checkId(errors, 'legacyContentBinding.id', record.id, { pattern: STABLE_ID })
-  if (!isNonEmptyString(record.contentPath) || !record.contentPath.startsWith('src/content/')) {
-    errors.push('legacyContentBinding.contentPath must be a src/content/… path — a binding with no path binds nothing')
-  }
-  if (record.supersededBy !== null) {
-    checkId(errors, 'legacyContentBinding.supersededBy', record.supersededBy, { pattern: STABLE_ID })
-  }
-  if (!isNonEmptyString(record.reason)) {
-    errors.push('legacyContentBinding.reason must say why this id is not a chapter')
-  }
-  checkSerialisable(errors, 'legacyContentBinding', record)
-  return errors
-}
+export const CURRICULUM_ENTITY_TYPES = [
+  'board', 'subject', 'specification', 'studyPathway', 'module', 'chapter',
+]
 
 /** Every entity type the catalogue validates, with its validator. */
 export const RECORD_TYPES = {
@@ -968,5 +950,4 @@ export const RECORD_TYPES = {
   studyPathway: validateStudyPathway,
   module: validateModule,
   chapter: validateChapter,
-  legacyContentBinding: validateLegacyContentBinding,
 }

@@ -22,6 +22,7 @@ import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 
 import { loadCatalogue } from '../src/curriculum-catalogue/index.js'
+import { loadCompatibility } from '../src/curriculum-catalogue/compatibility/index.js'
 import { OVERALL_SCOPE, resolveWeighting, weightingScopes } from '../src/curriculum-catalogue/schema.js'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -454,6 +455,7 @@ function renderModulesAndChapters(lines, catalogue) {
 }
 
 function renderMigration(lines, catalogue) {
+  const { hiddenChapter } = loadCompatibility()
   const chapterById = new Map(catalogue.chapters.map(chapter => [chapter.id, chapter]))
   lines.push('## Legacy and placeholder treatment')
   lines.push('')
@@ -473,16 +475,15 @@ function renderMigration(lines, catalogue) {
   lines.push('')
   lines.push('### Content the runtime loads for an id that is not a chapter')
   lines.push('')
-  lines.push('Read from the `legacyContentBindings` records, not restated here — the reason an id')
-  lines.push('is excluded is a catalogue fact, and a documentation script is the wrong place to')
-  lines.push('keep the only copy of it.')
+  lines.push('Read from `src/curriculum-catalogue/compatibility/runtime-v1.js`, not restated here —')
+  lines.push('the reason an id is excluded is a recorded fact, and a documentation script is the')
+  lines.push('wrong place to keep the only copy of it. It is compatibility data rather than a')
+  lines.push('curriculum record: there are six entity types and this is not a seventh.')
   lines.push('')
-  for (const binding of catalogue.legacyContentBindings) {
-    lines.push(`- **\`${binding.id}\`** → \`${binding.contentPath}\``)
-    if (binding.supersededBy) lines.push(`  Superseded by \`${binding.supersededBy}\`.`)
-    lines.push(`  ${escape(binding.reason)}`)
-    lines.push('')
-  }
+  lines.push(`- **\`${hiddenChapter.row.id}\`** → \`${hiddenChapter.contentPath}\``)
+  if (hiddenChapter.supersededBy) lines.push(`  Superseded by \`${hiddenChapter.supersededBy}\`.`)
+  lines.push(`  ${escape(hiddenChapter.reason)}`)
+  lines.push('')
   lines.push('Preserved is not the same as given a record. Every other current chapter id is')
   lines.push('carried verbatim, including the ones that break the naming rules (`soc1`, `math1`,')
   lines.push('`bio_building_blocks`, `sci_bio_w1`, `spain-new-world-1`), because each backs a live')
@@ -494,7 +495,7 @@ export function renderCurriculumMap(catalogue) {
   const { subjects, pathways, modules, chapters } = catalogue
   const available = chapters.filter(chapter => chapter.status === 'available').length
   const boundChapters = chapters.filter(chapter => chapter.contentPath !== null).length
-  const bound = boundChapters + catalogue.legacyContentBindings.length
+  const bound = boundChapters + 1
   const lines = []
 
   lines.push('# Curriculum map')
@@ -511,9 +512,8 @@ export function renderCurriculumMap(catalogue) {
     + `**${modules.length}** modules · **${chapters.length}** chapters `
     + `(**${available}** available, **${chapters.length - available}** planned)`)
   lines.push('')
-  lines.push(`**${bound}** content bindings — ${boundChapters} on chapters plus `
-    + `${catalogue.legacyContentBindings.length} legacy, which is every entry in the runtime`)
-  lines.push('loader registry.')
+  lines.push(`**${bound}** content bindings — ${boundChapters} on chapters plus the one `
+    + 'compatibility binding, which is every entry in the runtime loader registry.')
   lines.push('')
   lines.push('**No runtime projection exists yet.** This document and the specification catalogue')
   lines.push('are build-time documentation. `MODULES`, `CHAPTERS` and `CHAPTER_CONTENT_LOADERS`')

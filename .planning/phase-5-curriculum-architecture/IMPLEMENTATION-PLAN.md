@@ -165,6 +165,25 @@ exist* and *report* newly-correct positions rather than failing on them — and
 the report is reviewed, not auto-accepted, because a route moving from screen 0
 to screen 14 is a learner-visible change even though no code changed.
 
+**The compatibility projection.** The catalogue describes 8 subjects, 14
+pathways, 36 modules and 65 chapters; the runtime interface exposes 7 modules,
+60 chapters and 60 loaders. Stage 3 therefore lands
+`src/curriculum-catalogue/compatibility/runtime-v1.js` — an isolated, validated,
+build-time-only source holding the minimum non-derivable facts that reproduce
+the OLD interface: the seven legacy module aggregations, the runtime row and
+loader orders, the legacy-only chapter fields (`number`, `series`, `color`,
+`colorLight`, facet tags), the hidden Renaissance row, and the explicit
+exclusion of the six planned English chapters.
+
+It is **not a curriculum entity**. `legacyContentBindings` — filed under
+`records/` at Stage 2 and loaded through `RECORD_TYPES`, which made it a seventh
+entity type by accident — is reclassified into it. There are six entity types
+and there is no seventh.
+
+Every compatibility field names the stage that deletes it, and validation fails
+for any field that does not. Full contract and the field-authority audit:
+`docs/system/CURRICULUM_RUNTIME_COMPATIBILITY.md`.
+
 **Still no runtime change.** `pnpm verify` now checks the projections are
 current and that they agree with the authored files.
 
@@ -202,6 +221,11 @@ and nothing else. After it, the catalogue is load-bearing.
 **Still no learner-visible change.** A chapter renders identically, in the same
 order, with the same progress.
 
+**The compatibility projection is unchanged and still required.** Stage 4 moves
+where the three files get their data, not what that data is, so the projection
+must keep producing the identical interface. Nothing in
+`src/curriculum-catalogue/compatibility/` is deleted at this stage.
+
 ---
 
 ## Stage 5 — navigation moves off the hardcoded literals
@@ -227,6 +251,14 @@ reading it instead of eight hardcoded literals:
 
 `subjectCatalogue.js` is deleted; its job becomes a projection.
 
+**Retires most of the compatibility projection.** Once navigation reads
+canonical records, the canonical navigation projection supersedes
+`legacyModules`, `chapterOrder`, `loaderSectionAnchors`, `chapterFields.number`,
+`.series`, `.color`, `.colorLight` and `excludedChapterIds` — every one of them
+deleted here. No compatibility field may leak into the navigation projection;
+the fields that survive Stage 5 do so because something older than navigation
+still reads them.
+
 **Behaviour that must not change:** the seven browsable subjects, chapter order,
 which cards are openable, and every progress percentage. The `cs_*` cards change
 identity but must render the same titles, subtitles and coming-soon state.
@@ -248,6 +280,10 @@ decision, made visible here but decided separately.
 - `src/data/tagChapterMap.js`'s hand-maintained map — chapter routing becomes a
   concept→chapter query, which also resolves A-8's 21 unregistered `maths:*`
   tags and A-20's 13 broken routes;
+- `src/curriculum-catalogue/compatibility/` in full — `chapterFields.facetTags`
+  goes with `tagChapterMap`, and the hidden Renaissance row goes with
+  `LEGACY_CHAPTER_ID_MAP`. Those were the only two compatibility facts that
+  outlived Stage 5, and neither has a reader once this stage lands;
 - every drift test in `CENSUS.md` §2 whose two sources have collapsed into one:
   `extracted-chapter-contract` Rule 1, the `screenTags.length` check, the
   module/chapter subject equality check, and the loader-presence checks in

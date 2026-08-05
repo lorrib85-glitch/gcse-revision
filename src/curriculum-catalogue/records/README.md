@@ -26,7 +26,6 @@ else. There is no list of records anywhere.
 | `pathways/<id>.js` | one file per record | Same reasoning; a pathway changes when a school's option choices change. |
 | `modules/<id>.js` | one file per record | Each is edited independently when its chapters change. |
 | `chapters/<subject>/<module>.js` | one file per module, array of records | The fastest-growing set. Adding a chapter is almost always adding it to a module that already exists, so a per-module file keeps that a one-file edit and keeps `position` values visible next to each other. |
-| `legacyContentBindings.js` | one file, array of records | Content the runtime still loads for ids the curriculum does not own as chapters. One record today, read with nothing else. |
 
 For the per-file shapes the **filename is the record id** — a record cannot be
 found under a name that disagrees with what it calls itself.
@@ -112,12 +111,13 @@ null path. A file appearing never promotes a chapter — only `status` does.
 The six chapters converted from browse-surface placeholder cards have no file at
 all, so their path is `null` and they generate no loader entry.
 
-`legacyContentBindings.js` covers the remaining case: a content file the runtime
-loads for an id that is **not** a chapter. There is one —
-`history-medicine-renaissance-medicine`, the superseded hidden bundle, whose id
-is still a live progress destination. A binding has no module, no position, no
-status and no learner surface; it states only that a path is still loaded and
-why. Chapters plus bindings reproduce the loader registry exactly.
+One remaining case is **not** a record: a content file the runtime loads for an
+id that is not a chapter. There is one — `history-medicine-renaissance-medicine`,
+the superseded hidden bundle, whose id is still a live progress destination. It
+has no module, no position, no status and no learner surface; it states only
+that a path is still loaded and why. That makes it compatibility data, not a
+seventh entity type, so it lives in `../compatibility/runtime-v1.js`. Chapters
+plus that one binding reproduce the loader registry exactly.
 
 ## Persisted progress names
 

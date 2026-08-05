@@ -7,10 +7,11 @@ study pathways, modules and chapters.
 Design detail lives in `.planning/phase-5-curriculum-architecture/DESIGN.md`;
 the migration sequence in that directory's `IMPLEMENTATION-PLAN.md`.
 
-> **Migration status: Stage 1 of 6.** Boards and specifications are authored.
-> Subjects, pathways, modules and chapters arrive at Stage 2. **No production
-> code consumes the catalogue.** `MODULES`, `CHAPTERS` and
-> `CHAPTER_CONTENT_LOADERS` remain hand-authored exactly as they are, and
+> **Migration status: Stage 3 of 6.** All six entity types are authored, and the
+> runtime projections are generated and parity-checked against the hand-authored
+> files. **No production code consumes the catalogue.** `MODULES`, `CHAPTERS` and
+> `CHAPTER_CONTENT_LOADERS` remain hand-authored exactly as they are — Stage 4 is
+> what makes them re-export the projections — and
 > `docs/system/CONTENT_HIERARCHY.md` remains the governing document for the
 > current runtime hierarchy until Stage 6 replaces it.
 
@@ -22,15 +23,20 @@ src/curriculum-catalogue/          authored records — BUILD TIME ONLY
         ├─ schema.js               validates one record in isolation
         ├─ loadCatalogue.js        deterministic filesystem loader
         ├─ index.js                validates the relationships between records
-        └─ records/                the authored facts
+        ├─ records/                the authored facts — SIX entity types
+        └─ compatibility/          TEMPORARY. Not curriculum. Deleted at Stage 5/6
         │
         ▼
-scripts/generate-curriculum-catalogue.mjs
-        │
-        ├──► docs/curriculum/SPECIFICATION_CATALOGUE.md      generated documentation
-        └──► src/data/generated/curriculum/**                generated projections (Stage 3)
-                                                             ── the only thing the runtime may read
+scripts/generate-curriculum-catalogue.mjs      ──► docs/curriculum/*.md
+scripts/generate-curriculum-projections.mjs    ──► src/data/generated/curriculum/**
+                                                    ── the only thing the runtime may read
 ```
+
+There are **six curriculum entity types** — board, subject, specification, study
+pathway, module, chapter — and there is no seventh. Facts that exist only to
+reproduce the pre-cutover runtime interface live in `compatibility/`, carry a
+deletion stage, and are never counted as curriculum. See
+`docs/system/CURRICULUM_RUNTIME_COMPATIBILITY.md`.
 
 Two rules define the boundary, and both are enforced:
 
@@ -77,12 +83,15 @@ In short:
 ## Commands
 
 ```bash
-pnpm curriculum:generate   # write docs/curriculum/SPECIFICATION_CATALOGUE.md
-pnpm curriculum:check      # fail if the committed document has drifted
+pnpm curriculum:generate               # write docs/curriculum/*.md
+pnpm curriculum:check                  # fail if the committed documents have drifted
+pnpm curriculum:projections:generate   # write src/data/generated/curriculum/**
+pnpm curriculum:projections:check      # fail on drift, or on any runtime parity break
+pnpm curriculum:projections:report     # write the screenTags review artefact
 ```
 
-`curriculum:check` runs inside `pnpm verify`, after the component-domain checks
-and before the test suites — the same position `catalogue:check` occupies for
+`curriculum:check` and `curriculum:projections:check` both run inside
+`pnpm verify`, after the component-domain checks and before the test suites — the same position `catalogue:check` occupies for
 components. It is a generator check, so it belongs with the other generator
 checks and ahead of anything that might consume their output.
 
