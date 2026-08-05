@@ -129,6 +129,12 @@ jobs:
             await page.getByRole('button', { name: 'Continue →' }).click()
           }
 
+          const streakDialog = page.getByRole('dialog', { name: /day streak/ })
+          if (await streakDialog.isVisible().catch(() => false)) {
+            await streakDialog.getByRole('button', { name: 'Continue' }).click()
+            await streakDialog.waitFor({ state: 'hidden' })
+          }
+
           await page.getByRole('button', { name: 'Subjects' }).waitFor()
           await page.getByRole('button', { name: 'Subjects' }).click()
           await page.getByText('Your subjects', { exact: true }).waitFor()
