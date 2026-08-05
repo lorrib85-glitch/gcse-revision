@@ -123,6 +123,12 @@ jobs:
           if (await guest.isVisible().catch(() => false)) {
             await guest.click()
           }
+          const nameInput = page.getByPlaceholder('Your name')
+          if (await nameInput.isVisible().catch(() => false)) {
+            await nameInput.fill('Stage Five')
+            await page.getByRole('button', { name: 'Continue →' }).click()
+          }
+
           await page.getByRole('button', { name: 'Subjects' }).waitFor()
           await page.getByRole('button', { name: 'Subjects' }).click()
           await page.getByText('Your subjects', { exact: true }).waitFor()
