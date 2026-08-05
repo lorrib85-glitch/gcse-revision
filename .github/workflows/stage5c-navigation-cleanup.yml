@@ -42,6 +42,9 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Tighten finalizer replacement
+        run: python .github/scripts/fix_stage5c_finalize.py
+
       - name: Finalize Stage 5C architecture records
         run: python .github/scripts/stage5c_finalize.py
 
