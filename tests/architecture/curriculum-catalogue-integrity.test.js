@@ -36,6 +36,19 @@ import {
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const read = rel => readFileSync(resolve(root, rel), 'utf8')
 
+/**
+ * The pre-cutover loader targets, chapter id → project-relative content path.
+ *
+ * Read from the frozen contract, not from `src/content/chapterContentRegistry.js`.
+ * Since Stage 4 that file re-exports the generated projection, which is itself
+ * built from these records — parsing it would compare the catalogue with
+ * itself. `tests/fixtures/curriculum-runtime-v1.json` is the independent
+ * capture of what the registry held before the cutover.
+ */
+const FROZEN_RUNTIME = JSON.parse(read('tests/fixtures/curriculum-runtime-v1.json'))
+const frozenLoaderPaths = () =>
+  Object.fromEntries(FROZEN_RUNTIME.loaders.map(loader => [loader.id, loader.contentPath]))
+
 const CURRICULUM_ROOT = 'src/curriculum-catalogue'
 const COMPONENT_ROOT = 'src/component-catalogue'
 
@@ -268,13 +281,16 @@ describe('curriculum catalogue is never reachable from production source', () =>
     }
   })
 
-  it('leaves the runtime catalogue files hand-authored', () => {
-    // Stage 3 generates the projections but does NOT wire them in. These three
-    // stay hand-authored until Stage 4 turns them into re-exports (D-11).
+  it('keeps the three runtime files as re-exports that never reach the catalogue', () => {
+    // Stage 4 (D-11): these three re-export the generated projections and keep
+    // their export names. They are not themselves generated, and the catalogue
+    // still reaches production only through the generated output.
+    const reachesCatalogue = /(?:from\s*|import\s*\(?\s*)['"][^'"]*curriculum-catalogue/
     for (const file of ['src/data/modules.js', 'src/chapters.js', 'src/content/chapterContentRegistry.js']) {
       const source = read(file)
-      expect(source, `${file} became generated too early`).not.toMatch(/GENERATED FILE/)
-      expect(source, `${file} reaches the curriculum catalogue`).not.toMatch(/curriculum-catalogue/)
+      expect(source, `${file} became a generated file`).not.toMatch(/GENERATED FILE/)
+      expect(source, `${file} imports the curriculum catalogue`).not.toMatch(reachesCatalogue)
+      expect(source, `${file} is not a re-export`).toMatch(/^export\s*\{[^}]*\}\s*from\s*'[^']*generated\/curriculum\//m)
     }
   })
 })
@@ -1414,11 +1430,7 @@ describe('Stage 2 authored curriculum', () => {
 
   it('binds every available chapter to the content file it already loads', async () => {
     const { chapters } = await loadCatalogue()
-    const registry = read('src/content/chapterContentRegistry.js')
-    const loaderPath = {}
-    for (const match of registry.matchAll(/'([^']+)':\s*\(\)\s*=>\s*import\('\.\/([^']+)'\)/g)) {
-      loaderPath[match[1]] = `src/content/${match[2]}`
-    }
+    const loaderPath = frozenLoaderPaths()
     for (const chapter of chapters) {
       // Status does not decide the binding: a chapter is bound to the file the
       // runtime already loads for it, and to null only when no file exists.
@@ -1558,14 +1570,7 @@ describe('generated curriculum map', () => {
 // registry unreproducible from the catalogue.
 
 describe('chapter content bindings', () => {
-  const loaderPaths = () => {
-    const registry = read('src/content/chapterContentRegistry.js')
-    const paths = {}
-    for (const match of registry.matchAll(/'([^']+)':\s*\(\)\s*=>\s*import\('\.\/([^']+)'\)/g)) {
-      paths[match[1]] = `src/content/${match[2]}`
-    }
-    return paths
-  }
+  const loaderPaths = frozenLoaderPaths
 
   it('preserves the existing content binding of all 59 non-hidden chapters', async () => {
     const { chapters } = await loadCatalogue()

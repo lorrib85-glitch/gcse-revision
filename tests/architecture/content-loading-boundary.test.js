@@ -47,11 +47,10 @@ describe('Content-loading boundary — retired subject-bundle pattern', () => {
 describe('Content-loading boundary — one canonical registry owner', () => {
   it('chapterContentRegistry.js is the sole CHAPTER_CONTENT_LOADERS definition', () => {
     const registryPath = resolve(root, 'src/content/chapterContentRegistry.js')
-    // The Stage 3 projection declares the same symbol by design and is imported
-    // by nothing — Stage 4 is what makes the registry re-export it. Until then
-    // it is a generated candidate, not a competing owner; the parity gate in
-    // tests/architecture/curriculum-projection-parity.test.js proves no
-    // production file reaches it.
+    // Since Stage 4 the registry re-exports the generated projection, which
+    // declares the symbol. That is not a competing owner: the projection is
+    // reachable only through this file, proved by the boundary tests in
+    // tests/architecture/curriculum-projection-parity.test.js.
     const generatedProjection = resolve(root, 'src/data/generated/curriculum')
     const violators = allSrcFiles.filter(file => {
       if (file === registryPath) return false

@@ -15,14 +15,18 @@
 // Deterministic: same records in, same bytes out. No timestamps, no environment
 // reads, no absolute paths.
 //
-// ── Stage 3 is behaviour-preserving ────────────────────────────────────────
+// ── These files are the runtime (Stage 4) ──────────────────────────────────
 //
-// These files are NOT re-exported by anything. `src/data/modules.js`,
-// `src/chapters.js` and `src/content/chapterContentRegistry.js` stay
-// hand-authored and untouched; Stage 4 is what changes that. What this
-// generator buys today is the parity gate: `--check` proves the projection
-// reproduces the hand-authored runtime EXACTLY, so Stage 4 becomes a
-// three-line diff with evidence behind it.
+// `src/data/modules.js`, `src/chapters.js` and
+// `src/content/chapterContentRegistry.js` re-export them and nothing else, so
+// this output is what the app runs on. Those three stay the public import path
+// for every consumer; nothing else may import this directory.
+//
+// The parity gate no longer compares them with a hand-authored runtime —
+// there isn't one. It compares them with
+// `tests/fixtures/curriculum-runtime-v1.json`, a frozen semantic capture of the
+// pre-cutover interface, so the comparison stays independent now that the three
+// runtime files are re-exports.
 //
 // ── Permitted inputs, and only these ───────────────────────────────────────
 //
@@ -55,8 +59,15 @@ export const REPORT_PATH = 'docs/curriculum/SCREEN_TAG_REVIEW.md'
 /** How `src/…` is spelled from inside `src/data/generated/curriculum/`. */
 export const LOADER_PATH_PREFIX = '../../../'
 
-/** The three runtime files whose data this generator reproduces and must never read. */
-export const HANDWRITTEN_RUNTIME_FILES = [
+/**
+ * The three public boundary files this generator's output is re-exported by.
+ *
+ * The generator must never read them. Before Stage 4 they were hand-authored
+ * and reading them would have made the parity gate compare a file with itself;
+ * after Stage 4 they re-export this output, and reading them would do the same
+ * thing through one more hop. Either way they are output, never input.
+ */
+export const RUNTIME_BOUNDARY_FILES = [
   'src/data/modules.js',
   'src/chapters.js',
   'src/content/chapterContentRegistry.js',
@@ -75,8 +86,16 @@ const BANNER = [
   '// GENERATED FILE — DO NOT EDIT.',
   '//',
   '// Run `pnpm curriculum:projections:generate` after changing a record.',
-  '// `pnpm curriculum:projections:check` fails if this file has drifted, or if it',
-  '// stops matching the hand-authored runtime it reproduces.',
+  '// `pnpm curriculum:projections:check` fails if this file has drifted from the',
+  '// records it is projected from.',
+  '//',
+  '// This is the runtime. src/data/modules.js, src/chapters.js and',
+  '// src/content/chapterContentRegistry.js re-export these files and nothing',
+  '// else; they remain the import path for every consumer.',
+  '//',
+  '// Checked against tests/fixtures/curriculum-runtime-v1.json — the frozen',
+  '// pre-cutover contract — by tests/architecture/curriculum-projection-parity',
+  '// .test.js. There is no hand-authored runtime left to compare with.',
   '//',
   '// Source: the authored records under src/curriculum-catalogue/, projected',
   '// through scripts/generate-curriculum-projections.mjs.',
@@ -107,10 +126,10 @@ export function assertInputPurity(source = readFileSync(resolve(ROOT, 'scripts/g
     if (specifier.includes('tests/fixtures/') || specifier.endsWith('curriculum-runtime-v1.json')) {
       problems.push(`reads "${specifier}" — the frozen runtime fixture is never a generator input`)
     }
-    for (const file of HANDWRITTEN_RUNTIME_FILES) {
+    for (const file of RUNTIME_BOUNDARY_FILES) {
       const stem = file.split('/').pop()
       if (specifier.endsWith(`/${stem}`) && !specifier.includes('/generated/')) {
-        problems.push(`reads "${specifier}" — the hand-authored runtime is never a generator input`)
+        problems.push(`reads "${specifier}" — a runtime boundary file is never a generator input`)
       }
     }
   }

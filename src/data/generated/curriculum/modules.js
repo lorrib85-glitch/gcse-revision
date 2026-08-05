@@ -1,8 +1,16 @@
 // GENERATED FILE — DO NOT EDIT.
 //
 // Run `pnpm curriculum:projections:generate` after changing a record.
-// `pnpm curriculum:projections:check` fails if this file has drifted, or if it
-// stops matching the hand-authored runtime it reproduces.
+// `pnpm curriculum:projections:check` fails if this file has drifted from the
+// records it is projected from.
+//
+// This is the runtime. src/data/modules.js, src/chapters.js and
+// src/content/chapterContentRegistry.js re-export these files and nothing
+// else; they remain the import path for every consumer.
+//
+// Checked against tests/fixtures/curriculum-runtime-v1.json — the frozen
+// pre-cutover contract — by tests/architecture/curriculum-projection-parity
+// .test.js. There is no hand-authored runtime left to compare with.
 //
 // Source: the authored records under src/curriculum-catalogue/, projected
 // through scripts/generate-curriculum-projections.mjs.

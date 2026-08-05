@@ -7,10 +7,10 @@
 //
 // Stage 3 compared the generated projections with the hand-authored
 // `src/data/modules.js`, `src/chapters.js` and
-// `src/content/chapterContentRegistry.js`. Stage 4 makes those three files
-// re-export the generated projections — so from the cutover commit onwards,
-// importing them here would compare the generated files with themselves. The
-// gate would be green by construction and would prove nothing.
+// `src/content/chapterContentRegistry.js`. Stage 4 made those three files
+// re-export the generated projections — so importing them here would now
+// compare the generated files with themselves. The gate would be green by
+// construction and would prove nothing.
 //
 // So the comparison moved off the runtime and onto
 // `tests/fixtures/curriculum-runtime-v1.json`: a frozen, semantic capture of
@@ -48,7 +48,7 @@ import {
   LOADERS_PATH,
   REPORT_PATH,
   FROZEN_RUNTIME_FIXTURE,
-  HANDWRITTEN_RUNTIME_FILES,
+  RUNTIME_BOUNDARY_FILES,
 } from '../../scripts/generate-curriculum-projections.mjs'
 
 // The generated projections — the thing under test.
@@ -91,7 +91,7 @@ describe('the frozen runtime contract', () => {
 
   it('records the exact runtime it was captured from', () => {
     expect(fixture.contract.provenance.commit).toBe(FIXTURE_PROVENANCE_COMMIT)
-    expect(fixture.contract.provenance.capturedFrom).toEqual(HANDWRITTEN_RUNTIME_FILES)
+    expect(fixture.contract.provenance.capturedFrom).toEqual(RUNTIME_BOUNDARY_FILES)
     expect(fixture.contract.provenance.capturedWhen).toMatch(/still hand-authored/)
   })
 
@@ -104,12 +104,12 @@ describe('the frozen runtime contract', () => {
   })
 
   it('is never read by production source or by the generator', () => {
-    const reaches = /curriculum-runtime-v1|tests\/fixtures\//
+    // Anchored to a real read, not to any mention: the generator names the
+    // fixture in order to forbid it, and the generated banner names it to say
+    // what checks it. Naming is not reading.
+    const reads = /(?:from\s*|import\s*\(?\s*|readFileSync\s*\(\s*)['"][^'"]*(?:curriculum-runtime-v1\.json|tests\/fixtures\/)/
     const offenders = [...listFiles('src'), ...listFiles('scripts')]
-      .filter(file => reaches.test(read(file)))
-      // The generator NAMES the fixture to forbid it; naming is not reading,
-      // and `assertInputPurity` below is what proves the difference.
-      .filter(file => file !== 'scripts/generate-curriculum-projections.mjs')
+      .filter(file => reads.test(read(file)))
     expect(offenders, 'the frozen contract is test-only').toEqual([])
     expect(assertInputPurity(`readFileSync('${FROZEN_RUNTIME_FIXTURE}')`).join(' '))
       .toMatch(/frozen runtime fixture is never a generator input/)
@@ -119,7 +119,7 @@ describe('the frozen runtime contract', () => {
     expect(fixture.modules).toHaveLength(7)
     expect(fixture.chapters).toHaveLength(60)
     expect(fixture.loaders).toHaveLength(60)
-    expect(Object.keys(fixture.exports).sort()).toEqual([...HANDWRITTEN_RUNTIME_FILES].sort())
+    expect(Object.keys(fixture.exports).sort()).toEqual([...RUNTIME_BOUNDARY_FILES].sort())
     // Field ABSENCE is part of the contract, so the absences are counted here
     // as well as compared row by row below.
     expect(fixture.chapters.filter(chapter => 'series' in chapter)).toHaveLength(39)
@@ -536,11 +536,11 @@ describe('the projections generator is governed', () => {
     }
   })
 
-  it('never reads .planning/**, the frozen fixture, or the runtime files', () => {
+  it('never reads .planning/**, the frozen fixture, or a runtime boundary file', () => {
     expect(assertInputPurity()).toEqual([])
     // …and the guard fires on the three things it exists to catch.
     expect(assertInputPurity("import { CHAPTERS } from '../src/chapters.js'").join(' '))
-      .toMatch(/hand-authored runtime is never a generator input/)
+      .toMatch(/runtime boundary file is never a generator input/)
     expect(assertInputPurity("readFileSync('.planning/phase-5-curriculum-architecture/DESIGN.md')").join(' '))
       .toMatch(/\.planning\/\*\* is never a generator input/)
     expect(assertInputPurity(`import fixture from '../${FROZEN_RUNTIME_FIXTURE}'`).join(' '))
@@ -549,12 +549,28 @@ describe('the projections generator is governed', () => {
     expect(assertInputPurity("import x from '../src/data/generated/curriculum/chapters.js'")).toEqual([])
   })
 
-  it('names the three files it must never read, and they are still hand-authored', () => {
-    expect(HANDWRITTEN_RUNTIME_FILES).toEqual([
+  it('names the three boundary files, and none of them is a generated file', () => {
+    expect(RUNTIME_BOUNDARY_FILES).toEqual([
       'src/data/modules.js', 'src/chapters.js', 'src/content/chapterContentRegistry.js',
     ])
-    for (const file of HANDWRITTEN_RUNTIME_FILES) {
+    for (const file of RUNTIME_BOUNDARY_FILES) {
+      // They re-export generated output; they are not themselves generated, so
+      // the banner must not appear and `--check` must never rewrite them.
       expect(read(file), `${file} became generated`).not.toContain('GENERATED FILE')
+    }
+  })
+
+  it('says in the banner what it is checked against, and no longer claims a hand-authored runtime', () => {
+    for (const path of [MODULES_PATH, CHAPTERS_PATH, LOADERS_PATH]) {
+      const banner = read(path).split('\n').filter(line => line.startsWith('//')).join('\n')
+      expect(banner, `${path} does not name the frozen contract`).toContain(FROZEN_RUNTIME_FIXTURE)
+      expect(banner, `${path} still claims a hand-authored runtime`)
+        .not.toMatch(/matching the hand-authored runtime/)
+      // …and it says which files re-export it, so the boundary is discoverable
+      // from the generated file itself.
+      for (const file of RUNTIME_BOUNDARY_FILES) {
+        expect(banner, `${path} does not name ${file}`).toContain(file)
+      }
     }
   })
 
@@ -585,20 +601,113 @@ function listFiles(dir) {
   return out
 }
 
-describe('Stage 3 changes no runtime source', () => {
-  it('nothing re-exports or imports the generated projections', () => {
-    const reaches = /(?:from\s*|import\s*\(?\s*)['"][^'"]*generated\/curriculum\//
-    const importers = listFiles('src').filter(file => !file.startsWith('src/data/generated/curriculum/'))
-      .filter(file => reaches.test(read(file)))
-    expect(importers, 'Stage 3 must not wire the projections in — that is Stage 4').toEqual([])
+// ─── The Stage 4 authority boundary ─────────────────────────────────────────
+//
+// The cutover is three files wide and has to stay three files wide. Everything
+// below is about the SHAPE of that boundary, not about the data crossing it:
+// who may import the generated projections, what the three files are allowed to
+// contain, and whether reverting them restores exactly the authority the
+// repository had before.
+
+describe('the Stage 4 authority boundary', () => {
+  const REACHES_GENERATED = /(?:from\s*|import\s*\(?\s*)['"][^'"]*generated\/curriculum\//
+
+  it('is exactly three files wide — only the boundary files import the projections', () => {
+    const importers = listFiles('src')
+      .filter(file => !file.startsWith('src/data/generated/curriculum/'))
+      .filter(file => REACHES_GENERATED.test(read(file)))
+    expect(importers.sort(), 'a fourth file reached past the boundary')
+      .toEqual([...RUNTIME_BOUNDARY_FILES].sort())
+  })
+
+  it('makes each boundary file a thin re-export and nothing else', () => {
+    const expected = {
+      'src/data/modules.js': {
+        specifier: './generated/curriculum/modules.js',
+        symbols: ['MODULES', 'getModuleById', 'getModuleForChapter'],
+      },
+      'src/chapters.js': {
+        specifier: './data/generated/curriculum/chapters.js',
+        symbols: ['CHAPTERS', 'CHAPTER_AVAILABILITY', 'getChapterAvailability', 'isChapterAvailable'],
+      },
+      'src/content/chapterContentRegistry.js': {
+        specifier: '../data/generated/curriculum/chapterContentLoaders.js',
+        symbols: ['CHAPTER_CONTENT_LOADERS', 'loadChapterContent'],
+      },
+    }
+    for (const [file, { specifier, symbols }] of Object.entries(expected)) {
+      const source = read(file)
+      const code = source.split('\n').filter(line => !line.trimStart().startsWith('//')).join('\n').trim()
+      // One statement: `export { … } from '…'`. Nothing else survives.
+      const match = code.match(/^export\s*\{([^}]*)\}\s*from\s*'([^']+)'$/)
+      expect(match, `${file} is not a single re-export statement:\n${code}`).toBeTruthy()
+      expect(match[2], `${file} re-exports the wrong file`).toBe(specifier)
+      expect(match[1].split(',').map(name => name.trim()).filter(Boolean).sort(), `${file} symbols`)
+        .toEqual([...symbols].sort())
+      // …and the specifier resolves from this file's own directory.
+      expect(existsSync(resolve(root, dirname(file), specifier)), `${file} specifier does not resolve`).toBe(true)
+    }
+  })
+
+  it('leaves no authored Module, Chapter or loader entry in the boundary files', () => {
+    for (const file of RUNTIME_BOUNDARY_FILES) {
+      const code = read(file).split('\n').filter(line => !line.trimStart().startsWith('//')).join('\n')
+      expect(code, `${file} still declares data`).not.toMatch(/\bconst\s+(MODULES|CHAPTERS|CHAPTER_CONTENT_LOADERS|CHAPTER_AVAILABILITY)\b/)
+      expect(code, `${file} still declares a helper body`).not.toMatch(/\bfunction\s+\w+/)
+      expect(code, `${file} still holds an authored loader`).not.toMatch(/=>\s*import\(/)
+      expect(code, `${file} still holds an authored row`).not.toMatch(/\bscreenTags\s*:/)
+    }
+  })
+
+  it('rewrote no consumer — every one still imports the public boundary file', () => {
+    // The point of the boundary is that the cutover is invisible above it. Any
+    // consumer that had been re-pointed at the generated directory would make
+    // the revert in the next test a partial one.
+    const consumers = [
+      'src/progress.js',
+      'src/todaysPlan.js',
+      'src/app/LegacyApp.jsx',
+      'src/app/chapterNavigation.js',
+      'src/data/contentHierarchy.js',
+      'src/features/progress/Progress.jsx',
+      'src/features/subjects/Subjects.jsx',
+      'src/features/subjects/subjectCatalogue.js',
+      'src/features/planner/dailyPlanner.js',
+      'src/components/layout/ChapterPlayer.jsx',
+      'src/components/layout/ChapterCompleteScreen.jsx',
+    ]
+    const reachesBoundary = /(?:from\s*|import\s*\(?\s*)['"][^'"]*(?:data\/modules|chapters|content\/chapterContentRegistry)\.js['"]/
+    for (const consumer of consumers) {
+      const source = read(consumer)
+      expect(reachesBoundary.test(source), `${consumer} stopped importing the boundary`).toBe(true)
+      expect(REACHES_GENERATED.test(source), `${consumer} was re-pointed at the generated directory`).toBe(false)
+    }
+  })
+
+  it('is revertible — the three files are the whole of the change', () => {
+    // Reverting them restores the previous authority boundary because nothing
+    // else references the generated directory, and because the generated files
+    // remain self-contained: they import content, never the catalogue.
+    const importers = listFiles('src')
+      .filter(file => !file.startsWith('src/data/generated/curriculum/'))
+      .filter(file => !RUNTIME_BOUNDARY_FILES.includes(file))
+      .filter(file => REACHES_GENERATED.test(read(file)))
+    expect(importers, 'reverting the three files would not undo the cutover').toEqual([])
+    for (const path of [MODULES_PATH, CHAPTERS_PATH, LOADERS_PATH]) {
+      expect(read(path), `${path} imports a boundary file back`)
+        .not.toMatch(/(?:from\s*|import\s*\(?\s*)['"][^'"]*(?:data\/modules|\.\.\/chapters|chapterContentRegistry)\.js['"]/)
+    }
   })
 
   it('the generated projections import no catalogue and no compatibility data', () => {
     for (const path of [MODULES_PATH, CHAPTERS_PATH, LOADERS_PATH]) {
       const source = read(path)
-      expect(source, `${path} imports the catalogue`).not.toMatch(/(?:from\s*|import\s*\(?\s*)['"][^'"]*curriculum-catalogue/)
+      // Code only — the banner is prose about what this file is, and prose
+      // saying "import path" is not an import.
+      const code = source.split('\n').filter(line => !line.trimStart().startsWith('//')).join('\n')
+      expect(code, `${path} imports the catalogue`).not.toMatch(/(?:from\s*|import\s*\(?\s*)['"][^'"]*curriculum-catalogue/)
       // The loaders file imports content; the other two import nothing at all.
-      if (path !== LOADERS_PATH) expect(source, `${path} imports something`).not.toMatch(/\bimport\b/)
+      if (path !== LOADERS_PATH) expect(code, `${path} imports something`).not.toMatch(/\bimport\b/)
     }
   })
 
@@ -608,6 +717,37 @@ describe('Stage 3 changes no runtime source', () => {
       .filter(file => !file.startsWith('src/curriculum-catalogue/'))
       .filter(file => reaches.test(read(file)))
     expect(importers).toEqual([])
+  })
+
+  it('compatibility data reaches production only through the generated output', async () => {
+    // Two legacy-only facts that no canonical record states: the hidden
+    // Renaissance row and a per-row palette override. Both are live in the
+    // running app, and the only path they can have taken is the generated
+    // projection — production imports neither `compatibility/` nor the
+    // catalogue, proved above.
+    const runtimeChapters = await import('../../src/chapters.js')
+    const hidden = runtimeChapters.CHAPTERS.find(chapter => chapter.id === compatibility.hiddenChapter.row.id)
+    expect(hidden, 'the compatibility-only hidden row did not reach the runtime').toBeTruthy()
+    expect(hidden.availability).toBe('hidden')
+    expect(runtimeChapters.CHAPTERS.find(chapter => chapter.id === 'soc1').color)
+      .toBe(compatibility.chapterFields.soc1.color)
+  })
+
+  it('the generated loader specifiers resolve from the generated file, not from the boundary file', async () => {
+    // The two live in different directories. A specifier copied verbatim from
+    // the pre-cutover registry would resolve to nothing from here, and the
+    // re-export would break on the first chapter open.
+    const base = dirname(resolve(root, LOADERS_PATH))
+    const specifiers = [...read(LOADERS_PATH).matchAll(/import\(\s*['"]([^'"]+)['"]\s*\)/g)].map(match => match[1])
+    expect(specifiers).toHaveLength(60)
+    for (const specifier of specifiers) {
+      expect(existsSync(resolve(base, specifier)), `"${specifier}" does not resolve from the generated file`).toBe(true)
+      expect(existsSync(resolve(root, 'src/content', specifier)), `"${specifier}" resolves from the old registry location`)
+        .toBe(false)
+    }
+    // And the re-export really loads a chapter.
+    const registry = await import('../../src/content/chapterContentRegistry.js')
+    expect(await registry.loadChapterContent('soc1')).toBeTruthy()
   })
 })
 

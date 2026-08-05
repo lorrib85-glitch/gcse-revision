@@ -1,14 +1,22 @@
 # The runtime compatibility projection
 
-**Status: Stage 3 of the curriculum migration. Temporary by construction.**
+**Status: Stage 4 of the curriculum migration — load-bearing, and still
+temporary by construction.**
 
 The canonical catalogue describes **8 subjects, 14 pathways, 36 modules and
-65 chapters**. The pre-cutover runtime interface exposes **7 `MODULES`,
-60 `CHAPTERS` and 60 `CHAPTER_CONTENT_LOADERS`**. Stage 3 promises *exact*
-runtime parity, so the difference between those two numbers has to be written
-down somewhere that is visibly **not** the curriculum.
+65 chapters**. The runtime interface exposes **7 `MODULES`, 60 `CHAPTERS` and
+60 `CHAPTER_CONTENT_LOADERS`**. Exact runtime parity was promised, so the
+difference between those two numbers has to be written down somewhere that is
+visibly **not** the curriculum.
 
 That somewhere is `src/curriculum-catalogue/compatibility/runtime-v1.js`.
+
+Since Stage 4, `src/data/modules.js`, `src/chapters.js` and
+`src/content/chapterContentRegistry.js` re-export the generated projections, so
+this layer is what the app actually runs on. Parity is proved against
+`tests/fixtures/curriculum-runtime-v1.json` — the frozen pre-cutover contract —
+because the three runtime files can no longer serve as the independent side of
+the comparison.
 
 Authority: `docs/decisions/0002-canonical-curriculum-architecture.md`. Migration
 sequence: `.planning/phase-5-curriculum-architecture/IMPLEMENTATION-PLAN.md`.
@@ -74,8 +82,10 @@ Four authorities appear in the tables below.
 | **Derived (content)** | computed by loading the chapter's content file |
 | **Compatibility** | non-derivable legacy fact; lives in `runtime-v1.js`; has a deletion stage |
 
-*"Exact parity required"* is `yes` for every current output field: Stage 3 is
-behaviour-preserving and accepts no deliberate difference.
+*"Exact parity required"* is `yes` for every current output field: the
+projection is behaviour-preserving and accepts no deliberate difference. It is
+checked against `tests/fixtures/curriculum-runtime-v1.json`, not against the
+runtime files it now feeds.
 
 ### 2.1 `src/data/modules.js` — `MODULES`
 
@@ -197,9 +207,9 @@ runtime row, no content file and no loader:
 `english-macbeth-guilt-consequence` · `english-macbeth-witches-fate` ·
 `english-macbeth-appearance-reality`
 
-They **stay in the canonical catalogue** and **must not enter the Stage 3
+They **stay in the canonical catalogue** and **must not enter the compatibility
 projection**: surfacing six new coming-soon cards is a learner-visible change,
-and Stage 3 is not allowed to make one.
+and no behaviour-preserving stage is allowed to make one.
 
 They are listed explicitly in `excludedChapterIds` rather than filtered by
 `status`, and a completeness gate asserts that every non-retired canonical
@@ -214,10 +224,10 @@ more than a browser change.
 
 ---
 
-## 6. `screenTags` corrections are not a Stage 3 concern
+## 6. `screenTags` corrections are not a cutover concern
 
-`screenTags` derive from the content files **exactly**, so the Stage 3
-projection introduces no difference at all. It does not follow that the current
+`screenTags` derive from the content files **exactly**, so the projection
+introduces no difference at all. It does not follow that the current
 values are *good*: a weakness route whose tag is missing from its target
 chapter's `screenTags` silently lands on screen 0.
 

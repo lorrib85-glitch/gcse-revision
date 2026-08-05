@@ -6,11 +6,17 @@ const root = resolve(process.cwd())
 const read = (rel) => readFileSync(resolve(root, rel), 'utf8')
 
 describe('Placeholder chapter safety', () => {
-  it('the canonical chapter catalogue contains governed unbuilt chapters', () => {
-    const metadata = read('src/chapters.js')
-    expect(metadata).toContain('export const CHAPTERS = [')
-    expect(metadata).toMatch(/screenCount:\s*0/)
-    expect(metadata).toContain('export const CHAPTER_AVAILABILITY')
+  it('the canonical chapter catalogue contains governed unbuilt chapters', async () => {
+    // Asserted on the exported data, not on the source text: since Stage 4
+    // src/chapters.js re-exports the generated projection, so the rows are no
+    // longer literals in this file. What matters is unchanged — the catalogue
+    // still carries unbuilt chapters and still exposes the availability enum.
+    const { CHAPTERS, CHAPTER_AVAILABILITY } = await import('../../src/chapters.js')
+    expect(Array.isArray(CHAPTERS)).toBe(true)
+    expect(CHAPTERS.filter(chapter => chapter.screenCount === 0).length).toBeGreaterThan(0)
+    expect(CHAPTER_AVAILABILITY).toEqual({
+      AVAILABLE: 'available', COMING_SOON: 'comingSoon', HIDDEN: 'hidden',
+    })
   })
 
   it('openChapterPlayer guards against chapters without screens before opening the overlay', () => {

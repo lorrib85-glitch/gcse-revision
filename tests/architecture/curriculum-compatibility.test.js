@@ -468,11 +468,17 @@ describe('compatibility data is projection input, not curriculum identity', () =
     expect(checkCompatibility(catalogue, poisoned).join(' ')).toMatch(/unknown canonical module/)
   })
 
-  it('the runtime files it projects into are still hand-authored at Stage 3', () => {
-    for (const file of ['src/data/modules.js', 'src/chapters.js', 'src/content/chapterContentRegistry.js']) {
+  it('reaches the runtime only through the generated projections', () => {
+    // Stage 4: the three files re-export the generated output. That is the ONLY
+    // path compatibility data may take into production — none of them may
+    // import `compatibility/` or the catalogue directly, and none of them is
+    // itself a generated file.
+    const reachesCatalogue = /(?:from\s*|import\s*\(?\s*)['"][^'"]*curriculum-catalogue/
+    for (const file of RUNTIME_BOUNDARY_FILES) {
       const source = read(file)
-      expect(source, `${file} became generated`).not.toMatch(/GENERATED FILE/)
-      expect(source, `${file} reaches the catalogue`).not.toMatch(/curriculum-catalogue/)
+      expect(source, `${file} became a generated file`).not.toMatch(/GENERATED FILE/)
+      expect(source, `${file} imports the catalogue`).not.toMatch(reachesCatalogue)
+      expect(source, `${file} is not a re-export`).toMatch(/^export\s*\{[^}]*\}\s*from\s*'[^']*generated\/curriculum\//m)
     }
   })
 

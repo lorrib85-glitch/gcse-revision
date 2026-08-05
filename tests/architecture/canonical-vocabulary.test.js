@@ -117,30 +117,37 @@ describe('canonical vocabulary — deleted hierarchy surfaces', () => {
   })
 
   it('owns chapter metadata only in src/chapters.js', () => {
+    // Since Stage 4 the rows live in the generated projection and src/chapters.js
+    // re-exports them. It is still the single public owner: the same four
+    // symbols, from the same path, for every consumer.
     const chapters = read('src/chapters.js')
-    for (const exported of [
+    const reExport = chapters.match(/export\s*\{([^}]*)\}\s*from\s*'([^']+)'/)
+    expect(reExport, 'src/chapters.js no longer re-exports the projection').toBeTruthy()
+    expect(reExport[2]).toBe('./data/generated/curriculum/chapters.js')
+    expect(reExport[1].split(',').map(name => name.trim()).filter(Boolean).sort()).toEqual([
       'CHAPTERS', 'CHAPTER_AVAILABILITY', 'getChapterAvailability', 'isChapterAvailable',
-    ]) {
-      expect(chapters, exported).toMatch(new RegExp(`export (?:const|function) ${exported}\\b`))
-    }
-    // No other production file may re-export the chapter catalogue.
-    //
-    // The Stage 3 projection under src/data/generated/curriculum/ is exempt: it
-    // declares the same symbols by design, and is not a second owner because
-    // nothing imports it. That last part is the load-bearing half, so it is
-    // asserted here rather than taken on trust.
+    ].sort())
+
+    // No other production file may declare or re-export the chapter catalogue.
+    // The generated projection is exempt: it declares the symbols by design and
+    // is reachable only through the three boundary files, asserted below.
     const GENERATED_PROJECTION = 'src/data/generated/curriculum/'
-    const reExporters = PRODUCTION_FILES
+    const declarers = PRODUCTION_FILES
       .filter(path => path !== 'src/chapters.js')
       .filter(path => !path.startsWith(GENERATED_PROJECTION))
       .filter(path => /export\s+const\s+CHAPTERS\b/.test(read(path)))
-    expect(reExporters).toEqual([])
+    expect(declarers).toEqual([])
 
+    // The Stage 4 boundary is exactly three files wide. A fourth importer would
+    // mean a consumer had been re-pointed past the public files.
+    const BOUNDARY = [
+      'src/data/modules.js', 'src/chapters.js', 'src/content/chapterContentRegistry.js',
+    ]
     const reaches = /(?:from\s*|import\s*\(?\s*)['"][^'"]*generated\/curriculum\//
     const importers = PRODUCTION_FILES
       .filter(path => !path.startsWith(GENERATED_PROJECTION))
       .filter(path => reaches.test(read(path)))
-    expect(importers, 'the Stage 3 projection is wired in — that is Stage 4').toEqual([])
+    expect(importers.sort(), 'a fourth file imports the generated projection').toEqual([...BOUNDARY].sort())
   })
 
   it('imports nothing from the deleted root chapter catalogue', () => {
