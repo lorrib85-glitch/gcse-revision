@@ -31,9 +31,12 @@
 //   3. src/content/**                        for screenCount and screenTags
 //
 // FORBIDDEN as generator input: `.planning/**` (planning documents are not a
-// source of truth for shipped data) and the three hand-authored runtime files
-// themselves (reading them would make the "generator" a copier and the parity
-// gate a tautology). `assertInputPurity` enforces both by reading this file.
+// source of truth for shipped data), the three runtime files themselves
+// (reading them would make the "generator" a copier and the parity gate a
+// tautology), and `tests/fixtures/curriculum-runtime-v1.json` (the frozen
+// pre-cutover contract — a generator that rendered from it would be printing
+// the answer sheet). `assertInputPurity` enforces all three by reading this
+// file.
 
 import { readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { dirname, resolve } from 'path'
@@ -52,12 +55,21 @@ export const REPORT_PATH = 'docs/curriculum/SCREEN_TAG_REVIEW.md'
 /** How `src/…` is spelled from inside `src/data/generated/curriculum/`. */
 export const LOADER_PATH_PREFIX = '../../../'
 
-/** The three files whose data this generator reproduces and must never read. */
+/** The three runtime files whose data this generator reproduces and must never read. */
 export const HANDWRITTEN_RUNTIME_FILES = [
   'src/data/modules.js',
   'src/chapters.js',
   'src/content/chapterContentRegistry.js',
 ]
+
+/**
+ * The frozen pre-cutover contract the parity gate compares against.
+ *
+ * The generator must never read it. It is the independent side of the
+ * comparison; rendering from it would make the gate compare the fixture with
+ * itself, exactly as reading the runtime files would.
+ */
+export const FROZEN_RUNTIME_FIXTURE = 'tests/fixtures/curriculum-runtime-v1.json'
 
 const BANNER = [
   '// GENERATED FILE — DO NOT EDIT.',
@@ -77,9 +89,10 @@ const BANNER = [
  *
  * A generator that quietly imported `src/chapters.js` would still produce a
  * passing parity check — it would be comparing a file with itself. A generator
- * that read `.planning/**` would ship a planning document's opinion as data.
- * Both are caught by reading this file's own source, so the guard cannot drift
- * away from what the generator actually does.
+ * that read the frozen fixture would do the same thing one step removed. A
+ * generator that read `.planning/**` would ship a planning document's opinion
+ * as data. All three are caught by reading this file's own source, so the guard
+ * cannot drift away from what the generator actually does.
  */
 export function assertInputPurity(source = readFileSync(resolve(ROOT, 'scripts/generate-curriculum-projections.mjs'), 'utf8')) {
   const problems = []
@@ -90,6 +103,9 @@ export function assertInputPurity(source = readFileSync(resolve(ROOT, 'scripts/g
   for (const [, specifier] of source.matchAll(SPECIFIER)) {
     if (specifier.includes('.planning')) {
       problems.push(`reads "${specifier}" — .planning/** is never a generator input`)
+    }
+    if (specifier.includes('tests/fixtures/') || specifier.endsWith('curriculum-runtime-v1.json')) {
+      problems.push(`reads "${specifier}" — the frozen runtime fixture is never a generator input`)
     }
     for (const file of HANDWRITTEN_RUNTIME_FILES) {
       const stem = file.split('/').pop()

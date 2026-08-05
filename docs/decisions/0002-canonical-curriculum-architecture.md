@@ -264,6 +264,20 @@ without assigning that specification to a single subject. **No
 the schema forbids the field from Stage 0 onwards. Stage 5 must preserve the
 current seven visible subjects during the authority transfer.
 
+**Compatibility retirement is sequenced on final consumers, not on the browser.**
+The migration's temporary compatibility projection
+(`src/curriculum-catalogue/compatibility/`) becomes load-bearing at Stage 4,
+when the three runtime files re-export the generated projections. Stage 5 then
+*adds* canonical navigation and migrates `Subjects.jsx` — it deletes nothing,
+because nine other production consumers still import the compatibility-shaped
+`MODULES`, `CHAPTERS` and `CHAPTER_CONTENT_LOADERS`. Every compatibility field
+is therefore deleted at **Stage 6**, each one only after its own final consumer
+has been migrated or removed, and `runtime-v1.js` only once no generated output
+still needs it. A field whose last *reader* is the browser is not thereby
+retirable: it is still a key on a live legacy export. `FINAL_CONSUMERS` in
+`compatibility/index.js` records the blocking consumer per field;
+`docs/system/CURRICULUM_RUNTIME_COMPATIBILITY.md` §7 is the human table.
+
 ## Consequences
 
 - Adding a chapter becomes one edit to one module's chapter file plus a content

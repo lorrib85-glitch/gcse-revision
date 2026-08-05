@@ -13,7 +13,7 @@ a fact in `records/` is curriculum and outlives the migration.
 | File | What it is |
 |---|---|
 | `runtime-v1.js` | the data — plain, serialisable, no imports |
-| `index.js` | shape validation, cross-checks against the catalogue, and `DELETION_STAGES` |
+| `index.js` | shape validation, cross-checks against the catalogue, `DELETION_STAGES` and `FINAL_CONSUMERS` |
 
 ## The rules
 
@@ -23,10 +23,25 @@ a fact in `records/` is curriculum and outlives the migration.
 3. **Plain serialisable data,** validated like a record.
 4. **Never duplicates a derivable fact.** If a canonical record or a content
    file already states it, stating it here is a validation failure.
-5. **Every field names the stage that deletes it** (`DELETION_STAGES`).
+5. **Every field names the stage that deletes it** (`DELETION_STAGES`) **and the
+   consumers that set that stage** (`FINAL_CONSUMERS`).
 6. **Never leaks into the Stage 5 canonical navigation projection.**
 
 All six are enforced by `tests/architecture/curriculum-compatibility.test.js`.
+
+## Nothing here dies before Stage 6
+
+Stage 4 makes this projection load-bearing — the three runtime files re-export
+the generated output. Stage 5 **adds** canonical navigation and migrates the
+subject browser; it deletes nothing here, because nine other consumers still
+import the compatibility-shaped `MODULES`, `CHAPTERS` and
+`CHAPTER_CONTENT_LOADERS`. Stage 6 migrates or removes those consumers, and only
+then does each field go.
+
+A field's retirement stage is set by what still consumes it after Stage 5, not
+by the browser that stops. `FINAL_CONSUMERS` records both, per field, and
+`docs/system/CURRICULUM_RUNTIME_COMPATIBILITY.md` §7 explains the two fields
+(`series`, `colorLight`) where the rule could have been narrowed and was not.
 
 ## Before adding anything here
 
@@ -37,8 +52,9 @@ Ask, in this order:
    file? Then derive it in the generator — `screenCount` and `screenTags` both
    derive exactly, for all 60 rows, and neither appears here.
 3. Does it exist only because the *old* interface printed it? Only then does it
-   belong here — and it needs a `DELETION_STAGES` entry naming Stage 5 or
-   Stage 6 before it will validate.
+   belong here — and it needs a `DELETION_STAGES` entry naming Stage 6, plus a
+   `FINAL_CONSUMERS` entry naming what still consumes it after Stage 5, before
+   it will validate.
 
 Full contract and the field-authority audit:
 `docs/system/CURRICULUM_RUNTIME_COMPATIBILITY.md`.

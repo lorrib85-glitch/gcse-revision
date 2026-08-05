@@ -565,7 +565,7 @@ Every fact is **authored** in exactly one place or **derived** from one.
 | Subject display title and description | subject record | navigation projection — retires `SUBJECT_DISPLAY_TITLES` / `SUBJECT_DESCRIPTIONS` |
 | Chapter `number` | chapter reference `position + 1` | chapter projection — retires the three collisions of A-3 |
 | Chapter `subject` | module → subject | chapter projection — retires the duplicate-and-compare pair |
-| Chapter `series` | module id | chapter projection, compatibility only, removed at the end of the migration |
+| Chapter `series` | module id | chapter projection, compatibility only, removed at Stage 6 — its only reader migrates at Stage 5, but the key rides on `CHAPTERS` |
 | `screenCount` | content file `screens.length` | chapter projection — **retires the drift test** |
 | `screenTags` | content file screen order | chapter projection — and for the first time the *positions* are correct by construction |
 | Chapter counts per module/pathway | chapter refs filtered by status | navigation projection |
@@ -676,6 +676,24 @@ Names follow repository convention: generated runtime code under
 `src/data/generated/`, generated documentation under `docs/`, both with the
 existing `GENERATED FILE — DO NOT EDIT` banner, and both checked by a
 `curriculum:check` step added to `pnpm verify`.
+
+**The boundary is three files wide, and stays that way.** Only
+`src/data/modules.js`, `src/chapters.js` and
+`src/content/chapterContentRegistry.js` may import
+`src/data/generated/curriculum/**`. Every other consumer keeps importing those
+three public files, unchanged, exactly as before the cutover. A consumer that
+reached past them into the generated directory would turn a one-file revert into
+a repository-wide one, and would make the projection's shape a public API before
+anything has decided it should be.
+
+**Compatibility data reaches production only through generated output.** The
+catalogue and the compatibility projection stay build-time; the generated files
+are the only carrier. That is why the compatibility fields cannot be retired
+when the subject browser stops reading them — they are still riding the three
+generated projections into nine other consumers. The corrected sequence (Stage 4
+load-bearing → Stage 5 intact → Stage 6 delete after the final consumer) is in
+`IMPLEMENTATION-PLAN.md` and, per field, in
+`docs/system/CURRICULUM_RUNTIME_COMPATIBILITY.md` §7.
 
 ### 6.4 ID preservation and the alias policy
 

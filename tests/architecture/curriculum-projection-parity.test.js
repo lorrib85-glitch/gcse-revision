@@ -1,22 +1,36 @@
-// ─── Stage 3 exact parity gate ──────────────────────────────────────────────
+// ─── Exact parity gate, against a frozen contract ───────────────────────────
 //
-// The generated projections must reproduce the hand-authored runtime EXACTLY.
-// Not "compatibly", not "modulo known differences" — exactly. Stage 3's entire
-// promise is that nothing a learner can observe changes, and Stage 4 is only
-// safe to take because this file is green.
+// The generated projections must reproduce the pre-cutover runtime EXACTLY.
+// Not "compatibly", not "modulo known differences" — exactly.
+//
+// ── Why a fixture and not the runtime files ────────────────────────────────
+//
+// Stage 3 compared the generated projections with the hand-authored
+// `src/data/modules.js`, `src/chapters.js` and
+// `src/content/chapterContentRegistry.js`. Stage 4 makes those three files
+// re-export the generated projections — so from the cutover commit onwards,
+// importing them here would compare the generated files with themselves. The
+// gate would be green by construction and would prove nothing.
+//
+// So the comparison moved off the runtime and onto
+// `tests/fixtures/curriculum-runtime-v1.json`: a frozen, semantic capture of
+// what those three files meant BEFORE the cutover, taken while they were still
+// hand-authored. It is the independent side of the comparison, and it stays
+// independent after Stage 4 because nothing regenerates it from the runtime.
 //
 // Comparison is SEMANTIC, on data rather than on source text: a formatting
 // change must not read as a behaviour change, and a behaviour change must not
 // hide behind formatting. Key ORDER is deliberately not compared — the
-// hand-authored file uses five different key orders across its 60 rows — but
-// the key SET and every value are.
+// pre-cutover file used five different key orders across its 60 rows — but the
+// key SET, the key ABSENCES and every value are.
 //
 // Nothing here silently allows a difference. There is no allowlist.
 
 import { describe, it, expect } from 'vitest'
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs'
+import { createHash } from 'crypto'
 import { resolve, dirname, posix } from 'path'
-import { fileURLToPath } from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 
 import { loadCatalogue } from '../../src/curriculum-catalogue/index.js'
 import { loadCompatibility } from '../../src/curriculum-catalogue/compatibility/index.js'
@@ -33,20 +47,11 @@ import {
   CHAPTERS_PATH,
   LOADERS_PATH,
   REPORT_PATH,
+  FROZEN_RUNTIME_FIXTURE,
   HANDWRITTEN_RUNTIME_FILES,
 } from '../../scripts/generate-curriculum-projections.mjs'
 
-// The hand-authored runtime — the thing being reproduced.
-import { MODULES, getModuleById, getModuleForChapter } from '../../src/data/modules.js'
-import {
-  CHAPTERS,
-  CHAPTER_AVAILABILITY,
-  getChapterAvailability,
-  isChapterAvailable,
-} from '../../src/chapters.js'
-import { CHAPTER_CONTENT_LOADERS, loadChapterContent } from '../../src/content/chapterContentRegistry.js'
-
-// The generated projections.
+// The generated projections — the thing under test.
 import * as generatedModules from '../../src/data/generated/curriculum/modules.js'
 import * as generatedChapters from '../../src/data/generated/curriculum/chapters.js'
 import * as generatedLoaders from '../../src/data/generated/curriculum/chapterContentLoaders.js'
@@ -54,22 +59,87 @@ import * as generatedLoaders from '../../src/data/generated/curriculum/chapterCo
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const read = rel => readFileSync(resolve(root, rel), 'utf8')
 
+/**
+ * The frozen contract's checksum, pinned here rather than inside the fixture.
+ *
+ * A contract that could validate itself is not a contract. Pinning the digest
+ * in a different file means editing the fixture fails until this line is
+ * edited too — so a contract change is always two deliberate edits and is
+ * always visible in the diff, and can never be a quiet way to make a failing
+ * parity assertion pass.
+ */
+const FIXTURE_SHA256 = '4a9114d841ef84326001528dfb7438b00a3fce2f207736a84ad283044ff2c1c2'
+
+/** The commit whose runtime the fixture froze. */
+const FIXTURE_PROVENANCE_COMMIT = '7621d5569e4b97527097d144684a0f56b4fec62c'
+
+const fixtureBytes = readFileSync(resolve(root, FROZEN_RUNTIME_FIXTURE))
+const fixture = JSON.parse(fixtureBytes)
+
 const catalogue = await loadCatalogue()
 const compatibility = loadCompatibility()
 const projections = await buildProjections(catalogue, compatibility)
 
 const keysOf = record => Object.keys(record).sort()
 
+// ─── The frozen contract is intact, independent and test-only ───────────────
+
+describe('the frozen runtime contract', () => {
+  it('is byte-for-byte what it was frozen as', () => {
+    expect(createHash('sha256').update(fixtureBytes).digest('hex')).toBe(FIXTURE_SHA256)
+  })
+
+  it('records the exact runtime it was captured from', () => {
+    expect(fixture.contract.provenance.commit).toBe(FIXTURE_PROVENANCE_COMMIT)
+    expect(fixture.contract.provenance.capturedFrom).toEqual(HANDWRITTEN_RUNTIME_FILES)
+    expect(fixture.contract.provenance.capturedWhen).toMatch(/still hand-authored/)
+  })
+
+  it('says plainly that it is not authority, and when it is deleted', () => {
+    expect(fixture.contract.authority).toMatch(/NOT authority/)
+    expect(fixture.contract.authority).toMatch(/test-only/)
+    expect(fixture.contract.retirement).toMatch(/Stage 6/)
+    expect(fixture.contract.retirement).toMatch(/compatibility\//)
+    expect(fixture.contract.editing).toMatch(/never a way to make a failing parity test pass/)
+  })
+
+  it('is never read by production source or by the generator', () => {
+    const reaches = /curriculum-runtime-v1|tests\/fixtures\//
+    const offenders = [...listFiles('src'), ...listFiles('scripts')]
+      .filter(file => reaches.test(read(file)))
+      // The generator NAMES the fixture to forbid it; naming is not reading,
+      // and `assertInputPurity` below is what proves the difference.
+      .filter(file => file !== 'scripts/generate-curriculum-projections.mjs')
+    expect(offenders, 'the frozen contract is test-only').toEqual([])
+    expect(assertInputPurity(`readFileSync('${FROZEN_RUNTIME_FIXTURE}')`).join(' '))
+      .toMatch(/frozen runtime fixture is never a generator input/)
+  })
+
+  it('holds the whole pre-cutover interface, not a sample of it', () => {
+    expect(fixture.modules).toHaveLength(7)
+    expect(fixture.chapters).toHaveLength(60)
+    expect(fixture.loaders).toHaveLength(60)
+    expect(Object.keys(fixture.exports).sort()).toEqual([...HANDWRITTEN_RUNTIME_FILES].sort())
+    // Field ABSENCE is part of the contract, so the absences are counted here
+    // as well as compared row by row below.
+    expect(fixture.chapters.filter(chapter => 'series' in chapter)).toHaveLength(39)
+    expect(fixture.chapters.filter(chapter => 'tags' in chapter)).toHaveLength(16)
+    expect(fixture.chapters.filter(chapter => 'availability' in chapter).map(chapter => chapter.id))
+      .toEqual(['history-medicine-renaissance-medicine'])
+    expect(fixture.helpers.availableChapterCount).toBe(30)
+  })
+})
+
 // ─── MODULES ────────────────────────────────────────────────────────────────
 
 describe('MODULES parity', () => {
   it('projects the same seven ids, in the same order', () => {
-    expect(generatedModules.MODULES.map(module => module.id)).toEqual(MODULES.map(module => module.id))
+    expect(generatedModules.MODULES.map(module => module.id)).toEqual(fixture.modules.map(module => module.id))
     expect(generatedModules.MODULES).toHaveLength(7)
   })
 
   it('projects the same title and subject for every module', () => {
-    for (const [index, expected] of MODULES.entries()) {
+    for (const [index, expected] of fixture.modules.entries()) {
       const actual = generatedModules.MODULES[index]
       expect(actual.title, `${expected.id}.title`).toBe(expected.title)
       expect(actual.subject, `${expected.id}.subject`).toBe(expected.subject)
@@ -77,42 +147,45 @@ describe('MODULES parity', () => {
   })
 
   it('projects the same chapter ids, in the same order, for every module', () => {
-    for (const [index, expected] of MODULES.entries()) {
+    for (const [index, expected] of fixture.modules.entries()) {
       const actual = generatedModules.MODULES[index]
       expect(actual.chapterIds, `${expected.id}.chapterIds`).toEqual(expected.chapterIds)
     }
   })
 
   it('projects the same field set — no extra field, no missing field', () => {
-    for (const [index, expected] of MODULES.entries()) {
+    for (const [index, expected] of fixture.modules.entries()) {
       expect(keysOf(generatedModules.MODULES[index]), `${expected.id} fields`).toEqual(keysOf(expected))
     }
   })
 
   it('is deeply equal as a whole, so nothing above can pass by omission', () => {
-    expect(generatedModules.MODULES).toEqual(MODULES)
+    expect(generatedModules.MODULES).toEqual(fixture.modules)
   })
 
   it('reproduces getModuleById for every id, and for an unknown one', () => {
-    for (const module of MODULES) {
-      expect(generatedModules.getModuleById(module.id)).toEqual(getModuleById(module.id))
+    for (const [moduleId, expectedId] of Object.entries(fixture.helpers.getModuleById)) {
+      const actual = generatedModules.getModuleById(moduleId)
+      expect(actual?.id ?? null, `getModuleById("${moduleId}")`).toBe(expectedId)
+      if (expectedId === null) continue
+      // Not just the id: the whole row the pre-cutover function would have returned.
+      expect(actual).toEqual(fixture.modules.find(module => module.id === expectedId))
     }
     expect(generatedModules.getModuleById('nothing-like-this')).toBeNull()
-    expect(getModuleById('nothing-like-this')).toBeNull()
   })
 
   it('reproduces getModuleForChapter for every runtime chapter, including the hidden one', () => {
-    for (const chapter of CHAPTERS) {
-      expect(generatedModules.getModuleForChapter(chapter.id), chapter.id)
-        .toEqual(getModuleForChapter(chapter.id))
+    for (const [chapterId, expectedId] of Object.entries(fixture.helpers.getModuleForChapter)) {
+      expect(generatedModules.getModuleForChapter(chapterId)?.id ?? null, chapterId).toBe(expectedId)
     }
-    // The hidden Renaissance row belongs to no module in either version.
+    // The hidden Renaissance row belongs to no module, then or now.
+    expect(fixture.helpers.getModuleForChapter['history-medicine-renaissance-medicine']).toBeNull()
     expect(generatedModules.getModuleForChapter('history-medicine-renaissance-medicine')).toBeNull()
     expect(generatedModules.getModuleForChapter('nothing-like-this')).toBeNull()
   })
 
-  it('exports the same public symbols as the hand-authored file', () => {
-    expect(Object.keys(generatedModules).sort()).toEqual(['MODULES', 'getModuleById', 'getModuleForChapter'])
+  it('exports the same public symbols as the pre-cutover file', () => {
+    expect(Object.keys(generatedModules).sort()).toEqual(fixture.exports['src/data/modules.js'])
   })
 })
 
@@ -121,11 +194,11 @@ describe('MODULES parity', () => {
 describe('CHAPTERS parity', () => {
   it('projects all 60 rows, with the same ids in the same order', () => {
     expect(generatedChapters.CHAPTERS).toHaveLength(60)
-    expect(generatedChapters.CHAPTERS.map(chapter => chapter.id)).toEqual(CHAPTERS.map(chapter => chapter.id))
+    expect(generatedChapters.CHAPTERS.map(chapter => chapter.id)).toEqual(fixture.chapters.map(chapter => chapter.id))
   })
 
   it('projects the same field set for every row — including which rows omit series and tags', () => {
-    for (const [index, expected] of CHAPTERS.entries()) {
+    for (const [index, expected] of fixture.chapters.entries()) {
       expect(keysOf(generatedChapters.CHAPTERS[index]), `${expected.id} fields`).toEqual(keysOf(expected))
     }
     // The absences are load-bearing: `getChapterAvailability` reads
@@ -138,7 +211,7 @@ describe('CHAPTERS parity', () => {
 
   it('projects every enumerable field value identically, field by field', () => {
     const differences = []
-    for (const [index, expected] of CHAPTERS.entries()) {
+    for (const [index, expected] of fixture.chapters.entries()) {
       const actual = generatedChapters.CHAPTERS[index]
       for (const key of new Set([...Object.keys(expected), ...Object.keys(actual)])) {
         if (JSON.stringify(actual[key]) !== JSON.stringify(expected[key])) {
@@ -151,39 +224,43 @@ describe('CHAPTERS parity', () => {
 
   it('projects the hidden Renaissance row, at its exact position and marked hidden', () => {
     const index = generatedChapters.CHAPTERS.findIndex(chapter => chapter.id === 'history-medicine-renaissance-medicine')
-    expect(index).toBe(CHAPTERS.findIndex(chapter => chapter.id === 'history-medicine-renaissance-medicine'))
+    expect(index).toBe(fixture.chapters.findIndex(chapter => chapter.id === 'history-medicine-renaissance-medicine'))
     expect(index).toBe(2)
     const row = generatedChapters.CHAPTERS[index]
     expect(row.availability).toBe('hidden')
-    expect(row).toEqual(CHAPTERS[index])
+    expect(row).toEqual(fixture.chapters[index])
     // It is projected from compatibility data — nothing canonical claims it.
     expect(catalogue.chapters.map(chapter => chapter.id)).not.toContain(row.id)
   })
 
   it('projects the same availability for every row, through the same function', () => {
-    for (const [index, expected] of CHAPTERS.entries()) {
+    for (const [index, expected] of fixture.chapters.entries()) {
       const actual = generatedChapters.CHAPTERS[index]
       expect(generatedChapters.getChapterAvailability(actual), `${expected.id} availability`)
-        .toBe(getChapterAvailability(expected))
+        .toBe(fixture.helpers.getChapterAvailability[expected.id])
       expect(generatedChapters.isChapterAvailable(actual), `${expected.id} openable`)
-        .toBe(isChapterAvailable(expected))
+        .toBe(fixture.helpers.isChapterAvailable[expected.id])
     }
-    expect(generatedChapters.CHAPTER_AVAILABILITY).toEqual(CHAPTER_AVAILABILITY)
-    expect(generatedChapters.getChapterAvailability(null)).toBe(CHAPTER_AVAILABILITY.HIDDEN)
-    // 30 available today; the count is asserted so a silent shift fails here.
+    expect(generatedChapters.CHAPTER_AVAILABILITY).toEqual(fixture.chapterAvailability)
+    expect(generatedChapters.getChapterAvailability(null)).toBe(fixture.helpers.getChapterAvailabilityOfNull)
+    expect(generatedChapters.getChapterAvailability(null)).toBe(generatedChapters.CHAPTER_AVAILABILITY.HIDDEN)
+    // 30 available; the count is asserted so a silent shift fails here.
     expect(generatedChapters.CHAPTERS.filter(generatedChapters.isChapterAvailable))
-      .toHaveLength(CHAPTERS.filter(isChapterAvailable).length)
+      .toHaveLength(fixture.helpers.availableChapterCount)
+    expect(generatedChapters.CHAPTERS
+      .filter(chapter => generatedChapters.getChapterAvailability(chapter) === 'hidden')
+      .map(chapter => chapter.id)).toEqual(fixture.helpers.hiddenChapterIds)
   })
 
   it('derives screenCount from the content file and matches all 60 rows', () => {
-    for (const [index, expected] of CHAPTERS.entries()) {
+    for (const [index, expected] of fixture.chapters.entries()) {
       expect(generatedChapters.CHAPTERS[index].screenCount, `${expected.id}.screenCount`)
         .toBe(expected.screenCount)
     }
   })
 
   it('derives screenTags from the content file and matches all 60 rows, nulls included', () => {
-    for (const [index, expected] of CHAPTERS.entries()) {
+    for (const [index, expected] of fixture.chapters.entries()) {
       const actual = generatedChapters.CHAPTERS[index].screenTags
       expect(actual, `${expected.id}.screenTags`).toEqual(expected.screenTags)
       expect(actual.length, `${expected.id} screenTags length`).toBe(expected.screenCount)
@@ -191,7 +268,7 @@ describe('CHAPTERS parity', () => {
   })
 
   it('projects the same presentation and tag values — colour, icon, imagery, tags', () => {
-    for (const [index, expected] of CHAPTERS.entries()) {
+    for (const [index, expected] of fixture.chapters.entries()) {
       const actual = generatedChapters.CHAPTERS[index]
       for (const key of ['color', 'colorLight', 'icon', 'headerImage', 'number', 'series', 'tags']) {
         expect(actual[key], `${expected.id}.${key}`).toEqual(expected[key])
@@ -200,19 +277,17 @@ describe('CHAPTERS parity', () => {
   })
 
   it('is deeply equal as a whole', () => {
-    expect(generatedChapters.CHAPTERS).toEqual(CHAPTERS)
+    expect(generatedChapters.CHAPTERS).toEqual(fixture.chapters)
   })
 
-  it('exports the same public symbols as the hand-authored file', () => {
-    expect(Object.keys(generatedChapters).sort()).toEqual([
-      'CHAPTERS', 'CHAPTER_AVAILABILITY', 'getChapterAvailability', 'isChapterAvailable',
-    ])
+  it('exports the same public symbols as the pre-cutover file', () => {
+    expect(Object.keys(generatedChapters).sort()).toEqual(fixture.exports['src/chapters.js'])
   })
 
   it('keeps the six new English chapters out of the projection, and in the catalogue', () => {
     const projected = new Set(generatedChapters.CHAPTERS.map(chapter => chapter.id))
     for (const id of compatibility.excludedChapterIds) {
-      expect(projected.has(id), `${id} entered the Stage 3 projection`).toBe(false)
+      expect(projected.has(id), `${id} entered the projection`).toBe(false)
       expect(catalogue.chapters.some(chapter => chapter.id === id), `${id} left the catalogue`).toBe(true)
     }
     expect(compatibility.excludedChapterIds).toHaveLength(6)
@@ -225,39 +300,36 @@ describe('CHAPTERS parity', () => {
 
 describe('CHAPTER_CONTENT_LOADERS parity', () => {
   const generatedKeys = Object.keys(generatedLoaders.CHAPTER_CONTENT_LOADERS)
-  const runtimeKeys = Object.keys(CHAPTER_CONTENT_LOADERS)
+  const frozenKeys = fixture.loaders.map(loader => loader.id)
 
   it('projects exactly 60 keys, in the same order', () => {
     expect(generatedKeys).toHaveLength(60)
-    expect(generatedKeys).toEqual(runtimeKeys)
+    expect(generatedKeys).toEqual(frozenKeys)
   })
 
   it('projects the same dynamic import target for every key', () => {
     // Read from source: an import specifier is not observable at runtime.
     //
-    // Compared as RESOLVED targets, not as literal strings. The two files sit
-    // in different directories, so the same content file is spelled
-    // `./history/…` from `src/content/` and `../../../content/history/…` from
-    // `src/data/generated/curriculum/`. Demanding identical text would demand a
-    // specifier that resolves to nothing from the generated file's location.
-    const targets = (relativeFile, source) => {
-      const base = dirname(resolve(root, relativeFile))
-      const found = new Map()
-      const pattern = /["']?([\w-]+)["']?\s*:\s*\(\)\s*=>\s*import\(\s*['"]([^'"]+)['"]\s*\)/g
-      for (const [, id, path] of source.matchAll(pattern)) found.set(id, resolve(base, path))
-      return found
+    // Compared as NORMALISED project-relative targets, not as literal strings.
+    // The frozen registry sat in `src/content/` and wrote `./history/…`; the
+    // generated file sits in `src/data/generated/curriculum/`, so the same
+    // target is spelled `../../../content/history/…`. Demanding identical text
+    // would demand a specifier that resolves to nothing from the generated
+    // file's location.
+    const base = dirname(resolve(root, LOADERS_PATH))
+    const actual = new Map()
+    const pattern = /["']?([\w-]+)["']?\s*:\s*\(\)\s*=>\s*import\(\s*['"]([^'"]+)['"]\s*\)/g
+    for (const [, id, specifier] of read(LOADERS_PATH).matchAll(pattern)) {
+      actual.set(id, posix.relative(root, resolve(base, specifier)))
     }
-    const expected = targets('src/content/chapterContentRegistry.js', read('src/content/chapterContentRegistry.js'))
-    const actual = targets(LOADERS_PATH, read(LOADERS_PATH))
     expect(actual.size).toBe(60)
-    expect(expected.size).toBe(60)
-    for (const [id, target] of expected) {
-      expect(actual.get(id), `loader ${id} import target`).toBe(target)
-      expect(existsSync(target), `loader ${id} target does not exist`).toBe(true)
+    for (const { id, contentPath } of fixture.loaders) {
+      expect(actual.get(id), `loader ${id} import target`).toBe(contentPath)
+      expect(existsSync(resolve(root, contentPath)), `loader ${id} target does not exist`).toBe(true)
     }
   })
 
-  it('spells every target relative to the generated file, so Stage 4 can re-export it', () => {
+  it('spells every target relative to the generated file, so the re-export resolves', () => {
     const source = read(LOADERS_PATH)
     const specifiers = [...source.matchAll(/import\(\s*['"]([^'"]+)['"]\s*\)/g)].map(match => match[1])
     expect(specifiers).toHaveLength(60)
@@ -266,16 +338,16 @@ describe('CHAPTER_CONTENT_LOADERS parity', () => {
     }
   })
 
-  it('resolves every loader to the same content module as the runtime does', async () => {
-    for (const id of runtimeKeys) {
-      const [fromRuntime, fromProjection] = await Promise.all([
-        loadChapterContent(id),
+  it('resolves every loader to the content module the frozen contract names', async () => {
+    for (const { id, contentPath } of fixture.loaders) {
+      const [fromProjection, direct] = await Promise.all([
         generatedLoaders.loadChapterContent(id),
+        import(pathToFileURL(resolve(root, contentPath)).href),
       ])
-      // Same module instance: the two loaders name the same file, so the module
-      // registry hands back one object. Identity is the strongest available
-      // proof that the import targets agree.
-      expect(fromProjection, `loader ${id}`).toBe(fromRuntime)
+      // Same module instance: the loader and the frozen path name the same
+      // file, so the module registry hands back one object. Identity is the
+      // strongest available proof that the import targets agree.
+      expect(fromProjection, `loader ${id}`).toBe(direct.default)
       expect(fromProjection, `loader ${id} resolved nothing`).toBeTruthy()
     }
   })
@@ -298,13 +370,13 @@ describe('CHAPTER_CONTENT_LOADERS parity', () => {
     }
   })
 
-  it('returns null for an unknown id, like the runtime does', async () => {
+  it('returns null for an unknown id, like the pre-cutover registry did', async () => {
     expect(await generatedLoaders.loadChapterContent('nothing-like-this')).toBeNull()
-    expect(await loadChapterContent('nothing-like-this')).toBeNull()
   })
 
-  it('exports the same public symbols as the hand-authored file', () => {
-    expect(Object.keys(generatedLoaders).sort()).toEqual(['CHAPTER_CONTENT_LOADERS', 'loadChapterContent'])
+  it('exports the same public symbols as the pre-cutover file', () => {
+    expect(Object.keys(generatedLoaders).sort())
+      .toEqual(fixture.exports['src/content/chapterContentRegistry.js'])
   })
 })
 
@@ -313,7 +385,8 @@ describe('CHAPTER_CONTENT_LOADERS parity', () => {
 // A parity test that only ever compares two identical things proves the two
 // things are identical, not that the comparison would notice if they were not.
 // Each case below mutates the projection input by one fact and asserts the
-// output changes — so a real regression could not slip past.
+// output stops matching the frozen contract — so a real regression could not
+// slip past.
 
 describe('the parity gate detects a difference', () => {
   const rebuild = overrides => buildProjections(catalogue, { ...compatibility, ...overrides })
@@ -324,13 +397,13 @@ describe('the parity gate detects a difference', () => {
         { id: 'extra_module', title: 'Extra', canonicalModuleIds: ['english-lit-aqa-inspector-calls'] }],
     })
     expect(built.modules).toHaveLength(8)
-    expect(built.modules).not.toEqual(MODULES)
+    expect(built.modules).not.toEqual(fixture.modules)
   })
 
   it('notices a missing runtime module', async () => {
     const built = await rebuild({ legacyModules: compatibility.legacyModules.slice(1) })
     expect(built.modules).toHaveLength(6)
-    expect(built.modules.map(module => module.id)).not.toEqual(MODULES.map(module => module.id))
+    expect(built.modules.map(module => module.id)).not.toEqual(fixture.modules.map(module => module.id))
   })
 
   it('notices a changed module title', async () => {
@@ -338,24 +411,24 @@ describe('the parity gate detects a difference', () => {
       legacyModules: compatibility.legacyModules.map(legacy =>
         legacy.id === 'maths_core' ? { ...legacy, title: 'Maths' } : legacy),
     })
-    expect(built.modules).not.toEqual(MODULES)
+    expect(built.modules).not.toEqual(fixture.modules)
     expect(built.modules.find(module => module.id === 'maths_core').title).toBe('Maths')
   })
 
   it('notices a missing runtime chapter', async () => {
     const built = await rebuild({ chapterOrder: compatibility.chapterOrder.slice(0, 59) })
     expect(built.chapters).toHaveLength(59)
-    expect(built.chapters.map(chapter => chapter.id)).not.toEqual(CHAPTERS.map(chapter => chapter.id))
+    expect(built.chapters.map(chapter => chapter.id)).not.toEqual(fixture.chapters.map(chapter => chapter.id))
   })
 
   it('notices changed chapter ordering', async () => {
     const reordered = [...compatibility.chapterOrder]
     ;[reordered[0], reordered[1]] = [reordered[1], reordered[0]]
     const built = await rebuild({ chapterOrder: reordered })
-    expect(built.chapters.map(chapter => chapter.id)).not.toEqual(CHAPTERS.map(chapter => chapter.id))
+    expect(built.chapters.map(chapter => chapter.id)).not.toEqual(fixture.chapters.map(chapter => chapter.id))
     // Same set, different order — the kind of difference a set comparison misses.
     expect([...built.chapters.map(chapter => chapter.id)].sort())
-      .toEqual([...CHAPTERS.map(chapter => chapter.id)].sort())
+      .toEqual([...fixture.chapters.map(chapter => chapter.id)].sort())
   })
 
   it('notices a changed legacy-only chapter field', async () => {
@@ -365,15 +438,32 @@ describe('the parity gate detects a difference', () => {
         soc1: { ...compatibility.chapterFields.soc1, color: '#000000' },
       },
     })
-    expect(built.chapters).not.toEqual(CHAPTERS)
+    expect(built.chapters).not.toEqual(fixture.chapters)
     expect(built.chapters.find(chapter => chapter.id === 'soc1').color).toBe('#000000')
+  })
+
+  it('notices a chapter field that stopped being absent', async () => {
+    // Absence is contract. `series` is absent on 21 rows, and a row that gained
+    // it would render an extra label the pre-cutover runtime never printed.
+    const gained = fixture.chapters.find(chapter => !('series' in chapter))
+    const built = await rebuild({
+      chapterFields: {
+        ...compatibility.chapterFields,
+        [gained.id]: { ...compatibility.chapterFields[gained.id], series: 'invented' },
+      },
+    })
+    const row = built.chapters.find(chapter => chapter.id === gained.id)
+    expect('series' in row).toBe(true)
+    expect(Object.keys(row).sort()).not.toEqual(Object.keys(gained).sort())
+    expect(built.chapters).not.toEqual(fixture.chapters)
   })
 
   it('notices a chapter that stopped being excluded', async () => {
     const built = await rebuild({ excludedChapterIds: [] })
     const macbeth = built.modules.find(module => module.id === 'eng_macbeth')
     expect(macbeth.chapterIds).toHaveLength(4)
-    expect(macbeth.chapterIds).not.toEqual(getModuleById('eng_macbeth').chapterIds)
+    expect(macbeth.chapterIds)
+      .not.toEqual(fixture.modules.find(module => module.id === 'eng_macbeth').chapterIds)
   })
 
   it('notices a changed loader target', async () => {
@@ -384,15 +474,19 @@ describe('the parity gate detects a difference', () => {
     const built = await buildProjections(catalogue, poisoned)
     const hidden = built.loaders.find(loader => loader.id === compatibility.hiddenChapter.row.id)
     expect(hidden.importPath).toBe('../../../content/sociology/families/episodes/soc1.js')
+    // …and it no longer matches the target the frozen contract names.
+    const frozen = fixture.loaders.find(loader => loader.id === compatibility.hiddenChapter.row.id)
+    expect(posix.relative(root, resolve(dirname(resolve(root, LOADERS_PATH)), hidden.importPath)))
+      .not.toBe(frozen.contentPath)
     expect(read(LOADERS_PATH)).not.toContain(`"${compatibility.hiddenChapter.row.id}": () => import("${hidden.importPath}")`)
   })
 
   it('notices changed loader ordering', async () => {
     const anchors = [...compatibility.loaderSectionAnchors].reverse()
     const built = await rebuild({ loaderSectionAnchors: anchors })
-    expect(built.loaders.map(loader => loader.id)).not.toEqual(Object.keys(CHAPTER_CONTENT_LOADERS))
+    expect(built.loaders.map(loader => loader.id)).not.toEqual(fixture.loaders.map(loader => loader.id))
     expect([...built.loaders.map(loader => loader.id)].sort())
-      .toEqual([...Object.keys(CHAPTER_CONTENT_LOADERS)].sort())
+      .toEqual([...fixture.loaders.map(loader => loader.id)].sort())
   })
 
   it('throws rather than projecting a chapter with no content path', async () => {
@@ -442,13 +536,15 @@ describe('the projections generator is governed', () => {
     }
   })
 
-  it('never reads .planning/** or the hand-authored runtime', () => {
+  it('never reads .planning/**, the frozen fixture, or the runtime files', () => {
     expect(assertInputPurity()).toEqual([])
-    // …and the guard fires on the two things it exists to catch.
+    // …and the guard fires on the three things it exists to catch.
     expect(assertInputPurity("import { CHAPTERS } from '../src/chapters.js'").join(' '))
       .toMatch(/hand-authored runtime is never a generator input/)
     expect(assertInputPurity("readFileSync('.planning/phase-5-curriculum-architecture/DESIGN.md')").join(' '))
       .toMatch(/\.planning\/\*\* is never a generator input/)
+    expect(assertInputPurity(`import fixture from '../${FROZEN_RUNTIME_FIXTURE}'`).join(' '))
+      .toMatch(/frozen runtime fixture is never a generator input/)
     // A generated re-export is not the hand-authored file.
     expect(assertInputPurity("import x from '../src/data/generated/curriculum/chapters.js'")).toEqual([])
   })
@@ -475,21 +571,21 @@ describe('the projections generator is governed', () => {
 
 // ─── The generated files stay out of the runtime ────────────────────────────
 
-describe('Stage 3 changes no runtime source', () => {
-  function listFiles(dir) {
-    const out = []
-    const absolute = resolve(root, dir)
-    if (!existsSync(absolute)) return out
-    for (const name of readdirSync(absolute)) {
-      const rel = posix.join(dir, name)
-      if (statSync(resolve(root, rel)).isDirectory()) { out.push(...listFiles(rel)); continue }
-      if (name.endsWith('.stories.jsx') || /\.(test|spec)\.jsx?$/.test(name)) continue
-      if (!/\.jsx?$/.test(name)) continue
-      out.push(rel)
-    }
-    return out
+function listFiles(dir) {
+  const out = []
+  const absolute = resolve(root, dir)
+  if (!existsSync(absolute)) return out
+  for (const name of readdirSync(absolute)) {
+    const rel = posix.join(dir, name)
+    if (statSync(resolve(root, rel)).isDirectory()) { out.push(...listFiles(rel)); continue }
+    if (name.endsWith('.stories.jsx') || /\.(test|spec)\.jsx?$/.test(name)) continue
+    if (!/\.m?jsx?$/.test(name)) continue
+    out.push(rel)
   }
+  return out
+}
 
+describe('Stage 3 changes no runtime source', () => {
   it('nothing re-exports or imports the generated projections', () => {
     const reaches = /(?:from\s*|import\s*\(?\s*)['"][^'"]*generated\/curriculum\//
     const importers = listFiles('src').filter(file => !file.startsWith('src/data/generated/curriculum/'))
@@ -523,9 +619,9 @@ describe('the screenTags report is a review artefact, not a correction', () => {
     expect(documents[REPORT_PATH]).toBe(read(REPORT_PATH))
   })
 
-  it('changes no projected value — every screenTags array still equals the runtime', () => {
+  it('changes no projected value — every screenTags array still equals the frozen contract', () => {
     renderScreenTagReport(projections.chapters)
-    for (const [index, expected] of CHAPTERS.entries()) {
+    for (const [index, expected] of fixture.chapters.entries()) {
       expect(generatedChapters.CHAPTERS[index].screenTags, `${expected.id}`).toEqual(expected.screenTags)
     }
   })

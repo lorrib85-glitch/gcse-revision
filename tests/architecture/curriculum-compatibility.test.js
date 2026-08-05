@@ -8,7 +8,7 @@
 // The distinction being defended: a fact under `records/` is curriculum and
 // outlives the migration; a fact under `compatibility/` is temporary projection
 // INPUT. If that line blurs, the migration has quietly acquired a second
-// authority and Stage 5 has nothing to delete.
+// authority and there is nothing left for Stage 6 to delete.
 
 import { describe, it, expect } from 'vitest'
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs'
@@ -22,6 +22,9 @@ import {
   validateCompatibility,
   checkCompatibility,
   DELETION_STAGES,
+  FINAL_CONSUMERS,
+  STAGE_5_CONSUMERS,
+  RUNTIME_BOUNDARY_FILES,
   CANONICAL_CHAPTER_FIELDS,
   COMPATIBILITY_VERSION,
 } from '../../src/curriculum-catalogue/compatibility/index.js'
@@ -274,12 +277,52 @@ describe('every compatibility field has a death date', () => {
     }
   })
 
-  it('every declared stage is a real later stage — 5 or 6, never 3 or 4', () => {
-    // Stage 4 makes the runtime files re-export the projections, so the
-    // projection must still produce the identical interface. Nothing here can
-    // die before Stage 5.
+  it('nothing dies before Stage 6, because Stage 5 migrates one consumer', () => {
+    // Stage 4 makes the runtime files re-export the projections; Stage 5 ADDS
+    // canonical navigation and migrates the subject browser. It does not
+    // migrate the eight other consumers of MODULES / CHAPTERS /
+    // CHAPTER_CONTENT_LOADERS, so the compatibility projection has to keep
+    // producing the identical interface through Stage 5. Deleting a field
+    // before its final consumer has gone is a runtime change, not cleanup.
     for (const [field, stage] of Object.entries(DELETION_STAGES)) {
-      expect([5, 6], `${field} dies at stage ${stage}`).toContain(stage)
+      expect(stage, `${field} dies at stage ${stage}, before its final consumer`).toBe(6)
+    }
+  })
+
+  it('every field names the consumers that outlive the Stage 5 browser migration', () => {
+    expect(Object.keys(FINAL_CONSUMERS).sort()).toEqual(Object.keys(DELETION_STAGES).sort())
+    for (const [field, entry] of Object.entries(FINAL_CONSUMERS)) {
+      expect(entry.reason, `${field} gives no reason`).toMatch(/\S/)
+      expect(entry.survivingConsumers.length, `${field} names no surviving consumer`).toBeGreaterThan(0)
+      for (const consumer of [...entry.survivingConsumers, ...entry.stage5Consumers]) {
+        expect(existsSync(resolve(root, consumer)), `${field} names missing file ${consumer}`).toBe(true)
+      }
+      // The whole point of the correction: a field's retirement stage is set by
+      // what still consumes it AFTER Stage 5, never by the browser that stops.
+      for (const consumer of entry.survivingConsumers) {
+        expect(STAGE_5_CONSUMERS, `${field} calls a Stage 5 consumer a survivor`).not.toContain(consumer)
+      }
+    }
+  })
+
+  it('every surviving consumer really consumes the fact', () => {
+    // A named survivor has to be reachable evidence, not an assertion. It
+    // qualifies by being a runtime boundary file, by importing one, or — for
+    // the hidden Renaissance row — by naming the id the compatibility layer
+    // supplies, which is how `chapterProgress.js` consumes it without ever
+    // importing `CHAPTERS`.
+    const boundary = new Set(RUNTIME_BOUNDARY_FILES)
+    const reachesBoundary = /(?:from\s*|import\s*\(?\s*)['"][^'"]*(?:data\/modules|chapters|content\/chapterContentRegistry)\.js['"]/
+    const hiddenId = compatibility.hiddenChapter.row.id
+    for (const [field, entry] of Object.entries(FINAL_CONSUMERS)) {
+      for (const consumer of entry.survivingConsumers) {
+        if (boundary.has(consumer)) continue
+        const source = read(consumer)
+        expect(
+          reachesBoundary.test(source) || source.includes(hiddenId),
+          `${field}: ${consumer} neither reaches a runtime boundary file nor names a compatibility id`,
+        ).toBe(true)
+      }
     }
   })
 
@@ -298,11 +341,29 @@ describe('every compatibility field has a death date', () => {
 
   it('the documented retirement table matches DELETION_STAGES', () => {
     const doc = read('docs/system/CURRICULUM_RUNTIME_COMPATIBILITY.md')
-    for (const field of ['legacyModules', 'chapterOrder', 'loaderSectionAnchors', 'excludedChapterIds']) {
-      expect(doc, `${field} is missing from the Stage 5 row`).toMatch(new RegExp(`\`${field}\``))
+    for (const field of Object.keys(DELETION_STAGES)) {
+      expect(doc, `${field} is missing from the retirement table`).toMatch(new RegExp(`\`${field}\``))
     }
-    expect(doc).toMatch(/Stage 6.*facetTags/s)
-    expect(doc).toMatch(/Stage 4.*unchanged and still required/s)
+    // The corrected sequence, stated in the document the same way the code
+    // states it: Stage 4 load-bearing, Stage 5 intact, Stage 6 deletes.
+    expect(doc).toMatch(/Stage 4.*load-bearing/s)
+    expect(doc).toMatch(/Stage 5.*remains intact/s)
+    expect(doc).toMatch(/Stage 6.*final consumer/s)
+    // …and no field may be advertised as dying at Stage 5 any more.
+    expect(doc).not.toMatch(/deleted at \*\*Stage 5\*\*/)
+  })
+
+  it('the planning sequence and the design doc agree that Stage 5 deletes nothing', () => {
+    const plan = read('.planning/phase-5-curriculum-architecture/IMPLEMENTATION-PLAN.md')
+    expect(plan).toMatch(/Stage 5.*compatibility projection.*intact/s)
+    expect(plan).toMatch(/Stage 6/)
+    // Every legacy consumer that outlives Stage 5 has to be named in the Stage 6
+    // plan, or Stage 6 has no way to know what it still has to migrate.
+    const survivors = new Set(Object.values(FINAL_CONSUMERS).flatMap(entry => entry.survivingConsumers))
+    for (const consumer of survivors) {
+      if (RUNTIME_BOUNDARY_FILES.includes(consumer)) continue
+      expect(plan, `${consumer} is not named in the Stage 6 plan`).toContain(consumer)
+    }
   })
 })
 
