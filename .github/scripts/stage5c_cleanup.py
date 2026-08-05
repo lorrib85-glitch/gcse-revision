@@ -184,6 +184,8 @@ migration.write_text(text)
 
 live_roots = [Path('src'), Path('tests'), Path('docs'), Path('scripts'), Path('CLAUDE.md')]
 leftovers = []
+intentional_old_path = 'src/features/subjects/subjectCatalogue.js'
+intentional_guard_file = Path('tests/architecture/curriculum-navigation.test.js')
 for root in live_roots:
     paths = [root] if root.is_file() else [path for path in root.rglob('*') if path.is_file()]
     for path in paths:
@@ -191,6 +193,13 @@ for root in live_roots:
             value = path.read_text()
         except UnicodeDecodeError:
             continue
+        if path == intentional_guard_file:
+            count = value.count(intentional_old_path)
+            if count != 1:
+                raise RuntimeError(
+                    f'{intentional_guard_file} must contain exactly one negative-path reference; found {count}'
+                )
+            value = value.replace(intentional_old_path, '', 1)
         if 'subjectCatalogue' in value:
             leftovers.append(str(path))
 if leftovers:
