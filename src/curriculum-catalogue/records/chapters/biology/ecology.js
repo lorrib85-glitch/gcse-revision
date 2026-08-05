@@ -13,7 +13,7 @@ export default [
     icon: '🌿',
     headerImage: '/images/biology/_shared/ecosystems.webp',
     status: 'planned',
-    contentPath: null,
+    contentPath: 'src/content/biology/ecology/episodes/bio_ecosystems_group.js',
     conceptIds: [],
     requirementIds: [],
     estimatedMinutes: null,

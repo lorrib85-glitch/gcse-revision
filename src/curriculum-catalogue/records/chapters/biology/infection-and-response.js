@@ -13,7 +13,7 @@ export default [
     icon: '🦠',
     headerImage: '/images/biology/_shared/diseasewars.webp',
     status: 'planned',
-    contentPath: null,
+    contentPath: 'src/content/biology/infection-and-response/episodes/bio_disease_wars.js',
     conceptIds: [],
     requirementIds: [],
     estimatedMinutes: null,

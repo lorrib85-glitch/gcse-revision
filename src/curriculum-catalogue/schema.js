@@ -861,9 +861,24 @@ export function validateChapter(record) {
     errors.push(`chapter.status must be one of ${CHAPTER_STATUSES.join(' | ')}`)
   }
   // The one place a path is legitimate: it is the content SOURCE, not identity.
+  //
+  // `status` and `contentPath` answer different questions and are deliberately
+  // independent:
+  //
+  //   status      — may a learner open this chapter?
+  //   contentPath — does a content source exist for it today?
+  //
+  // 29 planned chapters have a real content file that currently returns zero
+  // screens. Forcing their path to null to match their status would delete a
+  // true fact about the repository to satisfy a rule that was never a rule, and
+  // would make the loader registry unreproducible from the catalogue.
+  //
+  // The one direction that IS constrained: available means openable, and
+  // nothing is openable without a source. A file existing never promotes a
+  // chapter — only `status` does that.
   if (record.contentPath !== null) {
     if (!isNonEmptyString(record.contentPath) || !record.contentPath.startsWith('src/content/')) {
-      errors.push('chapter.contentPath must be a src/content/… path or null when planned')
+      errors.push('chapter.contentPath must be a src/content/… path, or null when no source exists')
     }
   } else if (record.status === 'available') {
     errors.push('chapter.status is "available" but contentPath is null')
@@ -908,6 +923,43 @@ export function referenceIsLive(referrerStatus, targetStatus) {
   return RETIRED_STATUSES.includes(referrerStatus)
 }
 
+const LEGACY_BINDING_KEYS = ['id', 'contentPath', 'supersededBy', 'reason']
+
+/**
+ * A content file the runtime still loads for an id the curriculum no longer
+ * owns as a chapter.
+ *
+ * There is exactly one today: `history-medicine-renaissance-medicine`, the
+ * superseded hidden bundle. It has a live loader entry and a live progress
+ * key (`LEGACY_CHAPTER_ID_MAP.mod2` resolves to it) but deliberately no chapter
+ * record — it is not a chapter, and giving it a `retired` chapter record would
+ * put it back in the catalogue as one.
+ *
+ * Without this record the loader registry could not be reproduced from the
+ * catalogue, and the missing entry would have to live in a documentation
+ * script — a compatibility-critical fact in the one place nothing enforces it.
+ * A binding is not a chapter: it has no module, no order, no status and no
+ * learner surface. It says only "this path is still loaded, and here is why".
+ */
+export function validateLegacyContentBinding(record) {
+  const errors = []
+  if (!isPlainObject(record)) return ['legacy content binding must be an object']
+  checkKeys(errors, 'legacyContentBinding', record, LEGACY_BINDING_KEYS)
+
+  checkId(errors, 'legacyContentBinding.id', record.id, { pattern: STABLE_ID })
+  if (!isNonEmptyString(record.contentPath) || !record.contentPath.startsWith('src/content/')) {
+    errors.push('legacyContentBinding.contentPath must be a src/content/… path — a binding with no path binds nothing')
+  }
+  if (record.supersededBy !== null) {
+    checkId(errors, 'legacyContentBinding.supersededBy', record.supersededBy, { pattern: STABLE_ID })
+  }
+  if (!isNonEmptyString(record.reason)) {
+    errors.push('legacyContentBinding.reason must say why this id is not a chapter')
+  }
+  checkSerialisable(errors, 'legacyContentBinding', record)
+  return errors
+}
+
 /** Every entity type the catalogue validates, with its validator. */
 export const RECORD_TYPES = {
   board: validateBoard,
@@ -916,4 +968,5 @@ export const RECORD_TYPES = {
   studyPathway: validateStudyPathway,
   module: validateModule,
   chapter: validateChapter,
+  legacyContentBinding: validateLegacyContentBinding,
 }

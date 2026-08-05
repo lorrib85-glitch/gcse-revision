@@ -203,7 +203,7 @@ export default [
     icon: '🕯️',
     headerImage: '/images/history/medicine/headers/lady-lamp.png',
     status: 'planned',
-    contentPath: null,
+    contentPath: 'src/content/history/medicine/episodes/episode-10-nightingale.js',
     conceptIds: [
       'history:medicine:nightingale',
     ],

@@ -13,7 +13,7 @@ export default [
     icon: '🧠',
     headerImage: '/images/biology/_shared/controlsystems.webp',
     status: 'planned',
-    contentPath: null,
+    contentPath: 'src/content/biology/homeostasis/episodes/bio_control_systems.js',
     conceptIds: [],
     requirementIds: [],
     estimatedMinutes: null,

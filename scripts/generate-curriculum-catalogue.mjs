@@ -274,16 +274,6 @@ export const PLACEHOLDER_MIGRATION = [
   ['cs_inspector_3', 'english-inspector-calls-consequences-resolution'],
 ]
 
-/** The one existing chapter id that deliberately gets no canonical record. */
-export const EXCLUDED_CHAPTER = {
-  id: 'history-medicine-renaissance-medicine',
-  reason: 'The superseded Renaissance bundle: hidden from every learner surface and succeeded '
-    + 'by `history-medicine-vesalius-beginning-doubt`. Its id stays reachable through '
-    + '`LEGACY_CHAPTER_ID_MAP` in `src/data/chapterProgress.js`, which already folds `mod2` '
-    + 'progress forward onto it. A `retired` chapter record would put it back in the catalogue '
-    + 'as a chapter, which is exactly what it is not.',
-}
-
 const STATUS_MARK = { available: '●', active: '●', planned: '○', retired: '×' }
 
 function renderSubjects(lines, subjects) {
@@ -420,6 +410,13 @@ function renderModulesAndChapters(lines, catalogue) {
   lines.push('Ordering lives on the **relationship**, never on the entity: a chapter\'s position is')
   lines.push('a property of the module reference that includes it. `●` available · `○` planned.')
   lines.push('')
+  lines.push('**Status and content are independent columns because they answer different**')
+  lines.push('**questions.** Status is whether a learner may open the chapter; content is whether a')
+  lines.push('source file exists for it today. Most planned chapters below have a real content file')
+  lines.push('that currently returns zero screens — that is why the loader registry has more')
+  lines.push('entries than there are available chapters. A file appearing never promotes a chapter;')
+  lines.push('only its status does.')
+  lines.push('')
   for (const subject of subjects) {
     const owned = orderedFor(subject.id)
     if (owned.length === 0) continue
@@ -474,10 +471,18 @@ function renderMigration(lines, catalogue) {
     lines.push(`| \`${from}\` | \`${to}\` | ${escape(chapterById.get(to)?.title ?? '—')} |`)
   }
   lines.push('')
-  lines.push('### An existing chapter id that gets no record')
+  lines.push('### Content the runtime loads for an id that is not a chapter')
   lines.push('')
-  lines.push(`\`${EXCLUDED_CHAPTER.id}\` — ${escape(EXCLUDED_CHAPTER.reason)}`)
+  lines.push('Read from the `legacyContentBindings` records, not restated here — the reason an id')
+  lines.push('is excluded is a catalogue fact, and a documentation script is the wrong place to')
+  lines.push('keep the only copy of it.')
   lines.push('')
+  for (const binding of catalogue.legacyContentBindings) {
+    lines.push(`- **\`${binding.id}\`** → \`${binding.contentPath}\``)
+    if (binding.supersededBy) lines.push(`  Superseded by \`${binding.supersededBy}\`.`)
+    lines.push(`  ${escape(binding.reason)}`)
+    lines.push('')
+  }
   lines.push('Preserved is not the same as given a record. Every other current chapter id is')
   lines.push('carried verbatim, including the ones that break the naming rules (`soc1`, `math1`,')
   lines.push('`bio_building_blocks`, `sci_bio_w1`, `spain-new-world-1`), because each backs a live')
@@ -488,6 +493,8 @@ function renderMigration(lines, catalogue) {
 export function renderCurriculumMap(catalogue) {
   const { subjects, pathways, modules, chapters } = catalogue
   const available = chapters.filter(chapter => chapter.status === 'available').length
+  const boundChapters = chapters.filter(chapter => chapter.contentPath !== null).length
+  const bound = boundChapters + catalogue.legacyContentBindings.length
   const lines = []
 
   lines.push('# Curriculum map')
@@ -503,6 +510,10 @@ export function renderCurriculumMap(catalogue) {
   lines.push(`**${subjects.length}** subjects · **${pathways.length}** study pathways · `
     + `**${modules.length}** modules · **${chapters.length}** chapters `
     + `(**${available}** available, **${chapters.length - available}** planned)`)
+  lines.push('')
+  lines.push(`**${bound}** content bindings — ${boundChapters} on chapters plus `
+    + `${catalogue.legacyContentBindings.length} legacy, which is every entry in the runtime`)
+  lines.push('loader registry.')
   lines.push('')
   lines.push('**No runtime projection exists yet.** This document and the specification catalogue')
   lines.push('are build-time documentation. `MODULES`, `CHAPTERS` and `CHAPTER_CONTENT_LOADERS`')

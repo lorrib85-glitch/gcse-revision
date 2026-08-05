@@ -17,6 +17,7 @@ import { referenceIsLive, SUBJECT_IDS } from './schema.js'
 export function checkIntegrity(catalogue) {
   const problems = []
   const { boards, subjects, specifications, pathways, modules, chapters } = catalogue
+  const legacyContentBindings = catalogue.legacyContentBindings ?? []
 
   const byId = records => new Map(records.map(record => [record.id, record]))
   const boardById = byId(boards)
@@ -216,6 +217,42 @@ export function checkIntegrity(catalogue) {
     if (chapter.status === 'retired') continue
     if (!owners.has(chapter.id)) {
       problems.push(`chapter "${chapter.id}" is ${chapter.status} but belongs to no module`)
+    }
+  }
+
+  // ── Content bindings resolve to exactly one owner ─────────────────────────
+  //
+  // A content path is loaded for one id. If two chapters named the same file
+  // the loader registry could not be generated from the catalogue, and if a
+  // legacy binding named an id that has a chapter record the binding would be
+  // a second, competing statement about that chapter.
+  const pathOwner = new Map()
+  for (const chapter of chapters) {
+    if (chapter.contentPath === null) continue
+    const existing = pathOwner.get(chapter.contentPath)
+    if (existing) {
+      problems.push(`content path "${chapter.contentPath}" is bound by both "${existing}" and "${chapter.id}"`)
+    } else {
+      pathOwner.set(chapter.contentPath, chapter.id)
+    }
+  }
+  for (const binding of legacyContentBindings) {
+    if (chapterById.has(binding.id)) {
+      problems.push(
+        `legacy content binding "${binding.id}" also has a chapter record — `
+        + 'a binding exists for ids the curriculum does NOT own',
+      )
+    }
+    const existing = pathOwner.get(binding.contentPath)
+    if (existing) {
+      problems.push(`content path "${binding.contentPath}" is bound by both "${existing}" and legacy binding "${binding.id}"`)
+    } else {
+      pathOwner.set(binding.contentPath, binding.id)
+    }
+    // A superseded id has to be superseded BY something that still exists,
+    // or the record documents a dead end.
+    if (binding.supersededBy !== null && !chapterById.has(binding.supersededBy)) {
+      problems.push(`legacy content binding "${binding.id}" is superseded by "${binding.supersededBy}", which has no chapter record`)
     }
   }
 

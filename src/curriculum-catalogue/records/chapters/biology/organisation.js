@@ -13,7 +13,7 @@ export default [
     icon: '🫀',
     headerImage: '/images/biology/_shared/humanmachine.webp',
     status: 'planned',
-    contentPath: null,
+    contentPath: 'src/content/biology/organisation/episodes/bio_human_machine.js',
     conceptIds: [],
     requirementIds: [],
     estimatedMinutes: null,

@@ -26,7 +26,6 @@ export default {
     { moduleId: 'physics-aqa-matter-particles', position: 8, required: true },
     { moduleId: 'physics-aqa-forces-motion', position: 9, required: true },
     { moduleId: 'physics-aqa-waves-electricity', position: 10, required: true },
-    { moduleId: 'physics-aqa-space', position: 11, required: true },
   ],
 
   status: 'active',

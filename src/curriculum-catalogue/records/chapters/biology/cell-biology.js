@@ -39,7 +39,7 @@ export default [
     icon: '🔬',
     headerImage: '/images/biology/_shared/buildinglife.webp',
     status: 'planned',
-    contentPath: null,
+    contentPath: 'src/content/biology/organisation/episodes/bio_building_life.js',
     conceptIds: [],
     requirementIds: [],
     estimatedMinutes: null,

@@ -26,6 +26,7 @@ else. There is no list of records anywhere.
 | `pathways/<id>.js` | one file per record | Same reasoning; a pathway changes when a school's option choices change. |
 | `modules/<id>.js` | one file per record | Each is edited independently when its chapters change. |
 | `chapters/<subject>/<module>.js` | one file per module, array of records | The fastest-growing set. Adding a chapter is almost always adding it to a module that already exists, so a per-module file keeps that a one-file edit and keeps `position` values visible next to each other. |
+| `legacyContentBindings.js` | one file, array of records | Content the runtime still loads for ids the curriculum does not own as chapters. One record today, read with nothing else. |
 
 For the per-file shapes the **filename is the record id** — a record cannot be
 found under a name that disagrees with what it calls itself.
@@ -89,6 +90,34 @@ total add up.
 the Sciences weight 40/40/20 in both tiers, and writing that twice would be one
 fact with two homes. The generated document prints one column per tier only when
 the tiers actually differ.
+
+## Chapter status and content binding
+
+Two fields, two questions, deliberately independent:
+
+| Field | Question it answers |
+|---|---|
+| `status` | May a learner open this chapter? |
+| `contentPath` | Does a content source exist for it today? |
+
+29 planned chapters have a real content file that currently returns zero
+screens. Their `contentPath` names that file. Forcing it to `null` to match
+their status would delete a true fact about the repository and make the loader
+registry unreproducible from the catalogue.
+
+The one direction that **is** constrained: `available` means openable, and
+nothing is openable without a source, so an available chapter may never have a
+null path. A file appearing never promotes a chapter — only `status` does.
+
+The six chapters converted from browse-surface placeholder cards have no file at
+all, so their path is `null` and they generate no loader entry.
+
+`legacyContentBindings.js` covers the remaining case: a content file the runtime
+loads for an id that is **not** a chapter. There is one —
+`history-medicine-renaissance-medicine`, the superseded hidden bundle, whose id
+is still a live progress destination. A binding has no module, no position, no
+status and no learner surface; it states only that a path is still loaded and
+why. Chapters plus bindings reproduce the loader registry exactly.
 
 ## Persisted progress names
 

@@ -13,7 +13,7 @@ export default [
     icon: '🧬',
     headerImage: '/images/biology/_shared/genetics.webp',
     status: 'planned',
-    contentPath: null,
+    contentPath: 'src/content/biology/inheritance-variation-evolution/episodes/bio_genetics_evolution.js',
     conceptIds: [],
     requirementIds: [],
     estimatedMinutes: null,

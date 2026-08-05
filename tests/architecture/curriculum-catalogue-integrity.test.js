@@ -20,6 +20,7 @@ import {
   validateStudyPathway,
   validateModule,
   validateChapter,
+  validateLegacyContentBinding,
   checkSerialisable,
   weightingScopes,
   resolveWeighting,
@@ -30,7 +31,6 @@ import {
   OUTPUT_PATH,
   MAP_OUTPUT_PATH,
   PLACEHOLDER_MIGRATION,
-  EXCLUDED_CHAPTER,
 } from '../../scripts/generate-curriculum-catalogue.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -97,6 +97,7 @@ describe('curriculum catalogue loads', () => {
     const declared = LAYOUT.map(entry => entry.path)
     expect(declared).toEqual([
       'boards.js', 'subjects.js', 'specifications', 'pathways', 'modules', 'chapters',
+      'legacyContentBindings.js',
     ])
     const loaderSource = read(`${CURRICULUM_ROOT}/loadCatalogue.js`)
     expect(loaderSource).toMatch(/readdirSync/)
@@ -1389,17 +1390,19 @@ describe('Stage 2 authored curriculum', () => {
   })
 
   it('excludes the hidden Renaissance bundle while keeping its progress reachable', async () => {
-    const { chapters } = await loadCatalogue()
-    expect(chapters.some(chapter => chapter.id === EXCLUDED_CHAPTER.id)).toBe(false)
-    // Excluded from the catalogue, still whole in the runtime and still the
-    // destination `mod2` progress folds onto. Preserved is not the same as
-    // given a record.
+    const { chapters, legacyContentBindings } = await loadCatalogue()
+    const [binding] = legacyContentBindings
+    expect(binding.id).toBe('history-medicine-renaissance-medicine')
+    expect(chapters.some(chapter => chapter.id === binding.id)).toBe(false)
+    // Excluded from the catalogue as a chapter, still whole in the runtime and
+    // still the destination `mod2` progress folds onto. Preserved is not the
+    // same as given a chapter record.
     const runtime = await import('../../src/chapters.js')
-    const hidden = runtime.CHAPTERS.find(chapter => chapter.id === EXCLUDED_CHAPTER.id)
+    const hidden = runtime.CHAPTERS.find(chapter => chapter.id === binding.id)
     expect(runtime.getChapterAvailability(hidden)).toBe('hidden')
     const progress = await import('../../src/data/chapterProgress.js')
-    expect(progress.LEGACY_CHAPTER_ID_MAP.mod2).toBe(EXCLUDED_CHAPTER.id)
-    expect(progress.canonicalChapterId('mod2')).toBe(EXCLUDED_CHAPTER.id)
+    expect(progress.LEGACY_CHAPTER_ID_MAP.mod2).toBe(binding.id)
+    expect(progress.canonicalChapterId('mod2')).toBe(binding.id)
   })
 
   it('binds every available chapter to the content file it already loads', async () => {
@@ -1410,11 +1413,10 @@ describe('Stage 2 authored curriculum', () => {
       loaderPath[match[1]] = `src/content/${match[2]}`
     }
     for (const chapter of chapters) {
-      if (chapter.status !== 'available') {
-        expect(chapter.contentPath, `${chapter.id} is planned but names content`).toBe(null)
-        continue
-      }
-      expect(chapter.contentPath, chapter.id).toBe(loaderPath[chapter.id])
+      // Status does not decide the binding: a chapter is bound to the file the
+      // runtime already loads for it, and to null only when no file exists.
+      expect(chapter.contentPath, chapter.id).toBe(loaderPath[chapter.id] ?? null)
+      if (chapter.contentPath === null) continue
       expect(existsSync(resolve(root, chapter.contentPath)), `${chapter.contentPath} missing`).toBe(true)
     }
   })
@@ -1517,11 +1519,13 @@ describe('generated curriculum map', () => {
       const chapter = chapters.find(candidate => candidate.id === to)
       expect(chapter, `${to} has no record`).toBeTruthy()
       expect(chapter.status).toBe('planned')
+      // These six are the only planned chapters with no content path, because
+      // they are the only ones with no file — a placeholder card never had one.
       expect(chapter.contentPath).toBe(null)
     }
     const rendered = renderCurriculumMap(await loadCatalogue())
     expect(rendered).toContain('| `cs_macbeth_2` | `english-macbeth-guilt-consequence` |')
-    expect(rendered).toContain(EXCLUDED_CHAPTER.id)
+    expect(rendered).toContain('history-medicine-renaissance-medicine')
   })
 
   it('is documentation, not a runtime projection', () => {
@@ -1530,5 +1534,244 @@ describe('generated curriculum map', () => {
     expect(existsSync(resolve(root, 'src/data/generated/curriculum'))).toBe(false)
     expect(OUTPUT_PATH.startsWith('docs/')).toBe(true)
     expect(MAP_OUTPUT_PATH.startsWith('docs/')).toBe(true)
+  })
+})
+
+// ─── Content bindings ──────────────────────────────────────────────────────
+//
+// `status` and `contentPath` answer different questions and must stay
+// independent: status is whether a learner may open a chapter, contentPath is
+// whether a source exists for it. 29 planned chapters have a real file that
+// currently returns zero screens. Collapsing the two would have deleted a true
+// fact to satisfy a rule that was never a rule, and would have left the loader
+// registry unreproducible from the catalogue.
+
+describe('chapter content bindings', () => {
+  const loaderPaths = () => {
+    const registry = read('src/content/chapterContentRegistry.js')
+    const paths = {}
+    for (const match of registry.matchAll(/'([^']+)':\s*\(\)\s*=>\s*import\('\.\/([^']+)'\)/g)) {
+      paths[match[1]] = `src/content/${match[2]}`
+    }
+    return paths
+  }
+
+  it('preserves the existing content binding of all 59 non-hidden chapters', async () => {
+    const { chapters } = await loadCatalogue()
+    const paths = loaderPaths()
+    const runtime = await import('../../src/chapters.js')
+    const nonHidden = runtime.CHAPTERS
+      .filter(chapter => runtime.getChapterAvailability(chapter) !== 'hidden')
+      .map(chapter => chapter.id)
+    expect(nonHidden).toHaveLength(59)
+    for (const id of nonHidden) {
+      const chapter = chapters.find(candidate => candidate.id === id)
+      expect(chapter.contentPath, `${id} lost its binding`).toBe(paths[id])
+    }
+    expect(chapters.filter(chapter => chapter.contentPath !== null)).toHaveLength(59)
+  })
+
+  it('reproduces every one of the 60 runtime loader entries', async () => {
+    const { chapters, legacyContentBindings } = await loadCatalogue()
+    const paths = loaderPaths()
+    const reproduced = new Map()
+    for (const chapter of chapters) {
+      if (chapter.contentPath !== null) reproduced.set(chapter.id, chapter.contentPath)
+    }
+    // The hidden legacy loader has no chapter record and is reproduced from its
+    // binding — the reason the binding record type exists at all.
+    for (const binding of legacyContentBindings) reproduced.set(binding.id, binding.contentPath)
+
+    expect(reproduced.size).toBe(Object.keys(paths).length)
+    expect(reproduced.size).toBe(60)
+    for (const [id, path] of Object.entries(paths)) {
+      expect(reproduced.get(id), `loader ${id} not reproducible`).toBe(path)
+    }
+  })
+
+  it('generates no loader for the six new English chapters', async () => {
+    const { chapters } = await loadCatalogue()
+    const unbound = chapters.filter(chapter => chapter.contentPath === null)
+    expect(unbound.map(chapter => chapter.id).sort()).toEqual([
+      'english-inspector-calls-consequences-resolution',
+      'english-inspector-calls-responsibility-denial',
+      'english-inspector-calls-social-message',
+      'english-macbeth-appearance-reality',
+      'english-macbeth-guilt-consequence',
+      'english-macbeth-witches-fate',
+    ])
+    // No file, therefore no loader entry — not a loader entry pointing nowhere.
+    const paths = loaderPaths()
+    for (const chapter of unbound) expect(paths[chapter.id], chapter.id).toBeUndefined()
+  })
+
+  it('keeps status and content binding independent in both directions', async () => {
+    const { chapters } = await loadCatalogue()
+    const planned = chapters.filter(chapter => chapter.status === 'planned')
+    // Both combinations exist, which is what "independent" has to mean.
+    expect(planned.filter(chapter => chapter.contentPath !== null)).toHaveLength(29)
+    expect(planned.filter(chapter => chapter.contentPath === null)).toHaveLength(6)
+    // The schema permits a bound planned chapter…
+    const bound = { ...planned.find(chapter => chapter.contentPath !== null) }
+    expect(validateChapter(bound)).toEqual([])
+    // …and still refuses an available chapter with nothing to open.
+    expect(validateChapter({ ...bound, status: 'available', contentPath: null }).join(' '))
+      .toMatch(/is "available" but contentPath is null/)
+  })
+
+  it('never promotes a chapter because a file exists', async () => {
+    const { chapters } = await loadCatalogue()
+    const runtime = await import('../../src/chapters.js')
+    // The runtime's own answer is derived from screenCount; the catalogue's is
+    // authored. A bound planned chapter must still be closed in both.
+    for (const chapter of chapters) {
+      if (chapter.status !== 'planned' || chapter.contentPath === null) continue
+      const live = runtime.CHAPTERS.find(candidate => candidate.id === chapter.id)
+      expect(runtime.isChapterAvailable(live), `${chapter.id} is openable`).toBe(false)
+      expect(live.screenCount, `${chapter.id} has screens`).toBe(0)
+    }
+  })
+
+  it('binds each content path to exactly one owner', async () => {
+    const { chapters, legacyContentBindings } = await loadCatalogue()
+    const all = [
+      ...chapters.filter(chapter => chapter.contentPath !== null).map(chapter => chapter.contentPath),
+      ...legacyContentBindings.map(binding => binding.contentPath),
+    ]
+    expect(new Set(all).size).toBe(all.length)
+    // And the guard fires: two records claiming one file is a registry that
+    // cannot be generated.
+    const problems = checkIntegrity({
+      boards: [], subjects: [], specifications: [], pathways: [], modules: [],
+      chapters: [
+        { id: 'a', status: 'planned', contentPath: 'src/content/x.js', requirementIds: [], conceptIds: [] },
+        { id: 'b', status: 'planned', contentPath: 'src/content/x.js', requirementIds: [], conceptIds: [] },
+      ],
+      legacyContentBindings: [],
+    })
+    expect(problems.join(' ')).toMatch(/is bound by both "a" and "b"/)
+  })
+
+  it('rejects a legacy binding that competes with a chapter record', async () => {
+    const chapter = {
+      id: 'soc4', status: 'available', contentPath: 'src/content/sociology/families/episodes/soc4.js',
+      requirementIds: [], conceptIds: [],
+    }
+    const problems = checkIntegrity({
+      boards: [], subjects: [], specifications: [], pathways: [], modules: [],
+      chapters: [chapter],
+      legacyContentBindings: [{ id: 'soc4', contentPath: 'src/content/other.js', supersededBy: null, reason: 'x' }],
+    })
+    expect(problems.join(' ')).toMatch(/also has a chapter record/)
+  })
+
+  it('validates the binding record itself', async () => {
+    const { legacyContentBindings } = await loadCatalogue()
+    expect(legacyContentBindings).toHaveLength(1)
+    expect(validateLegacyContentBinding(legacyContentBindings[0])).toEqual([])
+    const [binding] = legacyContentBindings
+    expect(validateLegacyContentBinding({ ...binding, contentPath: null }).join(' '))
+      .toMatch(/a binding with no path binds nothing/)
+    expect(validateLegacyContentBinding({ ...binding, reason: '' }).join(' '))
+      .toMatch(/must say why this id is not a chapter/)
+    expect(validateLegacyContentBinding({ ...binding, status: 'retired' }).join(' '))
+      .toMatch(/legacyContentBinding\.status is not a known field/)
+    // A superseded id must be superseded by something that still exists.
+    const problems = checkIntegrity({
+      boards: [], subjects: [], specifications: [], pathways: [], modules: [], chapters: [],
+      legacyContentBindings: [{ ...binding, supersededBy: 'nothing-like-this' }],
+    })
+    expect(problems.join(' ')).toMatch(/superseded by "nothing-like-this", which has no chapter record/)
+  })
+})
+
+// ─── Science paper mappings ────────────────────────────────────────────────
+//
+// ⚠ Provenance: the structure below was supplied and verified by the product
+// owner in-session. This environment cannot reach the awarding-body domains, so
+// no AQA URL was opened from here — see the commit message and the Stage 1
+// provenance note. What these tests prove is that the records match the
+// supplied structure exactly, not that the structure was fetched.
+
+describe('Science paper mappings', () => {
+  const TRILOGY = 'aqa-gcse-combined-science-trilogy-8464'
+  const papersFor = (module, specificationId) =>
+    module.specRefs.find(ref => ref.specificationId === specificationId)?.paperIds ?? null
+
+  it('maps every Biology module to the paper that assesses it', async () => {
+    const { modules } = await loadCatalogue()
+    const expected = {
+      'biology-aqa-cell-biology': 1,
+      'biology-aqa-organisation': 1,
+      'biology-aqa-infection-and-response': 1,
+      'biology-aqa-homeostasis': 2,
+      'biology-aqa-inheritance-variation-evolution': 2,
+      'biology-aqa-ecology': 2,
+    }
+    for (const [id, paper] of Object.entries(expected)) {
+      const module = modules.find(candidate => candidate.id === id)
+      expect(papersFor(module, 'aqa-gcse-biology-8461'), id).toEqual([`aqa-gcse-biology-8461-paper-${paper}`])
+      expect(papersFor(module, TRILOGY), id).toEqual([`${TRILOGY}-biology-paper-${paper}`])
+    }
+  })
+
+  it('maps Chemistry atomic structure to Paper 1 of both specifications', async () => {
+    const { modules } = await loadCatalogue()
+    const module = modules.find(candidate => candidate.id === 'chemistry-aqa-atomic-structure')
+    expect(papersFor(module, 'aqa-gcse-chemistry-8462')).toEqual(['aqa-gcse-chemistry-8462-paper-1'])
+    expect(papersFor(module, TRILOGY)).toEqual([`${TRILOGY}-chemistry-paper-1`])
+  })
+
+  it('maps every Physics module, and splits Waves and electricity across both papers', async () => {
+    const { modules } = await loadCatalogue()
+    const expected = {
+      'physics-aqa-energy': [1],
+      'physics-aqa-matter-particles': [1],
+      'physics-aqa-forces-motion': [2],
+      // Electricity is Paper 1 and waves are Paper 2, so one module genuinely
+      // spans both. `paperIds` being a list is what lets it say so.
+      'physics-aqa-waves-electricity': [1, 2],
+    }
+    for (const [id, papers] of Object.entries(expected)) {
+      const module = modules.find(candidate => candidate.id === id)
+      expect(papersFor(module, 'aqa-gcse-physics-8463'), id)
+        .toEqual(papers.map(n => `aqa-gcse-physics-8463-paper-${n}`))
+      expect(papersFor(module, TRILOGY), id).toEqual(papers.map(n => `${TRILOGY}-physics-paper-${n}`))
+    }
+  })
+
+  it('assesses Space in separate Physics only', async () => {
+    const { modules, pathways } = await loadCatalogue()
+    const space = modules.find(candidate => candidate.id === 'physics-aqa-space')
+    expect(space.specRefs.map(ref => ref.specificationId)).toEqual(['aqa-gcse-physics-8463'])
+    expect(papersFor(space, TRILOGY)).toBe(null)
+    expect(papersFor(space, 'aqa-gcse-physics-8463')).toEqual(['aqa-gcse-physics-8463-paper-2'])
+
+    const reaches = id => pathways.find(pathway => pathway.id === id).moduleRefs.map(ref => ref.moduleId)
+    for (const tier of ['foundation', 'higher']) {
+      expect(reaches(`aqa-combined-science-8464-${tier}`), tier).not.toContain('physics-aqa-space')
+      expect(reaches(`aqa-physics-8463-${tier}`), tier).toContain('physics-aqa-space')
+    }
+  })
+
+  it('leaves Combined Science positions contiguous after Space is removed', async () => {
+    const { pathways } = await loadCatalogue()
+    for (const tier of ['foundation', 'higher']) {
+      const pathway = pathways.find(candidate => candidate.id === `aqa-combined-science-8464-${tier}`)
+      expect(pathway.moduleRefs).toHaveLength(11)
+      expect(pathway.moduleRefs.map(ref => ref.position)).toEqual([...Array(11).keys()])
+    }
+  })
+
+  it('names only papers its specification actually has', async () => {
+    const { modules, specifications } = await loadCatalogue()
+    const papersById = new Map(specifications.map(spec => [spec.id, spec.papers.map(paper => paper.id)]))
+    for (const module of modules) {
+      for (const ref of module.specRefs) {
+        for (const paperId of ref.paperIds) {
+          expect(papersById.get(ref.specificationId), `${module.id} → ${paperId}`).toContain(paperId)
+        }
+      }
+    }
   })
 })

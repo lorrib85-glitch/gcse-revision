@@ -10,6 +10,9 @@ Boards, specifications, papers and assessment objectives live in
 
 **8** subjects · **14** study pathways · **36** modules · **65** chapters (**30** available, **35** planned)
 
+**60** content bindings — 59 on chapters plus 1 legacy, which is every entry in the runtime
+loader registry.
+
 **No runtime projection exists yet.** This document and the specification catalogue
 are build-time documentation. `MODULES`, `CHAPTERS` and `CHAPTER_CONTENT_LOADERS`
 remain hand-authored and untouched.
@@ -49,8 +52,8 @@ changes the pathway, and every chapter already finished keeps its progress.
 | `aqa-biology-8461-higher` | GCSE Biology | higher | 6 | ● active |
 | `aqa-chemistry-8462-foundation` | GCSE Chemistry | foundation | 1 | ○ planned |
 | `aqa-chemistry-8462-higher` | GCSE Chemistry | higher | 1 | ○ planned |
-| `aqa-combined-science-8464-foundation` | GCSE Combined Science: Trilogy | foundation | 12 | ● active |
-| `aqa-combined-science-8464-higher` | GCSE Combined Science: Trilogy | higher | 12 | ● active |
+| `aqa-combined-science-8464-foundation` | GCSE Combined Science: Trilogy | foundation | 11 | ● active |
+| `aqa-combined-science-8464-higher` | GCSE Combined Science: Trilogy | higher | 11 | ● active |
 | `aqa-english-language-8700` | GCSE English Language | untiered | 4 | ○ planned |
 | `aqa-english-literature-8702-macbeth-inspector` | GCSE English Literature | untiered | 2 | ● active |
 | `aqa-maths-8300-foundation` | GCSE Mathematics | foundation | 6 | ● active |
@@ -101,13 +104,20 @@ Science and Triple Science share the same Biology teaching without either owning
 | `physics-aqa-energy` | Combined (F), Combined (H), Physics (F), Physics (H) | GCSE Combined Science: Trilogy · GCSE Physics |
 | `physics-aqa-forces-motion` | Combined (F), Combined (H), Physics (F), Physics (H) | GCSE Combined Science: Trilogy · GCSE Physics |
 | `physics-aqa-matter-particles` | Combined (F), Combined (H), Physics (F), Physics (H) | GCSE Combined Science: Trilogy · GCSE Physics |
-| `physics-aqa-space` | Combined (F), Combined (H), Physics (F), Physics (H) | GCSE Combined Science: Trilogy · GCSE Physics |
+| `physics-aqa-space` | Physics (F), Physics (H) | GCSE Physics |
 | `physics-aqa-waves-electricity` | Combined (F), Combined (H), Physics (F), Physics (H) | GCSE Combined Science: Trilogy · GCSE Physics |
 
 ## Modules and chapters
 
 Ordering lives on the **relationship**, never on the entity: a chapter's position is
 a property of the module reference that includes it. `●` available · `○` planned.
+
+**Status and content are independent columns because they answer different**
+**questions.** Status is whether a learner may open the chapter; content is whether a
+source file exists for it today. Most planned chapters below have a real content file
+that currently returns zero screens — that is why the loader registry has more
+entries than there are available chapters. A file appearing never promotes a chapter;
+only its status does.
 
 ### Maths
 
@@ -188,7 +198,7 @@ Cell structure, microscopy, transport and cell division.
 |---:|---|---|---|---|
 | 1 | Building blocks | `bio_building_blocks` | ● available | `src/content/biology/cell-biology/episodes/bio_building_blocks.js` |
 | 2 | Plant Cells & Photosynthesis | `sci_bio_w1` | ● available | `src/content/biology/cell-biology/episodes/sci_bio_w1.js` |
-| 3 | Building Life | `bio_building_life` | ○ planned | — |
+| 3 | Building Life | `bio_building_life` | ○ planned | `src/content/biology/organisation/episodes/bio_building_life.js` |
 
 #### ○ Organisation
 
@@ -198,7 +208,7 @@ Tissues, organs and the digestive, circulatory and respiratory systems.
 
 | # | Chapter | Id | Status | Content |
 |---:|---|---|---|---|
-| 1 | The Human Machine | `bio_human_machine` | ○ planned | — |
+| 1 | The Human Machine | `bio_human_machine` | ○ planned | `src/content/biology/organisation/episodes/bio_human_machine.js` |
 
 #### ○ Infection and response
 
@@ -208,7 +218,7 @@ Pathogens, the immune response, vaccination and drug development.
 
 | # | Chapter | Id | Status | Content |
 |---:|---|---|---|---|
-| 1 | Disease Wars | `bio_disease_wars` | ○ planned | — |
+| 1 | Disease Wars | `bio_disease_wars` | ○ planned | `src/content/biology/infection-and-response/episodes/bio_disease_wars.js` |
 
 #### ○ Homeostasis and response
 
@@ -218,7 +228,7 @@ The nervous system, hormonal control and how the body holds itself steady.
 
 | # | Chapter | Id | Status | Content |
 |---:|---|---|---|---|
-| 1 | Control Systems | `bio_control_systems` | ○ planned | — |
+| 1 | Control Systems | `bio_control_systems` | ○ planned | `src/content/biology/homeostasis/episodes/bio_control_systems.js` |
 
 #### ○ Inheritance, variation and evolution
 
@@ -228,7 +238,7 @@ DNA, inheritance, variation, natural selection and selective breeding.
 
 | # | Chapter | Id | Status | Content |
 |---:|---|---|---|---|
-| 1 | Genetics & Evolution | `bio_genetics_evolution` | ○ planned | — |
+| 1 | Genetics & Evolution | `bio_genetics_evolution` | ○ planned | `src/content/biology/inheritance-variation-evolution/episodes/bio_genetics_evolution.js` |
 
 #### ○ Ecology
 
@@ -238,7 +248,7 @@ Adaptation, food chains, cycles, biodiversity and human impact.
 
 | # | Chapter | Id | Status | Content |
 |---:|---|---|---|---|
-| 1 | Ecosystems | `bio_ecosystems_group` | ○ planned | — |
+| 1 | Ecosystems | `bio_ecosystems_group` | ○ planned | `src/content/biology/ecology/episodes/bio_ecosystems_group.js` |
 
 ### Chemistry
 
@@ -312,7 +322,7 @@ The thematic study: c1250 to the present, and what changed medicine at each turn
 | 8 | The invisible enemy | `history-medicine-germ-theory` | ● available | `src/content/history/medicine/episodes/episode-07-germ-theory.js` |
 | 9 | The great stink | `history-medicine-great-stink` | ● available | `src/content/history/medicine/episodes/episode-08-great-stink.js` |
 | 10 | The day surgery changed forever | `history-medicine-surgery-revolution` | ● available | `src/content/history/medicine/episodes/episode-09-surgery-revolution.js` |
-| 11 | The lady with the lamp | `history-medicine-nightingale` | ○ planned | — |
+| 11 | The lady with the lamp | `history-medicine-nightingale` | ○ planned | `src/content/history/medicine/episodes/episode-10-nightingale.js` |
 | 12 | The accidental miracle | `history-medicine-accidental-miracle` | ● available | `src/content/history/medicine/episodes/episode-11-accidental-miracle.js` |
 | 13 | When medicine became magic | `history-medicine-modern-medicine` | ● available | `src/content/history/medicine/episodes/episode-12-when-medicine-became-magic.js` |
 | 14 | Can we beat cancer? | `history-medicine-cancer` | ● available | `src/content/history/medicine/episodes/episode-13-can-we-beat-cancer.js` |
@@ -335,16 +345,16 @@ The period study: Columbus, the conquistadors, the fall of the Aztecs and the si
 
 | # | Chapter | Id | Status | Content |
 |---:|---|---|---|---|
-| 1 | The man who wanted to sail west | `spain-new-world-1` | ○ planned | — |
-| 2 | A new world | `spain-new-world-2` | ○ planned | — |
-| 3 | Gold, God and empire | `spain-new-world-3` | ○ planned | — |
-| 4 | The Conquistadors | `spain-new-world-4` | ○ planned | — |
-| 5 | The fall of the Aztecs | `spain-new-world-5` | ○ planned | — |
-| 6 | What the Spanish left behind | `spain-new-world-6` | ○ planned | — |
-| 7 | The last Inca Emperor | `spain-new-world-7` | ○ planned | — |
-| 8 | The conquest of Peru | `spain-new-world-8` | ○ planned | — |
-| 9 | How to rule an empire | `spain-new-world-9` | ○ planned | — |
-| 10 | Silver changed everything | `spain-new-world-10` | ○ planned | — |
+| 1 | The man who wanted to sail west | `spain-new-world-1` | ○ planned | `src/content/history/spain-new-world/episodes/spain-new-world-1.js` |
+| 2 | A new world | `spain-new-world-2` | ○ planned | `src/content/history/spain-new-world/episodes/spain-new-world-2.js` |
+| 3 | Gold, God and empire | `spain-new-world-3` | ○ planned | `src/content/history/spain-new-world/episodes/spain-new-world-3.js` |
+| 4 | The Conquistadors | `spain-new-world-4` | ○ planned | `src/content/history/spain-new-world/episodes/spain-new-world-4.js` |
+| 5 | The fall of the Aztecs | `spain-new-world-5` | ○ planned | `src/content/history/spain-new-world/episodes/spain-new-world-5.js` |
+| 6 | What the Spanish left behind | `spain-new-world-6` | ○ planned | `src/content/history/spain-new-world/episodes/spain-new-world-6.js` |
+| 7 | The last Inca Emperor | `spain-new-world-7` | ○ planned | `src/content/history/spain-new-world/episodes/spain-new-world-7.js` |
+| 8 | The conquest of Peru | `spain-new-world-8` | ○ planned | `src/content/history/spain-new-world/episodes/spain-new-world-8.js` |
+| 9 | How to rule an empire | `spain-new-world-9` | ○ planned | `src/content/history/spain-new-world/episodes/spain-new-world-9.js` |
+| 10 | Silver changed everything | `spain-new-world-10` | ○ planned | `src/content/history/spain-new-world/episodes/spain-new-world-10.js` |
 
 #### ○ Early Elizabethan England, 1558–88
 
@@ -362,18 +372,18 @@ The modern depth study: civil rights at home and the war in Vietnam.
 
 | # | Chapter | Id | Status | Content |
 |---:|---|---|---|---|
-| 1 | Separate and unequal | `usa-segregation` | ○ planned | — |
-| 2 | The girl who walked into history | `usa-brown-v-board` | ○ planned | — |
-| 3 | The woman who stayed seated | `usa-rosa-parks` | ○ planned | — |
-| 4 | Standing up, sitting down | `usa-sit-ins` | ○ planned | — |
-| 5 | I have a dream | `usa-i-have-a-dream` | ○ planned | — |
-| 6 | By any means necessary | `usa-malcolm-x` | ○ planned | — |
-| 7 | How much had really changed? | `usa-how-much-changed` | ○ planned | — |
-| 8 | Why America went to Vietnam | `usa-why-vietnam` | ○ planned | — |
-| 9 | America's war | `usa-americas-war` | ○ planned | — |
-| 10 | Can you win a guerrilla war? | `usa-guerrilla-war` | ○ planned | — |
-| 11 | The war comes home | `usa-war-comes-home` | ○ planned | — |
-| 12 | The long way out | `usa-long-way-out` | ○ planned | — |
+| 1 | Separate and unequal | `usa-segregation` | ○ planned | `src/content/history/usa/episodes/usa-segregation.js` |
+| 2 | The girl who walked into history | `usa-brown-v-board` | ○ planned | `src/content/history/usa/episodes/usa-brown-v-board.js` |
+| 3 | The woman who stayed seated | `usa-rosa-parks` | ○ planned | `src/content/history/usa/episodes/usa-rosa-parks.js` |
+| 4 | Standing up, sitting down | `usa-sit-ins` | ○ planned | `src/content/history/usa/episodes/usa-sit-ins.js` |
+| 5 | I have a dream | `usa-i-have-a-dream` | ○ planned | `src/content/history/usa/episodes/usa-i-have-a-dream.js` |
+| 6 | By any means necessary | `usa-malcolm-x` | ○ planned | `src/content/history/usa/episodes/usa-malcolm-x.js` |
+| 7 | How much had really changed? | `usa-how-much-changed` | ○ planned | `src/content/history/usa/episodes/usa-how-much-changed.js` |
+| 8 | Why America went to Vietnam | `usa-why-vietnam` | ○ planned | `src/content/history/usa/episodes/usa-why-vietnam.js` |
+| 9 | America's war | `usa-americas-war` | ○ planned | `src/content/history/usa/episodes/usa-americas-war.js` |
+| 10 | Can you win a guerrilla war? | `usa-guerrilla-war` | ○ planned | `src/content/history/usa/episodes/usa-guerrilla-war.js` |
+| 11 | The war comes home | `usa-war-comes-home` | ○ planned | `src/content/history/usa/episodes/usa-war-comes-home.js` |
+| 12 | The long way out | `usa-long-way-out` | ○ planned | `src/content/history/usa/episodes/usa-long-way-out.js` |
 
 ### English language
 
@@ -512,9 +522,15 @@ would imply learner data that cannot exist.
 | `cs_inspector_2` | `english-inspector-calls-responsibility-denial` | I accept no blame |
 | `cs_inspector_3` | `english-inspector-calls-consequences-resolution` | Fire, blood and anguish |
 
-### An existing chapter id that gets no record
+### Content the runtime loads for an id that is not a chapter
 
-`history-medicine-renaissance-medicine` — The superseded Renaissance bundle: hidden from every learner surface and succeeded by `history-medicine-vesalius-beginning-doubt`. Its id stays reachable through `LEGACY_CHAPTER_ID_MAP` in `src/data/chapterProgress.js`, which already folds `mod2` progress forward onto it. A `retired` chapter record would put it back in the catalogue as a chapter, which is exactly what it is not.
+Read from the `legacyContentBindings` records, not restated here — the reason an id
+is excluded is a catalogue fact, and a documentation script is the wrong place to
+keep the only copy of it.
+
+- **`history-medicine-renaissance-medicine`** → `src/content/history/medicine/episodes/episode-03-renaissance-medicine.js`
+  Superseded by `history-medicine-vesalius-beginning-doubt`.
+  The superseded Renaissance bundle. Hidden from every learner surface and replaced by a narrower chapter, but its id is still a live progress destination — LEGACY_CHAPTER_ID_MAP folds `mod2` onto it — and its loader entry still exists. It gets a binding rather than a retired chapter record, because a retired chapter record would put it back in the catalogue as a chapter, which is exactly what it is not.
 
 Preserved is not the same as given a record. Every other current chapter id is
 carried verbatim, including the ones that break the naming rules (`soc1`, `math1`,
