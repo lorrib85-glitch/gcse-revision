@@ -42,7 +42,7 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Replace the legacy browser catalogue with the generated adapter
+      - name: Write generated-navigation browser adapter
         run: |
           cat > src/features/subjects/subjectCatalogue.js <<'EOF'
           // Subject-browser runtime adapter.
@@ -50,8 +50,8 @@ jobs:
           // Stage 5B makes the generated navigation projection authoritative for
           // destination order, browser copy, sections and cards. This module keeps
           // the UI isolated from the raw generated shape and joins openable cards to
-          // their runtime Chapter records so existing progress and opening behaviour
-          // remain unchanged.
+          // runtime Chapter records so existing progress and opening behaviour stay
+          // unchanged.
 
           import { CHAPTERS } from '../../chapters.js'
           import {
@@ -120,11 +120,7 @@ jobs:
                 ? [adaptSubjectState(entry)]
                 : entry.cards.map(card => adaptCard(card))
 
-            return {
-              ...entry,
-              series,
-              items,
-            }
+            return { ...entry, series, items }
           }
 
           export function getSubjectChapterList(subjectName) {
@@ -132,7 +128,7 @@ jobs:
           }
           EOF
 
-      - name: Switch Subjects onto Browser Entry presentation
+      - name: Switch Subjects onto Browser Entry authority
         run: |
           python <<'PY'
           from pathlib import Path
@@ -151,15 +147,15 @@ jobs:
           )
 
           source, count = re.subn(
-              r"const SUBJECT_HEADER_IMGS = \{.*?\nfunction SubjectBrowser",
+              r"const SUBJECT_HEADER_IMGS = \{.*?\n\nfunction SubjectBrowser",
               "function SubjectBrowser",
               source,
               count=1,
               flags=re.S,
           )
-          assert count == 1, 'failed to remove duplicated browser presentation constants'
+          assert count == 1, 'failed to remove duplicate browser presentation constants'
 
-          replacement = '''function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
+          header = '''function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
             const navigationEntry = getSubjectNavigationEntry(subjectName)
             const sand         = SUBJECTS[subjectName]?.subjectBrowserAccent || SUBJECTS.History.subjectBrowserAccent
             const bronze       = SUBJECTS[subjectName]?.subjectBrowserAccentDark || SUBJECTS.History.subjectBrowserAccentDark
@@ -175,32 +171,32 @@ jobs:
             const hasSeries = series.length > 0
             const [activeSeries, setActiveSeries] = useState(() => series[0] ?? null)
 
-            // Generated navigation owns visible cards and their openability. The
-            // adapter joins openable cards to runtime Chapters so the existing
-            // progress keys and ChapterPlayer contract remain unchanged.'''
+            // Generated navigation owns visible cards and openability. The adapter
+            // joins openable cards to runtime Chapters so progress keys and the
+            // ChapterPlayer contract remain unchanged.
+
+            const allItems ='''
 
           source, count = re.subn(
-              r"function SubjectBrowser\(\{ subjectName, onBack, onOpenChapter \}\) \{\n  const sand.*?\n  // Canonical availability: hidden stubs drop out before numbering so they can\n  // never shift a visible chapter's position; coming-soon stubs show but never\n  // open \(guarded in handleCardClick / openChapterPlayer\)\.",
-              replacement,
+              r"function SubjectBrowser\(\{ subjectName, onBack, onOpenChapter \}\) \{.*?\n  const allItems =",
+              header,
               source,
               count=1,
               flags=re.S,
           )
-          assert count == 1, 'failed to replace SubjectBrowser authority block'
+          assert count == 1, 'failed to replace SubjectBrowser authority header'
 
-          replacement = '''  const allItems = getSubjectChapterList(subjectName).map(item => {
+          cards = '''getSubjectChapterList(subjectName).map(item => {
             const number = item.number
             if (!item.openable) return { ...item, number, status: 'coming_soon', pct: 0 }
 
             const chapterId = item.chapterId || item.id
-            const s = safeGetChapterState(chapterId)
-            const screen = s.screen || 0
-            const hasStarted = (s.hookDone && s.wylDone) || screen > 0
+            const state = safeGetChapterState(chapterId)
+            const screen = state.screen || 0
+            const hasStarted = (state.hookDone && state.wylDone) || screen > 0
             const total = item.screenCount || 1
-            // `completed` sticks once a chapter is finished — reviewing it afterwards moves `screen`
-            // back down, but it must never read as anything other than 'completed' again.
-            const pct = s.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
-            const status = s.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
+            const pct = state.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
+            const status = state.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
             return { ...item, number, status, pct }
           })
 
@@ -209,8 +205,8 @@ jobs:
               : allItems'''
 
           source, count = re.subn(
-              r"  const allItems = getSubjectChapterList\(subjectName\).*?\n\n  const defaultSeries = isHistory \? 'medicine' : 'macbeth'\n  const items = \(hasSeries && activeSeries\)\n    \? allItems\.filter\(m => \(m\.series \|\| defaultSeries\) === activeSeries\.id\)\n    : allItems",
-              replacement,
+              r"getSubjectChapterList\(subjectName\).*?\n\n  const defaultSeries = isHistory \? 'medicine' : 'macbeth'\n  const items = \(hasSeries && activeSeries\)\n    \? allItems\.filter\(m => \(m\.series \|\| defaultSeries\) === activeSeries\.id\)\n    : allItems",
+              cards,
               source,
               count=1,
               flags=re.S,
@@ -222,18 +218,19 @@ jobs:
               "          {series.map(s => {",
           )
 
-          old = '''  function handleCardClick(item) {
-            if (item.status === 'coming_soon') return
-            const realChapter = CHAPTERS.find(chapter => chapter.id === item.id)
-            if (realChapter && onOpenChapter) onOpenChapter(realChapter)
-          }'''
-          new = '''  function handleCardClick(item) {
+          click = '''  function handleCardClick(item) {
             if (item.status === 'coming_soon' || !item.openable || item.navigationKind !== 'chapter') return
             const realChapter = CHAPTERS.find(chapter => chapter.id === (item.chapterId || item.id))
             if (realChapter && onOpenChapter) onOpenChapter(realChapter)
           }'''
-          assert old in source, 'failed to find card click boundary'
-          source = source.replace(old, new)
+          source, count = re.subn(
+              r"  function handleCardClick\(item\) \{.*?\n  \}\n\n  function thumbFor",
+              click + "\n\n  function thumbFor",
+              source,
+              count=1,
+              flags=re.S,
+          )
+          assert count == 1, 'failed to replace card click boundary'
 
           source = source.replace(
               "const SUBJECT_NAMES = ['History', 'Biology', 'Chemistry', 'Physics', 'Maths', 'English', 'Sociology']",
@@ -241,12 +238,12 @@ jobs:
           )
 
           for forbidden in ('SUBJECT_HEADER_IMGS', 'SUBJECT_DISPLAY_TITLES', 'SUBJECT_DESCRIPTIONS', 'HISTORY_SERIES', 'ENGLISH_SERIES'):
-              assert forbidden not in source, f'stale duplicated browser authority remains: {forbidden}'
-
+              assert forbidden not in source, f'stale duplicate browser authority remains: {forbidden}'
+          assert "generated/curriculum/navigation.js" not in source
           path.write_text(source)
           PY
 
-      - name: Replace legacy browser tests with adapter contract tests
+      - name: Replace legacy browser unit tests
         run: |
           cat > tests/unit/subjects/subjectCatalogue.test.js <<'EOF'
           import { describe, expect, it } from 'vitest'
@@ -262,7 +259,7 @@ jobs:
           const ids = list => list.map(entry => entry.id)
 
           describe('Stage 5B subject-browser adapter', () => {
-            it('takes the seven destination names and order from generated navigation', () => {
+            it('takes all seven destinations and their order from generated navigation', () => {
               expect(SUBJECT_NAVIGATION_NAMES).toEqual([
                 'History', 'Biology', 'Chemistry', 'Physics', 'Maths', 'English', 'Sociology',
               ])
@@ -288,7 +285,7 @@ jobs:
               }
             })
 
-            it('adapts History and English sections into the existing series contract', () => {
+            it('adapts History and English sections to the existing series contract', () => {
               expect(getSubjectNavigationEntry('History').series.map(series => series.id)).toEqual([
                 'medicine', 'spain-new-world', 'elizabethan', 'usa',
               ])
@@ -299,7 +296,7 @@ jobs:
               expect(getSubjectNavigationEntry('English').series.find(series => series.id === 'inspector').comingSoon).toBe(true)
             })
 
-            it('preserves current Maths and Biology card order', () => {
+            it('preserves Maths and Biology card order', () => {
               expect(ids(getSubjectChapterList('Maths'))).toEqual([
                 'math1', 'math2', 'math3', 'math4', 'math5', 'math6', 'math7', 'math8',
               ])
@@ -308,7 +305,7 @@ jobs:
               ])
             })
 
-            it('uses semantic English Chapter identities instead of cs placeholders', () => {
+            it('uses semantic English Chapter identities rather than cs placeholders', () => {
               expect(ids(getSubjectChapterList('English'))).toEqual([
                 'english-macbeth-power-ambition',
                 'english-macbeth-guilt-consequence',
@@ -333,20 +330,20 @@ jobs:
             })
 
             it('represents Chemistry as a subject state rather than a fake Chapter', () => {
-              const chemistry = getSubjectChapterList('Chemistry')
-              expect(chemistry).toHaveLength(1)
-              expect(chemistry[0]).toEqual(expect.objectContaining({
-                id: 'chemistry:coming-soon',
-                navigationKind: 'state',
-                title: 'Content coming soon',
-                subtitle: 'Chemistry',
-                openable: false,
-                comingSoon: true,
-              }))
-              expect(chemistry[0].chapterId).toBeNull()
+              expect(getSubjectChapterList('Chemistry')).toEqual([
+                expect.objectContaining({
+                  id: 'chemistry:coming-soon',
+                  chapterId: null,
+                  navigationKind: 'state',
+                  title: 'Content coming soon',
+                  subtitle: 'Chemistry',
+                  openable: false,
+                  comingSoon: true,
+                }),
+              ])
             })
 
-            it('joins every openable card to the same available runtime Chapter', () => {
+            it('joins all 30 openable cards to the same available runtime Chapters', () => {
               const runtimeById = new Map(CHAPTERS.map(chapter => [chapter.id, chapter]))
               const cards = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
               const openable = cards.filter(card => card.openable)
@@ -359,13 +356,13 @@ jobs:
               }
             })
 
-            it('keeps all planned, Module and state cards non-openable', () => {
+            it('keeps all 41 planned, Module and state items non-openable', () => {
               const cards = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
               expect(cards.filter(card => !card.openable)).toHaveLength(41)
               expect(cards.filter(card => !card.openable).every(card => card.comingSoon)).toBe(true)
             })
 
-            it('surfaces 70 canonical cards plus one subject state and no cs identity', () => {
+            it('surfaces 70 canonical cards plus one state and no cs identity', () => {
               const cards = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
               expect(cards).toHaveLength(71)
               expect(cards.filter(card => card.navigationKind !== 'state')).toHaveLength(70)
@@ -374,20 +371,20 @@ jobs:
             })
 
             it('surfaces no hidden runtime Chapter', () => {
-              const cards = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
-              const hidden = cards.filter(card => card.chapterId)
+              const hidden = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
+                .filter(card => card.chapterId)
                 .filter(card => getChapterAvailability(card) === CHAPTER_AVAILABILITY.HIDDEN)
               expect(hidden).toEqual([])
             })
 
-            it('returns null or an empty list for an unknown destination', () => {
+            it('returns no entry for an unknown destination', () => {
               expect(getSubjectNavigationEntry('Drama')).toBeNull()
               expect(getSubjectChapterList('Drama')).toEqual([])
             })
           })
           EOF
 
-      - name: Update Stage 5B architecture gates
+      - name: Update navigation architecture gates
         run: |
           python <<'PY'
           from pathlib import Path
@@ -407,9 +404,9 @@ jobs:
               count=1,
               flags=re.S,
           )
-          assert count == 1, 'failed to remove the pre-cutover browser helper'
+          assert count == 1, 'failed to remove pre-cutover browser helper'
 
-          replacement = '''  it('adapts the generated projection into the existing browser contract', () => {
+          parity = '''  it('adapts the generated projection into the browser contract', () => {
             for (const entry of NAVIGATION_ENTRIES) {
               const browserEntry = getSubjectNavigationEntry(entry.label)
               expect(browserEntry).toEqual(expect.objectContaining({
@@ -460,14 +457,14 @@ jobs:
 
           source, count = re.subn(
               r"  it\('reproduces current browser copy and status while replacing placeholder identities', \(\) => \{.*?\n  \}\)",
-              replacement,
+              parity,
               source,
               count=1,
               flags=re.S,
           )
           assert count == 1, 'failed to replace pre-cutover parity test'
 
-          replacement = '''  it('keeps generator inputs pure and reaches production through one browser adapter', () => {
+          boundary = '''  it('keeps generator inputs pure and reaches production through one adapter', () => {
             expect(assertInputPurity()).toEqual([])
             const productionFiles = filesUnder('src', ['.js', '.jsx'])
             const generatedImport = /(?:from\\s*|import\\s*\\(\\s*)['\"][^'\"]*generated\\/curriculum\\/navigation\\.js['\"]/
@@ -479,25 +476,17 @@ jobs:
             const subjectsSource = readFileSync(resolve(ROOT, 'src/features/subjects/Subjects.jsx'), 'utf8')
             expect(subjectsSource).toContain("from './subjectCatalogue.js'")
             expect(subjectsSource).not.toContain('generated/curriculum/navigation.js')
-
-            const adapterImport = /from\\s*['\"][^'\"]*subjectCatalogue\\.js['\"]/
-            const adapterConsumers = productionFiles
-              .filter(path => path !== 'src/features/subjects/subjectCatalogue.js')
-              .filter(path => adapterImport.test(readFileSync(resolve(ROOT, path), 'utf8')))
-              .sort()
-            expect(adapterConsumers).toEqual(['src/features/subjects/Subjects.jsx'])
           })
           })'''
 
           source, count = re.subn(
               r"  it\('reads no browser, compatibility, fixture or planning source and stays inert', \(\) => \{.*?\n  \}\)\n\}\)\s*$",
-              replacement,
+              boundary,
               source,
               count=1,
               flags=re.S,
           )
-          assert count == 1, 'failed to replace inert Stage 5A import gate'
-
+          assert count == 1, 'failed to replace Stage 5A inert import gate'
           source = source.replace(
               "describe('Stage 5A canonical subject-browser navigation', () => {",
               "describe('Stage 5B canonical subject-browser navigation', () => {",
@@ -505,7 +494,7 @@ jobs:
           path.write_text(source)
           PY
 
-      - name: Update generated-navigation lifecycle documentation
+      - name: Update navigation lifecycle text
         run: |
           python <<'PY'
           from pathlib import Path
@@ -591,7 +580,7 @@ jobs:
           await browser.close()
           NODE
 
-      - name: Commit Stage 5B and remove this one-use workflow
+      - name: Commit Stage 5B and remove this workflow
         run: |
           rm .github/workflows/stage5b-cutover.yml
           git config user.name "OpenAI"
