@@ -129,6 +129,14 @@ describe('Subject-navigation adapter', () => {
     expect(hidden).toEqual([])
   })
 
+  it('does not leak compatibility-shaped Chapter fields into browser cards', () => {
+    const card = getSubjectChapterList('History').find(item => item.openable)
+    expect(card.screenCount).toBeGreaterThan(0)
+    for (const legacyField of ['color', 'colorLight', 'tags', 'era', 'icon', 'subject']) {
+      expect(card).not.toHaveProperty(legacyField)
+    }
+  })
+
   it('returns no entry for an unknown destination', () => {
     expect(getSubjectNavigationEntry('Drama')).toBeNull()
     expect(getSubjectChapterList('Drama')).toEqual([])

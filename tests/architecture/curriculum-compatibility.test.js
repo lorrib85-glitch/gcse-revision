@@ -305,6 +305,13 @@ describe('every compatibility field has a death date', () => {
     }
   })
 
+  it('records the browser feature, not the projection adapter, as the Stage 5 consumer', () => {
+    expect(STAGE_5_CONSUMERS).toEqual(['src/features/subjects/Subjects.jsx'])
+    for (const entry of Object.values(FINAL_CONSUMERS)) {
+      expect(entry.stage5Consumers).not.toContain('src/features/subjects/subjectNavigationAdapter.js')
+    }
+  })
+
   it('every surviving consumer really consumes the fact', () => {
     // A named survivor has to be reachable evidence, not an assertion. It
     // qualifies by being a runtime boundary file, by importing one, or — for

@@ -87,8 +87,12 @@ replace_once(
 )
 replace_once(
     compatibility,
-    "stage5Consumers: ['src/features/subjects/subjectNavigationAdapter.js'],",
-    "stage5Consumers: ['src/features/subjects/Subjects.jsx'],",
+    """  legacyModules: {
+    stage5Consumers: ['src/features/subjects/subjectNavigationAdapter.js'],
+""",
+    """  legacyModules: {
+    stage5Consumers: ['src/features/subjects/Subjects.jsx'],
+""",
 )
 replace_once(
     compatibility,

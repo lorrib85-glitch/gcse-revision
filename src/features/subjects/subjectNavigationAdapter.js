@@ -3,8 +3,8 @@
 // Stage 5C keeps the generated navigation projection authoritative for
 // destination order, browser copy, sections and cards. This module keeps
 // the UI isolated from the raw generated shape and joins openable cards to
-// runtime Chapter records so existing progress and opening behaviour stay
-// unchanged.
+// runtime Chapter screen counts so existing progress calculations stay unchanged.
+// It deliberately does not spread compatibility-shaped Chapter rows into the UI.
 
 import { CHAPTERS } from '../../chapters.js'
 import {
@@ -20,7 +20,6 @@ function adaptCard(card, series = null) {
     : null
 
   return {
-    ...(runtimeChapter ?? {}),
     id: card.id,
     chapterId: card.chapterId ?? null,
     navigationKind: card.kind,
@@ -28,6 +27,7 @@ function adaptCard(card, series = null) {
     subtitle: card.subtitle,
     number: card.number,
     series,
+    screenCount: runtimeChapter?.screenCount ?? 0,
     headerImage: card.headerImage ?? card.heroImage ?? runtimeChapter?.headerImage ?? null,
     comingSoon: !card.openable,
     openable: card.openable,

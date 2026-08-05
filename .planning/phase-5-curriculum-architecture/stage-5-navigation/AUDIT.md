@@ -174,10 +174,18 @@ canonical titles would change visible copy on three cards, which Stage 5A
 forbids — so they are carried as explicit, retirable label overrides and listed
 as a copy decision. See DECISIONS.md D-5-5.
 
-## 4. What Stage 5B still has to do after 5A
+## 4. Implementation outcome
 
-Nothing in 5A touches the browser. 5B remains: point `Subjects.jsx` at
-`NAVIGATION_ENTRIES`, delete the eight literal maps and
-`CHAPTER_HEADER_IMAGES`, delete `subjectCatalogue.js`, verify the seven
-destinations at 390px, and only then remove the old catalogue. The parity
-fixture landed in 5A is what makes that switch checkable.
+Stage 5B switched the live browser to `NAVIGATION_ENTRIES` through a thin
+runtime adapter and passed the frozen parity contract plus the seven-destination
+390px walkthrough. Browser copy, sections, order, openability and progress
+behaviour were preserved; canonical Chapter and Module ids replaced every
+`cs_*` placeholder identity.
+
+Stage 5C then renamed the retained boundary to
+`subjectNavigationAdapter.js`, proved and removed all 20 dead
+`CHAPTER_HEADER_IMAGES` entries, and narrowed the adapter to pass only the
+runtime `screenCount` required by the browser. `SUBJECT_TOPIC_IMAGES` remains a
+separate presentation decision. The generated projection has exactly one
+production importer and no compatibility-shaped Chapter row is spread into the
+UI.
