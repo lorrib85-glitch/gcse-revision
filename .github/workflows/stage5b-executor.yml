@@ -42,7 +42,7 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Execute the guarded Stage 5B steps
+      - name: Apply guarded Stage 5B source and test changes
         run: |
           python <<'PY'
           from pathlib import Path
@@ -55,12 +55,9 @@ jobs:
               'Replace legacy browser unit tests',
               'Update navigation architecture gates',
               'Update navigation lifecycle text',
-              'Regenerate navigation outputs',
-              'Verify complete repository',
-              'Mobile runtime smoke at 390px',
           ]
 
-          def extract(name):
+          def extract_block(name):
               marker = f'      - name: {name}'
               start = workflow.index(marker)
               run_line = next(i for i in range(start + 1, len(workflow)) if workflow[i] == '        run: |')
@@ -77,7 +74,7 @@ jobs:
               return '\n'.join(collected) + '\n'
 
           for name in wanted:
-              script = extract(name)
+              script = extract_block(name)
               if name == 'Update navigation architecture gates':
                   script = script.replace('\n    parity,\n', '\n    lambda _: parity,\n')
                   script = script.replace('\n    boundary,\n', '\n    lambda _: boundary,\n')
@@ -87,6 +84,65 @@ jobs:
               subprocess.run(['bash', '-euo', 'pipefail', '-c', script], check=True)
               print('::endgroup::', flush=True)
           PY
+
+      - name: Regenerate canonical navigation
+        run: pnpm curriculum:navigation:generate
+
+      - name: Verify complete repository
+        run: pnpm verify
+
+      - name: Mobile runtime smoke at 390px
+        run: |
+          pnpm vite --host 127.0.0.1 > /tmp/stage5b-vite.log 2>&1 &
+          VITE_PID=$!
+          trap 'kill $VITE_PID || true' EXIT
+          ready=false
+          for attempt in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:5173 >/dev/null; then ready=true; break; fi
+            sleep 1
+          done
+          if [ "$ready" != true ]; then
+            cat /tmp/stage5b-vite.log
+            exit 1
+          fi
+
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright'
+
+          const browser = await chromium.launch({ headless: true })
+          const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
+          const pageErrors = []
+          page.on('pageerror', error => pageErrors.push(error.message))
+
+          await page.goto('http://127.0.0.1:5173', { waitUntil: 'networkidle' })
+          const guest = page.getByRole('button', { name: 'Continue without Google' })
+          if (await guest.isVisible().catch(() => false)) {
+            await guest.click()
+          }
+          await page.getByRole('button', { name: 'Subjects' }).waitFor()
+          await page.getByRole('button', { name: 'Subjects' }).click()
+          await page.getByText('Your subjects', { exact: true }).waitFor()
+
+          const destinations = [
+            ['History', 'Medicine through time'],
+            ['Biology', 'AQA Biology'],
+            ['Chemistry', 'AQA Chemistry'],
+            ['Physics', 'AQA Physics'],
+            ['Maths', 'AQA Mathematics'],
+            ['English', 'AQA English'],
+            ['Sociology', 'AQA Sociology'],
+          ]
+
+          for (const [label, title] of destinations) {
+            await page.getByRole('button', { name: new RegExp(`^${label}`) }).first().click()
+            await page.getByText(title, { exact: true }).first().waitFor()
+            await page.getByRole('button', { name: 'Go back' }).click()
+            await page.getByText('Your subjects', { exact: true }).waitFor()
+          }
+
+          if (pageErrors.length) throw new Error(`runtime page errors: ${pageErrors.join(' | ')}`)
+          await browser.close()
+          NODE
 
       - name: Commit Stage 5B and remove this executor
         run: |
