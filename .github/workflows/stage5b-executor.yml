@@ -1,0 +1,107 @@
+name: Execute Stage 5B cutover
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stage5b-cutover-main
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    if: contains(github.event.head_commit.message, 'Run canonical browser cutover')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Execute the guarded Stage 5B steps
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          workflow = Path('.github/workflows/stage5b-cutover.yml').read_text().splitlines()
+          wanted = [
+              'Write generated-navigation browser adapter',
+              'Switch Subjects onto Browser Entry authority',
+              'Replace legacy browser unit tests',
+              'Update navigation architecture gates',
+              'Update navigation lifecycle text',
+              'Regenerate navigation outputs',
+              'Verify complete repository',
+              'Mobile runtime smoke at 390px',
+          ]
+
+          def extract(name):
+              marker = f'      - name: {name}'
+              start = workflow.index(marker)
+              run_line = next(i for i in range(start + 1, len(workflow)) if workflow[i] == '        run: |')
+              collected = []
+              for line in workflow[run_line + 1:]:
+                  if line.startswith('      - name:'):
+                      break
+                  if line.startswith('          '):
+                      collected.append(line[10:])
+                  elif line == '':
+                      collected.append('')
+                  else:
+                      raise RuntimeError(f'unexpected workflow indentation in {name}: {line!r}')
+              return '\n'.join(collected) + '\n'
+
+          for name in wanted:
+              script = extract(name)
+              if name == 'Update navigation architecture gates':
+                  script = script.replace('\n    parity,\n', '\n    lambda _: parity,\n')
+                  script = script.replace('\n    boundary,\n', '\n    lambda _: boundary,\n')
+                  if 'lambda _: parity' not in script or 'lambda _: boundary' not in script:
+                      raise RuntimeError('failed to repair architecture-test replacement callables')
+              print(f'::group::{name}', flush=True)
+              subprocess.run(['bash', '-euo', 'pipefail', '-c', script], check=True)
+              print('::endgroup::', flush=True)
+          PY
+
+      - name: Commit Stage 5B and remove this executor
+        run: |
+          rm .github/workflows/stage5b-executor.yml
+          git config user.name "OpenAI"
+          git config user.email "noreply@openai.com"
+          git add \
+            src/features/subjects/Subjects.jsx \
+            src/features/subjects/subjectCatalogue.js \
+            src/curriculum-catalogue/navigation/README.md \
+            src/data/generated/curriculum/navigation.js \
+            scripts/generate-curriculum-navigation.mjs \
+            docs/curriculum/NAVIGATION_MAP.md \
+            tests/unit/subjects/subjectCatalogue.test.js \
+            tests/architecture/curriculum-navigation.test.js \
+            .github/workflows/stage5b-executor.yml
+          git commit -m "Switch subject browser to canonical navigation"
+          git push origin HEAD:main
