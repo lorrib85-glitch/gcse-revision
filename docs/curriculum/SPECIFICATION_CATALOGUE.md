@@ -16,7 +16,7 @@ documentation and never reaches the learner runtime.
 | Id | Official name | Short name | Verified |
 |---|---|---|---|
 | `aqa` | AQA Education | AQA | [2026-08-05](https://www.aqa.org.uk/about-us/who-we-are) |
-| `pearson-edexcel` | Pearson Education Limited | Pearson Edexcel | [2026-08-05](https://qualifications.pearson.com/en/about-us/qualification-brands/edexcel/about-edexcel.html.html) |
+| `pearson-edexcel` | Pearson Education Limited | Pearson Edexcel | [2026-08-05](https://qualifications.pearson.com/en/about-us/qualification-brands/edexcel.html) |
 
 ## Specifications at a glance
 
@@ -188,15 +188,15 @@ documentation and never reaches the learner runtime.
 
 | AO | Description | Weighting |
 |---|---|---:|
-| `ao1` | Identify and interpret information and ideas | 10% |
-| `ao2` | Analyse language and structure | 17.5% |
-| `ao3` | Compare writers' ideas and perspectives | 10% |
-| `ao4` | Evaluate texts critically | 12.5% |
-| `ao5` | Communicate clearly and imaginatively | 30% |
-| `ao6` | Vocabulary, sentence structure, spelling and punctuation | 20% |
-| `ao7` | Presentation skills | 0% |
-| `ao8` | Listening and responding | 0% |
-| `ao9` | Spoken Standard English | 0% |
+| `ao1` | Identify and interpret explicit and implicit information and ideas; select and synthesise evidence from different texts. | 10% |
+| `ao2` | Explain, comment on and analyse how writers use language and structure to achieve effects and influence readers, using relevant subject terminology to support their views. | 17.5% |
+| `ao3` | Compare writers’ ideas and perspectives, as well as how these are conveyed, across two or more texts. | 10% |
+| `ao4` | Evaluate texts critically and support this with appropriate textual references. | 12.5% |
+| `ao5` | Communicate clearly, effectively and imaginatively, selecting and adapting tone, style and register for different forms, purposes and audiences. Organise information and ideas, using structural and grammatical features to support coherence and cohesion of texts. | 30% |
+| `ao6` | Candidates must use a range of vocabulary and sentence structures for clarity, purpose and effect, with accurate spelling and punctuation. | 20% |
+| `ao7` | Demonstrate presentation skills in a formal setting. | 0% |
+| `ao8` | Listen and respond appropriately to spoken language, including to questions and feedback on presentations. | 0% |
+| `ao9` | Use spoken Standard English effectively in speeches and presentations. | 0% |
 
 - `ao7` — Assessed through the separately reported Spoken Language endorsement, which does not contribute to the qualification grade.
 - `ao8` — Assessed through the separately reported Spoken Language endorsement, which does not contribute to the qualification grade.

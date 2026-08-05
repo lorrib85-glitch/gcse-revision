@@ -57,16 +57,67 @@ export default {
     },
   ],
 
+  // AQA's published wording, verbatim. These are the sentences the mark schemes
+  // are written against, so a paraphrase would quietly become a different
+  // objective the moment anyone taught from it.
   assessmentObjectives: [
-    { id: 'ao1', title: 'Identify and interpret information and ideas', weightings: { overall: 10 } },
-    { id: 'ao2', title: 'Analyse language and structure', weightings: { overall: 17.5 } },
-    { id: 'ao3', title: "Compare writers' ideas and perspectives", weightings: { overall: 10 } },
-    { id: 'ao4', title: 'Evaluate texts critically', weightings: { overall: 12.5 } },
-    { id: 'ao5', title: 'Communicate clearly and imaginatively', weightings: { overall: 30 } },
-    { id: 'ao6', title: 'Vocabulary, sentence structure, spelling and punctuation', weightings: { overall: 20 } },
-    { id: 'ao7', title: 'Presentation skills', weightings: { overall: 0 }, note: ENDORSEMENT_NOTE },
-    { id: 'ao8', title: 'Listening and responding', weightings: { overall: 0 }, note: ENDORSEMENT_NOTE },
-    { id: 'ao9', title: 'Spoken Standard English', weightings: { overall: 0 }, note: ENDORSEMENT_NOTE },
+    {
+      id: 'ao1',
+      title: 'Identify and interpret explicit and implicit information and ideas; '
+        + 'select and synthesise evidence from different texts.',
+      weightings: { overall: 10 },
+    },
+    {
+      id: 'ao2',
+      title: 'Explain, comment on and analyse how writers use language and structure to '
+        + 'achieve effects and influence readers, using relevant subject terminology to '
+        + 'support their views.',
+      weightings: { overall: 17.5 },
+    },
+    {
+      id: 'ao3',
+      title: 'Compare writers’ ideas and perspectives, as well as how these are conveyed, '
+        + 'across two or more texts.',
+      weightings: { overall: 10 },
+    },
+    {
+      id: 'ao4',
+      title: 'Evaluate texts critically and support this with appropriate textual references.',
+      weightings: { overall: 12.5 },
+    },
+    {
+      id: 'ao5',
+      title: 'Communicate clearly, effectively and imaginatively, selecting and adapting tone, '
+        + 'style and register for different forms, purposes and audiences. Organise information '
+        + 'and ideas, using structural and grammatical features to support coherence and '
+        + 'cohesion of texts.',
+      weightings: { overall: 30 },
+    },
+    {
+      id: 'ao6',
+      title: 'Candidates must use a range of vocabulary and sentence structures for clarity, '
+        + 'purpose and effect, with accurate spelling and punctuation.',
+      weightings: { overall: 20 },
+    },
+    {
+      id: 'ao7',
+      title: 'Demonstrate presentation skills in a formal setting.',
+      weightings: { overall: 0 },
+      note: ENDORSEMENT_NOTE,
+    },
+    {
+      id: 'ao8',
+      title: 'Listen and respond appropriately to spoken language, including to questions and '
+        + 'feedback on presentations.',
+      weightings: { overall: 0 },
+      note: ENDORSEMENT_NOTE,
+    },
+    {
+      id: 'ao9',
+      title: 'Use spoken Standard English effectively in speeches and presentations.',
+      weightings: { overall: 0 },
+      note: ENDORSEMENT_NOTE,
+    },
   ],
 
   selectionGroups: [],

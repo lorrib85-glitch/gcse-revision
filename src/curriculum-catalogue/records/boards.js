@@ -22,7 +22,7 @@ export default [
     shortName: 'Pearson Edexcel',
     provenance: verified(
       'Pearson Edexcel — About Edexcel',
-      'https://qualifications.pearson.com/en/about-us/qualification-brands/edexcel/about-edexcel.html.html',
+      'https://qualifications.pearson.com/en/about-us/qualification-brands/edexcel.html',
     ),
   },
 ]

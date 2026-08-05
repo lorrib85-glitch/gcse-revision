@@ -81,17 +81,45 @@ for everything the census enumerated.
 current entities and names each one's target. Stage 2 is executing that file,
 not re-deciding it.
 
+**The canonical chapter baseline is 65, not 60.** An earlier draft of this
+document said "same 60 chapter ids, no additions", which contradicted both
+`MODELS.md` §11 and the census. `CHAPTERS` holds 60 rows, but two of those rows
+are not one-to-one with canonical chapter records:
+
+```
+60 rows in CHAPTERS
+−  1 hidden legacy bundle   history-medicine-renaissance-medicine
+= 59 non-hidden chapter ids, every one preserved verbatim
++  6 planned English chapters, converted from the cs_macbeth_2–4 /
+     cs_inspector_1–3 placeholder cards (census: presentation-only → chapter)
+= 65 canonical chapter records   (30 available · 35 planned)
+```
+
+Both ends reconcile with the measured census, which classifies 59 entities
+`chapter` and exactly one `retired-hidden`, and with `MODELS.md` §11's
+30 built / 35 planned.
+
+**`history-medicine-renaissance-medicine` gets no canonical chapter record.** It
+is the superseded Renaissance bundle, hidden from every learner surface and
+succeeded by `history-medicine-vesalius-beginning-doubt`. Its id is not lost:
+it stays reachable through the existing legacy/progress compatibility mechanism
+(`LEGACY_CHAPTER_ID_MAP` and `chapterProgressSourceKeys` in
+`src/data/chapterProgress.js`, §6.4), which is what a superseded id is for. A
+`retired` chapter record would put it back in the catalogue as a chapter, which
+is precisely what the census says it is not.
+
 **Cross-check, and it must be exact.** A test asserts that the new records
 reproduce today's reality precisely:
 
 | Assertion | Source of truth |
 |---|---|
-| Same 60 chapter ids, no additions, no removals | `CHAPTERS` |
+| All 59 non-hidden chapter ids preserved verbatim, none removed | `CHAPTERS` |
+| The 6 added ids are semantic, never `cs_*` | `subjectCatalogue.js` placeholders |
 | Same chapter order within each module | `MODULES[].chapterIds` |
 | Same availability for every chapter | `getChapterAvailability` |
-| Same content path for every chapter | `CHAPTER_CONTENT_LOADERS` |
+| Same content path for every available chapter | `CHAPTER_CONTENT_LOADERS` |
 | Same subject for every chapter | `chapter.subject` |
-| `screenCount` derived == authored, for all 60 | `extracted-chapter-contract` Rule 1 |
+| `screenCount` derived == authored, for all 59 | `extracted-chapter-contract` Rule 1 |
 
 Module *splits* (A-1, A-7) change which module a chapter belongs to, so the
 "same order within each module" assertion is scoped to modules that do not

@@ -685,6 +685,14 @@ existing `GENERATED FILE — DO NOT EDIT` banner, and both checked by a
 they are all kept, because each one is a live progress key
 (`gcse_chapter_<id>`). A clean-looking id is not worth losing learner progress.
 
+**Preserved is not the same as given a chapter record.** 59 of the 60 become
+canonical chapter records. The 60th,
+`history-medicine-renaissance-medicine`, is the hidden superseded Renaissance
+bundle: the census classifies it `retired-hidden`, and it keeps its id through
+the legacy/progress mechanism below rather than through a chapter record. That
+is the distinction the mechanism exists to draw — an id can survive without the
+thing it once named coming back.
+
 The naming rules in §4.1 therefore bind **new** ids and **non-chapter** entities.
 
 Where a rename is genuinely wanted later, the repository already has the
