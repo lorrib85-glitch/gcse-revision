@@ -6,9 +6,9 @@ import re
 # generated navigation; browser cards use navigationKind plus their canonical id.
 adapter = Path('src/features/subjects/subjectCatalogue.js')
 source = adapter.read_text()
-source = source.replace('      moduleId: card.moduleId ?? null,\n', '')
-source = source.replace('      moduleId: null,\n', '')
-assert 'moduleId:' not in source
+source, removed = re.subn(r'^\s*moduleId:\s*.*\n', '', source, flags=re.MULTILINE)
+assert removed == 2, f'expected two moduleId adapter fields, removed {removed}'
+assert not re.search(r'\bmoduleId\s*:', source)
 adapter.write_text(source)
 
 
