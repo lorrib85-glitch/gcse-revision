@@ -4,8 +4,8 @@
 // or src/curriculum-catalogue/navigation/browserEntries.js.
 // `pnpm curriculum:navigation:check` fails when this projection drifts.
 //
-// Stage 5A: this file is deliberately imported by nothing. Stage 5B switches
-// the subject browser onto it after the frozen browser contract passes.
+// Stage 5B: consumed through src/features/subjects/subjectCatalogue.js.
+// Production components must not import this generated file directly.
 //
 // Source: canonical curriculum records plus the browser-entry configuration.
 

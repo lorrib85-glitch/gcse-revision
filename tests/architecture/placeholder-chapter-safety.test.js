@@ -32,10 +32,12 @@ describe('Placeholder chapter safety', () => {
     expect(guardPos).toBeLessThan(setViewPos)
   })
 
-  it('Subjects uses canonical chapter availability and maps non-available chapters to coming_soon', () => {
-    const src = read('src/features/subjects/Subjects.jsx')
-    expect(src).toMatch(/getChapterAvailability\((mod|chapter)\)/)
-    expect(src).toMatch(/CHAPTER_AVAILABILITY\.AVAILABLE.*coming_soon|coming_soon[\s\S]*CHAPTER_AVAILABILITY\.AVAILABLE/)
+  it('generated navigation openability maps to browser coming-soon state', () => {
+    const adapter = read('src/features/subjects/subjectCatalogue.js')
+    const subjects = read('src/features/subjects/Subjects.jsx')
+    expect(adapter).toContain('comingSoon: !card.openable')
+    expect(adapter).toContain('openable: card.openable')
+    expect(subjects).toMatch(/if\s*\(!item\.openable\)[\s\S]*status:\s*'coming_soon'/)
   })
 
   it('the guard is a falsy screenCount check, so built chapters pass through', () => {

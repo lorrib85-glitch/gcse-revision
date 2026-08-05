@@ -7,9 +7,9 @@ It is a sibling of `records/` and `compatibility/`, and neither of them.
   Subject, Specification, Study pathway, Module and Chapter.
 - It is **not runtime compatibility data**. It outlives the Stage 6 deletion of
   `compatibility/runtime-v1.js`.
-- It is **never imported by production source**. Only
-  `scripts/generate-curriculum-navigation.mjs` reads it; production will read
-  the generated projection after Stage 5B.
+- The configuration itself is **never imported by production source**. Only
+  `scripts/generate-curriculum-navigation.mjs` reads it; production reads the
+  generated projection through the subject-browser adapter.
 
 ## What a Browser Entry owns
 
@@ -45,5 +45,6 @@ pnpm curriculum:navigation:generate
 pnpm curriculum:navigation:check
 ```
 
-Stage 5A keeps `src/data/generated/curriculum/navigation.js` inert and imported
-by nothing. Stage 5B is the separate learner-visible authority switch.
+Stage 5B is complete: `src/data/generated/curriculum/navigation.js` is
+load-bearing through `src/features/subjects/subjectCatalogue.js`. UI components
+must use that adapter rather than importing generated output directly.

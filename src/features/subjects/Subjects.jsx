@@ -3,7 +3,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
-import { CHAPTERS, getChapterAvailability, CHAPTER_AVAILABILITY } from '../../chapters.js'
+import { CHAPTERS } from '../../chapters.js'
 import { getChapterState as safeGetChapterState, getChapterPct as chapterPct, getContinueChapter } from '../../progress.js'
 import { getWeakestSubject, getBiggestWin } from '../../unifiedWeaknessTracker.js'
 import { findTaggedChapterScreen } from '../../data/tagChapterMap.js'
@@ -11,7 +11,7 @@ import { StreakChip } from '../home/StreakChip.jsx'
 import BackButton from '../../components/core/BackButton.jsx'
 import BottomNav from '../../app/BottomNav.jsx'
 import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
-import { getSubjectChapterList } from './subjectCatalogue.js'
+import { getSubjectNavigationEntry, getSubjectChapterList, SUBJECT_NAVIGATION_NAMES } from './subjectCatalogue.js'
 
 const CHAPTER_HEADER_IMAGES = {
   'history-medicine-medieval-beliefs-causes': '/images/history/_shared/medicine-through-time.webp',
@@ -38,126 +38,41 @@ const CHAPTER_HEADER_IMAGES = {
 
 // ─── SubjectBrowser ────────────────────────────────────────────────────────────
 
-const SUBJECT_HEADER_IMGS = {
-  History:   '/images/history/_shared/medicine-through-time.webp',
-  Biology:   '/images/biology/_shared/main.png',
-  Chemistry: '/images/chemistry/_shared/matteratoms.webp',
-  Maths:     '/images/maths/_shared/numbers.webp',
-  Sociology: '/images/sociology/_shared/family.webp',
-  English:   '/images/english/_shared/macbeth.webp',
-  Physics:   '/images/physics/_shared/forces.webp',
-}
-
-const SUBJECT_DISPLAY_TITLES = {
-  History:   'Medicine through time',
-  Biology:   'AQA Biology',
-  Chemistry: 'AQA Chemistry',
-  Maths:     'AQA Mathematics',
-  Sociology: 'AQA Sociology',
-  English:   'AQA English',
-  Physics:   'AQA Physics',
-}
-
-const SUBJECT_DESCRIPTIONS = {
-  History:   'Explore how medicine and ideas have shaped the world.',
-  Biology:   'Build your understanding from cells to ecosystems.',
-  Chemistry: 'Master the reactions and patterns behind matter.',
-  Maths:     'Build number, algebra and problem-solving fluency.',
-  Sociology: 'Understand the social forces that shape our lives.',
-  English:   'Sharpen your reading, analysis and writing skills.',
-  Physics:   'Explore the forces and energy that shape our world.',
-}
-
-const HISTORY_SERIES = [
-  {
-    id: 'medicine',
-    title: 'Medicine through time',
-    short: 'Medicine',
-    headerImage: '/images/history/_shared/medicine-through-time.webp',
-    comingSoon: false,
-  },
-  {
-    id: 'spain-new-world',
-    title: 'Spain and the new world',
-    short: 'Spain',
-    headerImage: '/images/history/_shared/spain-new-world.webp',
-    comingSoon: false,
-  },
-  {
-    id: 'elizabethan',
-    title: 'Elizabethan England',
-    short: 'Elizabethan',
-    headerImage: '/images/history/_shared/elizabethan.webp',
-    comingSoon: true,
-  },
-  {
-    id: 'usa',
-    title: 'USA: conflict at home and abroad',
-    short: 'USA',
-    headerImage: '/images/history/_shared/usa-conflict.webp',
-    comingSoon: false,
-  },
-]
-
-const ENGLISH_SERIES = [
-  {
-    id: 'macbeth',
-    title: 'Macbeth',
-    short: 'Macbeth',
-    headerImage: '/images/history/_shared/medicine-through-time.webp',
-    comingSoon: false,
-  },
-  {
-    id: 'inspector',
-    title: 'An Inspector Calls',
-    short: 'Inspector',
-    headerImage: '/images/sociology/_shared/family.webp',
-    comingSoon: true,
-  },
-]
-
 function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
+  const navigationEntry = getSubjectNavigationEntry(subjectName)
   const sand         = SUBJECTS[subjectName]?.subjectBrowserAccent || SUBJECTS.History.subjectBrowserAccent
   const bronze       = SUBJECTS[subjectName]?.subjectBrowserAccentDark || SUBJECTS.History.subjectBrowserAccentDark
   const accent       = sand
   const accentRgb    = hexToRgb(sand)
-  const headerImg    = SUBJECT_HEADER_IMGS[subjectName]    || '/images/history/_shared/medicine-through-time.webp'
-  const displayTitle = SUBJECT_DISPLAY_TITLES[subjectName] || subjectName
-  const displayDesc  = SUBJECT_DESCRIPTIONS[subjectName]   || ''
+  const headerImg    = navigationEntry?.heroImage || '/images/history/_shared/medicine-through-time.webp'
+  const displayTitle = navigationEntry?.title || subjectName
+  const displayDesc  = navigationEntry?.description || ''
+  const series       = navigationEntry?.series ?? []
 
   const isHistory = subjectName === 'History'
-  const isEnglish = subjectName === 'English'
-  const hasSeries = isHistory || isEnglish
-  const [activeSeries, setActiveSeries] = useState(() => {
-    if (isHistory) return HISTORY_SERIES[0]
-    if (isEnglish) return ENGLISH_SERIES[0]
-    return null
-  })
+  const hasSeries = series.length > 0
+  const [activeSeries, setActiveSeries] = useState(() => series[0] ?? null)
 
-  // Canonical availability: hidden stubs drop out before numbering so they can
-  // never shift a visible chapter's position; coming-soon stubs show but never
-  // open (guarded in handleCardClick / openChapterPlayer).
-  const allItems = getSubjectChapterList(subjectName)
-    .filter(chapter => chapter.comingSoon || getChapterAvailability(chapter) !== CHAPTER_AVAILABILITY.HIDDEN)
-    .map((chapter, i) => {
-      // Authored chapter numbers win — a generated position is only for
-      // synthetic cards that carry none.
-      const number = chapter.number ?? i + 1
-      if (chapter.comingSoon || getChapterAvailability(chapter) !== CHAPTER_AVAILABILITY.AVAILABLE) return { ...chapter, number, status: 'coming_soon', pct: 0 }
-      const s = safeGetChapterState(chapter.id)
-      const screen = s.screen || 0
-      const hasStarted = (s.hookDone && s.wylDone) || screen > 0
-      const total = chapter.screenCount || 1
-      // `completed` sticks once a chapter is finished — reviewing it afterwards moves `screen`
-      // back down, but it must never read as anything other than 'completed' again.
-      const pct = s.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
-      const status = s.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
-      return { ...chapter, number, status, pct }
-    })
+  // Generated navigation owns visible cards and openability. The adapter
+  // joins openable cards to runtime Chapters so progress keys and the
+  // ChapterPlayer contract remain unchanged.
 
-  const defaultSeries = isHistory ? 'medicine' : 'macbeth'
+  const allItems = getSubjectChapterList(subjectName).map(item => {
+  const number = item.number
+  if (!item.openable) return { ...item, number, status: 'coming_soon', pct: 0 }
+
+  const chapterId = item.chapterId || item.id
+  const state = safeGetChapterState(chapterId)
+  const screen = state.screen || 0
+  const hasStarted = (state.hookDone && state.wylDone) || screen > 0
+  const total = item.screenCount || 1
+  const pct = state.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
+  const status = state.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
+  return { ...item, number, status, pct }
+})
+
   const items = (hasSeries && activeSeries)
-    ? allItems.filter(m => (m.series || defaultSeries) === activeSeries.id)
+    ? allItems.filter(item => item.series === activeSeries.id)
     : allItems
 
   const heroImage = hasSeries && activeSeries ? activeSeries.headerImage : headerImg
@@ -185,10 +100,10 @@ function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
   const CARD_RING_CIRCUM = 2 * Math.PI * CARD_RING_R
 
   function handleCardClick(item) {
-    if (item.status === 'coming_soon') return
-    const realChapter = CHAPTERS.find(chapter => chapter.id === item.id)
-    if (realChapter && onOpenChapter) onOpenChapter(realChapter)
-  }
+  if (item.status === 'coming_soon' || !item.openable || item.navigationKind !== 'chapter') return
+  const realChapter = CHAPTERS.find(chapter => chapter.id === (item.chapterId || item.id))
+  if (realChapter && onOpenChapter) onOpenChapter(realChapter)
+}
 
   function thumbFor(item) {
     return item.headerImage || CHAPTER_HEADER_IMAGES[item.id] || headerImg
@@ -276,7 +191,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
           display: 'flex', gap: 10, padding: '20px 24px 8px',
           overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch',
         }}>
-          {(isHistory ? HISTORY_SERIES : ENGLISH_SERIES).map(s => {
+          {series.map(s => {
             const isActive = activeSeries?.id === s.id
             return (
               <button
@@ -592,7 +507,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
 
 // "Your subjects" row on the Subjects tab — each subject picks one cinematic
 // topic image at random from its own content, rather than a fixed logo.
-const SUBJECT_NAMES = ['History', 'Biology', 'Chemistry', 'Physics', 'Maths', 'English', 'Sociology']
+const SUBJECT_NAMES = SUBJECT_NAVIGATION_NAMES
 
 const SUBJECT_TOPIC_IMAGES = {
   History:   ['/images/history/_shared/medicine-through-time.webp', '/images/history/_shared/elizabethan.webp', '/images/history/_shared/spain-new-world.webp', '/images/history/_shared/usa-conflict.webp'],

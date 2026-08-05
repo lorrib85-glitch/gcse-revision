@@ -1529,11 +1529,11 @@ describe('generated curriculum map', () => {
 
   it('documents the placeholder migration against the records it describes', async () => {
     const { chapters } = await loadCatalogue()
-    const subjectCatalogue = read('src/features/subjects/subjectCatalogue.js')
+    const browserFixture = JSON.parse(read('tests/fixtures/subject-browser-v1.json'))
     expect(PLACEHOLDER_MIGRATION).toHaveLength(6)
     for (const [from, to] of PLACEHOLDER_MIGRATION) {
       // The `from` was a real browse-surface placeholder…
-      expect(subjectCatalogue, `${from} was never a placeholder`).toContain(`id: '${from}'`)
+      expect(browserFixture.placeholderMappings[from], `${from} was never a placeholder`).toBe(to)
       // …and the `to` is a planned record that actually exists.
       const chapter = chapters.find(candidate => candidate.id === to)
       expect(chapter, `${to} has no record`).toBeTruthy()

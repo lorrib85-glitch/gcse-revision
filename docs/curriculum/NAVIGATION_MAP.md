@@ -7,7 +7,7 @@
 **7** browser entries · **70** canonical cards + **1** subject-level state · **71** visible items · **30** openable chapters
 
 This is application navigation configuration, not a seventh curriculum entity.
-Stage 5A keeps it inert: no production file imports the generated projection.
+Stage 5B makes it load-bearing through `src/features/subjects/subjectCatalogue.js`.
 
 ## Entries
 

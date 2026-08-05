@@ -1,61 +1,79 @@
-// Subject-browser catalogue — what a learner sees, in what order.
+// Subject-browser runtime adapter.
 //
-// Real chapter ownership and order are canonical in src/data/modules.js: a
-// subject's chapters are its modules' `chapterIds`, flattened in module order
-// and resolved against src/chapters.js. The flat CHAPTERS array is authoring
-// order, not journey order, so it is never filtered by subject here.
-//
-// The `cs_*` cards below are browse-surface presentation only — placeholders
-// for series that have no built chapters yet. They deliberately live outside
-// CHAPTERS and MODULES: they have no content, no loader and no progress, and
-// must never be openable.
+// Stage 5B makes the generated navigation projection authoritative for
+// destination order, browser copy, sections and cards. This module keeps
+// the UI isolated from the raw generated shape and joins openable cards to
+// runtime Chapter records so existing progress and opening behaviour stay
+// unchanged.
 
 import { CHAPTERS } from '../../chapters.js'
-import { MODULES } from '../../data/modules.js'
+import {
+  NAVIGATION_ENTRIES,
+  getNavigationEntryForDisplayName,
+} from '../../data/generated/curriculum/navigation.js'
 
-const comingSoon = (cards) => cards.map(card => ({ ...card, comingSoon: true }))
+const chapterById = new Map(CHAPTERS.map(chapter => [chapter.id, chapter]))
 
-const MACBETH_PLACEHOLDERS = comingSoon([
-  { id: 'cs_macbeth_2', title: 'Out, damned spot',                 subtitle: 'Guilt and consequence', series: 'macbeth', number: 2 },
-  { id: 'cs_macbeth_3', title: 'Double, double, toil and trouble', subtitle: 'The witches and fate',  series: 'macbeth', number: 3 },
-  { id: 'cs_macbeth_4', title: 'Fair is foul, foul is fair',       subtitle: 'Appearance vs reality', series: 'macbeth', number: 4 },
-])
+function adaptCard(card, series = null) {
+  const runtimeChapter = card.kind === 'chapter'
+    ? chapterById.get(card.chapterId)
+    : null
 
-const INSPECTOR_PLACEHOLDERS = comingSoon([
-  { id: 'cs_inspector_1', title: 'We are members of one body', subtitle: "Priestley's social message",  series: 'inspector', number: 1 },
-  { id: 'cs_inspector_2', title: 'I accept no blame',          subtitle: 'Responsibility and denial',   series: 'inspector', number: 2 },
-  { id: 'cs_inspector_3', title: 'Fire, blood and anguish',    subtitle: 'Consequences and resolution', series: 'inspector', number: 3 },
-])
+  return {
+    ...(runtimeChapter ?? {}),
+    id: card.id,
+    chapterId: card.chapterId ?? null,
+    navigationKind: card.kind,
+    title: card.title,
+    subtitle: card.subtitle,
+    number: card.number,
+    series,
+    headerImage: card.headerImage ?? card.heroImage ?? runtimeChapter?.headerImage ?? null,
+    comingSoon: !card.openable,
+    openable: card.openable,
+    canonical: card.canonical,
+  }
+}
 
-const PHYSICS_PLACEHOLDERS = comingSoon([
-  { id: 'cs_forces', title: 'Forces & Motion',     subtitle: 'AQA Physics · Topic 5 & 6' },
-  { id: 'cs_energy', title: 'Energy',              subtitle: 'AQA Physics · Topic 1' },
-  { id: 'cs_waves',  title: 'Waves & Electricity', subtitle: 'AQA Physics · Topic 6 & 2' },
-  { id: 'cs_space',  title: 'Space',               subtitle: 'AQA Physics · Topic 8' },
-  { id: 'cs_matter', title: 'Matter & Particles',  subtitle: 'AQA Physics · Topic 3 & 4' },
-])
+function adaptSubjectState(entry) {
+  return {
+    id: `${entry.id}:coming-soon`,
+    chapterId: null,
+    navigationKind: 'state',
+    title: entry.comingSoon.title,
+    subtitle: entry.comingSoon.subtitle,
+    number: 1,
+    series: null,
+    headerImage: entry.heroImage,
+    comingSoon: true,
+    openable: false,
+    canonical: null,
+  }
+}
 
-// A subject's real chapters, in canonical module order. Chapter ids referenced
-// by a module but missing from CHAPTERS are dropped here; the hierarchy
-// validation in tests/architecture/content-hierarchy.test.js is what stops that
-// happening in the first place.
-function getModuleChapters(subjectName) {
-  return MODULES
-    .filter(module => module.subject === subjectName)
-    .flatMap(module => module.chapterIds)
-    .map(chapterId => CHAPTERS.find(chapter => chapter.id === chapterId))
-    .filter(Boolean)
+export const SUBJECT_NAVIGATION_NAMES = NAVIGATION_ENTRIES.map(entry => entry.label)
+
+export function getSubjectNavigationEntry(subjectName) {
+  const entry = getNavigationEntryForDisplayName(subjectName)
+  if (!entry) return null
+
+  const series = entry.sections?.map(section => ({
+    id: section.id,
+    title: section.title,
+    short: section.shortLabel,
+    headerImage: section.heroImage,
+    comingSoon: section.comingSoon,
+  })) ?? []
+
+  const items = entry.sections
+    ? entry.sections.flatMap(section => section.cards.map(card => adaptCard(card, section.id)))
+    : entry.comingSoon
+      ? [adaptSubjectState(entry)]
+      : entry.cards.map(card => adaptCard(card))
+
+  return { ...entry, series, items }
 }
 
 export function getSubjectChapterList(subjectName) {
-  const real = getModuleChapters(subjectName)
-  switch (subjectName) {
-    case 'English':
-      return [...real, ...MACBETH_PLACEHOLDERS, ...INSPECTOR_PLACEHOLDERS]
-    case 'Physics':
-      return [...real, ...PHYSICS_PLACEHOLDERS]
-    default:
-      if (real.length > 0) return real
-      return comingSoon([{ id: `cs_${subjectName.toLowerCase()}`, title: 'Content coming soon', subtitle: subjectName }])
-  }
+  return getSubjectNavigationEntry(subjectName)?.items ?? []
 }

@@ -1,123 +1,136 @@
-import { describe, it, expect } from 'vitest'
-import { CHAPTERS, getChapterAvailability, CHAPTER_AVAILABILITY } from '../../../src/chapters.js'
-import { MODULES } from '../../../src/data/modules.js'
-import { getSubjectChapterList } from '../../../src/features/subjects/subjectCatalogue.js'
+import { describe, expect, it } from 'vitest'
 
-const ids = (list) => list.map(entry => entry.id)
-const seriesOf = (list, series) => list.filter(entry => entry.series === series)
-const positionOf = (list, id) => ids(list).indexOf(id)
+import { CHAPTERS, CHAPTER_AVAILABILITY, getChapterAvailability } from '../../../src/chapters.js'
+import { NAVIGATION_ENTRIES } from '../../../src/data/generated/curriculum/navigation.js'
+import {
+  SUBJECT_NAVIGATION_NAMES,
+  getSubjectChapterList,
+  getSubjectNavigationEntry,
+} from '../../../src/features/subjects/subjectCatalogue.js'
 
-describe('Subject browser catalogue — real chapters come from MODULES', () => {
-  it('resolves Maths as math1 through math8 in maths_core order', () => {
-    const mathsCore = MODULES.find(module => module.id === 'maths_core')
-    expect(ids(getSubjectChapterList('Maths'))).toEqual(mathsCore.chapterIds)
+const ids = list => list.map(entry => entry.id)
+
+describe('Stage 5B subject-browser adapter', () => {
+  it('takes all seven destinations and their order from generated navigation', () => {
+    expect(SUBJECT_NAVIGATION_NAMES).toEqual([
+      'History', 'Biology', 'Chemistry', 'Physics', 'Maths', 'English', 'Sociology',
+    ])
+    expect(SUBJECT_NAVIGATION_NAMES).toEqual(NAVIGATION_ENTRIES.map(entry => entry.label))
+  })
+
+  it('passes Browser Entry presentation through without a second copy', () => {
+    for (const projected of NAVIGATION_ENTRIES) {
+      const adapted = getSubjectNavigationEntry(projected.label)
+      expect({
+        id: adapted.id,
+        title: adapted.title,
+        description: adapted.description,
+        heroImage: adapted.heroImage,
+        themeKey: adapted.themeKey,
+      }).toEqual({
+        id: projected.id,
+        title: projected.title,
+        description: projected.description,
+        heroImage: projected.heroImage,
+        themeKey: projected.themeKey,
+      })
+    }
+  })
+
+  it('adapts History and English sections to the existing series contract', () => {
+    expect(getSubjectNavigationEntry('History').series.map(series => series.id)).toEqual([
+      'medicine', 'spain-new-world', 'elizabethan', 'usa',
+    ])
+    expect(getSubjectNavigationEntry('English').series.map(series => series.id)).toEqual([
+      'macbeth', 'inspector',
+    ])
+    expect(getSubjectNavigationEntry('History').series.find(series => series.id === 'elizabethan').comingSoon).toBe(true)
+    expect(getSubjectNavigationEntry('English').series.find(series => series.id === 'inspector').comingSoon).toBe(true)
+  })
+
+  it('preserves Maths and Biology card order', () => {
     expect(ids(getSubjectChapterList('Maths'))).toEqual([
       'math1', 'math2', 'math3', 'math4', 'math5', 'math6', 'math7', 'math8',
     ])
-  })
-
-  it('begins Biology with bio_building_blocks', () => {
-    expect(ids(getSubjectChapterList('Biology'))[0]).toBe('bio_building_blocks')
-  })
-
-  it('follows hist_medicine order for the Medicine series', () => {
-    const medicine = MODULES.find(module => module.id === 'hist_medicine')
-    const browsed = seriesOf(getSubjectChapterList('History'), 'medicine')
-    expect(ids(browsed)).toEqual(medicine.chapterIds)
-  })
-
-  it('places Great Plague before Surgery & anaesthetics', () => {
-    const history = getSubjectChapterList('History')
-    const plague = positionOf(history, 'history-medicine-great-plague-1665')
-    const surgery = positionOf(history, 'history-medicine-surgery-anaesthetics')
-    expect(plague).toBeGreaterThanOrEqual(0)
-    expect(plague).toBeLessThan(surgery)
-  })
-
-  it('keeps Nightingale at its authored chapter number', () => {
-    const authored = CHAPTERS.find(chapter => chapter.id === 'history-medicine-nightingale')
-    const browsed = getSubjectChapterList('History').find(entry => entry.id === 'history-medicine-nightingale')
-    expect(browsed.number).toBe(authored.number)
-    expect(browsed.number).toBe(10)
-  })
-
-  it('omits the hidden superseded Renaissance chapter', () => {
-    expect(ids(getSubjectChapterList('History'))).not.toContain('history-medicine-renaissance-medicine')
-  })
-
-  it('retains Spain and USA module chapter order', () => {
-    const history = getSubjectChapterList('History')
-    const spain = MODULES.find(module => module.id === 'hist_spain_new_world')
-    const usa = MODULES.find(module => module.id === 'hist_usa')
-    expect(ids(seriesOf(history, 'spain-new-world'))).toEqual(spain.chapterIds)
-    expect(ids(seriesOf(history, 'usa'))).toEqual(usa.chapterIds)
-  })
-})
-
-describe('Subject browser catalogue — synthetic placeholders', () => {
-  it('follows the real Macbeth chapter with its synthetic placeholders', () => {
-    const macbeth = seriesOf(getSubjectChapterList('English'), 'macbeth')
-    expect(ids(macbeth)).toEqual([
-      'english-macbeth-power-ambition', 'cs_macbeth_2', 'cs_macbeth_3', 'cs_macbeth_4',
-    ])
-    expect(macbeth[0].comingSoon).toBeUndefined()
-    expect(macbeth.slice(1).every(entry => entry.comingSoon)).toBe(true)
-  })
-
-  it('keeps the Inspector placeholders under the inspector series', () => {
-    const inspector = seriesOf(getSubjectChapterList('English'), 'inspector')
-    expect(ids(inspector)).toEqual(['cs_inspector_1', 'cs_inspector_2', 'cs_inspector_3'])
-    expect(inspector.map(entry => entry.number)).toEqual([1, 2, 3])
-  })
-
-  it('keeps the Physics topic cards even though Physics has no module', () => {
-    expect(MODULES.some(module => module.subject === 'Physics')).toBe(false)
-    expect(ids(getSubjectChapterList('Physics'))).toEqual([
-      'cs_forces', 'cs_energy', 'cs_waves', 'cs_space', 'cs_matter',
+    expect(ids(getSubjectChapterList('Biology')).slice(0, 2)).toEqual([
+      'bio_building_blocks', 'sci_bio_w1',
     ])
   })
 
-  it('falls back to a single coming-soon card for a subject with no module or chapters', () => {
-    expect(MODULES.some(module => module.subject === 'Chemistry')).toBe(false)
-    const chemistry = getSubjectChapterList('Chemistry')
-    expect(ids(chemistry)).toEqual(['cs_chemistry'])
-    expect(chemistry[0].comingSoon).toBe(true)
+  it('uses semantic English Chapter identities rather than cs placeholders', () => {
+    expect(ids(getSubjectChapterList('English'))).toEqual([
+      'english-macbeth-power-ambition',
+      'english-macbeth-guilt-consequence',
+      'english-macbeth-witches-fate',
+      'english-macbeth-appearance-reality',
+      'english-inspector-calls-social-message',
+      'english-inspector-calls-responsibility-denial',
+      'english-inspector-calls-consequences-resolution',
+    ])
   })
 
-  it('never lets a synthetic card into MODULES or CHAPTERS', () => {
-    const catalogued = new Set(MODULES.flatMap(module => module.chapterIds))
-    const known = new Set(CHAPTERS.map(chapter => chapter.id))
-    const synthetic = ['History', 'English', 'Physics', 'Biology', 'Maths', 'Sociology', 'Chemistry']
-      .flatMap(subject => getSubjectChapterList(subject))
-      .filter(entry => entry.id.startsWith('cs_'))
+  it('keeps Physics as five non-openable canonical Module cards', () => {
+    const physics = getSubjectChapterList('Physics')
+    expect(ids(physics)).toEqual([
+      'physics-aqa-forces-motion',
+      'physics-aqa-energy',
+      'physics-aqa-waves-electricity',
+      'physics-aqa-space',
+      'physics-aqa-matter-particles',
+    ])
+    expect(physics.every(card => card.navigationKind === 'module' && !card.openable)).toBe(true)
+  })
 
-    expect(synthetic.length).toBeGreaterThan(0)
-    for (const entry of synthetic) {
-      expect(catalogued.has(entry.id)).toBe(false)
-      expect(known.has(entry.id)).toBe(false)
+  it('represents Chemistry as a subject state rather than a fake Chapter', () => {
+    expect(getSubjectChapterList('Chemistry')).toEqual([
+      expect.objectContaining({
+        id: 'chemistry:coming-soon',
+        chapterId: null,
+        navigationKind: 'state',
+        title: 'Content coming soon',
+        subtitle: 'Chemistry',
+        openable: false,
+        comingSoon: true,
+      }),
+    ])
+  })
+
+  it('joins all 30 openable cards to the same available runtime Chapters', () => {
+    const runtimeById = new Map(CHAPTERS.map(chapter => [chapter.id, chapter]))
+    const cards = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
+    const openable = cards.filter(card => card.openable)
+    expect(openable).toHaveLength(30)
+    for (const card of openable) {
+      const runtime = runtimeById.get(card.chapterId)
+      expect(runtime, card.id).toBeTruthy()
+      expect(getChapterAvailability(runtime), card.id).toBe(CHAPTER_AVAILABILITY.AVAILABLE)
+      expect(card.screenCount, card.id).toBe(runtime.screenCount)
     }
   })
-})
 
-describe('Subject browser catalogue — availability survives the transformation', () => {
-  it('keeps coming-soon real chapters non-openable', () => {
-    const nightingale = getSubjectChapterList('History')
-      .find(entry => entry.id === 'history-medicine-nightingale')
-    expect(getChapterAvailability(nightingale)).toBe(CHAPTER_AVAILABILITY.COMING_SOON)
-    expect(nightingale.screenCount).toBe(0)
+  it('keeps all 41 planned, Module and state items non-openable', () => {
+    const cards = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
+    expect(cards.filter(card => !card.openable)).toHaveLength(41)
+    expect(cards.filter(card => !card.openable).every(card => card.comingSoon)).toBe(true)
   })
 
-  it('leaves every real available chapter openable', () => {
-    const available = getSubjectChapterList('Maths')
-      .filter(entry => getChapterAvailability(entry) === CHAPTER_AVAILABILITY.AVAILABLE)
-    expect(available.length).toBe(8)
-    expect(available.every(entry => entry.screenCount > 0)).toBe(true)
+  it('surfaces 70 canonical cards plus one state and no cs identity', () => {
+    const cards = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
+    expect(cards).toHaveLength(71)
+    expect(cards.filter(card => card.navigationKind !== 'state')).toHaveLength(70)
+    expect(cards.filter(card => card.navigationKind === 'state')).toHaveLength(1)
+    expect(cards.some(card => card.id.startsWith('cs_'))).toBe(false)
   })
 
-  it('surfaces no hidden chapter in any subject', () => {
-    const everything = ['History', 'English', 'Physics', 'Biology', 'Maths', 'Sociology', 'Chemistry']
-      .flatMap(subject => getSubjectChapterList(subject))
-    const hidden = everything.filter(entry => getChapterAvailability(entry) === CHAPTER_AVAILABILITY.HIDDEN)
+  it('surfaces no hidden runtime Chapter', () => {
+    const hidden = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
+      .filter(card => card.chapterId)
+      .filter(card => getChapterAvailability(card) === CHAPTER_AVAILABILITY.HIDDEN)
     expect(hidden).toEqual([])
+  })
+
+  it('returns no entry for an unknown destination', () => {
+    expect(getSubjectNavigationEntry('Drama')).toBeNull()
+    expect(getSubjectChapterList('Drama')).toEqual([])
   })
 })

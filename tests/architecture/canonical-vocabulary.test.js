@@ -138,12 +138,12 @@ describe('canonical vocabulary — deleted hierarchy surfaces', () => {
       .filter(path => /export\s+const\s+CHAPTERS\b/.test(read(path)))
     expect(declarers).toEqual([])
 
-    // The Stage 4 boundary is exactly three files wide. A fourth importer would
-    // mean a consumer had been re-pointed past the public files.
+    // The Stage 4 runtime boundary is exactly three files wide. The separate
+    // Stage 5B navigation projection is guarded by curriculum-navigation.test.js.
     const BOUNDARY = [
       'src/data/modules.js', 'src/chapters.js', 'src/content/chapterContentRegistry.js',
     ]
-    const reaches = /(?:from\s*|import\s*\(?\s*)['"][^'"]*generated\/curriculum\//
+    const reaches = /(?:from\s*|import\s*\(?\s*)['"][^'"]*generated\/curriculum\/(?:modules|chapters|chapterContentLoaders)\.js/
     const importers = PRODUCTION_FILES
       .filter(path => !path.startsWith(GENERATED_PROJECTION))
       .filter(path => reaches.test(read(path)))

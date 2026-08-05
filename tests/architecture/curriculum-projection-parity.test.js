@@ -610,13 +610,13 @@ function listFiles(dir) {
 // repository had before.
 
 describe('the Stage 4 authority boundary', () => {
-  const REACHES_GENERATED = /(?:from\s*|import\s*\(?\s*)['"][^'"]*generated\/curriculum\//
+  const REACHES_RUNTIME_GENERATED = /(?:from\s*|import\s*\(?\s*)['"][^'"]*generated\/curriculum\/(?:modules|chapters|chapterContentLoaders)\.js/
 
-  it('is exactly three files wide — only the boundary files import the projections', () => {
+  it('is exactly three files wide — only the boundary files import the runtime projections', () => {
     const importers = listFiles('src')
       .filter(file => !file.startsWith('src/data/generated/curriculum/'))
-      .filter(file => REACHES_GENERATED.test(read(file)))
-    expect(importers.sort(), 'a fourth file reached past the boundary')
+      .filter(file => REACHES_RUNTIME_GENERATED.test(read(file)))
+    expect(importers.sort(), 'a fourth file reached a Stage 4 runtime projection')
       .toEqual([...RUNTIME_BOUNDARY_FILES].sort())
   })
 
@@ -680,7 +680,7 @@ describe('the Stage 4 authority boundary', () => {
     for (const consumer of consumers) {
       const source = read(consumer)
       expect(reachesBoundary.test(source), `${consumer} stopped importing the boundary`).toBe(true)
-      expect(REACHES_GENERATED.test(source), `${consumer} was re-pointed at the generated directory`).toBe(false)
+      expect(REACHES_RUNTIME_GENERATED.test(source), `${consumer} was re-pointed at the generated directory`).toBe(false)
     }
   })
 
@@ -691,7 +691,7 @@ describe('the Stage 4 authority boundary', () => {
     const importers = listFiles('src')
       .filter(file => !file.startsWith('src/data/generated/curriculum/'))
       .filter(file => !RUNTIME_BOUNDARY_FILES.includes(file))
-      .filter(file => REACHES_GENERATED.test(read(file)))
+      .filter(file => REACHES_RUNTIME_GENERATED.test(read(file)))
     expect(importers, 'reverting the three files would not undo the cutover').toEqual([])
     for (const path of [MODULES_PATH, CHAPTERS_PATH, LOADERS_PATH]) {
       expect(read(path), `${path} imports a boundary file back`)

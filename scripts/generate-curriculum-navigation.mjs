@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 // ─── Canonical subject-browser navigation generator ────────────────────────
 //
-// Stage 5A: renders an inert browser projection from canonical curriculum
-// records plus the isolated browser-entry configuration.
+// Stage 5B: renders the load-bearing browser projection from canonical
+// curriculum records plus the isolated browser-entry configuration.
 //
 //   src/data/generated/curriculum/navigation.js
 //   docs/curriculum/NAVIGATION_MAP.md
 //
-// The generated runtime file is imported by nothing until Stage 5B. This
-// generator never reads the current subject browser, the runtime compatibility
+// Production reaches the generated runtime file only through the subject
+// browser adapter. This generator never reads the browser UI, runtime compatibility
 // projection, a test fixture or a planning document.
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
@@ -30,8 +30,8 @@ const BANNER = [
   '// or src/curriculum-catalogue/navigation/browserEntries.js.',
   '// `pnpm curriculum:navigation:check` fails when this projection drifts.',
   '//',
-  '// Stage 5A: this file is deliberately imported by nothing. Stage 5B switches',
-  '// the subject browser onto it after the frozen browser contract passes.',
+  '// Stage 5B: consumed through src/features/subjects/subjectCatalogue.js.',
+  '// Production components must not import this generated file directly.',
   '//',
   '// Source: canonical curriculum records plus the browser-entry configuration.',
 ]
@@ -304,7 +304,7 @@ export function renderNavigationMap(entries) {
     `**${entries.length}** browser entries · **${cards.length}** canonical cards + **${subjectStates.length}** subject-level state · **${cards.length + subjectStates.length}** visible items · **${openable.length}** openable chapters`,
     '',
     'This is application navigation configuration, not a seventh curriculum entity.',
-    'Stage 5A keeps it inert: no production file imports the generated projection.',
+    'Stage 5B makes it load-bearing through `src/features/subjects/subjectCatalogue.js`.',
     '',
     '## Entries',
     '',

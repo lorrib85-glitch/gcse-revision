@@ -3,7 +3,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { relative, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-import { CHAPTERS, CHAPTER_AVAILABILITY, getChapterAvailability } from '../../src/chapters.js'
+import { CHAPTERS } from '../../src/chapters.js'
 import { loadCatalogue } from '../../src/curriculum-catalogue/index.js'
 import {
   browserEntries,
@@ -15,7 +15,7 @@ import {
   getNavigationEntryById,
   getNavigationEntryForDisplayName,
 } from '../../src/data/generated/curriculum/navigation.js'
-import { getSubjectChapterList } from '../../src/features/subjects/subjectCatalogue.js'
+import { getSubjectChapterList, getSubjectNavigationEntry } from '../../src/features/subjects/subjectCatalogue.js'
 import {
   assertInputPurity,
   buildNavigation,
@@ -51,20 +51,8 @@ function filesUnder(dir, extensions) {
   return files
 }
 
-function currentBrowserCards(label) {
-  return getSubjectChapterList(label).map((card, index) => ({
-    id: fixture.placeholderMappings[card.id] ?? card.id,
-    title: card.title,
-    subtitle: card.subtitle,
-    number: card.number ?? index + 1,
-    status: card.comingSoon || getChapterAvailability(card) !== CHAPTER_AVAILABILITY.AVAILABLE
-      ? 'planned'
-      : 'available',
-    openable: !card.comingSoon && getChapterAvailability(card) === CHAPTER_AVAILABILITY.AVAILABLE,
-  }))
-}
 
-describe('Stage 5A canonical subject-browser navigation', () => {
+describe('Stage 5B canonical subject-browser navigation', () => {
   it('pins the frozen pre-cutover browser contract visibly', () => {
     expect(createHash('sha256').update(fixtureText).digest('hex')).toBe(FIXTURE_SHA256)
     expect(fixture.contract.provenanceCommit).toBe('2ef84c64ee0ba9f73354d3941072eef2960a83d2')
@@ -135,27 +123,54 @@ describe('Stage 5A canonical subject-browser navigation', () => {
     }
   })
 
-  it('reproduces current browser copy and status while replacing placeholder identities', () => {
-    for (const entry of NAVIGATION_ENTRIES) {
-      const current = currentBrowserCards(entry.label)
-      if (entry.cardMode === 'none') {
-        expect(current).toHaveLength(1)
-        expect(current[0].id).toBe('cs_chemistry')
-        expect(entry.comingSoon).toEqual({ title: current[0].title, subtitle: current[0].subtitle })
-        continue
-      }
+  it('adapts the generated projection into the browser contract', () => {
+  for (const entry of NAVIGATION_ENTRIES) {
+    const browserEntry = getSubjectNavigationEntry(entry.label)
+    expect(browserEntry).toEqual(expect.objectContaining({
+      id: entry.id,
+      label: entry.label,
+      title: entry.title,
+      description: entry.description,
+      heroImage: entry.heroImage,
+    }))
 
-      const projected = flattenNavigationCards(entry).map(card => ({
-        id: card.id,
-        title: card.title,
-        subtitle: card.subtitle,
-        number: card.number,
-        status: card.status,
-        openable: card.openable,
-      }))
-      expect(projected, entry.id).toEqual(current)
+    const adapted = getSubjectChapterList(entry.label)
+    if (entry.comingSoon) {
+      expect(adapted).toEqual([
+        expect.objectContaining({
+          navigationKind: 'state',
+          title: entry.comingSoon.title,
+          subtitle: entry.comingSoon.subtitle,
+          openable: false,
+        }),
+      ])
+      continue
     }
-  })
+
+    const seriesByCard = new Map((entry.sections ?? []).flatMap(section =>
+      section.cards.map(card => [card.id, section.id])))
+    const projected = flattenNavigationCards(entry).map(card => ({
+      id: card.id,
+      title: card.title,
+      subtitle: card.subtitle,
+      number: card.number,
+      series: seriesByCard.get(card.id) ?? null,
+      navigationKind: card.kind,
+      openable: card.openable,
+      comingSoon: !card.openable,
+    }))
+    expect(adapted.map(card => ({
+      id: card.id,
+      title: card.title,
+      subtitle: card.subtitle,
+      number: card.number,
+      series: card.series,
+      navigationKind: card.navigationKind,
+      openable: card.openable,
+      comingSoon: card.comingSoon,
+    }))).toEqual(projected)
+  }
+})
 
   it('preserves progress denominator inputs without putting progress in navigation', () => {
     for (const entry of NAVIGATION_ENTRIES) {
@@ -226,11 +241,17 @@ describe('Stage 5A canonical subject-browser navigation', () => {
     expect(() => buildNavigation(catalogue, mutated)).toThrow(/duplicates the default/)
   })
 
-  it('reads no browser, compatibility, fixture or planning source and stays inert', () => {
-    expect(assertInputPurity()).toEqual([])
-    const productionFiles = filesUnder('src', ['.js', '.jsx'])
-    const importPattern = /(?:from\s*|import\s*\(\s*)['"][^'"]*generated\/curriculum\/navigation\.js['"]/
-    const importers = productionFiles.filter(path => importPattern.test(readFileSync(resolve(ROOT, path), 'utf8')))
-    expect(importers).toEqual([])
-  })
+  it('keeps generator inputs pure and reaches production through one adapter', () => {
+  expect(assertInputPurity()).toEqual([])
+  const productionFiles = filesUnder('src', ['.js', '.jsx'])
+  const generatedImport = /(?:from\s*|import\s*\(\s*)['"][^'"]*generated\/curriculum\/navigation\.js['"]/
+  const generatedImporters = productionFiles
+    .filter(path => generatedImport.test(readFileSync(resolve(ROOT, path), 'utf8')))
+    .sort()
+  expect(generatedImporters).toEqual(['src/features/subjects/subjectCatalogue.js'])
+
+  const subjectsSource = readFileSync(resolve(ROOT, 'src/features/subjects/Subjects.jsx'), 'utf8')
+  expect(subjectsSource).toContain("from './subjectCatalogue.js'")
+  expect(subjectsSource).not.toContain('generated/curriculum/navigation.js')
+})
 })

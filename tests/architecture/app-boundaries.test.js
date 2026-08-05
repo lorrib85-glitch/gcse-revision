@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { readFileSync, existsSync } from 'fs'
 import { resolve } from 'path'
 import { SUBJECTS } from '../../src/constants/subjects.js'
+import { SUBJECT_NAVIGATION_NAMES } from '../../src/features/subjects/subjectCatalogue.js'
 
 const root = resolve(process.cwd())
 const read = (rel) => readFileSync(resolve(root, rel), 'utf8')
@@ -85,15 +86,10 @@ describe('Subjects.jsx does not regrow a local subject accent palette map', () =
     expect(src).toMatch(/SUBJECTS\[subjectName\]\?\.subjectBrowserAccentDark\b/)
   })
 
-  // Field presence, not colour uniqueness: every subject the browser can render
-  // must own both presentation roles canonically, so no subject silently falls
-  // through to the History fallback. Driven off the browser's own subject list
-  // so adding a subject there without the fields fails here.
+  // Field presence, not colour uniqueness: every generated browser entry
+  // must own both presentation roles canonically.
   it('every subject the browser displays owns both presentation roles', () => {
-    const browserSrc = read('src/features/subjects/Subjects.jsx')
-    const block = browserSrc.match(/const SUBJECT_DISPLAY_TITLES = \{([\s\S]*?)\n\}/)
-    expect(block, 'SUBJECT_DISPLAY_TITLES not found in Subjects.jsx').toBeTruthy()
-    const browserSubjects = [...block[1].matchAll(/^\s{2}(\w+):/gm)].map(m => m[1])
+    const browserSubjects = SUBJECT_NAVIGATION_NAMES
     expect(browserSubjects.length).toBeGreaterThan(0)
 
     const missing = browserSubjects.filter(
