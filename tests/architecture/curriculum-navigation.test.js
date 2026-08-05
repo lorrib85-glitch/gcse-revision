@@ -173,7 +173,7 @@ describe('Stage 5A canonical subject-browser navigation', () => {
     expect(states).toHaveLength(1)
     expect(cards.length + states.length).toBe(71)
     expect(cards.filter(card => card.openable)).toHaveLength(30)
-    expect(JSON.stringify(NAVIGATION_ENTRIES)).not.toContain('cs_')
+    expect(cards.some(card => card.id.startsWith('cs_'))).toBe(false)
   })
 
   it('resolves every card to a canonical Chapter or Module', async () => {
@@ -193,7 +193,9 @@ describe('Stage 5A canonical subject-browser navigation', () => {
 
     const mutated = structuredClone(catalogue)
     const higher = mutated.pathways.find(pathway => pathway.id === 'aqa-biology-8461-higher')
-    ;[higher.moduleRefs[0], higher.moduleRefs[1]] = [higher.moduleRefs[1], higher.moduleRefs[0]]
+    const firstPosition = higher.moduleRefs[0].position
+    higher.moduleRefs[0].position = higher.moduleRefs[1].position
+    higher.moduleRefs[1].position = firstPosition
     expect(() => resolvePathwayModules(biology, mutated)).toThrow(/diverging pathways/)
   })
 
