@@ -902,6 +902,25 @@ describe('relationship and status invariants', () => {
     expect(problems).toContain('chapter "soc4" belongs to both "module-a" and "module-b"')
   })
 
+  it('the Stage 1 records are the nine verified specifications and two boards', async () => {
+    // A deliberate census, not a growth counter. Stage 2 adds subjects,
+    // pathways, modules and chapters — not specifications — so this number
+    // changing is a decision someone must make on purpose.
+    const { boards, specifications } = await loadCatalogue()
+    expect(boards.map(board => board.id).sort()).toEqual(['aqa', 'pearson-edexcel'])
+    expect(specifications.map(spec => spec.id).sort()).toEqual([
+      'aqa-gcse-biology-8461',
+      'aqa-gcse-chemistry-8462',
+      'aqa-gcse-combined-science-trilogy-8464',
+      'aqa-gcse-english-language-8700',
+      'aqa-gcse-english-literature-8702',
+      'aqa-gcse-mathematics-8300',
+      'aqa-gcse-physics-8463',
+      'aqa-gcse-sociology-8192',
+      'pearson-edexcel-gcse-history-1hi0',
+    ])
+  })
+
   it('the canonical subject vocabulary is the ten disciplines, and creates no records', async () => {
     expect(SUBJECT_IDS).toEqual([
       'mathematics', 'biology', 'chemistry', 'physics', 'history',
@@ -913,5 +932,180 @@ describe('relationship and status invariants', () => {
       expect(catalogue.subjects.some(subject => subject.id === subjectId)).toBe(false)
       expect(catalogue.specifications.some(spec => spec.subjectIds.includes(subjectId))).toBe(false)
     }
+  })
+})
+
+// ─── Stage 1: the authored records say what the awarding bodies say ─────────
+//
+// The tests above prove the SCHEMA rejects malformed records. These prove the
+// AUTHORED records are the ones intended — that the qualifications are modelled
+// the way the awarding bodies actually publish them, and that the record set
+// does not quietly claim more than it has.
+
+describe('Stage 1 authored specifications', () => {
+  const spec = (catalogue, id) => catalogue.specifications.find(candidate => candidate.id === id)
+
+  it('models Combined Science as one specification covering exactly three subjects', async () => {
+    // The shape that would have forced a special case in a tree model: one
+    // qualification, three disciplines, six papers, two per discipline.
+    const trilogy = spec(await loadCatalogue(), 'aqa-gcse-combined-science-trilogy-8464')
+    expect(trilogy.subjectIds).toEqual(['biology', 'chemistry', 'physics'])
+    expect(trilogy.papers).toHaveLength(6)
+    for (const subjectId of trilogy.subjectIds) {
+      expect(trilogy.papers.filter(paper => paper.subjectId === subjectId)).toHaveLength(2)
+    }
+    // No subject claims it. Coverage is not ownership.
+    expect(trilogy.papers.every(paper => trilogy.subjectIds.includes(paper.subjectId))).toBe(true)
+  })
+
+  it('tiers each specification the way its awarding body does', async () => {
+    const catalogue = await loadCatalogue()
+    const tiered = catalogue.specifications
+      .filter(candidate => candidate.tiers.length > 0)
+      .map(candidate => candidate.id)
+      .sort()
+    expect(tiered).toEqual([
+      'aqa-gcse-biology-8461',
+      'aqa-gcse-chemistry-8462',
+      'aqa-gcse-combined-science-trilogy-8464',
+      'aqa-gcse-mathematics-8300',
+      'aqa-gcse-physics-8463',
+    ])
+    for (const candidate of catalogue.specifications) {
+      if (candidate.tiers.length) expect(candidate.tiers).toEqual(['foundation', 'higher'])
+    }
+    // One record per qualification. A tiered specification is never split into
+    // a Foundation copy and a Higher copy.
+    const codes = catalogue.specifications.map(candidate => candidate.code)
+    expect(new Set(codes).size).toBe(codes.length)
+  })
+
+  it('resolves every assessment objective set to 100% at every scope it declares', async () => {
+    const catalogue = await loadCatalogue()
+    for (const candidate of catalogue.specifications) {
+      for (const scope of weightingScopes(candidate.tiers)) {
+        const total = candidate.assessmentObjectives
+          .reduce((sum, ao) => sum + resolveWeighting(ao.weightings, scope), 0)
+        expect(total, `${candidate.id} @ ${scope}`).toBeCloseTo(100, 9)
+      }
+    }
+  })
+
+  it('records Mathematics as 50/25/25 Foundation and 40/30/30 Higher', async () => {
+    const maths = spec(await loadCatalogue(), 'aqa-gcse-mathematics-8300')
+    expect(maths.assessmentObjectives.map(ao => resolveWeighting(ao.weightings, 'foundation')))
+      .toEqual([50, 25, 25])
+    expect(maths.assessmentObjectives.map(ao => resolveWeighting(ao.weightings, 'higher')))
+      .toEqual([40, 30, 30])
+  })
+
+  it('keeps English Language AO1–AO9, with AO7–AO9 at 0%', async () => {
+    const english = spec(await loadCatalogue(), 'aqa-gcse-english-language-8700')
+    expect(english.assessmentObjectives.map(ao => ao.id))
+      .toEqual(['ao1', 'ao2', 'ao3', 'ao4', 'ao5', 'ao6', 'ao7', 'ao8', 'ao9'])
+    for (const id of ['ao7', 'ao8', 'ao9']) {
+      const ao = english.assessmentObjectives.find(candidate => candidate.id === id)
+      expect(resolveWeighting(ao.weightings, 'overall'), id).toBe(0)
+      // A 0% objective must say why it is 0%, or it reads as an authoring slip.
+      expect(ao.note).toMatch(/endorsement/i)
+    }
+  })
+
+  it('gives every written exam a duration and a mark total', async () => {
+    const catalogue = await loadCatalogue()
+    for (const candidate of catalogue.specifications) {
+      for (const paper of candidate.papers) {
+        if (paper.assessmentType !== 'written-exam') continue
+        expect(paper.durationMinutes, `${paper.id} duration`).toBeGreaterThan(0)
+        expect(paper.totalMarks, `${paper.id} marks`).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('does not let Spoken Language pretend to be a written exam', async () => {
+    const english = spec(await loadCatalogue(), 'aqa-gcse-english-language-8700')
+    const spoken = english.papers.find(paper => paper.id.endsWith('-spoken-language'))
+    expect(spoken.assessmentType).toBe('nea-endorsement')
+    // It has no fixed duration and no marks, so it states neither. Writing 0 or
+    // a plausible number would be inventing an assessment that does not exist.
+    expect('durationMinutes' in spoken).toBe(false)
+    expect('totalMarks' in spoken).toBe(false)
+    expect(spoken.note).toMatch(/separately reported/i)
+  })
+
+  it('points every selection group at a real paper of its own specification', async () => {
+    const catalogue = await loadCatalogue()
+    const withChoices = catalogue.specifications.filter(candidate => candidate.selectionGroups.length)
+    expect(withChoices.map(candidate => candidate.id).sort()).toEqual([
+      'aqa-gcse-english-literature-8702',
+      'pearson-edexcel-gcse-history-1hi0',
+    ])
+    for (const candidate of withChoices) {
+      const paperIds = candidate.papers.map(paper => paper.id)
+      for (const group of candidate.selectionGroups) {
+        expect(paperIds, `${candidate.id}/${group.id}`).toContain(group.paperId)
+        // Required, and nothing has chosen yet: a specification states what must
+        // be chosen, a study pathway records what was.
+        expect(group.required).toBe(true)
+      }
+    }
+    expect(spec(catalogue, 'aqa-gcse-english-literature-8702').selectionGroups.map(group => group.id))
+      .toEqual(['shakespeare-text', 'nineteenth-century-novel', 'modern-text', 'poetry-anthology-cluster'])
+    expect(spec(catalogue, 'pearson-edexcel-gcse-history-1hi0').selectionGroups.map(group => group.id))
+      .toEqual([
+        'thematic-study-and-historic-environment',
+        'period-study',
+        'british-depth-study',
+        'modern-depth-study',
+      ])
+  })
+
+  it('carries official provenance and the same verification date on every record', async () => {
+    const catalogue = await loadCatalogue()
+    const records = [...catalogue.boards, ...catalogue.specifications]
+    expect(records).toHaveLength(11)
+    for (const record of records) {
+      expect(record.provenance.verifiedOn, record.id).toBe('2026-08-05')
+      expect(record.provenance.sourceUrl, record.id).toMatch(/^https:\/\/(www\.aqa\.org\.uk|qualifications\.pearson\.com)\//)
+      expect(record.provenance.sourceName.length, record.id).toBeGreaterThan(10)
+      // The check was real; the environment reaching the domain was not. Saying
+      // so is the difference between provenance and decoration.
+      expect(record.provenance.note, record.id)
+        .toBe('Official awarding-body source independently verified and supplied in-session; '
+          + 'the implementation environment could not access the awarding-body domain.')
+    }
+  })
+
+  it('claims no requirement coverage, because none is authored', async () => {
+    const catalogue = await loadCatalogue()
+    for (const candidate of catalogue.specifications) {
+      expect(candidate.requirementCoverage, candidate.id).toBe('none')
+      expect(candidate.requirements, candidate.id).toEqual([])
+      expect(candidate.status, candidate.id).toBe('current')
+      expect(candidate.withdrawnFrom, candidate.id).toBe(null)
+    }
+  })
+
+  it('authors no record Stage 1 does not own', async () => {
+    // Subjects, pathways, modules and chapters are Stage 2. Their absence is
+    // the boundary, and an empty collection is what proves it was respected.
+    const catalogue = await loadCatalogue()
+    expect(catalogue.subjects).toEqual([])
+    expect(catalogue.pathways).toEqual([])
+    expect(catalogue.modules).toEqual([])
+    expect(catalogue.chapters).toEqual([])
+  })
+
+  it('derives the record set from disk rather than from a registry', () => {
+    // Every authored record is a file the loader found; nothing lists them.
+    const files = listAllRecordFiles()
+    expect(files).toContain('records/boards.js')
+    expect(files.filter(file => file.startsWith('records/specifications/'))).toHaveLength(9)
+    for (const file of files) {
+      expect(existsSync(resolve(RECORDS_DIR, file.replace(/^records\//, '')))).toBe(true)
+    }
+    // The one non-record file under records/ is shared provenance, and it is
+    // deliberately outside every location LAYOUT declares.
+    expect(files).not.toContain('records/provenance.js')
   })
 })
