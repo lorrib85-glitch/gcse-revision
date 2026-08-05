@@ -244,77 +244,32 @@ must keep producing the identical interface. Nothing in
 
 ---
 
-## Stage 5 — split into 5A and 5B
+## Stage 5 — canonical subject navigation
 
-**Stage 5 is two stages.** `stage-5-navigation/AUDIT.md` found three structural
-problems that all had to be settled before the browser could move: canonical
-English is two subjects against one browser destination; browser descriptions
-and hero images are not curriculum facts and must not be forced into subject
-records; and OD-8's "configured pathways" had no configuration to read. The
-split puts the authority boundary in the same place Stage 4 put it.
+Stage 5 is complete in three controlled slices:
 
-- **Stage 5A** defines the browser-entry contract and generates
-  `src/data/generated/curriculum/navigation.js`, imported by nothing.
-- **Stage 5B** switches `Subjects.jsx` onto it and deletes
-  `subjectCatalogue.js` only once parity is proved at 390px.
+- **5A** defines Browser Entries and generates
+  `src/data/generated/curriculum/navigation.js` without a runtime import.
+- **5B** switches the live subject browser onto that projection through a thin
+  adapter, preserving seven destinations, 71 visible items, 30 openable
+  Chapters, card copy, numbering, tabs and progress behaviour.
+- **5C** renames the surviving boundary to
+  `subjectNavigationAdapter.js`, removes the proved-dead 20-entry Chapter image
+  fallback, narrows the adapter so compatibility-shaped Chapter rows do not
+  leak into the UI, and updates the architecture records. No learner-visible
+  behaviour changes.
 
-Full contract pack: `stage-5-navigation/` — `AUDIT.md`,
-`CURRENT-BROWSER-CONTRACT.md`, `DESIGN.md`, `DECISIONS.md`, `MIGRATION-PLAN.md`.
+Browser presentation remains separate from the six curriculum entity types.
+`browserEntries.js` owns destination copy, imagery, sections and card mode;
+canonical pathway, Module and Chapter records own academic identity and order.
+Temporary number and Physics-label overrides remain governed by
+`stage-5-navigation/DECISIONS.md`.
 
-**Two findings change what Stage 5 may do.** The printed card number is
-derivable from no rule — canonical `position + 1` gets 24 of 71 cards wrong and
-section index gets 17 wrong — so deriving it, as the §5.2 table below proposed,
-is a deliberate learner-visible correction and is deferred (D-5-3, OD-5-A).
-Three Physics card labels differ from their canonical module titles and are
-carried as overrides (D-5-5, OD-5-B). Both override tables are temporary and
-join the Stage 6 delete list.
+The compatibility projection remains intact until Stage 6. Stage 5 migrates the
+subject browser only; the remaining runtime consumers still require the legacy
+`MODULES`, `CHAPTERS` and `CHAPTER_CONTENT_LOADERS` interfaces.
 
-## Stage 5B — navigation moves off the hardcoded literals
-
-The first stage a learner could notice. **OD-8 is settled**: a subject is shown
-when a non-retired catalogue study pathway in the navigation configuration
-reaches at least one non-retired module for that subject. Both `active` and
-`planned` modules qualify; `retired` never does. No `browsable` field exists.
-Stage 5 must preserve the current seven visible subjects.
-
-**Lands:** `src/data/generated/curriculum/navigation.js`, and `Subjects.jsx`
-reading it instead of eight hardcoded literals:
-
-| Retired from `Subjects.jsx` | Replaced by |
-|---|---|
-| `SUBJECT_NAMES` (7 hardcoded, untested) | subjects reached by a configured non-retired pathway through a non-retired module, `active` or `planned` (OD-8) |
-| `SUBJECT_DISPLAY_TITLES` | subject record `title` — retires `History: 'Medicine through time'` |
-| `SUBJECT_DESCRIPTIONS` | subject record |
-| `SUBJECT_HEADER_IMGS`, `SUBJECT_TOPIC_IMAGES` | subject record presentation |
-| `HISTORY_SERIES`, `ENGLISH_SERIES` | module records of the active pathway — gives `elizabethan` (A-5) and `inspector` real backing, and fixes the two wrong hero images (A-9) |
-| `CHAPTER_HEADER_IMAGES` | deleted outright — all 20 entries are already dead (A-10) |
-| `MACBETH_PLACEHOLDERS`, `INSPECTOR_PLACEHOLDERS`, `PHYSICS_PLACEHOLDERS` and the synthesised `cs_<subject>` fallback | `status: 'planned'` modules and chapters — retires all 12 `cs_*` ids (A-15) |
-
-`subjectCatalogue.js` is deleted; its job becomes a projection.
-
-**The compatibility projection remains intact.** An earlier draft deleted eight
-of its eleven fields here, on the grounds that the navigation projection
-supersedes them. Superseding is not retiring: Stage 5 migrates **one** consumer,
-and `progress.js`, `chapterNavigation.js`, `dailyPlanner.js`, `todaysPlan.js`,
-`Progress.jsx`, `LegacyApp.jsx`, `ChapterCompleteScreen.jsx`, `ChapterPlayer.jsx`
-and `contentHierarchy.js` all still import the compatibility-shaped `MODULES`,
-`CHAPTERS` and `CHAPTER_CONTENT_LOADERS`. Deleting a field they still receive is
-a runtime change wearing a cleanup label. **Nothing in
-`src/curriculum-catalogue/compatibility/` is deleted at Stage 5**; the
-retirement moves to Stage 6, per `FINAL_CONSUMERS` and
-`docs/system/CURRICULUM_RUNTIME_COMPATIBILITY.md` §7.
-
-No compatibility field may leak into the navigation projection — that rule is
-unchanged, and it is about what the new projection may read, not about what the
-old one may still emit.
-
-**Behaviour that must not change:** the seven browsable subjects, chapter order,
-which cards are openable, and every progress percentage. The `cs_*` cards change
-identity but must render the same titles, subtitles and coming-soon state.
-
-**Explicitly deferred to its own change:** anything that alters *what a learner
-sees*, beyond retiring dead data. Fixing A-9's wrong hero images is a content
-decision, made visible here but decided separately.
+Full contract pack: `stage-5-navigation/`.
 
 ---
 

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { readFileSync, existsSync } from 'fs'
 import { resolve } from 'path'
 import { SUBJECTS } from '../../src/constants/subjects.js'
-import { SUBJECT_NAVIGATION_NAMES } from '../../src/features/subjects/subjectCatalogue.js'
+import { SUBJECT_NAVIGATION_NAMES } from '../../src/features/subjects/subjectNavigationAdapter.js'
 
 const root = resolve(process.cwd())
 const read = (rel) => readFileSync(resolve(root, rel), 'utf8')

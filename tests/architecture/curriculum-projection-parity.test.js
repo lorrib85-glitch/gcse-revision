@@ -671,7 +671,7 @@ describe('the Stage 4 authority boundary', () => {
       'src/data/contentHierarchy.js',
       'src/features/progress/Progress.jsx',
       'src/features/subjects/Subjects.jsx',
-      'src/features/subjects/subjectCatalogue.js',
+      'src/features/subjects/subjectNavigationAdapter.js',
       'src/features/planner/dailyPlanner.js',
       'src/components/layout/ChapterPlayer.jsx',
       'src/components/layout/ChapterCompleteScreen.jsx',

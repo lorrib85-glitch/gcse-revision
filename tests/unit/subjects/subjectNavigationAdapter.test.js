@@ -6,11 +6,11 @@ import {
   SUBJECT_NAVIGATION_NAMES,
   getSubjectChapterList,
   getSubjectNavigationEntry,
-} from '../../../src/features/subjects/subjectCatalogue.js'
+} from '../../../src/features/subjects/subjectNavigationAdapter.js'
 
 const ids = list => list.map(entry => entry.id)
 
-describe('Stage 5B subject-browser adapter', () => {
+describe('Subject-navigation adapter', () => {
   it('takes all seven destinations and their order from generated navigation', () => {
     expect(SUBJECT_NAVIGATION_NAMES).toEqual([
       'History', 'Biology', 'Chemistry', 'Physics', 'Maths', 'English', 'Sociology',
@@ -127,6 +127,14 @@ describe('Stage 5B subject-browser adapter', () => {
       .filter(card => card.chapterId)
       .filter(card => getChapterAvailability(card) === CHAPTER_AVAILABILITY.HIDDEN)
     expect(hidden).toEqual([])
+  })
+
+  it('does not leak compatibility-shaped Chapter fields into browser cards', () => {
+    const card = getSubjectChapterList('History').find(item => item.openable)
+    expect(card.screenCount).toBeGreaterThan(0)
+    for (const legacyField of ['color', 'colorLight', 'tags', 'era', 'icon', 'subject']) {
+      expect(card).not.toHaveProperty(legacyField)
+    }
   })
 
   it('returns no entry for an unknown destination', () => {

@@ -146,7 +146,7 @@ sections.
 ## Explicitly not settled here, and not touched
 
 These are the parent plan's open progress decisions. Navigation work does **not**
-implement them, and no progress-writing behaviour changes in Stage 5A or 5B
+implement them, and no progress-writing behaviour changes in Stage 5A, 5B or 5C
 until they are separately settled and authorised.
 
 - **OD-2 — canonical subject ids in new score writes.** New writes continue to

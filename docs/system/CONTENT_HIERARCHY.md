@@ -58,28 +58,27 @@ module→chapter and chapter→module — and
 
 ## Subject browsing
 
-`src/features/subjects/subjectCatalogue.js` assembles the subject-browser
-catalogue. Real chapters are the subject's modules' `chapterIds`, flattened in
-module order and resolved against `CHAPTERS`; real order is never derived with
-`CHAPTERS.filter()`.
+Learner-facing destination order, browser copy, sections and card presentation
+are authored in `src/curriculum-catalogue/navigation/browserEntries.js` and
+combined with canonical pathway, Module and Chapter records by
+`scripts/generate-curriculum-navigation.mjs`. The generated runtime projection
+is `src/data/generated/curriculum/navigation.js`.
 
-**Real chapters vs synthetic placeholders.** The browser also renders `cs_*`
-placeholder cards for series with no built chapters. They are browse-surface
-presentation only: not chapters, no content file, no loader, no progress, never
-openable. They must never be added to `CHAPTERS` or `MODULES`, and canonical
-content rules do not apply to them.
+`src/features/subjects/subjectNavigationAdapter.js` is the projection's sole
+production importer. It converts Browser Entries into the UI contract and joins
+Chapter cards only to their runtime `screenCount`, preserving progress
+calculation without spreading compatibility-shaped `CHAPTERS` rows into the
+browser. Module cards and the Chemistry subject-level state remain non-openable.
 
-**Numbering.** A real chapter displays its authored `chapter.number`. A
-generated position is only a fallback for a synthetic card that carries no
-number. Hidden chapters are removed before numbering, so a superseded entry
-cannot shift a visible chapter's position.
+All 70 card identities are canonical Chapter or Module ids. The former `cs_*`
+synthetic placeholder ids are retired; the Chemistry coming-soon state is not a
+Chapter and has no Chapter id.
 
-**Series tabs are presentation, not ownership.** The History and English series
-tabs — labels, titles, hero images, and the empty Elizabethan coming-soon tab —
-live in `src/features/subjects/Subjects.jsx`. A `series` value is chapter
-identity used to group cards under a tab; it is not a module id and does not
-have to match one. Series presentation is not a second ownership hierarchy, and
-adding a tab does not create a module.
+Visible order comes from configured pathways, section `moduleIds`, canonical
+Module `chapterRefs` and explicitly governed temporary display overrides. It is
+never derived from `CHAPTERS` row order. Sections are navigation presentation,
+not curriculum ownership: one section may span several canonical Modules, as
+the Medicine section spans Medicine in Britain and the Western Front.
 
 ## Authoritative files
 
@@ -89,7 +88,9 @@ adding a tab does not create a module.
 - `src/chapters.js` — re-export boundary for `CHAPTERS`; never authored in.
 - `src/content/chapterContentRegistry.js` — re-export boundary for the generated loaders; never authored in.
 - `src/data/contentHierarchy.js` — hierarchy levels and the relationship validator.
-- `src/features/subjects/subjectCatalogue.js` — subject-browser catalogue assembly.
+- `src/curriculum-catalogue/navigation/browserEntries.js` — authored Browser Entry configuration.
+- `src/data/generated/curriculum/navigation.js` — generated browser projection; never hand-edit.
+- `src/features/subjects/subjectNavigationAdapter.js` — sole production projection adapter.
 - `src/data/screenRegistry.js` — approved screen/block schema and authoring contract.
 - `src/components/layout/ChapterPlayer.jsx` — chapter lifecycle and navigation.
 - `src/components/layout/ScreenRenderer.jsx` — the only component-routing boundary.

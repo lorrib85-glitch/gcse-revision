@@ -290,7 +290,7 @@ browser destination is therefore configured in
 `english-literature` are never merged, and browser copy and imagery stay out of
 subject records: a tile's description is true of the tile, not of the
 discipline. Stage 5 splits accordingly — **5A** generates an inert navigation
-projection, **5B** switches `Subjects.jsx` onto it. Contract pack:
+projection, **5B** switches `Subjects.jsx` onto it, and **5C** retires post-cutover naming and dead fallbacks without changing learner behaviour. Contract pack:
 `.planning/phase-5-curriculum-architecture/stage-5-navigation/`.
 
 ## Consequences
@@ -300,9 +300,10 @@ projection, **5B** switches `Subjects.jsx` onto it. Contract pack:
   chapter number all follow.
 - Adding a qualification becomes a specification record plus a pathway record.
   Tiers, option choices and set texts are data.
-- `src/features/subjects/subjectCatalogue.js` is deleted; eight hardcoded
-  literals leave `Subjects.jsx`; all twelve `cs_*` placeholder ids retire.
+- The old `subjectCatalogue.js` is retired. The accurately named
+  `subjectNavigationAdapter.js` remains as the sole production boundary to the
+  generated projection; hardcoded browser catalogues and all twelve `cs_*`
+  placeholder ids retire.
 - `pnpm verify` gains a `curriculum:check` step and loses four drift tests.
-- `docs/system/CONTENT_HIERARCHY.md` is superseded — including its statement
-  that "Subject owns brand, specification and overall progress", which no
-  subject record has ever done.
+- `docs/system/CONTENT_HIERARCHY.md` is updated to distinguish curriculum
+  ownership from Browser Entry presentation and generated navigation.

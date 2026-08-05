@@ -33,7 +33,7 @@ describe('Placeholder chapter safety', () => {
   })
 
   it('generated navigation openability maps to browser coming-soon state', () => {
-    const adapter = read('src/features/subjects/subjectCatalogue.js')
+    const adapter = read('src/features/subjects/subjectNavigationAdapter.js')
     const subjects = read('src/features/subjects/Subjects.jsx')
     expect(adapter).toContain('comingSoon: !card.openable')
     expect(adapter).toContain('openable: card.openable')
