@@ -52,12 +52,43 @@ that were deliberately rejected rather than merely never added:
 
 | Field | Why it is rejected |
 |---|---|
+| `assessmentObjective.weighting` | A single number cannot say which tier it describes. Use `weightings` (below). |
 | `module.tier` | Tier is a study-pathway property. A module is shared by Foundation and Higher pathways. |
 | `chapterRef.required`, `chapterRef.availabilityOverride`, `moduleRef.availabilityOverride` | Deferred (OD-6). No current surface demonstrates the requirement, and a field nobody maintains is worse than an absent one. |
 | `subject.browsable` | Browser visibility is **derived** from configured study pathways, never authored (OD-8). |
 | `subject.specificationIds` / `subject.moduleIds` | Coverage is not ownership. If a subject owned its specifications, Combined Science would have to pick one of Biology, Chemistry or Physics to belong to. |
 | `chapter.subject`, `chapter.number`, `chapter.series`, `chapter.screenCount`, `chapter.screenTags` | All derived — from the module, from the chapter reference's position, or from the content file. |
 | `component`, `screenType`, `blockType`, `authoringType` … | The component domain. The two catalogues share a pattern and no authority. |
+
+## Assessment objective weightings
+
+Every assessment objective carries a `weightings` object that names the scope it
+describes:
+
+```js
+{ id: 'ao1', title: 'Standard techniques', weightings: { foundation: 50, higher: 40 } }
+{ id: 'ao1', title: 'Knowledge and understanding', weightings: { overall: 40 } }
+```
+
+Two real qualifications forced this shape. AQA Mathematics weights its
+objectives differently in each tier — 50/25/25 Foundation, 40/30/30 Higher — so
+one number would be wrong for one tier. AQA English Language has three
+objectives, AO7–AO9, examined through the Spoken Language endorsement and worth
+**0%** of the qualification; they are real and must not be dropped to make a
+total add up.
+
+| Rule | Why |
+|---|---|
+| Either `overall`, or one entry per tier the specification declares | A record that states neither, or only some tiers, still reads as complete. |
+| Never both `overall` and a tier | A record stating both does not know which one is true. |
+| A scope the specification does not offer is rejected | A percentage attached to something that does not exist. |
+| Values are finite numbers from 0 to 100 **inclusive** | 0% is a fact; a missing weighting is not. |
+| Every scope totals exactly 100 across the objectives | Checked per scope, so a wrong Higher set is not averaged away by a right Foundation one. |
+
+`overall` is allowed on a tiered specification when the tiers genuinely agree —
+the Sciences weight 40/40/20 in both tiers, and writing that twice would be one
+fact with two homes. The generated document prints one column per tier only when
+the tiers actually differ.
 
 ## Ordering
 

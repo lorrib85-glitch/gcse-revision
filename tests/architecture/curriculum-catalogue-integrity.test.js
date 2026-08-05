@@ -21,6 +21,8 @@ import {
   validateModule,
   validateChapter,
   checkSerialisable,
+  weightingScopes,
+  resolveWeighting,
 } from '../../src/curriculum-catalogue/schema.js'
 import { renderCatalogue, OUTPUT_PATH } from '../../scripts/generate-curriculum-catalogue.mjs'
 
@@ -276,6 +278,35 @@ describe('generated specification catalogue', () => {
   it('carries the do-not-edit banner', () => {
     expect(read(OUTPUT_PATH)).toContain('GENERATED FILE — do not edit')
   })
+
+  const renderOnly = spec => renderCatalogue({
+    boards: [], subjects: [], specifications: [spec],
+    pathways: [], modules: [], chapters: [],
+  })
+
+  it('shows a weighting column per tier when the objectives differ by tier', () => {
+    // A document that printed one number for a tiered qualification would be
+    // wrong for one of the two tiers, silently.
+    const rendered = renderOnly(tieredSpecification())
+    expect(rendered).toContain('| AO | Description | Foundation | Higher |')
+    expect(rendered).toContain('| 50% | 40% |')
+    expect(rendered).toContain('| 25% | 30% |')
+  })
+
+  it('shows a single weighting column when a tiered specification does not differ', () => {
+    const rendered = renderOnly(withWeightings(tieredSpecification,
+      { overall: 40 }, { overall: 40 }, { overall: 20 }))
+    expect(rendered).toContain('| AO | Description | Weighting |')
+    expect(rendered).not.toContain('Foundation | Higher')
+  })
+
+  it('keeps 0% objectives in the table rather than dropping them', () => {
+    const rendered = renderOnly(zeroWeightedSpecification())
+    expect(rendered).toContain('| AO | Description | Weighting |')
+    for (const id of ['ao7', 'ao8', 'ao9']) {
+      expect(rendered).toMatch(new RegExp(`\\| \`${id}\` \\|[^\\n]*\\| 0% \\|`))
+    }
+  })
 })
 
 // ─── Schema invariants, proved by mutation ─────────────────────────────────
@@ -323,7 +354,7 @@ const validSpecification = () => ({
     },
   ],
   assessmentObjectives: [
-    { id: 'ao1', title: 'Demonstrate knowledge and understanding', weighting: 100 },
+    { id: 'ao1', title: 'Demonstrate knowledge and understanding', weightings: { overall: 100 } },
   ],
   selectionGroups: [],
   requirements: [],
@@ -405,8 +436,8 @@ describe('schema rejects invalid records', () => {
   it('rejects assessment-objective weightings that do not total 100', () => {
     const spec = validSpecification()
     spec.assessmentObjectives = [
-      { id: 'ao1', title: 'Knowledge', weighting: 40 },
-      { id: 'ao2', title: 'Application', weighting: 40 },
+      { id: 'ao1', title: 'Knowledge', weightings: { overall: 40 } },
+      { id: 'ao2', title: 'Application', weightings: { overall: 40 } },
     ]
     expect(validateSpecification(spec).join(' ')).toMatch(/must total 100%/)
   })
@@ -442,6 +473,183 @@ describe('schema rejects invalid records', () => {
   it('rejects an unknown field', () => {
     expect(validateBoard(mutate(validBoard, { website: 'https://example.org' })).join(' '))
       .toMatch(/board\.website is not a known field/)
+  })
+})
+
+// ─── Assessment objective weightings ───────────────────────────────────────
+//
+// A single `weighting: number` could not tell the truth about two real
+// specifications: AQA Mathematics weights its AOs differently by tier, and AQA
+// English Language has three assessment objectives that are valid, examined,
+// and worth 0% of the qualification. `weightings` states the scope explicitly.
+//
+// ⚠ Structural fixtures again — the shapes that forced the rule, not verified
+// curriculum data. The verified records live under `records/`.
+
+const overallAo = (id, overall) => ({ id, title: `Objective ${id}`, weightings: { overall } })
+
+const tieredSpecification = () => ({
+  ...validSpecification(),
+  id: 'aqa-gcse-mathematics-8300',
+  code: '8300',
+  title: 'AQA GCSE Mathematics',
+  subjectIds: ['mathematics'],
+  tiers: ['foundation', 'higher'],
+  papers: [{
+    id: 'aqa-gcse-mathematics-8300-paper-1',
+    title: 'Paper 1: non-calculator',
+    position: 0,
+    subjectId: 'mathematics',
+    assessmentType: 'written-exam',
+    durationMinutes: 90,
+    totalMarks: 80,
+  }],
+  assessmentObjectives: [
+    { id: 'ao1', title: 'Standard techniques', weightings: { foundation: 50, higher: 40 } },
+    { id: 'ao2', title: 'Reasoning and communication', weightings: { foundation: 25, higher: 30 } },
+    { id: 'ao3', title: 'Problem solving', weightings: { foundation: 25, higher: 30 } },
+  ],
+})
+
+const zeroWeightedSpecification = () => ({
+  ...validSpecification(),
+  id: 'aqa-gcse-english-language-8700',
+  code: '8700',
+  title: 'AQA GCSE English Language',
+  subjectIds: ['english-language'],
+  tiers: [],
+  papers: [{
+    id: 'aqa-gcse-english-language-8700-paper-1',
+    title: 'Paper 1: explorations in creative reading and writing',
+    position: 0,
+    subjectId: 'english-language',
+    assessmentType: 'written-exam',
+    durationMinutes: 105,
+    totalMarks: 80,
+  }],
+  assessmentObjectives: [
+    overallAo('ao1', 10), overallAo('ao2', 17.5), overallAo('ao3', 10),
+    overallAo('ao4', 12.5), overallAo('ao5', 30), overallAo('ao6', 20),
+    overallAo('ao7', 0), overallAo('ao8', 0), overallAo('ao9', 0),
+  ],
+})
+
+const withWeightings = (base, ...sets) => {
+  const spec = base()
+  spec.assessmentObjectives = sets.map((weightings, i) => ({
+    id: `ao${i + 1}`, title: `Objective ${i + 1}`, weightings,
+  }))
+  return spec
+}
+
+describe('assessment objective weightings', () => {
+  it('accepts an untiered specification stating one overall weighting per objective', () => {
+    expect(validateSpecification(validSpecification())).toEqual([])
+  })
+
+  it('accepts a tiered specification whose objectives differ by tier', () => {
+    // AQA Mathematics 8300: 50/25/25 Foundation, 40/30/30 Higher. A single
+    // number could only have recorded one of these two truths.
+    const spec = tieredSpecification()
+    expect(validateSpecification(spec)).toEqual([])
+    expect(spec.assessmentObjectives.map(ao => resolveWeighting(ao.weightings, 'foundation')))
+      .toEqual([50, 25, 25])
+    expect(spec.assessmentObjectives.map(ao => resolveWeighting(ao.weightings, 'higher')))
+      .toEqual([40, 30, 30])
+  })
+
+  it('accepts overall on a tiered specification when the tiers do not differ', () => {
+    // The Sciences: tiered qualification, identical AO percentages. Repeating
+    // the same number once per tier would be a second copy of one fact.
+    const spec = withWeightings(tieredSpecification,
+      { overall: 40 }, { overall: 40 }, { overall: 20 })
+    expect(validateSpecification(spec)).toEqual([])
+    expect(resolveWeighting(spec.assessmentObjectives[0].weightings, 'higher')).toBe(40)
+  })
+
+  it('accepts an assessment objective weighted 0%', () => {
+    // AQA English Language AO7–AO9 are examined through the Spoken Language
+    // endorsement and carry no weighting toward the grade. They are real
+    // objectives; dropping them would misdescribe the qualification.
+    const spec = zeroWeightedSpecification()
+    expect(validateSpecification(spec)).toEqual([])
+    expect(spec.assessmentObjectives).toHaveLength(9)
+    for (const id of ['ao7', 'ao8', 'ao9']) {
+      const ao = spec.assessmentObjectives.find(candidate => candidate.id === id)
+      expect(resolveWeighting(ao.weightings, 'overall')).toBe(0)
+    }
+  })
+
+  it('rejects a tiered set that omits a tier the specification declares', () => {
+    const spec = withWeightings(tieredSpecification,
+      { foundation: 50, higher: 40 }, { foundation: 25, higher: 30 }, { foundation: 25 })
+    expect(validateSpecification(spec).join(' ')).toMatch(/does not state a weighting for "higher"/)
+  })
+
+  it('rejects a scope the specification does not offer', () => {
+    const spec = withWeightings(tieredSpecification,
+      { foundation: 50, higher: 40, intermediate: 45 },
+      { foundation: 25, higher: 30 }, { foundation: 25, higher: 30 })
+    expect(validateSpecification(spec).join(' ')).toMatch(/"intermediate" is not a scope this specification offers/)
+  })
+
+  it('rejects a tier scope on an untiered specification', () => {
+    const spec = withWeightings(validSpecification, { foundation: 100 })
+    expect(validateSpecification(spec).join(' ')).toMatch(/"foundation" is not a scope this specification offers/)
+  })
+
+  it('rejects mixing overall with per-tier scopes', () => {
+    const spec = withWeightings(tieredSpecification,
+      { overall: 40, higher: 45 }, { overall: 40 }, { overall: 20 })
+    expect(validateSpecification(spec).join(' ')).toMatch(/must not mix "overall" with per-tier scopes/)
+  })
+
+  it('rejects an empty or missing weightings object', () => {
+    expect(validateSpecification(withWeightings(validSpecification, {})).join(' '))
+      .toMatch(/must state at least one scope/)
+    const spec = validSpecification()
+    spec.assessmentObjectives = [{ id: 'ao1', title: 'Knowledge' }]
+    expect(validateSpecification(spec).join(' ')).toMatch(/must be an object of scope → percentage/)
+  })
+
+  it('rejects a weighting below 0 or above 100', () => {
+    expect(validateSpecification(withWeightings(validSpecification, { overall: -1 })).join(' '))
+      .toMatch(/must be a percentage from 0 to 100/)
+    expect(validateSpecification(withWeightings(validSpecification, { overall: 101 })).join(' '))
+      .toMatch(/must be a percentage from 0 to 100/)
+  })
+
+  it('rejects a weighting that is not a finite number', () => {
+    for (const bad of ['40', Number.NaN, Number.POSITIVE_INFINITY, null]) {
+      expect(validateSpecification(withWeightings(validSpecification, { overall: bad })).join(' '))
+        .toMatch(/must be a percentage from 0 to 100/)
+    }
+  })
+
+  it('rejects a total that is not 100 at any one scope', () => {
+    // Foundation totals 100, Higher totals 95. A per-qualification total would
+    // have averaged the fault away.
+    const spec = withWeightings(tieredSpecification,
+      { foundation: 50, higher: 40 }, { foundation: 25, higher: 30 }, { foundation: 25, higher: 25 })
+    const errors = validateSpecification(spec).join(' ')
+    expect(errors).toMatch(/must total 100% for higher \(got 95\)/)
+    expect(errors).not.toMatch(/for foundation/)
+  })
+
+  it('rejects the superseded single-number weighting by name', () => {
+    const spec = validSpecification()
+    spec.assessmentObjectives = [{ id: 'ao1', title: 'Knowledge', weighting: 100 }]
+    expect(validateSpecification(spec).join(' '))
+      .toMatch(/assessmentObjective\.weighting is a rejected field/)
+  })
+
+  it('resolves the scopes a specification must state', () => {
+    expect(weightingScopes([])).toEqual(['overall'])
+    expect(weightingScopes(['foundation', 'higher'])).toEqual(['foundation', 'higher'])
+    // A scope nothing declares resolves to nothing, rather than to a default
+    // that would quietly invent a percentage.
+    expect(resolveWeighting({ foundation: 50 }, 'higher')).toBe(null)
+    expect(resolveWeighting(undefined, 'overall')).toBe(null)
   })
 })
 

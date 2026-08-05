@@ -22,6 +22,7 @@ import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 
 import { loadCatalogue } from '../src/curriculum-catalogue/index.js'
+import { OVERALL_SCOPE, resolveWeighting, weightingScopes } from '../src/curriculum-catalogue/schema.js'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 export const OUTPUT_PATH = 'docs/curriculum/SPECIFICATION_CATALOGUE.md'
@@ -51,10 +52,18 @@ const COVERAGE_LABELS = {
   complete: 'Complete',
 }
 
+const SCOPE_LABELS = {
+  [OVERALL_SCOPE]: 'Weighting',
+  foundation: 'Foundation',
+  higher: 'Higher',
+}
+
 const escape = value => String(value).replace(/\|/g, '\\|')
 const subjectTitle = id => SUBJECT_TITLES[id] ?? id
 const minutes = value => (value == null ? '—' : `${value} min`)
 const marks = value => (value == null ? '—' : String(value))
+const scopeLabel = scope => SCOPE_LABELS[scope] ?? scope
+const percentage = value => (value == null ? '—' : `${value}%`)
 
 function renderHeader(lines, catalogue) {
   const { boards, specifications } = catalogue
@@ -153,14 +162,30 @@ function renderSpecification(lines, spec, boards) {
   if (noted.length) lines.push('')
 
   if (spec.assessmentObjectives.length) {
+    // A tiered qualification whose percentages differ by tier gets a column per
+    // tier; printing one number would be wrong for one of the two. When the
+    // tiers agree, one column says so without repeating itself.
+    const scopes = weightingScopes(spec.tiers)
+    const differsByTier = scopes.length > 1 && spec.assessmentObjectives.some(ao =>
+      new Set(scopes.map(scope => resolveWeighting(ao.weightings, scope))).size > 1)
+    const columns = differsByTier ? scopes : [OVERALL_SCOPE]
+
     lines.push('### Assessment objectives')
     lines.push('')
-    lines.push('| AO | Description | Weighting |')
-    lines.push('|---|---|---:|')
+    lines.push(`| AO | Description | ${columns.map(scopeLabel).join(' | ')} |`)
+    lines.push(`|---|---|${columns.map(() => '---:').join('|')}|`)
     for (const ao of spec.assessmentObjectives) {
-      lines.push(`| \`${ao.id}\` | ${escape(ao.title)} | ${ao.weighting}% |`)
+      const cells = columns.map(scope => percentage(resolveWeighting(ao.weightings, scope)))
+      lines.push(`| \`${ao.id}\` | ${escape(ao.title)} | ${cells.join(' | ')} |`)
     }
     lines.push('')
+    // A 0% objective is kept, never dropped — it is examined, it just carries no
+    // weighting toward the grade. Its note is what explains that.
+    const explained = spec.assessmentObjectives.filter(ao => ao.note)
+    for (const ao of explained) {
+      lines.push(`- \`${ao.id}\` — ${escape(ao.note)}`)
+    }
+    if (explained.length) lines.push('')
   }
 
   if (spec.selectionGroups.length) {

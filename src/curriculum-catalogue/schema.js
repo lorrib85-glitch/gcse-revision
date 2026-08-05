@@ -82,6 +82,7 @@ export const PATHWAY_SCOPES = ['catalogue', 'installation']
 // the one OD-8 permanently forbids. Unknown keys are rejected anyway; these are
 // named so the error says *why* rather than "unknown key".
 export const REJECTED_FIELDS = {
+  'assessmentObjective.weighting': 'a weighting must name the scope it describes — use weightings: { overall } or one entry per tier',
   'module.tier': 'tier is a study-pathway property, never a module property (D-13)',
   'chapterRef.required': 'deferred: no surface distinguishes required from optional chapters (D-13, OD-6)',
   'chapterRef.availabilityOverride': 'deferred: chapter.status covers every current case (D-13, OD-6)',
@@ -310,16 +311,99 @@ function validatePaper(errors, label, paper, { specificationId, subjectIds, tier
   }
 }
 
-const AO_KEYS = ['id', 'title', 'weighting', 'note']
+const AO_KEYS = ['id', 'title', 'weightings', 'note']
 
-function validateAssessmentObjective(errors, label, ao) {
+/**
+ * The scope of a weighting that applies to the whole qualification.
+ *
+ * A tiered specification may still use it — AQA Biology weights AO1/AO2/AO3 at
+ * 40/40/20 in both tiers, and writing that number twice would be one fact with
+ * two homes. It is only forbidden alongside per-tier scopes, because a record
+ * that states both is a record that does not know which one is true.
+ */
+export const OVERALL_SCOPE = 'overall'
+
+/**
+ * The scopes a specification's weightings must resolve for: every tier it
+ * declares, or `overall` alone when it is untiered.
+ */
+export function weightingScopes(tiers) {
+  return Array.isArray(tiers) && tiers.length > 0 ? [...tiers] : [OVERALL_SCOPE]
+}
+
+/**
+ * One objective's weighting at one scope, or `null` if the record does not
+ * state it. Never defaults to a number: an invented percentage is the failure
+ * this whole shape exists to prevent.
+ */
+export function resolveWeighting(weightings, scope) {
+  if (!isPlainObject(weightings)) return null
+  if (scope in weightings) return weightings[scope]
+  if (OVERALL_SCOPE in weightings) return weightings[OVERALL_SCOPE]
+  return null
+}
+
+/**
+ * A weighting set is scoped, exhaustive and exclusive.
+ *
+ * `weighting: number` could not describe two real qualifications: AQA
+ * Mathematics weights its objectives differently by tier (50/25/25 Foundation,
+ * 40/30/30 Higher), and AQA English Language has three objectives — AO7–AO9,
+ * examined through the Spoken Language endorsement — that are valid and worth
+ * 0% of the grade. So a weighting states WHICH scope it describes, a record
+ * must state every scope its specification declares and no others, and 0 is a
+ * legitimate percentage while a missing one is not.
+ */
+function validateWeightings(errors, label, weightings, { tiers }) {
+  if (!isPlainObject(weightings)) {
+    errors.push(`${label} must be an object of scope → percentage`)
+    return
+  }
+  const scopes = Object.keys(weightings)
+  if (scopes.length === 0) {
+    errors.push(`${label} must state at least one scope`)
+    return
+  }
+
+  const perTier = scopes.filter(scope => scope !== OVERALL_SCOPE)
+  if (scopes.includes(OVERALL_SCOPE) && perTier.length > 0) {
+    errors.push(
+      `${label} must not mix "overall" with per-tier scopes — a weighting is `
+      + 'stated once, at one scope',
+    )
+  }
+
+  // Unknown, un-offered and missing scopes are one fault in three shapes: the
+  // set does not match the scopes the specification actually declares. A
+  // half-stated set is the dangerous one — it still reads as complete.
+  if (tiers) {
+    const allowed = [OVERALL_SCOPE, ...tiers]
+    for (const scope of perTier) {
+      if (!allowed.includes(scope)) {
+        errors.push(`${label}.${scope}: "${scope}" is not a scope this specification offers `
+          + `(${allowed.join(', ')})`)
+      }
+    }
+    if (perTier.length > 0) {
+      for (const tier of tiers) {
+        if (!scopes.includes(tier)) errors.push(`${label} does not state a weighting for "${tier}"`)
+      }
+    }
+  }
+
+  for (const [scope, value] of Object.entries(weightings)) {
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 100) {
+      errors.push(`${label}.${scope} must be a percentage from 0 to 100`)
+    }
+  }
+}
+
+function validateAssessmentObjective(errors, label, ao, { tiers }) {
   if (!isPlainObject(ao)) { errors.push(`${label} must be an object`); return }
   checkKeys(errors, 'assessmentObjective', ao, AO_KEYS)
   checkId(errors, `${label}.id`, ao.id)
   if (!isNonEmptyString(ao.title)) errors.push(`${label}.title must be a non-empty string`)
-  if (typeof ao.weighting !== 'number' || !(ao.weighting > 0) || ao.weighting > 100) {
-    errors.push(`${label}.weighting must be a percentage greater than 0 and at most 100`)
-  }
+  validateWeightings(errors, `${label}.weightings`, ao.weightings, { tiers })
   if ('note' in ao && !isNonEmptyString(ao.note)) {
     errors.push(`${label}.note must be a non-empty string when present`)
   }
@@ -562,16 +646,24 @@ export function validateSpecification(record) {
     errors.push('specification.assessmentObjectives must be an array')
   } else {
     record.assessmentObjectives.forEach((ao, i) =>
-      validateAssessmentObjective(errors, `specification.assessmentObjectives[${i}]`, ao))
+      validateAssessmentObjective(errors, `specification.assessmentObjectives[${i}]`, ao, { tiers }))
     assertUniqueField(errors, 'specification.assessmentObjectives', record.assessmentObjectives, 'id')
     // Weightings are a stated invariant: if they are authored at all they must
     // describe a whole qualification. Half a weighting set is worse than none,
     // because it looks complete.
+    //
+    // Checked once per scope, not once per qualification: a Higher set that
+    // totals 95 would otherwise be averaged away by a correct Foundation set.
+    // The tolerance is float noise only — 100 means 100.
     if (record.assessmentObjectives.length > 0) {
-      const total = record.assessmentObjectives.reduce(
-        (sum, ao) => sum + (typeof ao?.weighting === 'number' ? ao.weighting : 0), 0)
-      if (Math.abs(total - 100) > 0.5) {
-        errors.push(`specification.assessmentObjectives weightings must total 100% (got ${total})`)
+      for (const scope of weightingScopes(tiers)) {
+        const total = record.assessmentObjectives.reduce(
+          (sum, ao) => sum + (resolveWeighting(ao?.weightings, scope) ?? 0), 0)
+        if (!Number.isFinite(total) || Math.abs(total - 100) > 1e-9) {
+          errors.push(
+            `specification.assessmentObjectives weightings must total 100% for ${scope} (got ${total})`,
+          )
+        }
       }
     }
   }

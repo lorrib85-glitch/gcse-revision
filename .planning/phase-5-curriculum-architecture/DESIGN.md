@@ -178,7 +178,7 @@ rename.
 | `title` | official title, verbatim |
 | `subjectIds` | **a list** — Combined Science holds three |
 | `papers` | ordered paper records (§3.9) |
-| `assessmentObjectives` | `{ id, title, weighting }` |
+| `assessmentObjectives` | `{ id, title, weightings }` — `weightings` is scoped: `{ overall }` or one entry per tier (Maths differs by tier; English Language AO7–AO9 are 0%) |
 | `tiers` | `['foundation','higher']` or `[]` |
 | `firstTeaching` / `firstAssessment` / `withdrawnFrom` | versioning; `withdrawnFrom: null` = current |
 | `requirements` | specification requirement records (§3.8) |
