@@ -20,8 +20,10 @@ The canonical hierarchy is `Subject → Module → Chapter → Screen → Compon
 
 ## Prerequisites
 
-1. The chapter metadata row exists in `src/chapters.js`.
-2. Its parent module in `src/data/modules.js` contains the chapter ID in `chapterIds`.
+1. The canonical chapter record exists under
+   `src/curriculum-catalogue/records/chapters/<subject>/<module>.js`.
+2. Exactly one canonical module record references it in `chapterRefs`, with a
+   `position`.
 3. The intended screen and block types exist in `src/data/screenRegistry.js`.
 4. Relevant component decisions are documented in `docs/components/COMPONENT_REGISTRY.md`.
 
@@ -34,9 +36,11 @@ existing series naming convention. Export one chapter object with metadata, hook
 outcomes, recall, stage navigation and `screens: []`. Do not generate placeholder
 copy or teaching content.
 
-Add a dynamic loader to `CHAPTER_CONTENT_LOADERS` in
-`src/content/chapterContentRegistry.js`. Never add a static episode import to the
-app shell or `ChapterPlayer`.
+Point the chapter record's `contentPath` at that file and run
+`pnpm curriculum:projections:generate`. The loader entry is generated from
+`contentPath` — never hand-write one, and never add a static episode import to
+the app shell or `ChapterPlayer`. `src/content/chapterContentRegistry.js` is a
+generated re-export boundary.
 
 ## Validation
 
@@ -46,7 +50,9 @@ Before completion:
 - confirm every screen and nested block resolves through `screenRegistry.js`;
 - confirm `ChapterPlayer` and `ScreenRenderer` were not edited merely to support
   the new chapter;
-- update `screenCount` and `screenTags` in `src/chapters.js` after content exists;
+- regenerate the projections — `screenCount` and `screenTags` are DERIVED from
+  the content file and are never authored or updated by hand;
+- run `pnpm lab:generate` if screen or block usage changed;
 - run the content-registry alignment check.
 
 ## Completion message

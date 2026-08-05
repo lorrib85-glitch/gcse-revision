@@ -179,9 +179,11 @@ these jobs; if it does, it has two primary intents (halt 3).
    `docs/content/<subject>/<series>/<NN>_visual-assets.md`. Never generate
    bespoke imagery or diagrams.
 3. Register metadata per `CLAUDE.md` (per-chapter content file,
-   `CHAPTER_CONTENT_LOADERS` entry, `src/chapters.js` metadata with
-   `screenCount` / `screenTags`). For a rebuild that changes screen count,
-   update `screenCount`, `screenTags`, and any `stageNavigation` indices.
+   canonical chapter record with its `contentPath`, referenced from exactly
+   one module record). The loader entry, `screenCount` and `screenTags` are
+   all GENERATED — run `pnpm curriculum:projections:generate` instead of
+   editing them. For a rebuild that changes screen count, update only the
+   `stageNavigation` indices, then regenerate.
 4. **Commit per screen / story unit / stage**, never one mega-commit — each
    amendment must be individually revertible.
 

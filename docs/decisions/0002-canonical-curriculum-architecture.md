@@ -278,6 +278,21 @@ retirable: it is still a key on a live legacy export. `FINAL_CONSUMERS` in
 `compatibility/index.js` records the blocking consumer per field;
 `docs/system/CURRICULUM_RUNTIME_COMPATIBILITY.md` §7 is the human table.
 
+**A browser destination is not a subject, and gets its own build-time entity.**
+OD-8 derives visibility from *configured* study pathways, and Stage 5 found that
+no configuration existed and that a subject-keyed projection cannot produce
+today's browser: canonical English is two subjects against one English
+destination, and one Combined Science pathway reaches three destinations. The
+browser destination is therefore configured in
+`src/curriculum-catalogue/navigation/` — a sibling of `records/` and
+`compatibility/`, and neither. It is **not a seventh curriculum entity**, no
+`browsable` field is added to any subject record, `english-language` and
+`english-literature` are never merged, and browser copy and imagery stay out of
+subject records: a tile's description is true of the tile, not of the
+discipline. Stage 5 splits accordingly — **5A** generates an inert navigation
+projection, **5B** switches `Subjects.jsx` onto it. Contract pack:
+`.planning/phase-5-curriculum-architecture/stage-5-navigation/`.
+
 ## Consequences
 
 - Adding a chapter becomes one edit to one module's chapter file plus a content

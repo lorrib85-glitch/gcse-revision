@@ -40,7 +40,7 @@ The manifest isn't a deliverable the learner ever sees. Its value is forcing the
 
 All images sit under `/public/images/`, organised **subject → content series**, mirroring
 the `src/content/<subject>/<series>/` source tree. The folder segment is a chapter's
-`series` value in `src/chapters.js`, so an image path is derivable from the chapters it
+projected `series` value on a chapter, so an image path is derivable from the chapters it
 serves. A series names a family of related chapters for grouping art — it does not have
 to equal a module id, and this layout carries no module ownership.
 

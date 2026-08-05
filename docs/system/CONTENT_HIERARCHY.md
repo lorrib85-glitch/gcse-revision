@@ -12,25 +12,33 @@
 
 ## Ownership split — order vs metadata
 
-Two files describe chapters, and they own different things.
+> **Since the Stage 4 cutover, `src/data/modules.js`, `src/chapters.js` and
+> `src/content/chapterContentRegistry.js` are generated re-export boundaries.**
+> They are still the correct import path for every consumer; they are never
+> authored in. What follows describes what each *runtime export* carries and
+> where that fact is now authored.
 
-`src/data/modules.js` (`MODULES`) owns:
+`MODULES` carries, authored on **module records**
+(`src/curriculum-catalogue/records/modules/`):
 
-- which parent module a chapter belongs to;
-- the canonical order of real chapters inside that module;
+- which parent module a chapter belongs to — `chapterRefs`;
+- the canonical order of real chapters inside that module — `position`;
 - the module sequence used by module-aware navigation.
 
-`src/chapters.js` (`CHAPTERS`) owns:
+`CHAPTERS` carries, authored on **chapter records**
+(`src/curriculum-catalogue/records/chapters/`) unless noted:
 
-- chapter metadata: title, subtitle, era, colour, header image;
-- subject and series identity;
-- the authored chapter `number`;
-- `screenCount` and `screenTags`;
-- availability;
+- chapter metadata: title, subtitle, era, icon, header image;
+- subject — derived from the owning module's `subjectId`;
+- `series`, `number`, `color` and `colorLight` — legacy presentation held in the
+  temporary compatibility projection, not authored anywhere new;
+- `screenCount` and `screenTags` — **derived from the content file**, never
+  authored;
+- availability — derived from `screenCount`, with one hidden legacy override;
 - the metadata a progress card renders.
 
 **Position in the `CHAPTERS` array is not the learner journey order.** It is
-authoring order. Any surface that presents chapters in sequence resolves that
+projection order. Any surface that presents chapters in sequence resolves that
 sequence through `MODULES`; nothing derives real order by filtering `CHAPTERS`.
 
 ## Ownership invariant
@@ -75,11 +83,13 @@ adding a tab does not create a module.
 
 ## Authoritative files
 
-- `src/data/modules.js` — parent module catalogue; chapter membership and order.
-- `src/chapters.js` — chapter metadata and availability.
+- `src/curriculum-catalogue/records/modules/` — **authored** module membership and order.
+- `src/curriculum-catalogue/records/chapters/` — **authored** chapter identity and `contentPath`.
+- `src/data/modules.js` — re-export boundary for `MODULES`; never authored in.
+- `src/chapters.js` — re-export boundary for `CHAPTERS`; never authored in.
+- `src/content/chapterContentRegistry.js` — re-export boundary for the generated loaders; never authored in.
 - `src/data/contentHierarchy.js` — hierarchy levels and the relationship validator.
 - `src/features/subjects/subjectCatalogue.js` — subject-browser catalogue assembly.
-- `src/content/chapterContentRegistry.js` — lazy chapter-content loaders.
 - `src/data/screenRegistry.js` — approved screen/block schema and authoring contract.
 - `src/components/layout/ChapterPlayer.jsx` — chapter lifecycle and navigation.
 - `src/components/layout/ScreenRenderer.jsx` — the only component-routing boundary.

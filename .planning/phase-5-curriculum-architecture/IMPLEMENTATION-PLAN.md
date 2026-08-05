@@ -18,7 +18,9 @@ Stage 1  Specifications verified and authored          no runtime change
 Stage 2  Modules and chapters authored, cross-checked  no runtime change
 Stage 3  Projections generated, byte-compared          no runtime change
 Stage 4  Projections become the source of the three    no VISIBLE change
-Stage 5  Navigation moves off the hardcoded literals   visible change, gated
+Stage 5A Canonical navigation projection generated,    no runtime change
+         imported by nothing
+Stage 5B Subject browser switched onto it              visible change, gated
 Stage 6  Remaining legacy consumers migrated, THEN     cleanup
          compatibility and drift tests deleted
 ```
@@ -29,9 +31,9 @@ projection. Nine production consumers still read the compatibility-shaped
 compatibility field survives to Stage 6 and is deleted only once its own final
 consumer has gone.
 
-Stages 0–4 are all **behaviour-preserving**. The first learner-visible change is
-Stage 5. Its governing product decision (OD-8) is now settled, so it is gated on
-Stages 2–4 rather than on a pending decision.
+Stages 0–4 and 5A are all **behaviour-preserving**. The first learner-visible
+change is Stage 5B. Its governing product decision (OD-8) is settled, and Stage
+5A supplies the navigation configuration OD-8 requires but that did not exist.
 
 Each stage lands independently, keeps `pnpm verify` green, and can be reverted
 without touching the one before it.
@@ -242,7 +244,32 @@ must keep producing the identical interface. Nothing in
 
 ---
 
-## Stage 5 — navigation moves off the hardcoded literals
+## Stage 5 — split into 5A and 5B
+
+**Stage 5 is two stages.** `stage-5-navigation/AUDIT.md` found three structural
+problems that all had to be settled before the browser could move: canonical
+English is two subjects against one browser destination; browser descriptions
+and hero images are not curriculum facts and must not be forced into subject
+records; and OD-8's "configured pathways" had no configuration to read. The
+split puts the authority boundary in the same place Stage 4 put it.
+
+- **Stage 5A** defines the browser-entry contract and generates
+  `src/data/generated/curriculum/navigation.js`, imported by nothing.
+- **Stage 5B** switches `Subjects.jsx` onto it and deletes
+  `subjectCatalogue.js` only once parity is proved at 390px.
+
+Full contract pack: `stage-5-navigation/` — `AUDIT.md`,
+`CURRENT-BROWSER-CONTRACT.md`, `DESIGN.md`, `DECISIONS.md`, `MIGRATION-PLAN.md`.
+
+**Two findings change what Stage 5 may do.** The printed card number is
+derivable from no rule — canonical `position + 1` gets 24 of 71 cards wrong and
+section index gets 17 wrong — so deriving it, as the §5.2 table below proposed,
+is a deliberate learner-visible correction and is deferred (D-5-3, OD-5-A).
+Three Physics card labels differ from their canonical module titles and are
+carried as overrides (D-5-5, OD-5-B). Both override tables are temporary and
+join the Stage 6 delete list.
+
+## Stage 5B — navigation moves off the hardcoded literals
 
 The first stage a learner could notice. **OD-8 is settled**: a subject is shown
 when a non-retired catalogue study pathway in the navigation configuration

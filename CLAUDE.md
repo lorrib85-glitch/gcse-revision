@@ -66,26 +66,67 @@ Progress and Quiz do not pay for the chapter runtime on first load.
 
 ### Chapter content loading
 
-The canonical ownership chain is:
+**The curriculum catalogue is the authority. These three files are generated
+re-export boundaries — never author in them:**
 
-- `src/data/modules.js` — parent curriculum modules, chapter membership and the
-  canonical order of real chapters;
-- `src/chapters.js` — per-chapter metadata and availability (array position is
-  not journey order);
-- `src/content/chapterContentRegistry.js` — `CHAPTER_CONTENT_LOADERS` and
-  `loadChapterContent`;
+| File | What it is now |
+|------|----------------|
+| `src/data/modules.js` | re-exports `src/data/generated/curriculum/modules.js` |
+| `src/chapters.js` | re-exports `src/data/generated/curriculum/chapters.js` |
+| `src/content/chapterContentRegistry.js` | re-exports `src/data/generated/curriculum/chapterContentLoaders.js` |
+
+They keep their export names and stay the import path for every consumer, so
+reading from them is correct and unchanged. Writing to them is not: the next
+`pnpm curriculum:projections:generate` overwrites the generated file and
+`pnpm verify` fails on the drift.
+
+The ownership chain now runs:
+
+- `src/curriculum-catalogue/records/chapters/<subject>/<module>.js` — chapter
+  identity, title, subtitle, era, icon, header image, `status`, `contentPath`
+  and `conceptIds`;
+- `src/curriculum-catalogue/records/modules/<module>.js` — which chapters a
+  module holds, and their canonical order via `chapterRefs[].position`;
 - `src/content/<subject>/<series>/episodes/<file>.js` — one chapter's full hook,
-  outcomes, recall, stage navigation and screens.
+  outcomes, recall, stage navigation and screens;
+- `src/data/generated/curriculum/**` — the three runtime projections, generated
+  from the records plus the content files.
 
-All subjects use per-chapter lazy loaders. Adding a chapter means running
-`/chapter-creation <chapter-id>`, adding its content file and loader, placing the
-ID in one parent module, and keeping `screenCount` / `screenTags` aligned. Do not
-add new content to subject-wide bundles and do not edit `ChapterPlayer` merely to
-make a chapter render; use registered screen definitions.
+#### Adding or changing a chapter
 
-Placing the ID in a module is not optional: every non-hidden chapter — including
-an unbuilt `comingSoon` stub — must belong to exactly one module, and only an
-explicitly `hidden` chapter is exempt. See `docs/system/CONTENT_HIERARCHY.md`.
+1. Add or update the canonical **chapter record**.
+2. Add the chapter reference to **exactly one** canonical module, with its
+   `position`.
+3. Create or update the **chapter content file**.
+4. Set the record's **`contentPath`** to that file.
+5. Register any new **concepts** separately in `src/data/learningGraph/` where
+   the chapter references them.
+6. Run `pnpm curriculum:projections:generate`.
+7. Run `pnpm lab:generate` when the change adds, removes or moves a screen or
+   block — the Lab projection carries measured content usage.
+8. Run `pnpm verify`.
+
+What follows from that, and must not be done by hand:
+
+- **`screenCount` and `screenTags` are derived** from the content file's
+  `screens` array. There is nothing to keep aligned and nothing to update.
+- **Loader entries are generated** from the record's `contentPath`. Never add a
+  loader by hand, and never add a static episode import.
+- **`MODULES` and `CHAPTERS` are generated.** A chapter reaches the runtime by
+  being referenced from a module record, not by being appended to an array.
+- **Normal chapter creation never edits `ChapterPlayer`, `ScreenRenderer`, app
+  navigation or progress persistence.** Use registered screen definitions from
+  `src/data/screenRegistry.js`.
+- **A planned chapter may have a zero-screen content file** without becoming
+  available: availability is derived from `screenCount`, so an empty `screens`
+  array reads as `comingSoon`.
+- **Topic metadata, once implemented, lives inside chapter content**, not in the
+  curriculum catalogue. Do not add topic fields to a chapter record.
+
+Belonging to a module is not optional: every non-hidden chapter — including an
+unbuilt `comingSoon` stub — must be referenced by exactly one module record, and
+only the explicitly hidden legacy row is exempt. See
+`docs/system/CONTENT_HIERARCHY.md`.
 
 ### Exam Mode question banks are lazy-loaded via context
 
@@ -284,10 +325,12 @@ docs/system/TEACHING_VOICE_GUIDE.md
 
 | File | Contents |
 |------|----------|
-| `src/chapters.js` | **The chapter metadata source.** `CHAPTERS` array — per-chapter metadata (id, title, subject, `series`, authored `number`, colour, screenCount, screenTags, etc.), plus `CHAPTER_AVAILABILITY`, `getChapterAvailability` and `isChapterAvailable`. Position in this array is authoring order, **not** learner journey order — nothing derives browse order from it. Full lesson content lives in per-chapter content files (see Bundle Size / Lazy Loading) |
-| `src/data/modules.js` | **The parent-module catalogue.** `MODULES` — each parent curriculum unit with its ordered `chapterIds`, plus `getModuleById`. Owns which module a real chapter belongs to and its canonical order inside that module. Every chapter whose availability is not `hidden` — `available` and `comingSoon` alike — must belong to exactly one module. |
+| `src/chapters.js` | **Generated re-export boundary — never author here.** Re-exports `CHAPTERS`, `CHAPTER_AVAILABILITY`, `getChapterAvailability` and `isChapterAvailable` from `src/data/generated/curriculum/chapters.js`. Still the import path for every consumer. Row order is projection order, **not** learner journey order — nothing derives browse order from it. Chapter facts are authored in `src/curriculum-catalogue/records/chapters/`; `screenCount` and `screenTags` are derived from the content file |
+| `src/data/modules.js` | **Generated re-export boundary — never author here.** Re-exports `MODULES`, `getModuleById` and `getModuleForChapter` from `src/data/generated/curriculum/modules.js`. Module membership and chapter order are authored as `chapterRefs` on a module record in `src/curriculum-catalogue/records/modules/`. Every chapter that is not the hidden legacy row must be referenced by exactly one module record. |
+| `src/curriculum-catalogue/records/` | **The curriculum authority.** Board, subject, specification, study-pathway, module and chapter records. Build-time only — production source never imports it; the generated projections are the runtime's side of the boundary. See `docs/system/CURRICULUM_CATALOGUE.md`. |
 | `src/features/subjects/subjectCatalogue.js` | **Subject-browser catalogue.** `getSubjectChapterList(subject)` — real chapters resolved from the subject's modules in canonical order, merged with the `cs_*` synthetic placeholder cards. Synthetic cards are browse-surface presentation only: no content, no loader, no progress, never openable, and never added to `CHAPTERS` or `MODULES`. |
-| `src/content/<subject>/<series>/episodes/<file>.js` | Per-chapter content files — the canonical pattern. Each exports `default { id, subject, screens, ... }` and is loaded individually through `src/content/chapterContentRegistry.js` (`CHAPTER_CONTENT_LOADERS`). |
+| `src/content/chapterContentRegistry.js` | **Generated re-export boundary — never author here.** Re-exports `CHAPTER_CONTENT_LOADERS` and `loadChapterContent` from `src/data/generated/curriculum/chapterContentLoaders.js`. Loader entries are generated from each chapter record's `contentPath`. |
+| `src/content/<subject>/<series>/episodes/<file>.js` | Per-chapter content files — the canonical pattern. Each exports `default { id, subject, screens, ... }`, is bound by a chapter record's `contentPath`, and is loaded through the generated loader registry. |
 | `src/contentIndex.js` | `CONTENT_INDEX` — maps topic tags to section metadata for the Targeted Brush-Up system |
 | `src/progress.js` | Progress helpers: `getProgress`, `saveSessionResult`, `getSessionDraft`, etc. |
 | `src/lib/storage.js` | **Persistence + account-ownership boundary.** The only file allowed to touch `localStorage` directly (enforced by `tests/architecture/storage-boundary.test.js`). `getJson`/`setJson`/`removeKey`/`listKeys`/`saveCritical` transparently namespace every key under the currently active account scope (`'guest'` or `'uid:<firebase-uid>'`) — feature code never sees this or constructs a scoped key itself. `getRawJson`/`setRawJson`/`removeRawKey` bypass scoping for `riseUser` and two governance keys; `*ForScope` variants target an explicit scope for the sync/migration layer. Also runs the one-time legacy flat-key migration. See `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`. |
@@ -320,7 +363,7 @@ docs/system/TEACHING_VOICE_GUIDE.md
 
 All images live under `/public/images/`, organised **subject → content series**,
 mirroring the `src/content/<subject>/<series>/` source tree. The folder segment is
-a chapter's `series` value from `src/chapters.js` (e.g. `series: "medicine"` →
+a chapter's projected `series` value (e.g. `series: "medicine"` →
 `/images/history/medicine/`). A series folder groups the art shared by a family of
 chapters; its name does not have to equal a module id, and asset layout is not
 module ownership. Videos stay in `/public/videos/`.
