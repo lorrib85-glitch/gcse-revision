@@ -11,6 +11,23 @@ assert removed == 2, f'expected two moduleId adapter fields, removed {removed}'
 assert not re.search(r'\bmoduleId\s*:', source)
 adapter.write_text(source)
 
+# Dynamic generated sections replace the old English-specific branch, so this
+# pre-cutover flag must disappear rather than add a new lint warning.
+subjects = Path('src/features/subjects/Subjects.jsx')
+source = subjects.read_text()
+source, removed = re.subn(r'^\s*const isEnglish = subjectName === \'English\'\n', '', source, flags=re.MULTILINE)
+assert removed == 1, f'expected one obsolete isEnglish declaration, removed {removed}'
+subjects.write_text(source)
+
+# The Stage 5A test used Chapter availability directly. Stage 5B verifies that
+# relationship through the adapter tests, so retain only the still-used import.
+navigation_test = Path('tests/architecture/curriculum-navigation.test.js')
+source = navigation_test.read_text()
+old = "import { CHAPTERS, CHAPTER_AVAILABILITY, getChapterAvailability } from '../../src/chapters.js'"
+new = "import { CHAPTERS } from '../../src/chapters.js'"
+assert old in source
+navigation_test.write_text(source.replace(old, new, 1))
+
 
 # Stage 4 remains strict for the three runtime projections. Navigation is a
 # separate Stage 5B projection with its own one-adapter boundary test.
