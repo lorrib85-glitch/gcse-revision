@@ -253,19 +253,24 @@ describe('curriculum catalogue is never reachable from production source', () =>
     expect(importers).toEqual([])
   })
 
-  it('the generated document is documentation, not runtime code', () => {
-    // Stage 0 emits build-time documentation only. No runtime projection of
-    // MODULES, CHAPTERS or content loaders exists yet, and nothing under
-    // src/data/generated/ mentions the curriculum catalogue.
-    expect(existsSync(resolve(root, 'src/data/generated/curriculum'))).toBe(false)
+  it('the generated document is documentation, and the projections carry no catalogue', () => {
+    // Stage 3 added src/data/generated/curriculum/. Its three files are runtime
+    // SHAPED but reach nothing: the catalogue is governance data carrying
+    // provenance notes and specification prose, and none of it may enter a
+    // learner's bundle. The guard is therefore on the import, not on the word —
+    // a generated banner naming its source ships no code.
+    const reaches = /(?:from\s*|import\s*\(?\s*)['"][^'"]*curriculum-catalogue/
     for (const file of listFiles('src/data/generated')) {
-      expect(read(file), `${file} mentions the curriculum catalogue`).not.toMatch(/curriculum-catalogue/)
+      expect(read(file), `${file} imports the curriculum catalogue`).not.toMatch(reaches)
+    }
+    for (const file of listFiles('src/data/generated/curriculum')) {
+      expect(read(file), `${file} has no generated banner`).toMatch(/GENERATED FILE/)
     }
   })
 
   it('leaves the runtime catalogue files hand-authored', () => {
-    // The three files Stage 3 will eventually generate must still be authored
-    // by hand at Stage 0 and Stage 1 (D-11).
+    // Stage 3 generates the projections but does NOT wire them in. These three
+    // stay hand-authored until Stage 4 turns them into re-exports (D-11).
     for (const file of ['src/data/modules.js', 'src/chapters.js', 'src/content/chapterContentRegistry.js']) {
       const source = read(file)
       expect(source, `${file} became generated too early`).not.toMatch(/GENERATED FILE/)
@@ -1530,12 +1535,16 @@ describe('generated curriculum map', () => {
     expect(rendered).toContain('history-medicine-renaissance-medicine')
   })
 
-  it('is documentation, not a runtime projection', () => {
-    // Stage 3 owns projections. Nothing under src/data/generated/curriculum
-    // exists, and the two documents live under docs/.
-    expect(existsSync(resolve(root, 'src/data/generated/curriculum'))).toBe(false)
+  it('is documentation — the runtime projections belong to the other generator', () => {
+    // Two generators, two outputs. This one writes documentation under docs/;
+    // scripts/generate-curriculum-projections.mjs writes the runtime
+    // projections under src/data/generated/curriculum/. Neither writes the
+    // other's files.
     expect(OUTPUT_PATH.startsWith('docs/')).toBe(true)
     expect(MAP_OUTPUT_PATH.startsWith('docs/')).toBe(true)
+    const source = read('scripts/generate-curriculum-catalogue.mjs')
+    expect(source, 'the documentation generator writes a runtime projection')
+      .not.toMatch(/src\/data\/generated/)
   })
 })
 

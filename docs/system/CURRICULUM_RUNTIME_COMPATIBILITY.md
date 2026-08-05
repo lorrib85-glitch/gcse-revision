@@ -130,7 +130,7 @@ Consumers: `ChapterPlayer` via `loadChapterContent`.
 | key (×60) | **Canonical** (59) | `chapter.id` | exact | — |
 | key (the 60th) | **Compatibility** | `hiddenChapter.row.id` | exact | Stage 6 |
 | key order | **Compatibility** | `loaderSectionAnchors` re-sequencing `chapterOrder`. The registry holds the same 60 ids in the same contiguous runs, ordered differently (sociology and maths before biology). Seven anchor ids recover it; restating all 60 would violate rule 4. | exact | Stage 5 |
-| dynamic import path | **Derived (records)** | `chapter.contentPath` (or `hiddenChapter.contentPath`) with the `src/content/` prefix replaced by `./`. **Verified exact for all 60 entries.** | exact | — |
+| dynamic import path | **Derived (records)** | `chapter.contentPath` (or `hiddenChapter.contentPath`), rebased onto the generated file's own directory: `src/content/history/…` becomes `../../../content/history/…`, where the hand-authored registry writes `./history/…`. Parity is asserted on the **resolved** target, which is what has to be identical — a specifier matching the old string character for character would resolve to nothing from `src/data/generated/curriculum/`, and Stage 4 would break the moment it re-exported. **Verified exact for all 60 entries**, and every loader resolves to the same module object as the runtime's. | exact | — |
 | loaded module shape | **Derived (records)** | `.then(m => m.default)` for all 60 — one uniform rule, no per-entry exception | exact | — |
 | `loadChapterContent` | **Derived (code)** | same function body | exact | — |
 

@@ -124,10 +124,23 @@ describe('canonical vocabulary — deleted hierarchy surfaces', () => {
       expect(chapters, exported).toMatch(new RegExp(`export (?:const|function) ${exported}\\b`))
     }
     // No other production file may re-export the chapter catalogue.
+    //
+    // The Stage 3 projection under src/data/generated/curriculum/ is exempt: it
+    // declares the same symbols by design, and is not a second owner because
+    // nothing imports it. That last part is the load-bearing half, so it is
+    // asserted here rather than taken on trust.
+    const GENERATED_PROJECTION = 'src/data/generated/curriculum/'
     const reExporters = PRODUCTION_FILES
       .filter(path => path !== 'src/chapters.js')
+      .filter(path => !path.startsWith(GENERATED_PROJECTION))
       .filter(path => /export\s+const\s+CHAPTERS\b/.test(read(path)))
     expect(reExporters).toEqual([])
+
+    const reaches = /(?:from\s*|import\s*\(?\s*)['"][^'"]*generated\/curriculum\//
+    const importers = PRODUCTION_FILES
+      .filter(path => !path.startsWith(GENERATED_PROJECTION))
+      .filter(path => reaches.test(read(path)))
+    expect(importers, 'the Stage 3 projection is wired in — that is Stage 4').toEqual([])
   })
 
   it('imports nothing from the deleted root chapter catalogue', () => {
