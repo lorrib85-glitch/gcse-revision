@@ -1,4 +1,4 @@
-name: Execute Stage 5C navigation cleanup
+name: Finalize Stage 5C navigation cleanup
 
 on:
   push:
@@ -9,12 +9,12 @@ permissions:
   contents: write
 
 concurrency:
-  group: stage5c-navigation-cleanup
+  group: stage5c-navigation-finalize
   cancel-in-progress: true
 
 jobs:
-  cleanup:
-    if: contains(github.event.head_commit.message, 'Run Stage 5C cleanup')
+  finalize:
+    if: contains(github.event.head_commit.message, 'Finalize Stage 5C semantics')
     runs-on: ubuntu-latest
     timeout-minutes: 35
 
@@ -42,26 +42,8 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Prove the legacy chapter-image map is unreachable
-        run: |
-          node --input-type=module <<'NODE'
-          import { readFileSync } from 'node:fs'
-          import { CHAPTERS } from './src/chapters.js'
-
-          const source = readFileSync('src/features/subjects/Subjects.jsx', 'utf8')
-          const match = source.match(/const CHAPTER_HEADER_IMAGES = (\{[\s\S]*?\n\})/)
-          if (!match) throw new Error('CHAPTER_HEADER_IMAGES was not found before Stage 5C cleanup')
-          const legacyMap = Function(`"use strict"; return (${match[1]})`)()
-          const chapterById = new Map(CHAPTERS.map(chapter => [chapter.id, chapter]))
-          const missingCanonicalImages = Object.keys(legacyMap).filter(id => !chapterById.get(id)?.headerImage)
-          if (missingCanonicalImages.length) {
-            throw new Error(`legacy fallback is still reachable for: ${missingCanonicalImages.join(', ')}`)
-          }
-          console.log(`Proved ${Object.keys(legacyMap).length} legacy image fallbacks are unreachable.`)
-          NODE
-
-      - name: Apply Stage 5C cleanup
-        run: python .github/scripts/stage5c_cleanup.py
+      - name: Finalize Stage 5C architecture records
+        run: python .github/scripts/stage5c_finalize.py
 
       - name: Regenerate canonical navigation
         run: pnpm curriculum:navigation:generate
@@ -130,10 +112,10 @@ jobs:
           await browser.close()
           NODE
 
-      - name: Commit Stage 5C
+      - name: Commit finalized Stage 5C
         run: |
           git config user.name "OpenAI"
           git config user.email "noreply@openai.com"
           git add -A
-          git commit -m "Close Stage 5C navigation cleanup"
+          git commit -m "Finalize Stage 5C navigation cleanup"
           git push origin HEAD:agent/stage-5c-navigation-cleanup
