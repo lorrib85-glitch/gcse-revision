@@ -300,7 +300,7 @@ projection, **5B** switches `Subjects.jsx` onto it. Contract pack:
   chapter number all follow.
 - Adding a qualification becomes a specification record plus a pathway record.
   Tiers, option choices and set texts are data.
-- `src/features/subjects/subjectCatalogue.js` is deleted; eight hardcoded
+- `src/features/subjects/subjectNavigationAdapter.js` is deleted; eight hardcoded
   literals leave `Subjects.jsx`; all twelve `cs_*` placeholder ids retire.
 - `pnpm verify` gains a `curriculum:check` step and loses four drift tests.
 - `docs/system/CONTENT_HIERARCHY.md` is superseded — including its statement

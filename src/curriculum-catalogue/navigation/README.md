@@ -45,6 +45,6 @@ pnpm curriculum:navigation:generate
 pnpm curriculum:navigation:check
 ```
 
-Stage 5B is complete: `src/data/generated/curriculum/navigation.js` is
-load-bearing through `src/features/subjects/subjectCatalogue.js`. UI components
+Stage 5C is complete: `src/data/generated/curriculum/navigation.js` is
+load-bearing through `src/features/subjects/subjectNavigationAdapter.js`. UI components
 must use that adapter rather than importing generated output directly.

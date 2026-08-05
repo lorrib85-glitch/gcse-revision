@@ -58,7 +58,7 @@ module→chapter and chapter→module — and
 
 ## Subject browsing
 
-`src/features/subjects/subjectCatalogue.js` assembles the subject-browser
+`src/features/subjects/subjectNavigationAdapter.js` assembles the subject-browser
 catalogue. Real chapters are the subject's modules' `chapterIds`, flattened in
 module order and resolved against `CHAPTERS`; real order is never derived with
 `CHAPTERS.filter()`.
@@ -89,7 +89,7 @@ adding a tab does not create a module.
 - `src/chapters.js` — re-export boundary for `CHAPTERS`; never authored in.
 - `src/content/chapterContentRegistry.js` — re-export boundary for the generated loaders; never authored in.
 - `src/data/contentHierarchy.js` — hierarchy levels and the relationship validator.
-- `src/features/subjects/subjectCatalogue.js` — subject-browser catalogue assembly.
+- `src/features/subjects/subjectNavigationAdapter.js` — subject-browser catalogue assembly.
 - `src/data/screenRegistry.js` — approved screen/block schema and authoring contract.
 - `src/components/layout/ChapterPlayer.jsx` — chapter lifecycle and navigation.
 - `src/components/layout/ScreenRenderer.jsx` — the only component-routing boundary.

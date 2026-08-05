@@ -1,6 +1,6 @@
 // Subject-browser runtime adapter.
 //
-// Stage 5B makes the generated navigation projection authoritative for
+// Stage 5C keeps the generated navigation projection authoritative for
 // destination order, browser copy, sections and cards. This module keeps
 // the UI isolated from the raw generated shape and joins openable cards to
 // runtime Chapter records so existing progress and opening behaviour stay

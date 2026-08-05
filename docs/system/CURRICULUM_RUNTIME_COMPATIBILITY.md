@@ -272,13 +272,13 @@ Validation fails for any field missing from either.
 
 | Field | Stops mattering to | Still consumed after Stage 5 by | Deleted at |
 |---|---|---|---|
-| `legacyModules` | `subjectCatalogue.js` | `progress.js`, `chapterNavigation.js`, `dailyPlanner.js`, `ChapterPlayer.jsx` | Stage 6 |
-| `chapterOrder` | `Subjects.jsx`, `subjectCatalogue.js` | `progress.js`, `chapterNavigation.js`, `LegacyApp.jsx`, `dailyPlanner.js`, `todaysPlan.js`, `Progress.jsx`, `ChapterCompleteScreen.jsx`, `contentHierarchy.js` | Stage 6 |
+| `legacyModules` | `subjectNavigationAdapter.js` | `progress.js`, `chapterNavigation.js`, `dailyPlanner.js`, `ChapterPlayer.jsx` | Stage 6 |
+| `chapterOrder` | `Subjects.jsx`, `subjectNavigationAdapter.js` | `progress.js`, `chapterNavigation.js`, `LegacyApp.jsx`, `dailyPlanner.js`, `todaysPlan.js`, `Progress.jsx`, `ChapterCompleteScreen.jsx`, `contentHierarchy.js` | Stage 6 |
 | `loaderSectionAnchors` | — (never read by the browser) | `LegacyApp.jsx`, `ChapterPlayer.jsx` | Stage 6 |
 | `chapterFields` | `Subjects.jsx` | its own sub-fields, all Stage 6 | Stage 6 |
 | `chapterFields.number` | `Subjects.jsx` | `ChapterPlayer.jsx` — the fallback when a chapter opens outside a module group | Stage 6 |
 | `chapterFields.series` | `Subjects.jsx` — **its only reader** | nothing reads it; it is still a key on 39 `CHAPTERS` rows the other consumers receive | Stage 6 |
-| `chapterFields.color` | `subjectCatalogue.js` | `ChapterPlayer.jsx`, `chapterNavigation.js` | Stage 6 |
+| `chapterFields.color` | `subjectNavigationAdapter.js` | `ChapterPlayer.jsx`, `chapterNavigation.js` | Stage 6 |
 | `chapterFields.colorLight` | — (no reader at all) | nothing reads it; it is still a key on 59 `CHAPTERS` rows | Stage 6 |
 | `chapterFields.facetTags` | — | the facet prefix of `CHAPTERS[].tags`; retired with the concept query that replaces `TAG_CHAPTER_MAP` | Stage 6 |
 | `hiddenChapter` | — | `chapterProgress.js` (`LEGACY_CHAPTER_ID_MAP`), `chapterContentRegistry.js` | Stage 6 |

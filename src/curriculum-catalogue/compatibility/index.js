@@ -71,7 +71,7 @@ export const RUNTIME_BOUNDARY_FILES = [
 /** Consumers the Stage 5 browser migration removes. Naming a field's only reader here is not enough to retire it. */
 export const STAGE_5_CONSUMERS = [
   'src/features/subjects/Subjects.jsx',
-  'src/features/subjects/subjectCatalogue.js',
+  'src/features/subjects/subjectNavigationAdapter.js',
 ]
 
 /**
@@ -92,7 +92,7 @@ export const STAGE_5_CONSUMERS = [
  */
 export const FINAL_CONSUMERS = {
   legacyModules: {
-    stage5Consumers: ['src/features/subjects/subjectCatalogue.js'],
+    stage5Consumers: ['src/features/subjects/subjectNavigationAdapter.js'],
     survivingConsumers: [
       'src/progress.js',
       'src/app/chapterNavigation.js',
@@ -103,7 +103,7 @@ export const FINAL_CONSUMERS = {
       + 'the daily planner and the chapter player. Stage 5 migrates none of them.',
   },
   chapterOrder: {
-    stage5Consumers: ['src/features/subjects/Subjects.jsx', 'src/features/subjects/subjectCatalogue.js'],
+    stage5Consumers: ['src/features/subjects/Subjects.jsx', 'src/features/subjects/subjectNavigationAdapter.js'],
     survivingConsumers: [
       'src/progress.js',
       'src/app/chapterNavigation.js',
@@ -141,7 +141,7 @@ export const FINAL_CONSUMERS = {
       + 'on 39 CHAPTERS rows that eight other consumers receive, so the key waits for CHAPTERS.',
   },
   'chapterFields.color': {
-    stage5Consumers: ['src/features/subjects/subjectCatalogue.js'],
+    stage5Consumers: ['src/features/subjects/subjectNavigationAdapter.js'],
     survivingConsumers: ['src/components/layout/ChapterPlayer.jsx', 'src/app/chapterNavigation.js'],
     reason: 'chapter.color is the per-chapter accent the player themes with and the completion '
       + 'screen falls back to. Neither migrates at Stage 5.',

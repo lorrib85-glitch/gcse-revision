@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // ─── Canonical subject-browser navigation generator ────────────────────────
 //
-// Stage 5B: renders the load-bearing browser projection from canonical
+// Stage 5C: renders the load-bearing browser projection from canonical
 // curriculum records plus the isolated browser-entry configuration.
 //
 //   src/data/generated/curriculum/navigation.js
@@ -30,7 +30,7 @@ const BANNER = [
   '// or src/curriculum-catalogue/navigation/browserEntries.js.',
   '// `pnpm curriculum:navigation:check` fails when this projection drifts.',
   '//',
-  '// Stage 5B: consumed through src/features/subjects/subjectCatalogue.js.',
+  '// Stage 5C: consumed through src/features/subjects/subjectNavigationAdapter.js.',
   '// Production components must not import this generated file directly.',
   '//',
   '// Source: canonical curriculum records plus the browser-entry configuration.',
@@ -40,7 +40,7 @@ const FORBIDDEN_INPUTS = [
   '.planning/',
   'src/curriculum-catalogue/compatibility/',
   'src/features/subjects/Subjects.jsx',
-  'src/features/subjects/subjectCatalogue.js',
+  'src/features/subjects/subjectNavigationAdapter.js',
   'tests/fixtures/',
   'src/data/modules.js',
   'src/chapters.js',
@@ -304,7 +304,7 @@ export function renderNavigationMap(entries) {
     `**${entries.length}** browser entries · **${cards.length}** canonical cards + **${subjectStates.length}** subject-level state · **${cards.length + subjectStates.length}** visible items · **${openable.length}** openable chapters`,
     '',
     'This is application navigation configuration, not a seventh curriculum entity.',
-    'Stage 5B makes it load-bearing through `src/features/subjects/subjectCatalogue.js`.',
+    'Stage 5C keeps it load-bearing through `src/features/subjects/subjectNavigationAdapter.js`.',
     '',
     '## Entries',
     '',

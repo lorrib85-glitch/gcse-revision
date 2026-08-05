@@ -1,4 +1,4 @@
-# Stage 5, split into 5A and 5B
+# Stage 5, split into 5A, 5B and 5C
 
 The parent `IMPLEMENTATION-PLAN.md` had Stage 5 as one step: generate the
 navigation projection *and* move `Subjects.jsx` onto it. `AUDIT.md` §2 found
@@ -9,6 +9,7 @@ Stage 4 safe.
 ```
 Stage 5A   define the contract, generate the projection      no runtime change
 Stage 5B   switch the browser onto it                        gated visible cutover
+Stage 5C   retire post-cutover scaffolding                     no learner change
 ```
 
 ---
@@ -52,14 +53,16 @@ frozen browser semantics card for card.
 | `SUBJECT_DESCRIPTIONS` | entry `description` |
 | `SUBJECT_HEADER_IMGS` | entry `heroImage` |
 | `HISTORY_SERIES`, `ENGLISH_SERIES` | entry `sections` |
-| `CHAPTER_HEADER_IMAGES` | deleted outright — all 20 entries are already dead (A-10) |
+| `CHAPTER_HEADER_IMAGES` | retained through the cutover, then removed in 5C after all 20 entries are proved unreachable (A-10) |
 | `MACBETH_/INSPECTOR_/PHYSICS_PLACEHOLDERS`, the `cs_<subject>` fallback | canonical cards and the entry-level coming-soon state |
 
 `SUBJECT_TOPIC_IMAGES` stays for now: the tile thumbnail is randomised per
 mount, is not in the parity contract, and retiring it is a separate decision.
 
-`subjectCatalogue.js` is deleted **only after** the 390px parity walkthrough
-passes — not in the same breath as the switch.
+The original `subjectCatalogue.js` identity is retained through the 390px parity
+walkthrough as a thin runtime adapter. Stage 5C then renames that boundary to
+`subjectNavigationAdapter.js`; the adapter remains because it joins generated
+cards to runtime Chapters without letting UI components import the projection.
 
 **Verification, before the delete:**
 
@@ -75,6 +78,26 @@ passes — not in the same breath as the switch.
 
 **Worst case:** a destination disappears or a card moves. **Recovery:** revert
 `Subjects.jsx`; the projection stays and stays inert.
+
+## Stage 5C — post-cutover cleanup
+
+**Lands**
+
+- renames the surviving thin runtime boundary to
+  `src/features/subjects/subjectNavigationAdapter.js`;
+- renames its unit test and updates current architecture guards and documentation;
+- removes the 20-entry `CHAPTER_HEADER_IMAGES` fallback only after proving every
+  mapped runtime Chapter already owns a canonical `headerImage`;
+- adds a guard that the generated navigation projection has exactly one
+  production importer and that the old adapter identity cannot regrow.
+
+**Does not touch:** Browser Entry configuration, generated card order, learner
+copy, progress reads or writes, Chapter opening, `SUBJECT_TOPIC_IMAGES`, the
+compatibility projections, or Stage 6 consumers.
+
+**Proves:** the seven-destination 390px walkthrough still passes; the full
+repository verification remains green; and the cleanup changes naming and dead
+fallbacks only.
 
 ## Stage 6 — unchanged by this split
 
@@ -94,3 +117,4 @@ than quietly becoming the new home of a legacy fact.
 |---|---|---|
 | 5A | the projection disagrees with the browser | the parity gate fails; nothing ships |
 | 5B | a subject disappears from the browser | revert `Subjects.jsx`; the projection stays |
+| 5C | adapter cleanup changes browser behaviour | revert the cleanup commit; the Stage 5B boundary remains valid |

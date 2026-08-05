@@ -11,30 +11,9 @@ import { StreakChip } from '../home/StreakChip.jsx'
 import BackButton from '../../components/core/BackButton.jsx'
 import BottomNav from '../../app/BottomNav.jsx'
 import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
-import { getSubjectNavigationEntry, getSubjectChapterList, SUBJECT_NAVIGATION_NAMES } from './subjectCatalogue.js'
+import { getSubjectNavigationEntry, getSubjectChapterList, SUBJECT_NAVIGATION_NAMES } from './subjectNavigationAdapter.js'
 
-const CHAPTER_HEADER_IMAGES = {
-  'history-medicine-medieval-beliefs-causes': '/images/history/_shared/medicine-through-time.webp',
-  'history-medicine-black-death': '/images/history/medicine/plague-background.png',
-  'history-medicine-renaissance-medicine': '/images/history/medicine/headers/bloodletting.png',
-  'history-medicine-surgery-anaesthetics': '/images/history/medicine/headers/germ-bridge.png',
-  'history-medicine-jenner-vaccination': '/images/history/medicine/headers/medieval-scripture.png',
-  'history-medicine-germ-theory': '/images/history/medicine/headers/germ-bridge.png',
-  'history-medicine-great-stink': '/images/history/_shared/medicine-through-time.webp',
-  'history-medicine-surgery-revolution': '/images/history/medicine/headers/bloodletting.png',
-  'history-medicine-accidental-miracle': '/images/history/medicine/headers/germ-bridge.png',
-  'history-medicine-modern-medicine': '/images/history/medicine/headers/medieval-scripture.png',
-  'history-medicine-cancer': '/images/history/_shared/medicine-through-time.webp',
-  'sci_bio_w1': '/images/biology/_shared/main.png',
-  'bio_building_blocks': '/images/biology/_shared/main.png',
-  'math1': '/images/maths/_shared/numbers.webp',
-  'math2': '/images/maths/_shared/numbers.webp',
-  'soc1': '/images/sociology/_shared/family.webp',
-  'soc2': '/images/sociology/_shared/education.webp',
-  'soc3': '/images/sociology/_shared/crime.webp',
-  'soc4': '/images/sociology/_shared/stratification.webp',
-  'soc6': '/images/sociology/_shared/main.webp',
-}
+const DEFAULT_CHAPTER_HEADER_IMAGE = '/images/history/_shared/medicine-through-time.webp'
 
 // ─── SubjectBrowser ────────────────────────────────────────────────────────────
 
@@ -44,7 +23,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
   const bronze       = SUBJECTS[subjectName]?.subjectBrowserAccentDark || SUBJECTS.History.subjectBrowserAccentDark
   const accent       = sand
   const accentRgb    = hexToRgb(sand)
-  const headerImg    = navigationEntry?.heroImage || '/images/history/_shared/medicine-through-time.webp'
+  const headerImg    = navigationEntry?.heroImage || DEFAULT_CHAPTER_HEADER_IMAGE
   const displayTitle = navigationEntry?.title || subjectName
   const displayDesc  = navigationEntry?.description || ''
   const series       = navigationEntry?.series ?? []
@@ -106,7 +85,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
 }
 
   function thumbFor(item) {
-    return item.headerImage || CHAPTER_HEADER_IMAGES[item.id] || headerImg
+    return item.headerImage || headerImg
   }
 
   function stripEra(s) {
@@ -536,14 +515,14 @@ export default function SubjectsTab({ onOpenChapter }) {
 
   const continueChapter = getContinueChapter()
   const continuePct = chapterPct(continueChapter)
-  const continueHeaderImage = continueChapter.headerImage || CHAPTER_HEADER_IMAGES[continueChapter.id] || '/images/history/_shared/medicine-through-time.webp'
+  const continueHeaderImage = continueChapter.headerImage || DEFAULT_CHAPTER_HEADER_IMAGE
 
   const biggestWinRaw = getBiggestWin()
   const biggestWinChapter = biggestWinRaw ? CHAPTERS.find(chapter => chapter.id === biggestWinRaw.chapterId) : null
   const biggestWin = biggestWinChapter ? {
     ...biggestWinRaw,
     chapter: biggestWinChapter,
-    headerImage: biggestWinChapter.headerImage || CHAPTER_HEADER_IMAGES[biggestWinChapter.id],
+    headerImage: biggestWinChapter.headerImage || DEFAULT_CHAPTER_HEADER_IMAGE,
     startScreenIndex: findTaggedChapterScreen(biggestWinChapter, biggestWinRaw.conceptTag),
   } : null
 

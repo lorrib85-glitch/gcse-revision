@@ -15,7 +15,7 @@ import {
   getNavigationEntryById,
   getNavigationEntryForDisplayName,
 } from '../../src/data/generated/curriculum/navigation.js'
-import { getSubjectChapterList, getSubjectNavigationEntry } from '../../src/features/subjects/subjectCatalogue.js'
+import { getSubjectChapterList, getSubjectNavigationEntry } from '../../src/features/subjects/subjectNavigationAdapter.js'
 import {
   assertInputPurity,
   buildNavigation,
@@ -248,10 +248,34 @@ describe('Stage 5B canonical subject-browser navigation', () => {
   const generatedImporters = productionFiles
     .filter(path => generatedImport.test(readFileSync(resolve(ROOT, path), 'utf8')))
     .sort()
-  expect(generatedImporters).toEqual(['src/features/subjects/subjectCatalogue.js'])
+  expect(generatedImporters).toEqual(['src/features/subjects/subjectNavigationAdapter.js'])
 
   const subjectsSource = readFileSync(resolve(ROOT, 'src/features/subjects/Subjects.jsx'), 'utf8')
-  expect(subjectsSource).toContain("from './subjectCatalogue.js'")
+  expect(subjectsSource).toContain("from './subjectNavigationAdapter.js'")
   expect(subjectsSource).not.toContain('generated/curriculum/navigation.js')
 })
+})
+
+describe('Stage 5C navigation cleanup boundary', () => {
+  it('uses the accurately named adapter as the sole production projection boundary', () => {
+    const oldPath = resolve(ROOT, 'src/features/subjects/subjectCatalogue.js')
+    const adapterPath = resolve(ROOT, 'src/features/subjects/subjectNavigationAdapter.js')
+    expect(existsSync(oldPath)).toBe(false)
+    expect(existsSync(adapterPath)).toBe(true)
+
+    const productionFiles = filesUnder('src', ['.js', '.jsx'])
+    const generatedImport = /(?:from\s*|import\s*\(\s*)['"][^'"]*generated\/curriculum\/navigation\.js['"]/
+    const generatedImporters = productionFiles
+      .filter(path => generatedImport.test(readFileSync(resolve(ROOT, path), 'utf8')))
+      .sort()
+    expect(generatedImporters).toEqual(['src/features/subjects/subjectNavigationAdapter.js'])
+  })
+
+  it('keeps the dead image fallback map retired without changing tile imagery', () => {
+    const subjects = readFileSync(resolve(ROOT, 'src/features/subjects/Subjects.jsx'), 'utf8')
+    expect(subjects).not.toContain('CHAPTER_HEADER_IMAGES')
+    expect(subjects).toContain('DEFAULT_CHAPTER_HEADER_IMAGE')
+    expect(subjects).toContain('SUBJECT_TOPIC_IMAGES')
+    expect(subjects).toContain("from './subjectNavigationAdapter.js'")
+  })
 })
