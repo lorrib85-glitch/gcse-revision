@@ -548,7 +548,10 @@ export function validateBoard(record) {
   return errors
 }
 
-const SUBJECT_KEYS = ['id', 'title', 'shortTitle', 'themeKey', 'status', 'legacyProgressNames']
+const SUBJECT_KEYS = [
+  'id', 'title', 'shortTitle', 'themeKey', 'status',
+  'legacyProgressNames', 'unattributedProgressNames',
+]
 
 export function validateSubject(record) {
   const errors = []
@@ -567,8 +570,27 @@ export function validateSubject(record) {
   }
   // How the read layer recognises rows persisted under an older display string
   // without rewriting any of them (OD-1).
+  //
+  // Two lists, because there are two different facts and collapsing them would
+  // fabricate learner data. `legacyProgressNames` RESOLVES to this subject and
+  // is exclusive — `index.js` rejects a name claimed by two subjects, so
+  // resolution can never pick one arbitrarily. `unattributedProgressNames`
+  // records a name that is known legacy and resolves to NO subject: the
+  // persisted string `'English'` predates the Language/Literature split and
+  // nothing can say which one an old row meant. It is listed by both subjects
+  // precisely so both decline it — that is what makes it unattributed, and it
+  // is why it can never also appear as an exclusive alias.
   if (!isStringArray(record.legacyProgressNames) && record.legacyProgressNames?.length !== 0) {
     errors.push('subject.legacyProgressNames must be an array of persisted display strings (possibly empty)')
+  }
+  if (!isStringArray(record.unattributedProgressNames) && record.unattributedProgressNames?.length !== 0) {
+    errors.push('subject.unattributedProgressNames must be an array of persisted display strings (possibly empty)')
+  }
+  const exclusive = new Set(Array.isArray(record.legacyProgressNames) ? record.legacyProgressNames : [])
+  for (const name of Array.isArray(record.unattributedProgressNames) ? record.unattributedProgressNames : []) {
+    if (exclusive.has(name)) {
+      errors.push(`subject.unattributedProgressNames contains "${name}", which the same subject also claims as a legacy alias`)
+    }
   }
   checkSerialisable(errors, 'subject', record)
   return errors

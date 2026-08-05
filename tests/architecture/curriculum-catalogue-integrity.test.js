@@ -24,7 +24,14 @@ import {
   weightingScopes,
   resolveWeighting,
 } from '../../src/curriculum-catalogue/schema.js'
-import { renderCatalogue, OUTPUT_PATH } from '../../scripts/generate-curriculum-catalogue.mjs'
+import {
+  renderCatalogue,
+  renderCurriculumMap,
+  OUTPUT_PATH,
+  MAP_OUTPUT_PATH,
+  PLACEHOLDER_MIGRATION,
+  EXCLUDED_CHAPTER,
+} from '../../scripts/generate-curriculum-catalogue.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const read = rel => readFileSync(resolve(root, rel), 'utf8')
@@ -136,10 +143,15 @@ describe('curriculum catalogue purity', () => {
   })
 
   it('never imports app or runtime code', () => {
+    // Anchored to an actual import/export statement. A bare `from '…'` match
+    // also fires on authored prose — `"…what every living thing is built
+    // from", icon: "…"` reads as a specifier to a naive regex — and a guard
+    // that trips over chapter copy is a guard nobody trusts.
+    const IMPORT_SPECIFIER = /^\s*(?:import|export)\b[^;\n]*?\bfrom\s*['"]([^'"]+)['"]/gm
     // Record files are the strict case: nothing outside this directory at all.
     for (const file of listAllRecordFiles()) {
       const source = read(`${CURRICULUM_ROOT}/${file}`)
-      const specifiers = [...source.matchAll(/from\s*['"]([^'"]+)['"]/g)].map(match => match[1])
+      const specifiers = [...source.matchAll(IMPORT_SPECIFIER)].map(match => match[1])
       for (const specifier of specifiers) {
         expect(specifier.startsWith('./') || specifier.startsWith('../'), `${file} imports "${specifier}"`).toBe(true)
         expect(specifier, `${file} escapes the catalogue via "${specifier}"`).not.toMatch(/\.\.\/\.\.\//)
@@ -672,6 +684,7 @@ describe('schema rejects the fields Phase 5A rejected', () => {
     themeKey: 'Sociology',
     status: 'active',
     legacyProgressNames: ['Sociology'],
+    unattributedProgressNames: [],
   })
 
   it('accepts the unmutated fixtures', () => {
@@ -1086,14 +1099,12 @@ describe('Stage 1 authored specifications', () => {
     }
   })
 
-  it('authors no record Stage 1 does not own', async () => {
-    // Subjects, pathways, modules and chapters are Stage 2. Their absence is
-    // the boundary, and an empty collection is what proves it was respected.
+  it('keeps its own record set untouched now that Stage 2 has landed', async () => {
+    // Stage 2 added subjects, pathways, modules and chapters. It added no
+    // board and no specification, and changed neither count.
     const catalogue = await loadCatalogue()
-    expect(catalogue.subjects).toEqual([])
-    expect(catalogue.pathways).toEqual([])
-    expect(catalogue.modules).toEqual([])
-    expect(catalogue.chapters).toEqual([])
+    expect(catalogue.boards).toHaveLength(2)
+    expect(catalogue.specifications).toHaveLength(9)
   })
 
   it('derives the record set from disk rather than from a registry', () => {
@@ -1107,5 +1118,417 @@ describe('Stage 1 authored specifications', () => {
     // The one non-record file under records/ is shared provenance, and it is
     // deliberately outside every location LAYOUT declares.
     expect(files).not.toContain('records/provenance.js')
+  })
+})
+
+// ─── Persisted progress names ──────────────────────────────────────────────
+//
+// A subject id is progress identity, not display text: it is written into
+// `gcse_scores` and the weakness tracker. `'English'` was persisted before
+// Language and Literature were separate subjects, and no rule can recover
+// which one an old row meant — so the schema has to be able to say "known
+// legacy, resolves to nobody" without saying it twice and contradicting
+// itself (OD-1).
+
+describe('subject progress-name resolution', () => {
+  const subject = (id, legacy, unattributed = []) => ({
+    id,
+    title: id,
+    shortTitle: id,
+    themeKey: 'English',
+    status: 'active',
+    legacyProgressNames: legacy,
+    unattributedProgressNames: unattributed,
+  })
+  const catalogueOf = (...subjects) => checkIntegrity({
+    boards: [], subjects, specifications: [], pathways: [], modules: [], chapters: [],
+  })
+
+  it('accepts an exclusive alias and an unattributed name', () => {
+    expect(validateSubject(subject('sociology', ['Sociology']))).toEqual([])
+    expect(validateSubject(subject('english-language', [], ['English']))).toEqual([])
+  })
+
+  it('lets two subjects share an unattributed name — that is what unattributed means', () => {
+    expect(catalogueOf(
+      subject('english-language', [], ['English']),
+      subject('english-literature', [], ['English']),
+    )).toEqual([])
+  })
+
+  it('rejects one subject claiming a name as both alias and unattributed', () => {
+    expect(validateSubject(subject('english-literature', ['English'], ['English'])).join(' '))
+      .toMatch(/also claims as a legacy alias/)
+  })
+
+  it('rejects an alias claimed by two subjects', () => {
+    // The failure this exists to prevent: reading an old row would mean
+    // picking a subject at random, and fabricated progress is worse than
+    // absent progress.
+    expect(catalogueOf(
+      subject('english-language', ['English']),
+      subject('english-literature', ['English']),
+    ).join(' ')).toMatch(/claimed by both .* an alias that resolves to two subjects resolves to neither/)
+  })
+
+  it('rejects a name that is unattributed on one subject and an alias on another', () => {
+    expect(catalogueOf(
+      subject('english-language', ['English']),
+      subject('english-literature', [], ['English']),
+    ).join(' ')).toMatch(/cannot both resolve to a subject and to none/)
+  })
+
+  it('rejects a malformed list rather than treating it as empty', () => {
+    expect(validateSubject({ ...subject('sociology', ['Sociology']), unattributedProgressNames: 'English' }).join(' '))
+      .toMatch(/unattributedProgressNames must be an array/)
+    expect(validateSubject({ ...subject('sociology', 'Sociology') }).join(' '))
+      .toMatch(/legacyProgressNames must be an array/)
+  })
+})
+
+// ─── Stage 2: the authored curriculum reproduces today's reality ────────────
+//
+// Stage 1 proved the specifications say what the awarding bodies say. These
+// prove the subjects, pathways, modules and chapters say what the app already
+// does — and say the few things it could not previously express, in the exact
+// places the settled decisions put them.
+
+describe('Stage 2 authored curriculum', () => {
+  const byId = (records, id) => records.find(record => record.id === id)
+
+  it('authors eight subjects and no Drama or Music record', async () => {
+    const { subjects } = await loadCatalogue()
+    expect(subjects.map(subject => subject.id)).toEqual([
+      'mathematics', 'biology', 'chemistry', 'physics', 'history',
+      'english-language', 'english-literature', 'sociology',
+    ])
+    // OD-7: `drama` and `music` stay canonical vocabulary with no record until
+    // their first module is ready. Listing an id creates nothing.
+    for (const absent of ['drama', 'music']) {
+      expect(subjects.some(subject => subject.id === absent), absent).toBe(false)
+    }
+  })
+
+  it('references a theme key rather than duplicating palette data', async () => {
+    const { subjects } = await loadCatalogue()
+    const themes = await import('../../src/constants/subjects.js')
+    for (const subject of subjects) {
+      expect(Object.keys(themes.SUBJECTS), subject.id).toContain(subject.themeKey)
+      // A record may reference the theme; it may never restate what is in it.
+      const source = read(`${CURRICULUM_ROOT}/records/subjects.js`)
+      expect(source, 'a palette value leaked into a subject record').not.toMatch(/#[0-9a-fA-F]{6}/)
+    }
+    // Two subjects, one palette — the proof that theme key and academic
+    // identity are different facts.
+    expect(byId(subjects, 'english-language').themeKey).toBe('English')
+    expect(byId(subjects, 'english-literature').themeKey).toBe('English')
+  })
+
+  it('resolves persisted progress names to one subject, or deliberately to none', async () => {
+    const { subjects } = await loadCatalogue()
+    const owner = new Map()
+    for (const subject of subjects) {
+      for (const name of subject.legacyProgressNames) {
+        expect(owner.has(name), `${name} claimed twice`).toBe(false)
+        owner.set(name, subject.id)
+      }
+    }
+    // The write vocabulary that actually reaches storage.
+    expect([...owner.keys()].sort())
+      .toEqual(['Biology', 'Chemistry', 'History', 'Maths', 'Physics', 'Sociology'])
+
+    // OD-1: `'English'` predates the Language/Literature split. Both subjects
+    // list it as unattributed, so it resolves to neither and cannot be picked
+    // arbitrarily — the structural version of "do not guess".
+    for (const id of ['english-language', 'english-literature']) {
+      expect(byId(subjects, id).unattributedProgressNames, id).toEqual(['English'])
+      expect(byId(subjects, id).legacyProgressNames, id).toEqual([])
+    }
+    expect(owner.has('English')).toBe(false)
+    // `'Quick Fire'` is persisted and is not a subject at all (A-19). It
+    // belongs to no record, in either list.
+    const everyName = subjects.flatMap(s => [...s.legacyProgressNames, ...s.unattributedProgressNames])
+    expect(everyName).not.toContain('Quick Fire')
+  })
+
+  it('authors fourteen catalogue study pathways', async () => {
+    const { pathways } = await loadCatalogue()
+    expect(pathways.map(pathway => pathway.id).sort()).toEqual([
+      'aqa-biology-8461-foundation', 'aqa-biology-8461-higher',
+      'aqa-chemistry-8462-foundation', 'aqa-chemistry-8462-higher',
+      'aqa-combined-science-8464-foundation', 'aqa-combined-science-8464-higher',
+      'aqa-english-language-8700', 'aqa-english-literature-8702-macbeth-inspector',
+      'aqa-maths-8300-foundation', 'aqa-maths-8300-higher',
+      'aqa-physics-8463-foundation', 'aqa-physics-8463-higher',
+      'aqa-sociology-8192',
+      'pearson-edexcel-history-1hi0-medicine-spain-elizabethan-usa',
+    ])
+    for (const pathway of pathways) expect(pathway.scope, pathway.id).toBe('catalogue')
+  })
+
+  it('puts tier on the pathway and nowhere else', async () => {
+    const { pathways, modules, chapters } = await loadCatalogue()
+    const tiered = pathways.filter(pathway => pathway.tier !== null)
+    expect(tiered).toHaveLength(10)
+    for (const record of [...modules, ...chapters]) {
+      expect('tier' in record, `${record.id} carries a tier`).toBe(false)
+    }
+  })
+
+  it('records what was chosen, and records unchosen as unchosen', async () => {
+    const { pathways } = await loadCatalogue()
+    expect(byId(pathways, 'aqa-english-literature-8702-macbeth-inspector').selections).toEqual({
+      'shakespeare-text': 'macbeth',
+      'nineteenth-century-novel': null,
+      'modern-text': 'an-inspector-calls',
+      'poetry-anthology-cluster': null,
+    })
+    expect(byId(pathways, 'pearson-edexcel-history-1hi0-medicine-spain-elizabethan-usa').selections).toEqual({
+      'thematic-study-and-historic-environment': 'medicine-and-western-front',
+      'period-study': 'spain-new-world',
+      'british-depth-study': 'early-elizabethan-england',
+      'modern-depth-study': 'usa-conflict',
+    })
+    // English Language sets no texts: every source is unseen and supplied in
+    // the exam. Empty selections is the control case proving the machinery is
+    // optional rather than a field every pathway pads with placeholders.
+    for (const id of ['aqa-english-language-8700', 'aqa-sociology-8192',
+      'aqa-maths-8300-foundation', 'aqa-maths-8300-higher',
+      'aqa-combined-science-8464-higher', 'aqa-biology-8461-higher']) {
+      expect(byId(pathways, id).selections, id).toEqual({})
+    }
+  })
+
+  it('gives Medicine and the Western Front one selection group and two modules', async () => {
+    const { pathways } = await loadCatalogue()
+    const history = byId(pathways, 'pearson-edexcel-history-1hi0-medicine-spain-elizabethan-usa')
+    const thematic = history.moduleRefs
+      .filter(ref => ref.selectionGroup === 'thematic-study-and-historic-environment')
+      .map(ref => ref.moduleId)
+    expect(thematic).toEqual(['history-edexcel-medicine-britain', 'history-edexcel-western-front'])
+  })
+
+  it('reuses one module record across Combined and Triple Science', async () => {
+    const { modules, pathways } = await loadCatalogue()
+    const biology = ['biology-aqa-cell-biology', 'biology-aqa-organisation',
+      'biology-aqa-infection-and-response', 'biology-aqa-homeostasis',
+      'biology-aqa-inheritance-variation-evolution', 'biology-aqa-ecology']
+    for (const id of biology) {
+      const module = byId(modules, id)
+      expect(module.specRefs.map(ref => ref.specificationId).sort(), id)
+        .toEqual(['aqa-gcse-biology-8461', 'aqa-gcse-combined-science-trilogy-8464'])
+    }
+    // Same ids on both pathways — referenced, never copied. A "combined-"
+    // prefixed twin would be the duplication the model exists to prevent.
+    const reached = pathway => byId(pathways, pathway).moduleRefs.map(ref => ref.moduleId)
+    for (const id of biology) {
+      expect(reached('aqa-combined-science-8464-higher'), id).toContain(id)
+      expect(reached('aqa-biology-8461-higher'), id).toContain(id)
+    }
+    expect(modules.filter(module => module.subjectId === 'biology')).toHaveLength(6)
+    // Combined spans three disciplines; every module it reaches keeps one.
+    const combined = reached('aqa-combined-science-8464-foundation')
+      .map(id => byId(modules, id).subjectId)
+    expect([...new Set(combined)].sort()).toEqual(['biology', 'chemistry', 'physics'])
+  })
+
+  it('splits Sociology and History the way the settled decisions say', async () => {
+    const { modules } = await loadCatalogue()
+    const chapterIds = id => byId(modules, id).chapterRefs.map(ref => ref.chapterId)
+    // OD-4, settled before Stage 0.
+    expect(chapterIds('sociology-aqa-key-concepts')).toEqual(['soc1', 'soc2', 'soc3'])
+    expect(chapterIds('sociology-aqa-families')).toEqual(['soc4', 'soc6'])
+    // The Western Front leaves Medicine; OD-5 keeps Nightingale a distinct
+    // planned chapter rather than absorbing it.
+    expect(chapterIds('history-edexcel-western-front')).toEqual(['history-medicine-western-front'])
+    const medicine = chapterIds('history-edexcel-medicine-britain')
+    expect(medicine).toHaveLength(14)
+    expect(medicine).not.toContain('history-medicine-western-front')
+    expect(medicine).toContain('history-medicine-nightingale')
+    // maths_core renames in scope, not in membership.
+    expect(chapterIds('maths-aqa-number')).toHaveLength(8)
+    // bio_core splits across the six per-topic directories that already existed.
+    expect(chapterIds('biology-aqa-cell-biology'))
+      .toEqual(['bio_building_blocks', 'sci_bio_w1', 'bio_building_life'])
+  })
+
+  it('authors exactly 65 chapters — 30 available, 35 planned', async () => {
+    const { chapters } = await loadCatalogue()
+    expect(chapters).toHaveLength(65)
+    expect(chapters.filter(chapter => chapter.status === 'available')).toHaveLength(30)
+    expect(chapters.filter(chapter => chapter.status === 'planned')).toHaveLength(35)
+  })
+
+  it('preserves all 59 non-hidden chapter ids and adds six semantic ones', async () => {
+    const { chapters } = await loadCatalogue()
+    const runtime = await import('../../src/chapters.js')
+    const nonHidden = runtime.CHAPTERS
+      .filter(chapter => runtime.getChapterAvailability(chapter) !== 'hidden')
+      .map(chapter => chapter.id)
+    expect(nonHidden).toHaveLength(59)
+
+    const authored = new Set(chapters.map(chapter => chapter.id))
+    for (const id of nonHidden) expect(authored.has(id), `${id} lost`).toBe(true)
+
+    const added = chapters.map(c => c.id).filter(id => !nonHidden.includes(id))
+    expect(added.sort()).toEqual([
+      'english-inspector-calls-consequences-resolution',
+      'english-inspector-calls-responsibility-denial',
+      'english-inspector-calls-social-message',
+      'english-macbeth-appearance-reality',
+      'english-macbeth-guilt-consequence',
+      'english-macbeth-witches-fate',
+    ])
+    for (const id of added) {
+      expect(byId(chapters, id).status, id).toBe('planned')
+    }
+    // A browse-surface id is not a curriculum id. None survives.
+    for (const chapter of chapters) {
+      expect(chapter.id.startsWith('cs_'), `${chapter.id} is a placeholder id`).toBe(false)
+    }
+  })
+
+  it('excludes the hidden Renaissance bundle while keeping its progress reachable', async () => {
+    const { chapters } = await loadCatalogue()
+    expect(chapters.some(chapter => chapter.id === EXCLUDED_CHAPTER.id)).toBe(false)
+    // Excluded from the catalogue, still whole in the runtime and still the
+    // destination `mod2` progress folds onto. Preserved is not the same as
+    // given a record.
+    const runtime = await import('../../src/chapters.js')
+    const hidden = runtime.CHAPTERS.find(chapter => chapter.id === EXCLUDED_CHAPTER.id)
+    expect(runtime.getChapterAvailability(hidden)).toBe('hidden')
+    const progress = await import('../../src/data/chapterProgress.js')
+    expect(progress.LEGACY_CHAPTER_ID_MAP.mod2).toBe(EXCLUDED_CHAPTER.id)
+    expect(progress.canonicalChapterId('mod2')).toBe(EXCLUDED_CHAPTER.id)
+  })
+
+  it('binds every available chapter to the content file it already loads', async () => {
+    const { chapters } = await loadCatalogue()
+    const registry = read('src/content/chapterContentRegistry.js')
+    const loaderPath = {}
+    for (const match of registry.matchAll(/'([^']+)':\s*\(\)\s*=>\s*import\('\.\/([^']+)'\)/g)) {
+      loaderPath[match[1]] = `src/content/${match[2]}`
+    }
+    for (const chapter of chapters) {
+      if (chapter.status !== 'available') {
+        expect(chapter.contentPath, `${chapter.id} is planned but names content`).toBe(null)
+        continue
+      }
+      expect(chapter.contentPath, chapter.id).toBe(loaderPath[chapter.id])
+      expect(existsSync(resolve(root, chapter.contentPath)), `${chapter.contentPath} missing`).toBe(true)
+    }
+  })
+
+  it('authors only derived-free chapter fields, and only registered concepts', async () => {
+    const { chapters } = await loadCatalogue()
+    const graph = await import('../../src/data/learningGraph/index.js')
+    for (const chapter of chapters) {
+      for (const derived of ['screenCount', 'screenTags', 'number', 'series', 'subject']) {
+        expect(derived in chapter, `${chapter.id} authors ${derived}`).toBe(false)
+      }
+      for (const conceptId of chapter.conceptIds) {
+        expect(graph.isConceptId(conceptId), `${chapter.id}: ${conceptId}`).toBe(true)
+      }
+      // Requirements are not authored yet, so nothing may claim one.
+      expect(chapter.requirementIds, chapter.id).toEqual([])
+      expect(chapter.estimatedMinutes === null || chapter.estimatedMinutes > 0).toBe(true)
+    }
+    expect(chapters.some(chapter => chapter.conceptIds.length > 0)).toBe(true)
+  })
+
+  it('gives every chapter exactly one module, with unique ascending positions', async () => {
+    const { chapters, modules } = await loadCatalogue()
+    const owners = new Map()
+    for (const module of modules) {
+      const positions = module.chapterRefs.map(ref => ref.position)
+      expect(positions, `${module.id} positions`).toEqual(positions.map((_, i) => i))
+      for (const ref of module.chapterRefs) {
+        expect(owners.has(ref.chapterId), `${ref.chapterId} owned twice`).toBe(false)
+        owners.set(ref.chapterId, module.id)
+      }
+    }
+    for (const chapter of chapters) {
+      expect(owners.has(chapter.id), `${chapter.id} belongs to no module`).toBe(true)
+    }
+    expect(owners.size).toBe(65)
+    // Pathway module positions are equally deterministic.
+    const { pathways } = await loadCatalogue()
+    for (const pathway of pathways) {
+      const positions = pathway.moduleRefs.map(ref => ref.position)
+      expect(positions, `${pathway.id} positions`).toEqual(positions.map((_, i) => i))
+    }
+  })
+
+  it('invents no specification requirement to hang a module on', async () => {
+    const { modules, specifications } = await loadCatalogue()
+    for (const spec of specifications) expect(spec.requirements, spec.id).toEqual([])
+    for (const module of modules) {
+      for (const ref of module.specRefs) {
+        expect(ref.requirementIds, `${module.id} → ${ref.specificationId}`).toEqual([])
+        expect(ref.paperIds.length, `${module.id} names no paper`).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('leaves the runtime catalogue exactly as it was', async () => {
+    // Stage 2 authors records and changes no behaviour. If any of these three
+    // moved, something consumed the catalogue early.
+    const chapters = await import('../../src/chapters.js')
+    const modules = await import('../../src/data/modules.js')
+    const registry = await import('../../src/content/chapterContentRegistry.js')
+    expect(chapters.CHAPTERS).toHaveLength(60)
+    expect(modules.MODULES.map(module => module.id)).toEqual([
+      'hist_medicine', 'soc_family', 'maths_core', 'bio_core',
+      'eng_macbeth', 'hist_spain_new_world', 'hist_usa',
+    ])
+    expect(Object.keys(registry.CHAPTER_CONTENT_LOADERS)).toHaveLength(60)
+  })
+})
+
+// ─── The curriculum map ────────────────────────────────────────────────────
+
+describe('generated curriculum map', () => {
+  it('is byte-identical to a fresh render, and deterministic', async () => {
+    const catalogue = await loadCatalogue()
+    expect(renderCurriculumMap(catalogue)).toBe(read(MAP_OUTPUT_PATH))
+    expect(renderCurriculumMap(catalogue)).toBe(renderCurriculumMap(catalogue))
+    expect(read(MAP_OUTPUT_PATH)).toContain('GENERATED FILE — do not edit')
+  })
+
+  it('shows subjects, pathways, selections, reuse and chapter binding', async () => {
+    const rendered = renderCurriculumMap(await loadCatalogue())
+    expect(rendered).toContain('| `english-literature` | English literature | `English` |')
+    expect(rendered).toContain('| `aqa-maths-8300-higher` | GCSE Mathematics | higher | 7 |')
+    expect(rendered).toContain("| `Literature` | `poetry-anthology-cluster` | — |")
+    expect(rendered).toMatch(/`biology-aqa-cell-biology` \| Biology \(F\).*Combined \(H\)/)
+    expect(rendered).toContain('GCSE Combined Science: Trilogy · GCSE Biology')
+    expect(rendered).toContain('`src/content/sociology/families/episodes/soc4.js`')
+    expect(rendered).toContain('_Planned. No chapters are invented to fill it._')
+  })
+
+  it('documents the placeholder migration against the records it describes', async () => {
+    const { chapters } = await loadCatalogue()
+    const subjectCatalogue = read('src/features/subjects/subjectCatalogue.js')
+    expect(PLACEHOLDER_MIGRATION).toHaveLength(6)
+    for (const [from, to] of PLACEHOLDER_MIGRATION) {
+      // The `from` was a real browse-surface placeholder…
+      expect(subjectCatalogue, `${from} was never a placeholder`).toContain(`id: '${from}'`)
+      // …and the `to` is a planned record that actually exists.
+      const chapter = chapters.find(candidate => candidate.id === to)
+      expect(chapter, `${to} has no record`).toBeTruthy()
+      expect(chapter.status).toBe('planned')
+      expect(chapter.contentPath).toBe(null)
+    }
+    const rendered = renderCurriculumMap(await loadCatalogue())
+    expect(rendered).toContain('| `cs_macbeth_2` | `english-macbeth-guilt-consequence` |')
+    expect(rendered).toContain(EXCLUDED_CHAPTER.id)
+  })
+
+  it('is documentation, not a runtime projection', () => {
+    // Stage 3 owns projections. Nothing under src/data/generated/curriculum
+    // exists, and the two documents live under docs/.
+    expect(existsSync(resolve(root, 'src/data/generated/curriculum'))).toBe(false)
+    expect(OUTPUT_PATH.startsWith('docs/')).toBe(true)
+    expect(MAP_OUTPUT_PATH.startsWith('docs/')).toBe(true)
   })
 })

@@ -439,9 +439,10 @@ _chosen. No option, text or route is selected here._
 
 ---
 
-## Not in this catalogue
+## Not in this document
 
-- **Subjects, study pathways, modules and chapters** — Stage 2.
+- **Subjects, study pathways, modules and chapters** — `CURRICULUM_MAP.md`,
+  generated from the same records.
 - **Runtime `MODULES`, `CHAPTERS` and content loaders** — Stage 3 projections.
   The runtime files remain hand-authored and untouched until then.
 - **Option, text and route selections** — a study pathway records those, not a

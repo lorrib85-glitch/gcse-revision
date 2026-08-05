@@ -90,6 +90,27 @@ the Sciences weight 40/40/20 in both tiers, and writing that twice would be one
 fact with two homes. The generated document prints one column per tier only when
 the tiers actually differ.
 
+## Persisted progress names
+
+A subject id is **progress identity**, not display text: `recordScore` writes it
+into `gcse_scores` and the weakness tracker writes it into stored entries. The
+canonical ids differ from the strings already on disk, so a subject records
+which persisted strings are its own — and, separately, which are not anybody's.
+
+| Field | Meaning |
+|---|---|
+| `legacyProgressNames` | Persisted strings that **resolve to this subject**. Exclusive: `index.js` rejects a name claimed by two subjects, so resolution can never pick one arbitrarily. |
+| `unattributedProgressNames` | Persisted strings that are known legacy and **resolve to no subject**. May be listed by several subjects — that is precisely what makes them unattributed — and may never also be an exclusive alias anywhere. |
+
+`'English'` is the case that forced two lists (OD-1). It was written before
+Language and Literature were separate subjects, and nothing can recover which
+one an old row meant. Both English subjects list it as unattributed, so the rows
+stay stored, stay readable, and count toward neither average. Guessing would
+fabricate learner data, and fabricated progress is worse than absent progress.
+
+`'Quick Fire'` is also persisted and is not a subject at all. It appears in
+neither list, on any record.
+
 ## Ordering
 
 Ordering lives on the **relationship**, never on the entity: `{ moduleId,

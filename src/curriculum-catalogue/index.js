@@ -81,6 +81,39 @@ export function checkIntegrity(catalogue) {
     }
   }
 
+  // ── Persisted progress names resolve to one subject, or to none ───────────
+  //
+  // OD-1. A legacy alias is exclusive: if two subjects claimed `'English'`,
+  // reading an old row would mean picking one at random, and fabricated
+  // progress is worse than absent progress. An unattributed name is the
+  // opposite claim — known legacy, deliberately resolving to nobody — so it
+  // may be listed by several subjects but must never be an alias anywhere.
+  const aliasOwner = new Map()
+  for (const subject of subjects) {
+    for (const name of subject.legacyProgressNames ?? []) {
+      const existing = aliasOwner.get(name)
+      if (existing) {
+        problems.push(
+          `legacy progress name "${name}" is claimed by both "${existing}" and "${subject.id}" — `
+          + 'an alias that resolves to two subjects resolves to neither (OD-1)',
+        )
+      } else {
+        aliasOwner.set(name, subject.id)
+      }
+    }
+  }
+  for (const subject of subjects) {
+    for (const name of subject.unattributedProgressNames ?? []) {
+      const owner = aliasOwner.get(name)
+      if (owner) {
+        problems.push(
+          `progress name "${name}" is unattributed on "${subject.id}" but a legacy alias of "${owner}" — `
+          + 'it cannot both resolve to a subject and to none (OD-1)',
+        )
+      }
+    }
+  }
+
   // ── Study pathway → specification, modules ────────────────────────────────
   for (const pathway of pathways) {
     const specification = specificationById.get(pathway.specificationId)
