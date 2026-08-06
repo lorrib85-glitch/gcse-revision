@@ -45,6 +45,9 @@ jobs:
       - name: Migrate live consumers
         run: python .github/scripts/stage6_migrate_consumers.py
 
+      - name: Update transition guards
+        run: python .github/scripts/stage6_fix_transition_guards.py
+
       - name: Generate canonical learner runtime
         run: pnpm curriculum:runtime:generate
 
