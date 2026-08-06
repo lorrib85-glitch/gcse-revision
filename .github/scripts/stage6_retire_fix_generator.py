@@ -1,11 +1,16 @@
 from pathlib import Path
-import re
 
 path = Path('scripts/generate-curriculum-catalogue.mjs')
 text = path.read_text()
 text = text.replace("import { loadCompatibility } from '../src/curriculum-catalogue/compatibility/index.js'\n", '')
 
-pattern = r"function renderMigration\(lines, catalogue\) \{[\s\S]*?\n\}\n\nexport function renderCurriculumMap"
+start_marker = 'function renderMigration(lines, catalogue) {'
+end_marker = '\n\nexport function renderCurriculumMap'
+start = text.find(start_marker)
+end = text.find(end_marker, start)
+if start < 0 or end < 0:
+    raise RuntimeError('renderMigration boundaries were not found')
+
 replacement = """function renderMigration(lines, catalogue) {
   const chapterById = new Map(catalogue.chapters.map(chapter => [chapter.id, chapter]))
   lines.push('## Legacy and placeholder treatment')
@@ -34,12 +39,8 @@ replacement = """function renderMigration(lines, catalogue) {
   lines.push('Every other historical Chapter id is preserved verbatim because it backs a live')
   lines.push('`gcse_chapter_<id>` progress key. A tidier id is not worth a learner’s progress.')
   lines.push('')
-}
-
-export function renderCurriculumMap"""
-text, count = re.subn(pattern, replacement, text, count=1)
-if count != 1:
-    raise RuntimeError(f'expected one renderMigration block, found {count}')
+}"""
+text = text[:start] + replacement + text[end:]
 
 text = text.replace('  const bound = boundChapters + 1\n', '')
 text = text.replace(
