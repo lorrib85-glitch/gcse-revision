@@ -41,7 +41,6 @@ replace_once(
 replace_once(
     'tests/architecture/curriculum-navigation.test.js',
     """  it('preserves progress denominator inputs without putting progress in navigation', () => {
-    const expectedById = new Map(FROZEN.entries.map(entry => [entry.id, entry]))
     for (const entry of NAVIGATION_ENTRIES) {
       const expected = expectedById.get(entry.id)
       const canonicalDenominator = expected.progressDenominator - (entry.label === 'History' ? 1 : 0)
@@ -52,7 +51,6 @@ replace_once(
   })
 """,
     """  it('keeps progress out of navigation and records the canonical denominator migration', () => {
-    const expectedById = new Map(FROZEN.entries.map(entry => [entry.id, entry]))
     const shifts = {
       History: -1, // the superseded hidden Renaissance row is no longer a Chapter
       English: 6,  // six real planned English Chapters now exist in the canonical runtime
