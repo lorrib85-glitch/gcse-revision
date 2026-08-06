@@ -57,6 +57,9 @@ jobs:
       - name: Update remaining end-state contracts
         run: python .github/scripts/stage6_retire_fix_remaining.py
 
+      - name: Fix final assertions
+        run: python .github/scripts/stage6_fix_last_two.py
+
       - name: Regenerate canonical outputs
         run: |
           pnpm curriculum:generate
