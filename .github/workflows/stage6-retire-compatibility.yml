@@ -48,6 +48,9 @@ jobs:
       - name: Remove catalogue generator dependency
         run: python .github/scripts/stage6_retire_fix_generator.py
 
+      - name: Tighten test migration parser
+        run: python .github/scripts/stage6_fix_import_parser.py
+
       - name: Migrate architecture tests and guidance
         run: python .github/scripts/stage6_retire_fix_tests.py
 
