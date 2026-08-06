@@ -1,118 +1,212 @@
-# 0003 — Canonical chapter-topic identity
+# 0003 — Canonical Chapter Topic identity
 
-**Status:** accepted (design only); no implementation, no content, no behaviour change
-**Scope:** the teaching unit between a Chapter and its Screens
-**Relationship to 0002:** extends it downward. 0002 stops at the Chapter; this
-starts there and does not touch anything above it.
-**Evidence:** `.planning/chapter-topic-architecture/`
+**Status:** accepted; T0A contract complete  
+**Implementation status:** no schema, content metadata, generated index or learner behaviour exists yet  
+**Scope:** the teaching unit between a Chapter and its Screens  
+**Relationship to 0002:** extends the canonical curriculum architecture downward. ADR-0002 stops at the Chapter; this decision starts there and changes nothing above it.  
+**Supporting evidence:** `.planning/chapter-topic-architecture/`
 
-## The problem: "topic" already means five things
+If a planning document conflicts with this ADR, this ADR is authoritative.
 
-A learner who is weak on *miasma* has two possible destinations today. One is a
-34-screen chapter. The other is a single screen, chosen by
-`findTaggedChapterScreen`, which returns `screenTags.indexOf(tag)` — the first
-match, with no framing, no end and no way back. For 13 of the 54 routes in
-`TAG_CHAPTER_MAP` it returns nothing at all and the learner lands on screen 0.
+## Problem
 
-There is no entity between the chapter and the screen, and the word that should
-name it is already taken five times over:
+The app has no stable unit between a whole Chapter and one Screen. A learner who is weak on *miasma* can currently be sent back to a long Chapter or to the first Screen carrying a matching tag. Neither is a coherent refresher with a title, beginning and end.
 
-| Meaning | Where | Vocabulary | Count |
-|---|---|---|---:|
-| Question-bank grouping | `question.topicId` | `th1`, `tb_immune`, … | 16 |
-| Facet tag | `topic:` namespace | `topic:osmosis`, … | 16 |
-| Knowledge atom | concept registry | `history:medicine:galen` | 87 |
-| Progress-header stage | `stageNavigation` | `part-1`…`part-6` | 6/chapter |
-| Weakness label | `logWrongAnswer({ topic })` | free text | unbounded |
+The word “topic” already has several unrelated meanings in the codebase:
 
-None is a revisitable teaching unit inside one chapter, and none can be promoted
-into one:
+- question-bank routing through `question.topicId`;
+- `topic:` facet tags;
+- free-text weakness labels;
+- progress-header stages;
+- informal curriculum language.
 
-- `th1` means "Medieval Medicine", which spans at least two chapters, while
-  `tb_osmosis` is roughly a chapter section — one vocabulary, two orders of
-  magnitude of grain, and no owning chapter on either.
-- `topic:` facets are, by their own comment in `tagSchema.js`, stand-ins for
-  concepts nobody has registered yet.
-- Concepts are explicitly not a navigation level (0002 §3.10).
-- `stageNavigation` is capped at exactly six slots in two separate files, keyed
-  positionally (`part-3` means nothing), and bounded by screen *indices* that
-  silently shift when a screen is inserted.
-- The weakness-tracker `topic` is unvalidated free text that has already leaked
-  into a persisted key: `weakPointId: ${subject}_${topic}_${date}_…`.
-
-`AUDIT.md` records eight distinct collisions with evidence, including one field
-(`topicId`) that `selectQuestions.js` matches against both `q.module` and
-`q.topic` — one field answering two questions at two levels, which is the exact
-shape 0001 and 0002 each removed one layer up.
+None of these has exactly one owning Chapter, stable identity, learner-facing title, registered concepts and deterministic Screen membership. Reinterpreting one would encode false relationships and risk persisted learner data.
 
 ## Decision
 
-**A Chapter Topic is a new content-level entity: a named, revisitable span of
-screens inside exactly one chapter, referencing registered concepts.**
+A **Chapter Topic** is a new content-level entity: a named, revisitable span of Screens inside exactly one Chapter, referencing one or more registered Concepts.
 
-```
+```text
 Module → Chapter → Topic → Screens
-                     └── references one or more Concepts
+                     └── references Concepts
 ```
 
-Eight rules, settled in `DECISIONS.md`:
+A Topic is not a seventh curriculum entity and not a new browser level. It is a focused re-entry point inside a Chapter.
 
-1. **New entity, not a promotion.** No existing "topic" is reinterpreted.
-2. **Authored in the chapter's content file**, beside its screens — because
-   screen membership is its defining property, and any other home creates two
-   files that must agree with nothing enforcing it.
-3. **The curriculum catalogue never learns about topics.** It owns the Chapter
-   and stops at `contentPath`. This is 0001's and 0002's boundary restated for a
-   new entity, not renegotiated.
-4. **Ids are semantic and chapter-scoped**, referenced globally as
-   `<chapter-id>:<topic-slug>`. Sequential ids are forbidden.
-5. **Screens reference their topic; topics never list their screens.** A
-   `screenIndices` array would be a second copy of one fact, stale on the next
-   insertion — which is exactly how `stageNavigation` drifts and how a quarter
-   of the weakness routes broke.
-6. **Chapter-level screens omit `topic` entirely** — the hook, the diagnostic,
-   exam practice and the close serve the whole chapter.
-7. **Topic activity, concept mastery and chapter completion are three separate
-   stores.** A topic refresher never advances chapter completion.
-8. **Nothing is renamed before its replacement exists.** `topicId`,
-   `MEDICINE_TOPICS`, `topic:` facets, `stageNavigation` and `screenTags` all
-   stay. New identity is added beside old identity, the rule
-   `legacyProgressNames`, `LEGACY_CHAPTER_ID_MAP` and `conceptTag` already
-   follow.
+## V1 authored contract
 
-## Why rule 7 is the one that matters most
+Topics are authored in the Chapter content file, beside the Screens they organise.
 
-Telling a learner who revisited one topic that they have made chapter progress
-is a lie about their revision, and it is the kind of lie that makes them stop
-trusting every number the app shows. Chapter completion answers "have I finished
-this?", topic activity answers "have I been back?", and concept mastery answers
-"do I know this?". Three questions, three stores, no shared key.
+```js
+topics: [
+  {
+    id: 'four-humours-and-opposites',
+    title: 'The four humours and the theory of opposites',
+    conceptIds: [
+      'history:medicine:four-humours',
+      'history:medicine:hippocrates',
+    ],
+    estimatedMinutes: 6,
+  },
+]
+```
+
+A Screen that belongs to the Topic carries the Chapter-scoped slug:
+
+```js
+{
+  type: 'teachScreen',
+  topic: 'four-humours-and-opposites',
+  // ...existing Screen fields
+}
+```
+
+The Topic record has exactly four authored fields in v1:
+
+| Field | Contract |
+|---|---|
+| `id` | Required semantic kebab-case slug, unique within the Chapter |
+| `title` | Required learner-facing sentence-case title |
+| `conceptIds` | Required non-empty list of registered Concept IDs |
+| `estimatedMinutes` | Required positive number or `null` |
+
+Everything else is derived later.
+
+### Deliberately not authored
+
+A Topic record does **not** contain:
+
+- `chapterId` — ownership is structural because the record lives in one Chapter content file;
+- `screenRefs` or `screenIndices` — Screens carry the single membership statement;
+- `position` — array order is authored and a later generator emits position;
+- `globalId` — derived as `<chapter-id>:<topic-slug>`;
+- `prerequisiteTopicIds` — no demonstrated requirement in v1;
+- progress, mastery, completion or learner-state fields.
+
+## Identity
+
+The authored identity is Chapter-scoped:
+
+```text
+four-humours-and-opposites
+```
+
+The globally resolvable identity is derived:
+
+```text
+history-medicine-medieval-beliefs-causes:four-humours-and-opposites
+```
+
+Rules:
+
+1. IDs are semantic, never sequential. `topic-1`, `part-2` and equivalent positional IDs are forbidden.
+2. Reordering Screens or Topics never changes identity.
+3. Two Chapters may use the same local slug because the global identity includes the Chapter ID.
+4. Once Topic activity is persisted, a rename requires an explicit legacy mapping rather than a silent edit.
+
+## Ownership boundaries
+
+### Chapter content owns
+
+- Topic records;
+- Topic order;
+- learner-facing Topic titles;
+- Concept references;
+- estimated duration;
+- each Screen’s Topic back-reference.
+
+### Curriculum catalogue owns
+
+- Subjects, Specifications, Pathways, Modules and Chapters;
+- Chapter identity and `contentPath`.
+
+The curriculum catalogue must never reference Topics, Screens or components.
+
+### Generated learner curriculum owns
+
+The existing canonical learner runtime remains the sole authority for Modules, Chapters, Learning Sequences and content loaders. T0A and T0B do not add Topics to that projection.
+
+A future Topic index is generated separately from Chapter content under `src/data/generated/`, not under `src/data/generated/curriculum/`.
+
+## Screen membership
+
+Screens reference Topics; Topics never enumerate Screens.
+
+This prevents two authored copies of the same fact. Screen insertion and reordering therefore change only derived indices, not Topic records or Topic IDs.
+
+Chapter-wide Screens omit `topic` entirely. Typical examples are:
+
+- Chapter hook;
+- prior-knowledge diagnostic;
+- roadmap;
+- Chapter-wide exam practice;
+- closing Screen.
+
+`topic: null` is not authored. Absence means the Screen is Chapter-level.
+
+Topic Screens should usually be contiguous, but contiguity is a content-review signal rather than a schema failure. Deliberate interleaving remains possible.
+
+## Optionality and size
+
+`topics` is optional. A Chapter without useful standalone revisitable units remains valid and behaves exactly as it does now.
+
+A Topic is normally about **3–8 Screens**. This is review guidance, not a schema minimum or maximum:
+
+- a one-Screen Topic is probably just a Screen;
+- a very large Topic may indicate the Chapter boundary needs review;
+- exceptions are reported and reviewed rather than rejected mechanically.
+
+## State separation
+
+Chapter completion, Topic activity and Concept mastery answer different questions and must remain separate.
+
+| Store | Answers | Example key |
+|---|---|---|
+| Chapter progress | “Have I progressed through or completed this Chapter?” | `gcse_chapter_<chapter-id>` |
+| Topic activity | “Have I revisited this Topic?” | future `gcse_topic_<chapter-id>:<topic-slug>` |
+| Concept mastery | “How well do I know this Concept?” | Concept ID |
+
+A future Topic refresher must never advance Chapter completion. Questions answered inside it may still produce normal Concept evidence. Topic activity is not a mastery score.
+
+## Refresher return behaviour
+
+The v1 default is to return the learner to the route that opened the refresher. This is the least surprising behaviour and avoids inventing a new progression flow.
+
+A later retrieval check may be added as a distinct product decision, but it is not part of the Topic identity contract.
+
+## Compatibility
+
+Existing meanings of “topic” are not renamed or reinterpreted in T0A:
+
+- `question.topicId` and `QUESTION_BANKS_BY_TOPIC` remain question-bank routing keys;
+- `MEDICINE_TOPICS` remains a legacy question-bank grouping;
+- `topic:` facets remain until registered Concepts replace them subject by subject;
+- `stageNavigation` remains a Chapter progress-header concern;
+- `screenTags` remains until Topic routing replaces its last consumer;
+- persisted weakness labels and `weakPointId` remain untouched.
+
+New identity is added beside old identity. Persisted learner data is never rewritten in place.
 
 ## Consequences
 
-**Immediately:** none. This ADR changes no code, no content and no behaviour.
+### Now — T0A
 
-**When implemented** (`MIGRATION-PLAN.md`, T0–T6):
+- The contract and ownership boundaries are frozen.
+- No content file gains `topics` or Screen `topic` metadata.
+- No runtime API, generated index, storage key or learner behaviour is added.
+- No curriculum-catalogue record changes.
 
-- weak-spot recovery resolves a concept to a *titled span with a start and an
-  end* instead of a first-match screen index, which fixes the 13 routes that
-  currently land on screen 0;
-- a learner can open one topic without replaying its chapter, and without their
-  chapter progress moving;
-- the adaptive planner can schedule a 6-minute unit instead of a 34-screen one;
-- `MEDICINE_TOPICS` becomes an explicitly-labelled legacy grouping. It is **not**
-  mapped onto canonical topics: `th1` spans two chapters, so no mapping exists,
-  and inventing one would encode a false statement.
+### Next — T0B
 
-**Independent of Stage 3.** Topics live inside content files, one level below
-the curriculum catalogue's boundary. The generated topic index is a sibling of
-`src/data/generated/curriculum/`, never a child of it. T6 cleanup waits for
-Stage 3, because `screenTags` is compared during Stage 3's byte-equality gate.
+A schema and validator will implement this contract additively. Every existing Chapter without `topics` must continue to validate unchanged. Only after T0B is green may the Medicine pilot author Topic metadata.
 
-## Open
+## Rejected alternatives
 
-Five product decisions remain, each with a stated default so the phases that do
-not depend on them are not blocked: what a refresher does at its end (OD-1),
-whether the progress header should read from topics (OD-2), how a refresher
-handles screens that assume earlier context (OD-3), whether a topic has a size
-range (OD-4), and whether topics apply to every subject (OD-5).
+- Topic as a curriculum-catalogue record.
+- Topic as a fourth browser/navigation tier.
+- A separate handwritten Topic registry.
+- Deriving Topics only from existing Screen tags.
+- Authoring `screenIndices` or `screenRefs` on Topic records.
+- Sequential Topic IDs.
+- Topic-level completion percentages.
+- A prerequisite graph in v1.

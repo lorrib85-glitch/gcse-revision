@@ -1,226 +1,274 @@
 # Chapter Topic — migration plan
 
-**Nothing in this document is executed by this pack.** It sequences the work so
-each phase lands independently, keeps `pnpm verify` green, and can be reverted
-without touching the one before it.
+This plan breaks the Topic architecture into independently reversible phases. Each phase must keep `pnpm verify` green and must not rely on a later phase to make it safe.
 
-The governing constraint, unchanged from the curriculum migration: **`MODULES`,
-`CHAPTERS` and `CHAPTER_CONTENT_LOADERS` keep their exact export names and
-shapes.** Chapter progress keys are never touched.
+The governing boundary is now the post–Stage 6 architecture:
+
+- the curriculum catalogue owns Subjects, Specifications, Pathways, Modules and Chapters;
+- `src/data/learnerCurriculum.js` is the sole production learner-runtime boundary for canonical Modules, Chapters, Learning Sequences and content loaders;
+- Chapter Topic metadata lives inside Chapter content and never enters the curriculum catalogue;
+- Chapter progress keys remain untouched.
 
 ---
 
-## Phase shape
+## Phase map
 
+```text
+T0A  Contract and ownership boundaries are accepted             COMPLETE
+T0B  Additive Topic schema and validator                        no runtime change
+T1A  Write and review one Medicine screen-to-Topic assignment   no runtime change
+T1B  Author the Medicine pilot metadata                         no runtime change
+T2   Generate and drift-check the Topic index                   no runtime change
+T3   Weak-spot recovery reads the Topic index                   learner-visible, gated
+T4   A learner opens one standalone Topic refresher             learner-visible, gated
+T5   Adaptive planning schedules Topic-sized work               learner-visible, gated
+T6   Retire replaced compatibility fields subject by subject    cleanup
 ```
-T0  Contract and validation exist, no content uses them      no runtime change
-T1  Medicine pilot — one chapter authors topics              no runtime change
-T2  Generated index emitted and checked                      no runtime change
-T3  Weak-spot recovery reads the index                       VISIBLE, gated
-T4  Topic refresher — a learner opens one topic              VISIBLE, gated
-T5  Adaptive planner schedules topics                        VISIBLE, gated
-T6  Compatibility cleanup: topicId, topic:, MEDICINE_TOPICS  cleanup
-```
 
-T0–T2 are behaviour-preserving. The first learner-visible change is **T3**, and
-it is an improvement to a route that is measurably broken today (24% of
-weakness routes land on screen 0 — anomaly A-20).
+T0A–T2 are behaviour-preserving. T3 is the first learner-visible change.
 
 ---
 
-## T0 — the contract exists and nothing uses it
+## T0A — contract and architecture decision
 
-**Lands:** a topic schema and validator for the `topics` array and the screen
-`topic` back-reference; an architecture test asserting that a chapter with no
-`topics` key is valid and unchanged.
+**Status:** complete once ADR-0003, `DECISIONS.md` and this plan are committed together.
 
-**Deliberately not landed:** any content, any index, any consumer.
+**Lands:**
 
-**Verification:** every existing chapter still validates untouched. That is the
-whole test — the contract must be additive or it is wrong.
+- the definition of a Chapter Topic;
+- authored record shape;
+- semantic ID grammar;
+- ownership boundaries;
+- optionality and size guidance;
+- separation of Chapter completion, Topic activity and Concept mastery;
+- default refresher return behaviour;
+- explicit v1 non-goals.
 
-**Reversible by:** deleting one file.
+**Deliberately does not land:**
 
----
+- schema or validator code;
+- Topic metadata in content;
+- generated Topic data;
+- runtime imports;
+- storage keys;
+- learner-visible behaviour.
 
-## T1 — the Medicine pilot
-
-**Lands:** `topics` on `history-medicine-medieval-beliefs-causes`, and a `topic`
-key on the screens that belong to one. Chapter-level screens stay untouched.
-
-**Why this chapter:** 34 screens, 10 registered concepts, the most tagged screens
-of any chapter, and it is the destination of 7 of the 54 `TAG_CHAPTER_MAP`
-entries. If topics do not fit here they fit nowhere.
-
-**Prerequisites — all four, before a single line of content changes:**
-
-1. **T0 merged.** Authoring against an unvalidated shape produces a shape.
-2. **Every concept the pilot references is already registered.** The five topics
-   in `DESIGN.md` §9 use only existing ids; if a sixth topic needs a new
-   concept, the concept is registered in its own commit first.
-3. **A written screen-to-topic assignment, reviewed before authoring.** Which of
-   the 34 screens belongs to which topic, and which are chapter-level. This is a
-   pedagogical judgement, not a mechanical one, and `/content-review` governs
-   it.
-4. **The chapter renders identically afterwards.** A 390px render pass before
-   and after. `topic` is inert metadata at T1 — if anything moves on screen, the
-   change is wrong.
-
-**Verification:** `screenCount` unchanged, `screenTags` unchanged,
-`stageNavigation` unchanged, chapter opens/progresses/completes identically.
+**Acceptance:** the repository’s permanent ADR describes one contract with no competing authored source.
 
 ---
 
-## T2 — the generated index
+## T0B — additive schema and validator
 
-**Lands:** `scripts/generate-topic-index.mjs` writing
-`src/data/generated/topicIndex.js`, plus `topics:check` in `pnpm verify`.
+**Goal:** make the accepted contract enforceable without changing any existing Chapter.
 
-Same discipline as the four component-catalogue registries: deterministic, same
-content in / same bytes out, `GENERATED FILE — DO NOT EDIT` banner, drift check.
+**Lands:**
 
-**Checks the generator enforces:**
+- a Topic-record validator for the optional Chapter-content `topics` array;
+- validation for the Screen `topic` back-reference;
+- focused architecture tests;
+- authoring guidance pointing to ADR-0003.
 
-- every screen `topic` resolves to a topic declared by its own chapter;
-- every topic has at least one screen (a topic nothing teaches is an authoring
-  slip);
-- every `conceptIds` entry is registered;
-- topic slugs are unique within a chapter;
-- non-contiguous screen membership is **reported, not failed** (`DESIGN.md` §5).
+**Required rules:**
 
-**Still no runtime change.** Nothing imports the index.
+1. A Chapter with no `topics` key is valid and unchanged.
+2. When `topics` exists, it is a non-empty array.
+3. Each Topic has exactly the v1 authored fields:
+   - `id`;
+   - `title`;
+   - `conceptIds`;
+   - `estimatedMinutes`.
+4. `id` is semantic kebab case, unique within the Chapter and not sequential placeholder vocabulary.
+5. `title` is non-empty learner-facing text.
+6. `conceptIds` is a non-empty array of registered Concept IDs with no duplicates.
+7. `estimatedMinutes` is a positive finite number or `null`.
+8. A Screen `topic` value is a local slug declared by its own Chapter.
+9. Chapter-level Screens may omit `topic`.
+10. Topic metadata contains no Chapter progress, Topic activity, mastery or learner-state fields.
+11. No curriculum-catalogue record gains a Topic field.
+12. No production file imports Topic validation or a Topic index at runtime.
 
----
+**Deliberately not enforced yet:**
 
-## T3 — weak-spot recovery reads the index
+- at least one Screen per Topic — meaningful once the pilot exists;
+- Screen contiguity — reported later, not a schema failure;
+- 3–8 Screen size guidance — content review, not schema;
+- standalone-context quality — content review;
+- prerequisite relationships — not part of v1.
 
-**The first learner-visible phase, and the one with the clearest payoff.**
-
-Today `findTaggedChapterScreen` returns the first screen whose tag matches, or
-`undefined`; 13 of 54 routes return `undefined` and drop the learner at screen
-0. With the index, a concept resolves to a *topic* — a titled span with a start
-and an end.
-
-**Gated on:** T2 green, and a measured before/after of all 54 routes. A route
-moving from screen 0 to a real topic is the point; a route that changes
-*destination chapter* is a regression and must be reviewed individually.
-
-**Reversible by:** reverting one lookup.
-
----
-
-## T4 — the topic refresher
-
-**Lands:** the ability to open one topic without replaying its chapter, plus the
-topic-activity store from `DESIGN.md` §7.
-
-**Prerequisites:**
-
-1. **T3 shipped and stable.** Routing must be right before it becomes a
-   destination.
-2. **A settled answer to OD-3 (`DECISIONS.md`)** — what a refresher does when
-   its topic's screens assume earlier chapter context.
-3. **A separate storage key, proven not to touch `gcse_chapter_<id>`.** An
-   architecture test asserting a refresher session leaves chapter progress
-   byte-identical. This is the hard boundary of the whole feature.
-4. **The mastery-engine allowlist explicitly extended** to the refresher, in its
-   own change, per `tests/architecture/mastery-engine.test.js`.
-
-**Not in scope:** any change to what chapter completion means.
+**Acceptance:** every existing Chapter validates byte-for-byte unchanged, malformed fixtures fail for the intended reason, and no learner-facing output changes.
 
 ---
 
-## T5 — adaptive planning over topics
+## T1A — Medicine assignment before authoring
 
-`buildDailyPlan` gains topic-sized blocks: "6 minutes on miasma" instead of
-"open a 34-screen chapter". Depends on `estimatedMinutes` being authored widely
-enough to be useful, which is a content prerequisite, not an engineering one.
+**Pilot Chapter:** `history-medicine-medieval-beliefs-causes`
+
+Before content changes, write a reviewed assignment covering every Screen:
+
+- Topic slug;
+- learner-facing title;
+- Concept IDs;
+- estimated minutes;
+- Screen indices assigned to it;
+- Chapter-level Screens that deliberately remain unassigned;
+- any wording that assumes earlier Chapter context.
+
+This is a pedagogical decision and must be reviewed as content, not generated mechanically from existing tags.
+
+**Acceptance:** every Screen is accounted for, the assignment uses registered Concepts only, and no source content changes.
+
+---
+
+## T1B — Medicine pilot metadata
+
+**Lands:**
+
+- `topics` on `history-medicine-medieval-beliefs-causes`;
+- `topic` back-references on the assigned Screens only.
+
+**Prerequisites:** T0B green and T1A reviewed.
+
+**Hard parity requirements:**
+
+- same `screenCount`;
+- same derived `screenTags`;
+- same `stageNavigation`;
+- same Screen order and authored copy;
+- same Chapter open/progress/complete behaviour;
+- same 390px render before and after.
+
+Topic metadata is inert in T1B. Any visual or behavioural change is a regression.
+
+---
+
+## T2 — generated Topic index
+
+**Lands:**
+
+- `scripts/generate-topic-index.mjs`;
+- `src/data/generated/topicIndex.js`;
+- a public read boundary only when a later consumer needs it;
+- `topics:generate` and `topics:check` commands;
+- drift checking inside `pnpm verify`;
+- generated documentation or diagnostics for content review.
+
+The generator reads Chapter content through the canonical content-loading boundary. It does not read browser navigation, learner state, planning documents or curriculum compatibility files.
+
+**Generated facts include:**
+
+- global Topic ID;
+- Chapter ID;
+- position;
+- title;
+- Concept IDs;
+- estimated minutes;
+- Screen indices;
+- first and last Screen index;
+- Chapter-level Screen indices;
+- Concept-to-Topic lookup.
+
+**Checks:**
+
+- every Screen back-reference resolves within its own Chapter;
+- every Topic has at least one Screen;
+- every Concept ID resolves;
+- Topic slugs are unique within a Chapter;
+- global IDs are unique;
+- non-contiguous membership and size outliers are reported;
+- same content produces identical bytes.
+
+Still no production consumer imports the index.
+
+---
+
+## T3 — weak-spot recovery uses Topics
+
+Replace first-matching-Screen routing with Concept → Topic → start-Screen resolution.
+
+**Gate:** measure every existing weakness route before and after.
+
+A route moving from Screen 0 or `undefined` to the correct Topic is the intended improvement. A route changing destination Chapter requires explicit review.
+
+Keep `screenTags` until this route and any other consumer have proven replacements.
+
+---
+
+## T4 — standalone Topic refresher
+
+**Lands:**
+
+- direct Topic opening;
+- playback of Topic Screens only;
+- Topic activity storage under a new key;
+- return to the route that opened the refresher.
+
+**Hard boundary:** a refresher must leave `gcse_chapter_<chapter-id>` byte-identical.
+
+**Blocked by:** OD-3 content handling for Screens that assume earlier context.
+
+A refresher may record normal Concept evidence only after the mastery-engine allowlist is explicitly extended in its own reviewed change.
+
+---
+
+## T5 — adaptive planning
+
+The planner may schedule Topic-sized blocks only after Topic routing and standalone playback are stable.
+
+Initial selection should remain deterministic and explainable, using evidence such as:
+
+- repeated incorrect answers;
+- low confidence;
+- recency;
+- previous Topic activity;
+- estimated duration.
+
+No opaque “learning style” classification is introduced.
 
 ---
 
 ## T6 — compatibility cleanup
 
-Only after T3–T5 have a working replacement for each.
+Cleanup happens only after each replacement is live and proven.
+
+| Existing field or vocabulary | Treatment |
+|---|---|
+| `question.topicId` | Keep as a question-bank routing key. A future canonical `topicRef` may coexist. |
+| `QUESTION_BANKS_BY_TOPIC` | Keep while the question bank uses it. |
+| `MEDICINE_TOPICS` | Label explicitly as a legacy question-bank/tag grouping; do not map one-to-one to Chapter Topics. |
+| `topic:` facets | Replace subject by subject when registered Concepts exist. |
+| `stageNavigation` | Keep until a separate learner-visible progress-header decision replaces it. |
+| `screenTags` | Remove only after its final routing/content consumer has migrated. |
+| `logWrongAnswer({ topic })` | Keep free text; add canonical identity beside it rather than rewriting rows. |
+| `weakPointId` | Never rewrite; it is persisted identity. |
+
+The rule is **add beside, then retire after proof**. No learner row or progress key is rewritten in place.
 
 ---
 
-## 4. Compatibility treatment of the existing fields
+## Runtime and catalogue boundaries
 
-Nothing below is renamed, deleted or reinterpreted before its replacement
-exists. Each row states what happens and when.
+Stage 6 of the curriculum migration is complete. Topic work must preserve its result:
 
-| Field | Treatment | Phase |
-|---|---|---|
-| `question.topicId` | **Kept, unchanged, indefinitely.** It is a question-bank routing key and it works. It is *not* renamed to `bankId`, because 16 ids across 6 files and 4 consumers is a rename with no user. A future question may additionally carry a canonical `topicRef`; the two coexist. | — |
-| `QUESTION_BANKS_BY_TOPIC` | Kept. Same reasoning. | — |
-| `MEDICINE_TOPICS` | **Becomes a legacy grouping, explicitly.** It is a *tag-inheritance layer* for the question bank (`AUDIT.md` §8), not a topic set, and its `tags` are facets only. It is **not** renamed and **not** mapped one-to-one onto canonical topics — `th1` "Medieval Medicine" spans at least two chapters, so no mapping exists. It gains a comment saying what it is, and `masteryRecorder` keeps using it until questions carry concept tags directly. | T6 |
-| `topic:` facets | **Superseded per subject, never in bulk.** Each is a stand-in for an unregistered concept. When a subject's concepts are registered, its `topic:` tags are replaced in that subject's own change; `tagSchema.js` already says "prefer a registered concept tag once the subject has one". The namespace itself is removed only when the last tag goes. | T6 |
-| `stageNavigation` | **Kept, unchanged.** It is progress-header presentation with a hard six-slot contract in two files. Whether the header should read from topics is a separate product question (OD-4), not a migration step. | — |
-| `screenTags` | Kept until T3 removes its last routing consumer; it is also load-bearing for Stage 3 of the curriculum migration, which must land first. | T6 |
-| `logWrongAnswer({ topic })` | **Kept and never rewritten.** Existing rows carry free text and `weakPointId` embeds it (`AUDIT.md` C-4). A `topicRef` field is *added* beside `conceptTag` — the precedent already set when `conceptTag` was added beside `topic`. No stored row is rewritten and no weak point is orphaned. | T3 |
-| `weakPointId` | Untouched. It is a persisted key containing a free-text topic string; changing its shape orphans stored weak points. New weak points may carry `topicRef` as an extra field. | — |
-
-**The rule across every row: add beside, never rewrite in place.** It is the
-same rule `legacyProgressNames`, `LEGACY_CHAPTER_ID_MAP` and `conceptTag`
-already follow, and it is why none of them lost learner data.
+1. Topics never enter `src/curriculum-catalogue/**`.
+2. T0A and T0B do not alter `src/data/learnerCurriculum.js` or the generated learner curriculum.
+3. The future Topic index is a separate generated artefact under `src/data/generated/`, not `src/data/generated/curriculum/`.
+4. Browser navigation never becomes a Topic authority.
+5. Topic activity never shares a storage key with Chapter progress.
 
 ---
 
-## 5. Prerequisites for Stage 3 of the curriculum migration
-
-Stage 3 (curriculum runtime projections) and the Topic work are **independent
-and must not be interleaved**. Stage 3 generates `MODULES`, `CHAPTERS` and
-`CHAPTER_CONTENT_LOADERS` from the curriculum catalogue; topics live inside
-content files, one level below that boundary.
-
-Two constraints hold in both directions:
-
-1. **Topics must not enter the curriculum catalogue.** A catalogue record may
-   never reference a topic, a screen or a component. T0's validator lives with
-   the content schema, not with `src/curriculum-catalogue/schema.js`.
-2. **T2's index must not be written under `src/data/generated/curriculum/`.**
-   That path is Stage 3's, generated from a different source with a different
-   check. `src/data/generated/topicIndex.js` is a sibling, not a child.
-
-**Ordering:** T0–T2 may proceed at any time. **T6 must wait for Stage 3**,
-because `screenTags` is compared during Stage 3's byte-equality gate and
-removing it early would remove the thing being compared.
-
----
-
-## 6. Prerequisites for standalone adaptive topic refreshers
-
-The end state — "you are weak on miasma, here is a 6-minute refresher" — needs
-all six:
-
-1. T2 shipped: the `byConcept` index exists.
-2. T3 shipped: concepts resolve to topics, not to first-match screens.
-3. T4 shipped: a topic can be opened and its activity recorded separately from
-   chapter completion.
-4. `estimatedMinutes` authored on enough topics to schedule against.
-5. The mastery engine authorised to be **read** by the planner — today it is
-   write-only from QuickFire, and the allowlist guard blocks everything else.
-6. OD-1 and OD-3 settled: what a refresher does at its end, and what it does
-   when its screens assume earlier chapter context.
-
-Until 5 is granted, a refresher can be *routed to* but cannot be *chosen for*
-the learner by mastery. T3 is still worth shipping without it: it fixes 13
-broken routes on its own.
-
----
-
-## 7. What each phase costs if it goes wrong
+## Failure containment
 
 | Phase | Worst case | Recovery |
 |---|---|---|
-| T0 | a validator nobody calls | delete one file |
-| T1 | topics carve one chapter badly | edit one content file; no learner data involved |
-| T2 | the index disagrees with content | the drift check fails; nothing ships |
-| T3 | a weakness route lands somewhere worse | revert one lookup; `screenTags` still exists |
-| T4 | topic activity leaks into chapter progress | the architecture test in T4's prerequisites is what stops this reaching a learner at all |
-| T5 | the planner over-schedules refreshers | revert the block type |
-| T6 | a deleted field was load-bearing | restore from git |
+| T0A | a poor written contract | amend the ADR before implementation |
+| T0B | an additive validator rejects valid existing content | revert validator and tests; no content or learner data changed |
+| T1A | poor pedagogical grouping on paper | revise assignment before authoring |
+| T1B | poor grouping in one Chapter | edit one content file; no learner data exists yet |
+| T2 | generated index disagrees with content | drift/validation fails before any runtime import |
+| T3 | weakness route lands somewhere worse | revert one lookup; legacy route remains available |
+| T4 | Topic activity leaks into Chapter progress | architecture test blocks release |
+| T5 | planner over-schedules Topic work | revert Topic block selection |
+| T6 | a removed compatibility field was still live | restore it and identify the missed consumer |
 
-**No phase can lose learner progress.** Chapter progress keys are untouched
-throughout, topic activity is a new key, and no persisted weakness row is ever
-rewritten.
+No phase is permitted to lose or silently reinterpret learner progress.
