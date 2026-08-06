@@ -54,6 +54,9 @@ jobs:
       - name: Migrate architecture tests and guidance
         run: python .github/scripts/stage6_retire_fix_tests.py
 
+      - name: Update remaining end-state contracts
+        run: python .github/scripts/stage6_retire_fix_remaining.py
+
       - name: Regenerate canonical outputs
         run: |
           pnpm curriculum:generate
