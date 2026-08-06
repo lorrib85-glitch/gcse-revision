@@ -6,7 +6,7 @@
 // runtime Chapter screen counts so existing progress calculations stay unchanged.
 // It deliberately does not spread compatibility-shaped Chapter rows into the UI.
 
-import { CHAPTERS } from '../../chapters.js'
+import { CURRICULUM_CHAPTERS as CHAPTERS } from '../../data/learnerCurriculum.js'
 import {
   NAVIGATION_ENTRIES,
   getNavigationEntryForDisplayName,

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { CHAPTERS, isChapterAvailable } from '../../../src/chapters.js'
-import { MODULES } from '../../../src/data/modules.js'
+import { CURRICULUM_CHAPTERS as CHAPTERS, isChapterAvailable } from '../../../src/data/learnerCurriculum.js'
+import { LEARNING_SEQUENCES as MODULES } from '../../../src/data/learnerCurriculum.js'
 
 // Mock localStorage-backed storage so all planner tests run in node cleanly.
 // Must be declared before the dynamic import below.

@@ -1,5 +1,4 @@
-import { CHAPTERS, isChapterAvailable } from '../chapters.js'
-import { MODULES } from '../data/modules.js'
+import { CURRICULUM_CHAPTERS as CHAPTERS, LEARNING_SEQUENCES as MODULES, isChapterAvailable } from '../data/learnerCurriculum.js'
 import { MEDICINE_2023_PAPER } from '../data/medicineExamPapers.js'
 import { SUBJECTS } from '../constants/subjects.js'
 import { isCinematicHeaderScreen } from '../data/screenRegistry.js'

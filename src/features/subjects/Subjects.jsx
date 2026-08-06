@@ -3,7 +3,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
-import { CHAPTERS } from '../../chapters.js'
+import { CURRICULUM_CHAPTERS, getCurriculumChapterById } from '../../data/learnerCurriculum.js'
 import { getChapterState as safeGetChapterState, getChapterPct as chapterPct, getContinueChapter } from '../../progress.js'
 import { getWeakestSubject, getBiggestWin } from '../../unifiedWeaknessTracker.js'
 import { findTaggedChapterScreen } from '../../data/tagChapterMap.js'
@@ -80,7 +80,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenChapter }) {
 
   function handleCardClick(item) {
   if (item.status === 'coming_soon' || !item.openable || item.navigationKind !== 'chapter') return
-  const realChapter = CHAPTERS.find(chapter => chapter.id === (item.chapterId || item.id))
+  const realChapter = getCurriculumChapterById(item.chapterId || item.id)
   if (realChapter && onOpenChapter) onOpenChapter(realChapter)
 }
 
@@ -518,7 +518,7 @@ export default function SubjectsTab({ onOpenChapter }) {
   const continueHeaderImage = continueChapter.headerImage || DEFAULT_CHAPTER_HEADER_IMAGE
 
   const biggestWinRaw = getBiggestWin()
-  const biggestWinChapter = biggestWinRaw ? CHAPTERS.find(chapter => chapter.id === biggestWinRaw.chapterId) : null
+  const biggestWinChapter = biggestWinRaw ? getCurriculumChapterById(biggestWinRaw.chapterId) : null
   const biggestWin = biggestWinChapter ? {
     ...biggestWinRaw,
     chapter: biggestWinChapter,
@@ -528,7 +528,7 @@ export default function SubjectsTab({ onOpenChapter }) {
 
   const weakestSubject = getWeakestSubject()?.subject || null
   const subjectThumbs = SUBJECT_NAMES.map(name => {
-    const chapters = CHAPTERS.filter(chapter => chapter.subject === name)
+    const chapters = CURRICULUM_CHAPTERS.filter(chapter => chapter.subject === name)
     const pct = chapters.length ? Math.round(chapters.reduce((sum, chapter) => sum + chapterPct(chapter), 0) / chapters.length) : 0
     return { name, image: subjectImages[name], pct, isWeakest: name === weakestSubject }
   })

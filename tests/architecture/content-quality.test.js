@@ -15,8 +15,12 @@ import {
   sentenceCaseViolations,
   violationFingerprints,
 } from '../../src/data/contentQualityChecks.js'
-import { CHAPTERS } from '../../src/chapters.js'
-import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
+import {
+  CURRICULUM_CHAPTERS as CHAPTERS,
+} from '../../src/data/learnerCurriculum.js'
+import {
+  CHAPTER_CONTENT_LOADERS,
+} from '../../src/data/learnerCurriculum.js'
 import {
   KNOWN_GUARDRAIL_VIOLATIONS,
   KNOWN_READABILITY_BASELINES,

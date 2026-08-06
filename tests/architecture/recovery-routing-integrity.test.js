@@ -1,7 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { TAG_CHAPTER_MAP, findTaggedChapterScreen } from '../../src/data/tagChapterMap.js'
-import { CHAPTERS } from '../../src/chapters.js'
-import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
+import {
+  CURRICULUM_CHAPTERS as CHAPTERS,
+} from '../../src/data/learnerCurriculum.js'
+import {
+  CHAPTER_CONTENT_LOADERS,
+} from '../../src/data/learnerCurriculum.js'
 
 // Guards the weakness → recovery routing chain:
 //   weakness tag → TAG_CHAPTER_MAP → chapter → tagged screen → screen index

@@ -12,11 +12,8 @@
 
 ## Ownership split — order vs metadata
 
-> **Since the Stage 4 cutover, `src/data/modules.js`, `src/chapters.js` and
-> `src/content/chapterContentRegistry.js` are generated re-export boundaries.**
-> They are still the correct import path for every consumer; they are never
-> authored in. What follows describes what each *runtime export* carries and
-> where that fact is now authored.
+> **Since Stage 6, production uses one canonical learner-runtime boundary:**
+> `src/data/learnerCurriculum.js`. The three former compatibility boundaries are retired.
 
 `MODULES` carries, authored on **module records**
 (`src/curriculum-catalogue/records/modules/`):
@@ -84,10 +81,7 @@ the Medicine section spans Medicine in Britain and the Western Front.
 
 - `src/curriculum-catalogue/records/modules/` — **authored** module membership and order.
 - `src/curriculum-catalogue/records/chapters/` — **authored** chapter identity and `contentPath`.
-- `src/data/modules.js` — re-export boundary for `MODULES`; never authored in.
-- `src/chapters.js` — re-export boundary for `CHAPTERS`; never authored in.
-- `src/content/chapterContentRegistry.js` — re-export boundary for the generated loaders; never authored in.
-- `src/data/contentHierarchy.js` — hierarchy levels and the relationship validator.
+- `src/data/learnerCurriculum.js` — sole production boundary for canonical Modules, Chapters, Learning Sequences and loaders.
 - `src/curriculum-catalogue/navigation/browserEntries.js` — authored Browser Entry configuration.
 - `src/data/generated/curriculum/navigation.js` — generated browser projection; never hand-edit.
 - `src/features/subjects/subjectNavigationAdapter.js` — sole production projection adapter.

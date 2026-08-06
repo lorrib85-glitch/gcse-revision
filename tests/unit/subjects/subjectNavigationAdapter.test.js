@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { CHAPTERS, CHAPTER_AVAILABILITY, getChapterAvailability } from '../../../src/chapters.js'
+import { CURRICULUM_CHAPTERS as CHAPTERS, isChapterAvailable } from '../../../src/data/learnerCurriculum.js'
 import { NAVIGATION_ENTRIES } from '../../../src/data/generated/curriculum/navigation.js'
 import {
   SUBJECT_NAVIGATION_NAMES,
@@ -103,7 +103,7 @@ describe('Subject-navigation adapter', () => {
     for (const card of openable) {
       const runtime = runtimeById.get(card.chapterId)
       expect(runtime, card.id).toBeTruthy()
-      expect(getChapterAvailability(runtime), card.id).toBe(CHAPTER_AVAILABILITY.AVAILABLE)
+      expect(isChapterAvailable(runtime), card.id).toBe(true)
       expect(card.screenCount, card.id).toBe(runtime.screenCount)
     }
   })
@@ -122,11 +122,11 @@ describe('Subject-navigation adapter', () => {
     expect(cards.some(card => card.id.startsWith('cs_'))).toBe(false)
   })
 
-  it('surfaces no hidden runtime Chapter', () => {
-    const hidden = SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
-      .filter(card => card.chapterId)
-      .filter(card => getChapterAvailability(card) === CHAPTER_AVAILABILITY.HIDDEN)
-    expect(hidden).toEqual([])
+  it('surfaces no superseded Renaissance runtime Chapter', () => {
+    const retiredId = 'history-medicine-renaissance-medicine'
+    expect(CHAPTERS.some(chapter => chapter.id === retiredId)).toBe(false)
+    expect(SUBJECT_NAVIGATION_NAMES.flatMap(getSubjectChapterList)
+      .some(card => card.chapterId === retiredId)).toBe(false)
   })
 
   it('does not leak compatibility-shaped Chapter fields into browser cards', () => {

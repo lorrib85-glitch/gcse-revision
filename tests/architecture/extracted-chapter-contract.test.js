@@ -11,8 +11,12 @@
  */
 
 import { describe, it, expect, beforeAll } from 'vitest'
-import { CHAPTERS } from '../../src/chapters.js'
-import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
+import {
+  CURRICULUM_CHAPTERS as CHAPTERS,
+} from '../../src/data/learnerCurriculum.js'
+import {
+  CHAPTER_CONTENT_LOADERS,
+} from '../../src/data/learnerCurriculum.js'
 
 // ─── Chapter scope ─────────────────────────────────────────────────────────────
 
@@ -67,10 +71,10 @@ describe('Extracted chapter content contracts', () => {
   beforeAll(async () => {
     for (const id of TARGET_IDS) {
       const loader = CHAPTER_CONTENT_LOADERS[id]
-      if (!loader) throw new Error(`No loader registered for chapter "${id}" in chapterContentRegistry.js`)
+      if (!loader) throw new Error(`No loader registered for chapter "${id}" in learnerCurriculum.js`)
       const content = await loader()
       const meta = CHAPTERS.find(m => m.id === id)
-      if (!meta) throw new Error(`No metadata row for "${id}" in src/chapters.js`)
+      if (!meta) throw new Error(`No metadata row for "${id}" in learnerCurriculum.js`)
       loaded.push({ id, meta, content })
     }
   })
@@ -81,7 +85,7 @@ describe('Extracted chapter content contracts', () => {
     for (const { id, meta, content } of loaded) {
       expect(
         content.screens.length,
-        `[${id}] src/chapters.js screenCount=${meta.screenCount} but content has ${content.screens.length} screens`,
+        `[${id}] generated screenCount=${meta.screenCount} but content has ${content.screens.length} screens`,
       ).toBe(meta.screenCount)
     }
   })

@@ -91,12 +91,12 @@ const effective = resolveEffectiveTags(
 
 | Layer | Location |
 |---|---|
-| Module | `tags` on the 14 Medicine chapter entries in `src/chapters.js` |
+| Chapter | canonical `conceptIds` on Chapter records, projected through `learnerCurriculum.js` |
 | Topic | `MEDICINE_TOPICS` (`th1`…`th_modern`) in `concepts/historyMedicine.js` |
 | Question | `tags` on every question in `src/data/questionBanks/history/medicine.js` |
 | Exam question | `tags` on `J23_Q*` in `src/data/medicineExamPapers.js` |
 | Exam paper | `tags` on `MEDICINE_2023_PAPER` (paper-level: `paper:medicine`, `examboard:edexcel`, `tier:gcse`) |
-| Screen (legacy) | `screenTags` in `src/chapters.js` stay as-is; `MEDICINE_SCREEN_TAG_CONCEPTS` bridges them to concept ids without a migration |
+| Screen (legacy) | content `tag` values are derived into `learnerCurriculum.js`; `MEDICINE_SCREEN_TAG_CONCEPTS` bridges them to concept ids until Chapter Topics replace the route |
 
 ## Future expansion
 

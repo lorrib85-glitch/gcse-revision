@@ -192,7 +192,7 @@ describe('deleted ChapterPlayer overlay machinery stays deleted', () => {
 describe('no shipped chapter uses module-level examiner metadata', () => {
   // The basis for removing both overlays. Chapter content is the `chapter` prop
   // ChapterPlayer receives (LegacyApp hands it the content module's default
-  // export, falling back to the chapters.js row), so both are checked.
+  // export, falling back to canonical learner-runtime metadata), so both are checked.
   //
   // Only files whose source mentions "examiner" are imported: a top-level
   // examiner key and an authored examinerExplains screen both require that
@@ -216,8 +216,8 @@ describe('no shipped chapter uses module-level examiner metadata', () => {
     expect(offenders, 'a chapter now authors module-level examiner metadata — stop and decide whether to restore the overlay or migrate it to a screen').toEqual([])
   })
 
-  it('no chapters.js row defines a top-level examiner or examinerExplains', async () => {
-    const { CHAPTERS } = await import('../../src/chapters.js')
+  it('no canonical Chapter row defines a top-level examiner or examinerExplains', async () => {
+    const { CURRICULUM_CHAPTERS: CHAPTERS } = await import('../../src/data/learnerCurriculum.js')
     const offenders = CHAPTERS
       .filter(chapter => 'examiner' in chapter || 'examinerExplains' in chapter)
       .map(chapter => chapter.id)

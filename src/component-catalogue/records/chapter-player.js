@@ -38,7 +38,7 @@ export default {
       'screenRegistry.js schema validation',
       'chapterNavigation.js',
       'progress.js',
-      'MODULES',
+      'LEARNING_SEQUENCES via learnerCurriculum.js',
       'its own private family under layout/chapterPlayer/'
     ],
     usedBy: [],
@@ -47,7 +47,7 @@ export default {
     story: null,
     governanceRules: [
       'No chapter-level examiner or repair diversions. Finishing the last content screen completes the chapter, full stop. Face the Examiner and What Examiners Look For are reached as authored screens routed by ScreenRenderer, never as end-of-chapter overlays; WeakSpotRecovery and RecoveryQuizPlayer have no ChapterPlayer entry point.',
-      'Chapter-building rule: a normal chapter is buildable by authoring a canonical chapter record under src/curriculum-catalogue/records/chapters/, referencing it from exactly one canonical module record, writing its content file, pointing the record contentPath at that file, composing registered screens and blocks from src/data/screenRegistry.js, and running the curriculum generators. src/chapters.js, src/data/modules.js and src/content/chapterContentRegistry.js are generated re-export boundaries and are never authored in; screenCount, screenTags and the loader entry are derived, not maintained. Adding a normal chapter must not require editing ChapterPlayer, ScreenRenderer, app navigation or progress persistence. Enforced by tests/architecture/chapter-authoring-boundary.test.js and tests/architecture/authoring-guidance.test.js.'
+      'Chapter-building rule: author a canonical Chapter record, reference it from exactly one canonical Module record, create its content file, set contentPath, use registered screens and blocks, then run the curriculum generators. Production reaches the result only through src/data/learnerCurriculum.js; screenCount, screenTags and the loader entry are derived. Adding a normal Chapter must not require editing ChapterPlayer, ScreenRenderer, app navigation or progress persistence. Enforced by tests/architecture/chapter-authoring-boundary.test.js and tests/architecture/authoring-guidance.test.js.'
     ],
     notes: []
   },

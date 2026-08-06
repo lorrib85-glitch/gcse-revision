@@ -273,78 +273,41 @@ Full contract pack: `stage-5-navigation/`.
 
 ---
 
-## Stage 6 — migrate the remaining legacy consumers, then clean up
+## Stage 6 — canonical learner runtime and compatibility retirement
 
-Stage 6 is no longer only a delete list. Stage 5 leaves nine production
-consumers still importing the compatibility-shaped `MODULES`, `CHAPTERS` and
-`CHAPTER_CONTENT_LOADERS`, and every compatibility field's retirement is blocked
-behind them. **Migrating or removing those consumers is the first half of
-Stage 6; the deletions are the second half and cannot start before it.**
+Stage 6 is complete. It did **not** route progress and planning through the
+browser projection. Instead it added an explicit Learning Sequence configuration
+and generated canonical learner-runtime query model:
 
-### 6.1 The remaining legacy runtime consumers
+- canonical Modules continue to own Chapter membership;
+- Study Pathways continue to own qualification structure;
+- Browser Entries continue to own destination presentation;
+- Learning Sequences own only app-level continuation, numbering scope and planner order;
+- `src/data/learnerCurriculum.js` is the sole production boundary for canonical
+  Modules, Chapters, sequences and content loaders.
 
-Each row names the migration or removal required. **None of this is implemented
-before Stage 6**, and each row is a candidate for its own commit.
+All live consumers moved from compatibility-shaped `MODULES`, `CHAPTERS` and
+`CHAPTER_CONTENT_LOADERS` onto that boundary. The hidden Renaissance bundle was
+retired; both historical progress ids now resolve directly to
+`history-medicine-vesalius-beginning-doubt`.
 
-| Consumer | Reads | Migration or removal required |
-|---|---|---|
-| `src/progress.js` | `MODULES`, `CHAPTERS`, `isChapterAvailable` | Read modules and chapters from the canonical navigation projection. Progress keys are untouched (D-8) — only the source of the id list moves. |
-| `src/app/chapterNavigation.js` | `MODULES`, `CHAPTERS`, `isChapterAvailable`, `chapter.color` | Next-chapter resolution moves onto canonical module `chapterRefs` and `position`. The `chapter.color` accent fallback resolves from the subject theme instead of a per-row override. |
-| `src/features/planner/dailyPlanner.js` | `MODULES` (as `PARENT_MODULES`), `CHAPTERS`, `isChapterAvailable` | Same substitution. The planner's ordering assumptions must be re-verified against canonical `position` order, which is **not** identical to `chapterOrder`. |
-| `src/todaysPlan.js` | `CHAPTERS` | Read the navigation projection. Also drops `findTaggedChapterScreen`, which goes with `tagChapterMap`. |
-| `src/features/progress/Progress.jsx` | `CHAPTERS`, `isChapterAvailable` | Read the navigation projection; availability becomes `status` plus derived `screenCount`. |
-| `src/app/LegacyApp.jsx` | `CHAPTERS`, `CHAPTER_CONTENT_LOADERS` | Chapter opening moves onto the canonical loader projection; the shell stops holding a copy of the loader map. |
-| `src/components/layout/ChapterPlayer.jsx` | `MODULES`, `chapter.number`, `chapter.color` | The module-group lookup moves to canonical modules; `chapter.number` becomes `position + 1`; `chapter.color` resolves from the subject theme. **This is a runtime-boundary component — its lifecycle is not otherwise touched.** |
-| `src/components/layout/ChapterCompleteScreen.jsx` | `CHAPTERS` | Read the navigation projection for the completion payload's chapter lookup. |
-| `src/data/contentHierarchy.js` | `getChapterAvailability`, `CHAPTER_AVAILABILITY` | Its validator is deleted outright (below); the availability helpers go with it. |
+The subject-wide denominator source now reflects the canonical Chapter set:
+History drops the one hidden non-Chapter row and English gains the six genuine
+planned Chapters that the compatibility projection explicitly excluded. No
+Chapter progress key or stored learner result changes.
 
-Only when a row's consumer is migrated or gone may the compatibility fields it
-holds open be deleted — `FINAL_CONSUMERS` in
-`src/curriculum-catalogue/compatibility/index.js` is the machine-readable map
-from field to blocking consumer, and
-`docs/system/CURRICULUM_RUNTIME_COMPATIBILITY.md` §7.2 is the human one.
+Deleted after the migration passed parity, full verification and mobile smoke:
 
-### 6.2 Then, and only then, deleted
+- `src/curriculum-catalogue/compatibility/`;
+- the three old generated runtime projections and their generator;
+- `src/data/modules.js`, `src/chapters.js` and
+  `src/content/chapterContentRegistry.js`;
+- the frozen runtime-v1 fixture and compatibility/parity tests;
+- the redundant runtime content-hierarchy validator.
 
-- every compatibility field, in `FINAL_CONSUMERS` order — a field goes when its
-  last consumer in §6.1 has gone, not before;
-- `tests/fixtures/curriculum-runtime-v1.json` — the frozen pre-cutover contract.
-  It exists to prove the generated projections still reproduce the legacy
-  interface; once no legacy consumer and no compatibility field remain there is
-  no legacy interface to reproduce, and a frozen contract with no counterparty
-  starts silently describing something else;
-- `src/features/subjects/subjectCatalogue.js` (superseded at Stage 5);
-- `src/data/contentHierarchy.js`'s validator — the schema validates the same
-  relationships at build time, and a relationship that cannot be expressed
-  cannot be authored;
-- `src/data/tagChapterMap.js`'s hand-maintained map — chapter routing becomes a
-  concept→chapter query, which also resolves A-8's 21 unregistered `maths:*`
-  tags and A-20's 13 broken routes;
-- `src/curriculum-catalogue/compatibility/` in full, and `runtime-v1.js` last —
-  only once no generated output still needs it. All eleven fields outlive
-  Stage 5; `chapterFields.facetTags` goes with `tagChapterMap` and the hidden
-  Renaissance row goes with `LEGACY_CHAPTER_ID_MAP`, and the other nine go with
-  the §6.1 consumers that hold them open;
-- every drift test in `CENSUS.md` §2 whose two sources have collapsed into one:
-  `extracted-chapter-contract` Rule 1, the `screenTags.length` check, the
-  module/chapter subject equality check, and the loader-presence checks in
-  `module-metadata-integrity.test.js`.
-
-**Kept, unchanged, throughout all six stages:**
-
-`ScreenRenderer` · the component catalogue and its four generated registries ·
-the learning graph · the mastery engine · `src/data/chapterProgress.js` ·
-`src/lib/storage.js` · `src/constants/subjects.js` · the question banks · the
-exam papers.
-
-`ChapterPlayer` keeps its lifecycle, its screen routing and its persistence
-unchanged throughout. The one thing Stage 6 touches is §6.1's row: where it
-reads `MODULES`, `chapter.number` and `chapter.color` from. That is a data-source
-substitution inside an unchanged component, and it is the last thing standing
-between three compatibility fields and their deletion.
-
-**Superseded documentation:** `docs/system/CONTENT_HIERARCHY.md`, per OD-10.
-Not touched before this stage.
+Deliberately retained: `screenTags` and `tagChapterMap.js`. They still power
+weakness routing and cannot retire until Chapter Topic T3 provides the
+concept→Topic replacement.
 
 ---
 

@@ -10,11 +10,10 @@ Boards, specifications, papers and assessment objectives live in
 
 **8** subjects · **14** study pathways · **36** modules · **65** chapters (**30** available, **35** planned)
 
-**60** content bindings — 59 on chapters plus the one compatibility binding, which is every entry in the runtime loader registry.
+**59** canonical content bindings — one generated loader for every chapter with a contentPath.
 
-**No runtime projection exists yet.** This document and the specification catalogue
-are build-time documentation. `MODULES`, `CHAPTERS` and `CHAPTER_CONTENT_LOADERS`
-remain hand-authored and untouched.
+The canonical learner runtime is generated separately from these records plus
+Learning Sequence configuration and derived Chapter screen metadata.
 
 ## Subjects
 
@@ -506,11 +505,9 @@ _Planned. No chapters are invented to fill it._
 
 ### Placeholder cards that became chapters
 
-These were coming-soon cards synthesised by the browser: a real authored title and
-subtitle, but no chapter record, no loader and no progress. They are now planned
-chapter records with stable semantic ids. **No progress alias is created**, because
-a `cs_*` card was never openable and therefore never a progress identity — an alias
-would imply learner data that cannot exist.
+These were coming-soon cards synthesised by the browser. They are now planned
+canonical Chapter records with stable semantic ids. No progress alias exists because
+the old cards were never openable and therefore never stored learner progress.
 
 | Retired card | Canonical chapter | Title |
 |---|---|---|
@@ -521,19 +518,15 @@ would imply learner data that cannot exist.
 | `cs_inspector_2` | `english-inspector-calls-responsibility-denial` | I accept no blame |
 | `cs_inspector_3` | `english-inspector-calls-consequences-resolution` | Fire, blood and anguish |
 
-### Content the runtime loads for an id that is not a chapter
+### Superseded Renaissance progress ids
 
-Read from `src/curriculum-catalogue/compatibility/runtime-v1.js`, not restated here —
-the reason an id is excluded is a recorded fact, and a documentation script is the
-wrong place to keep the only copy of it. It is compatibility data rather than a
-curriculum record: there are six entity types and this is not a seventh.
+The former hidden bundle is no longer a Chapter or loader. Both historical ids map
+directly to the real canonical replacement, preserving old learner progress without
+keeping a compatibility-shaped curriculum row.
 
-- **`history-medicine-renaissance-medicine`** → `src/content/history/medicine/episodes/episode-03-renaissance-medicine.js`
-  Superseded by `history-medicine-vesalius-beginning-doubt`.
-  The superseded Renaissance bundle. Hidden from every learner surface and replaced by a narrower chapter, but its id is still a live progress destination — LEGACY_CHAPTER_ID_MAP folds `mod2` onto it — and its loader entry still exists. It is compatibility data rather than a retired chapter record, because a retired chapter record would put it back in the catalogue as a chapter, which is exactly what it is not.
+- `mod2` → `history-medicine-vesalius-beginning-doubt`
+- `history-medicine-renaissance-medicine` → `history-medicine-vesalius-beginning-doubt`
 
-Preserved is not the same as given a record. Every other current chapter id is
-carried verbatim, including the ones that break the naming rules (`soc1`, `math1`,
-`bio_building_blocks`, `sci_bio_w1`, `spain-new-world-1`), because each backs a live
-`gcse_chapter_<id>` progress key. A tidier id is not worth a learner's progress.
+Every other historical Chapter id is preserved verbatim because it backs a live
+`gcse_chapter_<id>` progress key. A tidier id is not worth a learner’s progress.
 

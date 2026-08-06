@@ -443,8 +443,8 @@ _chosen. No option, text or route is selected here._
 
 - **Subjects, study pathways, modules and chapters** — `CURRICULUM_MAP.md`,
   generated from the same records.
-- **Runtime `MODULES`, `CHAPTERS` and content loaders** — Stage 3 projections.
-  The runtime files remain hand-authored and untouched until then.
+- **Learner runtime sequences, Chapters and content loaders** — `LEARNER_CURRICULUM_MAP.md`,
+  generated from these records plus explicit Learning Sequence configuration.
 - **Option, text and route selections** — a study pathway records those, not a
   specification.
 

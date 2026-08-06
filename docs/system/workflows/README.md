@@ -24,7 +24,7 @@ Run the lightest command that covers what changed.
 
 | Files changed | Command |
 |---|---|
-| `src/curriculum-catalogue/records/**` — chapter or module records (then `pnpm curriculum:projections:generate`) | `vitest run tests/architecture` |
+| `src/curriculum-catalogue/records/**` — Chapter or Module records (then `pnpm curriculum:runtime:generate`) | `vitest run tests/architecture` |
 | `src/progress.js`, `src/unifiedWeaknessTracker.js`, `dailyPlanner.js` | `vitest run tests/unit` |
 | Storage / localStorage access patterns | `vitest run tests/architecture` |
 | Any component with a `.stories.jsx` file | `vitest` (full — Playwright/Chromium) |

@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { COMPONENT_TEXT_LIMITS } from '../../src/constants/contentLimits.js'
-import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
+import {
+  CHAPTER_CONTENT_LOADERS,
+} from '../../src/data/learnerCurriculum.js'
 
 function collectFactorWebs(node, path = [], out = []) {
   if (Array.isArray(node)) {

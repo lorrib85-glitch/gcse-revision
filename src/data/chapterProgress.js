@@ -8,7 +8,8 @@ export const CHAPTER_PROGRESS_KEY_PREFIX = 'gcse_chapter_'
 export const LEGACY_CHAPTER_PROGRESS_KEY_PREFIX = 'gcse_module_'
 
 export const LEGACY_CHAPTER_ID_MAP = Object.freeze({
-  mod2: 'history-medicine-renaissance-medicine',
+  mod2: 'history-medicine-vesalius-beginning-doubt',
+  'history-medicine-renaissance-medicine': 'history-medicine-vesalius-beginning-doubt',
   mod3: 'history-medicine-surgery-anaesthetics',
   mod6: 'history-medicine-surgery-revolution',
   mod7: 'history-medicine-accidental-miracle',

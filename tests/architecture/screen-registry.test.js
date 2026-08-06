@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
+import {
+  CHAPTER_CONTENT_LOADERS,
+} from '../../src/data/learnerCurriculum.js'
 import {
   SCREEN_REGISTRY,
   isCinematicHeaderScreen,
