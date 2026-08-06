@@ -45,6 +45,9 @@ jobs:
       - name: Retire compatibility scaffold
         run: python .github/scripts/stage6_retire_compatibility.py
 
+      - name: Remove catalogue generator dependency
+        run: python .github/scripts/stage6_retire_fix_generator.py
+
       - name: Regenerate canonical outputs
         run: |
           pnpm curriculum:generate
