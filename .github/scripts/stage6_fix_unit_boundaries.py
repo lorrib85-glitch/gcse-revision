@@ -60,9 +60,14 @@ for path in Path('tests/unit').rglob('*'):
         text,
     )
 
-    # A few fixtures load both old exports on adjacent lines. The substitutions
-    # above intentionally leave two imports from the same public file; that is
-    # harmless and clearer than adding test-only aliases.
+    # Keep one explicit replacement for the top-level-await fixture. This is
+    # intentionally redundant with the generic regex: it makes the migration
+    # robust to formatter changes in that file and proves the semantic alias.
+    text = text.replace(
+        "const { MODULES } = await import('../../src/data/modules.js')",
+        "const { LEARNING_SEQUENCES: MODULES } = await import('../../src/data/learnerCurriculum.js')",
+    )
+
     path.write_text(text)
 
 # The adapter suite referenced the deleted compatibility availability enum.
