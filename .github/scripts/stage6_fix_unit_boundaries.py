@@ -60,12 +60,13 @@ for path in Path('tests/unit').rglob('*'):
         text,
     )
 
-    # Keep one explicit replacement for the top-level-await fixture. This is
-    # intentionally redundant with the generic regex: it makes the migration
-    # robust to formatter changes in that file and proves the semantic alias.
     text = text.replace(
         "const { MODULES } = await import('../../src/data/modules.js')",
         "const { LEARNING_SEQUENCES: MODULES } = await import('../../src/data/learnerCurriculum.js')",
+    )
+    text = text.replace(
+        'for genuine parent curriculum units in src/data/modules.js, which plan tasks',
+        'for canonical parent curriculum units; plan tasks',
     )
 
     path.write_text(text)
@@ -116,4 +117,4 @@ for path in Path('tests/unit').rglob('*'):
         if retired in text:
             offenders.append(f'{path}: {retired}')
 if offenders:
-    raise RuntimeError('retired unit-test imports remain:\n  - ' + '\n  - '.join(offenders))
+    raise RuntimeError('retired unit-test references remain:\n  - ' + '\n  - '.join(offenders))
