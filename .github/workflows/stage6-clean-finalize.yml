@@ -63,7 +63,7 @@ jobs:
       - name: Migrate unit-test boundaries
         run: python .github/scripts/stage6_fix_unit_boundaries.py
 
-      - name: Move Subjects to the canonical chapter lookup
+      - name: Move Subjects to the canonical chapter model
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -71,18 +71,25 @@ jobs:
           path = Path('src/features/subjects/Subjects.jsx')
           text = path.read_text()
 
-          old_import = "import { CHAPTERS } from '../../chapters.js'"
-          new_import = "import { getCurriculumChapterById } from '../../data/learnerCurriculum.js'"
-          old_lookup = "const realChapter = CHAPTERS.find(chapter => chapter.id === (item.chapterId || item.id))"
-          new_lookup = "const realChapter = getCurriculumChapterById(item.chapterId || item.id)"
+          replacements = {
+              "import { CHAPTERS } from '../../chapters.js'":
+                  "import { CURRICULUM_CHAPTERS, getCurriculumChapterById } from '../../data/learnerCurriculum.js'",
+              "const realChapter = CHAPTERS.find(chapter => chapter.id === (item.chapterId || item.id))":
+                  "const realChapter = getCurriculumChapterById(item.chapterId || item.id)",
+              "const biggestWinChapter = biggestWinRaw ? CHAPTERS.find(chapter => chapter.id === biggestWinRaw.chapterId) : null":
+                  "const biggestWinChapter = biggestWinRaw ? getCurriculumChapterById(biggestWinRaw.chapterId) : null",
+              "const chapters = CHAPTERS.filter(chapter => chapter.subject === name)":
+                  "const chapters = CURRICULUM_CHAPTERS.filter(chapter => chapter.subject === name)",
+          }
 
-          if old_import not in text:
-              raise SystemExit('Subjects legacy Chapters import not found')
-          if old_lookup not in text:
-              raise SystemExit('Subjects legacy Chapters lookup not found')
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'Subjects migration target not found: {old}')
+              text = text.replace(old, new, 1)
 
-          text = text.replace(old_import, new_import, 1)
-          text = text.replace(old_lookup, new_lookup, 1)
+          if 'CHAPTERS' in text:
+              raise SystemExit('Subjects still references the retired CHAPTERS collection')
+
           path.write_text(text)
           PY
 
