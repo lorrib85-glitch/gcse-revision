@@ -1,0 +1,1 @@
+Temporary trigger for the guarded final Stage 6 retirement run. Excluded from the clean main commit.
