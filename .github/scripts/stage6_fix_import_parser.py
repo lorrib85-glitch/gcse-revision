@@ -18,8 +18,8 @@ text = text.replace(old_substitution, new_substitution, 1)
 path.write_text(text)
 
 # The first migration has already converted the Learning Graph import before
-# the final contract script runs. Make that final script accept either clean
-# starting state rather than trying to perform the same conversion twice.
+# the final contract script runs. Verify the semantic target regardless of
+# whether the formatter kept the declaration on one line or several.
 remaining = Path('.github/scripts/stage6_retire_fix_remaining.py')
 source = remaining.read_text()
 old = """graph = Path('tests/architecture/learning-graph.test.js')
@@ -31,12 +31,8 @@ replace_once(
 """
 new = """graph = Path('tests/architecture/learning-graph.test.js')
 graph_source = graph.read_text()
-legacy_import = \"import { CHAPTERS } from '../../src/chapters.js'\"
-canonical_import = \"import { CURRICULUM_CHAPTERS as CHAPTERS } from '../../src/data/learnerCurriculum.js'\"
-if legacy_import in graph_source:
-    graph.write_text(graph_source.replace(legacy_import, canonical_import, 1))
-elif canonical_import not in graph_source:
-    raise RuntimeError('learning-graph.test.js has neither legacy nor canonical Chapter import')
+if 'learnerCurriculum.js' not in graph_source or 'CURRICULUM_CHAPTERS as CHAPTERS' not in graph_source:
+    raise RuntimeError('learning-graph.test.js does not import canonical Chapters from learnerCurriculum.js')
 """
 if source.count(old) != 1:
     raise RuntimeError('expected one Learning Graph import migration block')
