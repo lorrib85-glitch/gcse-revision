@@ -48,11 +48,15 @@ jobs:
       - name: Remove catalogue generator dependency
         run: python .github/scripts/stage6_retire_fix_generator.py
 
+      - name: Migrate architecture tests and guidance
+        run: python .github/scripts/stage6_retire_fix_tests.py
+
       - name: Regenerate canonical outputs
         run: |
           pnpm curriculum:generate
           pnpm curriculum:navigation:generate
           pnpm curriculum:runtime:generate
+          pnpm catalogue:generate
 
       - name: Assert retired files are gone
         run: |
