@@ -1,0 +1,164 @@
+name: Clean Stage 6 finalization
+
+on:
+  push:
+    branches:
+      - agent/stage-6-canonical-runtime
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stage6-clean-finalization
+  cancel-in-progress: true
+
+jobs:
+  finalize:
+    if: contains(github.event.head_commit.message, 'Run clean Stage 6 finalization')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out Stage 6 branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/stage-6-canonical-runtime
+          fetch-depth: 1
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Retire compatibility scaffold
+        run: python .github/scripts/stage6_retire_compatibility.py
+
+      - name: Remove catalogue generator dependency
+        run: python .github/scripts/stage6_retire_fix_generator.py
+
+      - name: Tighten test migration parser
+        run: python .github/scripts/stage6_fix_import_parser.py
+
+      - name: Migrate architecture tests and guidance
+        run: python .github/scripts/stage6_retire_fix_tests.py
+
+      - name: Update remaining end-state contracts
+        run: python .github/scripts/stage6_retire_fix_remaining.py
+
+      - name: Fix final assertions
+        run: python .github/scripts/stage6_fix_last_two.py
+
+      - name: Migrate unit-test boundaries
+        run: python .github/scripts/stage6_fix_unit_boundaries.py
+
+      - name: Move Subjects to the canonical chapter lookup
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/features/subjects/Subjects.jsx')
+          text = path.read_text()
+
+          old_import = "import { CHAPTERS } from '../../chapters.js'"
+          new_import = "import { getCurriculumChapterById } from '../../data/learnerCurriculum.js'"
+          old_lookup = "const realChapter = CHAPTERS.find(chapter => chapter.id === (item.chapterId || item.id))"
+          new_lookup = "const realChapter = getCurriculumChapterById(item.chapterId || item.id)"
+
+          if old_import not in text:
+              raise SystemExit('Subjects legacy Chapters import not found')
+          if old_lookup not in text:
+              raise SystemExit('Subjects legacy Chapters lookup not found')
+
+          text = text.replace(old_import, new_import, 1)
+          text = text.replace(old_lookup, new_lookup, 1)
+          path.write_text(text)
+          PY
+
+      - name: Regenerate canonical outputs
+        run: |
+          pnpm curriculum:generate
+          pnpm curriculum:navigation:generate
+          pnpm curriculum:runtime:generate
+          pnpm catalogue:generate
+
+      - name: Remove temporary Stage 6 machinery
+        run: |
+          find .github/scripts -maxdepth 1 -type f -name 'stage6_*' -delete
+          find .github/workflows -maxdepth 1 -type f -name 'stage6*.yml' -delete
+          find . -maxdepth 1 -type f \( -name 'stage6-*' -o -name 'stage6_*' \) -delete
+
+      - name: Assert the final tree has no compatibility or temporary scaffold
+        run: |
+          test -z "$(find src/curriculum-catalogue/compatibility -type f 2>/dev/null)"
+          test ! -e src/chapters.js
+          test ! -e src/data/modules.js
+          test ! -e src/content/chapterContentRegistry.js
+          test ! -e scripts/generate-curriculum-projections.mjs
+          test ! -e tests/fixtures/curriculum-runtime-v1.json
+          test -z "$(find .github/scripts -maxdepth 1 -type f -name 'stage6_*' 2>/dev/null)"
+          test -z "$(find .github/workflows -maxdepth 1 -type f -name 'stage6*.yml' 2>/dev/null)"
+          ! grep -R "from '../../chapters.js'" src --include='*.js' --include='*.jsx'
+
+      - name: Verify complete repository
+        run: pnpm verify
+
+      - name: Mobile runtime smoke at 390px
+        run: |
+          pnpm vite --host 127.0.0.1 > /tmp/stage6-final-vite.log 2>&1 &
+          VITE_PID=$!
+          trap 'kill $VITE_PID || true' EXIT
+          ready=false
+          for attempt in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:5173 >/dev/null; then ready=true; break; fi
+            sleep 1
+          done
+          if [ "$ready" != true ]; then cat /tmp/stage6-final-vite.log; exit 1; fi
+
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright'
+          const browser = await chromium.launch({ headless: true })
+          const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
+          const pageErrors = []
+          page.on('pageerror', error => pageErrors.push(error.message))
+          await page.goto('http://127.0.0.1:5173', { waitUntil: 'networkidle' })
+          const guest = page.getByRole('button', { name: 'Continue without Google' })
+          if (await guest.isVisible().catch(() => false)) await guest.click()
+          const nameInput = page.getByPlaceholder('Your name')
+          if (await nameInput.isVisible().catch(() => false)) {
+            await nameInput.fill('Stage Six')
+            await page.getByRole('button', { name: 'Continue →' }).click()
+          }
+          const streakDialog = page.getByRole('dialog', { name: /day streak/ })
+          if (await streakDialog.isVisible().catch(() => false)) {
+            await streakDialog.getByRole('button', { name: 'Continue' }).click()
+            await streakDialog.waitFor({ state: 'hidden' })
+          }
+          await page.getByRole('button', { name: 'Subjects' }).click()
+          await page.getByText('Your subjects', { exact: true }).waitFor()
+          await page.getByRole('button', { name: /^History/ }).first().click()
+          await page.getByText('Medicine through time', { exact: true }).first().waitFor()
+          await page.getByText("Trust me, I'm Following Jupiter", { exact: true }).first().click()
+          await page.waitForTimeout(1200)
+          if (pageErrors.length) throw new Error(`runtime page errors: ${pageErrors.join(' | ')}`)
+          await browser.close()
+          NODE
+
+      - name: Commit clean Stage 6 end state
+        run: |
+          git config user.name "OpenAI"
+          git config user.email "noreply@openai.com"
+          git add -A
+          git commit -m "Retire the curriculum compatibility projection"
+          git push origin HEAD:agent/stage-6-canonical-runtime
