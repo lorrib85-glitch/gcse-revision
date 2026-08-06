@@ -119,3 +119,36 @@ replace_once(
     )
 """,
 )
+
+replace_once(
+    'tests/unit/app/chapterNavigation.test.js',
+    """const HANDOFF_CHAPTERS = [
+  { id: 'p1', title: 'P1', subject: 'Alpha', screenCount: 4 },
+  { id: 'p2', title: 'P2', subject: 'Alpha', screenCount: 4 },
+  { id: 'p3', title: 'P3', subject: 'Alpha', screenCount: 0 },                         // comingSoon
+  { id: 'p4', title: 'P4', subject: 'Alpha', screenCount: 4, availability: 'hidden' },
+  { id: 'p5', title: 'P5', subject: 'Alpha', screenCount: 4 },
+  { id: 'q1', title: 'Q1', subject: 'Alpha', screenCount: 0 },                         // all-stub module
+  { id: 'r1', title: 'R1', subject: 'Beta',  screenCount: 4 },                         // other subject
+  { id: 's1', title: 'S1', subject: 'Alpha', screenCount: 0 },
+  { id: 's2', title: 'S2', subject: 'Alpha', screenCount: 4 },
+]
+""",
+    """const HANDOFF_CHAPTERS = [
+  { id: 'p1', title: 'P1', subject: 'Alpha', status: 'available', screenCount: 4 },
+  { id: 'p2', title: 'P2', subject: 'Alpha', status: 'available', screenCount: 4 },
+  { id: 'p3', title: 'P3', subject: 'Alpha', status: 'planned', screenCount: 0 },
+  { id: 'p4', title: 'P4', subject: 'Alpha', status: 'planned', screenCount: 4 },
+  { id: 'p5', title: 'P5', subject: 'Alpha', status: 'available', screenCount: 4 },
+  { id: 'q1', title: 'Q1', subject: 'Alpha', status: 'planned', screenCount: 0 },
+  { id: 'r1', title: 'R1', subject: 'Beta', status: 'available', screenCount: 4 },
+  { id: 's1', title: 'S1', subject: 'Alpha', status: 'planned', screenCount: 0 },
+  { id: 's2', title: 'S2', subject: 'Alpha', status: 'available', screenCount: 4 },
+]
+""",
+)
+replace_once(
+    'tests/unit/app/chapterNavigation.test.js',
+    "it('skips a hidden chapter sitting between two available chapters', () => {",
+    "it('skips a planned chapter sitting between two available chapters', () => {",
+)
