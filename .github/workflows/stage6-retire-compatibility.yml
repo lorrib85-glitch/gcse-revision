@@ -60,6 +60,9 @@ jobs:
       - name: Fix final assertions
         run: python .github/scripts/stage6_fix_last_two.py
 
+      - name: Migrate unit-test boundaries
+        run: python .github/scripts/stage6_fix_unit_boundaries.py
+
       - name: Regenerate canonical outputs
         run: |
           pnpm curriculum:generate
