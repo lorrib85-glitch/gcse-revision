@@ -77,6 +77,11 @@ spec, stop and ask which briefs are confirmed.
 5. The subject's locked architecture (`HISTORY_MODULE_ARCHITECTURE.md` or
    `SCIENCE_MODULE_BLUEPRINT.md`).
 6. The `component-contracts/` page for every component the briefs name.
+7. `docs/system/CHAPTER_READINESS_AUDIT.md` — the single readiness-report
+   contract. When the Chapter authors Topics, also read
+   `docs/system/CHAPTER_TOPICS.md`; use **Topic ID** in authoring prose and
+   follow its semantic lowercase kebab-case rule rather than inventing a
+   second slug convention.
 
 ## The build chain — mandatory before component selection
 
@@ -184,8 +189,43 @@ these jobs; if it does, it has two primary intents (halt 3).
    all GENERATED — run `pnpm curriculum:runtime:generate` instead of
    editing them. For a rebuild that changes screen count, update only the
    `stageNavigation` indices, then regenerate.
-4. **Commit per screen / story unit / stage**, never one mega-commit — each
+4. When the Chapter authors Topics, declare them with the exact shape in
+   `CHAPTER_TOPICS.md`, assign Screen `topic` references deliberately, and
+   keep Chapter-wide Screens unassigned. Never use positional Topic IDs such
+   as `topic-1`, `part-2` or `section-3`.
+5. **Commit per screen / story unit / stage**, never one mega-commit — each
    amendment must be individually revertible.
+
+## Chapter readiness audit (required Stage-B evidence)
+
+Before this skill describes a new Chapter, or a materially rebuilt scope, as
+**implemented**, run `docs/system/CHAPTER_READINESS_AUDIT.md`.
+
+- A new Chapter receives the full audit.
+- Topic, Screen-order/count, canonical-coverage, evidence/weakness,
+  `stageNavigation` or metadata changes also receive the full audit.
+- A narrow Screen-only amendment receives a full audit of the changed scope
+  plus all Chapter-wide integrity counters; unrelated pre-existing failures
+  are named as out of scope, never hidden.
+
+The report must include the canonical coverage matrix, Topic summary, complete
+Screen inventory, derived component-function and interaction coverage,
+evidence/weakness and recovery mapping, metadata integrity, command results
+and composed 390px render evidence. Derive component pedagogy from the
+catalogue; do not add duplicate `learningFunction`, interaction, evidence or
+weakness fields merely to make the report possible.
+
+Use **Pass / Review / Fail** exactly as the audit contract defines them:
+
+- fix in-scope mechanical Failures;
+- surface missing canonical knowledge or product decisions rather than
+  inventing around them;
+- explain every Review and any allowed deferral;
+- do not claim the scope is implemented while an in-scope Fail remains.
+
+Write the Stage-B readiness report into the Chapter Review Log together with
+the build chain, render results and deviations. It is builder evidence for
+Stage C, **not approval**; `content-review` must independently reproduce it.
 
 ## Render pass and deviation record (Stage B output, not approval)
 
@@ -208,9 +248,9 @@ Before handing back to Stage C:
    didn't foresee, a component limitation, a canonical gap). Deviations are
    surfaced to the user and to Stage C, never hidden.
 4. Write the **first / build entry to the review log** so the amended scope
-   has a persisted record: what was built, the per-screen chain, the render
-   results, and every deviation. This entry is *implementation evidence for
-   Stage C*, explicitly not an approval.
+   has a persisted record: what was built, the per-screen chain, the Chapter
+   readiness report, the render results, and every deviation. This entry is
+   *implementation evidence for Stage C*, explicitly not an approval.
 
 ## Verify (mechanical floor, still not approval)
 
@@ -222,10 +262,11 @@ Before handing back to Stage C:
   never add a chapter to a grandfather allowlist to get green).
 - `./node_modules/.bin/vite build` green.
 - The chapter opens, progresses and completes in the running app.
+- The Chapter readiness report contains no unresolved in-scope Fail.
 
 Passing these is necessary, not sufficient. **The build is "implemented", not
 "approved", until an independent `content-review` (Stage C) has re-audited it
-against before / after / gold.**
+against before / after / gold and independently verified the readiness report.**
 
 ## Hard rules
 
@@ -238,5 +279,7 @@ against before / after / gold.**
   `PATTERN_GOVERNANCE.md`, not a looser builder-only standard.
 - A concept is never tested before the screen that teaches it.
 - Never generate imagery; reserve it with `MediaPlaceholder` + manifest.
+- Never declare a new or materially rebuilt Chapter implemented without the
+  required Chapter readiness report.
 - Never add a new chapter to `GRANDFATHERED_EPISODES` /
   `SENTENCE_CASE_GRANDFATHERED_EPISODES` — new content passes the floor.

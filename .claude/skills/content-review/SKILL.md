@@ -118,6 +118,11 @@ changes outside approved component and token systems.
 8. The episode's previous review log, if one exists (see Review log below)
    — findings marked deferred there are first-class inputs to this review. In
    `audit-only` mode, read it if present but do not create or update it.
+9. `docs/system/CHAPTER_READINESS_AUDIT.md` — the single readiness-report
+   contract. When the Chapter authors Topics, also read
+   `docs/system/CHAPTER_TOPICS.md` and validate Topic IDs and membership
+   against the existing Chapter Topic schema rather than inventing a second
+   convention.
 
 ### Degraded mode
 
@@ -221,6 +226,32 @@ allowlist, so it reports every violation on this module even if that
 module is grandfathered there; don't skip a finding because the module
 happens to be on that separate list.
 
+## Chapter readiness audit — independent review
+
+Run the audit in `docs/system/CHAPTER_READINESS_AUDIT.md` as part of this
+skill, not as a substitute for the six-dimension review above.
+
+- **Stage A:** produce a baseline readiness report. Use its Failures to make
+  concrete Screen decisions and amendment briefs; do not silently fold a
+  Chapter-level integrity problem into an unrelated Screen recommendation.
+- **Stage C:** independently reproduce the report after `content-create`.
+  Inspect the source, generated projections, assessed wiring, command output
+  and composed Screens yourself. Never copy the builder's Pass / Review /
+  Fail statuses.
+- **Scoped review:** audit the changed scope in full and re-run the Chapter-wide
+  integrity counters. Name unrelated pre-existing failures as out of scope and
+  describe the result as scoped approval, not whole-Chapter readiness.
+
+The report must account for canonical coverage, the Topic layer where present,
+every Screen, derived component functions and interaction classes, learning
+sequence, assessed evidence, weakness reporting, support/recovery, metadata,
+technical checks and 390px visual evidence. Do not add duplicate Screen or
+Topic metadata to make the report easier; use the existing owners named in the
+audit contract.
+
+An in-scope **Fail** blocks approval. Every **Review** needs an explicit
+accepted rationale or named allowed deferral. A builder report with no
+independent verification is itself a Stage-C Fail.
 
 ### Mechanical visual-quality checklist
 
@@ -325,14 +356,17 @@ not an acceptable shortcut.
 
 ## Findings report format
 
-Per rubric dimension: a rating (strong / adequate / below bar) plus
-findings as `screen <index> — <what's wrong> — <what fixing it looks
-like>`, ordered most-damaging first. Precede the six dimensions with the
-per-screen one-primary-intent / objective-match / contract results from
-Audit steps 1–3. End with the canonical coverage diff (or the degraded-mode
-note) and the technical-pass results, including every readability/
-sentence-case violation `check-content-quality.mjs` reported. No single
-overall score, ever.
+Begin with the Chapter readiness summary (Pass / Review / Fail counts, full
+Chapter versus scoped result, and every blocking Fail). Then, per rubric
+dimension: a rating (strong / adequate / below bar) plus findings as
+`screen <index> — <what's wrong> — <what fixing it looks like>`, ordered
+most-damaging first. Precede the six dimensions with the per-screen
+one-primary-intent / objective-match / contract results from Audit steps 1–3.
+Include the complete Screen inventory and evidence/weakness mapping from the
+readiness audit. End with the canonical coverage diff (or the degraded-mode
+note), remaining Reviews/Fails, and the technical-pass results, including
+every readability/sentence-case violation `check-content-quality.mjs`
+reported. No single overall score, ever.
 
 ## Screen decision — every screen gets exactly one
 
@@ -412,6 +446,8 @@ entries **newest-first**, each with:
 - date, session scope (full episode / stage / screen range), canonical
   files available yes/no, and which stage this entry records
   (A diagnose / B build / C approve)
+- Chapter readiness summary, complete Screen inventory, open Reviews/Fails and
+  whether the result is whole-Chapter or scoped
 - per-dimension ratings + findings (the report above)
 - the per-screen decision (Keep / Refine / Rebuild / Split / Cut) and, for
   each Refine/Rebuild/Split, the amendment brief (or a reference to it)
@@ -466,6 +502,9 @@ approval stage, and it is deliberately not the same act as building:
   amended screen at 390px yourself and run the strengthened visual verdict
   against **before / after / named gold example**. "The build says it's
   fixed" is not a finding.
+- Independently re-run the Chapter readiness audit. Compare the builder's
+  inventory, canonical mapping, evidence/weakness paths and command claims
+  with the actual Chapter; do not approve on a copied report.
 - Re-score the amended scope per the six dimensions and report before/after.
 - **Name every trade-off.** An amendment must not improve one dimension by
   silently damaging another. Check explicitly for each of these, and if any
@@ -477,7 +516,8 @@ approval stage, and it is deliberately not the same act as building:
   - improved hierarchy but missing content
   - reduced density but fragmented learning
   - stronger story but weaker exam preparation
-- Only when the re-audit clears the bar with no unreported trade-off is the
+- Only when the re-audit clears the bar with no unreported trade-off, no
+  in-scope readiness Fail and an explicit rationale for every Review is the
   amended scope **approved**. Append the Stage-C outcome to the review log,
   distinct from the Stage-B build entry — "implemented" and "approved" are
   separate log facts.
@@ -499,4 +539,6 @@ approval stage, and it is deliberately not the same act as building:
   governance failure.
 - Source inspection alone never passes composition or visual hierarchy — the
   mandatory 390px render pass is required.
+- Never approve a new or materially rebuilt Chapter without independently
+  running the Chapter readiness audit.
 - Findings are never averaged into one score, at any stage of this skill.
