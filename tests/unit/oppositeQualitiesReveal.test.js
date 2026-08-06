@@ -10,7 +10,9 @@ import {
 } from '../../src/components/learning/oppositeQualitiesRevealTheme.js'
 import canonicalEpisode from '../../src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.js'
 import runtimeEpisode from '../../src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.runtime.js'
-import { CHAPTERS } from '../../src/chapters.js'
+import {
+  CURRICULUM_CHAPTERS as CHAPTERS,
+} from '../../src/data/learnerCurriculum.js'
 
 const hotCold = {
   type: 'oppositeQualitiesReveal',

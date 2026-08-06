@@ -24,7 +24,6 @@ import {
   weightingScopes,
   resolveWeighting,
 } from '../../src/curriculum-catalogue/schema.js'
-import { loadCompatibility } from '../../src/curriculum-catalogue/compatibility/index.js'
 import {
   renderCatalogue,
   renderCurriculumMap,
@@ -35,19 +34,6 @@ import {
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const read = rel => readFileSync(resolve(root, rel), 'utf8')
-
-/**
- * The pre-cutover loader targets, chapter id → project-relative content path.
- *
- * Read from the frozen contract, not from `src/content/chapterContentRegistry.js`.
- * Since Stage 4 that file re-exports the generated projection, which is itself
- * built from these records — parsing it would compare the catalogue with
- * itself. `tests/fixtures/curriculum-runtime-v1.json` is the independent
- * capture of what the registry held before the cutover.
- */
-const FROZEN_RUNTIME = JSON.parse(read('tests/fixtures/curriculum-runtime-v1.json'))
-const frozenLoaderPaths = () =>
-  Object.fromEntries(FROZEN_RUNTIME.loaders.map(loader => [loader.id, loader.contentPath]))
 
 const CURRICULUM_ROOT = 'src/curriculum-catalogue'
 const COMPONENT_ROOT = 'src/component-catalogue'
@@ -281,17 +267,16 @@ describe('curriculum catalogue is never reachable from production source', () =>
     }
   })
 
-  it('keeps the three runtime files as re-exports that never reach the catalogue', () => {
-    // Stage 4 (D-11): these three re-export the generated projections and keep
-    // their export names. They are not themselves generated, and the catalogue
-    // still reaches production only through the generated output.
-    const reachesCatalogue = /(?:from\s*|import\s*\(?\s*)['"][^'"]*curriculum-catalogue/
-    for (const file of ['src/data/modules.js', 'src/chapters.js', 'src/content/chapterContentRegistry.js']) {
-      const source = read(file)
-      expect(source, `${file} became a generated file`).not.toMatch(/GENERATED FILE/)
-      expect(source, `${file} imports the curriculum catalogue`).not.toMatch(reachesCatalogue)
-      expect(source, `${file} is not a re-export`).toMatch(/^export\s*\{[^}]*\}\s*from\s*'[^']*generated\/curriculum\//m)
-    }
+  it('keeps one public learner-runtime boundary and no retired runtime files', () => {
+    const reachesCatalogue = /(?:from\s*|import\s*\(?\s*)['"][^'"]*curriculum-catalogue\//
+    const boundary = read('src/data/learnerCurriculum.js')
+    expect(boundary).toMatch(/^export\s*\{[^}]*\}\s*from\s*'\.\/generated\/curriculum\/learnerCurriculum\.js'/m)
+    expect(boundary).not.toMatch(reachesCatalogue)
+    for (const retired of [
+      'src/data/modules.js',
+      'src/chapters.js',
+      'src/content/chapterContentRegistry.js',
+    ]) expect(existsSync(resolve(root, retired)), retired).toBe(false)
   })
 })
 
@@ -1380,64 +1365,50 @@ describe('Stage 2 authored curriculum', () => {
     expect(chapters.filter(chapter => chapter.status === 'planned')).toHaveLength(35)
   })
 
-  it('preserves all 59 non-hidden chapter ids and adds six semantic ones', async () => {
+  it('projects all 65 canonical Chapter ids and keeps the six semantic English additions planned', async () => {
     const { chapters } = await loadCatalogue()
-    const runtime = await import('../../src/chapters.js')
-    const nonHidden = runtime.CHAPTERS
-      .filter(chapter => runtime.getChapterAvailability(chapter) !== 'hidden')
-      .map(chapter => chapter.id)
-    expect(nonHidden).toHaveLength(59)
+    const runtime = await import('../../src/data/learnerCurriculum.js')
+    expect(runtime.CURRICULUM_CHAPTERS.map(chapter => chapter.id))
+      .toEqual(chapters.map(chapter => chapter.id))
 
-    const authored = new Set(chapters.map(chapter => chapter.id))
-    for (const id of nonHidden) expect(authored.has(id), `${id} lost`).toBe(true)
-
-    const added = chapters.map(c => c.id).filter(id => !nonHidden.includes(id))
-    expect(added.sort()).toEqual([
+    const added = [
       'english-inspector-calls-consequences-resolution',
       'english-inspector-calls-responsibility-denial',
       'english-inspector-calls-social-message',
       'english-macbeth-appearance-reality',
       'english-macbeth-guilt-consequence',
       'english-macbeth-witches-fate',
-    ])
-    for (const id of added) {
-      expect(byId(chapters, id).status, id).toBe('planned')
-    }
-    // A browse-surface id is not a curriculum id. None survives.
+    ]
+    for (const id of added) expect(byId(chapters, id).status, id).toBe('planned')
     for (const chapter of chapters) {
       expect(chapter.id.startsWith('cs_'), `${chapter.id} is a placeholder id`).toBe(false)
     }
   })
 
-  it('excludes the hidden Renaissance bundle while keeping its progress reachable', async () => {
+  it('retires the hidden Renaissance bundle while keeping both historical progress ids reachable', async () => {
     const { chapters } = await loadCatalogue()
-    // The bundle is compatibility data, not a seventh entity type — see
-    // tests/architecture/curriculum-compatibility.test.js.
-    const { hiddenChapter } = loadCompatibility()
-    const binding = { id: hiddenChapter.row.id, contentPath: hiddenChapter.contentPath }
-    expect(binding.id).toBe('history-medicine-renaissance-medicine')
-    expect(chapters.some(chapter => chapter.id === binding.id)).toBe(false)
-    // The old projection remains only as an independent migration witness in
-    // the first Stage 6 cut. Progress no longer targets a hidden non-chapter:
-    // both historical ids fold directly onto the canonical replacement.
-    const runtime = await import('../../src/chapters.js')
-    const hidden = runtime.CHAPTERS.find(chapter => chapter.id === binding.id)
-    expect(runtime.getChapterAvailability(hidden)).toBe('hidden')
+    const runtime = await import('../../src/data/learnerCurriculum.js')
+    const hiddenId = 'history-medicine-renaissance-medicine'
+    const replacement = 'history-medicine-vesalius-beginning-doubt'
+    expect(chapters.some(chapter => chapter.id === hiddenId)).toBe(false)
+    expect(runtime.CURRICULUM_CHAPTERS.some(chapter => chapter.id === hiddenId)).toBe(false)
+    expect(runtime.CHAPTER_CONTENT_LOADERS).not.toHaveProperty(hiddenId)
     const progress = await import('../../src/data/chapterProgress.js')
-    expect(progress.LEGACY_CHAPTER_ID_MAP.mod2).toBe('history-medicine-vesalius-beginning-doubt')
-    expect(progress.canonicalChapterId('mod2')).toBe('history-medicine-vesalius-beginning-doubt')
-    expect(progress.canonicalChapterId(binding.id)).toBe('history-medicine-vesalius-beginning-doubt')
+    expect(progress.canonicalChapterId('mod2')).toBe(replacement)
+    expect(progress.canonicalChapterId(hiddenId)).toBe(replacement)
   })
 
-  it('binds every available chapter to the content file it already loads', async () => {
+  it('binds every authored contentPath to an existing file and generated loader', async () => {
     const { chapters } = await loadCatalogue()
-    const loaderPath = frozenLoaderPaths()
+    const runtime = await import('../../src/data/learnerCurriculum.js')
+    const loaderIds = new Set(Object.keys(runtime.CHAPTER_CONTENT_LOADERS))
     for (const chapter of chapters) {
-      // Status does not decide the binding: a chapter is bound to the file the
-      // runtime already loads for it, and to null only when no file exists.
-      expect(chapter.contentPath, chapter.id).toBe(loaderPath[chapter.id] ?? null)
-      if (chapter.contentPath === null) continue
+      if (chapter.contentPath === null) {
+        expect(loaderIds.has(chapter.id), `${chapter.id} unexpectedly has a loader`).toBe(false)
+        continue
+      }
       expect(existsSync(resolve(root, chapter.contentPath)), `${chapter.contentPath} missing`).toBe(true)
+      expect(loaderIds.has(chapter.id), `${chapter.id} has no generated loader`).toBe(true)
     }
   })
 
@@ -1492,18 +1463,16 @@ describe('Stage 2 authored curriculum', () => {
     }
   })
 
-  it('leaves the runtime catalogue exactly as it was', async () => {
-    // Stage 2 authors records and changes no behaviour. If any of these three
-    // moved, something consumed the catalogue early.
-    const chapters = await import('../../src/chapters.js')
-    const modules = await import('../../src/data/modules.js')
-    const registry = await import('../../src/content/chapterContentRegistry.js')
-    expect(chapters.CHAPTERS).toHaveLength(60)
-    expect(modules.MODULES.map(module => module.id)).toEqual([
-      'hist_medicine', 'soc_family', 'maths_core', 'bio_core',
-      'eng_macbeth', 'hist_spain_new_world', 'hist_usa',
-    ])
-    expect(Object.keys(registry.CHAPTER_CONTENT_LOADERS)).toHaveLength(60)
+  it('projects the authored catalogue into the canonical learner runtime', async () => {
+    const catalogue = await loadCatalogue()
+    const runtime = await import('../../src/data/learnerCurriculum.js')
+    expect(runtime.CURRICULUM_CHAPTERS.map(chapter => chapter.id))
+      .toEqual(catalogue.chapters.map(chapter => chapter.id))
+    expect(runtime.CURRICULUM_MODULES.map(module => module.id))
+      .toEqual(catalogue.modules.filter(module => module.status !== 'retired').map(module => module.id))
+    expect(runtime.CURRICULUM_CHAPTERS).toHaveLength(65)
+    expect(runtime.CURRICULUM_MODULES).toHaveLength(36)
+    expect(Object.keys(runtime.CHAPTER_CONTENT_LOADERS)).toHaveLength(59)
   })
 })
 
@@ -1545,13 +1514,13 @@ describe('generated curriculum map', () => {
     }
     const rendered = renderCurriculumMap(await loadCatalogue())
     expect(rendered).toContain('| `cs_macbeth_2` | `english-macbeth-guilt-consequence` |')
-    expect(rendered).toContain('history-medicine-renaissance-medicine')
+    expect(rendered).toContain('history-medicine-renaissance-medicine` → `history-medicine-vesalius-beginning-doubt')
   })
 
   it('is documentation — the runtime projections belong to the other generator', () => {
     // Two generators, two outputs. This one writes documentation under docs/;
-    // scripts/generate-curriculum-projections.mjs writes the runtime
-    // projections under src/data/generated/curriculum/. Neither writes the
+    // scripts/generate-learner-curriculum.mjs writes the learner runtime
+    // under src/data/generated/curriculum/. Neither writes the
     // other's files.
     expect(OUTPUT_PATH.startsWith('docs/')).toBe(true)
     expect(MAP_OUTPUT_PATH.startsWith('docs/')).toBe(true)
@@ -1570,95 +1539,43 @@ describe('generated curriculum map', () => {
 // fact to satisfy a rule that was never a rule, and would have left the loader
 // registry unreproducible from the catalogue.
 
-describe('chapter content bindings', () => {
-  const loaderPaths = frozenLoaderPaths
-
-  it('preserves the existing content binding of all 59 non-hidden chapters', async () => {
+describe('canonical Chapter content bindings', () => {
+  it('generates one loader for every canonical Chapter with a contentPath', async () => {
     const { chapters } = await loadCatalogue()
-    const paths = loaderPaths()
-    const runtime = await import('../../src/chapters.js')
-    const nonHidden = runtime.CHAPTERS
-      .filter(chapter => runtime.getChapterAvailability(chapter) !== 'hidden')
-      .map(chapter => chapter.id)
-    expect(nonHidden).toHaveLength(59)
-    for (const id of nonHidden) {
-      const chapter = chapters.find(candidate => candidate.id === id)
-      expect(chapter.contentPath, `${id} lost its binding`).toBe(paths[id])
-    }
-    expect(chapters.filter(chapter => chapter.contentPath !== null)).toHaveLength(59)
-  })
-
-  it('reproduces every one of the 60 runtime loader entries', async () => {
-    const { chapters } = await loadCatalogue()
-    const paths = loaderPaths()
-    const reproduced = new Map()
+    const runtime = await import('../../src/data/learnerCurriculum.js')
+    const loaderIds = new Set(Object.keys(runtime.CHAPTER_CONTENT_LOADERS))
+    expect(loaderIds.size).toBe(59)
     for (const chapter of chapters) {
-      if (chapter.contentPath !== null) reproduced.set(chapter.id, chapter.contentPath)
-    }
-    // The hidden legacy loader has no chapter record. It is reproduced from the
-    // compatibility projection — the reason that projection exists at all.
-    const { hiddenChapter } = loadCompatibility()
-    reproduced.set(hiddenChapter.row.id, hiddenChapter.contentPath)
-
-    expect(reproduced.size).toBe(Object.keys(paths).length)
-    expect(reproduced.size).toBe(60)
-    for (const [id, path] of Object.entries(paths)) {
-      expect(reproduced.get(id), `loader ${id} not reproducible`).toBe(path)
+      expect(loaderIds.has(chapter.id), chapter.id).toBe(chapter.contentPath !== null)
+      if (chapter.contentPath !== null) expect(existsSync(resolve(root, chapter.contentPath)), chapter.id).toBe(true)
     }
   })
 
-  it('generates no loader for the six new English chapters', async () => {
-    const { chapters } = await loadCatalogue()
-    const unbound = chapters.filter(chapter => chapter.contentPath === null)
-    expect(unbound.map(chapter => chapter.id).sort()).toEqual([
-      'english-inspector-calls-consequences-resolution',
-      'english-inspector-calls-responsibility-denial',
-      'english-inspector-calls-social-message',
-      'english-macbeth-appearance-reality',
-      'english-macbeth-guilt-consequence',
-      'english-macbeth-witches-fate',
-    ])
-    // No file, therefore no loader entry — not a loader entry pointing nowhere.
-    const paths = loaderPaths()
-    for (const chapter of unbound) expect(paths[chapter.id], chapter.id).toBeUndefined()
-  })
-
-  it('keeps status and content binding independent in both directions', async () => {
+  it('keeps status and content binding independent', async () => {
     const { chapters } = await loadCatalogue()
     const planned = chapters.filter(chapter => chapter.status === 'planned')
-    // Both combinations exist, which is what "independent" has to mean.
     expect(planned.filter(chapter => chapter.contentPath !== null)).toHaveLength(29)
     expect(planned.filter(chapter => chapter.contentPath === null)).toHaveLength(6)
-    // The schema permits a bound planned chapter…
     const bound = { ...planned.find(chapter => chapter.contentPath !== null) }
     expect(validateChapter(bound)).toEqual([])
-    // …and still refuses an available chapter with nothing to open.
     expect(validateChapter({ ...bound, status: 'available', contentPath: null }).join(' '))
       .toMatch(/is "available" but contentPath is null/)
   })
 
-  it('never promotes a chapter because a file exists', async () => {
+  it('never promotes a planned Chapter merely because a source file exists', async () => {
     const { chapters } = await loadCatalogue()
-    const runtime = await import('../../src/chapters.js')
-    // The runtime's own answer is derived from screenCount; the catalogue's is
-    // authored. A bound planned chapter must still be closed in both.
-    for (const chapter of chapters) {
-      if (chapter.status !== 'planned' || chapter.contentPath === null) continue
-      const live = runtime.CHAPTERS.find(candidate => candidate.id === chapter.id)
-      expect(runtime.isChapterAvailable(live), `${chapter.id} is openable`).toBe(false)
-      expect(live.screenCount, `${chapter.id} has screens`).toBe(0)
+    const runtime = await import('../../src/data/learnerCurriculum.js')
+    for (const chapter of chapters.filter(record => record.status === 'planned' && record.contentPath !== null)) {
+      const projected = runtime.getCurriculumChapterById(chapter.id)
+      expect(projected.status, chapter.id).toBe('planned')
+      expect(runtime.isChapterAvailable(projected), chapter.id).toBe(false)
     }
   })
 
-  it('binds each content path to exactly one owner', async () => {
+  it('binds every content path to exactly one canonical owner', async () => {
     const { chapters } = await loadCatalogue()
-    const all = [
-      ...chapters.filter(chapter => chapter.contentPath !== null).map(chapter => chapter.contentPath),
-      loadCompatibility().hiddenChapter.contentPath,
-    ]
+    const all = chapters.filter(chapter => chapter.contentPath !== null).map(chapter => chapter.contentPath)
     expect(new Set(all).size).toBe(all.length)
-    // And the guard fires: two records claiming one file is a registry that
-    // cannot be generated.
     const problems = checkIntegrity({
       boards: [], subjects: [], specifications: [], pathways: [], modules: [],
       chapters: [
@@ -1668,12 +1585,6 @@ describe('chapter content bindings', () => {
     })
     expect(problems.join(' ')).toMatch(/is bound by both "a" and "b"/)
   })
-
-  // The two tests that used to live here — "rejects a legacy binding that
-  // competes with a chapter record" and "validates the binding record itself" —
-  // moved to tests/architecture/curriculum-compatibility.test.js with the fact
-  // they guard. A binding was never a seventh curriculum entity; it is
-  // compatibility data, and its validation belongs with the rest of it.
 })
 
 // ─── Science paper mappings ────────────────────────────────────────────────

@@ -3,7 +3,9 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { relative, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-import { CHAPTERS } from '../../src/chapters.js'
+import {
+  CURRICULUM_CHAPTERS as CHAPTERS,
+} from '../../src/data/learnerCurriculum.js'
 import { loadCatalogue } from '../../src/curriculum-catalogue/index.js'
 import {
   browserEntries,
@@ -172,10 +174,16 @@ describe('Stage 5B canonical subject-browser navigation', () => {
   }
 })
 
-  it('preserves progress denominator inputs without putting progress in navigation', () => {
+  it('keeps progress out of navigation and records the canonical denominator migration', () => {
+    const shifts = {
+      History: -1, // the superseded hidden Renaissance row is no longer a Chapter
+      English: 6,  // six real planned English Chapters now exist in the canonical runtime
+    }
+
     for (const entry of NAVIGATION_ENTRIES) {
       const expected = expectedById.get(entry.id)
-      expect(CHAPTERS.filter(chapter => chapter.subject === entry.label)).toHaveLength(expected.progressDenominator)
+      const canonicalDenominator = expected.progressDenominator + (shifts[entry.label] ?? 0)
+      expect(CHAPTERS.filter(chapter => chapter.subject === entry.label)).toHaveLength(canonicalDenominator)
       expect(entry).not.toHaveProperty('progress')
       expect(entry).not.toHaveProperty('progressDenominator')
     }

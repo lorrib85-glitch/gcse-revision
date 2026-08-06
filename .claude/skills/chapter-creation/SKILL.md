@@ -37,9 +37,9 @@ outcomes, recall, stage navigation and `screens: []`. Do not generate placeholde
 copy or teaching content.
 
 Point the chapter record's `contentPath` at that file and run
-`pnpm curriculum:projections:generate`. The loader entry is generated from
+`pnpm curriculum:runtime:generate`. The loader entry is generated from
 `contentPath` — never hand-write one, and never add a static episode import to
-the app shell or `ChapterPlayer`. `src/content/chapterContentRegistry.js` is a
+the app shell or `ChapterPlayer`. `src/data/learnerCurriculum.js` is the generated-runtime
 generated re-export boundary.
 
 ## Validation

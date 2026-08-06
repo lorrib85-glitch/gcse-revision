@@ -1,6 +1,6 @@
 ---
 name: canonical-topic
-description: "Generate the canonical knowledge-source files for any GCSE subject episode or series — synthesizes the series spine, module architecture, current src/chapters.js state, and session-provided source material into two structured, exhaustive reference files (a content file and an architecture file) per episode for future build/audit sessions"
+description: "Generate the canonical knowledge-source files for any GCSE subject episode or series — synthesizes the series spine, module architecture, current canonical Chapter records, and session-provided source material into two structured, exhaustive reference files (a content file and an architecture file) per episode for future build/audit sessions"
 argument-hint: "[<subject>: ]<episode title or series name>"
 allowed-tools:
   - Read
@@ -39,7 +39,7 @@ Together they synthesize:
 3. **The module architecture** — either embedded inside the spine (English),
    or in a separate `docs/system/<SUBJECT>_MODULE_ARCHITECTURE.md` file
    (History). Feeds the architecture file.
-4. The matching entry/entries in `src/chapters.js`, if already built.
+4. The matching canonical Chapter record(s) in `src/curriculum-catalogue/records/chapters/`, if already built.
    Feeds the architecture file.
 
 `$ARGUMENTS` format: `[<subject>: ]<episode title or series name>` — e.g.
@@ -201,16 +201,16 @@ spine and pull Key Topic N's full bullet text as the reference. Series 1
 
 ### 2b. Build status
 
-Check `src/chapters.js` for any chapter whose `title` (case-insensitive,
+Check canonical Chapter records for any Chapter whose `title` (case-insensitive,
 ignoring punctuation) matches the episode title, to supplement any explicit legacy "Current module" column in the spine.
 
 Then determine status:
 
-- Spine column absent **and** no `src/chapters.js` title match → `Not yet built`.
+- Spine column absent **and** no canonical Chapter title match → `Not yet built`.
 - Spine column says `—` → `Not yet built`.
-- `src/chapters.js` has a title match: note the `id` field.
+- a canonical Chapter record has a title match: note the `id` field.
 - Spine column lists two or more chapter ids joined by `+` → `Built across <id-1> + <id-2>`.
-- Spine column or `src/chapters.js` match names one chapter id:
+- Spine column or canonical Chapter match names one chapter id:
   - Check whether any other episode in the same spine references the same id.
   - If yes → `Built (shared) as <id> — also covers Episode(s) <N, N, ...>` (ascending, excluding this episode).
   - Otherwise → `Built as <id>`.
@@ -229,10 +229,10 @@ doc), extract:
   a stagecraft device" for AIC, the Interleaving Rule and five agents of
   change for Medicine Through Time).
 
-### 2d. Current src/chapters.js entry/entries
+### 2d. Current canonical Chapter record(s)
 
-If build status (2b) names one or more chapter ids: for each, read the matching metadata row in `src/chapters.js`, then resolve the chapter's
-loader in `src/content/chapterContentRegistry.js` and read the returned content
+If build status (2b) names one or more chapter ids: for each, read the matching canonical Chapter record, then resolve the Chapter's
+loader through `src/data/learnerCurriculum.js` and read the returned content
 file for `hook`, `outcomes`, `recall`, `screens` and `stageNavigation`. Metadata
 and authored chapter content deliberately have separate owners.
 

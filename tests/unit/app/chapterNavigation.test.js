@@ -11,7 +11,7 @@ import {
   buildChapterProgressState,
   buildCompletedChapterState,
 } from '../../../src/app/chapterNavigation.js'
-import { CHAPTERS, isChapterAvailable } from '../../../src/chapters.js'
+import { CURRICULUM_CHAPTERS as CHAPTERS, isChapterAvailable } from '../../../src/data/learnerCurriculum.js'
 
 function makeChapter(overrides = {}) {
   return {

@@ -120,7 +120,7 @@ export const HISTORY_MEDICINE_CONCEPTS = [
 ]
 
 // Question-bank topic layer (topicId → tags), used with resolveEffectiveTags:
-// effective = module.tags + MEDICINE_TOPICS[q.topicId].tags + q.tags
+// effective = canonical course facets + MEDICINE_TOPICS[q.topicId].tags + q.tags
 export const MEDICINE_TOPICS = {
   th1:       { label: 'Medieval Medicine',                     tags: ['period:medieval'] },
   th2:       { label: 'Renaissance Medicine',                  tags: ['period:renaissance'] },
@@ -131,7 +131,7 @@ export const MEDICINE_TOPICS = {
   th_modern: { label: 'Modern Medicine',                       tags: ['period:modern'] },
 }
 
-// Bridge from legacy single-word screen tags (`src/chapters.js` screenTags, consumed
+// Bridge from legacy single-word screen tags (derived into learnerCurriculum.js and consumed
 // by findTaggedChapterScreen / weak-spot routing) to canonical concept ids. Only
 // confident 1:1 mappings belong here — composite or navigational screen tags
 // (e.g. 'core-takeaway', 'medieval-practitioners') are deliberately absent.

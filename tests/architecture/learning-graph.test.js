@@ -25,7 +25,9 @@ import {
   MEDICINE_SCREEN_TAG_CONCEPTS,
 } from '../../src/data/learningGraph/concepts/historyMedicine.js'
 
-import { CHAPTERS } from '../../src/chapters.js'
+import {
+  CURRICULUM_CHAPTERS as CHAPTERS,
+} from '../../src/data/learnerCurriculum.js'
 import { ALL_QUESTIONS } from '../../src/data/questionBanks/questionRegistry.js'
 import { ALL_MEDICINE_QUESTIONS } from '../../src/data/questionBanks/history/medicine.js'
 import { MEDICINE_2023_PAPER, ALL_MEDICINE_PAPERS } from '../../src/data/medicineExamPapers.js'
@@ -166,34 +168,40 @@ describe('Learning graph — resolveEffectiveTags', () => {
     expect(layer).toEqual(['a:b', 'c:d'])
   })
 
-  it('resolves a real medicine question through module + topic + question layers', () => {
-    const mod = CHAPTERS.find(m => m.id === 'history-medicine-medieval-beliefs-causes')
-    const question = ALL_MEDICINE_QUESTIONS.find(q => q.id === 'med-th1-003')
-    const effective = resolveEffectiveTags(mod.tags, MEDICINE_TOPICS[question.topicId].tags, question.tags)
-    expect(effective).toContain('subject:history')          // inherited from module
-    expect(effective).toContain('period:medieval')          // module + topic, deduped
-    expect(effective).toContain('history:medicine:black-death') // question's own
-    expect(effective.filter(t => t === 'period:medieval')).toHaveLength(1)
+  it('resolves a real medicine question through canonical course, topic and question layers', () => {
+    const chapter = CHAPTERS.find(record => record.id === 'history-medicine-medieval-beliefs-causes')
+    const question = ALL_MEDICINE_QUESTIONS.find(record => record.id === 'med-th1-003')
+    const courseLayer = [`subject:${chapter.subjectId}`, 'course:medicine', 'period:medieval']
+    const effective = resolveEffectiveTags(courseLayer, MEDICINE_TOPICS[question.topicId].tags, question.tags)
+    expect(effective).toContain('subject:history')
+    expect(effective).toContain('course:medicine')
+    expect(effective).toContain('period:medieval')
+    expect(effective).toContain('history:medicine:black-death')
+    expect(effective.filter(tag => tag === 'period:medieval')).toHaveLength(1)
   })
 })
 
 // ─── Tagged content resolves against the registry ────────────────────────────
 
 describe('Learning graph — tagged content uses only registered vocabulary', () => {
-  it('every module tag is a registered concept or known facet', () => {
-    for (const mod of CHAPTERS) {
-      for (const tag of mod.tags ?? []) {
-        expect(tagProblem(tag), `${mod.id}: ${tagProblem(tag)}`).toBeNull()
+  it('every canonical Chapter concept id is registered', () => {
+    for (const chapter of CHAPTERS) {
+      for (const conceptId of chapter.conceptIds) {
+        expect(isConceptId(conceptId), `${chapter.id}: ${conceptId}`).toBe(true)
       }
     }
   })
 
-  it('all Medicine modules carry subject/course tags', () => {
-    const medicine = CHAPTERS.filter(m => m.series === 'medicine')
-    for (const mod of medicine) {
-      expect(mod.tags, `${mod.id} missing tags`).toBeDefined()
-      expect(mod.tags).toContain('subject:history')
-      expect(mod.tags).toContain('course:medicine')
+  it('keeps every Medicine Chapter in the History discipline and course sequence', () => {
+    const medicineIds = new Set([
+      'history-edexcel-medicine-britain',
+      'history-edexcel-western-front',
+    ])
+    const medicine = CHAPTERS.filter(chapter => medicineIds.has(chapter.moduleId))
+    expect(medicine.length).toBeGreaterThan(0)
+    for (const chapter of medicine) {
+      expect(chapter.subjectId, chapter.id).toBe('history')
+      expect(chapter.sequenceId, chapter.id).toBe('history-medicine')
     }
   })
 
@@ -262,8 +270,8 @@ describe('Learning graph — exam paper tagging', () => {
 
 describe('Learning graph — legacy screen-tag bridge', () => {
   const medicineScreenTags = new Set(
-    CHAPTERS.filter(m => m.series === 'medicine')
-      .flatMap(m => m.screenTags ?? [])
+    CHAPTERS.filter(chapter => chapter.sequenceId === 'history-medicine')
+      .flatMap(chapter => chapter.screenTags ?? [])
       .filter(Boolean),
   )
 

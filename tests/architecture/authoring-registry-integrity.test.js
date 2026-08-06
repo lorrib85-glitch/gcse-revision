@@ -5,7 +5,9 @@ import { resolve } from 'node:path'
 import { loadCatalogue } from '../../src/component-catalogue/loadCatalogue.js'
 import { AUTHORING_COMPATIBILITY } from '../../src/component-catalogue/migrations/authoringCompatibility.js'
 import { catalogueEntries, projectRegistries } from '../../scripts/generate-authoring-registry.mjs'
-import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
+import {
+  CHAPTER_CONTENT_LOADERS,
+} from '../../src/data/learnerCurriculum.js'
 import { BLOCK_REGISTRY, SCREEN_REGISTRY } from '../../src/data/screenRegistry.js'
 import {
   BLOCK_RENDERER_TYPES,

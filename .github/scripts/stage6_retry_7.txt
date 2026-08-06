@@ -1,1 +1,0 @@
-Temporary trigger for the final complete Stage 6 retirement workflow. Excluded from the clean main commit.

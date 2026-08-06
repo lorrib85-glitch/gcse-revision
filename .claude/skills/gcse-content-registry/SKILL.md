@@ -33,7 +33,7 @@ Action required:   <none / list>
 | `src/curriculum-catalogue/records/modules/<module>.js` | Module membership and chapter order (`chapterRefs[].position`) |
 | `src/curriculum-catalogue/records/chapters/<subject>/<module>.js` | Chapter identity, presentation, `status` and `contentPath` |
 | `src/content/<subject>/<series>/episodes/<file>.js` | Hook, outcomes, recall, screens and stage navigation |
-| `src/data/generated/curriculum/**` | The generated `MODULES`, `CHAPTERS` and `CHAPTER_CONTENT_LOADERS` — read through `src/data/modules.js`, `src/chapters.js` and `src/content/chapterContentRegistry.js`, which are re-export boundaries and are never authored in |
+| `src/data/generated/curriculum/learnerCurriculum.js` | Generated canonical Modules, Chapters, Learning Sequences and loaders; read only through `src/data/learnerCurriculum.js` |
 | `src/data/screenRegistry.js` | Approved screen/block types and required data |
 
 Some content filenames still use `episode-*` for historical reasons. That filename
@@ -45,7 +45,7 @@ convention does not change the product model: each file exports one chapter.
 - Exactly one module record must reference the chapter.
 - `screenCount` and `screenTags` are DERIVED by the generator from the content
   file. Never author or "fix" them — a mismatch means the projection is stale,
-  so run `pnpm curriculum:projections:generate`.
+  so run `pnpm curriculum:runtime:generate`.
 - Every screen and nested block type must resolve through `screenRegistry.js`.
 - New chapter content must not require edits to `ChapterPlayer` or new routing
   branches in `ScreenRenderer`.
@@ -58,16 +58,16 @@ convention does not change the product model: each file exports one chapter.
 3. Create or update the chapter content file under `src/content/`.
 4. Validate the authored screen/block types against `src/data/screenRegistry.js`.
 5. Update any affected `stageNavigation` indices in the content file.
-6. Run `pnpm curriculum:projections:generate`, and `pnpm lab:generate` if screen
+6. Run `pnpm curriculum:runtime:generate`, and `pnpm lab:generate` if screen
    or block usage changed.
 7. Run the architecture suite and production build.
 
 ## Test pattern
 
 ```javascript
-import { CHAPTERS } from '../../src/chapters.js'
-import { MODULES } from '../../src/data/modules.js'
-import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
+import { CURRICULUM_CHAPTERS } from '../../src/data/learnerCurriculum.js'
+import { CURRICULUM_MODULES } from '../../src/data/learnerCurriculum.js'
+import { CHAPTER_CONTENT_LOADERS } from '../../src/data/learnerCurriculum.js'
 
 const chapter = CHAPTERS.find(item => item.id === '<chapter-id>')
 const parentModule = MODULES.find(item => item.chapterIds.includes(chapter.id))

@@ -1,17 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-
 import { loadCatalogue } from '../../src/curriculum-catalogue/index.js'
-import {
-  loadLearningSequences,
-  validateLearningSequences,
-} from '../../src/curriculum-catalogue/runtime/index.js'
-import {
-  assertInputPurity,
-  buildLearnerCurriculum,
-} from '../../scripts/generate-learner-curriculum.mjs'
+import { loadLearningSequences, validateLearningSequences } from '../../src/curriculum-catalogue/runtime/index.js'
+import { assertInputPurity, buildLearnerCurriculum } from '../../scripts/generate-learner-curriculum.mjs'
 import {
   LEARNING_SEQUENCES,
   CURRICULUM_MODULES,
@@ -21,21 +14,10 @@ import {
   getLearningSequenceForChapter,
   getOrderedAvailableChapters,
   isChapterAvailable,
-} from '../../src/data/generated/curriculum/learnerCurriculum.js'
-import {
-  MODULES as LEGACY_MODULES,
-} from '../../src/data/modules.js'
-import {
-  CHAPTERS as LEGACY_CHAPTERS,
-  isChapterAvailable as isLegacyChapterAvailable,
-} from '../../src/chapters.js'
-import {
-  canonicalChapterId,
-  chapterProgressSourceKeys,
-} from '../../src/data/chapterProgress.js'
+} from '../../src/data/learnerCurriculum.js'
+import { canonicalChapterId, chapterProgressSourceKeys } from '../../src/data/chapterProgress.js'
 
 const ROOT = resolve(fileURLToPath(new URL('../..', import.meta.url)))
-
 const productionFiles = [
   'src/progress.js',
   'src/app/chapterNavigation.js',
@@ -49,29 +31,23 @@ const productionFiles = [
 ]
 
 describe('canonical learner runtime', () => {
-  it('validates the seven semantic Learning Sequences', async () => {
+  it('validates seven semantic Learning Sequences', async () => {
     const catalogue = await loadCatalogue()
     const sequences = loadLearningSequences(catalogue)
     expect(validateLearningSequences(sequences, catalogue)).toEqual([])
-    expect(sequences).toHaveLength(7)
     expect(sequences.map(sequence => sequence.id)).toEqual([
-      'history-medicine',
-      'sociology-family',
-      'maths-number',
-      'biology-core',
-      'english-macbeth',
-      'history-spain-new-world',
-      'history-usa-conflict',
+      'history-medicine', 'sociology-family', 'maths-number', 'biology-core',
+      'english-macbeth', 'history-spain-new-world', 'history-usa-conflict',
     ])
   })
 
-  it('projects the canonical catalogue without compatibility-shaped Chapter fields', () => {
+  it('projects 36 Modules and all 65 canonical Chapters without compatibility fields', () => {
     expect(CURRICULUM_MODULES).toHaveLength(36)
     expect(CURRICULUM_CHAPTERS).toHaveLength(65)
     expect(LEARNING_SEQUENCES).toHaveLength(7)
     for (const chapter of CURRICULUM_CHAPTERS) {
-      for (const legacyField of ['number', 'series', 'color', 'colorLight', 'tags', 'availability']) {
-        expect(chapter).not.toHaveProperty(legacyField)
+      for (const field of ['number', 'series', 'color', 'colorLight', 'tags', 'availability']) {
+        expect(chapter, `${chapter.id}.${field}`).not.toHaveProperty(field)
       }
       expect(chapter).toHaveProperty('moduleId')
       expect(chapter).toHaveProperty('status')
@@ -80,75 +56,69 @@ describe('canonical learner runtime', () => {
     }
   })
 
-  it('preserves the live available-Chapter set and current continuation order', () => {
-    const expectedAvailable = LEGACY_CHAPTERS.filter(isLegacyChapterAvailable).map(chapter => chapter.id)
-    const actualAvailable = CURRICULUM_CHAPTERS.filter(isChapterAvailable).map(chapter => chapter.id)
-    expect(new Set(actualAvailable)).toEqual(new Set(expectedAvailable))
-    expect(actualAvailable).toHaveLength(30)
-
-    // Canonical sequences may already contain planned Chapters. The migration
-    // contract is that the live, openable order is identical — not that planned
-    // content remains artificially excluded from its real sequence.
-    expect(LEARNING_SEQUENCES.map(sequence => sequence.chapterIds
-      .map(getCurriculumChapterById)
-      .filter(isChapterAvailable)
-      .map(chapter => chapter.id))).toEqual(
-      LEGACY_MODULES.map(module => module.chapterIds
-        .map(id => LEGACY_CHAPTERS.find(chapter => chapter.id === id))
-        .filter(isLegacyChapterAvailable)
-        .map(chapter => chapter.id)),
-    )
+  it('projects exactly 30 available Chapters in Learning Sequence order', () => {
+    expect(CURRICULUM_CHAPTERS.filter(isChapterAvailable)).toHaveLength(30)
     expect(getOrderedAvailableChapters().map(chapter => chapter.id)).toEqual(
-      LEGACY_MODULES
-        .flatMap(module => module.chapterIds)
-        .map(id => LEGACY_CHAPTERS.find(chapter => chapter.id === id))
-        .filter(isLegacyChapterAvailable)
+      LEARNING_SEQUENCES
+        .flatMap(sequence => sequence.chapterIds)
+        .map(getCurriculumChapterById)
+        .filter(isChapterAvailable)
         .map(chapter => chapter.id),
     )
   })
 
-  it('derives every available Chapter through exactly one Learning Sequence', () => {
+  it('resolves every available Chapter through exactly one Learning Sequence', () => {
     for (const chapter of CURRICULUM_CHAPTERS.filter(isChapterAvailable)) {
       const sequence = getLearningSequenceForChapter(chapter.id)
       expect(sequence, chapter.id).not.toBeNull()
       expect(sequence.chapterIds.filter(id => id === chapter.id)).toHaveLength(1)
-      expect(getCurriculumChapterById(chapter.id)).toBe(chapter)
     }
   })
 
-  it('generates 59 canonical content loaders and every loader resolves', async () => {
+  it('generates 59 canonical loaders and no hidden Renaissance loader', async () => {
     expect(Object.keys(CHAPTER_CONTENT_LOADERS)).toHaveLength(59)
     expect(CHAPTER_CONTENT_LOADERS).not.toHaveProperty('history-medicine-renaissance-medicine')
-    for (const [chapterId, loader] of Object.entries(CHAPTER_CONTENT_LOADERS)) {
-      const content = await loader()
-      expect(content?.id, chapterId).toBe(chapterId)
+    for (const [id, loader] of Object.entries(CHAPTER_CONTENT_LOADERS)) {
+      expect((await loader()).id, id).toBe(id)
     }
   })
 
-  it('migrates both mod2 and the superseded hidden id onto the canonical replacement', () => {
-    expect(canonicalChapterId('mod2')).toBe('history-medicine-vesalius-beginning-doubt')
-    expect(canonicalChapterId('history-medicine-renaissance-medicine'))
-      .toBe('history-medicine-vesalius-beginning-doubt')
-    const sources = chapterProgressSourceKeys('history-medicine-vesalius-beginning-doubt')
+  it('maps both historical Renaissance ids directly onto the canonical replacement', () => {
+    const replacement = 'history-medicine-vesalius-beginning-doubt'
+    expect(canonicalChapterId('mod2')).toBe(replacement)
+    expect(canonicalChapterId('history-medicine-renaissance-medicine')).toBe(replacement)
+    const sources = chapterProgressSourceKeys(replacement)
     expect(sources).toContain('gcse_chapter_history-medicine-renaissance-medicine')
     expect(sources).toContain('gcse_module_mod2')
   })
 
-  it('keeps the learner generator independent of compatibility and browser output', async () => {
+  it('keeps the generator independent of compatibility and browser output', async () => {
     expect(assertInputPurity()).toEqual([])
     const catalogue = await loadCatalogue()
-    const sequences = loadLearningSequences(catalogue)
-    const built = await buildLearnerCurriculum(catalogue, sequences)
+    const built = await buildLearnerCurriculum(catalogue, loadLearningSequences(catalogue))
     expect(built.chapters).toEqual(CURRICULUM_CHAPTERS)
     expect(built.modules).toEqual(CURRICULUM_MODULES)
     expect(built.sequences).toEqual(LEARNING_SEQUENCES)
   })
 
-  it('moves every live consumer onto the public learner-curriculum boundary', () => {
+  it('keeps retired compatibility paths absent', () => {
+    for (const path of [
+      'src/curriculum-catalogue/compatibility/index.js',
+      'src/curriculum-catalogue/compatibility/runtime-v1.js',
+      'src/data/modules.js',
+      'src/chapters.js',
+      'src/content/chapterContentRegistry.js',
+      'scripts/generate-curriculum-projections.mjs',
+      'tests/fixtures/curriculum-runtime-v1.json',
+    ]) expect(existsSync(resolve(ROOT, path)), path).toBe(false)
+  })
+
+  it('moves every live consumer onto the public learner boundary', () => {
     for (const path of productionFiles) {
       const source = readFileSync(resolve(ROOT, path), 'utf8')
       expect(source, path).toContain('learnerCurriculum.js')
-      expect(source, path).not.toMatch(/(?:from|import\s*\()\s*['"][^'"]*(?:chapters|data\/modules|chapterContentRegistry)\.js['"]/) 
+      expect(source, path).not.toMatch(/generated\/curriculum\/learnerCurriculum\.js/)
+      expect(source, path).not.toMatch(/(?:chapters|data\/modules|chapterContentRegistry)\.js['"]/) 
     }
   })
 })

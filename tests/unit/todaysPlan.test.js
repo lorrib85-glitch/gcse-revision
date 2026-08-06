@@ -14,8 +14,8 @@ vi.mock('../../src/lib/storage.js', () => ({
 }))
 
 const { isTaskDoneToday, getNextPlannerItem, getTaskSubject, buildTodaysPlan } = await import('../../src/todaysPlan.js')
-const { CHAPTERS } = await import('../../src/chapters.js')
-const { MODULES } = await import('../../src/data/modules.js')
+const { CURRICULUM_CHAPTERS: CHAPTERS } = await import('../../src/data/learnerCurriculum.js')
+const { LEARNING_SEQUENCES: MODULES } = await import('../../src/data/learnerCurriculum.js')
 
 const TODAY = new Date().toISOString().slice(0, 10)
 const YESTERDAY = (() => {
@@ -136,7 +136,7 @@ describe('getTaskSubject', () => {
 
 // Gate 5 of the hierarchy migration: a task that routes the learner into one
 // learner-facing journey must name it with chapterId. "moduleId" is reserved
-// for genuine parent curriculum units in src/data/modules.js, which plan tasks
+// for canonical parent curriculum units; plan tasks
 // never route to.
 describe('plan task payload semantics', () => {
   // A part-finished chapter is what makes buildTodaysPlan emit a "Continue"

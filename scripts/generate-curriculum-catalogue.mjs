@@ -22,7 +22,6 @@ import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 
 import { loadCatalogue } from '../src/curriculum-catalogue/index.js'
-import { loadCompatibility } from '../src/curriculum-catalogue/compatibility/index.js'
 import { OVERALL_SCOPE, resolveWeighting, weightingScopes } from '../src/curriculum-catalogue/schema.js'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -236,8 +235,8 @@ export function renderCatalogue(catalogue) {
   lines.push('')
   lines.push('- **Subjects, study pathways, modules and chapters** — `CURRICULUM_MAP.md`,')
   lines.push('  generated from the same records.')
-  lines.push('- **Runtime `MODULES`, `CHAPTERS` and content loaders** — Stage 3 projections.')
-  lines.push('  The runtime files remain hand-authored and untouched until then.')
+  lines.push('- **Learner runtime sequences, Chapters and content loaders** — `LEARNER_CURRICULUM_MAP.md`,')
+  lines.push('  generated from these records plus explicit Learning Sequence configuration.')
   lines.push('- **Option, text and route selections** — a study pathway records those, not a')
   lines.push('  specification.')
   lines.push('')
@@ -455,17 +454,14 @@ function renderModulesAndChapters(lines, catalogue) {
 }
 
 function renderMigration(lines, catalogue) {
-  const { hiddenChapter } = loadCompatibility()
   const chapterById = new Map(catalogue.chapters.map(chapter => [chapter.id, chapter]))
   lines.push('## Legacy and placeholder treatment')
   lines.push('')
   lines.push('### Placeholder cards that became chapters')
   lines.push('')
-  lines.push('These were coming-soon cards synthesised by the browser: a real authored title and')
-  lines.push('subtitle, but no chapter record, no loader and no progress. They are now planned')
-  lines.push('chapter records with stable semantic ids. **No progress alias is created**, because')
-  lines.push('a `cs_*` card was never openable and therefore never a progress identity — an alias')
-  lines.push('would imply learner data that cannot exist.')
+  lines.push('These were coming-soon cards synthesised by the browser. They are now planned')
+  lines.push('canonical Chapter records with stable semantic ids. No progress alias exists because')
+  lines.push('the old cards were never openable and therefore never stored learner progress.')
   lines.push('')
   lines.push('| Retired card | Canonical chapter | Title |')
   lines.push('|---|---|---|')
@@ -473,21 +469,17 @@ function renderMigration(lines, catalogue) {
     lines.push(`| \`${from}\` | \`${to}\` | ${escape(chapterById.get(to)?.title ?? '—')} |`)
   }
   lines.push('')
-  lines.push('### Content the runtime loads for an id that is not a chapter')
+  lines.push('### Superseded Renaissance progress ids')
   lines.push('')
-  lines.push('Read from `src/curriculum-catalogue/compatibility/runtime-v1.js`, not restated here —')
-  lines.push('the reason an id is excluded is a recorded fact, and a documentation script is the')
-  lines.push('wrong place to keep the only copy of it. It is compatibility data rather than a')
-  lines.push('curriculum record: there are six entity types and this is not a seventh.')
+  lines.push('The former hidden bundle is no longer a Chapter or loader. Both historical ids map')
+  lines.push('directly to the real canonical replacement, preserving old learner progress without')
+  lines.push('keeping a compatibility-shaped curriculum row.')
   lines.push('')
-  lines.push(`- **\`${hiddenChapter.row.id}\`** → \`${hiddenChapter.contentPath}\``)
-  if (hiddenChapter.supersededBy) lines.push(`  Superseded by \`${hiddenChapter.supersededBy}\`.`)
-  lines.push(`  ${escape(hiddenChapter.reason)}`)
+  lines.push('- `mod2` → `history-medicine-vesalius-beginning-doubt`')
+  lines.push('- `history-medicine-renaissance-medicine` → `history-medicine-vesalius-beginning-doubt`')
   lines.push('')
-  lines.push('Preserved is not the same as given a record. Every other current chapter id is')
-  lines.push('carried verbatim, including the ones that break the naming rules (`soc1`, `math1`,')
-  lines.push('`bio_building_blocks`, `sci_bio_w1`, `spain-new-world-1`), because each backs a live')
-  lines.push('`gcse_chapter_<id>` progress key. A tidier id is not worth a learner\'s progress.')
+  lines.push('Every other historical Chapter id is preserved verbatim because it backs a live')
+  lines.push('`gcse_chapter_<id>` progress key. A tidier id is not worth a learner’s progress.')
   lines.push('')
 }
 
@@ -495,7 +487,6 @@ export function renderCurriculumMap(catalogue) {
   const { subjects, pathways, modules, chapters } = catalogue
   const available = chapters.filter(chapter => chapter.status === 'available').length
   const boundChapters = chapters.filter(chapter => chapter.contentPath !== null).length
-  const bound = boundChapters + 1
   const lines = []
 
   lines.push('# Curriculum map')
@@ -512,12 +503,10 @@ export function renderCurriculumMap(catalogue) {
     + `**${modules.length}** modules · **${chapters.length}** chapters `
     + `(**${available}** available, **${chapters.length - available}** planned)`)
   lines.push('')
-  lines.push(`**${bound}** content bindings — ${boundChapters} on chapters plus the one `
-    + 'compatibility binding, which is every entry in the runtime loader registry.')
+  lines.push(`**${boundChapters}** canonical content bindings — one generated loader for every chapter with a contentPath.`)
   lines.push('')
-  lines.push('**No runtime projection exists yet.** This document and the specification catalogue')
-  lines.push('are build-time documentation. `MODULES`, `CHAPTERS` and `CHAPTER_CONTENT_LOADERS`')
-  lines.push('remain hand-authored and untouched.')
+  lines.push('The canonical learner runtime is generated separately from these records plus')
+  lines.push('Learning Sequence configuration and derived Chapter screen metadata.')
   lines.push('')
 
   renderSubjects(lines, subjects)

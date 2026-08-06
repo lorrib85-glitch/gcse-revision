@@ -307,3 +307,15 @@ projection, **5B** switches `Subjects.jsx` onto it, and **5C** retires post-cuto
 - `pnpm verify` gains a `curriculum:check` step and loses four drift tests.
 - `docs/system/CONTENT_HIERARCHY.md` is updated to distinguish curriculum
   ownership from Browser Entry presentation and generated navigation.
+
+
+## Stage 6 closure
+
+Stage 6 retired the runtime-v1 compatibility projection after introducing the
+canonical learner-runtime model. A build-time Learning Sequence configuration
+owns application continuation and planner order across canonical Modules; it is
+not a seventh curriculum entity. Production now reaches canonical Modules,
+Chapters, derived screen metadata and content loaders through
+`src/data/learnerCurriculum.js` only. Browser navigation remains a separate
+presentation projection. Historical Renaissance progress ids map directly to
+the canonical Vesalius Chapter; no hidden Chapter or loader remains.

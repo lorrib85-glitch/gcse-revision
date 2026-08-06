@@ -1,1 +1,0 @@
-Unit suite passed unexpectedly; no diagnostic needed.

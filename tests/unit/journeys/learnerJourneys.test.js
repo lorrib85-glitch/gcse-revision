@@ -38,7 +38,7 @@ describe('Journey 1 — progress survives a refresh', () => {
   it('module resume state written before a refresh is read back at the right screen', async () => {
     const { prepareChapterScreenState } = await import('../../../src/app/chapterNavigation.js')
     const { getChapterState, saveChapterState, getChapterPct } = await import('../../../src/progress.js')
-    const { CHAPTERS } = await import('../../../src/chapters.js')
+    const { CURRICULUM_CHAPTERS: CHAPTERS } = await import('../../../src/data/learnerCurriculum.js')
 
     const chapter = CHAPTERS.find(m => m.id === 'history-medicine-medieval-beliefs-causes')
     // Learner reaches screen 10 of a real module.
@@ -66,7 +66,7 @@ describe('Journey 2 — a wrong answer routes to the intended teaching screen', 
     const { logWrongAnswer, logCorrectAnswer, getWeakTopics, getBiggestWin } =
       await import('../../../src/unifiedWeaknessTracker.js')
     const { TAG_CHAPTER_MAP, findTaggedChapterScreen } = await import('../../../src/data/tagChapterMap.js')
-    const { CHAPTERS } = await import('../../../src/chapters.js')
+    const { CURRICULUM_CHAPTERS: CHAPTERS } = await import('../../../src/data/learnerCurriculum.js')
 
     // Two wrong answers on a recoverable concept crosses the weak threshold.
     for (let i = 0; i < 2; i++) {
@@ -122,7 +122,7 @@ describe('Journey 3 — completing a chapter updates the surfaces that read it',
     const { recordScore, getScores, getProgress, getChapterState, saveChapterState } =
       await import('../../../src/progress.js')
     const { buildChapterCompletePayload } = await import('../../../src/app/chapterNavigation.js')
-    const { CHAPTERS } = await import('../../../src/chapters.js')
+    const { CURRICULUM_CHAPTERS: CHAPTERS } = await import('../../../src/data/learnerCurriculum.js')
 
     const chapter = CHAPTERS.find(m => m.id === 'history-medicine-medieval-beliefs-causes')
 

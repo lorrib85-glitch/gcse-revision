@@ -66,67 +66,61 @@ Progress and Quiz do not pay for the chapter runtime on first load.
 
 ### Chapter content loading
 
-**The curriculum catalogue is the authority. These three files are generated
-re-export boundaries — never author in them:**
+The curriculum catalogue is the authored authority. Production reads one
+canonical runtime boundary: `src/data/learnerCurriculum.js`. That boundary
+re-exports generated canonical Modules, Chapters, Learning Sequences and content
+loaders from `src/data/generated/curriculum/learnerCurriculum.js`; never import
+the generated file directly.
 
-| File | What it is now |
-|------|----------------|
-| `src/data/modules.js` | re-exports `src/data/generated/curriculum/modules.js` |
-| `src/chapters.js` | re-exports `src/data/generated/curriculum/chapters.js` |
-| `src/content/chapterContentRegistry.js` | re-exports `src/data/generated/curriculum/chapterContentLoaders.js` |
+The ownership chain is:
 
-They keep their export names and stay the import path for every consumer, so
-reading from them is correct and unchanged. Writing to them is not: the next
-`pnpm curriculum:projections:generate` overwrites the generated file and
-`pnpm verify` fails on the drift.
+- `src/curriculum-catalogue/records/chapters/` — Chapter identity, learner copy,
+  authored `status`, `contentPath`, concepts and requirements;
+- `src/curriculum-catalogue/records/modules/` — canonical Chapter membership and
+  order through `chapterRefs[].position`;
+- `src/curriculum-catalogue/runtime/learningSequences.js` — app-level
+  continuation, numbering scope and planner order across canonical Modules;
+- `src/content/<subject>/<series>/episodes/` — hooks, outcomes, recall, stage
+  navigation and screens;
+- `scripts/generate-learner-curriculum.mjs` — derives screen metadata and loaders
+  and writes the sole learner-runtime projection.
 
-The ownership chain now runs:
-
-- `src/curriculum-catalogue/records/chapters/<subject>/<module>.js` — chapter
-  identity, title, subtitle, era, icon, header image, `status`, `contentPath`
-  and `conceptIds`;
-- `src/curriculum-catalogue/records/modules/<module>.js` — which chapters a
-  module holds, and their canonical order via `chapterRefs[].position`;
-- `src/content/<subject>/<series>/episodes/<file>.js` — one chapter's full hook,
-  outcomes, recall, stage navigation and screens;
-- `src/data/generated/curriculum/**` — the three runtime projections, generated
-  from the records plus the content files.
+Browser destination presentation is separate and remains generated through the
+navigation projection. Learning Sequences are application configuration, not a
+seventh curriculum entity.
 
 #### Adding or changing a chapter
 
-1. Add or update the canonical **chapter record**.
-2. Add the chapter reference to **exactly one** canonical module, with its
+1. Add or update the canonical **Chapter record**.
+2. Add the Chapter reference to **exactly one** canonical **Module**, with its
    `position`.
-3. Create or update the **chapter content file**.
+3. Create or update the **Chapter content file**.
 4. Set the record's **`contentPath`** to that file.
-5. Register any new **concepts** separately in `src/data/learningGraph/` where
-   the chapter references them.
-6. Run `pnpm curriculum:projections:generate`.
-7. Run `pnpm lab:generate` when the change adds, removes or moves a screen or
-   block — the Lab projection carries measured content usage.
+5. Register any new **concepts** separately in `src/data/learningGraph/`.
+6. Run `pnpm curriculum:runtime:generate` and, when browser presentation changes,
+   `pnpm curriculum:navigation:generate`.
+7. Run `pnpm lab:generate` when screens or blocks are added, removed or moved.
 8. Run `pnpm verify`.
 
-What follows from that, and must not be done by hand:
+Consequences:
 
-- **`screenCount` and `screenTags` are derived** from the content file's
-  `screens` array. There is nothing to keep aligned and nothing to update.
-- **Loader entries are generated** from the record's `contentPath`. Never add a
-  loader by hand, and never add a static episode import.
-- **`MODULES` and `CHAPTERS` are generated.** A chapter reaches the runtime by
-  being referenced from a module record, not by being appended to an array.
-- **Normal chapter creation never edits `ChapterPlayer`, `ScreenRenderer`, app
-  navigation or progress persistence.** Use registered screen definitions from
-  `src/data/screenRegistry.js`.
-- **A planned chapter may have a zero-screen content file** without becoming
-  available: availability is derived from `screenCount`, so an empty `screens`
-  array reads as `comingSoon`.
-- **Topic metadata, once implemented, lives inside chapter content**, not in the
-  curriculum catalogue. Do not add topic fields to a chapter record.
+- **`status` is authored.** A Chapter is openable only when its status is
+  `available` and its derived `screenCount` is greater than zero.
+- **`screenCount` and `screenTags` are derived** from the content file.
+- **Loader entries are generated** from `contentPath`; never register one by hand
+  or add a static episode import.
+- **Canonical Modules and Chapters are generated** into the learner runtime.
+- **Normal Chapter creation never edits `ChapterPlayer`, `ScreenRenderer`, app
+  navigation or progress persistence.**
+- **A planned Chapter may have a zero-screen content file** without becoming
+  available.
+- **Topic metadata, once implemented, lives inside Chapter content**, never in a
+  curriculum record.
+- Every non-retired canonical Chapter belongs to exactly one canonical Module.
+  There is no hidden runtime Chapter exemption.
 
-Belonging to a module is not optional: every non-hidden chapter — including an
-unbuilt `comingSoon` stub — must be referenced by exactly one module record, and
-only the explicitly hidden legacy row is exempt. See
-`docs/system/CONTENT_HIERARCHY.md`.
+The retired `src/chapters.js`, `src/data/modules.js` and
+`src/content/chapterContentRegistry.js` boundaries must not return.
 
 ### Exam Mode question banks are lazy-loaded via context
 
@@ -325,13 +319,10 @@ docs/system/TEACHING_VOICE_GUIDE.md
 
 | File | Contents |
 |------|----------|
-| `src/chapters.js` | **Generated re-export boundary — never author here.** Re-exports `CHAPTERS`, `CHAPTER_AVAILABILITY`, `getChapterAvailability` and `isChapterAvailable` from `src/data/generated/curriculum/chapters.js`. Still the import path for every consumer. Row order is projection order, **not** learner journey order — nothing derives browse order from it. Chapter facts are authored in `src/curriculum-catalogue/records/chapters/`; `screenCount` and `screenTags` are derived from the content file |
-| `src/data/modules.js` | **Generated re-export boundary — never author here.** Re-exports `MODULES`, `getModuleById` and `getModuleForChapter` from `src/data/generated/curriculum/modules.js`. Module membership and chapter order are authored as `chapterRefs` on a module record in `src/curriculum-catalogue/records/modules/`. Every chapter that is not the hidden legacy row must be referenced by exactly one module record. |
 | `src/curriculum-catalogue/records/` | **The curriculum authority.** Board, subject, specification, study-pathway, module and chapter records. Build-time only — production source never imports it; generated projections are the runtime side of the boundary. See `docs/system/CURRICULUM_CATALOGUE.md`. |
 | `src/curriculum-catalogue/runtime/learningSequences.js` | **Learner-flow configuration, not curriculum.** Semantic Learning Sequences reference canonical Modules and own only continuation, numbering scope and planner order. Every available Chapter must resolve through exactly one sequence. |
-| `src/data/learnerCurriculum.js` | **Canonical learner runtime boundary.** Progress, planning, ChapterPlayer, completion and content loading import this file. It re-exports the generated canonical Module, Chapter, Learning Sequence and loader query model. |
+| `src/data/learnerCurriculum.js` | **Canonical learner runtime boundary.** Progress, planning, navigation, ChapterPlayer, completion and content loading import this file. It is the only production boundary for generated canonical Modules, Chapters, Learning Sequences and loaders. The retired `src/chapters.js`, `src/data/modules.js` and `chapterContentRegistry.js` files must not return. |
 | `src/features/subjects/subjectNavigationAdapter.js` | **Sole production boundary for generated subject navigation.** Exposes ordered Browser Entries and adapts their Chapter, Module and subject-state cards to the UI contract. Only Chapter cards receive a runtime `screenCount`; no compatibility-shaped Chapter row is spread into the browser. UI components must use this adapter rather than importing `src/data/generated/curriculum/navigation.js` directly. |
-| `src/content/chapterContentRegistry.js` | **Generated re-export boundary — never author here.** Re-exports `CHAPTER_CONTENT_LOADERS` and `loadChapterContent` from `src/data/generated/curriculum/chapterContentLoaders.js`. Loader entries are generated from each chapter record's `contentPath`. |
 | `src/content/<subject>/<series>/episodes/<file>.js` | Per-chapter content files — the canonical pattern. Each exports `default { id, subject, screens, ... }`, is bound by a chapter record's `contentPath`, and is loaded through the generated loader registry. |
 | `src/contentIndex.js` | `CONTENT_INDEX` — maps topic tags to section metadata for the Targeted Brush-Up system |
 | `src/progress.js` | Progress helpers: `getProgress`, `saveSessionResult`, `getSessionDraft`, etc. |

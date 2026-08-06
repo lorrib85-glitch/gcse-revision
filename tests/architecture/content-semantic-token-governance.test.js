@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { CHAPTERS } from '../../src/chapters.js'
-import { CHAPTER_CONTENT_LOADERS } from '../../src/content/chapterContentRegistry.js'
+import {
+  CURRICULUM_CHAPTERS as CHAPTERS,
+} from '../../src/data/learnerCurriculum.js'
+import {
+  CHAPTER_CONTENT_LOADERS,
+} from '../../src/data/learnerCurriculum.js'
 
 const PRESENTATION_KEYS = new Set(['color', 'colorRgb', 'bg', 'colorLight'])
 

@@ -2745,7 +2745,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Props:** `chapter (a chapter definition resolved through CHAPTER_CONTENT_LOADERS)`, `onBack`, `onChapterComplete`
 
-**Dependencies:** `ScreenRenderer`, `screenRegistry.js schema validation`, `chapterNavigation.js`, `progress.js`, `MODULES`, `its own private family under layout/chapterPlayer/`
+**Dependencies:** `ScreenRenderer`, `screenRegistry.js schema validation`, `chapterNavigation.js`, `progress.js`, `LEARNING_SEQUENCES via learnerCurriculum.js`, `its own private family under layout/chapterPlayer/`
 
 **Usage boundary:** Not an authoring choice. Content authors never select ChapterPlayer as a screen or component, and never add a screen type to it. It resolves every screen through ScreenRenderer and holds no component-routing branches of its own.
 
@@ -2756,7 +2756,7 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Governance rules:**
 
 - No chapter-level examiner or repair diversions. Finishing the last content screen completes the chapter, full stop. Face the Examiner and What Examiners Look For are reached as authored screens routed by ScreenRenderer, never as end-of-chapter overlays; WeakSpotRecovery and RecoveryQuizPlayer have no ChapterPlayer entry point.
-- Chapter-building rule: a normal chapter is buildable by authoring a canonical chapter record under src/curriculum-catalogue/records/chapters/, referencing it from exactly one canonical module record, writing its content file, pointing the record contentPath at that file, composing registered screens and blocks from src/data/screenRegistry.js, and running the curriculum generators. src/chapters.js, src/data/modules.js and src/content/chapterContentRegistry.js are generated re-export boundaries and are never authored in; screenCount, screenTags and the loader entry are derived, not maintained. Adding a normal chapter must not require editing ChapterPlayer, ScreenRenderer, app navigation or progress persistence. Enforced by tests/architecture/chapter-authoring-boundary.test.js and tests/architecture/authoring-guidance.test.js.
+- Chapter-building rule: author a canonical Chapter record, reference it from exactly one canonical Module record, create its content file, set contentPath, use registered screens and blocks, then run the curriculum generators. Production reaches the result only through src/data/learnerCurriculum.js; screenCount, screenTags and the loader entry are derived. Adding a normal Chapter must not require editing ChapterPlayer, ScreenRenderer, app navigation or progress persistence. Enforced by tests/architecture/chapter-authoring-boundary.test.js and tests/architecture/authoring-guidance.test.js.
 
 **Contract:** standard
 

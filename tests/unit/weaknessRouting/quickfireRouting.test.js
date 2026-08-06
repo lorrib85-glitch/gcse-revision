@@ -8,7 +8,7 @@ import {
   clearWeaknessLog,
 } from '../../../src/unifiedWeaknessTracker.js'
 import { TAG_CHAPTER_MAP, findTaggedChapterScreen } from '../../../src/data/tagChapterMap.js'
-import { CHAPTERS, isChapterAvailable } from '../../../src/chapters.js'
+import { CURRICULUM_CHAPTERS as CHAPTERS, isChapterAvailable } from '../../../src/data/learnerCurriculum.js'
 
 function installLocalStorage() {
   const store = {}

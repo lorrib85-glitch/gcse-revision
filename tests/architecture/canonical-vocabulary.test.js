@@ -3,8 +3,8 @@
 //
 //   Subject → Module → Chapter → Screen → Component
 //
-//   module   = a parent curriculum unit (src/data/modules.js)
-//   chapter  = one learner-facing journey (src/chapters.js)
+//   module   = a canonical curriculum unit
+//   chapter  = one learner-facing journey
 //
 // This test inspects semantic paths and exact identifiers. It deliberately
 // does NOT ban the word "module": genuine parent-module code is legitimate and
@@ -69,8 +69,7 @@ const HISTORICAL_STORAGE_FILES = new Set([
 
 // Exception 3 — genuine parent-module surfaces.
 const PARENT_MODULE_FILES = new Set([
-  'src/data/modules.js',
-  'src/data/contentHierarchy.js',
+  'src/data/learnerCurriculum.js',
   'src/app/chapterNavigation.js',
 ])
 
@@ -116,38 +115,19 @@ describe('canonical vocabulary — deleted hierarchy surfaces', () => {
     }
   })
 
-  it('owns chapter metadata only in src/chapters.js', () => {
-    // Since Stage 4 the rows live in the generated projection and src/chapters.js
-    // re-exports them. It is still the single public owner: the same four
-    // symbols, from the same path, for every consumer.
-    const chapters = read('src/chapters.js')
-    const reExport = chapters.match(/export\s*\{([^}]*)\}\s*from\s*'([^']+)'/)
-    expect(reExport, 'src/chapters.js no longer re-exports the projection').toBeTruthy()
-    expect(reExport[2]).toBe('./data/generated/curriculum/chapters.js')
-    expect(reExport[1].split(',').map(name => name.trim()).filter(Boolean).sort()).toEqual([
-      'CHAPTERS', 'CHAPTER_AVAILABILITY', 'getChapterAvailability', 'isChapterAvailable',
-    ].sort())
+  it('owns production Chapter metadata through one canonical learner boundary', () => {
+    const boundary = read('src/data/learnerCurriculum.js')
+    expect(boundary).toContain("from './generated/curriculum/learnerCurriculum.js'")
+    expect(boundary).toContain('CURRICULUM_CHAPTERS')
+    expect(boundary).toContain('CURRICULUM_MODULES')
+    expect(boundary).toContain('CHAPTER_CONTENT_LOADERS')
 
-    // No other production file may declare or re-export the chapter catalogue.
-    // The generated projection is exempt: it declares the symbols by design and
-    // is reachable only through the three boundary files, asserted below.
-    const GENERATED_PROJECTION = 'src/data/generated/curriculum/'
-    const declarers = PRODUCTION_FILES
-      .filter(path => path !== 'src/chapters.js')
-      .filter(path => !path.startsWith(GENERATED_PROJECTION))
-      .filter(path => /export\s+const\s+CHAPTERS\b/.test(read(path)))
-    expect(declarers).toEqual([])
-
-    // The Stage 4 runtime boundary is exactly three files wide. The separate
-    // Stage 5B navigation projection is guarded by curriculum-navigation.test.js.
-    const BOUNDARY = [
-      'src/data/modules.js', 'src/chapters.js', 'src/content/chapterContentRegistry.js',
-    ]
-    const reaches = /(?:from\s*|import\s*\(?\s*)['"][^'"]*generated\/curriculum\/(?:modules|chapters|chapterContentLoaders)\.js/
-    const importers = PRODUCTION_FILES
-      .filter(path => !path.startsWith(GENERATED_PROJECTION))
-      .filter(path => reaches.test(read(path)))
-    expect(importers.sort(), 'a fourth file imports the generated projection').toEqual([...BOUNDARY].sort())
+    const generatedImport = /(?:from\s*|import\s*\(\s*)['"][^'"]*generated\/curriculum\/learnerCurriculum\.js['"]/
+    const importers = PRODUCTION_FILES.filter(path => generatedImport.test(read(path)))
+    expect(importers).toEqual(['src/data/learnerCurriculum.js'])
+    for (const retired of ['src/chapters.js', 'src/data/modules.js', 'src/content/chapterContentRegistry.js']) {
+      expect(existsSync(resolve(ROOT, retired)), retired).toBe(false)
+    }
   })
 
   it('imports nothing from the deleted root chapter catalogue', () => {

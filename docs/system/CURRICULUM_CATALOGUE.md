@@ -85,12 +85,11 @@ In short:
 ```bash
 pnpm curriculum:generate               # write docs/curriculum/*.md
 pnpm curriculum:check                  # fail if the committed documents have drifted
-pnpm curriculum:projections:generate   # write src/data/generated/curriculum/**
-pnpm curriculum:projections:check      # fail on drift, or on any runtime parity break
-pnpm curriculum:projections:report     # write the screenTags review artefact
+pnpm curriculum:runtime:generate       # write the canonical learner runtime
+pnpm curriculum:runtime:check          # fail when the learner runtime drifts
 ```
 
-`curriculum:check` and `curriculum:projections:check` both run inside
+`curriculum:check` and `curriculum:runtime:check` both run inside
 `pnpm verify`, after the component-domain checks and before the test suites — the same position `catalogue:check` occupies for
 components. It is a generator check, so it belongs with the other generator
 checks and ahead of anything that might consume their output.
