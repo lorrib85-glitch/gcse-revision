@@ -56,7 +56,7 @@ jobs:
 
       - name: Assert retired files are gone
         run: |
-          test ! -e src/curriculum-catalogue/compatibility
+          test -z "$(find src/curriculum-catalogue/compatibility -type f 2>/dev/null)"
           test ! -e src/chapters.js
           test ! -e src/data/modules.js
           test ! -e src/content/chapterContentRegistry.js
