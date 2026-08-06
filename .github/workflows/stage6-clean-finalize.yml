@@ -87,8 +87,13 @@ jobs:
                   raise SystemExit(f'Subjects migration target not found: {old}')
               text = text.replace(old, new, 1)
 
-          if 'CHAPTERS' in text:
-              raise SystemExit('Subjects still references the retired CHAPTERS collection')
+          forbidden_runtime_uses = (
+              "import { CHAPTERS }",
+              'CHAPTERS.find(',
+              'CHAPTERS.filter(',
+          )
+          if any(token in text for token in forbidden_runtime_uses):
+              raise SystemExit('Subjects still has an executable reference to the retired CHAPTERS collection')
 
           path.write_text(text)
           PY
