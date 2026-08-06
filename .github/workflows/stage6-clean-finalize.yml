@@ -67,6 +67,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
           path = Path('src/features/subjects/Subjects.jsx')
           text = path.read_text()
@@ -87,13 +88,10 @@ jobs:
                   raise SystemExit(f'Subjects migration target not found: {old}')
               text = text.replace(old, new, 1)
 
-          forbidden_runtime_uses = (
-              "import { CHAPTERS }",
-              'CHAPTERS.find(',
-              'CHAPTERS.filter(',
-          )
-          if any(token in text for token in forbidden_runtime_uses):
+          if re.search(r'(?<![A-Za-z0-9_])CHAPTERS\.(?:find|filter)\(', text):
               raise SystemExit('Subjects still has an executable reference to the retired CHAPTERS collection')
+          if "import { CHAPTERS }" in text:
+              raise SystemExit('Subjects still imports the retired CHAPTERS collection')
 
           path.write_text(text)
           PY
