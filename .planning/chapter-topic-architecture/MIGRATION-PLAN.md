@@ -15,7 +15,7 @@ The governing boundary is now the post–Stage 6 architecture:
 
 ```text
 T0A  Contract and ownership boundaries are accepted             COMPLETE
-T0B  Additive Topic schema and validator                        no runtime change
+T0B  Additive Topic schema and validator                        COMPLETE
 T1A  Write and review one Medicine screen-to-Topic assignment   no runtime change
 T1B  Author the Medicine pilot metadata                         no runtime change
 T2   Generate and drift-check the Topic index                   no runtime change
@@ -31,7 +31,7 @@ T0A–T2 are behaviour-preserving. T3 is the first learner-visible change.
 
 ## T0A — contract and architecture decision
 
-**Status:** complete once ADR-0003, `DECISIONS.md` and this plan are committed together.
+**Status:** complete.
 
 **Lands:**
 
@@ -59,14 +59,16 @@ T0A–T2 are behaviour-preserving. T3 is the first learner-visible change.
 
 ## T0B — additive schema and validator
 
+**Status:** complete.
+
 **Goal:** make the accepted contract enforceable without changing any existing Chapter.
 
 **Lands:**
 
-- a Topic-record validator for the optional Chapter-content `topics` array;
+- `src/content/chapterTopicSchema.js` as a build-time/test-time Topic-record validator for the optional Chapter-content `topics` array;
 - validation for the Screen `topic` back-reference;
 - focused architecture tests;
-- authoring guidance pointing to ADR-0003.
+- `docs/system/CHAPTER_TOPICS.md` as practical authoring guidance subordinate to ADR-0003.
 
 **Required rules:**
 

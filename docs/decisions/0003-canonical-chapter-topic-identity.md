@@ -1,7 +1,7 @@
 # 0003 — Canonical Chapter Topic identity
 
-**Status:** accepted; T0A contract complete  
-**Implementation status:** no schema, content metadata, generated index or learner behaviour exists yet  
+**Status:** accepted; T0A contract and T0B validator complete  
+**Implementation status:** additive schema and validation exist; no content metadata, generated index, storage or learner behaviour exists yet  
 **Scope:** the teaching unit between a Chapter and its Screens  
 **Relationship to 0002:** extends the canonical curriculum architecture downward. ADR-0002 stops at the Chapter; this decision starts there and changes nothing above it.  
 **Supporting evidence:** `.planning/chapter-topic-architecture/`
@@ -176,7 +176,7 @@ A later retrieval check may be added as a distinct product decision, but it is n
 
 ## Compatibility
 
-Existing meanings of “topic” are not renamed or reinterpreted in T0A:
+Existing meanings of “topic” are not renamed or reinterpreted in T0A or T0B:
 
 - `question.topicId` and `QUESTION_BANKS_BY_TOPIC` remain question-bank routing keys;
 - `MEDICINE_TOPICS` remains a legacy question-bank grouping;
@@ -187,18 +187,37 @@ Existing meanings of “topic” are not renamed or reinterpreted in T0A:
 
 New identity is added beside old identity. Persisted learner data is never rewritten in place.
 
+## Enforced authoring boundary
+
+`src/content/chapterTopicSchema.js` implements this contract additively for build-time and architecture-test use.
+
+It validates:
+
+- the optional `topics` array;
+- exact v1 authored fields;
+- semantic, unique Topic IDs;
+- registered and non-duplicated Concept references;
+- estimated duration;
+- each Screen’s local Topic back-reference.
+
+It deliberately does not enforce Topic Screen count, contiguity, the 3–8 Screen heuristic or standalone-context quality. Those require content evidence from the pilot.
+
+Learner runtime code does not import this validator. `ChapterPlayer` and the generated learner curriculum remain unchanged.
+
 ## Consequences
 
-### Now — T0A
+### Now — T0A and T0B
 
 - The contract and ownership boundaries are frozen.
+- The additive validator and authoring guidance exist.
+- Every existing Chapter without `topics` remains valid and byte-identical.
 - No content file gains `topics` or Screen `topic` metadata.
 - No runtime API, generated index, storage key or learner behaviour is added.
 - No curriculum-catalogue record changes.
 
-### Next — T0B
+### Next — T1A
 
-A schema and validator will implement this contract additively. Every existing Chapter without `topics` must continue to validate unchanged. Only after T0B is green may the Medicine pilot author Topic metadata.
+The Medicine pilot must first receive a written and reviewed Screen-to-Topic assignment. Only after that review may T1B add inert metadata to `history-medicine-medieval-beliefs-causes`.
 
 ## Rejected alternatives
 
