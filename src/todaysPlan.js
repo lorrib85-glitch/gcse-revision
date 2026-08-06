@@ -1,7 +1,7 @@
 // Pure logic module — builds Home's "Today's plan" task carousel.
 // See docs/superpowers/specs/2026-06-14-home-todays-plan-redesign.md
 
-import { CHAPTERS } from './chapters.js'
+import { CURRICULUM_CHAPTERS as CHAPTERS } from './data/learnerCurriculum.js'
 import { getChapterState, getInProgressChapter, todayStr, getScores } from './progress.js'
 import { getBiggestWin, getWeakestSubject } from './unifiedWeaknessTracker.js'
 import { findTaggedChapterScreen } from './data/tagChapterMap.js'

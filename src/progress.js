@@ -1,5 +1,4 @@
-import { CHAPTERS, isChapterAvailable } from './chapters.js'
-import { MODULES } from './data/modules.js'
+import { CURRICULUM_CHAPTERS as CHAPTERS, LEARNING_SEQUENCES as MODULES, isChapterAvailable } from './data/learnerCurriculum.js'
 import { getJson, getObject, getArray, setJson, saveCritical, removeKey } from './lib/storage.js'
 import {
   chapterProgressKey,

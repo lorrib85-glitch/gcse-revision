@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { CHAPTERS } from '../../chapters.js'
+import { CURRICULUM_CHAPTERS as CHAPTERS } from '../../data/learnerCurriculum.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import {
   SUBJECT_BACKDROPS,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { recordActivity, getChapterState, saveChapterState } from '../../progress.js'
-import { MODULES } from '../../data/modules.js'
+import { LEARNING_SEQUENCES as MODULES } from '../../data/learnerCurriculum.js'
 import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialChapterState, clampScreenIndex, getChapterGate, buildChapterProgressState, buildCompletedChapterState } from '../../app/chapterNavigation.js'
 import { resolveScreenDefinition, screenHasComponentOwnedContinuation, validateChapterDefinition } from '../../data/screenRegistry.js'
 import LearningHeader from '../core/LearningHeader.jsx'

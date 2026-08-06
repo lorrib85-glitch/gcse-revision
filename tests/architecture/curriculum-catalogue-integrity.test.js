@@ -1417,15 +1417,16 @@ describe('Stage 2 authored curriculum', () => {
     const binding = { id: hiddenChapter.row.id, contentPath: hiddenChapter.contentPath }
     expect(binding.id).toBe('history-medicine-renaissance-medicine')
     expect(chapters.some(chapter => chapter.id === binding.id)).toBe(false)
-    // Excluded from the catalogue as a chapter, still whole in the runtime and
-    // still the destination `mod2` progress folds onto. Preserved is not the
-    // same as given a chapter record.
+    // The old projection remains only as an independent migration witness in
+    // the first Stage 6 cut. Progress no longer targets a hidden non-chapter:
+    // both historical ids fold directly onto the canonical replacement.
     const runtime = await import('../../src/chapters.js')
     const hidden = runtime.CHAPTERS.find(chapter => chapter.id === binding.id)
     expect(runtime.getChapterAvailability(hidden)).toBe('hidden')
     const progress = await import('../../src/data/chapterProgress.js')
-    expect(progress.LEGACY_CHAPTER_ID_MAP.mod2).toBe(binding.id)
-    expect(progress.canonicalChapterId('mod2')).toBe(binding.id)
+    expect(progress.LEGACY_CHAPTER_ID_MAP.mod2).toBe('history-medicine-vesalius-beginning-doubt')
+    expect(progress.canonicalChapterId('mod2')).toBe('history-medicine-vesalius-beginning-doubt')
+    expect(progress.canonicalChapterId(binding.id)).toBe('history-medicine-vesalius-beginning-doubt')
   })
 
   it('binds every available chapter to the content file it already loads', async () => {

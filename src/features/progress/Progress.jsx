@@ -1,4 +1,4 @@
-import { CHAPTERS, isChapterAvailable } from '../../chapters.js'
+import { CURRICULUM_CHAPTERS as CHAPTERS, isChapterAvailable } from '../../data/learnerCurriculum.js'
 import { getChapterPct, getProgress } from '../../progress.js'
 import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'

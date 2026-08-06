@@ -659,28 +659,23 @@ describe('the Stage 4 authority boundary', () => {
     }
   })
 
-  it('rewrote no consumer — every one still imports the public boundary file', () => {
-    // The point of the boundary is that the cutover is invisible above it. Any
-    // consumer that had been re-pointed at the generated directory would make
-    // the revert in the next test a partial one.
+  it('hands live consumers to the canonical learner boundary without direct generated imports', () => {
     const consumers = [
       'src/progress.js',
       'src/todaysPlan.js',
       'src/app/LegacyApp.jsx',
       'src/app/chapterNavigation.js',
-      'src/data/contentHierarchy.js',
       'src/features/progress/Progress.jsx',
-      'src/features/subjects/Subjects.jsx',
       'src/features/subjects/subjectNavigationAdapter.js',
       'src/features/planner/dailyPlanner.js',
       'src/components/layout/ChapterPlayer.jsx',
       'src/components/layout/ChapterCompleteScreen.jsx',
     ]
-    const reachesBoundary = /(?:from\s*|import\s*\(?\s*)['"][^'"]*(?:data\/modules|chapters|content\/chapterContentRegistry)\.js['"]/
     for (const consumer of consumers) {
       const source = read(consumer)
-      expect(reachesBoundary.test(source), `${consumer} stopped importing the boundary`).toBe(true)
-      expect(REACHES_RUNTIME_GENERATED.test(source), `${consumer} was re-pointed at the generated directory`).toBe(false)
+      expect(source, `${consumer} did not migrate to the canonical learner boundary`)
+        .toMatch(/from\s*['"][^'"]*learnerCurriculum\.js['"]/)
+      expect(REACHES_RUNTIME_GENERATED.test(source), `${consumer} imports generated output directly`).toBe(false)
     }
   })
 

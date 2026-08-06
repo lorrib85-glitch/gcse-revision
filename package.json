@@ -29,7 +29,9 @@
     "curriculum:projections:report": "node scripts/generate-curriculum-projections.mjs --report",
     "curriculum:navigation:generate": "node scripts/generate-curriculum-navigation.mjs",
     "curriculum:navigation:check": "node scripts/generate-curriculum-navigation.mjs --check",
-    "verify": "pnpm catalogue:check && pnpm authoring:check && pnpm pedagogy:check && pnpm lab:check && pnpm curriculum:check && pnpm curriculum:projections:check && pnpm curriculum:navigation:check && pnpm test:architecture && pnpm lint && pnpm test:unit && pnpm test:storybook && pnpm build",
+    "curriculum:runtime:generate": "node scripts/generate-learner-curriculum.mjs",
+    "curriculum:runtime:check": "node scripts/generate-learner-curriculum.mjs --check",
+    "verify": "pnpm catalogue:check && pnpm authoring:check && pnpm pedagogy:check && pnpm lab:check && pnpm curriculum:check && pnpm curriculum:projections:check && pnpm curriculum:navigation:check && pnpm curriculum:runtime:check && pnpm test:architecture && pnpm lint && pnpm test:unit && pnpm test:storybook && pnpm build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

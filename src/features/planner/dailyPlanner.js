@@ -66,8 +66,7 @@
 //   nextReviewAt:      string | null,
 // }
 
-import { CHAPTERS, isChapterAvailable } from '../../chapters.js'
-import { MODULES as PARENT_MODULES } from '../../data/modules.js'
+import { CURRICULUM_CHAPTERS as CHAPTERS, LEARNING_SEQUENCES as PARENT_MODULES, isChapterAvailable } from '../../data/learnerCurriculum.js'
 import { getChapterState } from '../../progress.js'
 import { getArray, getObject, setJson, saveCritical } from '../../lib/storage.js'
 

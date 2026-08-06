@@ -86,8 +86,17 @@ describe('canonical learner runtime', () => {
     expect(new Set(actualAvailable)).toEqual(new Set(expectedAvailable))
     expect(actualAvailable).toHaveLength(30)
 
-    expect(LEARNING_SEQUENCES.map(sequence => sequence.chapterIds)).toEqual(
-      LEGACY_MODULES.map(module => module.chapterIds),
+    // Canonical sequences may already contain planned Chapters. The migration
+    // contract is that the live, openable order is identical — not that planned
+    // content remains artificially excluded from its real sequence.
+    expect(LEARNING_SEQUENCES.map(sequence => sequence.chapterIds
+      .map(getCurriculumChapterById)
+      .filter(isChapterAvailable)
+      .map(chapter => chapter.id))).toEqual(
+      LEGACY_MODULES.map(module => module.chapterIds
+        .map(id => LEGACY_CHAPTERS.find(chapter => chapter.id === id))
+        .filter(isLegacyChapterAvailable)
+        .map(chapter => chapter.id)),
     )
     expect(getOrderedAvailableChapters().map(chapter => chapter.id)).toEqual(
       LEGACY_MODULES

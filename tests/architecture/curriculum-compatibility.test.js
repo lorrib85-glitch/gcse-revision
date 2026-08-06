@@ -325,9 +325,10 @@ describe('every compatibility field has a death date', () => {
       for (const consumer of entry.survivingConsumers) {
         if (boundary.has(consumer)) continue
         const source = read(consumer)
+        const reachesCanonicalRuntime = /(?:from\s*|import\s*\(?\s*)['"][^'"]*learnerCurriculum\.js['"]/.test(source)
         expect(
-          reachesBoundary.test(source) || source.includes(hiddenId),
-          `${field}: ${consumer} neither reaches a runtime boundary file nor names a compatibility id`,
+          reachesBoundary.test(source) || reachesCanonicalRuntime || source.includes(hiddenId),
+          `${field}: ${consumer} reaches neither the transitional nor canonical runtime boundary`,
         ).toBe(true)
       }
     }
