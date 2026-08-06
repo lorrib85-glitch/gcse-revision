@@ -1,0 +1,84 @@
+name: Stage 6 unit diagnostic
+
+on:
+  push:
+    branches:
+      - agent/stage-6-canonical-runtime
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stage6-unit-diagnostic
+  cancel-in-progress: true
+
+jobs:
+  diagnose:
+    if: contains(github.event.head_commit.message, 'Run Stage 6 unit diagnostic')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/stage-6-canonical-runtime
+          fetch-depth: 1
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build the final Stage 6 worktree
+        run: |
+          python .github/scripts/stage6_retire_compatibility.py
+          python .github/scripts/stage6_retire_fix_generator.py
+          python .github/scripts/stage6_fix_import_parser.py
+          python .github/scripts/stage6_retire_fix_tests.py
+          python .github/scripts/stage6_retire_fix_remaining.py
+          python .github/scripts/stage6_fix_last_two.py
+          python .github/scripts/stage6_fix_unit_boundaries.py
+          pnpm curriculum:generate
+          pnpm curriculum:navigation:generate
+          pnpm curriculum:runtime:generate
+          pnpm catalogue:generate
+
+      - name: Run unit tests and save compact failures
+        run: |
+          set +e
+          pnpm test:unit --reporter=verbose > /tmp/stage6-unit.log 2>&1
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then
+            echo "Unit suite passed unexpectedly; no diagnostic needed." > stage6-unit-failures.txt
+          else
+            python <<'PY'
+          from pathlib import Path
+          lines = Path('/tmp/stage6-unit.log').read_text(errors='replace').splitlines()
+          selected = []
+          markers = (' FAIL ', 'Failed Tests', 'AssertionError', 'Cannot find module', 'expected ', 'Test Files', 'Tests ')
+          for index, line in enumerate(lines):
+              if any(marker in line for marker in markers):
+                  start = max(0, index - 4)
+                  end = min(len(lines), index + 18)
+                  selected.extend(lines[start:end])
+                  selected.append('\n---\n')
+          if not selected:
+              selected = lines[-400:]
+          # Preserve order while removing repeated adjacent diagnostic blocks.
+          output = '\n'.join(selected)
+          Path('stage6-unit-failures.txt').write_text(output[-50000:] + '\n')
+          PY
+          fi
+          git config user.name "OpenAI"
+          git config user.email "noreply@openai.com"
+          git add stage6-unit-failures.txt
+          git commit -m "Record Stage 6 unit failures"
+          git push origin HEAD:agent/stage-6-canonical-runtime
+          exit "$code"
