@@ -1,4 +1,5 @@
 import { SUBJECTS } from '../../constants/subjects.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 // ── CardContainer v1 ───────────────────────────────────────────────────────
 // Reusable cinematic content surface for learning modules.
@@ -7,9 +8,9 @@ import { SUBJECTS } from '../../constants/subjects.js'
 //
 // Props:
 // - children: content
-// - variant: 'contained' | 'inline' | 'compact' | 'fullBleed' (default: 'contained')
+// - variant: 'contained' | 'cinematicOverlay' | 'inline' | 'compact' | 'fullBleed' (default: 'contained')
 // - subject: subject key for subtle atmosphere
-// - padding: 16 | 24 | 32 (default: 24 for contained, 16 for inline/compact, 32 for fullBleed)
+// - padding: 16 | 24 | 32 (default: 24 for contained/cinematicOverlay, 16 for inline/compact, 32 for fullBleed)
 // - contextImage: optional background image URL or imported asset
 // - showAtmosphere: boolean (default: true)
 export default function CardContainer({
@@ -47,6 +48,36 @@ export default function CardContainer({
           0 4px 16px ${shadowTint},
           inset 0 1px 1px rgba(255,255,255,0.05)
         `,
+        overflow: 'hidden',
+      }}>
+        {children}
+      </div>
+    )
+  }
+
+  // ── Cinematic overlay variant ──
+  // A restrained translucent surface for passive content that sits over scene
+  // artwork. It borrows subject identity only as atmosphere, never as a fixed
+  // colour, so the same component works across every subject theme.
+  if (variant === 'cinematicOverlay') {
+    const p = padding ?? 24
+    const overlayTint = showAtmosphere
+      ? `${tint},${GENERAL.examTechnique.surfaceTintAlpha})`
+      : 'transparent'
+    const overlayGlow = showAtmosphere
+      ? `${tint},${GENERAL.examTechnique.surfaceGlowAlpha})`
+      : 'transparent'
+
+    return (
+      <div style={{
+        margin: '20px 0',
+        padding: `${p}px`,
+        background: `${GENERAL.contentSurface.cinematicOverlay}, ${overlayTint}`,
+        border: `1px solid ${GENERAL.contentSurface.cinematicOverlayBorder}`,
+        borderRadius: 24,
+        backdropFilter: `blur(${GENERAL.contentSurface.cinematicOverlayBlur})`,
+        WebkitBackdropFilter: `blur(${GENERAL.contentSurface.cinematicOverlayBlur})`,
+        boxShadow: `${GENERAL.contentSurface.cinematicOverlayShadow}, 0 0 28px ${overlayGlow}, ${GENERAL.contentSurface.cinematicOverlayInset}`,
         overflow: 'hidden',
       }}>
         {children}
