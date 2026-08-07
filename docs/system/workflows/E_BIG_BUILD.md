@@ -19,6 +19,8 @@ component family, new app-level flow, new architecture pattern.
 - Discussion summary: confirmed facts, open decisions, out of scope (phase 4)
 - Plan (`/gsd-plan-phase` output — phase 6)
 - Scope lock (signed off before any implementation — phase 7)
+- For a new Chapter or materially rebuilt Chapter: the readiness evidence
+  required by `docs/system/CHAPTER_READINESS_AUDIT.md`
 
 ## Phases
 
@@ -64,6 +66,10 @@ component family, new app-level flow, new architecture pattern.
      requires an approved contract declaring its composition ownership before
      it may own layout. Reserve images/diagrams with `MediaPlaceholder` + a
      visual-assets manifest entry, never generate imagery.
+   - **New or materially rebuilt Chapters:** also read
+     `docs/system/CHAPTER_READINESS_AUDIT.md`. When the Chapter authors Topics,
+     read `docs/system/CHAPTER_TOPICS.md`. These documents remain the single
+     readiness and Topic authorities; this workflow only routes to them.
 6. **Plan phase** — `superpowers:writing-plans` → `/gsd-plan-phase`.
    Only after discussion decisions are closed.
 7. **Scope lock** — required before any implementation:
@@ -74,6 +80,7 @@ component family, new app-level flow, new architecture pattern.
    New components: yes / no — if yes, name them + Component Registry entries
    New stories required: yes / no
    Assets required: yes / no
+   Chapter readiness audit required: yes / no — if yes, name why it is triggered
    Verification plan:
    ```
 8. **Execute phase** — `superpowers:subagent-driven-development` →
@@ -82,7 +89,9 @@ component family, new app-level flow, new architecture pattern.
    primary intent → learner need → approved component → contract → named gold
    example → content structure → render acceptance criteria) and runs the
    composed render pass; the story spine must already exist in the episode's
-   canonical architecture file (run `/canonical-topic` if absent).
+   canonical architecture file (run `/canonical-topic` if absent). For a new
+   or materially rebuilt Chapter, `content-create` also produces the Stage-B
+   Chapter readiness report before describing the build as implemented.
    Good subagent tasks: metadata, module content, question bank, tests, docs.
    Bad subagent tasks: same file, same component, visual polish decisions.
 9. **Review** — `/ponytail-review`; `/code-review`; `/frontend-design` if
@@ -93,9 +102,10 @@ component family, new app-level flow, new architecture pattern.
    **render pass** (screenshot at 390px) against the named gold example
    (`GOLD_SCREEN_REGISTER.md`) and answer the strengthened visual verdict in
    writing — source + tests alone do not pass. An **independent
-   `content-review`** re-audits the built scope (against the gold example)
-   before the build is treated as approved; "implemented" is never
-   "approved".
+   `content-review`** re-audits the built scope (against the gold example),
+   independently re-runs the required Chapter readiness audit, and must clear
+   every in-scope Fail before the build is treated as approved; "implemented"
+   is never "approved".
 10. **Verify** — see below.
 11. **Pause / handoff** — `/gsd-pause-work` with state summary.
 12. **Commit** — directly to `main`.
@@ -124,6 +134,8 @@ files.
 - Plan not complete → do not execute
 - New component with no Component Registry justification → stop and check
 - `vitest run tests/architecture` fails → do not commit; fix first
+- A required Chapter readiness audit has an unresolved in-scope Fail → do not
+  describe the Chapter as implemented or approved
 
 ## Verification
 
@@ -139,6 +151,8 @@ files.
 - `vitest run tests/unit` if logic files were touched
 - `vitest` (full, Playwright/Chromium) if new component stories were added
 - Module opens, progresses, and completes — full flow walkthrough
+- New/materially rebuilt Chapters have a Stage-B readiness report and an
+  independently verified Stage-C result with no unresolved in-scope Fail
 - `superpowers:verification-before-completion`
 - `/verify`
 
