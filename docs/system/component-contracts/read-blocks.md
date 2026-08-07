@@ -38,9 +38,18 @@ cues, not buttons or a second interaction disguised as decoration.
 - Subject identity comes only from the canonical `SUBJECTS` accent. No
   History-specific amber, science-specific green, or other component-local
   colour is permitted.
+- The label is sentence case and uses `TYPE.label`. Uppercase transforms and
+  the deprecated eyebrow pattern are forbidden.
 - Visual hierarchy is fixed by meaning: label/accent → primary exam rule →
   optional supporting `tip` → optional sentence-stem `phrases`. Do not make
   every line equally loud.
+- When both the primary rule and supporting `tip` are present, separate them
+  with the shared `CinematicDivider` component. Do not recreate the divider
+  locally with borders, pseudo-elements or one-off lines.
+- Typography, spacing, colour, radii and emphasis must come from the shared
+  `TYPE`, `SPACING`, `GENERAL.examTechnique`, `GENERAL.contentSurface` and
+  canonical subject tokens. Do not introduce local font sizes, line heights,
+  spacing arithmetic, raw colours or one-off opacity values in `ExamTipBlock`.
 - Glow is restrained to the subject-tinted atmosphere of the surface. It is
   not an achievement, selected state or active-progress signal.
 - The presentation remains reusable across subjects and does not require an
@@ -81,3 +90,6 @@ cues, not buttons or a second interaction disguised as decoration.
 4. **Opaque exam-tip card** — treating `examtip` as a heavy standalone panel
    that hides the surrounding scene and makes a passive reminder feel like a
    dashboard widget.
+5. **Locally rebuilt styling** — adding an uppercase label, a hand-drawn divider,
+   raw spacing or opacity values, or local typography overrides instead of using
+   the governed tokens and `CinematicDivider`.
