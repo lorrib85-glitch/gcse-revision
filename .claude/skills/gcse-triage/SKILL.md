@@ -84,6 +84,16 @@ uses `/content-create`; auditing or improving built content uses
 `/content-review`; both enforce this doc. Name the applicable skill in
 "Allowed skills" for content work.
 
+**Chapter readiness — content work that creates a new Chapter, materially
+rebuilds one, changes Topic membership, canonical coverage, assessed evidence,
+weakness/recovery wiring, Screen order/count, `stageNavigation` or Chapter
+metadata:** also read `docs/system/CHAPTER_READINESS_AUDIT.md`. `content-create`
+produces the Stage-B readiness evidence and `content-review` independently
+verifies it. When the Chapter authors Topics, also read
+`docs/system/CHAPTER_TOPICS.md`. Do not copy either contract into the triage
+output; name them as required reading and let their owning docs define the
+checks.
+
 ## Universal stop points
 
 Halt and surface to the user before continuing if any of these occur:
