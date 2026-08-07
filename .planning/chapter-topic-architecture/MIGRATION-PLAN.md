@@ -16,7 +16,7 @@ The governing boundary is now the post–Stage 6 architecture:
 ```text
 T0A  Contract and ownership boundaries are accepted             COMPLETE
 T0B  Additive Topic schema and validator                        COMPLETE
-T1A  Write and review one Medicine screen-to-Topic assignment   no runtime change
+T1A  Write and review one Medicine screen-to-Topic assignment   COMPLETE
 T1B  Author the Medicine pilot metadata                         no runtime change
 T2   Generate and drift-check the Topic index                   no runtime change
 T3   Weak-spot recovery reads the Topic index                   learner-visible, gated
@@ -103,21 +103,33 @@ T0A–T2 are behaviour-preserving. T3 is the first learner-visible change.
 
 ## T1A — Medicine assignment before authoring
 
+**Status:** complete as a planning artefact. T1B is not authorised by this status.
+
 **Pilot Chapter:** `history-medicine-medieval-beliefs-causes`
 
-Before content changes, write a reviewed assignment covering every Screen:
+**Reviewed assignment:** `.planning/chapter-topic-architecture/MEDICINE-PILOT-ASSIGNMENT.md`
 
-- Topic slug;
-- learner-facing title;
-- Concept IDs;
-- estimated minutes;
-- Screen indices assigned to it;
-- Chapter-level Screens that deliberately remain unassigned;
-- any wording that assumes earlier Chapter context.
+The pilot establishes the current learner-facing runtime baseline at **34 Screens** and assigns all 34 exactly once:
 
-This is a pedagogical decision and must be reviewed as content, not generated mechanically from existing tags.
+- 28 Screens across six semantic Chapter Topics;
+- 6 deliberately Chapter-level Screens;
+- registered Concept IDs only;
+- provisional Topic-duration estimates;
+- standalone-context assumptions recorded for future T4 work.
 
-**Acceptance:** every Screen is accounted for, the assignment uses registered Concepts only, and no source content changes.
+The assignment is a pedagogical decision and was checked against the canonical Medicine content, the current runtime transform, registered Concepts, component pedagogy and supplied Edexcel source material. It is not generated from the sparse legacy `screenTags`.
+
+The pilot readiness pass also exposed pre-existing Chapter debt. This debt is recorded in the assignment and is **not** licence to expand T1B:
+
+- the current `FaceTheExaminer` uses a non-authentic 8-mark thematic Medicine format;
+- `stageNavigation` semantic boundaries have drifted from the current runtime sequence;
+- the hand-authored Episode 1 concept-support map contains stale Screen indices;
+- several taught details lack granular registered Concept atoms;
+- exact canonical evidence/weakness attribution is not proven for every assessed interaction.
+
+The Topic assignment itself remains valid despite that separate whole-Chapter debt.
+
+**Acceptance achieved:** every runtime Screen is accounted for, the assignment uses registered Concepts only, standalone assumptions are named, and no source/runtime content changed.
 
 ---
 
@@ -128,11 +140,13 @@ This is a pedagogical decision and must be reviewed as content, not generated me
 - `topics` on `history-medicine-medieval-beliefs-causes`;
 - `topic` back-references on the assigned Screens only.
 
-**Prerequisites:** T0B green and T1A reviewed.
+**Prerequisites:** T0B green, T1A complete, and explicit authorisation to begin T1B.
+
+**Assignment authority:** `.planning/chapter-topic-architecture/MEDICINE-PILOT-ASSIGNMENT.md`.
 
 **Hard parity requirements:**
 
-- same `screenCount`;
+- same `screenCount` — 34 runtime Screens before and after;
 - same derived `screenTags`;
 - same `stageNavigation`;
 - same Screen order and authored copy;
@@ -140,6 +154,8 @@ This is a pedagogical decision and must be reviewed as content, not generated me
 - same 390px render before and after.
 
 Topic metadata is inert in T1B. Any visual or behavioural change is a regression.
+
+Pre-existing exam-format, navigation, concept-support and Concept-registry findings from T1A are not bundled into this behaviour-preserving phase.
 
 ---
 
@@ -206,7 +222,7 @@ Keep `screenTags` until this route and any other consumer have proven replacemen
 
 **Hard boundary:** a refresher must leave `gcse_chapter_<chapter-id>` byte-identical.
 
-**Blocked by:** OD-3 content handling for Screens that assume earlier context.
+**Blocked by:** OD-3 content handling for Screens that assume earlier context. The Medicine T1A assignment records concrete examples for Galen, religion/astrology and miasma/prevention.
 
 A refresher may record normal Concept evidence only after the mastery-engine allowlist is explicitly extended in its own reviewed change.
 
