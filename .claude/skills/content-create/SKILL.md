@@ -37,6 +37,12 @@ missing or not-yet-built anywhere.
   nothing else. New problems noticed while building are logged back to
   `content-review`, not fixed opportunistically.
 
+Readiness planning does not weaken these boundaries. For a fresh build it checks
+whether the **confirmed build spec** has a complete route before authoring. For
+an existing Chapter it checks the **confirmed Stage-A scope** when that scope
+changes Chapter-wide learning architecture. It may expose and block on a
+missing route; it must not diagnose or redesign unrelated content.
+
 ## The three-stage pipeline (this skill owns Stage B)
 
 The whole pathway, so this skill's boundaries are unambiguous:
@@ -90,10 +96,46 @@ active matches, or neither does, halt and resolve the ambiguity through
    `SCIENCE_MODULE_BLUEPRINT.md`).
 6. The `component-contracts/` page for every component the briefs name.
 7. `docs/system/CHAPTER_READINESS_AUDIT.md` — the single readiness-report
-   contract. When the Chapter authors Topics, also read
-   `docs/system/CHAPTER_TOPICS.md`; use **Topic ID** in authoring prose and
-   follow its semantic lowercase kebab-case rule rather than inventing a
-   second slug convention.
+   contract and reusable report template. When the Chapter authors Topics,
+   also read `docs/system/CHAPTER_TOPICS.md`; use **Topic ID** in authoring
+   prose and follow its semantic lowercase kebab-case rule rather than
+   inventing a second slug convention.
+
+## Pre-build Chapter readiness pass — before Screen authoring
+
+For every genuinely new Chapter, run the **pre-build planning** phase in
+`CHAPTER_READINESS_AUDIT.md` after the canonical/build spec is confirmed and
+**before authoring the first Screen**.
+
+Run it again before a material rebuild when the confirmed scope changes Chapter
+coverage, Topic boundaries, learning sequence, assessed evidence,
+weakness/recovery routing or other Chapter-wide learning architecture. A narrow
+Screen-level amendment already fully specified by confirmed Stage-A briefs does
+not need a second speculative Chapter plan; it still receives the scoped actual
+audit required at hand-off.
+
+Use the audit's reusable report template. For a new Chapter, map at minimum:
+
+`canonical requirement / Concept / learner outcome → planned Topic or
+Chapter-level home → planned teaching job → planned assessed check + Concept
+attribution → existing evidence/weakness path → planned recovery route`.
+
+Also record the planned Screen-job order/stages, Chapter-level opening/synthesis/
+exam/completion jobs, parent Module and metadata ownership, and the exact
+technical/render checks Stage B must later execute.
+
+Rules:
+
+- **Do not create placeholder Screens** to make the plan look complete.
+- Plan learning jobs and evidence routes here; exact component selection still
+  resolves through the per-Screen build chain below.
+- A pre-build **Pass** means only that a valid plan exists; it is not build
+  evidence and cannot be reused as such at Stage B.
+- An unexplained **Review** or any in-scope **Fail** blocks Screen authoring.
+  Surface missing canonical knowledge or product decisions rather than
+  inventing around them.
+- Keep the pre-build report in the working plan and carry it forward to the
+  Stage-B readiness report so plan → actual deviations can be compared.
 
 ## The build chain — mandatory before component selection
 
@@ -211,7 +253,9 @@ these jobs; if it does, it has two primary intents (halt 3).
 ## Chapter readiness audit (required Stage-B evidence)
 
 Before this skill describes a new Chapter, or a materially rebuilt scope, as
-**implemented**, run `docs/system/CHAPTER_READINESS_AUDIT.md`.
+**implemented**, run the **Stage-B actual** phase in
+`docs/system/CHAPTER_READINESS_AUDIT.md` using the same reusable report shape as
+the pre-build pass.
 
 - A new Chapter receives the full audit.
 - Topic, Screen-order/count, canonical-coverage, evidence/weakness,
@@ -220,12 +264,16 @@ Before this skill describes a new Chapter, or a materially rebuilt scope, as
   plus all Chapter-wide integrity counters; unrelated pre-existing failures
   are named as out of scope, never hidden.
 
-The report must include the canonical coverage matrix, Topic summary, complete
-Screen inventory, derived component-function and interaction coverage,
-evidence/weakness and recovery mapping, metadata integrity, command results
-and composed 390px render evidence. Derive component pedagogy from the
-catalogue; do not add duplicate `learningFunction`, interaction, evidence or
-weakness fields merely to make the report possible.
+Replace every planning-only claim with actual evidence: indexed Screens,
+resolved Topic membership, derived component functions/interactions, actual
+assessed producers and Concept attribution, evidence/weakness wiring,
+recovery/support destinations, generated metadata, command results and composed
+390px renders. An unrun command, unseen render or merely planned producer is not
+Stage-B evidence.
+
+Compare the result with the pre-build report where one was required. Record
+material **plan → actual deviations** and re-evaluate them rather than silently
+accepting them.
 
 Use **Pass / Review / Fail** exactly as the audit contract defines them:
 
@@ -236,9 +284,9 @@ Use **Pass / Review / Fail** exactly as the audit contract defines them:
 - do not claim the scope is implemented while an in-scope Fail remains.
 
 Write the Stage-B readiness report into the Chapter Review Log at the resolved
-`<canonical-root>` together with the build chain, render results and
-deviations. It is builder evidence for Stage C, **not approval**;
-`content-review` must independently reproduce it.
+`<canonical-root>` together with the build chain, plan → actual comparison,
+render results and deviations. It is builder evidence for Stage C, **not
+approval**; `content-review` must independently reproduce it.
 
 ## Render pass and deviation record (Stage B output, not approval)
 
@@ -276,7 +324,7 @@ Before handing back to Stage C:
   never add a Chapter to a grandfather allowlist to get green).
 - `./node_modules/.bin/vite build` green.
 - The Chapter opens, progresses and completes in the running app.
-- The Chapter readiness report contains no unresolved in-scope Fail.
+- The Stage-B Chapter readiness report contains no unresolved in-scope Fail.
 
 Passing these is necessary, not sufficient. **The build is "implemented", not
 "approved", until an independent `content-review` (Stage C) has re-audited it
@@ -286,6 +334,8 @@ against before / after / gold and independently verified the readiness report.**
 
 - Never freely invent a screen: every screen resolves the full build chain or
   it is not built.
+- Never start Screen authoring for a new Chapter while its required pre-build
+  readiness report contains an unresolved in-scope Fail.
 - Never treat "implemented" as "approved" — Stage C is a separate,
   independent pass.
 - Build to the same bar Stage C judges by — `content-review`'s Mechanical
@@ -294,6 +344,6 @@ against before / after / gold and independently verified the readiness report.**
 - A concept is never tested before the screen that teaches it.
 - Never generate imagery; reserve it with `MediaPlaceholder` + manifest.
 - Never declare a new or materially rebuilt Chapter implemented without the
-  required Chapter readiness report.
+  required Stage-B Chapter readiness report.
 - Never add a new Chapter to `GRANDFATHERED_EPISODES` /
   `SENTENCE_CASE_GRANDFATHERED_EPISODES` — new content passes the floor.
