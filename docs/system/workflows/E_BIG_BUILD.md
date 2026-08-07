@@ -1,17 +1,17 @@
-# Workflow E — Big Build / New Module / New Feature
+# Workflow E — Big Build / New Chapter or Parent Module / New Feature
 
 **Authority:** `CLAUDE.md` > this file > session instructions.
 
 ## Purpose
 
-Building something genuinely new — a new History episode, new subject
-module, new exam mode, new reusable component family, new app-level flow,
+Building something genuinely new — a new learner-facing Chapter, a new parent
+Module, a new exam mode, new reusable component family, new app-level flow,
 or a new architecture pattern.
 
 ## When to use
 
-New History episode, new subject module, new exam mode, new reusable
-component family, new app-level flow, new architecture pattern.
+New Chapter, new parent Module, new exam mode, new reusable component family,
+new app-level flow or new architecture pattern.
 
 ## Required artefacts
 
@@ -51,9 +51,12 @@ component family, new app-level flow, new architecture pattern.
      silently trust either source — flag the contradiction to the user and
      re-run `/gsd-map-codebase` (sanctioned in Lane F) to refresh the map
      before proceeding.
+   - Canonical Chapter files may live under either `docs/content/<subject>/`
+     or `docs/canonical/<subject>/`. Resolve the active matching series and
+     Chapter before planning content; do not assume one root across subjects.
    - Run `/canonical-topic` only if canonical or architecture docs are
-     missing, stale, incomplete, or explicitly requested. Do not run it by
-     default.
+     missing, stale, incomplete, ambiguous across roots, or explicitly
+     requested. Do not run it by default.
    - `/frontend-design` if a new visual surface is introduced.
    - **Content builds:** read `docs/system/PATTERN_GOVERNANCE.md` and the
      relevant `component-contracts/`. Every screen resolves through the
@@ -84,16 +87,16 @@ component family, new app-level flow, new architecture pattern.
    Verification plan:
    ```
 8. **Execute phase** — `superpowers:subagent-driven-development` →
-   `/gsd-execute-phase`. **New module content is built with `/content-create`**,
+   `/gsd-execute-phase`. **New Chapter content is built with `/content-create`**,
    which resolves every screen through the build chain (learning objective →
    primary intent → learner need → approved component → contract → named gold
    example → content structure → render acceptance criteria) and runs the
-   composed render pass; the story spine must already exist in the episode's
+   composed render pass; the story spine must already exist in the Chapter's
    canonical architecture file (run `/canonical-topic` if absent). For a new
    or materially rebuilt Chapter, `content-create` also produces the Stage-B
    Chapter readiness report before describing the build as implemented.
-   Good subagent tasks: metadata, module content, question bank, tests, docs.
-   Bad subagent tasks: same file, same component, visual polish decisions.
+   Good subagent tasks: Chapter metadata, Chapter content, question bank, tests,
+   docs. Bad subagent tasks: same file, same component, visual polish decisions.
 9. **Review** — `/ponytail-review`; `/code-review`; `/frontend-design` if
    UI changed. **Pattern-governance review** (`PATTERN_GOVERNANCE.md`) for
    every screen: state its one primary intent in a sentence (fail and
@@ -115,11 +118,11 @@ component family, new app-level flow, new architecture pattern.
 `superpowers:brainstorming`, `superpowers:writing-plans`,
 `superpowers:subagent-driven-development`, `superpowers:executing-plans`,
 `superpowers:verification-before-completion`,
-`/content-create` (build new module content), `/content-review` (diagnose +
+`/content-create` (build new Chapter content), `/content-review` (diagnose +
 independent post-build approval),
 `/gsd-discuss-phase`, `/gsd-plan-phase`, `/gsd-execute-phase`,
 `/gsd-resume-work`, `/gsd-pause-work`,
-`/canonical-topic` (only when docs are missing/stale/requested),
+`/canonical-topic` (only when docs are missing/stale/ambiguous/requested),
 `/frontend-design`, `/ponytail-review`, `/code-review`, `/verify`
 
 ## Forbidden
@@ -140,17 +143,17 @@ files.
 ## Verification
 
 - **`pnpm lab:generate`, and commit the result**, whenever the build added,
-  removed or moved chapter screens or blocks, or changed a record's `authoring`
+  removed or moved Chapter screens or blocks, or changed a record's `authoring`
   entries — the Component Lab projection carries both, and `pnpm lab:check`
   fails on drift. A new authoring type also needs a Lab adapter in the same
   change: the bidirectional coverage guard fails an active entry with no
   selection.
 - `vite build` passes
-- `vitest run tests/architecture` — always; module metadata changes are
-  frequent in big builds
+- `vitest run tests/architecture` — always; Chapter or parent-Module metadata
+  changes are frequent in big builds
 - `vitest run tests/unit` if logic files were touched
 - `vitest` (full, Playwright/Chromium) if new component stories were added
-- Module opens, progresses, and completes — full flow walkthrough
+- Chapter opens, progresses, and completes — full flow walkthrough
 - New/materially rebuilt Chapters have a Stage-B readiness report and an
   independently verified Stage-C result with no unresolved in-scope Fail
 - `superpowers:verification-before-completion`
