@@ -2,7 +2,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { hexToRgb } from '../../constants/subjects.js'
 
 const DIVIDER_WIDTHS = {
-  compact: 64,
+  compact: 80,
   standard: 96,
   wide: 144,
 }
@@ -10,13 +10,15 @@ const DIVIDER_WIDTHS = {
 /**
  * Decorative line–diamond–line separator for cinematic and editorial screens.
  *
- * The surrounding component owns placement through `style`; this component owns
- * the motif, governed line colour and subject-accent treatment.
+ * The component owns the motif, governed line colour, subject-accent treatment
+ * and its default balanced alignment. Consumers can opt into start alignment
+ * explicitly without rebuilding the divider locally.
  */
 export default function CinematicDivider({
   accent = GENERAL.teal,
   accentRgb,
   size = 'standard',
+  align = 'center',
   style,
 }) {
   const resolvedAccentRgb = accentRgb || hexToRgb(accent)
@@ -32,6 +34,7 @@ export default function CinematicDivider({
         width,
         maxWidth: '100%',
         ...style,
+        marginInline: align === 'center' ? 'auto' : undefined,
       }}
     >
       <span style={{ height: 1, flex: 1, background: GENERAL.line.medium }} />
