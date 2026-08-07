@@ -23,6 +23,29 @@ nothing else. It earns its place because removing it would leave the
 following interactive payoff untaught, not because it is interesting on
 its own.
 
+An `examtip` is a short examiner-facing rule, not a mini lesson. Its first
+text beat carries the rule the learner should remember; an optional `tip`
+can add the explanation or warning, and optional `phrases` can provide
+quiet sentence stems. It must remain passive: sentence stems are memory
+cues, not buttons or a second interaction disguised as decoration.
+
+## Presentation contract
+
+- `examtip` uses the governed translucent `CardContainer` cinematic-overlay
+  surface. The scene or atmospheric background should remain perceptible
+  around and faintly through the block; the card must not become an opaque
+  dashboard panel or bright glassmorphism treatment.
+- Subject identity comes only from the canonical `SUBJECTS` accent. No
+  History-specific amber, science-specific green, or other component-local
+  colour is permitted.
+- Visual hierarchy is fixed by meaning: label/accent → primary exam rule →
+  optional supporting `tip` → optional sentence-stem `phrases`. Do not make
+  every line equally loud.
+- Glow is restrained to the subject-tinted atmosphere of the surface. It is
+  not an achievement, selected state or active-progress signal.
+- The presentation remains reusable across subjects and does not require an
+  examiner character, illustration, background asset or bespoke screen type.
+
 ## Copy standards
 
 - Full sentences. A `read` block teaches at most one causal chain — cause
@@ -55,3 +78,6 @@ its own.
    a story unit with a term and its definition where a tension beat
    (scene, stake, or question) should sit instead. Definitions belong
    inside the teach beat, after the hook, not as the hook itself.
+4. **Opaque exam-tip card** — treating `examtip` as a heavy standalone panel
+   that hides the surrounding scene and makes a passive reminder feel like a
+   dashboard widget.
