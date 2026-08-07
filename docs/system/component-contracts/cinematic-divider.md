@@ -33,14 +33,15 @@ It is decorative only. It must never communicate progress, completion, correctne
   accent={subjectAccent}
   accentRgb={subjectAccentRgb}
   size="standard"
-  style={{ margin: '22px auto 0' }}
+  style={{ marginBlock: 22 }}
 />
 ```
 
 - `accent`: subject accent colour. Defaults to the governed general accent.
 - `accentRgb`: optional pre-resolved RGB string. Use the subject token when already available.
 - `size`: `compact`, `standard` or `wide`.
-- `style`: placement overrides only, such as margin or alignment.
+- `align`: `center` by default; use `start` only when the composition deliberately calls for an editorial left alignment.
+- `style`: placement overrides such as block spacing. Do not use it to rebuild motif colour or sizing.
 
 ## Governance
 
@@ -48,4 +49,4 @@ It is decorative only. It must never communicate progress, completion, correctne
 - the centre diamond derives from the supplied subject accent
 - colours must not be hard-coded by consumers
 - the component is always `aria-hidden` because it is decorative
-- consumers own placement; the component owns motif, sizing and colour treatment
+- the component owns its default balanced alignment; consumers may opt into start alignment explicitly rather than recreating the motif
