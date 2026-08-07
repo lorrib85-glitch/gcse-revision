@@ -106,9 +106,10 @@ DRAFT (for user confirmation): Before 1847, surgery was a race against pain and 
 - By 1900 — Aseptic surgery (steam sterilisation, gloves, gowns, masks) commonplace
 
 ### Key people
-- **James Simpson (1811–1870):** Scottish surgeon; discovered chloroform as anaesthetic (1847); experimented with chemicals; provided anaesthetic to Queen Victoria (1853) — gave chloroform social credibility
+- **James Simpson (1811–1870):** Scottish obstetrician; pioneered the use of chloroform as an anaesthetic (1847) after experimenting with chemicals. Simpson did **not** administer it to Queen Victoria.
+- **John Snow (1813–1858):** Administered chloroform to Queen Victoria during childbirth in 1853. The royal use increased chloroform's social credibility; keep Snow's anaesthetic role distinct from his cholera work in Episode 8.
 - **Joseph Lister (1827–1912):** English surgeon; connected infected wounds to Pasteur's germ theory; developed antiseptic surgery using carbolic acid (1865); also developed aseptic practices; slow adoption due to discomfort and lack of understanding
-- **Queen Victoria:** Used chloroform during childbirth (1853) → gave chloroform royal and social legitimacy; same woman Snow anaesthetised (John Snow is linked across Episodes 8 and 9)
+- **Queen Victoria:** Used chloroform during childbirth (1853) → gave chloroform royal and social legitimacy
 - **Louis Pasteur (1822–1895):** Episode 7 — but his germ theory is what directly inspired Lister; the Pasteur → Lister connection is the clearest science-to-medicine link in the series
 
 ### Key terms & definitions

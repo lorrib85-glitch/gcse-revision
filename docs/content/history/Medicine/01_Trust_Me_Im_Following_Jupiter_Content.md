@@ -41,6 +41,19 @@ DRAFT (for user confirmation): Medieval medicine was not random superstition —
 
 ## 3. Specification requirements
 
+### Authority note — Hippocrates
+
+Pearson Issue 6 explicitly requires the Theory of the Four Humours and the continuing influence in England of Galen. It does **not** name Hippocrates. The supplied Medicine knowledge organiser does name Hippocrates and links him to the Four Humours, natural explanations, observation and note-taking.
+
+Treat Hippocrates as **essential supporting knowledge** for the required medieval strand, not as a named specification bullet. The minimum learner knowledge is:
+
+- Hippocrates looked for natural explanations of illness and encouraged observation and recording of symptoms.
+- He is associated with the development of the Four Humours theory.
+- Galen later built on Hippocrates's ideas and added the Theory of Opposites.
+- Learners must be able to distinguish those contributions and connect them to the survival of ancient authority in medieval medicine.
+
+Do not expand this into biographical trivia. Its purpose is to make the required Four Humours/Galen relationship accurate and usable.
+
 - **Background context — medieval Britain:**
   - Church dominance over everyday life (everyone attended church, paid tithes)
   - Dark Ages knowledge loss (c410–1066): much Roman/Greek learning disappeared in Western Europe
@@ -53,7 +66,7 @@ DRAFT (for user confirmation): Medieval medicine was not random superstition —
   - **Astrology:** alignment of stars/planets influenced disease; used in diagnosis (star charts, birth date, date of illness); Church initially disliked astrology but accepted it more after the Black Death; link to God (God controls planets → astrology is God's will)
   - **Miasma:** bad air filled with harmful fumes; came from swamps, corpses, rotting matter; Hippocrates and Galen had written about miasmata; linked to dirt and sin
   - **Four Humours theory:**
-    - Created by Hippocrates (Ancient Greece), developed by Galen (Ancient Rome)
+    - Developed by Hippocrates (Ancient Greece), then built on by Galen (Ancient Rome)
     - Four humours: blood, phlegm, black bile, yellow bile — must be balanced in the body
     - Illness = humours out of balance
     - Humours linked to seasons (winter = wet/cold = too much phlegm), personality traits (hot-tempered = too much yellow bile), star signs
@@ -72,10 +85,12 @@ DRAFT (for user confirmation): Medieval medicine was not random superstition —
 
   Physicians believed illness happened when these qualities became unbalanced. Galen's Theory of Opposites aimed to restore balance by using treatments with opposite qualities.
 
-- **Why Galen and Hippocrates had such influence — three reasons:**
+- **Why Galen had such influence in medieval England — three reasons:**
   - **Influence of the Church:** Galen believed in the soul → fitted Christian beliefs → Church promoted his texts → only texts widely taught
   - **Importance of book learning:** Good physician = widely read, not experienced; physicians who hadn't read Galen couldn't find work
   - **Lack of alternatives:** Human dissection was rare and opportunities to examine the body were limited, making it difficult to test Galen's ideas and challenge his conclusions
+
+  Hippocrates's medieval influence is taught through the Four Humours and through Galen's development of his ideas. Do not imply that Issue 6 separately requires an explanation of Hippocrates's influence.
 
 - **Natural and supernatural explanations:**
   Medieval people often divided illness into natural and supernatural causes.
@@ -133,7 +148,7 @@ DRAFT (for user confirmation): Medieval medicine was not random superstition —
 ## 4. Content reference pack
 
 ### Dates & timeline
-- c460–370 BC — Hippocrates (Ancient Greece): created Four Humours theory
+- c460–370 BC — Hippocrates (Ancient Greece): developed the Four Humours theory
 - c129–216 AD — Galen (Ancient Rome): built on Hippocrates; Theory of Opposites; dissected animals (not humans)
 - c410–1066 — Dark Ages: much classical knowledge lost in Western Europe
 - c1250 — Edexcel spec start date for medieval medicine
@@ -141,7 +156,7 @@ DRAFT (for user confirmation): Medieval medicine was not random superstition —
 - 1348 — Black Death reaches England (EXCLUDED — Episode 2 scope)
 
 ### Key people
-- **Hippocrates (Ancient Greece, c460–370 BC):** Created the Four Humours theory; encouraged careful observation of patients, recording symptoms and looking for natural causes of illness rather than relying only on superstition. The Hippocratic Oath originates here.
+- **Hippocrates (Ancient Greece, c460–370 BC; essential supporting knowledge):** Associated with the development of the Four Humours theory; encouraged careful observation of patients, recording symptoms and looking for natural causes of illness rather than relying only on supernatural explanations. Keep assessment focused on those contributions and the distinction from Galen, not on dates or the Hippocratic Oath.
 - **Galen (Ancient Rome, c129–216 AD):** Built on Hippocrates; added Theory of Opposites; believed in the soul (made him compatible with Church doctrine); dissected animals → around 300 errors in his descriptions of human anatomy that persisted until Vesalius; his ideas dominated medieval medicine entirely
 - **The Church (institutional "individual"):** Preserved and promoted Galen's ideas through monasteries and universities; controlled all books and education; made dissection largely illegal; ran hospitals
 
@@ -184,8 +199,9 @@ DRAFT (for user confirmation): Medieval medicine was not random superstition —
   - "Physicians treated patients in medieval times" — FALSE: physicians diagnosed, barber surgeons and apothecaries performed treatments
 
 ### Sourcing notes
+- **Pearson Edexcel GCSE History specification, Issue 6, pp. 11–13** — mandatory authority. It names the Four Humours and the continuing influence of Galen, but not Hippocrates.
 - **Primary source:** `content1.txt` / `paper_1_medicine_through_time_revision_book.txt` (same file, confirmed duplicate) — pp. 4–13 equivalent; rich detail on all specification points for Episode 1
-- **`EdexcelGCSEHistoryKnowledgeOrganiserforMedicineinBritain.txt`** — medieval section (Key Topic 1, pp. 1–2 equivalent) cross-references and confirms all major spec points
+- **`EdexcelGCSEHistoryKnowledgeOrganiserforMedicineinBritain.txt`** — medieval section (Key Topic 1, pp. 1–2 equivalent) names Hippocrates, links him to the Four Humours, observation and note-taking, and states that Galen built on his ideas; this supports the classification above without turning Hippocrates into a named Issue 6 requirement
 - **`reviseedexcelgcsehistorymodelanswerworkbook.txt`** — very limited coverage of medieval period specifically; mainly used for cross-topic confirmation
 - **`Paper_1_1HI011_Medicine_SAMs_Mark_scheme_2025.txt`** — confirms exam question types (explain why, how far do you agree) and mark scheme language relevant to this episode
 - **`Renaissance_Medicine_Section_of_Textbook.txt` and `Textbook_pages_British_Sector.txt`** — both 0 bytes (scanned PDFs with no extractable text); no content retrieved

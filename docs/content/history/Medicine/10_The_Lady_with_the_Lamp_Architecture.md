@@ -17,7 +17,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 2. **Before Nightingale: Nursing's Problem** — poor hospital conditions, weak training and low status.
 3. **Scutari: Cleanliness Becomes Evidence** — Nightingale, sanitation, statistics and death rates.
 4. **Changing Nursing at Home** — training, professionalisation and hospital reform.
-5. **The Myth and the Real Impact** — significance, limits, Seacole comparison and continuity.
+5. **The Myth and the Real Impact** — significance, limits, miasma, evidence and continuity.
 6. **Exam Prep: Nursing, Hospitals and Evidence** — examiner traps, significance judgement and exam practice.
 
 ---
@@ -46,7 +46,8 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 ### Section 5 — Learning Chunk 4
 - **Purpose:** Complete teaching — significance and limits.
-- **Proposed content for Episode 10:** improved nursing status, limits of germ understanding, comparison with Mary Seacole, gender/class narratives and evidence-based reform.
+- **Proposed content for Episode 10:** improved nursing status, limits of germ understanding, Nightingale myth versus evidence, continuity and evidence-based reform.
+- **Enrichment boundary:** Mary Seacole is not named in Issue 6 or the supplied organiser and has no approved teaching source in this pack. Do not build a Seacole objective, assessment or weak spot. A future source-approved comparison must remain optional and cannot displace required Nightingale/nursing/hospital content.
 - **Suggested components:** `ColSortBlock`, `ExplainReveal`, `QuickRecallScreen`
 
 ### Section 6 — Summary & Examiner
@@ -62,6 +63,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 - [ ] Interleaving exists throughout the module
 - [ ] Weak spots are revisited in-module
 - [ ] Core chapter message is reinforced
+- [ ] Required Nightingale, nursing and hospital-care coverage is complete without relying on optional enrichment
 - [ ] Examiner content appears only in Section 6
 - [ ] Module ends with a completion screen
 - [ ] No feature component is used more than twice in the module
@@ -77,6 +79,6 @@ Not yet built. Build this as a focused hospital/nursing reform module rather tha
 ## 4. Build recommendations
 
 1. Avoid a sentimental Nightingale-only story; the exam value is evidence, sanitation, nursing training and hospital reform.
-2. Include Seacole carefully as comparison/context without derailing the main Edexcel Medicine spine.
+2. Do not include Seacole while the content remains on source hold; if a dedicated source is later approved, keep the comparison optional and outside the core evidence contract.
 3. Link to surgery and public health: cleanliness matters before and after germ theory.
 4. Make Part 6 a significance-judgement practice section.

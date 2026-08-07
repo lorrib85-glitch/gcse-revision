@@ -71,6 +71,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
   - Vesalius's role and *On the Fabric of the Human Body* (1543).
   - Human dissection versus Galen's reliance on animal dissection.
   - Jaw, ribs and breastbone as memorable evidence cases.
+  - Influence on medical training: students and doctors increasingly learned anatomy from direct human observation and accurate illustrations.
   - Galen was not wrong about everything; Vesalius did not reject all Galenic ideas.
 - **Recommended components:**
   - `KeyFigureReveal` — short cinematic introduction before detailed evidence.
@@ -86,6 +87,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
   - Detailed illustration made the evidence visible.
   - Printing reproduced the argument consistently and at scale.
   - Doctors across Europe could compare Galen's claims with Vesalius's evidence.
+  - Training changed because teachers and learners could use the same accurate human-anatomy evidence beyond one dissection.
 - **Recommended components:**
   - `VisualNarrativeScreen` — dissection → illustration → printed book → wider comparison → growing doubt.
   - `FactorWeb` — why Vesalius could challenge Galen: individual skill, human dissection, anatomy theatres, humanism, weaker Church authority and printing; learner makes a supported judgement about the most important factor.
@@ -123,6 +125,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 - [ ] Every major taught idea is retrieved or applied later.
 - [ ] The `TheoryCompare` `people` variant teaches before it asks the learner to judge or recall.
 - [ ] Printing is taught as a mechanism of spread, not as the source of Vesalius's discovery.
+- [ ] Vesalius's influence on medical training is explicit: dissection, anatomy theatres and printed illustration changed how anatomy was learned.
 - [ ] Change and continuity are both explicit.
 - [ ] The chapter repeatedly reinforces **knowledge changed before treatment**.
 - [ ] Examiner teaching is followed by assessed exam-technique application.
@@ -138,6 +141,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 - Renaissance conditions needed to understand Vesalius.
 - Vesalius, human dissection and Galen's anatomical errors.
+- Vesalius's influence on medical training through observation, anatomy theatres and printed human-anatomy evidence.
 - Printing and the spread of anatomical evidence.
 - Knowledge/method change versus treatment continuity.
 
@@ -161,5 +165,6 @@ The chapter's teaching-first evidence comparison is delivered by the `people` va
 2. **Make the method visible:** every anatomical correction must end with what it proved about evidence and authority.
 3. **Keep the three comparison cases purposeful:** jaw, ribs and breastbone are enough; do not turn the sequence into body-part trivia.
 4. **Make printing causal:** show how evidence travelled from body to illustration to book to medical community.
-5. **End with judgement:** better knowledge of anatomy was a major change; everyday treatment remained limited.
-6. **Protect the boundary:** do not add Royal Society, Sydenham, Fracastoro, Leeuwenhoek, Paré or Great Plague detail back into this chapter.
+5. **Make training explicit:** show how direct observation and consistent printed illustrations changed what medical students could see, compare and learn.
+6. **End with judgement:** better training and anatomical knowledge were major changes; everyday treatment remained limited.
+7. **Protect the boundary:** do not add Royal Society, Sydenham, Fracastoro, Leeuwenhoek, Paré or Great Plague detail back into this chapter.
