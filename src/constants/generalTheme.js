@@ -153,6 +153,32 @@ export const GENERAL = {
 
   surfaceTint: 'rgba(255,255,255,0.04)',
 
+  // Shared translucent surface used when content should sit over a scene or
+  // atmospheric background without becoming a bright "glass card". Subject
+  // identity is layered in by CardContainer from SUBJECTS, never encoded here.
+  contentSurface: {
+    cinematicOverlay: 'linear-gradient(145deg, rgba(13,15,20,0.78) 0%, rgba(13,15,20,0.56) 100%)',
+    cinematicOverlayBorder: 'rgba(255,255,255,0.10)',
+    cinematicOverlayBlur: '14px',
+    cinematicOverlayShadow: '0 18px 44px rgba(0,0,0,0.32)',
+    cinematicOverlayInset: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+  },
+
+  // Passive exam-technique hierarchy. The accent itself always comes from the
+  // active subject theme; these tokens only control emphasis and spacing.
+  examTechnique: {
+    bodyPrimary: 'rgba(255,255,255,0.92)',
+    bodySecondary: 'rgba(255,255,255,0.72)',
+    phraseFillAlpha: 0.08,
+    phraseBorderAlpha: 0.26,
+    surfaceTintAlpha: 0.055,
+    surfaceGlowAlpha: 0.12,
+    labelGap: 12,
+    sectionGap: 14,
+    phraseGap: 8,
+    phraseRadius: 999,
+  },
+
   // Elevation shadows on dark surfaces and imagery — the approved shadow
   // ladder. Pick the nearest step; do not invent new shadow values.
   shadow: {
