@@ -51,7 +51,11 @@ export default {
     usageBoundary: 'Not an authoring choice. Authors select entries from screenRegistry.js, never ScreenRenderer directly.',
     contractDoc: null,
     story: null,
-    governanceRules: [],
+    governanceRules: [
+      'ExamTipBlock labels are sentence case and use TYPE.label; uppercase transforms and TYPE.eyebrow are forbidden.',
+      'When an exam tip has both a primary rule and supporting tip, the separation is the shared CinematicDivider component rather than a locally drawn border or line.',
+      'ExamTipBlock presentation consumes canonical TYPE, SPACING, GENERAL.examTechnique, GENERAL.contentSurface and SUBJECTS tokens; do not add local type sizing, line heights, spacing arithmetic, raw colours or opacity values.'
+    ],
     notes: [
       'ExamTipBlock is a passive exam-technique beat. It uses CardContainer cinematicOverlay, takes accent identity from canonical SUBJECTS, and follows docs/system/component-contracts/read-blocks.md; do not create subject-specific exam-tip variants or asset-dependent examiner scenes.'
     ]
