@@ -1,17 +1,19 @@
-# Workflow C — Content / Module Update
+# Workflow C — Content / Chapter Update
 
 **Authority:** `CLAUDE.md` > this file > session instructions.
 
 ## Purpose
 
-Changing or extending content inside an already-built module — lesson copy,
-screens, recall questions, module structure, GCSE knowledge coverage.
+Changing or extending content inside an already-built Chapter — lesson copy,
+Screens, recall questions, Chapter structure, question-bank content or GCSE
+knowledge coverage.
 
 ## When to use
 
-Any change to `src/modules/<subject>.js` content, `screens` array, `recall`
-questions, or `hook`/`outcomes` copy for a module that already exists.
-Module not yet built → re-triage to E (Big Build).
+Any content change inside an already-built Chapter, including its
+`src/content/<subject>/<series>/episodes/<file>.js` `screens` array,
+`recall`, `hook` or `outcomes`, or question-bank content associated with that
+Chapter. Chapter not yet built → re-triage to E (Big Build).
 
 ## Required artefacts
 
@@ -32,11 +34,16 @@ Module not yet built → re-triage to E (Big Build).
 3. **Source of truth check:**
    - Read existing canonical and architecture docs first — grep for the
      relevant section; do not bulk-read.
+   - Canonical Chapter files may live under either `docs/content/<subject>/`
+     or `docs/canonical/<subject>/`. Resolve the active matching series and
+     Chapter before proceeding; do not assume the History/English root for
+     Maths, Science or Sociology.
    - Run `/canonical-topic` only if canonical or architecture docs are
-     missing, stale, incomplete, or explicitly requested. Do not run it
-     by default.
-   - Allowed: canonical file, module architecture doc, exam spec/mark
-     scheme, neighbouring module, target `src/modules/<subject>.js` file,
+     missing, stale, incomplete, ambiguous across roots, or explicitly
+     requested. Do not run it by default.
+   - Allowed: the matching canonical file under its resolved root, subject
+     architecture doc, exam spec/mark scheme, neighbouring Chapter, target
+     `src/content/<subject>/<series>/episodes/<file>.js`,
      `docs/system/PATTERN_GOVERNANCE.md` + the relevant
      `component-contracts/` and `CONTENT_BUILD_TEMPLATE.md`.
    - When the scope creates or changes Chapter Topics, canonical coverage,
@@ -100,7 +107,7 @@ Module not yet built → re-triage to E (Big Build).
 
 `/content-review` (diagnose + amendment briefs + independent post-build
 approval), `/content-create` (implement confirmed briefs),
-`/canonical-topic` (History, only when docs are missing/stale/requested),
+`/canonical-topic` (only when docs are missing/stale/ambiguous/requested),
 `/ponytail-review`, `/code-review`, `superpowers:writing-plans`,
 `superpowers:executing-plans`, `/verify`
 
@@ -110,7 +117,7 @@ approval), `/content-create` (implement confirmed briefs),
 
 ## Stop points
 
-- Module is not yet built → re-triage to E
+- Chapter is not yet built → re-triage to E
 - New component required → check Component Registry; if genuinely new,
   re-triage to E
 - `vitest run tests/architecture` fails → do not commit; fix first
@@ -125,9 +132,9 @@ approval), `/content-create` (implement confirmed briefs),
   ships a stale projection and `pnpm lab:check` fails the build.
 - `vite build` passes
 - `vitest run tests/architecture` — catches `screenCount` mismatches,
-  missing `screenTags`, broken module boundaries, storage violations, and Lab
+  missing `screenTags`, broken Chapter boundaries, storage violations, and Lab
   projection drift
-- Module opens, progresses, and completes without errors
+- Chapter opens, progresses, and completes without errors
 - No missing `recoveryQuizId` tags
 - When triggered by `CHAPTER_READINESS_AUDIT.md`, Stage B and independent
   Stage C readiness results are recorded, with no unresolved in-scope Fail
