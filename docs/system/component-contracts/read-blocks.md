@@ -29,6 +29,12 @@ can add the explanation or warning, and optional `phrases` can provide
 quiet sentence stems. It must remain passive: sentence stems are memory
 cues, not buttons or a second interaction disguised as decoration.
 
+The primary sequencing job of `examtip` is **teach → connect to exam use**.
+Use it immediately after a topic or concept has been covered when the learner
+needs to see how that fresh knowledge translates into marks: the relevant
+command word, what earns the marks, the detail that needs including, or the
+mistake that would waste marks. It does not introduce new subject knowledge.
+
 ## Presentation contract
 
 - `examtip` uses the governed translucent `CardContainer` cinematic-overlay
@@ -59,6 +65,9 @@ cues, not buttons or a second interaction disguised as decoration.
 
 - Full sentences. A `read` block teaches at most one causal chain — cause
   → mechanism → consequence — never a second, unrelated fact bolted on.
+- An `examtip` should contain one exam-use rule tied directly to the topic just
+  taught. It may add one short warning/explanation and a small number of
+  sentence stems, but it must not become a bundle of generic exam advice.
 - Never more than 2 consecutive passive screens (⚙,
   `docs/system/CONTENT_BUILD_TEMPLATE.md` hard floor) — if a `read`/`keypoint`/
   `examtip`/`funfact` block would make a third in a row, it needs an
@@ -93,3 +102,7 @@ cues, not buttons or a second interaction disguised as decoration.
 5. **Locally rebuilt styling** — adding an uppercase label, a hand-drawn divider,
    raw spacing or opacity values, or local typography overrides instead of using
    the governed tokens and `CinematicDivider`.
+6. **Generic exam advice detached from learning** — dropping an exam tip into a
+   chapter without a clear connection to the topic just taught. If the learner
+   cannot answer "what did I just learn that this helps me use?", the block is
+   in the wrong place.
