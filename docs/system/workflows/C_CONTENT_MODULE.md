@@ -18,6 +18,8 @@ Module not yet built → re-triage to E (Big Build).
 - User story (exam-board framing — see phase 2)
 - Coverage check (inline note or doc — see phase 4)
 - Plan (`superpowers:writing-plans` output)
+- Chapter readiness report when the change triggers
+  `docs/system/CHAPTER_READINESS_AUDIT.md`
 
 ## Phases
 
@@ -36,7 +38,13 @@ Module not yet built → re-triage to E (Big Build).
    - Allowed: canonical file, module architecture doc, exam spec/mark
      scheme, neighbouring module, target `src/modules/<subject>.js` file,
      `docs/system/PATTERN_GOVERNANCE.md` + the relevant
-     `component-contracts/` and `CONTENT_BUILD_TEMPLATE.md`
+     `component-contracts/` and `CONTENT_BUILD_TEMPLATE.md`.
+   - When the scope creates or changes Chapter Topics, canonical coverage,
+     assessed evidence, weakness/recovery wiring, Screen order/count,
+     `stageNavigation` or Chapter metadata, also read
+     `docs/system/CHAPTER_READINESS_AUDIT.md`; if Topics are present, read
+     `docs/system/CHAPTER_TOPICS.md` too. These docs own the readiness and
+     Topic rules — do not restate them in this workflow.
    - During `/content-review`, brand, typography, subject-theme and product-UI
      governance may be consulted to audit an existing learning screen. This
      does not authorise creation of a new visual system, broad redesign,
@@ -69,7 +77,9 @@ Module not yet built → re-triage to E (Big Build).
    content-level or screen-owning) per `CONTENT_BUILD_TEMPLATE.md` →
    "Composition selection": teaching/explanation screens default to
    `TeachScreenShell` (Route A); a Route B/C route needs explicit
-   contract-granted full-screen ownership.
+   contract-granted full-screen ownership. When the readiness contract is
+   triggered, `content-create` must also produce the Stage-B Chapter readiness
+   report before calling the scope implemented.
 7. **Review** — `/ponytail-review`; `/code-review` if data shape or logic
    changed. **Pattern-governance review** (`PATTERN_GOVERNANCE.md`) for any
    screen touched: state its one primary intent in a sentence (fail and
@@ -80,8 +90,9 @@ Module not yet built → re-triage to E (Big Build).
    change — source + tests alone do not pass — and answer the strengthened
    visual verdict in writing. After `content-create` builds, the
    **independent post-build `content-review`** re-audits the amended scope
-   (before / after / gold) and names any quality trade-off; "implemented" is
-   never "approved".
+   (before / after / gold), independently re-runs any required Chapter
+   readiness audit, and names any quality trade-off; "implemented" is never
+   "approved".
 8. **Verify** — see below.
 9. **Commit** — directly to `main`.
 
@@ -103,6 +114,8 @@ approval), `/content-create` (implement confirmed briefs),
 - New component required → check Component Registry; if genuinely new,
   re-triage to E
 - `vitest run tests/architecture` fails → do not commit; fix first
+- A required Chapter readiness audit has an unresolved in-scope Fail → do not
+  describe the changed scope as implemented or approved
 
 ## Verification
 
@@ -116,4 +129,6 @@ approval), `/content-create` (implement confirmed briefs),
   projection drift
 - Module opens, progresses, and completes without errors
 - No missing `recoveryQuizId` tags
+- When triggered by `CHAPTER_READINESS_AUDIT.md`, Stage B and independent
+  Stage C readiness results are recorded, with no unresolved in-scope Fail
 - `/verify` in the running app
