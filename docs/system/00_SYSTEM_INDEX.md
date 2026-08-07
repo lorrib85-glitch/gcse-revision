@@ -88,6 +88,23 @@ Governs how every element is placed on a learning screen: the taxonomy chain (le
 
 ---
 
+### 1f.1. Chapter Topic Authoring
+
+`docs/system/CHAPTER_TOPICS.md`  
+`docs/decisions/0003-canonical-chapter-topic-identity.md`
+
+Practical authoring guidance and the architectural decision for the optional Chapter Topic layer used to group coherent, revisitable Screen ranges inside a Chapter. The ADR is authoritative if the practical guide conflicts with it. Topic IDs are stable semantic identities; Topic metadata lives inside Chapter content and must not become a second curriculum hierarchy or duplicate progress/mastery state.
+
+---
+
+### 1f.2. Chapter Readiness Audit
+
+`docs/system/CHAPTER_READINESS_AUDIT.md`
+
+The single orchestration contract for deciding whether a new or materially changed Chapter is structurally and educationally ready. It assembles — but does not redefine — canonical coverage, Topic/Screen accountability, component pedagogy, assessed evidence and weakness/recovery wiring, metadata integrity, technical checks and 390px visual evidence. `content-create` produces Stage-B builder evidence; `content-review` independently verifies it before approval. An unresolved in-scope Fail blocks implementation/approval claims.
+
+---
+
 ### 1g. Gold Screen Register
 
 `docs/system/GOLD_SCREEN_REGISTER.md`
@@ -195,5 +212,6 @@ Before making any UI change, confirm:
 4. **Tokens** — am I using tokens from the relevant Foundation System doc?
 5. **Existing components** — does something in the component catalogue already cover this?
 6. **Contracts** — read the component's catalogue record: does this change touch a documented invariant, exclusivity rule or public API?
+7. **Chapter readiness** — if this change creates/materially rebuilds a Chapter or changes Topics, canonical coverage, assessed evidence/weakness wiring, Screen order/count, `stageNavigation` or Chapter metadata, has `CHAPTER_READINESS_AUDIT.md` been routed into the workflow?
 
 **When in doubt: go simpler, darker, calmer, and less decorated.**
