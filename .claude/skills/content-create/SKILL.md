@@ -8,8 +8,8 @@ description: >
   MediaPlaceholder, running the composed 390px render pass, and recording any
   deviation from the brief. It never freely invents screens and never treats
   "implemented" as "approved" — an independent post-build content-review does
-  that. Use for building new chapter content (Lane E) or rebuilding confirmed
-  briefs in built content (Lane C).
+  that. Use for building new Chapter content (Lane E) or rebuilding confirmed
+  briefs in built Chapter content (Lane C).
 argument-hint: "<chapter id> [screen range | brief file] "
 ---
 
@@ -17,8 +17,8 @@ argument-hint: "<chapter id> [screen range | brief file] "
 
 The build side of the governed review-to-rebuild pipeline. `content-review`
 diagnoses and writes amendment briefs; **`content-create` implements them.**
-For a genuinely new chapter it consumes a build spec/canonical spine instead
-of a brief, but the same chain and halts apply. Runs in Lane E (new chapter)
+For a genuinely new Chapter it consumes a build spec/canonical spine instead
+of a brief, but the same chain and halts apply. Runs in Lane E (new Chapter)
 or Lane C (rebuilding confirmed briefs) after `/gcse-triage`.
 
 This is the companion build-side skill named throughout
@@ -58,12 +58,24 @@ Do not start Stage B without confirmed Stage-A briefs (or, for a new build,
 a confirmed spec + canonical story spine). If invoked with no brief and no
 spec, stop and ask which briefs are confirmed.
 
+## Canonical root resolution
+
+Canonical Chapter documents are not stored under one universal subject root.
+Before reading or writing canonical-adjacent workflow artefacts, locate the
+matching active Chapter files under **both** `docs/content/<subject>/` and
+`docs/canonical/<subject>/` and define that location as `<canonical-root>` for
+this run. Use the root containing the matching active series spine and canonical
+`*_Content.md` / `*_Architecture.md` pair. Do not move or copy canonical files
+between roots merely to satisfy this skill. If both roots contain plausible
+active matches, or neither does, halt and resolve the ambiguity through
+`/canonical-topic` rather than guessing.
+
 ## Required reading before any screen is written
 
 1. The **confirmed amendment brief(s)** from `content-review`
-   (the current or a prior `docs/content/<subject>/<series>/<NN>_Review_Log.md`
-   entry), or — for a new build — the episode's canonical files
-   `docs/content/<subject>/<series>/<NN>_*_Content.md` / `..._Architecture.md`
+   (the current or a prior `<canonical-root>/<series>/<NN>_Review_Log.md`
+   entry), or — for a new build — the Chapter's canonical files
+   `<canonical-root>/<series>/<NN>_*_Content.md` / `..._Architecture.md`
    including the Story spine section. If canonical files are missing or lack a
    spine for a new build, run `/canonical-topic` first — never invent an arc
    at build time.
@@ -183,10 +195,10 @@ these jobs; if it does, it has two primary intents (halt 3).
 2. **Reserve every visual with `MediaPlaceholder`** + a manifest entry in
    `docs/content/<subject>/<series>/<NN>_visual-assets.md`. Never generate
    bespoke imagery or diagrams.
-3. Register metadata per `CLAUDE.md` (per-chapter content file,
-   canonical chapter record with its `contentPath`, referenced from exactly
-   one module record). The loader entry, `screenCount` and `screenTags` are
-   all GENERATED — run `pnpm curriculum:runtime:generate` instead of
+3. Register metadata per `CLAUDE.md` (per-Chapter content file,
+   canonical Chapter record with its `contentPath`, referenced from exactly
+   one parent Module record). The loader entry, `screenCount` and `screenTags`
+   are all GENERATED — run `pnpm curriculum:runtime:generate` instead of
    editing them. For a rebuild that changes screen count, update only the
    `stageNavigation` indices, then regenerate.
 4. When the Chapter authors Topics, declare them with the exact shape in
@@ -223,9 +235,10 @@ Use **Pass / Review / Fail** exactly as the audit contract defines them:
 - explain every Review and any allowed deferral;
 - do not claim the scope is implemented while an in-scope Fail remains.
 
-Write the Stage-B readiness report into the Chapter Review Log together with
-the build chain, render results and deviations. It is builder evidence for
-Stage C, **not approval**; `content-review` must independently reproduce it.
+Write the Stage-B readiness report into the Chapter Review Log at the resolved
+`<canonical-root>` together with the build chain, render results and
+deviations. It is builder evidence for Stage C, **not approval**;
+`content-review` must independently reproduce it.
 
 ## Render pass and deviation record (Stage B output, not approval)
 
@@ -247,10 +260,11 @@ Before handing back to Stage C:
    built screen differs from what the brief specified (a constraint the brief
    didn't foresee, a component limitation, a canonical gap). Deviations are
    surfaced to the user and to Stage C, never hidden.
-4. Write the **first / build entry to the review log** so the amended scope
-   has a persisted record: what was built, the per-screen chain, the Chapter
-   readiness report, the render results, and every deviation. This entry is
-   *implementation evidence for Stage C*, explicitly not an approval.
+4. Write the **first / build entry to the review log** at the resolved
+   `<canonical-root>` so the amended scope has a persisted record: what was
+   built, the per-screen chain, the Chapter readiness report, the render
+   results, and every deviation. This entry is *implementation evidence for
+   Stage C*, explicitly not an approval.
 
 ## Verify (mechanical floor, still not approval)
 
@@ -259,9 +273,9 @@ Before handing back to Stage C:
   or moving a screen or block changes it. Skipping this ships a stale
   projection and `pnpm lab:check` fails the build.
 - `vitest run tests/architecture` green (includes the content-quality floor —
-  never add a chapter to a grandfather allowlist to get green).
+  never add a Chapter to a grandfather allowlist to get green).
 - `./node_modules/.bin/vite build` green.
-- The chapter opens, progresses and completes in the running app.
+- The Chapter opens, progresses and completes in the running app.
 - The Chapter readiness report contains no unresolved in-scope Fail.
 
 Passing these is necessary, not sufficient. **The build is "implemented", not
@@ -281,5 +295,5 @@ against before / after / gold and independently verified the readiness report.**
 - Never generate imagery; reserve it with `MediaPlaceholder` + manifest.
 - Never declare a new or materially rebuilt Chapter implemented without the
   required Chapter readiness report.
-- Never add a new chapter to `GRANDFATHERED_EPISODES` /
+- Never add a new Chapter to `GRANDFATHERED_EPISODES` /
   `SENTENCE_CASE_GRANDFATHERED_EPISODES` — new content passes the floor.
