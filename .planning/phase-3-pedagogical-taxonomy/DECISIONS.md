@@ -24,8 +24,7 @@ Approved outcomes:
   replacing that dependency or a genuine authoring entry — whichever first.
   Shrinking-set governance applies: no additional non-authoring entry without
   an explicit decision, reason and removal condition.
-- **D2:** `hotspot` → { functions: ['teach-mechanism'], interaction: 'reveal' };
-  `timeline` → { functions: ['sequence-process'], interaction: 'passive' };
+- **D2:** `timeline` → { functions: ['sequence-process'], interaction: 'passive' };
   `standard` → `pedagogy: null` with the narrow structured exemption
   `pedagogyExemption: { kind: 'container-derived', reason: … }` — no generic
   boolean, exemption valid only on a screen entry that structurally requires a
@@ -66,7 +65,7 @@ real, catalogued, storied, but unrouted and unauthorable.
 - Alternative: drop it and hand-set `interaction` on the Lab entry — but that
   edits the Lab manifest, which Phase 3's exclusions forbid.
 
-## D2 — the three authoring entries with no taxonomy coverage *(blocking)*
+## D2 — the two authoring entries with no taxonomy coverage *(blocking)*
 
 Census §2d. Guards 1–2 require every active entry to carry pedagogy, so the
 flip must either assign facts or exempt explicitly. These are **new facts**,
@@ -83,14 +82,6 @@ whatever its blocks are; quality checks never consult it (raw `screen.type` is
   behaviour exactly. Giving it a real classification would invent a fact the
   quality system would then half-consult (only for explicitly-typed screens).
 
-**block `hotspot`** (renderer-owned, 0 uses) — tap-to-explore labelled
-diagram, no scoring. Today's absence makes any host screen count non-passive
-by accident.
-
-- **Proposed values:** `functions: ['teach-mechanism']`,
-  `interaction: 'reveal'` — same reasoning as the documented 2026-07-24
-  `interactiveImage` correction (its full-screen sibling).
-
 **block `timeline`** (renderer-owned, 0 uses) — static rendered event list.
 
 - **Proposed values:** `functions: ['sequence-process']`,
@@ -98,9 +89,8 @@ by accident.
   handler).
 
 Consequence either way: quality parity is unaffected today (zero uses), but
-future content using `hotspot`/`timeline` would flip from
-accidentally-non-passive to their true class. That is the point of covering
-them.
+future content using `timeline` would flip from accidentally non-passive to
+its true class. That is the point of covering it.
 
 ## Open debt after Phase 3
 

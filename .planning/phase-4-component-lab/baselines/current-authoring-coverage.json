@@ -1,36 +1,36 @@
 {
   "$schema": "phase-4-component-lab/current-authoring-coverage",
-  "capturedAtSha": "d2c0030f80730db42e0b5097319ae5292966b078",
-  "note": "The Component Lab measured against the LIVE CHAPTER AUTHORING SURFACE, per the clarified product rule that the Lab is the chapter-building component library. This supersedes current-catalogue-coverage.json as the Lab coverage contract; that file remains valid as the catalogue-population record.",
+  "baselineReferenceSha": "d2c0030f80730db42e0b5097319ae5292966b078",
+  "note": "The Component Lab measured against the LIVE CHAPTER AUTHORING SURFACE, per the clarified product rule that the Lab is the chapter-building component library. Authoring-surface lists and totals are maintained against the current catalogue. This supersedes current-catalogue-coverage.json as the Lab coverage contract; that file remains valid as the catalogue-population record.",
   "correction": {
     "id": "D0 — derived routes are not selectable authoring choices",
-    "summary": "The superseded target of 51 counted screen:misconceptionCheck, a derived route, as an independently selectable authoring choice. A derived route is the runtime presenting an existing choice at another level; it is accounted for as a presentation of its source entry, never as a second Lab selection. The direct authoring coverage contract counts active entries only.",
+    "summary": "The superseded target of 50 counted screen:misconceptionCheck, a derived route, as an independently selectable authoring choice. A derived route is the runtime presenting an existing choice at another level; it is accounted for as a presentation of its source entry, never as a second Lab selection. The direct authoring coverage contract counts active entries only.",
     "evidence": "Measured content usage: block:misconceptionCheck 21 uses / 17 files; screen:misconceptionCheck 0 uses. Enforced by the schema derivedFrom key and by mutation 4 in tests/architecture/component-lab-authoring-coverage.test.js.",
     "supersedes": {
-      "liveAuthoringEntries": 51,
+      "liveAuthoringEntries": 50,
       "coveredByLab": 34,
-      "target": 51
+      "target": 50
     }
   },
   "correctedBasis": {
     "note": "Measured before any Phase 4 change, on an active-only basis. The single Lab item that bound to the derived screen route is counted here as it stood: covering the derived entry, not the active block entry.",
-    "activeAuthoringEntries": 50,
+    "activeAuthoringEntries": 49,
     "derivedRoutes": 1,
     "legacyEntriesExcluded": 4,
     "activeCoveredByLab": 33,
-    "activeMissingFromLab": 17,
+    "activeMissingFromLab": 16,
     "labSelectionsWithNoActiveEntry": 11,
     "categoryCItemsInLab": 5
   },
   "target": {
-    "activeAuthoringEntries": 57,
-    "selectableLabChoices": 57,
+    "activeAuthoringEntries": 56,
+    "selectableLabChoices": 56,
     "activeMissingFromLab": 0,
     "labSelectionsWithNoActiveEntry": 0,
     "categoryCItemsInLab": 0,
     "derivedRoutesAccountedFor": 1,
     "derivedRoutesSelectable": 0,
-    "arithmetic": "33 active covered + 17 active missing = 50 active today; + 7 new authoring types = 57 active, all selectable. No remainder."
+    "arithmetic": "33 active covered + 16 active missing = 49 active today; + 7 new authoring types = 56 active, all selectable. No remainder."
   },
   "newAuthoringTypes": [
     {
@@ -692,24 +692,6 @@
       "contentUses": 1
     },
     {
-      "key": "block:hotspot",
-      "level": "block",
-      "type": "hotspot",
-      "owningRecord": "ScreenRenderer",
-      "recordId": "screen-renderer",
-      "handler": "HotspotBlock",
-      "layout": "content",
-      "authoringName": "Hotspot block",
-      "status": "active",
-      "pedagogy": {
-        "functions": [
-          "teach-mechanism"
-        ],
-        "interaction": "reveal"
-      },
-      "contentUses": 0
-    },
-    {
       "key": "block:timeline",
       "level": "block",
       "type": "timeline",
@@ -809,13 +791,6 @@
       "key": "block:graphView",
       "owningRecord": "GraphView",
       "handler": null,
-      "status": "active",
-      "contentUses": 0
-    },
-    {
-      "key": "block:hotspot",
-      "owningRecord": "ScreenRenderer",
-      "handler": "HotspotBlock",
       "status": "active",
       "contentUses": 0
     },
@@ -1104,20 +1079,20 @@
     "labItem": "misconception-check",
     "from": "screen:misconceptionCheck (derived)",
     "to": "block:misconceptionCheck (active)",
-    "effect": "A correction, not new coverage: active covered 33 → 34 and active missing 17 → 16, with no adapter added. The remaining 16 are the new adapters Phase 4 writes."
+    "effect": "A correction, not new coverage: active covered 33 → 34 and active missing 16 → 15, with no adapter added. The remaining 15 are the new adapters Phase 4 writes."
   },
   "measuredAfterPhase4": {
     "capturedBy": "tests/architecture/component-lab-authoring-coverage.test.js and pnpm lab:check, both green",
-    "projectionRows": 58,
-    "activeAuthoringEntries": 57,
+    "projectionRows": 57,
+    "activeAuthoringEntries": 56,
     "derivedRoutes": 1,
-    "selectableLabChoices": 57,
+    "selectableLabChoices": 56,
     "activeMissingFromLab": 0,
     "labSelectionsWithNoActiveEntry": 0,
     "categoryCItemsInLab": 0,
     "categoryCItemsOnSystemReference": 5,
-    "totalPreviewUnits": 114,
-    "selectionsWithValidMinimalChapterShape": 57
+    "totalPreviewUnits": 113,
+    "selectionsWithValidMinimalChapterShape": 56
   },
   "finalSelections": [
     {
@@ -1238,14 +1213,6 @@
       "handler": null,
       "owningRecord": "graph-view",
       "previews": 2,
-      "contentUses": 0
-    },
-    {
-      "key": "block:hotspot",
-      "component": "ScreenRenderer",
-      "handler": "HotspotBlock",
-      "owningRecord": "screen-renderer",
-      "previews": 1,
       "contentUses": 0
     },
     {

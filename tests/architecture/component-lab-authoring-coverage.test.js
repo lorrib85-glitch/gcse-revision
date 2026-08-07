@@ -273,7 +273,7 @@ describe('handler-backed types are previewed without exporting a handler', () =>
   const handlerRows = LAB_REGISTRY_ROWS.filter(row => row.handler)
 
   it('covers every handler-backed authoring type', () => {
-    expect(handlerRows.length).toBeGreaterThan(9)
+    expect(handlerRows.length).toBeGreaterThan(8)
     for (const row of handlerRows) {
       expect(LAB_ADAPTERS[row.key], `${row.key} must be selectable`).toBeDefined()
     }
@@ -419,7 +419,7 @@ describe('the Lab holds no runtime, infrastructure or design-system item', () =>
   })
 
   it('never lists ScreenRenderer or ChapterPlayer as a selection', () => {
-    // ScreenRenderer owns ten authoring types and is the preview mechanism for
+    // ScreenRenderer owns nine authoring types and is the preview mechanism for
     // them, but it is not itself a choice: no selection names it as a component.
     const componentNames = ACTIVE_LAB_KEYS.map(key => COMPONENT_LAB_REGISTRY[key].componentName)
     expect(componentNames.filter(name => name === 'ChapterPlayer')).toEqual([])

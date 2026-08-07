@@ -2784,6 +2784,16 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 - `src/components/layout/deferredFigureLoaders.js` (file) — The stable per-component dynamic-import thunks behind those routes, kept free of React so the app shell can preload a chapter’s figures without pulling in the rendering layer. Implementation detail of the same routing boundary.
 - `src/components/layout/deferredFigureComponentMap.js` (file) — The authoring-type to lazy-component map for those routes, split out so the rendering module exports components only and keeps fast refresh. Read by the architecture guard rather than by the runtime, and part of the same private routing machinery.
 
+**Governance rules:**
+
+- ExamTipBlock labels are sentence case and use TYPE.label; uppercase transforms and TYPE.eyebrow are forbidden.
+- When an exam tip has both a primary rule and supporting tip, the separation is the shared CinematicDivider component rather than a locally drawn border or line.
+- ExamTipBlock presentation consumes canonical TYPE, SPACING, GENERAL.examTechnique, GENERAL.contentSurface and SUBJECTS tokens; do not add local type sizing, line heights, spacing arithmetic, raw colours or opacity values.
+
+**Notes:**
+
+- ExamTipBlock is a passive exam-technique beat. It uses CardContainer cinematicOverlay, takes accent identity from canonical SUBJECTS, and follows docs/system/component-contracts/read-blocks.md; do not create subject-specific exam-tip variants or asset-dependent examiner scenes.
+
 **Authoring**
 
 - **Block type:** `examtip` — Exam tip
@@ -2800,12 +2810,6 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
   - Requires: `text`:string
   - Implementation: private `ScreenRenderer` handler `FunFactBlock`
   - Pedagogy: hook-tension · passive
-- **Block type:** `hotspot` — Hotspot block
-  - Status: `active`
-  - Layout: content
-  - Continuation: player-owned
-  - Implementation: private `ScreenRenderer` handler `HotspotBlock`
-  - Pedagogy: teach-mechanism · reveal
 - **Block type:** `keypoint` — Key point
   - Status: `active`
   - Layout: content

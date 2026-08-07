@@ -12,12 +12,12 @@ completion claim.
 
 > **Superseded twice, in place.** The first sequence built a record-keyed
 > projection and deleted the `calculationBreakdown` pedagogy shim early. The
-> second targeted 51 entries and recommended a `block:mathsFigure` dispatcher.
+> second targeted 50 entries and recommended a `block:mathsFigure` dispatcher.
 > Both are withdrawn: the projection unit is the *active* authoring entry, the
-> target is **57**, each figure component gets its own public type, and the
+> target is **56**, each figure component gets its own public type, and the
 > shim is removed only after a genuine entry exists.
 
-The target: **57 selectable Lab choices resolving to 57 active authoring
+The target: **56 selectable Lab choices resolving to 56 active authoring
 entries**, one derived route accounted for as a presentation, four legacy
 entries excluded.
 
@@ -62,7 +62,7 @@ Plus:
 - `screen:examinerExplains` moved from the parked `ExaminerExplainsScreen`
   record to the canonical `WhatExaminersLookFor` record (D5.1).
 
-**Exit:** 57 active + 1 derived entries load and validate.
+**Exit:** 56 active + 1 derived entries load and validate.
 
 ---
 
@@ -109,7 +109,7 @@ contract criticality, and drift-checked content usage (D1).
 Guards: generated-file header; no JSX, functions or React; no catalogue import;
 deterministic bytes.
 
-**Exit:** `lab:generate && lab:check` clean; 58 rows (57 active + 1 derived).
+**Exit:** `lab:generate && lab:check` clean; 57 rows (56 active + 1 derived).
 
 ---
 
@@ -126,7 +126,7 @@ verbatim — this step moves code, it does not rewrite previews.
   examples and preview-only variants. No canonical name, usage prose,
   alternatives, lifecycle, authorability or pedagogy — the shell reads those
   from the projection.
-- The ten handler-backed types mount `ScreenRenderer` with a minimal valid
+- The nine handler-backed types mount `ScreenRenderer` with a minimal valid
   one-block fixture (D4). No handler is exported.
 - Collapse into variants: `GraphView` ×2 → 1, `InteractiveHotspotImage` ×2 → 1,
   `BuilderBlock` ×3 → 1.
@@ -191,7 +191,7 @@ app-replacement, exit behaviour, URL structure or learner reachability.
 
 | Check | Evidence |
 |---|---|
-| Coverage contract 2 | Step 7's guard passes: 100% both directions over 57 active entries |
+| Coverage contract 2 | Step 7's guard passes: 100% both directions over 56 active entries |
 | Derived route | Accounted for, not selectable; mutation 4 proves it |
 | Authoring completeness | All ten requirements per selection |
 | Shim handover | Pedagogy line byte-identical; diffs additions-only |
@@ -226,7 +226,7 @@ app-replacement, exit behaviour, URL structure or learner reachability.
 | Pedagogy classification lost when the shim goes | Enforced by the generator's collision guard, plus the byte-identity evidence in Step 3 |
 | A fake authoring type gets registered to keep an item | Step 7 requires a renderer route and a validator-accepted content shape, which a fake type cannot produce |
 | A derived route becomes a public option | `derivedFrom` in the schema plus mutation 4 |
-| The ten handler types get previewed by exporting private handlers | D4's fixture route, plus mutation 8 |
+| The nine handler types get previewed by exporting private handlers | D4's fixture route, plus mutation 8 |
 | Generated usage churns on content commits | Accepted under D1; the content workflow gains an explicit regenerate step |
 | Fixture rename breaks Storybook | `fixtures.base.js` export names frozen |
 | New sibling surface drifts into the Lab's access model | System reference has its own flag and shell; the Lab's access assertions are kept and extended |
@@ -241,9 +241,9 @@ Every figure below was produced by a green run, not estimated.
 
 | | Target | Measured |
 |---|---|---|
-| Projection rows | 58 | **58** |
-| Active authoring entries | 57 | **57** |
-| — selectable in the Lab | 57 | **57** |
+| Projection rows | 57 | **57** |
+| Active authoring entries | 56 | **56** |
+| — selectable in the Lab | 56 | **56** |
 | — missing | 0 | **0** |
 | Lab selections with no active entry | 0 | **0** |
 | Derived routes accounted for | 1 | **1** |
@@ -251,8 +251,8 @@ Every figure below was produced by a green run, not estimated.
 | Legacy entries in the projection | 0 | **0** |
 | Category C items in the Lab | 0 | **0** |
 | Category C items on System reference | 5 | **5** |
-| Selections with a validator-accepted minimal chapter shape | 57 | **57** |
-| Total preview units (selections + modes + variants + presentations) | — | **114** |
+| Selections with a validator-accepted minimal chapter shape | 56 | **56** |
+| Total preview units (selections + modes + variants + presentations) | — | **113** |
 
 Machine-readable: `baselines/current-authoring-coverage.json`, key
 `measuredAfterPhase4`, plus the full `finalSelections` list.
@@ -295,7 +295,7 @@ bare named, default-plus-named and aliased.
 
 Both surfaces driven in a real browser at 390 × 844:
 
-- Lab index lists **57** rows and says "57 choices"; no category C item appears.
+- Lab index lists **56** rows and says "56 choices"; no category C item appears.
 - `block:read` — the most-used authoring type — previews through the real
   `ScreenRenderer`, showing `ScreenRenderer · ReadBlock`, `text (string)` and
   "261 uses across 23 files", all read from the projection.
@@ -409,7 +409,7 @@ Seven applied to the real files, each caught by a named assertion, all reverted
 **1243** unit tests, **304** Storybook browser tests, lint **0 errors and 90
 warnings** — the baseline — and the build succeeds.
 
-The Phase 4 authoring architecture is untouched: 57 ↔ 57 coverage, adapters,
+The Phase 4 authoring architecture is untouched: 56 ↔ 56 coverage, adapters,
 authoring types, generated projection, System reference, both access flags,
 catalogue records, pedagogy and chapter content all unchanged.
 

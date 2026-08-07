@@ -22,10 +22,10 @@
       "history",
       "maths"
     ],
-    "activeAuthoringEntries": 57,
-    "totalAuthoringEntries": 62,
+    "activeAuthoringEntries": 56,
+    "totalAuthoringEntries": 61,
     "authoringEntriesByLevelAndStatus": {
-      "block:active": 31,
+      "block:active": 30,
       "block:legacy": 4,
       "screen:active": 26,
       "screen:derived": 1

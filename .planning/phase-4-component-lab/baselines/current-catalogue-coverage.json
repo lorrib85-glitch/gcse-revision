@@ -1,7 +1,7 @@
 {
   "$schema": "phase-4-component-lab/current-catalogue-coverage",
-  "capturedAtSha": "d2c0030f80730db42e0b5097319ae5292966b078",
-  "note": "Every catalogue record at the baseline SHA, with how the Component Lab represents it today and the target coverage category. Totals reconcile exactly to the catalogue population.",
+  "baselineReferenceSha": "d2c0030f80730db42e0b5097319ae5292966b078",
+  "note": "Every catalogue record in the baseline population, with current authoring facts, how the Component Lab represents it today and the target coverage category. Totals reconcile exactly to the catalogue population.",
   "catalogueRecords": 84,
   "categories": {
     "1": "Directly previewable standalone component",
@@ -1258,7 +1258,6 @@
       "authoringTypes": [
         "block:examtip",
         "block:funfact",
-        "block:hotspot",
         "block:keypoint",
         "block:misconception",
         "block:read",
@@ -1270,7 +1269,7 @@
       "labEntryIds": [],
       "mountedInLab": false,
       "category": 8,
-      "reason": "The screen/block routing boundary; owns ten authorable types via private handlers. List the types, do not mount the router."
+      "reason": "The screen/block routing boundary; owns nine authorable types via private handlers. List the types, do not mount the router."
     },
     {
       "id": "exam-question-frame",

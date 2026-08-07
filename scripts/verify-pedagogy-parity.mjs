@@ -30,7 +30,7 @@ const BASELINES = resolve(HERE, '../.planning/phase-3-pedagogical-taxonomy/basel
 
 // Approved deviations — D1 removals and D2 additions, nothing else.
 const APPROVED_REMOVALS = ['choice', 'truefalse', 'connection']
-const APPROVED_ADDITIONS = ['hotspot', 'timeline']
+const APPROVED_ADDITIONS = ['timeline']
 
 const failures = []
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b)
