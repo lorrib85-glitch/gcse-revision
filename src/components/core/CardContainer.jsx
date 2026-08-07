@@ -72,7 +72,7 @@ export default function CardContainer({
       <div style={{
         margin: '20px 0',
         padding: `${p}px`,
-        background: `${GENERAL.contentSurface.cinematicOverlay}, ${overlayTint}`,
+        background: `linear-gradient(${overlayTint}, ${overlayTint}), ${GENERAL.contentSurface.cinematicOverlay}`,
         border: `1px solid ${GENERAL.contentSurface.cinematicOverlayBorder}`,
         borderRadius: 24,
         backdropFilter: `blur(${GENERAL.contentSurface.cinematicOverlayBlur})`,
