@@ -23,6 +23,7 @@ import MemoryHook from '../learning/MemoryHook.jsx'
 import BuilderBlock from '../learning/BuilderBlock.jsx'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import CardContainer from '../core/CardContainer.jsx'
+import CinematicDivider from '../core/CinematicDivider.jsx'
 import GuidedChoiceCarousel from '../learning/GuidedChoiceCarousel.jsx'
 import TimelineChain, { TimelineChainBlock } from '../learning/TimelineChain.jsx'
 import TimelineCanvas from '../learning/TimelineCanvas.jsx'
@@ -135,21 +136,13 @@ function ExamTipBlock({ block, subject }) {
   return (
     <div>
       <div style={{
-        ...TYPE.eyebrow,
-        textTransform: 'uppercase',
+        ...TYPE.label,
         color: accent,
         marginBottom: examTheme.labelGap,
         display: 'flex',
         alignItems: 'center',
         gap: SPACING.micro,
       }}>
-        <span aria-hidden="true" style={{
-          width: SPACING.compact,
-          height: 1,
-          background: accent,
-          opacity: 0.72,
-          flexShrink: 0,
-        }} />
         {block.label || '🗡️ Exam Assassin'}
       </div>
       {block.text && (
@@ -157,18 +150,22 @@ function ExamTipBlock({ block, subject }) {
           ...TYPE.bodyStrong,
           margin: 0,
           color: examTheme.bodyPrimary,
-          lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.text }} />
       )}
       {block.tip && (
-        <p style={{
-          ...TYPE.body,
-          margin: `${examTheme.sectionGap}px 0 0`,
-          paddingTop: examTheme.sectionGap,
-          borderTop: `1px solid ${GENERAL.line.faint}`,
-          color: examTheme.bodySecondary,
-          lineHeight: 1.65,
-        }} dangerouslySetInnerHTML={{ __html: block.tip }} />
+        <>
+          <CinematicDivider
+            accent={accent}
+            accentRgb={accentRgb}
+            size="compact"
+            style={{ margin: `${examTheme.sectionGap}px 0` }}
+          />
+          <p style={{
+            ...TYPE.body,
+            margin: 0,
+            color: examTheme.bodySecondary,
+          }} dangerouslySetInnerHTML={{ __html: block.tip }} />
+        </>
       )}
       {block.phrases && (
         <div style={{
@@ -183,7 +180,7 @@ function ExamTipBlock({ block, subject }) {
               border: `1px solid rgba(${accentRgb},${examTheme.phraseBorderAlpha})`,
               color: accent,
               borderRadius: examTheme.phraseRadius,
-              padding: `${SPACING.micro - 3}px ${SPACING.compact - 4}px`,
+              padding: `${SPACING.micro}px ${SPACING.compact}px`,
               ...TYPE.label,
             }}>{p}</span>
           ))}
