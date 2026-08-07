@@ -125,31 +125,65 @@ function FunFactBlock({ block }) {
   )
 }
 
-function ExamTipBlock({ block }) {
+function ExamTipBlock({ block, subject }) {
+  const capitalised = subject ? subject.charAt(0).toUpperCase() + subject.slice(1).toLowerCase() : null
+  const theme = (capitalised && SUBJECTS[capitalised]) || SUBJECTS.Physics
+  const accent = theme.accent
+  const accentRgb = theme.accentRgb
+  const examTheme = GENERAL.examTechnique
+
   return (
     <div>
       <div style={{
         ...TYPE.eyebrow,
-        textTransform: 'uppercase', color: '#F5B700', marginBottom: 12,
-      }}>{block.label || '🗡️ Exam Assassin'}</div>
+        textTransform: 'uppercase',
+        color: accent,
+        marginBottom: examTheme.labelGap,
+        display: 'flex',
+        alignItems: 'center',
+        gap: SPACING.micro,
+      }}>
+        <span aria-hidden="true" style={{
+          width: SPACING.compact,
+          height: 1,
+          background: accent,
+          opacity: 0.72,
+          flexShrink: 0,
+        }} />
+        {block.label || '🗡️ Exam Assassin'}
+      </div>
       {block.text && (
         <p style={{
-          ...TYPE.body,
-          fontSize: '.9rem', margin: '0 0 12px 0', color: '#C8D0E8', lineHeight: 1.65,
+          ...TYPE.bodyStrong,
+          margin: 0,
+          color: examTheme.bodyPrimary,
+          lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.text }} />
       )}
       {block.tip && (
         <p style={{
           ...TYPE.body,
-          fontSize: '.9rem', marginBottom: block.phrases ? 12 : 0, color: '#C8D0E8', lineHeight: 1.65,
+          margin: `${examTheme.sectionGap}px 0 0`,
+          paddingTop: examTheme.sectionGap,
+          borderTop: `1px solid ${GENERAL.line.faint}`,
+          color: examTheme.bodySecondary,
+          lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.tip }} />
       )}
       {block.phrases && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: examTheme.phraseGap,
+          marginTop: examTheme.sectionGap,
+        }}>
           {block.phrases.map(p => (
             <span key={p} style={{
-              background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.3)',
-              color: '#F5B700', borderRadius: 8, padding: '5px 11px',
+              background: `rgba(${accentRgb},${examTheme.phraseFillAlpha})`,
+              border: `1px solid rgba(${accentRgb},${examTheme.phraseBorderAlpha})`,
+              color: accent,
+              borderRadius: examTheme.phraseRadius,
+              padding: `${SPACING.micro - 3}px ${SPACING.compact - 4}px`,
               ...TYPE.label,
             }}>{p}</span>
           ))}
@@ -616,7 +650,7 @@ const BLOCK_RENDERERS = Object.freeze({
   read: ({ block, subject }) => <CardContainer variant="contained" subject={subject} padding={24}><ReadBlock block={block} /></CardContainer>,
   keypoint: ({ block, subject }) => <CardContainer variant="contained" subject={subject} padding={24}><KeypointBlock block={block} /></CardContainer>,
   funfact: ({ block, subject }) => <CardContainer variant="contained" subject={subject} padding={20}><FunFactBlock block={block} /></CardContainer>,
-  examtip: ({ block, subject }) => <CardContainer variant="contained" subject={subject} padding={24}><ExamTipBlock block={block} /></CardContainer>,
+  examtip: ({ block, subject }) => <CardContainer variant="cinematicOverlay" subject={subject} padding={SPACING.standard}><ExamTipBlock block={block} subject={subject} /></CardContainer>,
   timeline: ({ block }) => <TimelineBlock block={block} />,
   reveal: ({ block }) => <RevealBlock block={block} />,
   quiz: ({ block, subject, index, handleQuizComplete }) => <AnswerInteraction block={{ ...block, explanation: undefined }} subject={subject} onComplete={() => handleQuizComplete(index)} />,
@@ -897,7 +931,6 @@ export default function ScreenRenderer({
   if (definition.layout !== 'full') {
     return <ScreenContentRenderer screen={cur} subject={subject} onScreenComplete={onScreenComplete} />
   }
-
   const authoredType = getScreenType(cur)
   if (definition.status !== 'derived' && !FULL_SCREEN_RENDERER_TYPES.includes(authoredType)) {
     return <UnsupportedScreen screen={cur} chapter={chapter} definition={definition} />
