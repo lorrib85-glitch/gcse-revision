@@ -30,8 +30,8 @@ Stop at the first match.
 | G | Changes `CLAUDE.md`, a skill, `DEVELOPMENT_WORKFLOW.md`, any `docs/system/workflows/` file, or any workflow/process rule |
 | F | Only `.planning/` or process docs — no app source |
 | D | Something appears broken: unexpected behaviour, build failure, tap not working, test failure |
-| E | New History episode, module, component family, app-level flow, or architecture pattern |
-| C | Existing module content, `screens` array, or question banks — inside an already-built module |
+| E | New learner-facing Chapter, parent Module, component family, app-level flow, or architecture pattern |
+| C | Existing Chapter content, `screens` array, or question banks — inside an already-built Chapter |
 | B | Appearance change on existing screen/component **and** a new visual rule is needed |
 | A | Everything else: ≤2 lines, ≤1 file, no new visual rule, no logic touched |
 
