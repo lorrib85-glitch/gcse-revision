@@ -58,6 +58,8 @@ export function projectLabRegistry(records, usage) {
   for (const { entry, record } of catalogueEntries(records)) {
     if (entry.status === 'legacy') continue
     const key = authoringKeyOf(entry)
+    const entryGuidance = record.documentation.authoringGuidance?.[key] ?? null
+
     rows.push([key, {
       key,
       level: entry.level,
@@ -86,12 +88,16 @@ export function projectLabRegistry(records, usage) {
 
       lifecycle: record.lifecycle,
       criticality: record.contract.criticality,
-      decisionStatus: record.decision?.status ?? null,
-      bestUsedFor: record.documentation.bestUsedFor,
-      useWhen: record.decision?.useWhen ?? null,
-      doNotUseWhen: record.decision?.doNotUseWhen ?? null,
-      chooseInstead: record.decision?.chooseInstead ?? null,
-      contentShape: record.decision?.contentShape ?? null,
+      // Most reusable records own one authoring choice, so record-level
+      // guidance remains the default. Multi-entry runtime records may provide
+      // guidance keyed by the exact authoring entry so one private handler's
+      // decision rules never leak onto its siblings.
+      decisionStatus: entryGuidance?.status ?? record.decision?.status ?? null,
+      bestUsedFor: entryGuidance?.bestUsedFor ?? record.documentation.bestUsedFor,
+      useWhen: entryGuidance?.useWhen ?? record.decision?.useWhen ?? null,
+      doNotUseWhen: entryGuidance?.doNotUseWhen ?? record.decision?.doNotUseWhen ?? null,
+      chooseInstead: entryGuidance?.chooseInstead ?? record.decision?.chooseInstead ?? null,
+      contentShape: entryGuidance?.contentShape ?? record.decision?.contentShape ?? null,
 
       contentUsage: usage[key] ?? NO_USAGE,
     }])
