@@ -58,7 +58,17 @@ export default {
     ],
     notes: [
       'ExamTipBlock is a passive exam-technique beat. It uses CardContainer cinematicOverlay, takes accent identity from canonical SUBJECTS, and follows docs/system/component-contracts/read-blocks.md; do not create subject-specific exam-tip variants or asset-dependent examiner scenes.'
-    ]
+    ],
+    authoringGuidance: {
+      'block:examtip': {
+        status: 'complete',
+        bestUsedFor: 'A brief bridge from newly taught subject knowledge to the way that knowledge should be used to earn marks in an exam.',
+        useWhen: 'A topic or concept has just been covered and the learner needs an immediate connection to its exam use — for example the relevant command word, what earns the marks, the detail that must be included or a common mistake that would waste marks. The block translates freshly learned knowledge into exam behaviour; it does not introduce new subject knowledge.',
+        doNotUseWhen: 'The subject knowledge has not yet been taught, the learner needs a substantial explanation or worked method, the advice is generic and unrelated to the topic just covered, or several unrelated exam rules would be bundled together. Do not use it as a mini lesson or as a substitute for actual exam practice.',
+        chooseInstead: 'Use WhatExaminersLookFor when the learner needs a fuller explanation of examiner priorities. Use GuidedExamResponse when they need support constructing an answer, FaceTheExaminer when they should judge and improve a prepared response, and ExamQuestionFrame when they are ready to practise independently.',
+        contentShape: 'One exam-use rule tied directly to the topic just taught. Lead with the memorable rule; optionally add one short explanation or warning and a small number of quiet sentence stems. Keep it passive, concise and specific enough that the learner can apply it to the next relevant exam question.'
+      }
+    }
   },
   decision: null,
   contract: {
