@@ -1,7 +1,7 @@
 ---
 name: content-review
 description: >
-  Diagnose and approve existing module content in the governed
+  Diagnose and approve existing Chapter content in the governed
   review-to-rebuild pipeline — states each screen's one primary intent,
   checks it against the learning objective, scores the 9-field contracts and
   intent→component map, runs the mandatory 390px render pass against the gold
@@ -10,13 +10,13 @@ description: >
   Rebuild / Split. Implementation is done by content-create; this skill then
   re-audits the result independently (implemented ≠ approved). Findings are
   per-dimension, never a single blended score. Use for reviewing or improving
-  any already-built episode/module (Lane C).
-argument-hint: "<module id or episode title> [stage name | screen range] [audit-only]"
+  any already-built Chapter (Lane C).
+argument-hint: "<chapter id or title> [stage name | screen range] [audit-only]"
 ---
 
 # Content review
 
-Audits a built episode against the content quality framework, assigns each
+Audits a built Chapter against the content quality framework, assigns each
 screen a decision, and writes the amendment briefs `content-create`
 implements — then approves the result independently. Runs in Lane C after
 `/gcse-triage`. Pass `audit-only` to stop after the findings report with
@@ -58,12 +58,12 @@ never the same as "approved".
 
 ## Scope argument
 
-`content-review <module id> [stage name | screen range] [audit-only]`
+`content-review <chapter id> [stage name | screen range] [audit-only]`
 
-- No second argument: review the whole episode.
+- No second argument: review the whole Chapter.
 - A stage name (matching a `stageNavigation` entry) or a screen range
   (`12-18`): review only that slice. A stage is the realistic unit of work
-  — prefer "review the Galen stage" over a whole-episode audit when the
+  — prefer "review the Galen stage" over a whole-Chapter audit when the
   user names a specific area.
 - `audit-only`: report findings in the task response and stop with zero
   repository writes — no review log, backlog entry, fixture update, generated
@@ -73,9 +73,21 @@ never the same as "approved".
   confirmation" below — so `audit-only` mainly matters for pre-authorising the
   amend step in the invocation itself.
 
+## Canonical root resolution
+
+Canonical Chapter documents are not stored under one universal subject root.
+Before reading canonical files or Review Logs, locate the matching active
+Chapter files under **both** `docs/content/<subject>/` and
+`docs/canonical/<subject>/` and define that location as `<canonical-root>` for
+this run. Use the root containing the matching active series spine and canonical
+`*_Content.md` / `*_Architecture.md` pair. Do not move or copy canonical files
+between roots merely to satisfy this skill. If both roots contain plausible
+active matches, or neither does, halt and resolve the ambiguity through
+`/canonical-topic` rather than guessing.
+
 ## Visual-review authority hierarchy
 
-For visual-quality review of in-module learning screens, use this precedence
+For visual-quality review of in-Chapter learning screens, use this precedence
 when docs appear to conflict:
 
 1. `docs/system/PATTERN_GOVERNANCE.md` — learning intent, screen structure,
@@ -103,10 +115,12 @@ changes outside approved component and token systems.
    convention, design-rule review checks.
 2. `docs/system/CONTENT_BUILD_TEMPLATE.md` — story units, the hard floor,
    the six-dimension rubric.
-3. The episode's canonical files: `docs/content/<subject>/<series>/<NN>_*_Content.md`
-   and `..._Architecture.md`, including the Story spine section if present.
+3. The Chapter's canonical files at
+   `<canonical-root>/<series>/<NN>_*_Content.md` and `..._Architecture.md`,
+   including the Story spine section if present.
 4. The subject's locked architecture (`docs/system/HISTORY_MODULE_ARCHITECTURE.md`
-   or `SCIENCE_MODULE_BLUEPRINT.md`).
+   or `SCIENCE_MODULE_BLUEPRINT.md`). These filenames retain their established
+   names; they do not change the canonical learner-facing entity from Chapter.
 5. The component contracts (`docs/system/component-contracts/`) for every
    component the reviewed screens use.
 6. `docs/system/GOLD_SCREEN_REGISTER.md` — the named gold example (and
@@ -115,9 +129,10 @@ changes outside approved component and token systems.
 7. For the visual-quality pass only, consult the authority hierarchy above as
    needed to resolve interpretation, exceptions or disputed findings. Do not
    bulk-read unrelated design docs when the compact checklist below is enough.
-8. The episode's previous review log, if one exists (see Review log below)
-   — findings marked deferred there are first-class inputs to this review. In
-   `audit-only` mode, read it if present but do not create or update it.
+8. The Chapter's previous Review Log at the resolved `<canonical-root>`, if one
+   exists (see Review log below) — findings marked deferred there are
+   first-class inputs to this review. In `audit-only` mode, read it if present
+   but do not create or update it.
 9. `docs/system/CHAPTER_READINESS_AUDIT.md` — the single readiness-report
    contract. When the Chapter authors Topics, also read
    `docs/system/CHAPTER_TOPICS.md` and validate Topic IDs and membership
@@ -127,12 +142,12 @@ changes outside approved component and token systems.
 ### Degraded mode
 
 If the canonical content/architecture file is missing, or present but has
-no Story spine section (true for every episode built before 2026-07 —
-this is expected, not an error): run everything below **except** the
-canonical-coverage technical pass and the story-spine check. State plainly
-in the findings report and the review log entry: *"canonical files
-unavailable — coverage and spine unassessed."* Recommend `/canonical-topic`
-as follow-up. Never invent a spine mid-review.
+no Story spine section (true for Chapters built before 2026-07 — this is
+expected, not an error): run everything below **except** the canonical-coverage
+technical pass and the story-spine check. State plainly in the findings report
+and the Review Log entry: *"canonical files unavailable — coverage and spine
+unassessed."* Recommend `/canonical-topic` as follow-up. Never invent a spine
+mid-review.
 
 ## Audit
 
@@ -156,7 +171,7 @@ For every screen in scope, in this order:
    per screen) actually live; don't re-derive them, run what the contract
    lists. Flag any ad-hoc element that should have been a pattern component
    (`TeachScreenShell` / `MemoryHook` / `MediaPlaceholder`).
-4. **Composition route** — for the in-module screen, identify and record:
+4. **Composition route** — for the in-Chapter screen, identify and record:
    (a) its one primary intent, (b) the approved component serving it,
    (c) the approved learning-composition route (A teaching → `TeachScreenShell`
    / B interaction-owned / C cinematic — `PATTERN_GOVERNANCE.md`),
@@ -176,7 +191,7 @@ For every screen in scope, in this order:
    - an interaction component claiming screen ownership without contract
      approval
 
-   > **Fail** any in-module screen that uses a generic shell, local heading
+   > **Fail** any in-Chapter screen that uses a generic shell, local heading
    > treatment or ad-hoc vertical spacing where `TeachScreenShell` or another
    > approved composition route exists.
 
@@ -185,8 +200,8 @@ For every screen in scope, in this order:
    > the required mobile render width (390px) — decided in the render pass,
    > not from source.
 
-Then score the whole episode (or scoped slice) per the six rubric
-dimensions, each reported separately — **never averaged**:
+Then score the whole Chapter (or scoped slice) per the six rubric dimensions,
+each reported separately — **never averaged**:
 
 1. **Story** — follows its story spine (or has a discernible arc, if
    spine-less)? Dramatic questions raised/escalated/resolved? Name
@@ -194,7 +209,7 @@ dimensions, each reported separately — **never averaged**:
 2. **Teaching** — cause → mechanism → consequence before testing? Depth
    sufficient for the exam question, not just term recognition?
 3. **Retrieval** — every taught fact retrieved or applied later? Wrong
-   answers feed `unifiedWeaknessTracker.js`? Spacing across the episode?
+   answers feed `unifiedWeaknessTracker.js`? Spacing across the Chapter?
 4. **Interactions** — right function tag for the content shape (the Pedagogy
    line on the component's authoring entry in
    `docs/components/COMPONENT_REGISTRY.md`, authored in its catalogue record)?
@@ -215,16 +230,16 @@ that format), **mechanical visual quality** (run the checklist below),
 **canonical coverage** (two-way diff against the canonical content file — gaps
 listed by canonical section, unsourced content flagged; skipped in degraded
 mode), and **readability + sentence case** (run
-`node scripts/check-content-quality.mjs <module-id>` — a live, per-screen
-check against this one module, with no pre-registration required; report
-every violation it prints, then apply "plain language around the
-compulsory subject vocabulary, aiming for a reading age of 12" plus
-sentence case to copy the script can't reach, e.g. body prose outside
-label/title/heading/sub). This script is independent of the CI regression
-floor (`tests/architecture/content-quality.test.js`) — it has no
-allowlist, so it reports every violation on this module even if that
-module is grandfathered there; don't skip a finding because the module
-happens to be on that separate list.
+`node scripts/check-content-quality.mjs <chapter-id>` — a live, per-screen
+check against this one Chapter, with no pre-registration required; report
+every violation it prints, then apply "plain language around the compulsory
+subject vocabulary, aiming for a reading age of 12" plus sentence case to copy
+the script can't reach, e.g. body prose outside label/title/heading/sub). This
+script is independent of the CI regression floor
+(`tests/architecture/content-quality.test.js`) — it has no allowlist, so it
+reports every violation on this Chapter even if that Chapter is grandfathered
+there; don't skip a finding because the Chapter happens to be on that separate
+list.
 
 ## Chapter readiness audit — independent review
 
@@ -317,8 +332,8 @@ observable failure, not a personal style preference.
 
 ### The render pass (mandatory for every 👁 check)
 
-Source-and-tests review is not sufficient — every 👁 contract check
-requires rendering and looking at the pixels at 390px width:
+Source-and-tests review is not sufficient — every 👁 contract check requires
+rendering and looking at the pixels at 390px width:
 
 1. Start the dev server (`./node_modules/.bin/vite --port 5173`).
 2. For each screen in scope, screenshot it via the dev-only jump:
@@ -350,7 +365,7 @@ requires rendering and looking at the pixels at 390px width:
 
 If a 👁 check genuinely cannot be run (e.g. a screen behind a blocking
 assessed interaction the jump can't skip past, or the environment blocks
-rendering entirely), say so explicitly in the findings and the review log —
+rendering entirely), say so explicitly in the findings and the Review Log —
 name which state could not be captured. Silent skipping is a review failure,
 not an acceptable shortcut.
 
@@ -383,7 +398,7 @@ There is no "leave it, roughly fine" — the decision is stated:
 - **Cut** — serves no learning objective, or fails the deletion test
   (removing it does not reduce understanding, retention or motivation).
 
-Record the decision per screen in the findings and the review log.
+Record the decision per screen in the findings and the Review Log.
 
 ## The amendment brief — required for every Refine / Rebuild / Split
 
@@ -393,7 +408,7 @@ brief is what `content-create` implements** (Stage B). No amendment begins
 before the brief exists and the user has confirmed it. Each brief contains
 **all** of these fields:
 
-- **Module ID**
+- **Chapter ID**
 - **Screen index**
 - **Current component**
 - **Decision** (Refine / Rebuild / Split)
@@ -437,15 +452,14 @@ reason it helps.
 
 ## Review log
 
-Unless running `audit-only`, write findings to a persisted per-episode log:
-`docs/content/<subject>/<series>/<NN>_Review_Log.md` (matching the
-`NN_` canonical-file naming). Create it if it doesn't exist outside
-`audit-only`. Append
-entries **newest-first**, each with:
+Unless running `audit-only`, write findings to a persisted per-Chapter log:
+`<canonical-root>/<series>/<NN>_Review_Log.md` (matching the `NN_`
+canonical-file naming). Create it if it doesn't exist outside `audit-only`.
+Append entries **newest-first**, each with:
 
-- date, session scope (full episode / stage / screen range), canonical
-  files available yes/no, and which stage this entry records
-  (A diagnose / B build / C approve)
+- date, session scope (full Chapter / stage / screen range), canonical files
+  available yes/no, and which stage this entry records (A diagnose / B build /
+  C approve)
 - Chapter readiness summary, complete Screen inventory, open Reviews/Fails and
   whether the result is whole-Chapter or scoped
 - per-dimension ratings + findings (the report above)
@@ -457,9 +471,10 @@ entries **newest-first**, each with:
 - the Stage-C independent re-audit result and any named trade-off —
   "implemented" and "approved" logged as separate facts
 
-Read the previous entry (if any) before auditing; in `audit-only`, this is read-only context. A finding marked
-"deferred" in a prior entry is a first-class input this time — don't
-re-discover it from scratch, and don't let it silently drop.
+Read the previous entry (if any) before auditing; in `audit-only`, this is
+read-only context. A finding marked "deferred" in a prior entry is a
+first-class input this time — don't re-discover it from scratch, and don't let
+it silently drop.
 
 ## Stop for confirmation (end of Stage A)
 
@@ -486,10 +501,10 @@ component change or a rebuild goes through `content-create`.)
 check, `/ponytail-review`, architecture tests
 (`vitest run tests/architecture`), `vite build`, in-app verification, and
 **commit per screen / story unit / stage, never one mega-commit**. If the
-episode is in `GRANDFATHERED_EPISODES` or
+Chapter is in `GRANDFATHERED_EPISODES` or
 `SENTENCE_CASE_GRANDFATHERED_EPISODES`
 (`tests/architecture/content-quality.test.js`) and the amended scope now
-passes, it removes the episode from the relevant allowlist in the same commit
+passes, it removes the Chapter from the relevant allowlist in the same commit
 — the list only shrinks, and only for what was actually fixed.
 
 ## Post-build approval (Stage C — this skill, independently)
@@ -518,7 +533,7 @@ approval stage, and it is deliberately not the same act as building:
   - stronger story but weaker exam preparation
 - Only when the re-audit clears the bar with no unreported trade-off, no
   in-scope readiness Fail and an explicit rationale for every Review is the
-  amended scope **approved**. Append the Stage-C outcome to the review log,
+  amended scope **approved**. Append the Stage-C outcome to the Review Log,
   distinct from the Stage-B build entry — "implemented" and "approved" are
   separate log facts.
 
