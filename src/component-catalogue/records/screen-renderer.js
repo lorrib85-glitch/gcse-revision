@@ -52,7 +52,9 @@ export default {
     contractDoc: null,
     story: null,
     governanceRules: [],
-    notes: []
+    notes: [
+      'ExamTipBlock is a passive exam-technique beat. It uses CardContainer cinematicOverlay, takes accent identity from canonical SUBJECTS, and follows docs/system/component-contracts/read-blocks.md; do not create subject-specific exam-tip variants or asset-dependent examiner scenes.'
+    ]
   },
   decision: null,
   contract: {
