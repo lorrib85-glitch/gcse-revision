@@ -454,7 +454,8 @@ reason it helps.
 
 Unless running `audit-only`, write findings to a persisted per-Chapter log:
 `<canonical-root>/<series>/<NN>_Review_Log.md` (matching the `NN_`
-canonical-file naming). Create it if it doesn't exist outside `audit-only`.
+canonical-file naming). Create it if it doesn't exist outside
+`audit-only`.
 Append entries **newest-first**, each with:
 
 - date, session scope (full Chapter / stage / screen range), canonical files
