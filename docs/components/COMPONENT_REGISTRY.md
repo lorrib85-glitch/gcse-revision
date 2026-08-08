@@ -3252,15 +3252,24 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **File:** `src/components/learning/CircuitSymbolReference.jsx`  
 **Kind:** author-selectable component (`reusable`)  
-**Lifecycle:** `reviewing` — Routed for chapter authoring in Phase 4 as block:circuitSymbolReference; the component itself is still under review, which is what keeps this lifecycle at reviewing.
+**Lifecycle:** `active` — Reviewed as the passive Physics representation-reference block routed for chapter authoring as block:circuitSymbolReference.
 
-**Purpose:** A reference sheet of the GCSE Physics circuit symbols, drawn from the shared circuit/CircuitPrimitives.jsx set so the symbols match those used in live CircuitDiagram figures exactly. The symbol shape is the exam convention; colour is only used to show state inside interactive diagrams.
+**Purpose:** A passive Physics reference board that builds representation fluency by pairing each governed GCSE circuit symbol with its accepted label. It draws from the shared circuit/CircuitPrimitives.jsx set so the symbols match those used in live CircuitDiagram figures exactly. The symbol shape is the exam convention; colour is only used to show state inside interactive diagrams.
+
+**Best used for:** Introducing or refreshing the standard circuit-symbol vocabulary immediately before learners interpret or draw circuit diagrams. It is especially useful as a just-in-time reference when symbol recognition is the blocking foundation.
 
 **Props:** `title (default 'GCSE circuit symbols')`, `description`
 
 **Data shape:** `{ type: 'circuitSymbolReference', title?, description? } — the board is complete in itself, so it requires no authored data. Both fields have component defaults and override the heading and standfirst only.`
 
 **Dependencies:** `circuit/CircuitPrimitives.jsx`, `circuit/circuitVisualRoles.js`, `GENERAL`
+
+**Usage boundary:** Physics-only passive reference. Viewing the board is exposure, not evidence of unaided recognition or accurate drawing; do not log completion as mastery. Pair it with an assessed circuit task when progress evidence is needed.
+
+**Governance rules:**
+
+- Treat completion as exposure only: CircuitSymbolReference must not write a correct result or mastery signal to the weakness tracker.
+- Keep symbol shapes and labels aligned with the shared circuit primitives and accepted exam convention. Colour must not become a second code for symbol identity.
 
 **Authoring**
 
@@ -3272,7 +3281,11 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 
 **Decision**
 
-- *Pending* — Not applicable while unrouted: with no authorable screen type there is no authoring choice to guide. Revisit when a chapter needs a symbol reference.
+- **Use when:** The learner needs to learn, compare or quickly reorient to several standard circuit symbols as one visual vocabulary before interpreting or drawing a circuit. Choose it for first teaching or a just-in-time refresher when symbol recognition is the blocking foundation.
+- **Do not use when:** The learner needs to prove unaided recall, draw a circuit from a description, explain current, voltage or component behaviour, or inspect how components connect in a complete circuit. Do not use it as a decorative poster or as a replacement for practice.
+- **Choose instead:** Use CircuitDiagram when the learner needs to understand connections or how a complete circuit changes state. Use a standard teaching block when only one symbol needs explanation in context. Use ExamQuestionFrame or another suitable assessed question component when the learner must draw or interpret a circuit for marks.
+- **Content shape:** One fixed, mobile-legible board of the governed circuit-symbol set, with every conventional symbol paired with its accepted name. Authors may override only the short title and standfirst; they do not supply subsets, extra meanings, questions, procedures or colour-coded categories inside this component.
+- **Rhythm role:** teaching, repair.
 
 **Contract:** standard
 
