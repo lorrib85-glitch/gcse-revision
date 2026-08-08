@@ -256,6 +256,6 @@ chapter, in `src/components/layout/deferredFigures.stories.jsx` (real browser,
 
 The Component Lab still imports its six previews directly. It is an owner chunk
 the learner never downloads, and deferring is about the learner runtime only.
-The 57 ↔ 57 coverage contract, the adapters, the authoring types, the generated
+The 56 ↔ 56 coverage contract, the adapters, the authoring types, the generated
 projection, System reference, both access flags, the catalogue records, the
 pedagogy and all chapter content are untouched.

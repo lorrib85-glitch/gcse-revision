@@ -3,9 +3,10 @@
 Baseline SHA: `9dc4e875a146fbe4ea44992fb31bc5a81023e765`
 Branch: `main` · working tree clean at the start of the phase.
 
-Method: every number below was **measured by loading the live modules**, not
-grepped and not taken from documentation or previous commit messages. The
-machine-readable output is `baselines/current-curriculum-baseline.json` and
+Method: curriculum figures were **measured by loading the live modules**, not
+grepped and not taken from documentation or previous commit messages. Authoring
+registry totals are maintained against the current catalogue. The machine-
+readable output is `baselines/current-curriculum-baseline.json` and
 `census/migration-census.json`; both regenerate deterministically:
 
 ```bash
@@ -21,8 +22,9 @@ absolute path, so the same tree always produces the same bytes.
 > grafted history made local `main` *look* 53 ahead / 50 behind `origin/main`
 > with no merge base. After `git fetch --unshallow`, the truth is **0 ahead, 74
 > behind**. The phase was re-baselined onto the real `origin/main` head before
-> any measurement was taken. Every figure here is from `9dc4e87`, not from the
-> stale shallow tip.
+> any measurement was taken. Curriculum figures here are from `9dc4e87`, not
+> from the stale shallow tip; authoring registry totals follow the current
+> catalogue.
 
 ---
 
@@ -47,8 +49,8 @@ absolute path, so the same tree always produces the same bytes.
 | Learning-graph concepts | **87** |
 | — two-segment "course" nodes | 7 |
 | — knowledge atoms (3+ segments) | 80 |
-| Active authoring entries | **57** (26 screen + 31 block) |
-| Total authoring entries | 62 (+1 derived screen, +4 legacy blocks) |
+| Active authoring entries | **56** (26 screen + 30 block) |
+| Total authoring entries | 61 (+1 derived screen, +4 legacy blocks) |
 | Synthetic browser placeholder cards | **12** |
 | Subject-browser series tabs | 6 (4 History, 2 English) |
 | Distinct chapter `series` values | 4 |

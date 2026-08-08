@@ -47,8 +47,8 @@ from — but it is never a second thing to pick. Binding an adapter to a derived
 entry is a build failure, in both directions: it would inflate the count of
 independently selectable choices and quietly publish a route no author writes.
 
-Today: 38 of 49 Lab items satisfy direction 1; **33 of 50 active** authoring
-entries satisfy direction 2. Phase 4 takes both to 100%, over **57 active**
+Today: 38 of 49 Lab items satisfy direction 1; **33 of 49 active** authoring
+entries satisfy direction 2. Phase 4 takes both to 100%, over **56 active**
 entries once the seven new types land.
 
 ---
@@ -87,7 +87,7 @@ adapter, `derived` rows forbid one and carry `derivedFrom`.
 | `required`, `requiredAny` | authoring entry — the content contract |
 | `pedagogy` (`functions`, `interaction`) | authoring entry |
 | `owningRecordId`, `componentName`, `source` | owning catalogue record |
-| `handler` | authoring entry — non-null for the ten `ScreenRenderer` types |
+| `handler` | authoring entry — non-null for the nine `ScreenRenderer` types |
 | `lifecycle`, `criticality`, `decisionStatus` | owning record |
 | `bestUsedFor`, `useWhen`, `doNotUseWhen`, `chooseInstead`, `contentShape` | owning record |
 | `contentUsage` | generated scan of `src/content/**` |
@@ -96,7 +96,7 @@ No JSX, no functions, no React. Production-safe, as the settled boundaries requi
 
 A record that owns several authoring entries (`MisconceptionCheck`,
 `OppositeQualitiesReveal`, `TimelineChain`/`TimelineChainBlock`, `ScreenRenderer`
-with ten) contributes one row per entry. That is the whole point: an author
+with nine) contributes one row per entry. That is the whole point: an author
 picks a *type*, not a file.
 
 ### Layer 2 — handwritten preview adapters
@@ -310,15 +310,15 @@ Populations after reclassification (D0's corrected arithmetic):
 
 | | Now | Target |
 |---|---|---|
-| Active authoring entries | 50 | **57** (50 + 7 new types) |
-| — selectable in the Lab | 33 | **57** |
-| — missing | 17 | **0** |
+| Active authoring entries | 49 | **56** (49 + 7 new types) |
+| — selectable in the Lab | 33 | **56** |
+| — missing | 16 | **0** |
 | Derived routes | 1 | 1 — accounted for, never selectable |
 | Legacy entries | 4 | 4 — excluded |
 | Lab selections with no active authoring entry | 11 | **0** |
 | Category C items in the Lab | 5 | **0** |
 
-33 + 7 + 17 = 57, with no remainder. The superseded "51" counted the derived
+33 + 7 + 16 = 56, with no remainder. The superseded "50" counted the derived
 route as a selectable choice.
 
 ---
@@ -366,7 +366,7 @@ Derived filters (`unused`, `one-off`) become predicates over facts, so the
 ## 10. Bundle position
 
 Lab chunk today: 356.16 kB raw / 105.76 kB gzip, no leakage into the learner
-entry (measured). Phase 4 both **adds** adapters (17 missing entries) and
+entry (measured). Phase 4 both **adds** adapters (16 missing entries) and
 **removes** them (5 category C items, including the ten primitives on the
 buttons page). Net direction is unknown until built — re-measure and report; no
 budget is set.

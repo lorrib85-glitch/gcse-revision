@@ -8,13 +8,16 @@ graph is migrated later through its own full authority flip.
 Status: **census complete, architecture proposed, scope locked pending three
 product decisions.** No implementation started.
 
+Authoring-entry lists and totals are maintained against the current catalogue;
+the surrounding pre-flip analysis retains its original scope.
+
 ---
 
 ## 0. Surfaces surveyed
 
 | Surface | Lines | Role today |
 |---|---|---|
-| `src/data/screenRegistry.js` | 489 | Authors `SCREEN_REGISTRY` (30) + `BLOCK_REGISTRY` (29), derives `LEGACY_BLOCK_TYPES`, plus 10 handwritten helpers and the chapter validator |
+| `src/data/screenRegistry.js` | 489 | Authors `SCREEN_REGISTRY` (30) + `BLOCK_REGISTRY` (28), derives `LEGACY_BLOCK_TYPES`, plus 10 handwritten helpers and the chapter validator |
 | `src/components/layout/ScreenRenderer.jsx` | 1251 | Concrete implementation map — **three** routing tables, not one (see §2) |
 | `src/component-catalogue/records/**` | 84 records | Phase 1 catalogue; generates `docs/components/COMPONENT_REGISTRY.md` |
 | `src/component-catalogue/schema.js` | 364 | Fixed `REQUIRED_KEYS`, rejects unknown keys — a new authoring key is a schema change |
@@ -67,14 +70,14 @@ and routed · **L/R** legacy with replacement · **C** compatibility-only ·
 
 ---
 
-## 2. Block census — all 29 entries
+## 2. Block census — all 28 entries
 
 Every active block is in `BLOCK_RENDERERS`, so the existing set-equality test
 holds. The real finding is **where the implementation lives**.
 
 ### 2a. Active blocks routed to a *private internal of `ScreenRenderer.jsx`* — **G**
 
-These nine have no standalone file and therefore **no catalogue record, and no
+These eight have no standalone file and therefore **no catalogue record, and no
 record is possible under the Phase 1 model** (a record needs a `source` file
 whose identity it owns).
 
@@ -86,7 +89,6 @@ whose identity it owns).
 | `examtip` | `ExamTipBlock` | `:110` | 7 |
 | `timeline` | `TimelineBlock` | `:144` | 0 |
 | `reveal` | `RevealBlock` | `:183` | 0 |
-| `hotspot` | `HotspotBlock` | `:252` | 0 |
 | `misconception` | `MisconceptionBlock` | `:398` | 0 |
 | `scenario` | `ScenarioBlock` | `:456` | 0 |
 
@@ -205,21 +207,21 @@ forbid.
 
 **Needs your call: delete, or extract?**
 
-### Decision 2 — the nine renderer-owned block components
+### Decision 2 — the eight renderer-owned block components
 
-"Catalogue records become the authority" cannot be literally true for nine of
-the twenty-five active blocks, because they are private functions inside
+"Catalogue records become the authority" cannot be literally true for eight of
+the twenty-four active blocks, because they are private functions inside
 `ScreenRenderer.jsx` with no `source` file of their own. Three options:
 
 | Option | What it means | Cost |
 |---|---|---|
-| **(a) Extract** all nine into `src/components/learning/blocks/*.jsx` + 9 catalogue records + 9 stories | Every authoring entry is owned by a component record, uniformly | Large; four of the nine have **zero** authored uses, so it is speculative work on dead types |
-| **(b) Renderer-owned family** — `ScreenRenderer`'s existing `runtime` record gains an `authoring.rendererOwned[]` list declaring these nine types, with the same full entry shape | Authority genuinely sits in the catalogue; the honest fact ("this type's implementation is private to the renderer") becomes explicit and testable instead of hidden behind a fake component name | One schema addition; the integrity contract gains an explicit "documented generic handler" class, which your brief already anticipates |
+| **(a) Extract** all eight into `src/components/learning/blocks/*.jsx` + 8 catalogue records + 8 stories | Every authoring entry is owned by a component record, uniformly | Large; three of the eight have **zero** authored uses, so it is speculative work on dead types |
+| **(b) Renderer-owned family** — `ScreenRenderer`'s existing `runtime` record gains an `authoring.rendererOwned[]` list declaring these eight types, with the same full entry shape | Authority genuinely sits in the catalogue; the honest fact ("this type's implementation is private to the renderer") becomes explicit and testable instead of hidden behind a fake component name | One schema addition; the integrity contract gains an explicit "documented generic handler" class, which your brief already anticipates |
 | **(c) Compatibility registry** | Wrong — these are active and live, not legacy |
 
 **Recommendation: (b).** It satisfies your requirement that the projection may
 combine "authoring entries owned by current component records" with an
-explicitly documented generic handler, without a nine-file speculative
+explicitly documented generic handler, without an eight-file speculative
 extraction. `ScreenContentRenderer`, `LegacyUnroutedBlock` and `Infographic`'s
 content-layer route are covered by the same mechanism.
 

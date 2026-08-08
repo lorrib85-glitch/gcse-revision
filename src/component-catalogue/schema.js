@@ -287,7 +287,7 @@ function validateContract(errors, contract) {
 //
 // `handler` is the honest part. Most entries leave it null, meaning the
 // record's own component implements the type. A non-null handler names a
-// function *private to the record's own source file* — the nine block types
+// function *private to the record's own source file* — the eight block types
 // implemented inside ScreenRenderer.jsx are real authoring types whose
 // implementation is deliberately not a standalone reusable component. Naming
 // the private handler is truthful; inventing a component record for it is not.

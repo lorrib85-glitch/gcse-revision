@@ -135,25 +135,6 @@ export default {
         }
       },
       {
-        type: 'hotspot',
-        level: 'block',
-        authoringName: 'Hotspot block',
-        layout: 'content',
-        status: 'active',
-        replacement: null,
-        required: [],
-        requiredAny: [],
-        continuation: 'player',
-        headerMode: 'standard',
-        handler: 'HotspotBlock',
-        pedagogy: {
-          functions: [
-            'teach-mechanism'
-          ],
-          interaction: 'reveal'
-        }
-      },
-      {
         type: 'keypoint',
         level: 'block',
         authoringName: 'Key point',

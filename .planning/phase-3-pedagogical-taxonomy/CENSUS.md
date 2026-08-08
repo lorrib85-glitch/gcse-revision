@@ -4,12 +4,13 @@ Starting SHA: `5fd92ff08830d02221d44e68a1561aa3c98b78a7`.
 
 **Status: EXECUTED.** D1 and D2 were approved and the authority flip landed in
 six commits from `57efba8`. Both parity layers passed: the taxonomy identical
-for all 49 retained types with exactly the three approved removals and two
-approved additions, and the quality output byte-identical for all 60 chapters.
+for all 49 retained types with exactly the three approved removals and one
+approved addition, and the quality output byte-identical for all 60 chapters.
 `tests/architecture/content-quality.test.js` passes unmodified. D3 and D4
 remain open debt, recorded in `DECISIONS.md`.
 
-The census below is the pre-flip record, kept as written.
+The census below retains the pre-flip structure; authoring-surface facts are
+maintained against the current catalogue.
 All usage counts are runtime truth: every count comes from loading all 60
 registered chapters through `CHAPTER_CONTENT_LOADERS`, not from grep.
 
@@ -122,12 +123,11 @@ collisions; it is the 24th block-level entry.)
 three taxonomy entries are never consulted by anything. They are not display
 types and never were. → **Decision D1.**
 
-### 2d. Authoring entries with NO taxonomy coverage (3)
+### 2d. Authoring entries with NO taxonomy coverage (2)
 
 | entry | status | uses | behavioural consequence today |
 |---|---|---|---|
 | screen `standard` | active | 0 explicit (every untyped screen resolves to it, but quality checks read raw `screen.type`, which is `undefined` and filtered before lookup — `standard` is never queried) | none in practice; if content ever wrote `type: 'standard'` explicitly, `isPassive('standard')` = false → counted non-passive |
-| block `hotspot` | active (renderer-owned) | 0 | a hotspot block would make its screen count as **non-passive** in the passive-run guardrail (unknown → `isPassive` false) — an accident of no coverage, not a decision |
 | block `timeline` | active (renderer-owned) | 0 | same accident |
 
 → **Decision D2** (new facts must be assigned or exempted explicitly; this is

@@ -1,8 +1,9 @@
 # Phase 4 — Component Lab census
 
-Baseline SHA: `d2c0030f80730db42e0b5097319ae5292966b078`
-Method: every number below was measured at that SHA, not estimated. The tooling
-used is described per census; the machine-readable output is under `baselines/`.
+Baseline reference SHA: `d2c0030f80730db42e0b5097319ae5292966b078`.
+Historical Lab-population figures were measured there; authoring-surface lists
+and totals are maintained against the current catalogue. The tooling used is
+described per census; the machine-readable output is under `baselines/`.
 
 > ### ⚠️ Census 3's coverage target is SUPERSEDED
 >
@@ -19,13 +20,13 @@ used is described per census; the machine-readable output is under `baselines/`.
 
 > ### ⚠️ Two corrections applied after this census
 >
-> **1. The "51 live entries" target counted a derived route as a selectable
-> choice.** 51 is 50 `active` plus 1 `derived` (`screen:misconceptionCheck`).
+> **1. The "50 live entries" target counted a derived route as a selectable
+> choice.** 50 is 49 `active` plus 1 `derived` (`screen:misconceptionCheck`).
 > A derived route is the runtime presenting an existing choice at another
 > level, not a second thing to author. The coverage contract counts **active**
 > entries only; the derived route is accounted for as a presentation. See D0 in
-> `DECISIONS.md`. Corrected basis: **50 active, 33 covered, 17 missing** →
-> target **57** once Phase 4's seven new types land.
+> `DECISIONS.md`. Corrected basis: **49 active, 33 covered, 16 missing** →
+> target **56** once Phase 4's seven new types land.
 >
 > **2. The regex usage evidence is wrong about levels.** Census 6 and 7 counted
 > `type:` occurrences, which cannot distinguish a screen from a block. The
@@ -39,9 +40,9 @@ used is described per census; the machine-readable output is under `baselines/`.
 
 | Fact | Value |
 |---|---|
-| **Live chapter-authoring entries** | **51** (50 active + 1 derived) |
+| **Live chapter-authoring entries** | **50** (49 active + 1 derived) |
 | **— covered by a Lab selection** | **34** |
-| **— missing from the Lab** | **17** |
+| **— missing from the Lab** | **16** |
 | **Lab entries: A / B / C** | **38 / 6 / 5** |
 | Lab entries | 49 |
 | Lab preview variants | 60 |
@@ -492,7 +493,7 @@ These belong in the handwritten adapter layer, not the catalogue.
 Machine-readable: `baselines/current-authoring-coverage.json`.
 
 Measures the Lab against the **live chapter-authoring surface**: every authoring
-entry in the catalogue whose status is not `legacy` — 50 `active` plus 1
+entry in the catalogue whose status is not `legacy` — 49 `active` plus 1
 `derived`. Legacy types (`appliedscenario`, `examscored`) live in
 `authoringCompatibility.js`, are routed to a `LegacyUnroutedBlock` notice, and
 are deliberately excluded.
@@ -502,7 +503,7 @@ are deliberately excluded.
 | Direction | Result |
 |---|---|
 | Every Lab item maps to a real authoring entry | **38 of 49** do. 11 do not |
-| Every active authoring entry is selectable in the Lab | **34 of 51** are. **17 are not** |
+| Every active authoring entry is selectable in the Lab | **33 of 49** are. **16 are not** |
 
 **A third of the live authoring surface has no Lab selection**, and the gap is
 worst exactly where it matters most.
@@ -543,7 +544,7 @@ The three chapter-framing screens are real, active, well-formed components — t
 are simply **placed by the runtime, not selected by an author**. That is what
 makes them category C, not their quality.
 
-### The 17 missing authoring entries
+### The 16 missing authoring entries
 
 Ordered by measured content usage:
 
@@ -563,7 +564,6 @@ Ordered by measured content usage:
 | `block:misconception` | ScreenRenderer | `MisconceptionBlock` | 2 |
 | `block:mediaPlaceholder` | MediaPlaceholder | — | 1 |
 | `block:reveal` | ScreenRenderer | `RevealBlock` | 1 |
-| `block:hotspot` | ScreenRenderer | `HotspotBlock` | 0 |
 | `block:timeline` | ScreenRenderer | `TimelineBlock` | 0 |
 | `screen:standard` | ScreenRenderer | `ScreenContentRenderer` | 0 |
 
@@ -572,7 +572,7 @@ in the entire codebase — `block:read` (261 uses) and `block:quiz` (224 uses) �
 have no Lab presence at all. An author building a chapter cannot see the two
 things they will place most often.
 
-Ten of the seventeen are the `ScreenRenderer` private-handler block types. They
+Nine of the sixteen are the `ScreenRenderer` private-handler block types. They
 are genuine authoring types — the schema explicitly sanctions this ("real
 authoring types whose implementation is deliberately not a standalone reusable
 component") — and the Lab has simply never covered them because it was organised
@@ -642,6 +642,6 @@ authoring entry and a renderer route**. The recommendation is in `DESIGN.md` §6
 | Chunk sizes | `./node_modules/.bin/vite build` at the baseline SHA |
 | Leakage check | grep of built `dist/assets/index-*.js` for Lab-only strings |
 | Chunk sharing | Parsed `from"./…"` specifiers out of the built chunks |
-| 51 live authoring entries | Catalogue authoring blocks, `status !== 'legacy'` |
+| 50 live authoring entries | Catalogue authoring blocks, `status !== 'legacy'` |
 | A/B/C classification | Explicit Lab-entry → authoring-key binding, asserted against the live entry set so a bad binding throws |
-| 17 missing entries | Set difference between live authoring keys and keys bound to a Lab item |
+| 16 missing entries | Set difference between live authoring keys and keys bound to a Lab item |

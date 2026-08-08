@@ -1,8 +1,8 @@
 // ─── Component Lab — adapters for the ScreenRenderer-owned authoring types ───
 //
-// Ten authoring types are implemented by handlers private to
+// Nine authoring types are implemented by handlers private to
 // ScreenRenderer.jsx: ReadBlock, KeypointBlock, ExamTipBlock, ScenarioBlock,
-// FunFactBlock, MisconceptionBlock, RevealBlock, HotspotBlock, TimelineBlock
+// FunFactBlock, MisconceptionBlock, RevealBlock, TimelineBlock
 // and ScreenContentRenderer. They include the two most-used authorable types
 // in the codebase — `read` (261 uses) and `quiz` (224) — so a Lab that omits
 // them omits the things an author places most often.
@@ -78,7 +78,7 @@ const screenAdapter = (minimalScreen, { subject = 'History' } = {}) => ({
 
 const blockAdapter = (block, options) => screenAdapter(inStandardScreen(block), options)
 
-// ─── The ten handler-backed selections ───────────────────────────────────────
+// ─── The nine handler-backed selections ──────────────────────────────────────
 //
 // Content is realistic GCSE material at the minimum the contract requires —
 // "minimal" is about the shape, not about being unrepresentative.
@@ -145,12 +145,6 @@ export const SCREEN_RENDERER_ADAPTERS = {
     prompt: 'Name the four humours.',
     answer: 'Blood, phlegm, black bile and yellow bile.',
   }),
-
-  'block:hotspot': blockAdapter({
-    type: 'hotspot',
-    label: 'Plant cell — tap to explore',
-    parts: ['cell_wall', 'nucleus', 'chloroplast', 'vacuole', 'mitochondria'],
-  }, { subject: 'Biology' }),
 
   'block:timeline': blockAdapter({
     type: 'timeline',

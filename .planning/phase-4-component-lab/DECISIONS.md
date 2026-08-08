@@ -18,8 +18,8 @@ component library.**
 
 ## D0 — the derived-entry correction (settled first, because it re-bases D1–D5)
 
-**The defect.** The census counted 51 "live" authoring entries and made that
-the coverage target. 51 is 50 `active` plus 1 `derived`, and treating them
+**The defect.** The census counted 50 "live" authoring entries and made that
+the coverage target. 50 is 49 `active` plus 1 `derived`, and treating them
 alike would have turned a derived route into a public authoring option.
 
 **A derived route is not a separate selectable authoring choice.** It is the
@@ -50,19 +50,19 @@ guards will then *require* the second row.
 
 | | Before Phase 4 | After Phase 4 |
 |---|---|---|
-| Active authoring entries | 50 | **57** |
+| Active authoring entries | 49 | **56** |
 | Derived routes | 1 | 1 |
 | Legacy entries (excluded) | 4 | 4 |
-| Active entries selectable in the Lab | 33 | **57** |
-| Active entries missing from the Lab | 17 | **0** |
+| Active entries selectable in the Lab | 33 | **56** |
+| Active entries missing from the Lab | 16 | **0** |
 | Lab selections with no active authoring entry | 11 | **0** |
 | Category C items in the Lab | 5 | **0** |
 
 The seven new active entries are the seven new authoring types below (D2 and
-CalculationBreakdown). 33 + 7 + 17 = 57, with no remainder.
+CalculationBreakdown). 33 + 7 + 16 = 56, with no remainder.
 
-The superseded target was "51". The correct target is **57 selectable choices
-resolving to 57 active entries**, with one derived route accounted for as a
+The superseded target was "50". The correct target is **56 selectable choices
+resolving to 56 active entries**, with one derived route accounted for as a
 presentation and four legacy entries excluded.
 
 ---
@@ -187,20 +187,20 @@ to add a sibling surface is not approval to redesign the existing one.
 
 ## D4 — handler-backed entries are previewed through ScreenRenderer
 
-**Chosen: option A.** All ten `ScreenRenderer`-owned private-handler entries
+**Chosen: option A.** All nine `ScreenRenderer`-owned private-handler entries
 are represented by mounting `ScreenRenderer` with a minimal, valid, one-block
 fixture screen.
 
 | | Approach | Consequence | |
 |---|---|---|---|
 | **A** | **Preview through `ScreenRenderer` with a one-block fixture** | **Renders exactly what an author gets, through the real router** | **chosen** |
-| B | Export the ten handlers and mount them directly | Promotes ten deliberately private handlers to public API | rejected |
-| C | Defer all ten | Ships a Lab missing the two most-used authoring types | rejected |
+| B | Export the nine handlers and mount them directly | Promotes nine deliberately private handlers to public API | rejected |
+| C | Defer all nine | Ships a Lab missing the two most-used authoring types | rejected |
 
 The private handlers are **not** exported and **no** fake component record is
 created for any of them. Each Lab selection is keyed by its own authoring key —
 `block:read`, `block:keypoint`, `block:examtip`, `block:scenario`,
-`block:funfact`, `block:misconception`, `block:reveal`, `block:hotspot`,
+`block:funfact`, `block:misconception`, `block:reveal`,
 `block:timeline`, `screen:standard` — and `ScreenRenderer` is only the
 rendering mechanism. It never appears as a selectable Lab item.
 
