@@ -1,5 +1,6 @@
 import { SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { RADII } from '../../constants/radii.js'
 
 // ── CardContainer v1 ───────────────────────────────────────────────────────
 // Reusable cinematic content surface for learning modules.
@@ -74,7 +75,7 @@ export default function CardContainer({
         padding: `${p}px`,
         background: `linear-gradient(${overlayTint}, ${overlayTint}), ${GENERAL.contentSurface.cinematicOverlay}`,
         border: `1px solid ${GENERAL.contentSurface.cinematicOverlayBorder}`,
-        borderRadius: 24,
+        borderRadius: RADII.medium,
         backdropFilter: `blur(${GENERAL.contentSurface.cinematicOverlayBlur})`,
         WebkitBackdropFilter: `blur(${GENERAL.contentSurface.cinematicOverlayBlur})`,
         boxShadow: `${GENERAL.contentSurface.cinematicOverlayShadow}, 0 0 28px ${overlayGlow}, ${GENERAL.contentSurface.cinematicOverlayInset}`,

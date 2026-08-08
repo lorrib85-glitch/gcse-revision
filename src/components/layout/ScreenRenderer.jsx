@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
-import { SPACING } from '../../constants/spacing.js'
+import { COMPONENT_SIZE, SPACING } from '../../constants/spacing.js'
 import { getBlockDefinition, getScreenType, resolveScreenDefinition } from '../../data/screenRegistry.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
@@ -23,7 +23,6 @@ import MemoryHook from '../learning/MemoryHook.jsx'
 import BuilderBlock from '../learning/BuilderBlock.jsx'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import CardContainer from '../core/CardContainer.jsx'
-import CinematicDivider from '../core/CinematicDivider.jsx'
 import GuidedChoiceCarousel from '../learning/GuidedChoiceCarousel.jsx'
 import TimelineChain, { TimelineChainBlock } from '../learning/TimelineChain.jsx'
 import TimelineCanvas from '../learning/TimelineCanvas.jsx'
@@ -130,7 +129,6 @@ function ExamTipBlock({ block, subject }) {
   const capitalised = subject ? subject.charAt(0).toUpperCase() + subject.slice(1).toLowerCase() : null
   const theme = (capitalised && SUBJECTS[capitalised]) || SUBJECTS.Physics
   const accent = theme.accent
-  const accentRgb = theme.accentRgb
   const examTheme = GENERAL.examTechnique
 
   return (
@@ -143,7 +141,13 @@ function ExamTipBlock({ block, subject }) {
         alignItems: 'center',
         gap: SPACING.micro,
       }}>
-        {block.label || '🗡️ Exam Assassin'}
+        <span aria-hidden="true" style={{
+          width: SPACING.compact,
+          height: COMPONENT_SIZE.accentRail,
+          background: accent,
+          flexShrink: 0,
+        }} />
+        {block.label || 'Exam tactic'}
       </div>
       {block.text && (
         <p style={{
@@ -153,37 +157,29 @@ function ExamTipBlock({ block, subject }) {
         }} dangerouslySetInnerHTML={{ __html: block.text }} />
       )}
       {block.tip && (
-        <>
-          <CinematicDivider
-            accent={accent}
-            accentRgb={accentRgb}
-            size="compact"
-            style={{ margin: `${examTheme.sectionGap}px 0` }}
-          />
-          <p style={{
-            ...TYPE.body,
-            margin: 0,
-            color: examTheme.bodySecondary,
-          }} dangerouslySetInnerHTML={{ __html: block.tip }} />
-        </>
+        <p style={{
+          ...TYPE.body,
+          margin: block.text ? `${examTheme.sectionGap}px 0 0` : 0,
+          color: examTheme.bodySecondary,
+        }} dangerouslySetInnerHTML={{ __html: block.tip }} />
       )}
-      {block.phrases && (
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: examTheme.phraseGap,
-          marginTop: examTheme.sectionGap,
-        }}>
-          {block.phrases.map(p => (
-            <span key={p} style={{
-              background: `rgba(${accentRgb},${examTheme.phraseFillAlpha})`,
-              border: `1px solid rgba(${accentRgb},${examTheme.phraseBorderAlpha})`,
-              color: accent,
-              borderRadius: examTheme.phraseRadius,
-              padding: `${SPACING.micro}px ${SPACING.compact}px`,
-              ...TYPE.label,
-            }}>{p}</span>
-          ))}
+      {Array.isArray(block.phrases) && block.phrases.length > 0 && (
+        <div style={{ marginTop: examTheme.sectionGap }}>
+          <div style={{
+            ...TYPE.label,
+            color: examTheme.bodySecondary,
+            marginBottom: examTheme.phraseGap,
+          }}>
+            {block.phrasesLabel || 'Key wording'}
+          </div>
+          <div style={{ display: 'grid', gap: examTheme.phraseGap }}>
+            {block.phrases.map((phrase, index) => (
+              <div key={`${phrase}-${index}`} style={{
+                ...TYPE.bodyStrong,
+                color: examTheme.bodyPrimary,
+              }}>{phrase}</div>
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -490,7 +486,7 @@ const BLOCK_RENDERERS = Object.freeze({
   read: ({ block, subject }) => <CardContainer variant="contained" subject={subject} padding={24}><ReadBlock block={block} /></CardContainer>,
   keypoint: ({ block, subject }) => <CardContainer variant="contained" subject={subject} padding={24}><KeypointBlock block={block} /></CardContainer>,
   funfact: ({ block, subject }) => <CardContainer variant="contained" subject={subject} padding={20}><FunFactBlock block={block} /></CardContainer>,
-  examtip: ({ block, subject }) => <CardContainer variant="cinematicOverlay" subject={subject} padding={SPACING.standard}><ExamTipBlock block={block} subject={subject} /></CardContainer>,
+  examtip: ({ block, subject }) => <CardContainer variant="cinematicOverlay" subject={subject} padding={SPACING.compact}><ExamTipBlock block={block} subject={subject} /></CardContainer>,
   timeline: ({ block }) => <TimelineBlock block={block} />,
   reveal: ({ block }) => <RevealBlock block={block} />,
   quiz: ({ block, subject, index, handleQuizComplete }) => <AnswerInteraction block={{ ...block, explanation: undefined }} subject={subject} onComplete={() => handleQuizComplete(index)} />,

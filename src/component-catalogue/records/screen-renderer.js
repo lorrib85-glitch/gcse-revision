@@ -53,7 +53,8 @@ export default {
     story: null,
     governanceRules: [
       'ExamTipBlock labels are sentence case and use TYPE.label; uppercase transforms and TYPE.eyebrow are forbidden.',
-      'When an exam tip has both a primary rule and supporting tip, the separation is the shared CinematicDivider component rather than a locally drawn border or line.',
+      'ExamTipBlock uses a short subject-accent rule instead of emoji or decorative iconography; supporting copy is separated by spacing rather than a divider.',
+      'Optional phrases render as labelled, passive wording or answer-pattern lines, never pills, chips or controls; phrasesLabel names their purpose when the default Key wording label is not accurate.',
       'ExamTipBlock presentation consumes canonical TYPE, SPACING, GENERAL.examTechnique, GENERAL.contentSurface and SUBJECTS tokens; do not add local type sizing, line heights, spacing arithmetic, raw colours or opacity values.'
     ],
     notes: [
@@ -66,7 +67,7 @@ export default {
         useWhen: 'A topic or concept has just been covered and the learner needs an immediate connection to its exam use — for example the relevant command word, what earns the marks, the detail that must be included or a common mistake that would waste marks. The block translates freshly learned knowledge into exam behaviour; it does not introduce new subject knowledge.',
         doNotUseWhen: 'The subject knowledge has not yet been taught, the learner needs a substantial explanation or worked method, the advice is generic and unrelated to the topic just covered, or several unrelated exam rules would be bundled together. Do not use it as a mini lesson or as a substitute for actual exam practice.',
         chooseInstead: 'Use WhatExaminersLookFor when the learner needs a fuller explanation of examiner priorities. Use GuidedExamResponse when they need support constructing an answer, FaceTheExaminer when they should judge and improve a prepared response, and ExamQuestionFrame when they are ready to practise independently.',
-        contentShape: 'One exam-use rule tied directly to the topic just taught. Lead with the memorable rule; optionally add one short explanation or warning and a small number of quiet sentence stems. Keep it passive, concise and specific enough that the learner can apply it to the next relevant exam question.'
+        contentShape: 'One exam-use rule tied directly to the topic just taught. Lead with the memorable rule; optionally add one short explanation or warning and a small number of labelled wording cues or answer-pattern lines. Use phrasesLabel when Key wording does not describe them accurately. Keep it passive, concise and specific enough that the learner can apply it to the next relevant exam question.'
       }
     }
   },

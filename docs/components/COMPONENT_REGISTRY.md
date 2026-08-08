@@ -201,7 +201,7 @@ Evidence: `review` — Before approving a new screen, search it for chevron or b
 
 **Purpose:** Atmospheric content surface wrapper. Provides a consistent card shell with optional background image, subject glow and cinematic atmosphere.
 
-**Props:** `subject`, `backgroundImage`, `children`, `style`
+**Props:** `variant`, `subject`, `padding`, `contextImage`, `showAtmosphere`, `children`
 
 **Contract:** critical
 
@@ -209,7 +209,7 @@ Evidence: `review` — Before approving a new screen, search it for chevron or b
 
 **Invariants:**
 
-- `explicit-variant` — variant is always explicit ('contained' | 'inline' | 'compact' | 'fullBleed'). The component never infers a variant from its content.
+- `explicit-variant` — variant is always explicit ('contained' | 'cinematicOverlay' | 'inline' | 'compact' | 'fullBleed'). The component never infers a variant from its content.
   - Evidence: `review` — Confirm no call site relies on an inferred variant, and the component adds no content sniffing.
 - `restrained-subject-atmosphere` — Subject atmosphere stays barely-there: tint, glow and shadow opacities live in the 0.06–0.12 range, so the surface never competes with the lesson.
   - Evidence: `review` — Check every tint, glow and shadow opacity value against the 0.06–0.12 range.
@@ -2787,7 +2787,8 @@ No invariants or exclusivity rules are recorded. Internal changes that keep the 
 **Governance rules:**
 
 - ExamTipBlock labels are sentence case and use TYPE.label; uppercase transforms and TYPE.eyebrow are forbidden.
-- When an exam tip has both a primary rule and supporting tip, the separation is the shared CinematicDivider component rather than a locally drawn border or line.
+- ExamTipBlock uses a short subject-accent rule instead of emoji or decorative iconography; supporting copy is separated by spacing rather than a divider.
+- Optional phrases render as labelled, passive wording or answer-pattern lines, never pills, chips or controls; phrasesLabel names their purpose when the default Key wording label is not accurate.
 - ExamTipBlock presentation consumes canonical TYPE, SPACING, GENERAL.examTechnique, GENERAL.contentSurface and SUBJECTS tokens; do not add local type sizing, line heights, spacing arithmetic, raw colours or opacity values.
 
 **Notes:**

@@ -23,10 +23,12 @@ export default {
   documentation: {
     bestUsedFor: null,
     props: [
+      'variant',
       'subject',
-      'backgroundImage',
+      'padding',
+      'contextImage',
+      'showAtmosphere',
       'children',
-      'style'
     ],
     dataShape: null,
     dependencies: [],
@@ -44,7 +46,7 @@ export default {
     invariants: [
       {
         id: 'explicit-variant',
-        statement: "variant is always explicit ('contained' | 'inline' | 'compact' | 'fullBleed'). The component never infers a variant from its content.",
+        statement: "variant is always explicit ('contained' | 'cinematicOverlay' | 'inline' | 'compact' | 'fullBleed'). The component never infers a variant from its content.",
         evidence: [
           {
             kind: 'review',
