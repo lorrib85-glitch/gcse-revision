@@ -102,9 +102,10 @@ export const SCREEN_RENDERER_ADAPTERS = {
 
   'block:examtip': blockAdapter({
     type: 'examtip',
-    text: 'A "describe two features" question is worth 4 marks: two features, each with one supporting detail.',
-    tip: 'Do not explain <em>why</em> — that earns nothing here. State the feature, then add the detail that proves it.',
-    phrases: ['One feature was…', 'This is shown by…'],
+    text: '<strong>For 4 marks, describe two features.</strong><br/>Each needs one precise supporting detail.',
+    tip: 'Don’t explain why — it doesn’t earn marks in this question.',
+    phrasesLabel: 'Answer pattern',
+    phrases: ['Feature → supporting detail', 'Feature → supporting detail'],
   }),
 
   'block:scenario': blockAdapter({

@@ -26,8 +26,10 @@ its own.
 An `examtip` is a short examiner-facing rule, not a mini lesson. Its first
 text beat carries the rule the learner should remember; an optional `tip`
 can add the explanation or warning, and optional `phrases` can provide
-quiet sentence stems. It must remain passive: sentence stems are memory
-cues, not buttons or a second interaction disguised as decoration.
+quiet wording cues or answer-pattern lines. `phrasesLabel` names their purpose
+when the default `Key wording` label is not accurate. It must remain passive:
+these lines are memory cues, not buttons or a second interaction disguised as
+decoration.
 
 The primary sequencing job of `examtip` is **teach → connect to exam use**.
 Use it immediately after a topic or concept has been covered when the learner
@@ -44,14 +46,17 @@ mistake that would waste marks. It does not introduce new subject knowledge.
 - Subject identity comes only from the canonical `SUBJECTS` accent. No
   History-specific amber, science-specific green, or other component-local
   colour is permitted.
-- The label is sentence case and uses `TYPE.label`. Uppercase transforms and
-  the deprecated eyebrow pattern are forbidden.
+- The label is sentence case and uses `TYPE.label`, led by a short rule in the
+  canonical subject accent. Emoji, uppercase transforms and the deprecated
+  eyebrow pattern are forbidden.
 - Visual hierarchy is fixed by meaning: label/accent → primary exam rule →
-  optional supporting `tip` → optional sentence-stem `phrases`. Do not make
+  optional supporting `tip` → optional labelled `phrases`. Do not make
   every line equally loud.
 - When both the primary rule and supporting `tip` are present, separate them
-  with the shared `CinematicDivider` component. Do not recreate the divider
-  locally with borders, pseudo-elements or one-off lines.
+  with governed spacing. Do not insert a decorative divider between them.
+- Optional `phrases` render as quiet text lines beneath an explicit label, never
+  as pills, chips or controls. Use `phrasesLabel` for answer patterns, formulae
+  or another purpose that is not accurately described by `Key wording`.
 - Typography, spacing, colour, radii and emphasis must come from the shared
   `TYPE`, `SPACING`, `GENERAL.examTechnique`, `GENERAL.contentSurface` and
   canonical subject tokens. Do not introduce local font sizes, line heights,
@@ -67,7 +72,8 @@ mistake that would waste marks. It does not introduce new subject knowledge.
   → mechanism → consequence — never a second, unrelated fact bolted on.
 - An `examtip` should contain one exam-use rule tied directly to the topic just
   taught. It may add one short warning/explanation and a small number of
-  sentence stems, but it must not become a bundle of generic exam advice.
+  labelled wording cues or answer-pattern lines, but it must not become a
+  bundle of generic exam advice.
 - Never more than 2 consecutive passive screens (⚙,
   `docs/system/CONTENT_BUILD_TEMPLATE.md` hard floor) — if a `read`/`keypoint`/
   `examtip`/`funfact` block would make a third in a row, it needs an
@@ -99,9 +105,9 @@ mistake that would waste marks. It does not introduce new subject knowledge.
 4. **Opaque exam-tip card** — treating `examtip` as a heavy standalone panel
    that hides the surrounding scene and makes a passive reminder feel like a
    dashboard widget.
-5. **Locally rebuilt styling** — adding an uppercase label, a hand-drawn divider,
-   raw spacing or opacity values, or local typography overrides instead of using
-   the governed tokens and `CinematicDivider`.
+5. **Locally rebuilt styling** — adding an uppercase or emoji label, a decorative
+   divider, pill-like wording cues, raw spacing or opacity values, or local
+   typography overrides instead of using the governed tokens.
 6. **Generic exam advice detached from learning** — dropping an exam tip into a
    chapter without a clear connection to the topic just taught. If the learner
    cannot answer "what did I just learn that this helps me use?", the block is

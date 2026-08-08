@@ -121,14 +121,11 @@ export const GENERAL = {
   examTechnique: {
     bodyPrimary: 'rgba(255,255,255,0.92)',
     bodySecondary: 'rgba(255,255,255,0.68)',
-    phraseFillAlpha: 0.035,
-    phraseBorderAlpha: 0.14,
     surfaceTintAlpha: 0.04,
     surfaceGlowAlpha: 0.07,
     labelGap: 12,
     sectionGap: 16,
     phraseGap: 8,
-    phraseRadius: 12,
   },
 
   shadow: {
