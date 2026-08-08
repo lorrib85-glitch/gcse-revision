@@ -22,6 +22,44 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 ---
 
+## Canonical learning contract — Hippocrates
+
+### Authority and role
+
+- **Issue 6 required concepts:** `history:medicine:four-humours`, `history:medicine:galen`
+- **Essential supporting concept:** `history:medicine:hippocrates`
+- **Related distinction:** `history:medicine:theory-of-opposites`
+
+Issue 6 does not name Hippocrates, but the supplied Medicine knowledge organiser does. Teach him because learners need the relationship **Hippocrates → Four Humours and observation; Galen → development of the theory and Theory of Opposites** to understand the required medieval content accurately. Do not present him as a separate named syllabus bullet or add biography for its own sake.
+
+### Objectives
+
+| Stage | Learner objective |
+|---|---|
+| **Recall** | Identify Hippocrates with natural explanations, observation/recording and the Four Humours. |
+| **Understand** | Distinguish Hippocrates's contribution from Galen's Theory of Opposites. |
+| **Connect** | Explain how Galen's development and medieval transmission of these ancient ideas helped the Four Humours remain influential. |
+
+### Minimum evidence
+
+1. At least one assessed response must make `history:medicine:hippocrates` the **primary concept** and test a contribution, not mere name recognition.
+2. At least one later response must distinguish or apply the Hippocrates/Galen relationship. This may test a misconception, comparison or causal link.
+3. Episode 3 retrieval must reactivate Hippocrates's observation method when learners contrast ancient authority with Renaissance evidence; Episode 4 should connect that method to Sydenham.
+
+A passive content reveal, seeing "Hippocrates" among answer options, or answering a Four-Humours-primary question with Hippocrates as context does not independently satisfy this contract. Keep one primary concept per assessed interaction:
+
+- if the prompt asks what Hippocrates contributed, primary = `history:medicine:hippocrates`;
+- if it asks how the Four Humours worked, primary = `history:medicine:four-humours`, Hippocrates may be secondary;
+- if it asks who added or how to apply opposites, primary = `history:medicine:theory-of-opposites` or `history:medicine:galen`, Hippocrates may be secondary.
+
+### Recovery steer
+
+- Confusing Hippocrates with Galen creates a Hippocrates-specific weak spot and routes first to the concise contribution/distinction explanation.
+- A Four Humours mechanism error routes to `history:medicine:four-humours`, even if Hippocrates appears in the question.
+- Recovery should ask the learner to make the distinction again in a new form; it should not simply replay biography or the same option order.
+
+---
+
 ## 2. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
@@ -29,7 +67,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 - **Proposed content for this episode:**
   - Hook: What do people typically believe killed people in the Middle Ages? (disease, not war — subverts expectation)
   - PriorKnowledgeRecall: first episode in series — recall acts as baseline capture of prior knowledge
-  - Concepts to probe: Four Humours, God/sin causation, miasma, role of the Church, Galen
+  - Concepts to probe: Four Humours, God/sin causation, miasma, role of the Church, and the Hippocrates/Galen distinction
   - WhatYouWillLearn: previews the central tension ("everyone agreed. everyone was wrong. and nobody could say so.")
 - **Suggested components:**
   - `CinematicRevealMoment` — medieval physician reading a star chart by candlelight; establishes atmosphere and curiosity
@@ -52,8 +90,9 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 ### Section 3 — Learning Chunk 2
 - **Purpose:** Develop understanding — why Galen and Hippocrates dominated.
 - **Proposed content for this episode:**
-  - Hippocrates (Ancient Greece): created Four Humours; encouraged observation
+  - Hippocrates (Ancient Greece; essential supporting knowledge): natural explanations, observation/recording and the Four Humours
   - Galen (Ancient Rome): Theory of Opposites; believed in the soul (Church-compatible); dissected animals not humans → ~300 errors
+  - Required distinction: Hippocrates's contribution versus Galen's later development; this must be understood, not only recognised by name
   - Three Reasons why ancient thinking dominated: Church promotion, book learning culture, lack of alternatives (no dissection)
   - Dissection mostly illegal; criminals occasionally allowed; disagreements explained away
   - Printing press (1440): existed but not yet disruptive
@@ -106,6 +145,9 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 - [ ] Interleaving exists throughout the module
 - [ ] Weak spots are revisited in-module
 - [ ] Core chapter message is reinforced
+- [ ] Hippocrates is taught as essential supporting knowledge, not mislabelled as a named Issue 6 requirement
+- [ ] At least one assessed response has `history:medicine:hippocrates` as its primary concept and tests a contribution
+- [ ] A later assessed response distinguishes Hippocrates from Galen and routes any misconception to the correct weak spot
 - [ ] Examiner content appears only in Section 6
 - [ ] Module ends with a completion screen
 - [ ] No feature component is used more than twice in the module
@@ -115,6 +157,8 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 ## 3. Current state & gap analysis
 
 Built as `history-medicine-medieval-beliefs-causes` — 32 screens.
+
+**Hippocrates audit (7 August 2026):** the current source already includes a Hippocrates teaching reveal, later recall and a Hippocrates/Galen misconception check. The gap is not a shortage of exposition or screen time. The missing piece was a canonical objective/evidence contract and explicit primary-concept/recovery steer. A downstream runtime pass must verify evidence attribution against the contract above; do not add another biography screen by default.
 
 Known screen tags from `src/modules.js`: `four-humours` (s4), `galen` (s9), `medieval-practitioners` (s12), `miasma` (s13), `core-takeaway` (s31).
 
@@ -137,14 +181,16 @@ Known screen tags from `src/modules.js`: `four-humours` (s4), `galen` (s9), `med
 
 ## 4. Build recommendations
 
-1. **Storyline integration (⛪ Religion agent):** The Core takeaway — the system was coherent and self-reinforcing — should thread as a recurring motif: Section 1 hook, Section 3 Three Reasons reveal, Section 5 ColSortBlock. Verify `core-takeaway` at s31 explicitly names the Church/Religion agent as the primary mechanism. If not, update that screen.
+1. **Hippocrates contract:** Preserve the existing concise teaching, recall and misconception beats. Verify that one response makes Hippocrates the primary concept, that a later response distinguishes him from Galen, and that recovery targets the actual concept error. More exposition is not the default fix.
 
-2. **Astrology screen audit (⛪ Religion):** If no screen covers astrology as a cause, add a dedicated beat in the Section 2 VisualLearning. Astrology appears in past-paper questions and mark schemes.
+2. **Storyline integration (⛪ Religion agent):** The Core takeaway — the system was coherent and self-reinforcing — should thread as a recurring motif: Section 1 hook, Section 3 Three Reasons reveal, Section 5 ColSortBlock. Verify `core-takeaway` at s31 explicitly names the Church/Religion agent as the primary mechanism. If not, update that screen.
 
-3. **Hospitals screen (🏛️ Government):** "Describe two features of hospitals in medieval England" is a common 2-mark question. Verify `medieval-practitioners` screen covers hospitals, or add a dedicated `hospital-care` tagged screen in Section 4.
+3. **Astrology screen audit (⛪ Religion):** If no screen covers astrology as a cause, add a dedicated beat in the Section 2 VisualLearning. Astrology appears in past-paper questions and mark schemes.
 
-4. **FaceTheExaminer in Section 6 (Exam technique):** "Explain why Galen had such a big influence" is one of the most predictable exam questions for this period. Confirm this question is present in Section 6.
+4. **Hospitals screen (🏛️ Government):** "Describe two features of hospitals in medieval England" is a common 2-mark question. Verify `medieval-practitioners` screen covers hospitals, or add a dedicated `hospital-care` tagged screen in Section 4.
 
-5. **Interleaving check:** The `core-takeaway` at s31 is late. Confirm Four Humours concepts also recur in Section 3 and 4 retrieval screens — the s4 tag (four-humours) is early Section 2; it should reappear in later QuickRecallScreen and MatchingTask.
+5. **FaceTheExaminer in Section 6 (Exam technique):** "Explain why Galen had such a big influence" is one of the most predictable exam questions for this period. Confirm this question is present in Section 6.
 
-6. **Episode 2 handoff:** End of Episode 1 should tease the Black Death — the Black Death is where the "coherent system meets its greatest test" narrative begins. Agents: ⛪ Religion (people pray harder) + 👤 Individuals (no individual can save them).
+6. **Interleaving check:** The `core-takeaway` at s31 is late. Confirm Four Humours concepts also recur in Section 3 and 4 retrieval screens — the s4 tag (four-humours) is early Section 2; it should reappear in later QuickRecallScreen and MatchingTask.
+
+7. **Episode 2 handoff:** End of Episode 1 should tease the Black Death — the Black Death is where the "coherent system meets its greatest test" narrative begins. Agents: ⛪ Religion (people pray harder) + 👤 Individuals (no individual can save them).

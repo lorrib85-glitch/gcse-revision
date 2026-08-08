@@ -5,6 +5,17 @@ Following Jupiter"). Entries newest-first.
 
 ---
 
+## 2026-08-07 — canonical coverage audit — Hippocrates learning contract
+
+- **Session scope:** canonical coverage and source-authority review against Pearson Edexcel GCSE History Issue 6, the supplied Medicine knowledge organiser and the 2025 sample assessment materials. Documentation only; no runtime or screen design change.
+- **Authority decision:** Issue 6 requires the Four Humours and continuing influence of Galen but does not name Hippocrates. The supplied organiser names Hippocrates and links him to the Four Humours, natural explanations, observation and note-taking. He is therefore essential supporting knowledge, not a named specification bullet.
+- **Diagnosis:** the runtime already teaches Hippocrates and includes later recall and a Hippocrates/Galen misconception check. The canonical architecture gave him only a brief content bullet and did not require typed objectives, independent evidence, primary-concept attribution or recovery. The issue was contract weakness, not insufficient exposition.
+- **Canonical amendment:** added recall, understand and connect objectives; required one Hippocrates-primary contribution check, a later Hippocrates/Galen distinction, delayed Episode 3 retrieval and concept-specific recovery. Clarified that a Four-Humours-primary question with Hippocrates as context does not independently satisfy his evidence threshold.
+- **Build steer:** preserve the concise existing teaching. The next runtime parity check should map responses to the declared objectives and weak spot; it should not add biography merely to increase Hippocrates screen time.
+- **Acceptance criteria for that downstream check:** one primary concept per assessed response; Hippocrates evidence tests a contribution; Galen/Theory of Opposites remains separately attributable; an error routes to the concept actually misunderstood.
+
+---
+
 ## 2026-07-12 — Gold audit (third wave) — two golds seated from Ep1
 
 - **Session scope:** the rank-1 recurring-pattern gold audit (Step 2b of

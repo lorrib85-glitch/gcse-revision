@@ -26,6 +26,7 @@ Harvey and the wider spread of Renaissance scientific method belong to Episode 4
 - Printing press and accurate anatomical illustration
 - Andreas Vesalius, human dissection and *On the Fabric of the Human Body* (1543)
 - Specific Galenic errors corrected by Vesalius
+- Vesalius's influence on medical training: direct human observation, anatomy theatres and accurate printed illustrations changed how anatomy could be taught
 - Vesalius's significance and limits: anatomy and method changed more than treatment
 
 #### Supporting context only
@@ -70,6 +71,7 @@ For centuries, doctors trusted Galen's books, but Renaissance thinkers became mo
 - Human anatomy improved, but physicians still used humoural treatments such as bloodletting and purging.
 - Humanism, anatomy theatres and a weaker hold of Church authority made direct investigation more acceptable.
 - Printing allowed accurate copies of Vesalius's illustrations and arguments to spread beyond one university or anatomy theatre.
+- Medical students and doctors could learn from direct human dissection and consistent anatomical images instead of relying only on inherited descriptions.
 
 ### Galen vs Vesalius comparison (learner sequence)
 
@@ -128,6 +130,13 @@ The chapter teaches the Galen/Vesalius contrast through the `people` variant of 
 - Used detailed illustrations to make human anatomy easier to study and teach.
 - Encouraged other doctors to observe and dissect rather than rely unquestioningly on ancient books.
 
+### Influence on medical training
+
+- Anatomy theatres made human dissection part of university learning that students and doctors could observe directly.
+- Vesalius's accurate illustrations gave teachers and learners a consistent human-anatomy reference that could be compared with Galen's claims.
+- Printing spread those illustrations and corrections beyond the university or dissection where the evidence was first seen.
+- The main change was to **training, anatomical knowledge and method**: students were increasingly encouraged to look, compare and test. It did not immediately replace humoural treatment or create new cures.
+
 ### Limitations of Vesalius
 
 - He corrected anatomy but did not discover how the body functioned.
@@ -179,6 +188,7 @@ The chapter teaches the Galen/Vesalius contrast through the `people` variant of 
 - Anatomy theatres and access to human dissection → Galen's claims could be compared with real human bodies.
 - Galen's reliance on animal dissection → anatomical errors → Vesalius exposed those errors using human evidence.
 - Printing press → accurate illustrations and arguments spread widely → Vesalius's challenge reached doctors across Europe.
+- Human dissection + anatomy theatres + printed illustrations → students could learn from human evidence → medical training became more observational and anatomically accurate.
 - Better anatomy → improved knowledge and method → little immediate change in treatment.
 
 ### Misconceptions for `MisconceptionCheck`
